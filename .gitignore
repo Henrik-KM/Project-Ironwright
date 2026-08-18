@@ -1,0 +1,30 @@
+# Godot
+.godot/
+.import/
+export.cfg
+export_presets.cfg
+
+# Build outputs
+build/
+dist/
+exports/
+*.pck
+*.exe
+*.app
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local diagnostics and saves
+*.log
+game/user_data/
+game/saves/

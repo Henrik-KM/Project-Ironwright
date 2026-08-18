@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "stages": [
+    {
+      "id": "dependent",
+      "display_name": "Dependent",
+      "player_role": "Direct survival beside one flawed companion",
+      "machine_capabilities": [
+        "follow_mechromancer",
+        "remain_near_heartforge",
+        "attack_obvious_nearby_threat",
+        "return_on_signal"
+      ],
+      "work_removed": [],
+      "allowed_player_signals": [
+        "stay_close",
+        "remain_home",
+        "return"
+      ]
+    },
+    {
+      "id": "routine",
+      "display_name": "Routine",
+      "player_role": "Choose risks while machines handle familiar local work",
+      "machine_capabilities": [
+        "recognise_nearby_scrap",
+        "gather_nearby_scrap",
+        "repair_familiar_damage",
+        "defend_obvious_approaches",
+        "return_when_damaged",
+        "replace_simple_losses"
+      ],
+      "work_removed": [
+        "ordinary_nearby_scrap_collection",
+        "routine_repair",
+        "simple_replacement"
+      ],
+      "allowed_player_signals": [
+        "emergency_recall"
+      ]
+    },
+    {
+      "id": "cooperative",
+      "display_name": "Cooperative",
+      "player_role": "Resolve exceptional threats and choose major evolutions",
+      "machine_capabilities": [
+        "dynamic_role_assignment",
+        "escort_vulnerable_roles",
+        "recover_disabled_machines",
+        "share_threat_observations",
+        "redistribute_local_defence"
+      ],
+      "work_removed": [
+        "worker_assignment",
+        "formation_management",
+        "casualty_recovery_orders",
+        "local_defensive_positioning"
+      ],
+      "allowed_player_signals": [
+        "emergency_recall",
+        "protect_heartforge_at_any_cost",
+        "preserve_machines"
+      ]
+    },
+    {
+      "id": "expeditionary",
+      "display_name": "Expeditionary",
+      "player_role": "Authorise risk and decide whether to accompany",
+      "machine_capabilities": [
+        "evaluate_known_objective",
+        "compose_viable_group",
+        "select_route",
+        "retreat_on_invalidated_assumptions",
+        "return_and_debrief"
+      ],
+      "work_removed": [
+        "expedition_unit_selection",
+        "route_drawing",
+        "supply_preparation",
+        "routine_remote_tactics"
+      ],
+      "allowed_player_signals": [
+        "authorise",
+        "accompany",
+        "delay",
+        "decline",
+        "emergency_recall"
+      ]
+    },
+    {
+      "id": "adaptive",
+      "display_name": "Adaptive",
+      "player_role": "Choose among competing strategic responses",
+      "machine_capabilities": [
+        "learn_from_attack_history",
+        "adapt_defensive_geometry",
+        "revise_expedition_assumptions",
+        "preserve_strategic_reserve",
+        "escalate_low_confidence_decisions"
+      ],
+      "work_removed": [
+        "repeated_base_reconfiguration",
+        "routine_doctrine_tuning",
+        "manual_reserve_management"
+      ],
+      "allowed_player_signals": [
+        "choose_major_response",
+        "emergency_recall",
+        "focus_apex_threat"
+      ]
+    },
+    {
+      "id": "sovereign",
+      "display_name": "Sovereign",
+      "player_role": "Handle unprecedented threats, irreversible evolution, and the endgame",
+      "machine_capabilities": [
+        "maintain_familiar_survival",
+        "conduct_routine_distant_activity",
+        "replace_ordinary_losses",
+        "repair_and_reconfigure_heartforge",
+        "request_input_only_for_exceptions"
+      ],
+      "work_removed": [
+        "ordinary_base_operation",
+        "ordinary_expedition_authorisation",
+        "ordinary_population_composition",
+        "routine_threat_response"
+      ],
+      "allowed_player_signals": [
+        "choose_irreversible_evolution",
+        "resolve_unprecedented_threat",
+        "initiate_endgame"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "product_id": "project_ironwight",
+  "canonical_mode": "persistent_survival_sandbox",
+  "perspective": "direct_isometric_character_control",
+  "hard_limits": {
+    "permanent_player_bases_max": 1,
+    "ordinary_stockpiled_resources_max": 1,
+    "ordinary_resource_id": "scrap",
+    "principal_run_duration_hours_min": 30,
+    "principal_run_duration_hours_max": 100
+  },
+  "required": {
+    "base_defence_is_primary": true,
+    "base_is_constrained": true,
+    "base_evolves_automatically": true,
+    "robot_autonomy_removes_work": true,
+    "enemy_origin": "organic",
+    "continuous_ecological_pressure": true,
+    "rare_major_attacks_are_causal": true,
+    "early_game_is_small_dark_and_frightening": true,
+    "excursions_return_to_heartforge": true,
+    "repeated_failure_before_first_victory_is_expected": true,
+    "save_is_persistent_across_many_sessions": true
+  },
+  "forbidden": {
+    "territory_claiming": true,
+    "permanent_outposts": true,
+    "multiple_base_network": true,
+    "production_chain_economy": true,
+    "player_managed_power_grid": true,
+    "scheduled_recurring_wave_loop": true,
+    "hostile_robot_faction": true,
+    "routine_individual_robot_orders": true,
+    "routine_individual_robot_loadouts": true,
+    "routine_manual_wall_placement": true,
+    "hunger_thirst_sleep_management": true,
+    "short_run_roguelite_as_principal_mode": true
+  },
+  "decision_paths": [
+    "mechromancer",
+    "machines",
+    "heartforge"
+  ]
+}

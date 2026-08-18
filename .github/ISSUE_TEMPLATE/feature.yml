@@ -1,0 +1,43 @@
+name: Gameplay feature
+description: Propose a feature within the survival-first design contract
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Observable player outcome
+      description: Describe what the player will experience, not the implementation alone.
+    validations:
+      required: true
+  - type: textarea
+    id: strategy
+    attributes:
+      label: Strategic decision
+      description: What meaningful choice does this create?
+    validations:
+      required: true
+  - type: textarea
+    id: workload
+    attributes:
+      label: Workload impact
+      description: What recurring work is added, and how is it delegated or removed?
+    validations:
+      required: true
+  - type: checkboxes
+    id: locks
+    attributes:
+      label: Design locks
+      options:
+        - label: One constrained Heartforge remains the only permanent base.
+          required: true
+        - label: The feature does not add scheduled waves or an RTS economy.
+          required: true
+        - label: Enemies remain organic.
+          required: true
+        - label: Workload does not scale linearly with robot count.
+          required: true
+  - type: textarea
+    id: prototype
+    attributes:
+      label: Smallest validating prototype
+    validations:
+      required: true

@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "enemy_origin": "organic",
+  "archetypes": [
+    {
+      "id": "enemy.gleaner",
+      "display_name": "Gleaner",
+      "role": "scavenger",
+      "attracted_to": [
+        "exposed_scrap",
+        "damaged_machines",
+        "fresh_carcasses"
+      ],
+      "core_behaviours": [
+        "approach_cautiously",
+        "remove_loose_material",
+        "flee_strong_resistance",
+        "remember_successful_feeding_sites"
+      ]
+    },
+    {
+      "id": "enemy.veilstalker",
+      "display_name": "Veilstalker",
+      "role": "excursion_predator",
+      "attracted_to": [
+        "isolated_targets",
+        "injured_targets",
+        "predictable_retreat_routes"
+      ],
+      "core_behaviours": [
+        "remain_near_edge_of_light",
+        "match_target_movement",
+        "test_vulnerability",
+        "attack_only_on_opportunity",
+        "retreat_from_strong_heartforge_light"
+      ]
+    },
+    {
+      "id": "enemy.undermaw",
+      "display_name": "Undermaw",
+      "role": "subterranean_pressure",
+      "attracted_to": [
+        "vibration",
+        "heat",
+        "repeated_mechanical_activity"
+      ],
+      "core_behaviours": [
+        "investigate_below_ground",
+        "undermine_weak_structure",
+        "surface_briefly",
+        "retreat_when_exposed"
+      ]
+    },
+    {
+      "id": "enemy.pallid_bloom",
+      "display_name": "Pallid Bloom",
+      "role": "infestation",
+      "attracted_to": [
+        "damaged_warm_machinery",
+        "enclosed_cavities",
+        "returning_carriers"
+      ],
+      "core_behaviours": [
+        "attach_spores",
+        "remain_latent",
+        "impair_sensors_and_joints",
+        "spread_through_unchecked_damage"
+      ]
+    },
+    {
+      "id": "enemy.rakepack",
+      "display_name": "Rakepack",
+      "role": "coordinated_hunter",
+      "attracted_to": [
+        "small_machine_groups",
+        "injured_defenders",
+        "exposed_retreat_routes"
+      ],
+      "core_behaviours": [
+        "pressure_front",
+        "circle_target",
+        "pursue_retreat",
+        "disengage_from_strong_static_defence"
+      ]
+    },
+    {
+      "id": "enemy.crownbeast",
+      "display_name": "Crownbeast",
+      "role": "apex_organism",
+      "attracted_to": [
+        "territorial_disturbance",
+        "major_heartforge_signal",
+        "loss_of_nesting_area"
+      ],
+      "core_behaviours": [
+        "alter_lesser_species_movement",
+        "patrol_territory",
+        "respond_to_provocation",
+        "create_regional_strategic_constraint"
+      ]
+    }
+  ]
+}

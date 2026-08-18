@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "milestone_id": "first_light",
+  "display_name": "First Light",
+  "status": "not_implemented",
+  "target_minutes_min": 15,
+  "target_minutes_max": 25,
+  "player_experience": "Leave one weak pool of safety, recover enough Scrap for a critical repair, and escape an organic predator with one dependent robot.",
+  "required_entities": [
+    "heartforge_damaged",
+    "mechromancer",
+    "scrapling_dependent",
+    "veilstalker",
+    "salvage_wreck"
+  ],
+  "required_systems": [
+    "direct_movement",
+    "heartforge_light_radius",
+    "single_scrap_resource",
+    "critical_repair",
+    "organic_stalking_enemy",
+    "minimal_hud",
+    "versioned_save_load",
+    "ai_state_diagnostics"
+  ],
+  "explicitly_out_of_scope": [
+    "scheduled_waves",
+    "build_menu",
+    "manual_structure_placement",
+    "territory_map",
+    "production_queue",
+    "power_management",
+    "multiple_resources",
+    "hostile_robots",
+    "procedural_world_generation",
+    "large_machine_population"
+  ]
+}
