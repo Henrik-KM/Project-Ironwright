@@ -1,0 +1,14 @@
+{
+  "name": "project-ironwright",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "serve": "python3 -m http.server 8000 --directory web",
+    "check": "node --check web/src/sim.mjs && node --check web/src/game.mjs",
+    "test": "node --test web/tests/sim.test.mjs",
+    "validate": "npm run check && npm test && python3 scripts/validate_repo.py",
+    "test:browser": "python3 web/tests/browser_smoke.py",
+    "test:all": "npm run check && npm test && npm run test:browser && python3 scripts/validate_repo.py"
+  }
+}
