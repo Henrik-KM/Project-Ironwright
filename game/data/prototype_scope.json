@@ -2,26 +2,45 @@
   "schema_version": 1,
   "milestone_id": "first_light",
   "display_name": "First Light",
-  "status": "not_implemented",
-  "target_minutes_min": 15,
-  "target_minutes_max": 25,
-  "player_experience": "Leave one weak pool of safety, recover enough Scrap for a critical repair, and escape an organic predator with one dependent robot.",
+  "status": "playable_browser_vertical_slice",
+  "target_minutes_min": 12,
+  "target_minutes_max": 30,
+  "player_experience": "Recover one critical Scrap load, restore the Heartforge, choose one evolution, let machines assume routine work, authorize and physically follow a North Ruins expedition, then survive the organic consequence of disturbing the Cognition Core.",
   "required_entities": [
     "heartforge_damaged",
+    "heartforge_restored",
     "mechromancer",
     "scrapling_dependent",
+    "scrapper_autonomous",
+    "sentry_autonomous",
+    "hauler_expedition",
+    "lancer_expedition",
     "veilstalker",
-    "salvage_wreck"
+    "skitterling",
+    "razorhound",
+    "cathedral_beast",
+    "salvage_wreck",
+    "north_ruins",
+    "cognition_core"
   ],
   "required_systems": [
     "direct_movement",
+    "direct_combat",
     "heartforge_light_radius",
     "single_scrap_resource",
     "critical_repair",
-    "organic_stalking_enemy",
+    "organic_ecology",
+    "autonomous_salvage",
+    "autonomous_defence",
+    "one_choice_evolution",
+    "physical_persistent_world",
+    "physical_expedition",
+    "live_command_map",
     "minimal_hud",
     "versioned_save_load",
-    "ai_state_diagnostics"
+    "ai_state_diagnostics",
+    "causal_major_threat",
+    "victory_and_failure"
   ],
   "explicitly_out_of_scope": [
     "scheduled_waves",
@@ -34,5 +53,11 @@
     "hostile_robots",
     "procedural_world_generation",
     "large_machine_population"
+  ],
+  "implementation_path": "web/",
+  "implementation_notes": [
+    "The dependency-free browser build is the executable reference vertical slice.",
+    "All living organisms, machines, pickups, and expedition members retain physical coordinates in one continuously updated world.",
+    "The Godot project remains the production-engine shell for a later port after the loop is validated."
   ]
 }
