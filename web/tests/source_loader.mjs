@@ -1,7 +1,6 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 
 const HERE = dirname(fileURLToPath(import.meta.url));

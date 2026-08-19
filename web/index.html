@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080b0d">
+  <meta name="description" content="Project Ironwright: First Light — a playable survival-strategy prototype.">
+  <title>Project Ironwright — First Light</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="loading" class="loading">Assembling the Heartforge…</div>
+
+  <main id="game-shell" hidden>
+    <canvas id="game-canvas" width="1280" height="720" tabindex="0" aria-label="Project Ironwright game canvas"></canvas>
+    <p class="sr-only">The Mechromancer automatically fires at the nearest organic enemy within range. Use WASD to move.</p>
+  </main>
+
+  <section id="title-screen" class="screen" hidden aria-labelledby="game-title">
+    <div class="title-vignette"></div>
+    <div class="title-card">
+      <p class="eyebrow">A MECHROMANCER SURVIVAL PROTOTYPE</p>
+      <h1 id="game-title">PROJECT<br><span>IRONWRIGHT</span></h1>
+      <p class="tagline">One home. One hostile city. Machines that learn to carry the burden.</p>
+      <div class="menu">
+        <button id="new-world" type="button">NEW WORLD</button>
+        <button id="continue-world" type="button">CONTINUE</button>
+      </div>
+      <p class="launch-note">Run through a local web server: <code>npm run serve</code></p>
+      <p id="launch-error" class="error" hidden></p>
+    </div>
+    <div class="title-detail">
+      <strong>FIRST LIGHT</strong>
+      <span>Automatic combat · physical robot expeditions · persistent organic ecology</span>
+    </div>
+  </section>
+
+  <section id="end-screen" class="screen end-screen" hidden aria-live="polite">
+    <div class="end-card">
+      <p class="eyebrow">WORLD REPORT</p>
+      <h2 id="end-title">FIRST LIGHT SECURED</h2>
+      <p id="end-message"></p>
+      <div class="menu horizontal">
+        <button id="restart-world" type="button">NEW WORLD</button>
+        <button id="load-world" type="button">LOAD LAST SAVE</button>
+        <button id="return-title" type="button">TITLE</button>
+      </div>
+    </div>
+  </section>
+
+  <noscript>This playable prototype requires JavaScript.</noscript>
+  <script type="module" src="src/loader.mjs"></script>
+</body>
+</html>

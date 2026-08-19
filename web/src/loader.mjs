@@ -7,12 +7,13 @@ async function loadSource(manifestPath) {
     throw new Error(`Invalid source manifest: ${manifestUrl.pathname}`);
   }
   const directory = new URL('./', manifestUrl);
-  const parts = await Promise.all(manifest.parts.map(async (name) => {
+  const parts = [];
+  for (const name of manifest.parts) {
     const partUrl = new URL(name, directory);
     const partResponse = await fetch(partUrl);
     if (!partResponse.ok) throw new Error(`Unable to load ${partUrl.pathname}`);
-    return partResponse.text();
-  }));
+    parts.push(await partResponse.text());
+  }
   return parts.join('');
 }
 

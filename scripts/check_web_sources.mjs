@@ -9,6 +9,9 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 async function source(kind) {
   const directory = resolve(ROOT, 'web', 'source', kind);
   const manifest = JSON.parse(await readFile(resolve(directory, 'manifest.json'), 'utf8'));
+  if (!Array.isArray(manifest.parts) || manifest.parts.length === 0) {
+    throw new Error(`${kind} source manifest is empty`);
+  }
   return (await Promise.all(manifest.parts.map((name) => readFile(resolve(directory, name), 'utf8')))).join('');
 }
 
