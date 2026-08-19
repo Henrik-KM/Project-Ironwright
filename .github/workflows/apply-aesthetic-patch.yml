@@ -1,0 +1,37 @@
+name: Apply authored aesthetic patch
+
+on:
+  push:
+    branches:
+      - agent/aesthetic-overhaul-authoritative-chat
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out authored branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/aesthetic-overhaul-authoritative-chat
+          fetch-depth: 0
+
+      - name: Expand authored implementation
+        run: python3 scripts/apply_patch_payload.py
+
+      - name: Commit expanded implementation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No generated changes."
+          else
+            git commit -m "Implement aesthetic overhaul and autonomous outposts"
+            git push origin HEAD:agent/aesthetic-overhaul-authoritative-chat
+          fi
