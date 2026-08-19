@@ -15,5 +15,10 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Validate design contracts and repository structure
-        run: python3 scripts/validate_repo.py
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate playable slice and design contracts
+        run: npm run validate

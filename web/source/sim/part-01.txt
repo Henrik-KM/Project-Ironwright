@@ -1,0 +1,221 @@
+const SCHEMA_VERSION = 2;
+const WORLD_WIDTH = 4600;
+const WORLD_HEIGHT = 3200;
+const HEARTFORGE_POS = Object.freeze({ x: 820, y: 1680 });
+const NORTH_RUINS_POS = Object.freeze({ x: 3820, y: 430 });
+const PLAYER_FIRE_RANGE = 430;
+const ROBOT_FIRE_RANGE = 350;
+const HEARTFORGE_REPAIR_COST = 60;
+const EXPEDITION_COST = 50;
+const MAX_ENEMIES = 72;
+const MAX_PROJECTILES = 220;
+const MAX_EVENTS = 36;
+const TAU = Math.PI * 2;
+
+const ORGANIC_ENEMY_TYPES = Object.freeze({
+  skitterling: Object.freeze({
+    displayName: 'Skitterling',
+    hp: 30,
+    speed: 104,
+    damage: 7,
+    attackRange: 28,
+    attackCooldown: 0.9,
+    radius: 13,
+    threat: 1,
+  }),
+  razorhound: Object.freeze({
+    displayName: 'Razorhound',
+    hp: 72,
+    speed: 138,
+    damage: 13,
+    attackRange: 34,
+    attackCooldown: 1.05,
+    radius: 18,
+    threat: 2,
+  }),
+  veilstalker: Object.freeze({
+    displayName: 'Veilstalker',
+    hp: 128,
+    speed: 116,
+    damage: 19,
+    attackRange: 42,
+    attackCooldown: 1.25,
+    radius: 23,
+    threat: 3,
+  }),
+  cathedral_beast: Object.freeze({
+    displayName: 'Cathedral Beast',
+    hp: 1050,
+    speed: 54,
+    damage: 38,
+    attackRange: 70,
+    attackCooldown: 1.5,
+    radius: 54,
+    threat: 10,
+  }),
+});
+
+const EXPEDITION_ROUTE = Object.freeze([
+  Object.freeze({ x: HEARTFORGE_POS.x, y: HEARTFORGE_POS.y }),
+  Object.freeze({ x: 1060, y: 1580 }),
+  Object.freeze({ x: 1330, y: 1450 }),
+  Object.freeze({ x: 1640, y: 1330 }),
+  Object.freeze({ x: 2020, y: 1270 }),
+  Object.freeze({ x: 2320, y: 1080 }),
+  Object.freeze({ x: 2700, y: 930 }),
+  Object.freeze({ x: 3090, y: 760 }),
+  Object.freeze({ x: 3480, y: 600 }),
+  Object.freeze({ x: 3820, y: 430 }),
+]);
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function length(x, y) {
+  return Math.hypot(x, y);
+}
+
+function distance(a, b) {
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function normalized(x, y) {
+  const magnitude = Math.hypot(x, y);
+  if (magnitude <= 0.00001) return { x: 0, y: 0 };
+  return { x: x / magnitude, y: y / magnitude };
+}
+
+function random(world) {
+  let x = world.rngState | 0;
+  x ^= x << 13;
+  x ^= x >>> 17;
+  x ^= x << 5;
+  world.rngState = x >>> 0;
+  return (world.rngState & 0xffffffff) / 0x100000000 + 0.5;
+}
+
+function randomRange(world, min, max) {
+  return min + (max - min) * random(world);
+}
+
+function nextId(world, prefix) {
+  const id = `${prefix}-${world.nextEntityId}`;
+  world.nextEntityId += 1;
+  return id;
+}
+
+function pushEvent(world, text, kind = 'info') {
+  world.events.unshift({ id: nextId(world, 'event'), time: world.time, text, kind });
+  if (world.events.length > MAX_EVENTS) world.events.length = MAX_EVENTS;
+}
+
+function makeCityObstacles() {
+  return [
+    { id: 'block-a', x: 0, y: 0, w: 620, h: 690, label: 'Municipal Offices' },
+    { id: 'block-b', x: 810, y: 40, w: 650, h: 520, label: 'Westview Gas' },
+    { id: 'block-c', x: 1670, y: 0, w: 720, h: 510, label: 'Mercantile Row' },
+    { id: 'block-d', x: 2610, y: 90, w: 660, h: 530, label: 'North Hospital' },
+    { id: 'block-e', x: 4020, y: 0, w: 580, h: 760, label: 'Cathedral Annex' },
+    { id: 'block-f', x: 0, y: 920, w: 520, h: 620, label: 'Foundry Block' },
+    { id: 'block-g', x: 1080, y: 760, w: 520, h: 420, label: 'Old Hardware' },
+    { id: 'block-h', x: 1840, y: 660, w: 530, h: 420, label: 'Civic Records' },
+    { id: 'block-i', x: 2920, y: 820, w: 600, h: 390, label: 'Transit Depot' },
+    { id: 'block-j', x: 3890, y: 1000, w: 710, h: 560, label: 'North Tenements' },
+    { id: 'block-k', x: 0, y: 1920, w: 510, h: 650, label: 'South Warehouses' },
+    { id: 'block-l', x: 1260, y: 1990, w: 610, h: 510, label: 'Pharmacy Row' },
+    { id: 'block-m', x: 2160, y: 1710, w: 540, h: 540, label: 'Central Market' },
+    { id: 'block-n', x: 3080, y: 1580, w: 600, h: 590, label: 'Rail Authority' },
+    { id: 'block-o', x: 4020, y: 1830, w: 580, h: 680, label: 'East Works' },
+    { id: 'block-p', x: 610, y: 2720, w: 680, h: 480, label: 'Flooded Garage' },
+    { id: 'block-q', x: 1560, y: 2630, w: 690, h: 570, label: 'Old School' },
+    { id: 'block-r', x: 2500, y: 2520, w: 620, h: 680, label: 'Machine District' },
+    { id: 'block-s', x: 3420, y: 2610, w: 720, h: 590, label: 'Eastern Flats' },
+  ];
+}
+
+function circleIntersectsRect(x, y, radius, rect) {
+  const nearestX = clamp(x, rect.x, rect.x + rect.w);
+  const nearestY = clamp(y, rect.y, rect.y + rect.h);
+  return Math.hypot(x - nearestX, y - nearestY) < radius;
+}
+
+function canOccupy(world, x, y, radius) {
+  if (x < radius || y < radius || x > WORLD_WIDTH - radius || y > WORLD_HEIGHT - radius) return false;
+  for (const obstacle of world.obstacles) {
+    if (circleIntersectsRect(x, y, radius, obstacle)) return false;
+  }
+  return true;
+}
+
+function moveWithCollisions(world, entity, dx, dy, radius = 16) {
+  const nextX = clamp(entity.x + dx, radius, WORLD_WIDTH - radius);
+  if (canOccupy(world, nextX, entity.y, radius)) entity.x = nextX;
+  const nextY = clamp(entity.y + dy, radius, WORLD_HEIGHT - radius);
+  if (canOccupy(world, entity.x, nextY, radius)) entity.y = nextY;
+}
+
+function moveIgnoringBuildings(entity, dx, dy, radius = 16) {
+  entity.x = clamp(entity.x + dx, radius, WORLD_WIDTH - radius);
+  entity.y = clamp(entity.y + dy, radius, WORLD_HEIGHT - radius);
+}
+
+function makeRobot(world, kind, x, y, role = 'companion') {
+  const definitions = {
+    scrapling: { hp: 95, speed: 154, radius: 13, damage: 9, range: 270, cooldown: 0.75 },
+    hauler: { hp: 145, speed: 126, radius: 18, damage: 7, range: 230, cooldown: 0.9 },
+    sentry: { hp: 175, speed: 116, radius: 19, damage: 14, range: 370, cooldown: 0.66 },
+    lancer: { hp: 210, speed: 132, radius: 21, damage: 18, range: 390, cooldown: 0.72 },
+  };
+  const def = definitions[kind] ?? definitions.scrapling;
+  return {
+    id: nextId(world, 'robot'),
+    kind,
+    role,
+    x,
+    y,
+    hp: def.hp,
+    maxHp: def.hp,
+    speed: def.speed,
+    radius: def.radius,
+    damage: def.damage,
+    range: def.range,
+    fireInterval: def.cooldown,
+    fireCooldown: randomRange(world, 0, def.cooldown),
+    state: 'booting',
+    reason: 'Awaiting a useful task.',
+    targetId: null,
+    cargo: 0,
+    cargoCapacity: kind === 'hauler' ? 32 : 16,
+    reservedSalvageId: null,
+    expedition: false,
+    expeditionSlot: -1,
+    routeIndex: 0,
+    returning: false,
+    disabled: false,
+    holdPosition: false,
+    heading: 0,
+  };
+}
+
+function makeEnemy(world, type, x, y, nestId = null) {
+  const def = ORGANIC_ENEMY_TYPES[type];
+  if (!def) throw new Error(`Unknown organic enemy type: ${type}`);
+  return {
+    id: nextId(world, 'enemy'),
+    type,
+    organic: true,
+    x,
+    y,
+    hp: def.hp,
+    maxHp: def.hp,
+    speed: def.speed,
+    damage: def.damage,
+    attackRange: def.attackRange,
+    attackInterval: def.attackCooldown,
+    attackCooldown: randomRange(world, 0, def.attackCooldown),
+    radius: def.radius,
+    threat: def.threat,
+    nestId,
+    targetKind: null,
+    targetId: null,

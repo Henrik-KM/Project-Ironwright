@@ -1,0 +1,222 @@
+        id: nextId(world, 'core'),
+        type: 'cognition_core',
+        x: target.x,
+        y: target.y,
+      });
+      world.progress.expeditionCoreCarrierId = null;
+      pushEvent(world, 'The Cognition Core was dropped in the city. It remains physically recoverable.', 'danger');
+    }
+  }
+}
+
+function updateEnemy(world, enemy, dt) {
+  if (enemy.dead || enemy.hp <= 0) return;
+  enemy.attackCooldown = Math.max(0, enemy.attackCooldown - dt);
+  const target = chooseEnemyTarget(world, enemy);
+  if (!target) return;
+  enemy.targetKind = target.kind;
+  enemy.targetId = target.entity.id;
+
+  const targetDistance = distance(enemy, target.entity);
+  if (targetDistance > enemy.attackRange + (target.entity.radius ?? 35)) {
+    let speed = enemy.speed;
+    if (distance(enemy, world.heartforge) < world.heartforge.lightRadius && enemy.type !== 'cathedral_beast') {
+      speed *= 0.72;
+      enemy.hp -= 2.2 * dt;
+    }
+    const direction = normalized(target.entity.x - enemy.x, target.entity.y - enemy.y);
+    enemy.heading = Math.atan2(direction.y, direction.x);
+    moveIgnoringBuildings(enemy, direction.x * speed * dt, direction.y * speed * dt, enemy.radius);
+  } else if (enemy.attackCooldown <= 0) {
+    damageTarget(world, target.kind, target.entity, enemy.damage);
+    enemy.attackCooldown = enemy.attackInterval;
+  }
+}
+
+function updateProjectiles(world, dt) {
+  for (const projectile of world.projectiles) {
+    projectile.ttl -= dt;
+    const target = findEnemyById(world, projectile.targetId);
+    if (target) {
+      const direction = normalized(target.x - projectile.x, target.y - projectile.y);
+      const speed = Math.hypot(projectile.vx, projectile.vy);
+      projectile.vx = direction.x * speed;
+      projectile.vy = direction.y * speed;
+    }
+    projectile.x += projectile.vx * dt;
+    projectile.y += projectile.vy * dt;
+
+    if (target && distance(projectile, target) <= projectile.radius + target.radius) {
+      target.hp -= projectile.damage;
+      projectile.ttl = -1;
+      if (target.hp <= 0 && !target.dead) {
+        target.dead = true;
+        target.hp = 0;
+        if (target.type === 'cathedral_beast') {
+          world.progress.apexDefeated = true;
+          world.status = 'victory';
+          world.statusReason = 'The Cathedral Beast has fallen. The Heartforge survives its first awakening.';
+          pushEvent(world, 'The Cathedral Beast is dead. First Light has been secured.', 'success');
+        }
+      }
+    }
+  }
+  world.projectiles = world.projectiles.filter((projectile) => projectile.ttl > 0);
+}
+
+function ecologyPressure(world) {
+  let pressure = clamp(world.time / 720, 0, 0.55);
+  if (world.heartforge.restored) pressure += 0.14;
+  if (world.progress.evolution) pressure += 0.08;
+  if (world.progress.expeditionAuthorized) pressure += 0.12;
+  if (world.progress.cognitionInstalled) pressure += 0.2;
+  return clamp(pressure, 0, 1);
+}
+
+function pickNestEnemyType(world, nest) {
+  const pressure = ecologyPressure(world) + nest.disturbance;
+  const roll = random(world);
+  if (pressure > 0.65 && roll > 0.78) return 'veilstalker';
+  if (pressure > 0.32 && roll > 0.48) return 'razorhound';
+  return 'skitterling';
+}
+
+function updateEcology(world, dt) {
+  if (world.enemies.length >= MAX_ENEMIES) return;
+  const pressure = ecologyPressure(world);
+  for (const nest of world.nests) {
+    nest.population = clamp(nest.population + dt * (0.008 + pressure * 0.006), 0, 4.5);
+    nest.spawnCooldown -= dt;
+    if (world.time < nest.startTime || nest.spawnCooldown > 0 || nest.population < 1) continue;
+    if (world.enemies.length >= MAX_ENEMIES) break;
+    const type = pickNestEnemyType(world, nest);
+    const angle = randomRange(world, 0, TAU);
+    const radius = randomRange(world, 24, 90);
+    world.enemies.push(makeEnemy(world, type, nest.x + Math.cos(angle) * radius, nest.y + Math.sin(angle) * radius, nest.id));
+    nest.population -= type === 'skitterling' ? 0.75 : type === 'razorhound' ? 1.05 : 1.5;
+    nest.spawnCooldown = randomRange(world, 18, 34) * (1.1 - pressure * 0.25);
+  }
+}
+
+function cleanupWorld(world) {
+  world.enemies = world.enemies.filter((enemy) => !enemy.dead && enemy.hp > 0);
+  if (world.enemies.length > MAX_ENEMIES) world.enemies.length = MAX_ENEMIES;
+  if (world.projectiles.length > MAX_PROJECTILES) world.projectiles = world.projectiles.slice(-MAX_PROJECTILES);
+  if (world.events.length > MAX_EVENTS) world.events.length = MAX_EVENTS;
+}
+
+function maybeAdvanceExpedition(world, dt) {
+  const progress = world.progress;
+  if (!progress.expeditionAuthorized) return;
+  const active = world.robots.filter((robot) => robot.expedition && !robot.disabled && robot.hp > 0);
+  if (active.length === 0) {
+    if (['outbound', 'recovering', 'returning'].includes(progress.expeditionStage)) {
+      progress.expeditionStage = 'failed';
+      pushEvent(world, 'The North Ruins expedition has been lost in the city.', 'danger');
+    }
+    return;
+  }
+
+  if (progress.expeditionStage === 'outbound') {
+    const arrived = active.filter((robot) => robot.routeIndex >= world.route.length - 1 && distance(robot, NORTH_RUINS_POS) < 120);
+    if (arrived.length === active.length) {
+      progress.expeditionStage = 'recovering';
+      progress.expeditionTimer = 8;
+      pushEvent(world, 'The robots have physically reached the North Ruins and are opening the archive.', 'info');
+    }
+  } else if (progress.expeditionStage === 'recovering') {
+    progress.expeditionTimer -= dt;
+    for (const robot of active) {
+      robot.state = 'recovering_core';
+      robot.reason = 'Holding the ruined archive while the Cognition Core is extracted.';
+    }
+    if (progress.expeditionTimer <= 0) {
+      const carrier = active.find((robot) => robot.kind === 'hauler') ?? active[0];
+      progress.expeditionCoreCarrierId = carrier.id;
+      progress.expeditionStage = 'returning';
+      for (const robot of active) robot.routeIndex = 0;
+      pushEvent(world, `${carrier.kind} recovered the Cognition Core. The convoy is returning through the same streets.`, 'success');
+    }
+  } else if (progress.expeditionStage === 'returning') {
+    const arrived = active.filter((robot) => robot.routeIndex >= world.route.length - 1 && distance(robot, world.heartforge) < 180);
+    const carrier = findRobotById(world, progress.expeditionCoreCarrierId);
+    if (carrier && distance(carrier, world.heartforge) < 180 && arrived.length >= Math.max(1, active.length - 1)) {
+      progress.expeditionStage = 'returned';
+      world.rareItems.cognitionCore = true;
+      for (const robot of active) {
+        robot.expedition = false;
+        robot.routeIndex = 0;
+        robot.role = robot.kind === 'sentry' ? 'sentry' : 'gatherer';
+      }
+      pushEvent(world, 'The Cognition Core has physically arrived at the Heartforge. Installation remains your choice.', 'success');
+    }
+  }
+}
+
+function maybeProgress(world, dt) {
+  const progress = world.progress;
+  if (!world.heartforge.restored && world.scrap >= HEARTFORGE_REPAIR_COST) progress.stage = 'repair_ready';
+  if (world.heartforge.restored && !progress.evolution) {
+    progress.stage = 'evolution';
+    progress.evolutionAvailable = true;
+  }
+  if (progress.evolution && !progress.expeditionAuthorized) progress.stage = 'expedition_ready';
+  if (progress.expeditionAuthorized && progress.expeditionStage !== 'returned') progress.stage = 'expedition';
+  if (progress.expeditionStage === 'returned' && !progress.cognitionInstalled) progress.stage = 'install_core';
+  if (progress.cognitionInstalled && !progress.apexDefeated) progress.stage = 'apex';
+
+  if (world.heartforge.restored && world.heartforge.passiveRepair > 0) {
+    const threat = nearestEnemy(world, world.heartforge, 300);
+    if (!threat) world.heartforge.hp = Math.min(world.heartforge.maxHp, world.heartforge.hp + world.heartforge.passiveRepair * dt);
+  }
+
+  if (world.player.hp <= 0 && world.status === 'playing') {
+    world.player.hp = 0;
+    world.status = 'defeat';
+    world.statusReason = 'The Mechromancer died beyond the Heartforge light.';
+    pushEvent(world, world.statusReason, 'danger');
+  }
+  if (world.heartforge.hp <= 0 && world.status === 'playing') {
+    world.heartforge.hp = 0;
+    world.status = 'defeat';
+    world.statusReason = 'The Heartforge was destroyed. There is no second base.';
+    pushEvent(world, world.statusReason, 'danger');
+  }
+}
+
+function stepWorld(world, input = {}, dt = 1 / 60) {
+  if (!world || world.status !== 'playing') return world;
+  const safeDt = clamp(Number(dt) || 0, 0, 0.05);
+  world.time += safeDt;
+  world.tick += 1;
+
+  updatePlayer(world, input, safeDt);
+  for (const robot of world.robots) updateRobot(world, robot, safeDt);
+  for (const enemy of world.enemies) updateEnemy(world, enemy, safeDt);
+  updateProjectiles(world, safeDt);
+  updateEcology(world, safeDt);
+  maybeAdvanceExpedition(world, safeDt);
+  maybeProgress(world, safeDt);
+  cleanupWorld(world);
+  return world;
+}
+
+function restoreHeartforge(world) {
+  if (world.heartforge.restored || world.scrap < HEARTFORGE_REPAIR_COST) return false;
+  world.scrap -= HEARTFORGE_REPAIR_COST;
+  world.heartforge.restored = true;
+  world.heartforge.hp = 820;
+  world.heartforge.lightRadius = 335;
+  world.progress.autonomyLevel = 1;
+  world.progress.stage = 'evolution';
+  world.progress.evolutionAvailable = true;
+  world.robots[0].role = 'gatherer';
+  world.robots.push(makeRobot(world, 'hauler', world.heartforge.x - 55, world.heartforge.y + 75, 'gatherer'));
+  pushEvent(world, 'Heartforge restored. Routine salvage and self-repair are now delegated.', 'success');
+  return true;
+}
+
+function chooseEvolution(world, choice) {
+  if (!world.heartforge.restored || world.progress.evolution) return false;
+  if (!['mechromancer', 'machines', 'heartforge'].includes(choice)) return false;
+  world.progress.evolution = choice;

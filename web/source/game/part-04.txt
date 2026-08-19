@@ -1,0 +1,222 @@
+  for (const item of world.droppedItems) {
+    const point = worldToScreen(item.x, item.y);
+    context.fillStyle = '#ad7cff';
+    context.shadowColor = '#ad7cff';
+    context.shadowBlur = 18;
+    context.fillRect(point.x - 9, point.y - 9, 18, 18);
+    context.shadowBlur = 0;
+    if (distance(world.player, item) < 100) drawText('E  RECOVER COGNITION CORE', point.x, point.y - 38, 12, '#c7a9ff', 'center', 750);
+  }
+}
+
+function drawNorthRuinsMarker() {
+  const point = worldToScreen(NORTH_RUINS_POS.x, NORTH_RUINS_POS.y);
+  context.strokeStyle = 'rgba(164, 139, 101, 0.68)';
+  context.lineWidth = 3;
+  context.strokeRect(point.x - 62, point.y - 45, 124, 90);
+  context.fillStyle = 'rgba(27, 25, 23, 0.72)';
+  context.fillRect(point.x - 55, point.y - 38, 110, 76);
+  drawText('NORTH RUINS', point.x, point.y - 8, 13, '#d0b989', 'center', 750);
+}
+
+function drawLighting() {
+  lightContext.clearRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
+  lightContext.fillStyle = 'rgba(0, 0, 0, 0.68)';
+  lightContext.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
+  lightContext.globalCompositeOperation = 'destination-out';
+
+  const lights = [
+    { entity: world.player, radius: 235 },
+    { entity: world.heartforge, radius: world.heartforge.lightRadius + 100 },
+    ...world.robots.filter((robot) => !robot.disabled).map((entity) => ({ entity, radius: entity.expedition ? 105 : 72 })),
+  ];
+  for (const light of lights) {
+    const point = worldToScreen(light.entity.x, light.entity.y);
+    if (point.x < -light.radius || point.y < -light.radius || point.x > VIEW_WIDTH + light.radius || point.y > VIEW_HEIGHT + light.radius) continue;
+    const gradient = lightContext.createRadialGradient(point.x, point.y, 8, point.x, point.y, light.radius);
+    gradient.addColorStop(0, 'rgba(0,0,0,0.96)');
+    gradient.addColorStop(0.45, 'rgba(0,0,0,0.72)');
+    gradient.addColorStop(1, 'rgba(0,0,0,0)');
+    lightContext.fillStyle = gradient;
+    lightContext.beginPath();
+    lightContext.arc(point.x, point.y, light.radius, 0, Math.PI * 2);
+    lightContext.fill();
+  }
+  lightContext.globalCompositeOperation = 'source-over';
+  context.drawImage(lightCanvas, 0, 0);
+}
+
+function drawWorld() {
+  drawRoads();
+  drawDecorativeProps();
+  drawRoute();
+  drawNorthRuinsMarker();
+  drawSalvage();
+  drawHeartforge();
+  drawDroppedItems();
+  for (const enemy of world.enemies) drawEnemy(enemy);
+  for (const robot of world.robots) drawRobot(robot);
+  drawPlayer();
+  drawProjectiles();
+  drawLighting();
+}
+
+function currentContextHint() {
+  const nearbySalvage = world.salvage.find((salvage) => salvage.amount > 0 && distance(world.player, salvage) < 85);
+  if (nearbySalvage) return `E  Recover ${nearbySalvage.amount} Scrap`;
+  if (distance(world.player, world.heartforge) < 135) {
+    if (!world.heartforge.restored) {
+      return world.scrap >= HEARTFORGE_REPAIR_COST
+        ? 'E  Restore the Heartforge'
+        : `Need ${HEARTFORGE_REPAIR_COST - world.scrap} more Scrap`;
+    }
+    if (!world.progress.evolution) return 'E  Choose an evolution';
+    if (world.progress.expeditionStage === 'returned' && !world.progress.cognitionInstalled) return 'E  Install the Cognition Core';
+  }
+  if (canAuthorizeExpedition(world)) return 'X  Authorize North Ruins expedition';
+  return 'AUTO-FIRE ACTIVE';
+}
+
+function drawHud() {
+  drawPanel(18, 18, 408, 128, 0.86);
+  drawText('CURRENT NEED', 34, 32, 12, '#7fb9bc', 'left', 800);
+  wrapText(getObjective(world), 34, 54, 374, 22, 17, '#edf1ed', 650);
+  drawText(currentContextHint(), 34, 116, 12, '#d7b66e', 'left', 750);
+
+  drawPanel(VIEW_WIDTH - 282, 18, 264, 113, 0.86);
+  drawText('HEARTFORGE', VIEW_WIDTH - 264, 32, 12, '#8eafb0', 'left', 800);
+  drawHealthBar(VIEW_WIDTH - 264, 54, 228, world.heartforge.hp, world.heartforge.maxHp, '#71cfd1');
+  drawText(`${Math.ceil(world.heartforge.hp)} / ${world.heartforge.maxHp}`, VIEW_WIDTH - 36, 48, 12, '#c9d3d1', 'right', 650);
+  drawText('SCRAP', VIEW_WIDTH - 264, 77, 12, '#8eafb0', 'left', 800);
+  drawText(String(world.scrap), VIEW_WIDTH - 36, 72, 24, '#e1c586', 'right', 750);
+
+  drawPanel(18, VIEW_HEIGHT - 106, 325, 88, 0.87);
+  drawText('MECHROMANCER', 34, VIEW_HEIGHT - 92, 12, '#8eafb0', 'left', 800);
+  drawHealthBar(34, VIEW_HEIGHT - 69, 200, world.player.hp, world.player.maxHp, '#79d8d9');
+  drawText(`${Math.ceil(world.player.hp)} / ${world.player.maxHp}`, 244, VIEW_HEIGHT - 74, 12, '#d4dddb', 'left', 650);
+  const target = world.enemies.find((enemy) => enemy.id === world.player.targetId);
+  drawText(
+    target ? `AUTO-TARGET: ${ORGANIC_ENEMY_TYPES[target.type].displayName}` : `AUTO-TARGET: scanning ${Math.round(world.player.fireRange)}m`,
+    34,
+    VIEW_HEIGHT - 47,
+    12,
+    target ? '#8eeaf0' : '#7c8c8d',
+    'left',
+    650,
+  );
+
+  const controls = cameraMode === 'expedition'
+    ? 'WASD move   SHIFT evade   E interact   F leave convoy   M map   TAB autonomy   ESC pause'
+    : 'WASD move   SHIFT evade   E interact   X expedition   F camera   M map   TAB autonomy';
+  drawPanel(365, VIEW_HEIGHT - 56, 690, 38, 0.77);
+  drawText(controls, 710, VIEW_HEIGHT - 47, 12, '#aeb8b6', 'center', 600);
+
+  const recentEvents = world.events.slice(0, 3);
+  let eventY = 158;
+  for (const event of recentEvents) {
+    const colors = { danger: '#e57a65', warning: '#d9aa62', success: '#7bc9a9', info: '#aab9b8' };
+    drawPanel(18, eventY, 360, 42, 0.7);
+    drawText(event.text, 31, eventY + 12, 12, colors[event.kind] ?? colors.info, 'left', 600);
+    eventY += 48;
+  }
+
+  drawText(`CAMERA: ${cameraMode.toUpperCase()}`, VIEW_WIDTH - 28, VIEW_HEIGHT - 28, 11, '#718184', 'right', 700);
+}
+
+function drawCommandMap() {
+  drawPanel(55, 35, VIEW_WIDTH - 110, VIEW_HEIGHT - 70, 0.96);
+  drawText('LIVE COMMAND MAP', 80, 56, 24, '#e5e9e6', 'left', 750);
+  drawText('Every marker is a physical entity in the same persistent city.', 80, 90, 14, '#8fa2a3', 'left', 500);
+
+  const mapX = 300;
+  const mapY = 118;
+  const mapWidth = 880;
+  const mapHeight = 520;
+  context.fillStyle = '#0c1012';
+  context.fillRect(mapX, mapY, mapWidth, mapHeight);
+  context.strokeStyle = '#39464a';
+  context.strokeRect(mapX, mapY, mapWidth, mapHeight);
+  const project = (x, y) => ({ x: mapX + x / WORLD_WIDTH * mapWidth, y: mapY + y / WORLD_HEIGHT * mapHeight });
+
+  context.fillStyle = '#15191b';
+  for (const obstacle of world.obstacles) {
+    const point = project(obstacle.x, obstacle.y);
+    context.fillRect(point.x, point.y, obstacle.w / WORLD_WIDTH * mapWidth, obstacle.h / WORLD_HEIGHT * mapHeight);
+  }
+
+  context.strokeStyle = 'rgba(99, 190, 217, 0.55)';
+  context.lineWidth = 2;
+  context.setLineDash([5, 5]);
+  context.beginPath();
+  world.route.forEach((point, index) => {
+    const projected = project(point.x, point.y);
+    if (index === 0) context.moveTo(projected.x, projected.y);
+    else context.lineTo(projected.x, projected.y);
+  });
+  context.stroke();
+  context.setLineDash([]);
+
+  const base = project(world.heartforge.x, world.heartforge.y);
+  context.fillStyle = '#e0a664';
+  context.beginPath();
+  context.arc(base.x, base.y, 8, 0, Math.PI * 2);
+  context.fill();
+  drawText('HEARTFORGE', base.x + 12, base.y - 7, 11, '#e0c18b', 'left', 750);
+
+  const ruins = project(NORTH_RUINS_POS.x, NORTH_RUINS_POS.y);
+  context.strokeStyle = '#b7a67f';
+  context.strokeRect(ruins.x - 6, ruins.y - 6, 12, 12);
+  drawText('NORTH RUINS', ruins.x - 8, ruins.y + 11, 11, '#b8ad94', 'right', 700);
+
+  for (const nest of world.nests) {
+    const point = project(nest.x, nest.y);
+    context.fillStyle = 'rgba(176, 66, 55, 0.82)';
+    context.beginPath();
+    context.arc(point.x, point.y, 4 + nest.population * 1.5, 0, Math.PI * 2);
+    context.fill();
+  }
+  for (const enemy of world.enemies) {
+    const point = project(enemy.x, enemy.y);
+    context.fillStyle = enemy.type === 'cathedral_beast' ? '#ff765f' : '#9b4d43';
+    context.fillRect(point.x - 2, point.y - 2, enemy.type === 'cathedral_beast' ? 8 : 4, enemy.type === 'cathedral_beast' ? 8 : 4);
+  }
+  for (const robot of world.robots) {
+    const point = project(robot.x, robot.y);
+    context.fillStyle = robot.disabled ? '#5d6564' : robot.expedition ? '#69d9ef' : '#d0a568';
+    context.beginPath();
+    context.arc(point.x, point.y, robot.expedition ? 5 : 3, 0, Math.PI * 2);
+    context.fill();
+  }
+  const player = project(world.player.x, world.player.y);
+  context.fillStyle = '#ffffff';
+  context.beginPath();
+  context.arc(player.x, player.y, 5, 0, Math.PI * 2);
+  context.fill();
+
+  drawPanel(80, 118, 190, 520, 0.84);
+  drawText('WORLD STATE', 98, 136, 13, '#8fc3c4', 'left', 800);
+  drawText(`Organic threats: ${world.enemies.length}`, 98, 169, 13, '#d3d9d7');
+  drawText(`Machines active: ${world.robots.filter((robot) => !robot.disabled).length}`, 98, 194, 13, '#d3d9d7');
+  drawText(`Autonomy level: ${world.progress.autonomyLevel}`, 98, 219, 13, '#d3d9d7');
+  drawText(`World time: ${formatTime(world.time)}`, 98, 244, 13, '#d3d9d7');
+  drawText('EXPEDITION', 98, 290, 13, '#8fc3c4', 'left', 800);
+  wrapText(world.progress.expeditionAuthorized ? world.progress.expeditionStage.toUpperCase() : 'NOT AUTHORIZED', 98, 320, 150, 20, 13, '#d3d9d7', 650);
+  drawText('LEGEND', 98, 400, 13, '#8fc3c4', 'left', 800);
+  drawText('● Player', 98, 430, 12, '#ffffff');
+  drawText('● Local machine', 98, 454, 12, '#d0a568');
+  drawText('● Expedition robot', 98, 478, 12, '#69d9ef');
+  drawText('● Organic threat', 98, 502, 12, '#b75b4d');
+  drawText('M  CLOSE MAP', 98, 594, 12, '#93a3a3', 'left', 750);
+}
+
+function drawDiagnostics() {
+  drawPanel(80, 48, VIEW_WIDTH - 160, VIEW_HEIGHT - 96, 0.96);
+  drawText('MACHINE AUTONOMY — EXPLAINED', 108, 72, 23, '#e4e8e5', 'left', 750);
+  drawText('These are observations, not per-unit orders.', 108, 105, 14, '#8ca0a1');
+  const summary = getAutonomySummary(world);
+  let y = 145;
+  for (const robot of summary.slice(0, 9)) {
+    context.fillStyle = robot.state === 'disabled' ? 'rgba(108, 55, 51, 0.25)' : 'rgba(29, 43, 45, 0.62)';
+    context.fillRect(108, y, VIEW_WIDTH - 216, 50);
+    context.strokeStyle = 'rgba(102, 137, 140, 0.22)';
+    context.strokeRect(108.5, y + 0.5, VIEW_WIDTH - 217, 49);

@@ -1,0 +1,223 @@
+  context.restore();
+  drawHealthBar(point.x - 58, point.y - 77, 116, world.heartforge.hp, world.heartforge.maxHp, world.heartforge.restored ? '#65d4d8' : '#e0a15a');
+}
+
+function drawSalvage() {
+  for (const salvage of world.salvage) {
+    if (salvage.amount <= 0) continue;
+    const point = worldToScreen(salvage.x, salvage.y);
+    if (point.x < -30 || point.y < -30 || point.x > VIEW_WIDTH + 30 || point.y > VIEW_HEIGHT + 30) continue;
+    context.save();
+    context.translate(point.x, point.y);
+    context.rotate(Math.sin(Number(salvage.id.split('-').pop())) * 0.3);
+    context.fillStyle = salvage.reservedBy ? '#6f806f' : '#8a7554';
+    context.fillRect(-15, -10, 30, 20);
+    context.strokeStyle = '#c2a66f';
+    context.strokeRect(-15, -10, 30, 20);
+    context.beginPath();
+    context.moveTo(-10, -3);
+    context.lineTo(10, 4);
+    context.stroke();
+    context.restore();
+    if (distance(world.player, salvage) < 100) {
+      drawText(`E  SALVAGE ${salvage.amount}`, point.x, point.y - 34, 12, '#e5c57d', 'center', 750);
+    }
+  }
+}
+
+function drawRobot(robot) {
+  const point = worldToScreen(robot.x, robot.y);
+  if (point.x < -60 || point.y < -60 || point.x > VIEW_WIDTH + 60 || point.y > VIEW_HEIGHT + 60) return;
+  context.save();
+  context.translate(point.x, point.y);
+  context.rotate(robot.heading);
+  context.globalAlpha = robot.disabled ? 0.42 : 1;
+  context.fillStyle = robot.kind === 'sentry' || robot.kind === 'lancer' ? '#725d43' : '#5f6462';
+  context.strokeStyle = '#c19b5f';
+  context.lineWidth = 2;
+  if (robot.kind === 'hauler') {
+    context.fillRect(-18, -13, 36, 26);
+    context.strokeRect(-18, -13, 36, 26);
+    context.fillStyle = '#272d2f';
+    context.fillRect(-8, -18, 18, 10);
+  } else {
+    context.beginPath();
+    context.roundRect(-16, -12, 32, 24, 6);
+    context.fill();
+    context.stroke();
+  }
+  context.fillStyle = robot.disabled ? '#6b3f34' : '#7de8f4';
+  context.shadowColor = context.fillStyle;
+  context.shadowBlur = 9;
+  context.beginPath();
+  context.arc(10, 0, 4, 0, Math.PI * 2);
+  context.fill();
+  context.shadowBlur = 0;
+  context.strokeStyle = '#4c5152';
+  context.lineWidth = 4;
+  for (const side of [-1, 1]) {
+    context.beginPath();
+    context.moveTo(-8, side * 9);
+    context.lineTo(-15, side * 17);
+    context.lineTo(-22, side * 18);
+    context.stroke();
+    context.beginPath();
+    context.moveTo(7, side * 9);
+    context.lineTo(14, side * 16);
+    context.lineTo(21, side * 17);
+    context.stroke();
+  }
+  if (robot.targetId && !robot.disabled) {
+    context.strokeStyle = 'rgba(255, 193, 96, 0.6)';
+    context.beginPath();
+    context.moveTo(15, 0);
+    context.lineTo(30, 0);
+    context.stroke();
+  }
+  context.restore();
+  drawHealthBar(point.x - 20, point.y - 29, 40, robot.hp, robot.maxHp, robot.disabled ? '#7d4640' : '#68b9bd');
+}
+
+function drawEnemy(enemy) {
+  const point = worldToScreen(enemy.x, enemy.y);
+  if (point.x < -90 || point.y < -90 || point.x > VIEW_WIDTH + 90 || point.y > VIEW_HEIGHT + 90) return;
+  context.save();
+  context.translate(point.x, point.y);
+  context.rotate(enemy.heading);
+  const damaged = enemy.hp < enemy.maxHp * 0.35;
+  context.fillStyle = enemy.type === 'cathedral_beast' ? '#251e1f' : damaged ? '#382326' : '#292224';
+  context.strokeStyle = enemy.type === 'cathedral_beast' ? '#9a5549' : '#70423d';
+  context.lineWidth = enemy.type === 'cathedral_beast' ? 5 : 2;
+
+  if (enemy.type === 'skitterling') {
+    context.beginPath();
+    context.ellipse(0, 0, 15, 10, 0, 0, Math.PI * 2);
+    context.fill();
+    context.stroke();
+    context.lineWidth = 2;
+    for (let side = -1; side <= 1; side += 2) {
+      for (let index = -1; index <= 1; index += 1) {
+        context.beginPath();
+        context.moveTo(index * 5, side * 6);
+        context.lineTo(index * 10 + 4, side * 19);
+        context.stroke();
+      }
+    }
+  } else if (enemy.type === 'razorhound') {
+    context.beginPath();
+    context.ellipse(-3, 0, 23, 13, 0, 0, Math.PI * 2);
+    context.fill();
+    context.stroke();
+    context.beginPath();
+    context.moveTo(14, -8);
+    context.lineTo(30, 0);
+    context.lineTo(14, 8);
+    context.closePath();
+    context.fill();
+    context.stroke();
+    for (const x of [-14, 9]) {
+      context.beginPath();
+      context.moveTo(x, -8);
+      context.lineTo(x - 5, -22);
+      context.stroke();
+      context.beginPath();
+      context.moveTo(x, 8);
+      context.lineTo(x - 5, 22);
+      context.stroke();
+    }
+  } else if (enemy.type === 'veilstalker') {
+    context.beginPath();
+    context.ellipse(0, 0, 20, 27, 0, 0, Math.PI * 2);
+    context.fill();
+    context.stroke();
+    for (let side = -1; side <= 1; side += 2) {
+      for (let index = -1; index <= 1; index += 1) {
+        context.beginPath();
+        context.moveTo(index * 7, side * 12);
+        context.lineTo(index * 13, side * 34);
+        context.lineTo(index * 20 + 8, side * 43);
+        context.stroke();
+      }
+    }
+  } else {
+    context.beginPath();
+    context.ellipse(0, 0, 60, 48, 0, 0, Math.PI * 2);
+    context.fill();
+    context.stroke();
+    for (let index = 0; index < 8; index += 1) {
+      const angle = index * Math.PI / 4;
+      context.beginPath();
+      context.moveTo(Math.cos(angle) * 32, Math.sin(angle) * 25);
+      context.lineTo(Math.cos(angle) * 82, Math.sin(angle) * 65);
+      context.stroke();
+    }
+  }
+  context.fillStyle = '#e06e4c';
+  context.shadowColor = '#f06b46';
+  context.shadowBlur = 10;
+  context.beginPath();
+  context.arc(enemy.type === 'cathedral_beast' ? 35 : 10, -4, enemy.type === 'cathedral_beast' ? 7 : 3.5, 0, Math.PI * 2);
+  context.fill();
+  context.shadowBlur = 0;
+  context.restore();
+  const barWidth = enemy.type === 'cathedral_beast' ? 130 : 46;
+  drawHealthBar(point.x - barWidth / 2, point.y - enemy.radius - 20, barWidth, enemy.hp, enemy.maxHp, '#c55c49');
+}
+
+function drawPlayer() {
+  const player = world.player;
+  const point = worldToScreen(player.x, player.y);
+  context.save();
+  context.translate(point.x, point.y);
+  context.rotate(player.heading);
+  if (player.invulnerable > 0) context.globalAlpha = 0.55 + Math.sin(world.time * 50) * 0.25;
+  context.fillStyle = '#1b2327';
+  context.strokeStyle = '#a2c6c8';
+  context.lineWidth = 2;
+  context.beginPath();
+  context.moveTo(20, 0);
+  context.lineTo(-13, -14);
+  context.lineTo(-9, 14);
+  context.closePath();
+  context.fill();
+  context.stroke();
+  context.fillStyle = '#7ee9ef';
+  context.shadowColor = '#7ee9ef';
+  context.shadowBlur = 12;
+  context.beginPath();
+  context.arc(7, 0, 4, 0, Math.PI * 2);
+  context.fill();
+  context.shadowBlur = 0;
+  context.restore();
+
+  const target = world.enemies.find((enemy) => enemy.id === player.targetId);
+  if (target) {
+    const targetPoint = worldToScreen(target.x, target.y);
+    context.strokeStyle = 'rgba(126, 233, 239, 0.68)';
+    context.lineWidth = 1.5;
+    context.setLineDash([4, 5]);
+    context.beginPath();
+    context.moveTo(point.x, point.y);
+    context.lineTo(targetPoint.x, targetPoint.y);
+    context.stroke();
+    context.setLineDash([]);
+    context.beginPath();
+    context.arc(targetPoint.x, targetPoint.y, target.radius + 9, 0, Math.PI * 2);
+    context.stroke();
+  }
+}
+
+function drawProjectiles() {
+  for (const projectile of world.projectiles) {
+    const point = worldToScreen(projectile.x, projectile.y);
+    context.fillStyle = projectile.color;
+    context.shadowColor = projectile.color;
+    context.shadowBlur = 12;
+    context.beginPath();
+    context.arc(point.x, point.y, projectile.radius, 0, Math.PI * 2);
+    context.fill();
+  }
+  context.shadowBlur = 0;
+}
+
+function drawDroppedItems() {

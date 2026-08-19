@@ -1,6 +1,6 @@
 # Contributing
 
-Project Ironwight is currently a design-led prototype repository.
+Project Ironwright contains a playable reference slice and a design-led production scaffold.
 
 Before proposing gameplay work:
 
@@ -13,7 +13,7 @@ Before proposing gameplay work:
 Run:
 
 ```bash
-python scripts/validate_repo.py
+npm run validate
 ```
 
 Keep pull requests small, testable, and centred on one observable outcome. Do not broaden scope by adding familiar RTS or survival systems that are explicitly excluded by the design contract.

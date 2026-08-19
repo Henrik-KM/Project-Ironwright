@@ -1,0 +1,222 @@
+import {
+  WORLD_WIDTH,
+  WORLD_HEIGHT,
+  HEARTFORGE_POS,
+  NORTH_RUINS_POS,
+  PLAYER_FIRE_RANGE,
+  HEARTFORGE_REPAIR_COST,
+  EXPEDITION_COST,
+  ORGANIC_ENEMY_TYPES,
+  createWorld,
+  stepWorld,
+  interact,
+  chooseEvolution,
+  canAuthorizeExpedition,
+  authorizeExpedition,
+  emergencyRecall,
+  getObjective,
+  getAutonomySummary,
+  serializeWorld,
+  deserializeWorld,
+  distance,
+} from './sim.mjs';
+
+const VIEW_WIDTH = 1280;
+const VIEW_HEIGHT = 720;
+const SAVE_KEY = 'project-ironwright-first-light-v2';
+const AUTOSAVE_SECONDS = 8;
+
+const canvas = document.querySelector('#game-canvas');
+const context = canvas.getContext('2d', { alpha: false });
+const lightCanvas = document.createElement('canvas');
+const lightContext = lightCanvas.getContext('2d');
+const loading = document.querySelector('#loading');
+const titleScreen = document.querySelector('#title-screen');
+const gameShell = document.querySelector('#game-shell');
+const newWorldButton = document.querySelector('#new-world');
+const continueButton = document.querySelector('#continue-world');
+const endScreen = document.querySelector('#end-screen');
+const endTitle = document.querySelector('#end-title');
+const endMessage = document.querySelector('#end-message');
+const restartButton = document.querySelector('#restart-world');
+const loadButton = document.querySelector('#load-world');
+const launchError = document.querySelector('#launch-error');
+
+canvas.width = VIEW_WIDTH;
+canvas.height = VIEW_HEIGHT;
+lightCanvas.width = VIEW_WIDTH;
+lightCanvas.height = VIEW_HEIGHT;
+context.imageSmoothingEnabled = true;
+
+let world = null;
+let running = false;
+let paused = false;
+let commandMapOpen = false;
+let diagnosticsOpen = false;
+let helpOpen = false;
+let evolutionOpen = false;
+let cameraMode = 'player';
+let camera = { x: HEARTFORGE_POS.x, y: HEARTFORGE_POS.y };
+let lastFrame = performance.now();
+let autosaveAccumulator = 0;
+let lastStatus = 'playing';
+let mouse = { x: VIEW_WIDTH * 0.5, y: VIEW_HEIGHT * 0.5 };
+let dashQueued = false;
+const keys = new Set();
+const decorativeProps = createDecorativeProps(92317);
+
+function createDecorativeProps(seed) {
+  let state = seed >>> 0;
+  const next = () => {
+    state ^= state << 13;
+    state ^= state >>> 17;
+    state ^= state << 5;
+    return ((state >>> 0) % 100000) / 100000;
+  };
+  const props = [];
+  for (let index = 0; index < 190; index += 1) {
+    props.push({
+      x: 80 + next() * (WORLD_WIDTH - 160),
+      y: 80 + next() * (WORLD_HEIGHT - 160),
+      rotation: next() * Math.PI * 2,
+      scale: 0.65 + next() * 0.8,
+      kind: next() > 0.58 ? 'car' : next() > 0.45 ? 'lamp' : 'rubble',
+    });
+  }
+  return props;
+}
+
+function safeStorageAvailable() {
+  try {
+    const key = '__ironwright_test__';
+    localStorage.setItem(key, '1');
+    localStorage.removeItem(key);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function hasSave() {
+  return safeStorageAvailable() && Boolean(localStorage.getItem(SAVE_KEY));
+}
+
+function saveWorld(showEvent = false) {
+  if (!world || !safeStorageAvailable()) return false;
+  try {
+    localStorage.setItem(SAVE_KEY, serializeWorld(world));
+    if (showEvent) addClientEvent('World saved locally.');
+    return true;
+  } catch (error) {
+    console.error(error);
+    addClientEvent('Save failed in this browser.', 'danger');
+    return false;
+  }
+}
+
+function loadWorld() {
+  if (!hasSave()) return false;
+  try {
+    world = deserializeWorld(localStorage.getItem(SAVE_KEY));
+    beginPlaying();
+    addClientEvent('Persistent world restored.');
+    return true;
+  } catch (error) {
+    console.error(error);
+    localStorage.removeItem(SAVE_KEY);
+    continueButton.disabled = true;
+    launchError.textContent = `The save could not be loaded: ${error.message}`;
+    launchError.hidden = false;
+    return false;
+  }
+}
+
+function addClientEvent(text, kind = 'info') {
+  if (!world) return;
+  world.events.unshift({ id: `client-${Date.now()}-${Math.random()}`, time: world.time, text, kind });
+  if (world.events.length > 36) world.events.length = 36;
+}
+
+function startNewWorld() {
+  world = createWorld((Date.now() ^ 0x5f3759df) >>> 0);
+  if (safeStorageAvailable()) localStorage.removeItem(SAVE_KEY);
+  beginPlaying();
+}
+
+function beginPlaying() {
+  running = true;
+  paused = false;
+  commandMapOpen = false;
+  diagnosticsOpen = false;
+  helpOpen = false;
+  evolutionOpen = false;
+  cameraMode = 'player';
+  camera.x = world.player.x;
+  camera.y = world.player.y;
+  lastStatus = world.status;
+  titleScreen.hidden = true;
+  endScreen.hidden = true;
+  gameShell.hidden = false;
+  canvas.focus();
+}
+
+function returnToTitle() {
+  running = false;
+  gameShell.hidden = true;
+  endScreen.hidden = true;
+  titleScreen.hidden = false;
+  continueButton.disabled = !hasSave();
+}
+
+function finishScreen() {
+  if (!world || world.status === 'playing') return;
+  endTitle.textContent = world.status === 'victory' ? 'FIRST LIGHT SECURED' : 'THE HEARTFORGE IS DARK';
+  endMessage.textContent = world.statusReason;
+  loadButton.disabled = !hasSave();
+  endScreen.hidden = false;
+  paused = true;
+}
+
+function screenToWorld(screenX, screenY) {
+  return {
+    x: screenX - VIEW_WIDTH / 2 + camera.x,
+    y: screenY - VIEW_HEIGHT / 2 + camera.y,
+  };
+}
+
+function worldToScreen(x, y) {
+  return {
+    x: x - camera.x + VIEW_WIDTH / 2,
+    y: y - camera.y + VIEW_HEIGHT / 2,
+  };
+}
+
+function activeExpeditionRobots() {
+  if (!world) return [];
+  return world.robots.filter((robot) => robot.expedition && !robot.disabled);
+}
+
+function cameraTarget() {
+  if (!world) return HEARTFORGE_POS;
+  if (cameraMode === 'heartforge') return world.heartforge;
+  if (cameraMode === 'expedition') {
+    const expedition = activeExpeditionRobots();
+    if (expedition.length > 0) {
+      return {
+        x: expedition.reduce((sum, robot) => sum + robot.x, 0) / expedition.length,
+        y: expedition.reduce((sum, robot) => sum + robot.y, 0) / expedition.length,
+      };
+    }
+    cameraMode = 'player';
+  }
+  return world.player;
+}
+
+function updateCamera(dt) {
+  const target = cameraTarget();
+  const factor = 1 - Math.pow(0.001, dt);
+  camera.x += (target.x - camera.x) * factor;
+  camera.y += (target.y - camera.y) * factor;
+  camera.x = Math.max(VIEW_WIDTH / 2, Math.min(WORLD_WIDTH - VIEW_WIDTH / 2, camera.x));
+  camera.y = Math.max(VIEW_HEIGHT / 2, Math.min(WORLD_HEIGHT - VIEW_HEIGHT / 2, camera.y));
+}

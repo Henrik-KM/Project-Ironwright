@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "product_id": "project_ironwight",
+  "product_id": "project_ironwright",
   "canonical_mode": "persistent_survival_sandbox",
   "perspective": "direct_isometric_character_control",
   "hard_limits": {
@@ -21,7 +21,11 @@
     "early_game_is_small_dark_and_frightening": true,
     "excursions_return_to_heartforge": true,
     "repeated_failure_before_first_victory_is_expected": true,
-    "save_is_persistent_across_many_sessions": true
+    "save_is_persistent_across_many_sessions": true,
+    "full_world_exists_at_all_times": true,
+    "remote_entities_keep_physical_positions": true,
+    "expeditions_physically_traverse_world": true,
+    "remote_activity_is_observable": true
   },
   "forbidden": {
     "territory_claiming": true,

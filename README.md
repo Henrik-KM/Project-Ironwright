@@ -1,100 +1,109 @@
-# Project Ironwight
+# Project Ironwright
 
-![Early-, mid-, and late-game progression](docs/concept-art/progression-board-web.png)
+**Project Ironwright** is a survival-strategy game about defending one vulnerable Heartforge in a hostile, organic, post-apocalyptic city. You begin as a nearly helpless Mechromancer with one crude Scrapling. Machines gradually learn to salvage, repair, defend, cooperate, and conduct expeditions without routine supervision.
 
-**Project Ironwight** is a single-player, long-form survival strategy game about defending one vulnerable Heartforge in a hostile organic world. The player begins as a nearly helpless Mechromancer with one damaged robot. Over a persistent run lasting many sessions, the Heartforge and its machines learn to defend, repair, gather, scout, and conduct expeditions with progressively less supervision.
+This repository contains the playable **First Light** browser prototype, the Godot production scaffold, the complete design documents, and the concept-art library.
 
-The game is not an RTS about expansion, territory, production chains, or unit micro-management. The strategic challenge is deciding what the Mechromancer, the machines, and the Heartforge should become while the outside world applies continuous pressure.
+> One home. One hostile city. Machines that learn to carry the burden.
 
-> One home. One hostile world. Machines that gradually learn to keep both themselves and their creator alive.
+## Play First Light
 
-## Canonical product direction
+Requirements: Python 3 and a current desktop browser. Node.js 22+ is required only for validation.
 
-- One constrained, evolving base centred on the original Heartforge.
-- One ordinary stockpiled resource: **Scrap**.
-- Rare discoveries are unique components or knowledge, not additional currencies.
-- Organic enemies: predators, burrowers, parasites, swarms, and apex creatures. Enemy robots are outside the design.
-- No scheduled-wave main loop. Major attacks are rare, causal events.
-- No territory claiming, outpost network, supply-line game, or production-chain economy.
-- No routine per-robot orders, loadouts, repair work, construction placement, or alert clearing.
-- Robot and base autonomy must remove player work as the run progresses.
-- A full successful run is expected to take many play sessions and may take 30–100 hours depending on difficulty and play style.
-- Repeated failed worlds before the first victory are an intended part of learning the game.
-
-The complete non-negotiable contract is in [`docs/DESIGN_LOCKS.md`](docs/DESIGN_LOCKS.md).
-
-## Repository status
-
-This is a **design-complete, implementation-ready repository scaffold**, not a finished game. It contains:
-
-- the revised game design document;
-- machine-readable design contracts for Codex and validation scripts;
-- autonomy, enemy-ecology, sandbox, art, and technical design documents;
-- a milestone plan and copy-ready Codex tasks;
-- concept art for the intended early-, mid-, and late-game contrast;
-- a minimal Godot 4.7.1 project shell that opens to a project-status screen;
-- GitHub Actions validation for repository structure and design contracts.
-
-No third-party runtime art assets are bundled. The art plan separates temporary prototype assets from the later bespoke production set.
-
-## Start here
-
-Read these files in order:
-
-1. [`docs/DESIGN_LOCKS.md`](docs/DESIGN_LOCKS.md)
-2. [`docs/GAME_DESIGN_DOCUMENT.md`](docs/GAME_DESIGN_DOCUMENT.md)
-3. [`docs/AUTONOMY_AND_ANTI_CHORE.md`](docs/AUTONOMY_AND_ANTI_CHORE.md)
-4. [`docs/ENEMY_ECOLOGY.md`](docs/ENEMY_ECOLOGY.md)
-5. [`docs/PRODUCTION_ROADMAP.md`](docs/PRODUCTION_ROADMAP.md)
-6. [`prompts/FIRST_CODEX_TASK.md`](prompts/FIRST_CODEX_TASK.md)
-
-For Codex, keep the root [`AGENTS.md`](AGENTS.md) in place. It is the operational contract for implementation work.
-
-## Local validation
+From the repository root:
 
 ```bash
-python scripts/validate_repo.py
+npm run serve
 ```
 
-The minimal Godot shell is under `game/`. Open `game/project.godot` in Godot 4.7.1 or a compatible later 4.x release. It is intentionally limited to a bootstrap screen; gameplay begins with the first Codex task.
+Open `http://localhost:8000`, then select **New World**.
 
-## Repository map
+The browser build has no package dependencies and downloads no runtime assets. Its visuals are rendered procedurally on Canvas.
+
+## Controls
+
+| Input | Action |
+|---|---|
+| `WASD` / arrows | Move the Mechromancer |
+| Automatic | Shoot the nearest organic enemy in range |
+| Mouse | Orient when no enemy is in firing range |
+| `Shift` or `Space` | Emergency evade |
+| `E` | Salvage, restore, evolve, recover, or install the contextual objective |
+| `X` | Authorize the North Ruins expedition when ready |
+| `R` | Emergency recall for local machines |
+| `F` | Cycle between player, Heartforge, and physical-expedition cameras |
+| `M` | Open the live command map |
+| `Tab` | Explain current machine decisions |
+| `H` | Show controls |
+| `F5` / `F9` | Save / load |
+| `Esc` | Pause or close an interface |
+
+The Mechromancer now fires automatically. Combat does not require constant clicking or individual target micro-management: the simulation selects the nearest valid enemy within the current firing range, displays that target, and fires according to weapon cooldown.
+
+## Playable arc
+
+1. Leave the weak Heartforge light to recover critical Scrap.
+2. Return and restore the only permanent base.
+3. Watch machines take over routine salvage and local defence.
+4. Choose one consequential evolution: Mechromancer, machines, or Heartforge.
+5. Authorize a North Ruins expedition.
+6. Follow the robots as they physically cross the persistent city, reach the ruins, recover the Cognition Core, and return through the same streets.
+7. Install the core and survive the causally triggered Cathedral Beast attack.
+
+The city remains one simulation. Expeditions are not timers or probability rolls: every robot retains coordinates, health, state, cargo, route progress, and a player-readable reason for its current decision. The command map is a view of those physical entities, not a separate strategic layer.
+
+There are no scheduled waves, hostile robots, power grids, production chains, territorial capture, multiple bases, individual loadouts, or recurring production-queue maintenance.
+
+## Browser implementation
 
 ```text
-.
-├── AGENTS.md
-├── README.md
-├── docs/
-│   ├── GAME_DESIGN_DOCUMENT.md
-│   ├── DESIGN_LOCKS.md
-│   ├── AUTONOMY_AND_ANTI_CHORE.md
-│   ├── ENEMY_ECOLOGY.md
-│   ├── LONG_RUN_SANDBOX.md
-│   ├── ART_DIRECTION_AND_ASSET_PLAN.md
-│   ├── TECHNICAL_ARCHITECTURE.md
-│   ├── PRODUCTION_ROADMAP.md
-│   ├── PLAYTEST_PLAN.md
-│   └── concept-art/
-├── game/
-│   ├── project.godot
-│   ├── data/
-│   ├── scenes/
-│   └── scripts/
-├── prompts/
-├── scripts/
-└── .github/
+web/
+├── index.html
+├── styles.css
+├── src/
+│   └── loader.mjs
+├── source/
+│   ├── sim/
+│   │   ├── manifest.json
+│   │   └── part-*.txt
+│   └── game/
+│       ├── manifest.json
+│       └── part-*.txt
+└── tests/
+    ├── browser_smoke.py
+    ├── sim.test.mjs
+    └── source_loader.mjs
 ```
 
-## Visual target
+The segmented source layout keeps individual Git objects modest while still assembling normal JavaScript modules at launch. All files referenced by both manifests are committed and verified by the smoke test.
 
-The concept art is a direction reference, not a literal UI specification or source of production-ready models. The important progression is:
+## Validate
 
-- **Early:** one weak light, one broken robot, one damaged Heartforge, and darkness close enough to feel lethal.
-- **Mid:** a compact base that repairs and defends itself while the player chooses the next risk.
-- **Late:** the same home transformed into a dense autonomous machine fortress, with expeditions and large formations operating beyond the walls.
+```bash
+npm run validate
+```
 
-The base may become visually formidable, but it must remain spatially constrained. Late-game scale comes from machine intelligence, density, and reach—not from covering the world in player-owned structures.
+Validation checks:
 
-## Rights and assets
+- browser launch files and every segmented source part exist and are non-empty;
+- assembled simulation and presentation modules parse;
+- automatic targeting fires at the nearest in-range enemy and remains silent out of range;
+- enemies are organic and no scheduled-wave state exists;
+- routine gathering becomes autonomous after Heartforge restoration;
+- expedition robots travel physically to the North Ruins and back;
+- save/load preserves remote positions and decision reasons;
+- the Cathedral Beast appears only after the returned core is installed;
+- Scrap remains the only ordinary stockpiled resource;
+- repository design contracts remain valid.
 
-The concept images in this repository were generated for this project and are included as design references. Before any external asset is committed, record its source, licence, version, and modification status in [`ATTRIBUTION.md`](ATTRIBUTION.md). Do not import asset packs simply because they are convenient; visual coherence and provenance are part of the product.
+## Product contract
+
+Read these before expanding the game:
+
+1. [`AGENTS.md`](AGENTS.md)
+2. [`docs/DESIGN_LOCKS.md`](docs/DESIGN_LOCKS.md)
+3. [`docs/GAME_DESIGN_DOCUMENT.md`](docs/GAME_DESIGN_DOCUMENT.md)
+4. [`docs/AUTONOMY_AND_ANTI_CHORE.md`](docs/AUTONOMY_AND_ANTI_CHORE.md)
+5. [`docs/ENEMY_ECOLOGY.md`](docs/ENEMY_ECOLOGY.md)
+
+The browser prototype is a playable reference implementation, not the final 30–100-hour production game. The production-engine scaffold remains under `game/` and targets Godot 4.7.1-compatible APIs.

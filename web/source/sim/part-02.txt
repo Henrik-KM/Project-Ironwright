@@ -1,0 +1,222 @@
+    heading: randomRange(world, 0, TAU),
+    wanderTimer: randomRange(world, 1, 4),
+    dead: false,
+  };
+}
+
+function makeSalvage(world, x, y, amount, label = 'Wreckage') {
+  return {
+    id: nextId(world, 'salvage'),
+    x,
+    y,
+    amount,
+    maxAmount: amount,
+    label,
+    reservedBy: null,
+  };
+}
+
+function createWorld(seed = 0x49a2f0c3) {
+  const safeSeed = Number.isFinite(seed) ? (seed >>> 0) || 1 : 1;
+  const world = {
+    schemaVersion: SCHEMA_VERSION,
+    seed: safeSeed,
+    rngState: safeSeed,
+    nextEntityId: 1,
+    time: 0,
+    tick: 0,
+    status: 'playing',
+    statusReason: '',
+    scrap: 0,
+    rareItems: { cognitionCore: false },
+    player: {
+      id: 'player',
+      x: HEARTFORGE_POS.x + 75,
+      y: HEARTFORGE_POS.y + 55,
+      hp: 160,
+      maxHp: 160,
+      speed: 196,
+      radius: 16,
+      heading: -0.5,
+      fireCooldown: 0,
+      fireInterval: 0.31,
+      fireRange: PLAYER_FIRE_RANGE,
+      damage: 24,
+      targetId: null,
+      dashCooldown: 0,
+      dashTime: 0,
+      invulnerable: 0,
+    },
+    heartforge: {
+      id: 'heartforge',
+      x: HEARTFORGE_POS.x,
+      y: HEARTFORGE_POS.y,
+      hp: 300,
+      maxHp: 1050,
+      restored: false,
+      lightRadius: 235,
+      passiveRepair: 0,
+    },
+    progress: {
+      stage: 'first_salvage',
+      autonomyLevel: 0,
+      evolution: null,
+      evolutionAvailable: false,
+      expeditionAuthorized: false,
+      expeditionStage: 'locked',
+      expeditionTimer: 0,
+      expeditionCoreCarrierId: null,
+      cognitionInstalled: false,
+      apexSpawned: false,
+      apexDefeated: false,
+    },
+    tuning: {
+      robotDamageBonus: 0,
+      robotSpeedBonus: 0,
+      salvageEfficiency: 1,
+    },
+    robots: [],
+    enemies: [],
+    nests: [
+      { id: 'nest-west', x: 1450, y: 760, population: 1.2, spawnCooldown: 22, startTime: 42, disturbance: 0.08 },
+      { id: 'nest-north', x: 3310, y: 540, population: 1.6, spawnCooldown: 28, startTime: 75, disturbance: 0.12 },
+      { id: 'nest-east', x: 4140, y: 1760, population: 1.4, spawnCooldown: 31, startTime: 100, disturbance: 0.06 },
+      { id: 'nest-sewer', x: 2130, y: 2470, population: 1.0, spawnCooldown: 36, startTime: 135, disturbance: 0.04 },
+    ],
+    salvage: [],
+    projectiles: [],
+    droppedItems: [],
+    events: [],
+    obstacles: makeCityObstacles(),
+    route: EXPEDITION_ROUTE.map((point) => ({ ...point })),
+  };
+
+  world.robots.push(makeRobot(world, 'scrapling', HEARTFORGE_POS.x + 42, HEARTFORGE_POS.y + 92, 'companion'));
+  world.salvage.push(
+    makeSalvage(world, 1110, 1640, 38, 'Collapsed utility cart'),
+    makeSalvage(world, 1240, 1460, 34, 'Delivery van'),
+    makeSalvage(world, 1470, 1730, 42, 'Machine shop debris'),
+    makeSalvage(world, 1780, 1420, 46, 'Tram wreck'),
+    makeSalvage(world, 2050, 1220, 48, 'Service tunnel cache'),
+    makeSalvage(world, 2550, 1050, 54, 'Emergency depot'),
+    makeSalvage(world, 3050, 820, 62, 'Armoured transport'),
+    makeSalvage(world, 3490, 570, 72, 'North checkpoint'),
+    makeSalvage(world, 1080, 2220, 38, 'Flooded garage'),
+    makeSalvage(world, 720, 2490, 32, 'Municipal truck'),
+    makeSalvage(world, 2820, 2260, 58, 'Rail maintenance cache'),
+  );
+
+  world.enemies.push(makeEnemy(world, 'veilstalker', 1390, 1450, 'nest-west'));
+  world.enemies.push(makeEnemy(world, 'skitterling', 1290, 1840, 'nest-west'));
+  pushEvent(world, 'The Heartforge is failing. Recover Scrap without straying far from its light.', 'warning');
+  return world;
+}
+
+function findEnemyById(world, id) {
+  return world.enemies.find((enemy) => enemy.id === id && !enemy.dead) ?? null;
+}
+
+function findRobotById(world, id) {
+  return world.robots.find((robot) => robot.id === id && !robot.disabled) ?? null;
+}
+
+function nearestEnemy(world, origin, range = Infinity) {
+  let best = null;
+  let bestDistance = range;
+  for (const enemy of world.enemies) {
+    if (enemy.dead || enemy.hp <= 0) continue;
+    const currentDistance = distance(origin, enemy);
+    if (currentDistance < bestDistance) {
+      best = enemy;
+      bestDistance = currentDistance;
+    }
+  }
+  return best;
+}
+
+function nearestSalvage(world, origin, range = Infinity, requireUnreserved = false) {
+  let best = null;
+  let bestDistance = range;
+  for (const salvage of world.salvage) {
+    if (salvage.amount <= 0) continue;
+    if (requireUnreserved && salvage.reservedBy) continue;
+    const currentDistance = distance(origin, salvage);
+    if (currentDistance < bestDistance) {
+      best = salvage;
+      bestDistance = currentDistance;
+    }
+  }
+  return best;
+}
+
+function spawnProjectile(world, ownerKind, owner, target, damage, speed, color) {
+  if (world.projectiles.length >= MAX_PROJECTILES) world.projectiles.shift();
+  const direction = normalized(target.x - owner.x, target.y - owner.y);
+  world.projectiles.push({
+    id: nextId(world, 'shot'),
+    ownerKind,
+    ownerId: owner.id,
+    targetId: target.id,
+    x: owner.x + direction.x * (owner.radius + 5),
+    y: owner.y + direction.y * (owner.radius + 5),
+    vx: direction.x * speed,
+    vy: direction.y * speed,
+    damage,
+    radius: ownerKind === 'player' ? 5 : 4,
+    ttl: 1.2,
+    color,
+  });
+  owner.heading = Math.atan2(direction.y, direction.x);
+}
+
+function updatePlayer(world, input, dt) {
+  const player = world.player;
+  player.fireCooldown = Math.max(0, player.fireCooldown - dt);
+  player.dashCooldown = Math.max(0, player.dashCooldown - dt);
+  player.dashTime = Math.max(0, player.dashTime - dt);
+  player.invulnerable = Math.max(0, player.invulnerable - dt);
+
+  if (input.dash && player.dashCooldown <= 0) {
+    player.dashCooldown = 1.35;
+    player.dashTime = 0.17;
+    player.invulnerable = 0.23;
+  }
+
+  const movement = normalized(Number(input.moveX) || 0, Number(input.moveY) || 0);
+  const speedMultiplier = player.dashTime > 0 ? 3.25 : 1;
+  const dx = movement.x * player.speed * speedMultiplier * dt;
+  const dy = movement.y * player.speed * speedMultiplier * dt;
+  if (Math.abs(dx) + Math.abs(dy) > 0) {
+    moveWithCollisions(world, player, dx, dy, player.radius);
+    if (!player.targetId) player.heading = Math.atan2(movement.y, movement.x);
+  }
+
+  const target = nearestEnemy(world, player, player.fireRange);
+  player.targetId = target?.id ?? null;
+  if (target) {
+    player.heading = Math.atan2(target.y - player.y, target.x - player.x);
+    if (player.fireCooldown <= 0) {
+      spawnProjectile(world, 'player', player, target, player.damage, 920, '#7fe8ff');
+      player.fireCooldown = player.fireInterval;
+    }
+  } else if (Number.isFinite(input.aimX) && Number.isFinite(input.aimY)) {
+    const aim = normalized(input.aimX - player.x, input.aimY - player.y);
+    if (Math.abs(aim.x) + Math.abs(aim.y) > 0) player.heading = Math.atan2(aim.y, aim.x);
+  }
+}
+
+function chooseLocalRobotThreat(world, robot) {
+  const local = nearestEnemy(world, robot, robot.range);
+  if (local) return local;
+  const baseThreat = nearestEnemy(world, world.heartforge, 520);
+  if (baseThreat && distance(robot, world.heartforge) < 750) return baseThreat;
+  return null;
+}
+
+function moveToward(world, entity, target, speed, dt, collision = true, radius = 14) {
+  const direction = normalized(target.x - entity.x, target.y - entity.y);
+  entity.heading = Math.atan2(direction.y, direction.x);
+  if (collision) moveWithCollisions(world, entity, direction.x * speed * dt, direction.y * speed * dt, radius);
+  else moveIgnoringBuildings(entity, direction.x * speed * dt, direction.y * speed * dt, radius);
+  return distance(entity, target);
+}

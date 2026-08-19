@@ -1,0 +1,221 @@
+  world.progress.evolutionAvailable = false;
+  if (choice === 'mechromancer') {
+    world.player.maxHp += 55;
+    world.player.hp = world.player.maxHp;
+    world.player.fireRange += 90;
+    world.player.damage += 8;
+    pushEvent(world, 'Vessel evolution chosen: the Mechromancer can survive and engage farther from safety.', 'success');
+  } else if (choice === 'machines') {
+    world.progress.autonomyLevel = 2;
+    world.tuning.robotDamageBonus += 7;
+    world.tuning.robotSpeedBonus += 12;
+    world.robots.push(makeRobot(world, 'sentry', world.heartforge.x + 110, world.heartforge.y - 10, 'sentry'));
+    pushEvent(world, 'Machine evolution chosen: coordinated defence and stronger autonomous action unlocked.', 'success');
+  } else {
+    world.heartforge.maxHp += 520;
+    world.heartforge.hp = world.heartforge.maxHp;
+    world.heartforge.lightRadius += 70;
+    world.heartforge.passiveRepair = 2.2;
+    pushEvent(world, 'Heartforge evolution chosen: the same compact home becomes harder to extinguish.', 'success');
+  }
+  world.progress.stage = 'expedition_ready';
+  return true;
+}
+
+function canAuthorizeExpedition(world) {
+  return (
+    world.status === 'playing'
+    && world.heartforge.restored
+    && Boolean(world.progress.evolution)
+    && !world.progress.expeditionAuthorized
+    && world.scrap >= EXPEDITION_COST
+  );
+}
+
+function authorizeExpedition(world) {
+  if (!canAuthorizeExpedition(world)) return false;
+  world.scrap -= EXPEDITION_COST;
+  while (world.robots.filter((robot) => !robot.disabled).length < 4) {
+    const kind = world.robots.length % 2 === 0 ? 'sentry' : 'lancer';
+    const role = kind === 'sentry' ? 'sentry' : 'escort';
+    world.robots.push(makeRobot(world, kind, world.heartforge.x + randomRange(world, -90, 90), world.heartforge.y + randomRange(world, -90, 90), role));
+  }
+  const convoy = world.robots
+    .filter((robot) => !robot.disabled)
+    .sort((a, b) => {
+      const priority = { hauler: 0, lancer: 1, sentry: 2, scrapling: 3 };
+      return (priority[a.kind] ?? 9) - (priority[b.kind] ?? 9);
+    })
+    .slice(0, 4);
+  convoy.forEach((robot, index) => {
+    releaseRobotReservation(world, robot);
+    robot.expedition = true;
+    robot.expeditionSlot = index;
+    robot.routeIndex = 0;
+    robot.cargo = 0;
+    robot.role = index === 0 ? 'carrier' : 'escort';
+  });
+  world.progress.expeditionAuthorized = true;
+  world.progress.expeditionStage = 'outbound';
+  world.progress.stage = 'expedition';
+  pushEvent(world, 'North Ruins expedition authorized. The robots are physically leaving the Heartforge.', 'info');
+  return true;
+}
+
+function spawnCathedralBeast(world) {
+  if (world.progress.apexSpawned) return null;
+  const beast = makeEnemy(world, 'cathedral_beast', 4300, 1320, null);
+  world.enemies.push(beast);
+  world.progress.apexSpawned = true;
+  pushEvent(world, 'Installing the Cognition Core has drawn the Cathedral Beast from the eastern ruins.', 'danger');
+  return beast;
+}
+
+function interact(world) {
+  if (world.status !== 'playing') return { kind: 'none' };
+  const player = world.player;
+  const dropped = world.droppedItems.find((item) => distance(player, item) < 72);
+  if (dropped) {
+    world.droppedItems = world.droppedItems.filter((item) => item.id !== dropped.id);
+    if (dropped.type === 'cognition_core') {
+      world.rareItems.cognitionCore = true;
+      world.progress.expeditionStage = 'returned';
+      pushEvent(world, 'The Mechromancer recovered the dropped Cognition Core.', 'success');
+      return { kind: 'core_recovered' };
+    }
+  }
+
+  const salvage = nearestSalvage(world, player, 76);
+  if (salvage) {
+    const amount = salvage.amount;
+    salvage.amount = 0;
+    salvage.reservedBy = null;
+    world.scrap += amount;
+    pushEvent(world, `Recovered ${amount} Scrap from ${salvage.label}.`, 'success');
+    return { kind: 'salvage', amount };
+  }
+
+  if (distance(player, world.heartforge) < 120) {
+    if (!world.heartforge.restored) {
+      if (restoreHeartforge(world)) return { kind: 'heartforge_restored' };
+      return { kind: 'need_scrap', amount: HEARTFORGE_REPAIR_COST - world.scrap };
+    }
+    if (world.progress.evolutionAvailable && !world.progress.evolution) return { kind: 'choose_evolution' };
+    if (world.progress.expeditionStage === 'returned' && world.rareItems.cognitionCore && !world.progress.cognitionInstalled) {
+      world.progress.cognitionInstalled = true;
+      world.progress.stage = 'apex';
+      spawnCathedralBeast(world);
+      return { kind: 'core_installed' };
+    }
+  }
+  return { kind: 'none' };
+}
+
+function emergencyRecall(world) {
+  let recalled = 0;
+  for (const robot of world.robots) {
+    if (robot.disabled || robot.expedition) continue;
+    releaseRobotReservation(world, robot);
+    robot.cargo = 0;
+    robot.role = robot.kind === 'sentry' ? 'sentry' : 'gatherer';
+    robot.state = 'recalled';
+    robot.reason = 'Emergency recall temporarily overrides routine autonomy.';
+    recalled += 1;
+  }
+  if (recalled > 0) pushEvent(world, `${recalled} local machines recalled to the Heartforge.`, 'warning');
+  return recalled;
+}
+
+function getObjective(world) {
+  if (world.status === 'victory') return 'First Light secured. The Cathedral Beast is dead.';
+  if (world.status === 'defeat') return world.statusReason;
+  if (!world.heartforge.restored) {
+    if (world.scrap < HEARTFORGE_REPAIR_COST) return `Recover Scrap and return alive (${world.scrap}/${HEARTFORGE_REPAIR_COST}).`;
+    return 'Return to the Heartforge and press E to restore it.';
+  }
+  if (!world.progress.evolution) return 'At the Heartforge, press E and choose one decisive evolution.';
+  if (!world.progress.expeditionAuthorized) {
+    if (world.scrap < EXPEDITION_COST) return `Let machines gather ${EXPEDITION_COST - world.scrap} more Scrap for the North Ruins expedition.`;
+    return 'Press X to authorize the physical North Ruins expedition.';
+  }
+  if (world.progress.expeditionStage === 'outbound') return 'The convoy is travelling north. Press F to follow it or M to inspect the live map.';
+  if (world.progress.expeditionStage === 'recovering') return 'The machines are securing the North Ruins archive.';
+  if (world.progress.expeditionStage === 'returning') return 'The convoy is physically returning with the Cognition Core.';
+  if (world.progress.expeditionStage === 'failed') return 'The expedition was lost. Recover any dropped core or rebuild the attempt.';
+  if (!world.progress.cognitionInstalled) return 'The Cognition Core has arrived. Press E at the Heartforge to install it.';
+  return 'Defend the Heartforge from the Cathedral Beast.';
+}
+
+function getAutonomySummary(world) {
+  return world.robots.map((robot) => ({
+    id: robot.id,
+    kind: robot.kind,
+    role: robot.role,
+    state: robot.disabled ? 'disabled' : robot.state,
+    reason: robot.disabled ? 'Disabled at a persistent world position; not abstracted away.' : robot.reason,
+    hp: robot.hp,
+    maxHp: robot.maxHp,
+    x: robot.x,
+    y: robot.y,
+  }));
+}
+
+function serializeWorld(world) {
+  return JSON.stringify({ ...world, schemaVersion: SCHEMA_VERSION });
+}
+
+function migrateWorld(data) {
+  const world = data;
+  world.schemaVersion = SCHEMA_VERSION;
+  world.events ??= [];
+  world.projectiles ??= [];
+  world.droppedItems ??= [];
+  world.tuning ??= { robotDamageBonus: 0, robotSpeedBonus: 0, salvageEfficiency: 1 };
+  world.rareItems ??= { cognitionCore: false };
+  world.route ??= EXPEDITION_ROUTE.map((point) => ({ ...point }));
+  world.obstacles ??= makeCityObstacles();
+  world.progress.apexDefeated ??= false;
+  world.progress.apexSpawned ??= false;
+  world.progress.cognitionInstalled ??= false;
+  world.player.fireRange ??= PLAYER_FIRE_RANGE;
+  world.player.damage ??= 24;
+  world.player.targetId ??= null;
+  for (const enemy of world.enemies ?? []) enemy.organic = true;
+  return world;
+}
+
+function deserializeWorld(serialized) {
+  const data = typeof serialized === 'string' ? JSON.parse(serialized) : structuredClone(serialized);
+  if (!data || typeof data !== 'object') throw new Error('Invalid save data.');
+  if (!Number.isInteger(data.schemaVersion) || data.schemaVersion > SCHEMA_VERSION) {
+    throw new Error(`Unsupported save schema: ${data.schemaVersion}`);
+  }
+  return migrateWorld(data);
+}
+
+export {
+  SCHEMA_VERSION,
+  WORLD_WIDTH,
+  WORLD_HEIGHT,
+  HEARTFORGE_POS,
+  NORTH_RUINS_POS,
+  PLAYER_FIRE_RANGE,
+  ROBOT_FIRE_RANGE,
+  HEARTFORGE_REPAIR_COST,
+  EXPEDITION_COST,
+  ORGANIC_ENEMY_TYPES,
+  EXPEDITION_ROUTE,
+  createWorld,
+  stepWorld,
+  interact,
+  chooseEvolution,
+  canAuthorizeExpedition,
+  authorizeExpedition,
+  emergencyRecall,
+  getObjective,
+  getAutonomySummary,
+  nearestEnemy,
+  serializeWorld,
+  deserializeWorld,
+  distance,
+};
