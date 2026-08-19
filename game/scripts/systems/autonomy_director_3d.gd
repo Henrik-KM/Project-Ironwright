@@ -95,6 +95,13 @@ func _refresh_macro_assignments() -> void:
             _assign_defensive_ring()
 
 
+func _remove_invalid_robots() -> void:
+    for index in range(robots.size() - 1, -1, -1):
+        var robot := robots[index]
+        if not is_instance_valid(robot) or not robot.is_alive():
+            robots.remove_at(index)
+
+
 func _assign_defensive_ring() -> void:
     var defenders := living_robots()
     var slot := 0

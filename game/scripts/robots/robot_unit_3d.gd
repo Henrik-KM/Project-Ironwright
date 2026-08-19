@@ -264,8 +264,8 @@ func _refresh_visual_identity() -> void:
 
     for side in [-1.0, 1.0]:
         for front in [-1.0, 1.0]:
-            var leg_x := side * body_size.x * 0.48
-            var leg_z := front * body_size.z * 0.38
+            var leg_x: float = float(side) * body_size.x * 0.48
+            var leg_z: float = float(front) * body_size.z * 0.38
             ModelKit3D.add_capsule(_model_root, 0.12, 0.72, Vector3(leg_x, 0.46, leg_z), dark_steel, Vector3(0.0, 0.0, side * 0.34), "Leg")
             ModelKit3D.add_box(_model_root, Vector3(0.28, 0.12, 0.42), Vector3(leg_x + side * 0.12, 0.12, leg_z), rust, Vector3.ZERO, "Foot")
 
