@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "protocols": [
+    {
+      "id": "protocol.severance",
+      "display_name": "Severance",
+      "description": "Use the recovered components to overload the root network and permanently cut the town away from the organism. The response is shorter, violent, and focused on the Heartforge.",
+      "requirements": {
+        "heartforge_tier": 5,
+        "technology": "tech.endgame.severance",
+        "completed_operation": "operation.root_cistern_mapping",
+        "components_min": 4
+      },
+      "scrap_cost": 420,
+      "rare_core_cost": 2,
+      "duration_seconds": 210.0,
+      "pressure_multiplier": 2.35,
+      "spawn_interval_seconds": 9.0,
+      "ending": "The signal collapses. Organisms remain in the streets, but the intelligence coordinating them is gone. The machines inherit a wounded, survivable town."
+    },
+    {
+      "id": "protocol.containment",
+      "display_name": "Containment",
+      "description": "Build a resonant lattice that cages the root signal without destroying the ecology. The process is longer and requires more material, but the final pressure rises more gradually.",
+      "requirements": {
+        "heartforge_tier": 5,
+        "technology": "tech.endgame.containment",
+        "completed_operation": "operation.root_cistern_mapping",
+        "components_min": 4,
+        "functioning_outposts_min": 3
+      },
+      "scrap_cost": 580,
+      "rare_core_cost": 3,
+      "duration_seconds": 300.0,
+      "pressure_multiplier": 1.75,
+      "spawn_interval_seconds": 12.0,
+      "ending": "The lattice closes around the signal. The hostile ecology becomes local, animal, and finite. The Heartforge survives as the centre of a machine sanctuary rather than a conquering empire."
+    }
+  ]
+}
