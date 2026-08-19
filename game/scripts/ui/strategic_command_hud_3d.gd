@@ -8,12 +8,16 @@ signal close_requested
 
 const ROLES: Array[StringName] = [&"resource", &"defence", &"scout", &"repair"]
 
+var backdrop: ColorRect
 var panel: PanelContainer
+var scroll: ScrollContainer
 var title_label: Label
 var summary_label: Label
 var selection_label: Label
 var detail_label: Label
 var cost_label: Label
+var previous_button: Button
+var next_button: Button
 var primary_button: Button
 var secondary_button: Button
 var mode: StringName = &"evolution"
@@ -31,45 +35,68 @@ var operation_summary: String = ""
 func _ready() -> void:
     layer = 35
     _build_ui()
+    var viewport := get_viewport()
+    if viewport != null:
+        viewport.size_changed.connect(_on_viewport_resized)
+        call_deferred("apply_safe_layout", Vector2(viewport.get_visible_rect().size))
 
 
 func _build_ui() -> void:
+    backdrop = ColorRect.new()
+    backdrop.name = "StrategicBackdrop"
+    backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    backdrop.color = Color(0.004, 0.012, 0.016, 0.78)
+    backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+    backdrop.visible = false
+    add_child(backdrop)
+
     panel = PanelContainer.new()
     panel.name = "StrategicCommandPanel"
     panel.set_anchors_preset(Control.PRESET_CENTER)
-    panel.position = Vector2(-380, -300)
-    panel.size = Vector2(760, 600)
     panel.visible = false
     panel.mouse_filter = Control.MOUSE_FILTER_STOP
     panel.add_theme_stylebox_override("panel", _panel_style())
     add_child(panel)
 
-    var box := VBoxContainer.new()
-    box.add_theme_constant_override("separation", 10)
-    panel.add_child(box)
+    scroll = ScrollContainer.new()
+    scroll.name = "StrategicScroll"
+    scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+    panel.add_child(scroll)
 
-    title_label = _label("STRATEGIC COMMAND", 28, Color("edf2ef"))
+    var box := VBoxContainer.new()
+    box.name = "StrategicContent"
+    box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    box.add_theme_constant_override("separation", 10)
+    scroll.add_child(box)
+
+    title_label = _label("STRATEGIC COMMAND", 27, Color("edf2ef"))
     box.add_child(title_label)
 
     summary_label = _label("", 15, Color("aebbb8"))
     summary_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-    summary_label.custom_minimum_size = Vector2(0, 60)
+    summary_label.custom_minimum_size = Vector2(0, 64)
     box.add_child(summary_label)
 
     var selection_row := HBoxContainer.new()
+    selection_row.name = "SelectionRow"
     selection_row.add_theme_constant_override("separation", 8)
     box.add_child(selection_row)
-    var previous := _button("◀ PREVIOUS", select_previous)
-    previous.custom_minimum_size = Vector2(130, 44)
-    selection_row.add_child(previous)
+
+    previous_button = _button("◀ PREVIOUS", select_previous)
+    previous_button.custom_minimum_size = Vector2(132, 44)
+    selection_row.add_child(previous_button)
+
     selection_label = _label("", 20, Color("f4dfc6"))
     selection_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     selection_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-    selection_label.custom_minimum_size = Vector2(450, 44)
+    selection_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    selection_label.custom_minimum_size = Vector2(300, 44)
     selection_row.add_child(selection_label)
-    var next := _button("NEXT ▶", select_next)
-    next.custom_minimum_size = Vector2(130, 44)
-    selection_row.add_child(next)
+
+    next_button = _button("NEXT ▶", select_next)
+    next_button.custom_minimum_size = Vector2(132, 44)
+    selection_row.add_child(next_button)
 
     detail_label = _label("", 17, Color("d3ddda"))
     detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -79,7 +106,7 @@ func _build_ui() -> void:
 
     cost_label = _label("", 16, Color("e7ad68"))
     cost_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-    cost_label.custom_minimum_size = Vector2(0, 52)
+    cost_label.custom_minimum_size = Vector2(0, 58)
     box.add_child(cost_label)
 
     primary_button = _button("AUTHORIZE", _activate_primary)
@@ -99,23 +126,44 @@ func _build_ui() -> void:
 func open_evolution() -> void:
     mode = &"evolution"
     selected_index = 0
+    backdrop.visible = true
     panel.visible = true
+    apply_safe_layout(Vector2(get_viewport().get_visible_rect().size))
     _refresh()
 
 
 func open_outposts() -> void:
     mode = &"outposts"
     selected_index = 0
+    backdrop.visible = true
     panel.visible = true
+    apply_safe_layout(Vector2(get_viewport().get_visible_rect().size))
     _refresh()
 
 
 func close() -> void:
+    backdrop.visible = false
     panel.visible = false
 
 
 func is_open() -> bool:
     return panel != null and panel.visible
+
+
+func apply_safe_layout(viewport_size: Vector2) -> void:
+    if panel == null:
+        return
+    var safe_width := minf(780.0, maxf(320.0, viewport_size.x - 32.0))
+    var safe_height := minf(650.0, maxf(340.0, viewport_size.y - 32.0))
+    panel.set_anchors_preset(Control.PRESET_CENTER)
+    panel.offset_left = -safe_width * 0.5
+    panel.offset_right = safe_width * 0.5
+    panel.offset_top = -safe_height * 0.5
+    panel.offset_bottom = safe_height * 0.5
+
+
+func _on_viewport_resized() -> void:
+    apply_safe_layout(Vector2(get_viewport().get_visible_rect().size))
 
 
 func update_progression(
@@ -143,7 +191,7 @@ func update_outposts(next_sites: Array[Dictionary], next_operation_summary: Stri
 
 func select_previous() -> void:
     var count := _current_count()
-    if count <= 0:
+    if count <= 1:
         return
     selected_index = posmod(selected_index - 1, count)
     _refresh()
@@ -151,7 +199,7 @@ func select_previous() -> void:
 
 func select_next() -> void:
     var count := _current_count()
-    if count <= 0:
+    if count <= 1:
         return
     selected_index = posmod(selected_index + 1, count)
     _refresh()
@@ -211,9 +259,18 @@ func _clamp_selection() -> void:
     selected_index = 0 if count <= 0 else clampi(selected_index, 0, count - 1)
 
 
+func _set_navigation_state(count: int) -> void:
+    var show_navigation := count > 1
+    previous_button.visible = show_navigation
+    next_button.visible = show_navigation
+    previous_button.disabled = not show_navigation
+    next_button.disabled = not show_navigation
+
+
 func _refresh() -> void:
     if panel == null:
         return
+    _set_navigation_state(_current_count())
     if mode == &"evolution":
         _refresh_evolution()
     else:
@@ -222,17 +279,19 @@ func _refresh() -> void:
 
 func _refresh_evolution() -> void:
     title_label.text = "EVOLUTION · %s · HEARTFORGE TIER %d" % [phase_name.to_upper(), heartforge_tier]
-    summary_label.text = "Choose one consequential technology. Routine execution remains delegated to the machines. Scrap %d · Cognition Cores %d" % [scrap, rare_cores]
     secondary_button.visible = false
-    primary_button.text = "AUTHORIZE EVOLUTION"
 
     if technologies.is_empty():
-        selection_label.text = "NO CURRENT EVOLUTION AVAILABLE"
-        detail_label.text = "Continue surviving, recovering Scrap, building the first machine group, or completing a physical expedition. New choices appear when their actual world prerequisites are met."
-        cost_label.text = "No purchase is currently available."
+        summary_label.text = "No strategic decision is required at this moment. The machines will continue routine work without opening another management task."
+        selection_label.text = "NO EVOLUTION AVAILABLE"
+        detail_label.text = "Continue the current objective. Recover Scrap, fabricate the required machine class, complete a physical expedition, or meet the next Heartforge prerequisite. The interface will become actionable only when a real choice exists."
+        cost_label.text = "Status: locked by world progress — not by a hidden menu selection."
+        primary_button.text = "NO EVOLUTION AVAILABLE"
         primary_button.disabled = true
         return
 
+    summary_label.text = "Choose one consequential technology. Routine execution remains delegated to the machines. Scrap %d · Cognition Cores %d" % [scrap, rare_cores]
+    primary_button.text = "AUTHORIZE EVOLUTION"
     primary_button.disabled = false
     var technology := technologies[selected_index]
     selection_label.text = str(technology.get("display_name", "Unknown technology")).to_upper()
@@ -251,7 +310,7 @@ func _refresh_evolution() -> void:
 
 func _refresh_outposts() -> void:
     title_label.text = "AUTONOMOUS OUTPOST PROJECTS · HEARTFORGE TIER %d" % heartforge_tier
-    summary_label.text = "Choose a discovered fixed site and strategic role. The machines choose builders, escorts, route, construction, repair, hauling, and rebuilding."
+    summary_label.text = "Choose a discovered fixed site and strategic role. Machines choose builders, escorts, route, construction, repair, hauling, and rebuilding."
     primary_button.text = "AUTHORIZE AUTONOMOUS BUILD"
     secondary_button.text = "AUTHORIZE AUTONOMOUS UPGRADE"
     secondary_button.visible = true
@@ -259,8 +318,10 @@ func _refresh_outposts() -> void:
     if sites.is_empty():
         selection_label.text = "NO DISCOVERED SITES"
         detail_label.text = "Pathfinders must discover viable foundations through physical excursions. Outposts cannot be placed freely and do not claim territory."
-        cost_label.text = operation_summary
+        cost_label.text = "Status: no site decision exists yet. %s" % operation_summary
+        primary_button.text = "NO BUILD SITE AVAILABLE"
         primary_button.disabled = true
+        secondary_button.text = "NO OUTPOST TO UPGRADE"
         secondary_button.disabled = true
         return
 
@@ -317,9 +378,14 @@ func _button(text_value: String, callback: Callable) -> Button:
     var hover := normal.duplicate() as StyleBoxFlat
     hover.bg_color = Color(0.13, 0.15, 0.13, 0.98)
     hover.border_color = Color(0.95, 0.64, 0.34, 0.75)
+    var disabled := normal.duplicate() as StyleBoxFlat
+    disabled.bg_color = Color(0.025, 0.04, 0.045, 0.82)
+    disabled.border_color = Color(0.25, 0.34, 0.35, 0.24)
     button.add_theme_stylebox_override("normal", normal)
     button.add_theme_stylebox_override("hover", hover)
     button.add_theme_stylebox_override("pressed", hover)
+    button.add_theme_stylebox_override("disabled", disabled)
+    button.add_theme_color_override("font_disabled_color", Color(0.46, 0.54, 0.54, 0.86))
     return button
 
 
