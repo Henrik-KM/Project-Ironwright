@@ -1,8 +1,10 @@
 extends SceneTree
 
 const MAIN_SCENE := preload("res://scenes/main_3d.tscn")
+const TEST_VIEWPORT_SIZE := Vector2i(800, 520)
 
 var failures: Array[String] = []
+var test_viewport: SubViewport
 
 
 func _initialize() -> void:
@@ -10,9 +12,17 @@ func _initialize() -> void:
 
 
 func _run_all() -> void:
-    root.size = Vector2i(800, 520)
+    # The headless root Window is fixed at the runner's display default. A
+    # dedicated SubViewport gives the world and every CanvasLayer a genuine
+    # 800×520 layout context rather than comparing two coordinate systems.
+    test_viewport = SubViewport.new()
+    test_viewport.name = "FirstSessionUXViewport"
+    test_viewport.size = TEST_VIEWPORT_SIZE
+    test_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+    root.add_child(test_viewport)
+
     var world := MAIN_SCENE.instantiate() as IronwrightProductionWorld3D
-    root.add_child(world)
+    test_viewport.add_child(world)
     await process_frame
     await physics_frame
     await process_frame
@@ -28,20 +38,15 @@ func _run_all() -> void:
         _finish()
         return
 
-    # show_forge_menu() correctly resolves against the live viewport in the
-    # actual game. Apply the explicit constrained regression size afterwards
-    # so a headless runner's window defaults cannot invalidate this test.
     hud.show_forge_menu()
-    hud.apply_safe_layout(Vector2(800, 520))
     await process_frame
     var forge_rect := hud.forge_panel.get_global_rect()
-    print("First-session forge diagnostic · root=%s viewport=%s rect=%s minimum=%s" % [
-        str(root.size),
-        str(root.get_visible_rect().size),
+    print("First-session forge diagnostic · viewport=%s rect=%s minimum=%s" % [
+        str(test_viewport.get_visible_rect().size),
         str(forge_rect),
         str(hud.forge_panel.get_combined_minimum_size()),
     ])
-    _expect(_rect_fits_viewport(forge_rect, Vector2(800, 520)), "The forge menu must remain fully inside an 800×520 viewport.")
+    _expect(_rect_fits_viewport(forge_rect, Vector2(TEST_VIEWPORT_SIZE)), "The forge menu must remain fully inside an 800×520 viewport.")
     _expect(hud.forge_scroll != null, "The forge menu must scroll instead of clipping tall fabrication content.")
     _expect(hud.forge_content_box != null and hud.forge_content_box.get_child_count() >= 12, "The responsive forge must expose all base and full-game fabrication actions.")
     hud.hide_forge_menu()
