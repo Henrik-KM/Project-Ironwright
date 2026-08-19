@@ -87,24 +87,24 @@ func _build_ui() -> void:
     prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     prompt_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
-    resource_panel = _panel(Vector2(-406, 22), Vector2(384, 190), true)
+    resource_panel = _panel(Vector2(-406, 22), Vector2(384, 224), true)
     resource_panel.name = "ResourcePanel"
     var reserve_heading := _label(resource_panel, "MATERIAL RESERVES", 12, Color("87a4a5"))
     reserve_heading.position = Vector2(18, 10)
     reserve_heading.size = Vector2(344, 20)
     resource_label = _label(resource_panel, "SCRAP  24\nCOGNITION CORES  0", 21, Color("d9e1de"))
-    resource_label.position = Vector2(18, 32)
-    resource_label.size = Vector2(344, 66)
-    resource_label.add_theme_constant_override("line_spacing", 5)
+    resource_label.position = Vector2(18, 34)
+    resource_label.size = Vector2(344, 74)
+    resource_label.add_theme_constant_override("line_spacing", 6)
     focus_label = _label(resource_panel, "FOCUS · DEFEND", 17, Color("78d3d7"))
-    focus_label.position = Vector2(18, 106)
-    focus_label.size = Vector2(344, 28)
+    focus_label.position = Vector2(18, 122)
+    focus_label.size = Vector2(344, 30)
     operation_label = _label(resource_panel, "No remote operation", 14, Color("9aa9a6"))
-    operation_label.position = Vector2(18, 137)
-    operation_label.size = Vector2(344, 42)
+    operation_label.position = Vector2(18, 166)
+    operation_label.size = Vector2(344, 46)
     operation_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
-    notification_panel = _panel(Vector2(-446, 226), Vector2(424, 170), true)
+    notification_panel = _panel(Vector2(-446, 266), Vector2(424, 170), true)
     notification_panel.name = "NotificationToastPanel"
     notification_panel.visible = false
     var notification_heading := _label(notification_panel, "MACHINE REPORTS", 12, Color("87a4a5"))
@@ -174,14 +174,28 @@ func _build_forge_panel() -> PanelContainer:
     panel.name = "ForgeMenu"
     panel.set_anchors_preset(Control.PRESET_CENTER)
     panel.mouse_filter = Control.MOUSE_FILTER_STOP
+    panel.clip_contents = true
     panel.visible = false
     root_control.add_child(panel)
 
+    # A plain Control intentionally isolates the panel's minimum size from the
+    # tall scroll content. Without this shell, ScrollContainer propagates the
+    # forge list's minimum size and Godot expands the modal off-screen.
+    var shell := Control.new()
+    shell.name = "ForgeViewportShell"
+    shell.custom_minimum_size = Vector2.ZERO
+    shell.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    panel.add_child(shell)
+
     forge_scroll = ScrollContainer.new()
     forge_scroll.name = "ForgeScroll"
-    forge_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-    forge_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-    panel.add_child(forge_scroll)
+    forge_scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    forge_scroll.offset_left = 10.0
+    forge_scroll.offset_top = 10.0
+    forge_scroll.offset_right = -10.0
+    forge_scroll.offset_bottom = -10.0
+    forge_scroll.mouse_filter = Control.MOUSE_FILTER_STOP
+    shell.add_child(forge_scroll)
 
     forge_content_box = VBoxContainer.new()
     forge_content_box.name = "ForgeContent"
@@ -228,8 +242,8 @@ func _forge_button(parent: VBoxContainer, text_value: String, callback: Callable
 func apply_safe_layout(viewport_size: Vector2) -> void:
     if forge_panel == null:
         return
-    var safe_width := minf(720.0, maxf(300.0, viewport_size.x - 32.0))
-    var safe_height := minf(700.0, maxf(320.0, viewport_size.y - 32.0))
+    var safe_width := minf(720.0, maxf(300.0, viewport_size.x - 40.0))
+    var safe_height := minf(700.0, maxf(320.0, viewport_size.y - 40.0))
     forge_panel.set_anchors_preset(Control.PRESET_CENTER)
     forge_panel.offset_left = -safe_width * 0.5
     forge_panel.offset_right = safe_width * 0.5
@@ -248,7 +262,7 @@ func apply_safe_layout(viewport_size: Vector2) -> void:
     if viewport_size.x < 980.0:
         objective_panel.size.x = 370.0
         objective_label.size.x = 330.0
-        resource_panel.size.x = 330.0
+        resource_panel.size = Vector2(330.0, 224.0)
         resource_panel.position.x = -352.0
         resource_label.size.x = 294.0
         focus_label.size.x = 294.0
@@ -259,7 +273,7 @@ func apply_safe_layout(viewport_size: Vector2) -> void:
     else:
         objective_panel.size.x = 440.0
         objective_label.size.x = 400.0
-        resource_panel.size.x = 384.0
+        resource_panel.size = Vector2(384.0, 224.0)
         resource_panel.position.x = -406.0
         resource_label.size.x = 344.0
         focus_label.size.x = 344.0
@@ -287,7 +301,24 @@ func _panel(position_value: Vector2, size_value: Vector2, anchor_right: bool = f
     panel.size = size_value
     panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
     root_control.add_child(panel)
+
+    # PanelContainer is a layout container; adding several positioned labels
+    # directly to it makes Godot stretch every child over the same rectangle.
+    # One free-layout content node preserves the intended measured positions.
+    var content := Control.new()
+    content.name = "PanelContent"
+    content.custom_minimum_size = Vector2.ZERO
+    content.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    panel.add_child(content)
     return panel
+
+
+func _content_parent(parent: Control) -> Control:
+    if parent is PanelContainer:
+        var content := parent.get_node_or_null("PanelContent") as Control
+        if content != null:
+            return content
+    return parent
 
 
 func _label(parent: Control, text_value: String, font_size: int, color: Color) -> Label:
@@ -296,7 +327,7 @@ func _label(parent: Control, text_value: String, font_size: int, color: Color) -
     label.add_theme_font_size_override("font_size", font_size)
     label.add_theme_color_override("font_color", color)
     label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    parent.add_child(label)
+    _content_parent(parent).add_child(label)
     return label
 
 
@@ -318,7 +349,7 @@ func _progress(parent: Control, position_value: Vector2, size_value: Vector2, co
     background.bg_color = Color(0.04, 0.06, 0.07, 0.92)
     bar.add_theme_stylebox_override("fill", fill)
     bar.add_theme_stylebox_override("background", background)
-    parent.add_child(bar)
+    _content_parent(parent).add_child(bar)
     return bar
 
 
