@@ -1,94 +1,136 @@
 # Implementation status
 
-## Native Godot 3D — full-game production foundation
+## Native Godot 3D — complete end-to-end systemic alpha
 
-The default Godot scene is `game/scenes/main_3d.tscn`. It now boots `IronwrightProductionWorld3D`, preserving the aesthetic and opening-survival layers while adding the first persistent full-game systems.
+The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGameWorld3D`, which preserves the aesthetic, opening UX, progression, and outpost layers while adding the full start-to-victory systemic run.
 
-## Gameplay implemented
+## Connected game implemented
 
 ### Opening survival
 
-- high-angle 3D camera with player, map and machine-group follow modes;
+- high-angle 3D camera with player, map and physical-group follow modes;
 - weak automatic Mechromancer pistol;
-- strong opening Bulwark companion and explicit dependence on it;
-- timed manual salvage that disables movement/fire and emits ecological noise;
-- timed manual robot fabrication at the Heartforge;
-- Scrapper, Warden, Pathfinder, Engineer and Bulwark runtime models;
-- three robot levels per class, with rare-core gates at level 3;
-- global Defend, Salvage and Expedition focus choices;
-- coordinated physical salvage and North Ruins operations;
-- persistent organic enemies reacting to noise and nest pressure.
+- indispensable Bulwark companion;
+- world-space wreck marker and route guidance;
+- timed manual salvage that disables attack and emits ecological noise;
+- timed manual early robot fabrication;
+- Scrapper, Warden, Pathfinder, Engineer and Bulwark frames;
+- three class-wide levels with rare-core gates;
+- macro Defend, Salvage and Expedition focus;
+- coordinated physical local salvage and North Ruins expedition.
 
-### Full-game progression
+### Heartforge and autonomy progression
 
-- machine-readable progression phases from Embers through Sovereignty;
-- technology registry with prerequisites, Scrap/core costs and effects;
-- persistent unlocked technologies and Heartforge tier;
-- Task Memory, Group Coordination, Heartforge Tier II and Field Engineering path;
-- strategic evolution interface that excludes routine unit control;
-- manual exposed Heartforge evolution at the forge;
-- Engineer fabrication gated behind tier 2.
+- progression phases from Embers through Sovereignty;
+- Heartforge tiers I–V;
+- data-driven technology prerequisites, costs and effects;
+- manual exposed Heartforge evolution;
+- autonomous ordinary machine replacement after Forge Assistance;
+- broad tier-based machine composition without a maintained production queue;
+- optional Rapid March, Deep Operations, Signal Dampening and Distributed Continuity technologies.
 
 ### Autonomous outposts
 
-- fixed physical sites loaded from authored data;
-- sites hidden until discovered through a real expedition;
+- fixed physical sites discovered through real excursions;
 - Resource, Defence, Scout and Repair roles;
 - physical Engineer and escort construction groups;
-- shared pace, formation cohesion and regrouping;
-- construction only after group arrival;
-- physical return after work;
-- autonomous operation and self-repair using Scrap;
-- physical protected hauling from forward storage;
-- organic enemies able to attack outposts;
-- destruction and automatic escorted rebuilding;
-- player-authorized tier upgrades through another physical operation;
-- save state for discovery, role, tier, health, destruction and stored Scrap.
+- shared pace, cohesion and regrouping;
+- automatic operation and self-repair;
+- physical protected resource hauling;
+- organic attacks, destruction and automatic escorted rebuilding;
+- tier upgrades through another real construction journey;
+- persistent discovery, role, tier, health, destruction and stored Scrap.
 
-### Persistence and tests
+### Multi-region world
 
-- original native world save retained;
-- full-game extension save for progression and outposts;
-- repository/browser contract validation;
-- core native gameplay tests;
-- native aesthetic acceptance tests;
-- native full-game tests for progression, site discovery, construction travel, repair, hauling, destruction, rebuild and persistence.
+- seven persistent regions with stable IDs, physical centres, routes and landmarks;
+- Heartforge District, North Ruins, West Grid, Flood Market, Cathedral Quarter, Buried Laboratories and Root Cistern;
+- discovery, ecological pressure and suppression state;
+- region-specific physical salvage after discovery;
+- authored procedural visual identity for industrial, commercial, nest, laboratory and endgame districts.
+
+### Long-range operations
+
+- reusable operation data and director;
+- role-based team selection without individual orders;
+- physical outbound travel, exposed work and physical return;
+- formation-relative roles, shared pace, cohesion and regrouping;
+- escort response to nearby organisms;
+- rewards retained locally until the group returns;
+- West Grid survey;
+- Vital Membrane recovery;
+- Cathedral Brood suppression;
+- Genome Prism excavation;
+- Root Cistern mapping;
+- optional Apex lure.
+
+### Continuous organic ecology
+
+- local noise-driven ecology retained;
+- regional ecological capacity and pressure;
+- disturbance memory and suppression;
+- individual regional spawning rather than wave schedules;
+- causal organic migrations from high-pressure districts;
+- pressure reduction from important kills and successful suppression;
+- Skitterling, Razorhound, Veilstalker, Burrower, Sporecaster, Broodmass and Apex forms;
+- final-protocol escalation tied to deliberate player action.
+
+### Endgame and first victory
+
+- unique Vital Membrane, Choral Gland, Genome Prism and Root Map components;
+- Severance research and ending;
+- Containment research and ending;
+- responsive final-protocol interface;
+- player-triggered irreversible final crisis;
+- sustained Heartforge defence without recurring numbered waves;
+- optional Apex lure pressure reduction;
+- first-victory end state;
+- optional one-use Distributed Continuity recovery.
+
+### Persistence and validation
+
+- original world save;
+- progression/outpost extension save;
+- complete-alpha save for regions, operations, components, machine society, strategic ecology, endgame, continuity and victory;
+- browser and repository contract tests;
+- core native tests;
+- aesthetic tests;
+- first-session UX tests;
+- outpost/progression tests;
+- accelerated native start-to-victory complete-alpha test.
 
 ## Presentation implemented
 
-- readable blue-hour environment, ACES tonemapping and controlled fog;
-- cool exterior light contrasted with a warm inhabited Heartforge sanctuary;
-- wet streets, puddles, practical lights, windows, signage, clutter and vegetation;
-- embers, smoke and atmospheric motes;
-- stronger player, robot and enemy silhouettes;
-- procedural actor movement, recoil, work poses and hit response;
-- muzzle flashes, impacts, sparks, death effects, visible noise pulses and camera response;
-- cinematic HUD skin, vignette, damage flash and sanctuary-integrity status;
-- strategic interface consistent with the established presentation.
+- readable blue-hour environment and controlled fog;
+- warm inhabited Heartforge sanctuary;
+- wet streets, lights, windows, signs, clutter, vegetation, embers and smoke;
+- procedural character, robot and organic animation;
+- combat, interaction, construction and noise feedback;
+- responsive forge, evolution, outpost, operation and endgame interfaces;
+- physical region landmarks and discovery beacons;
+- bounded transient notifications and clear objective hierarchy.
 
-## Browser reference — retained
+## Browser reference retained
 
-The dependency-free browser implementation remains under `web/`. It is useful for deterministic simulation iteration and regression tests, but Godot is the production runtime.
+The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.
 
-## Production roadmap
+## Commercial work still remaining
 
-The end-to-end sequence through persistent regions, reduced-detail remote simulation, deeper autonomy, adaptive Heartforge construction, full ecology, midgame, late machine war, endgame, production assets, alpha, beta and launch is maintained in `docs/FULL_GAME_ROADMAP.md`.
+Version 0.6.0 is game-complete in systemic structure, not commercially final.
 
-## Not yet production-complete
+Remaining production work includes:
 
-Version 0.4.0 starts full-game implementation; it is not the finished 30–100-hour product.
+- authored production models, rigs, animations, VFX, sound and music;
+- substantially more environmental detail and authored encounter spaces;
+- true active/reduced-detail simulation for much larger world and entity scale;
+- deeper navigation and route recovery;
+- more robot families, organic species, technologies, operations and site variants;
+- adaptive autonomous Heartforge geometry;
+- one transactional versioned save with migration and rotating backups;
+- full controller support, input remapping, accessibility and localization;
+- performance profiling and optimization on agreed target hardware;
+- environmental narrative and run variation;
+- 30–100-hour balance and repeated full internal runs;
+- external alpha, beta, packaging, store assets and release QA.
 
-Major remaining work includes:
-
-- a larger multi-region persistent town;
-- active/reduced-detail simulation transitions;
-- deep route planning and navigation;
-- broader ecology and species content;
-- more robot families and technologies;
-- adaptive autonomous Heartforge construction;
-- late-game doctrines and simultaneous operations;
-- complete endgame and first-victory path;
-- release-grade transactional saves and migration;
-- authored production models, rigs, animation and audio;
-- accessibility, localization, controller support and performance at target scale;
-- long-run balance and external playtesting.
+The roadmap now refines and expands an actual complete game loop rather than extrapolating from a disconnected prototype.
