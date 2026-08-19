@@ -28,10 +28,19 @@ func _run_all() -> void:
         _finish()
         return
 
-    hud.apply_safe_layout(Vector2(800, 520))
+    # show_forge_menu() correctly resolves against the live viewport in the
+    # actual game. Apply the explicit constrained regression size afterwards
+    # so a headless runner's window defaults cannot invalidate this test.
     hud.show_forge_menu()
+    hud.apply_safe_layout(Vector2(800, 520))
     await process_frame
     var forge_rect := hud.forge_panel.get_global_rect()
+    print("First-session forge diagnostic · root=%s viewport=%s rect=%s minimum=%s" % [
+        str(root.size),
+        str(root.get_visible_rect().size),
+        str(forge_rect),
+        str(hud.forge_panel.get_combined_minimum_size()),
+    ])
     _expect(_rect_fits_viewport(forge_rect, Vector2(800, 520)), "The forge menu must remain fully inside an 800×520 viewport.")
     _expect(hud.forge_scroll != null, "The forge menu must scroll instead of clipping tall fabrication content.")
     _expect(hud.forge_content_box != null and hud.forge_content_box.get_child_count() >= 12, "The responsive forge must expose all base and full-game fabrication actions.")
