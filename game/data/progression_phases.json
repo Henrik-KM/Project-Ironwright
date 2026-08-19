@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "phases": [
+    {
+      "id": "embers",
+      "display_name": "Embers",
+      "heartforge_tier_min": 1,
+      "summary": "One weak Mechromancer, one indispensable companion, manual salvage and manual fabrication.",
+      "strategic_focus": ["survive", "recover_scrap", "protect_companion"],
+      "work_removed": []
+    },
+    {
+      "id": "foothold",
+      "display_name": "Foothold",
+      "heartforge_tier_min": 1,
+      "summary": "The first robot group can perform routine local salvage and standing defence.",
+      "strategic_focus": ["machine_composition", "local_defence", "north_ruins"],
+      "work_removed": ["routine_local_salvage", "routine_local_return_routing"]
+    },
+    {
+      "id": "network",
+      "display_name": "Network",
+      "heartforge_tier_min": 2,
+      "summary": "Discovered fixed sites support autonomous outposts, escorted construction and physical hauling.",
+      "strategic_focus": ["outpost_site", "outpost_role", "heartforge_reserve"],
+      "work_removed": ["outpost_layout", "builder_selection", "escort_selection", "outpost_repair", "resource_haul_routing", "outpost_rebuilding"]
+    },
+    {
+      "id": "frontier",
+      "display_name": "Frontier",
+      "heartforge_tier_min": 3,
+      "summary": "Remote groups operate through multiple districts with doctrine, recovery and field repair.",
+      "strategic_focus": ["doctrine", "deep_excursions", "acceptable_loss"],
+      "work_removed": ["routine_rescue_composition", "ordinary_replacement", "local_route_selection", "field_repair_assignment"]
+    },
+    {
+      "id": "machine_war",
+      "display_name": "Machine War",
+      "heartforge_tier_min": 4,
+      "summary": "Large autonomous forces conduct simultaneous operations while the Heartforge remains under pressure.",
+      "strategic_focus": ["front_priority", "reserve_policy", "apex_suppression"],
+      "work_removed": ["operation_subtask_assignment", "ordinary_force_rebalancing", "routine_structural_adaptation"]
+    },
+    {
+      "id": "sovereignty",
+      "display_name": "Sovereignty",
+      "heartforge_tier_min": 5,
+      "summary": "The machine society can sustain itself while the player chooses an irreversible endgame approach.",
+      "strategic_focus": ["endgame_approach", "continuity", "final_commitment"],
+      "work_removed": ["routine_operation_scheduling", "ordinary_machine_replacement", "base_upkeep", "outpost_upkeep"]
+    }
+  ]
+}
