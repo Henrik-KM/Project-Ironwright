@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "technologies": [
     {
       "id": "tech.machine.task_memory",
@@ -82,13 +82,37 @@
       "automatic": false
     },
     {
+      "id": "tech.heartforge.tier_3",
+      "display_name": "Heartforge Tier III",
+      "branch": "heartforge",
+      "description": "Integrate the West Grid archive, expand autonomous planning, and permit ordinary machine replacement without a maintained production queue.",
+      "cost": {"scrap": 210, "rare_cores": 1},
+      "requirements": {
+        "heartforge_tier": 2,
+        "completed_operation": "operation.west_grid_survey",
+        "functioning_outposts_min": 1
+      },
+      "effects": ["heartforge_tier_3", "unlock_deep_operations", "unlock_machine_society"],
+      "automatic": false
+    },
+    {
       "id": "tech.machine.forge_assistance",
       "display_name": "Forge Assistance",
       "branch": "machines",
-      "description": "Robots assist fabrication and later permit automatic replacement of ordinary losses.",
+      "description": "Robots assume ordinary replacement of missing work and defence frames. The player retains only broad composition and exceptional choices.",
       "cost": {"scrap": 150, "rare_cores": 1},
       "requirements": {"heartforge_tier": 3},
       "effects": ["reduce_manual_fabrication_time", "unlock_ordinary_replacement"],
+      "automatic": false
+    },
+    {
+      "id": "tech.doctrine.deep_operations",
+      "display_name": "Deep Operation Doctrine",
+      "branch": "doctrine",
+      "description": "Long-range groups maintain field priorities, protected work frames, and autonomous retreat across multiple districts.",
+      "cost": {"scrap": 135, "rare_cores": 1},
+      "requirements": {"heartforge_tier": 3, "completed_operation": "operation.west_grid_survey"},
+      "effects": ["unlock_deep_operation_doctrine"],
       "automatic": false
     },
     {
@@ -102,13 +126,82 @@
       "automatic": false
     },
     {
+      "id": "tech.heartforge.tier_4",
+      "display_name": "Heartforge Tier IV",
+      "branch": "heartforge",
+      "description": "Use recovered biological organs to build adaptive sensors, stronger autonomous reserves, and multi-region operational awareness.",
+      "cost": {"scrap": 360, "rare_cores": 2},
+      "requirements": {
+        "heartforge_tier": 3,
+        "components_min": 2,
+        "functioning_outposts_min": 2,
+        "completed_operation": "operation.cathedral_brood_suppression"
+      },
+      "effects": ["heartforge_tier_4", "unlock_adaptive_defence", "unlock_multi_region_autonomy"],
+      "automatic": false
+    },
+    {
+      "id": "tech.ecology.signal_dampening",
+      "display_name": "Signal Dampening",
+      "branch": "heartforge",
+      "description": "Reduce the attention created by ordinary machine activity while preserving the causal danger of major construction and final protocols.",
+      "cost": {"scrap": 190, "rare_cores": 1},
+      "requirements": {"heartforge_tier": 4, "components_min": 2},
+      "effects": ["signal_dampening"],
+      "automatic": false
+    },
+    {
+      "id": "tech.heartforge.tier_5",
+      "display_name": "Heartforge Tier V",
+      "branch": "heartforge",
+      "description": "Integrate the three biological components and prepare the Heartforge to project a final protocol into the Root Cistern.",
+      "cost": {"scrap": 560, "rare_cores": 3},
+      "requirements": {
+        "heartforge_tier": 4,
+        "components_min": 3,
+        "completed_operation": "operation.buried_lab_excavation",
+        "functioning_outposts_min": 3
+      },
+      "effects": ["heartforge_tier_5", "unlock_final_protocol_research", "unlock_sovereign_autonomy"],
+      "automatic": false
+    },
+    {
       "id": "tech.heartforge.continuity",
       "display_name": "Distributed Continuity",
       "branch": "heartforge",
-      "description": "A late technology permits one catastrophic Heartforge failure to trigger recovery rather than immediate run loss.",
+      "description": "Permit one catastrophic Heartforge failure to trigger a costly recovery instead of immediate run loss.",
       "cost": {"scrap": 420, "rare_cores": 3},
       "requirements": {"heartforge_tier": 5},
       "effects": ["single_continuity_recovery"],
+      "automatic": false
+    },
+    {
+      "id": "tech.endgame.severance",
+      "display_name": "Severance Protocol",
+      "branch": "endgame",
+      "description": "Prepare a violent short-duration overload that cuts the town away from the coordinating root signal.",
+      "cost": {"scrap": 260, "rare_cores": 1},
+      "requirements": {
+        "heartforge_tier": 5,
+        "components_min": 4,
+        "completed_operation": "operation.root_cistern_mapping"
+      },
+      "effects": ["protocol_severance_available"],
+      "automatic": false
+    },
+    {
+      "id": "tech.endgame.containment",
+      "display_name": "Containment Protocol",
+      "branch": "endgame",
+      "description": "Prepare a longer resonant lattice that confines the root intelligence while leaving the local ecology alive.",
+      "cost": {"scrap": 310, "rare_cores": 1},
+      "requirements": {
+        "heartforge_tier": 5,
+        "components_min": 4,
+        "completed_operation": "operation.root_cistern_mapping",
+        "functioning_outposts_min": 3
+      },
+      "effects": ["protocol_containment_available"],
       "automatic": false
     }
   ]
