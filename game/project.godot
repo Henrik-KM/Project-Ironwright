@@ -1,25 +1,32 @@
 ; Engine configuration file.
-; Edit through the Godot editor where practical.
+; Project Ironwright 3D survival-strategy vertical slice.
 config_version=5
 
 [application]
 
 config/name="Project Ironwright"
-config/description="Long-form survival strategy centred on one autonomous Heartforge."
+config/description="A 3D survival-strategy game about one weak Mechromancer and increasingly autonomous machines."
 config/features=PackedStringArray("4.7", "GL Compatibility")
-run/main_scene="res://scenes/bootstrap.tscn"
+run/main_scene="res://scenes/main_3d.tscn"
 config/icon="res://icon.svg"
 
 [display]
 
-window/size/viewport_width=1280
-window/size/viewport_height=720
+window/size/viewport_width=1600
+window/size/viewport_height=900
 window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
+window/handheld/orientation=1
 
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-environment/defaults/default_clear_color=Color(0.015, 0.018, 0.022, 1)
+textures/default_filters/use_nearest_mipmap_filter=false
+environment/defaults/default_clear_color=Color(0.01, 0.012, 0.015, 1)
+
+[physics]
+
+common/physics_ticks_per_second=60
+3d/default_gravity=18.0

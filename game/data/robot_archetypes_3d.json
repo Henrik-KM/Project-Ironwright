@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "ordinary_resource": "scrap",
+  "archetypes": {
+    "companion": {
+      "display_name": "Bulwark Companion",
+      "purpose": "Keep the weak Mechromancer alive and intercept immediate threats.",
+      "build_cost_scrap": 90,
+      "manual_build_seconds": 9.5,
+      "levels": [
+        {"level": 1, "health": 180, "damage": 13, "speed": 5.2},
+        {"level": 2, "health": 245, "damage": 18, "speed": 5.5},
+        {"level": 3, "health": 335, "damage": 25, "speed": 5.8}
+      ]
+    },
+    "salvager": {
+      "display_name": "Scrapper",
+      "purpose": "Physically leave the Heartforge in coordinated groups, dismantle salvage, and return with Scrap.",
+      "build_cost_scrap": 42,
+      "manual_build_seconds": 6.5,
+      "levels": [
+        {"level": 1, "health": 95, "damage": 4, "speed": 4.4, "salvage_rate": 1.0},
+        {"level": 2, "health": 125, "damage": 6, "speed": 4.7, "salvage_rate": 1.35},
+        {"level": 3, "health": 165, "damage": 9, "speed": 5.0, "salvage_rate": 1.8}
+      ]
+    },
+    "guardian": {
+      "display_name": "Warden",
+      "purpose": "Defend the Heartforge and screen vulnerable salvage or expedition groups.",
+      "build_cost_scrap": 68,
+      "manual_build_seconds": 8.0,
+      "levels": [
+        {"level": 1, "health": 155, "damage": 10, "speed": 4.2},
+        {"level": 2, "health": 215, "damage": 15, "speed": 4.4},
+        {"level": 3, "health": 295, "damage": 21, "speed": 4.7}
+      ]
+    },
+    "scout": {
+      "display_name": "Pathfinder",
+      "purpose": "Lead coherent expeditions through the persistent city and mark safer routes.",
+      "build_cost_scrap": 58,
+      "manual_build_seconds": 7.2,
+      "levels": [
+        {"level": 1, "health": 80, "damage": 5, "speed": 6.2},
+        {"level": 2, "health": 105, "damage": 7, "speed": 6.8},
+        {"level": 3, "health": 140, "damage": 10, "speed": 7.5}
+      ]
+    }
+  }
+}
