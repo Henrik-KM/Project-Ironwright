@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "regions": [
+    {
+      "id": "region.heartforge_district",
+      "display_name": "Heartforge District",
+      "kind": "sanctuary",
+      "center": [0.0, 0.0, 0.0],
+      "radius": 42.0,
+      "initially_discovered": true,
+      "base_pressure": 0.35,
+      "spawn_budget": 4,
+      "route_from_heartforge": [[0.0, 0.0, 0.0]],
+      "description": "The original town square and the only player-operated home."
+    },
+    {
+      "id": "region.north_ruins",
+      "display_name": "North Ruins",
+      "kind": "archive",
+      "center": [0.0, 0.0, -66.0],
+      "radius": 34.0,
+      "initially_discovered": false,
+      "base_pressure": 0.72,
+      "spawn_budget": 8,
+      "route_from_heartforge": [[0.0, 0.0, -24.0], [0.0, 0.0, -46.0], [0.0, 0.0, -66.0]],
+      "description": "Collapsed administrative blocks surrounding the archive recovered by the first expedition."
+    },
+    {
+      "id": "region.west_grid",
+      "display_name": "West Grid",
+      "kind": "industrial",
+      "center": [-92.0, 0.0, 18.0],
+      "radius": 42.0,
+      "initially_discovered": false,
+      "base_pressure": 0.86,
+      "spawn_budget": 10,
+      "route_from_heartforge": [[-28.0, 0.0, 0.0], [-54.0, 0.0, 8.0], [-76.0, 0.0, 14.0], [-92.0, 0.0, 18.0]],
+      "description": "A flooded substation and tram-maintenance corridor threaded through hunting territory."
+    },
+    {
+      "id": "region.flood_market",
+      "display_name": "Flood Market",
+      "kind": "commercial",
+      "center": [88.0, 0.0, 62.0],
+      "radius": 46.0,
+      "initially_discovered": false,
+      "base_pressure": 1.05,
+      "spawn_budget": 12,
+      "route_from_heartforge": [[28.0, 0.0, 8.0], [52.0, 0.0, 24.0], [72.0, 0.0, 44.0], [88.0, 0.0, 62.0]],
+      "description": "A drowned market hall where membrane growth traps intact municipal machinery."
+    },
+    {
+      "id": "region.cathedral_quarter",
+      "display_name": "Cathedral Quarter",
+      "kind": "nest",
+      "center": [42.0, 0.0, -124.0],
+      "radius": 54.0,
+      "initially_discovered": false,
+      "base_pressure": 1.32,
+      "spawn_budget": 16,
+      "route_from_heartforge": [[0.0, 0.0, -34.0], [8.0, 0.0, -68.0], [24.0, 0.0, -98.0], [42.0, 0.0, -124.0]],
+      "description": "A vertical district wrapped around a resonant brood colony beneath the old cathedral."
+    },
+    {
+      "id": "region.buried_labs",
+      "display_name": "Buried Laboratories",
+      "kind": "research",
+      "center": [-126.0, 0.0, -108.0],
+      "radius": 52.0,
+      "initially_discovered": false,
+      "base_pressure": 1.48,
+      "spawn_budget": 18,
+      "route_from_heartforge": [[-30.0, 0.0, -22.0], [-58.0, 0.0, -48.0], [-90.0, 0.0, -78.0], [-126.0, 0.0, -108.0]],
+      "description": "Subterranean biological research facilities exposed by collapse and root growth."
+    },
+    {
+      "id": "region.root_cistern",
+      "display_name": "Root Cistern",
+      "kind": "endgame",
+      "center": [128.0, 0.0, -116.0],
+      "radius": 58.0,
+      "initially_discovered": false,
+      "base_pressure": 1.75,
+      "spawn_budget": 22,
+      "route_from_heartforge": [[28.0, 0.0, -24.0], [58.0, 0.0, -52.0], [92.0, 0.0, -84.0], [128.0, 0.0, -116.0]],
+      "description": "A buried pumping complex where the hostile ecology converges into one deep signalling organ."
+    }
+  ]
+}
