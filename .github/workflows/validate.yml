@@ -29,7 +29,7 @@ jobs:
 
   validate-native-godot:
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 20
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -55,3 +55,6 @@ jobs:
 
       - name: Run full-game progression and outpost tests
         run: godot --headless --path game --script res://tests/full_game_test_runner.gd
+
+      - name: Run first-session UX and guidance tests
+        run: godot --headless --path game --script res://tests/first_session_ux_test_runner.gd

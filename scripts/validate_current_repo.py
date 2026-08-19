@@ -2,8 +2,8 @@
 """Run repository validation against the current production Godot entrypoint.
 
 The legacy validator still provides useful browser, content, link, image and
-manifest checks. This wrapper replaces only contracts that were deliberately
-superseded by the authoritative conversation and the native full-game build.
+manifest checks. This wrapper replaces contracts deliberately superseded by
+the authoritative conversation and validates the current native game layers.
 """
 
 from __future__ import annotations
@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 NEW_REQUIRED_PATHS = [
     "docs/FULL_GAME_ROADMAP.md",
+    "docs/FIRST_SESSION_UX.md",
     "game/data/full_game_manifest.json",
     "game/data/progression_phases.json",
     "game/data/technology_tree.json",
@@ -29,12 +30,20 @@ NEW_REQUIRED_PATHS = [
     "game/scripts/world/outpost_site_3d.gd",
     "game/scripts/world/outpost_3d.gd",
     "game/scripts/ui/strategic_command_hud_3d.gd",
+    "game/scripts/presentation/objective_guidance_3d.gd",
     "game/scripts/enemies/organic_enemy_full_game_3d.gd",
     "game/tests/full_game_test_runner.gd",
+    "game/tests/first_session_ux_test_runner.gd",
 ]
 for relative in NEW_REQUIRED_PATHS:
     if relative not in legacy.REQUIRED_PATHS:
         legacy.REQUIRED_PATHS.append(relative)
+
+OBSOLETE_PATCH_PATHS = [
+    ".github/workflows/apply-aesthetic-patch.yml",
+    "scripts/apply_patch_payload.py",
+    "scripts/.aesthetic_patch",
+]
 
 
 def _load(relative: str) -> dict:
@@ -171,7 +180,14 @@ def validate_native_godot_entrypoint() -> None:
 
     production = (ROOT / "game/scripts/main_world_production_3d.gd").read_text(encoding="utf-8")
     full_game = (ROOT / "game/scripts/main_world_full_game_3d.gd").read_text(encoding="utf-8")
-    for token in ["extends IronwrightFullGameWorld3D", "engineer_build_available"]:
+    for token in [
+        "extends IronwrightFullGameWorld3D",
+        "engineer_build_available",
+        "ObjectiveGuidance3D",
+        "_opening_salvage_target",
+        "RECOVER YOUR FIRST SCRAP",
+        "forge_content_box",
+    ]:
         if token not in production:
             raise legacy.ValidationError(f"Production entrypoint is missing {token!r}")
     for token in [
@@ -188,6 +204,39 @@ def validate_native_godot_entrypoint() -> None:
     hud_scene = (ROOT / "game/scenes/ui/ironwright_hud_3d.tscn").read_text(encoding="utf-8")
     if "ironwright_beautiful_hud_3d.gd" not in hud_scene:
         raise legacy.ValidationError("Native HUD must retain the cinematic skin")
+
+    hud = (ROOT / "game/scripts/ui/ironwright_hud_3d.gd").read_text(encoding="utf-8")
+    for token in [
+        "ForgeModalBackdrop",
+        "ForgeScroll",
+        "apply_safe_layout",
+        "MAX_VISIBLE_NOTIFICATIONS",
+        "NotificationToastPanel",
+        "ImmediateInteractionPanel",
+        "COGNITION CORES",
+    ]:
+        if token not in hud:
+            raise legacy.ValidationError(f"First-session HUD is missing {token!r}")
+
+    strategic = (ROOT / "game/scripts/ui/strategic_command_hud_3d.gd").read_text(encoding="utf-8")
+    for token in [
+        "previous_button.visible = show_navigation",
+        "next_button.visible = show_navigation",
+        "NO EVOLUTION AVAILABLE",
+        "No strategic decision is required",
+        "apply_safe_layout",
+    ]:
+        if token not in strategic:
+            raise legacy.ValidationError(f"Strategic empty-state handling is missing {token!r}")
+
+    guidance = (ROOT / "game/scripts/presentation/objective_guidance_3d.gd").read_text(encoding="utf-8")
+    for token in ["ROUTE_DOT_COUNT", "ObjectiveBeacon", "route_summary", "direction_to_target"]:
+        if token not in guidance:
+            raise legacy.ValidationError(f"World-space guidance is missing {token!r}")
+
+    for obsolete in OBSOLETE_PATCH_PATHS:
+        if (ROOT / obsolete).exists():
+            raise legacy.ValidationError(f"Obsolete self-modifying patch infrastructure must be removed: {obsolete}")
 
 
 def validate_current_design_documents() -> None:
@@ -216,6 +265,18 @@ def validate_current_design_documents() -> None:
         raise legacy.ValidationError("Full-game roadmap is unexpectedly short")
     if "Milestone 13 — Release candidate and launch" not in roadmap:
         raise legacy.ValidationError("Full-game roadmap must extend through release")
+
+    first_session = (ROOT / "docs/FIRST_SESSION_UX.md").read_text(encoding="utf-8").lower()
+    for phrase in [
+        "first objective clarity",
+        "information hierarchy",
+        "notification policy",
+        "forge menu",
+        "evolution empty state",
+        "resource readability",
+    ]:
+        if phrase not in first_session:
+            raise legacy.ValidationError(f"FIRST_SESSION_UX.md is missing {phrase!r}")
 
     gdd = (ROOT / "docs/GAME_DESIGN_DOCUMENT.md").read_text(encoding="utf-8")
     if len(gdd.split()) < 5000:

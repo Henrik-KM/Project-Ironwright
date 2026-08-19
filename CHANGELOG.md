@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.5.0 — 2026-08-19
+
+### First-session UX and world guidance
+
+- Rebuilt the forge as a centred responsive modal with viewport-safe margins and scrollable content, preventing fabrication options from clipping at constrained resolutions.
+- Separated the persistent objective, immediate contextual interaction, material reserves and transient machine reports into distinct HUD regions.
+- Replaced the permanent notification paragraph stack with at most three short-lived machine-report toasts.
+- Enlarged and spaced Scrap, Cognition Core, focus and operation text to eliminate visual collisions.
+- Added a physical amber wreck beacon, ground route cues, distance/direction text and an explicit `HOLD E · LOUD` interaction for the first salvage objective.
+- Added continued cyan guidance back to the Heartforge for the first Scrapper and expedition-group fabrication steps.
+- Clarified the empty evolution state by hiding meaningless Previous/Next controls and disabling a clearly labelled `NO EVOLUTION AVAILABLE` action.
+- Added responsive strategic-screen layout and full-screen modal backdrops.
+- Added native first-session UX regression tests at an 800×520 constrained viewport.
+- Removed obsolete self-modifying patch-expansion infrastructure that had been accidentally merged into the repository.
+
 ## 0.4.0 — 2026-08-19
 
 ### Full-game production foundation

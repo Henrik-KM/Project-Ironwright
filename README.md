@@ -30,7 +30,7 @@ Direct launch:
 godot --path game
 ```
 
-The current runtime uses original procedural low-poly geometry, a readable blue-hour ruined-town presentation, warm Heartforge lighting, procedural animation, particles, combat feedback, and a cinematic HUD. These are production-facing placeholders for a later authored Blender/glTF asset pass.
+The current runtime uses original procedural low-poly geometry, a readable blue-hour ruined-town presentation, warm Heartforge lighting, procedural animation, particles, combat feedback, world-space objective cues, and a cinematic HUD. These are production-facing placeholders for a later authored Blender/glTF asset pass.
 
 ## Native controls
 
@@ -54,13 +54,38 @@ The current runtime uses original procedural low-poly geometry, a readable blue-
 | `F5` / `F9` | Save / load |
 | `Esc` | Close interface or pause |
 
+## First-session guidance and HUD
+
+The opening now identifies the concrete next interaction without making the world less threatening.
+
+- An amber beacon marks a real nearby municipal wreck.
+- A pulsing ground route leads from the Mechromancer to that wreck.
+- The objective includes approximate distance and cardinal direction.
+- The marker states `HOLD E · LOUD`.
+- The immediate prompt warns that the pistol will be disabled and organisms will be alerted.
+- After salvaging, cyan guidance leads back to the Heartforge and names the first Scrapper fabrication action.
+- Guidance continues through preparation of the first Warden and Pathfinder, then removes itself once the player understands the physical loop.
+
+HUD information is separated by function:
+
+- objective at top-left;
+- contextual interaction at bottom-centre;
+- large resources, focus and operation status at top-right;
+- transient machine reports below the resource panel;
+- health at bottom-left;
+- macro controls at bottom-right.
+
+The forge and strategic interfaces are responsive centred modals with safe margins and scrollable content. Empty evolution states hide meaningless navigation and say clearly that no decision is currently available.
+
+See [`docs/FIRST_SESSION_UX.md`](docs/FIRST_SESSION_UX.md).
+
 ## Current playable production arc
 
 The repository has moved beyond a self-contained prototype ending. The current connected arc is:
 
-1. Leave the weak Heartforge light while depending on the Bulwark.
-2. Hold `E` at a wreck. Salvage takes time, disables the pistol, emits repeated noise, and attracts organisms.
-3. Return and manually fabricate a Scrapper.
+1. Follow the visible amber route out of the weak Heartforge light while depending on the Bulwark.
+2. Hold `E` at the highlighted wreck. Salvage takes time, disables the pistol, emits repeated noise, and attracts organisms.
+3. Follow cyan guidance home and manually fabricate a Scrapper.
 4. Set a macro salvage focus and let a coordinated group physically recover Scrap.
 5. Manually fabricate a Warden and Pathfinder.
 6. Authorize the North Ruins expedition and follow the group through the persistent town.
@@ -75,13 +100,13 @@ The repository has moved beyond a self-contained prototype ending. The current c
 15. Lose and automatically rebuild an outpost through another escorted Engineer operation.
 16. Upgrade an outpost through a real protected construction journey.
 
-The game continues after this foundation milestone. The North Ruins are now an early progression event rather than a forced ending.
+The game continues after this foundation milestone. The North Ruins are an early progression event rather than a forced ending.
 
 ## Full-game foundation systems
 
 ### Persistent progression
 
-The native game now has stable progression phases, Heartforge tiers, technology prerequisites, effects, and save state. The first implemented path includes Task Memory, Group Coordination, Heartforge Tier II, Field Engineering, and four outpost roles.
+The native game has stable progression phases, Heartforge tiers, technology prerequisites, effects, and save state. The first implemented path includes Task Memory, Group Coordination, Heartforge Tier II, Field Engineering, and four outpost roles.
 
 ### Engineer robot
 
@@ -90,8 +115,6 @@ Engineer frames are manually fabricated after the relevant Heartforge evolution.
 ### Autonomous outposts
 
 Outposts are bounded support installations on fixed sites discovered through excursions. They do not claim territory and are not secondary player bases.
-
-Implemented roles:
 
 - **Recovery Post:** gathers local Scrap into forward storage; a protected hauler group physically returns it.
 - **Proxy Defence Post:** automatically attacks nearby organic threats.
@@ -142,24 +165,23 @@ godot --headless --path game --editor --quit
 godot --headless --path game --script res://tests/test_runner.gd
 godot --headless --path game --script res://tests/aesthetic_test_runner.gd
 godot --headless --path game --script res://tests/full_game_test_runner.gd
+godot --headless --path game --script res://tests/first_session_ux_test_runner.gd
 ```
 
 GitHub Actions runs all validation tracks on pushes and pull requests.
 
-The full-game scenario test covers:
+The first-session regression test verifies:
 
-- authoritative progression data and Heartforge tier gates;
-- Engineer unlock and fabrication data;
-- hidden fixed sites during the opening;
-- discovery through the North Ruins expedition;
-- non-teleporting construction travel;
-- construction only after group arrival;
-- physical builder return;
-- autonomous outpost repair using Scrap;
-- forward resource storage;
-- physical protected hauling with no early credit;
-- organic destruction and automatic escorted rebuilding;
-- progression and outpost save-state equivalence.
+- the full forge fits inside an 800×520 viewport;
+- tall forge content remains scrollable;
+- objective and notification panels never overlap;
+- only three transient machine reports can remain visible;
+- reports expire rather than burying objectives;
+- resource, focus and operation text have explicit spacing;
+- empty evolution screens hide Previous and Next;
+- a real wreck is marked from the opening frame;
+- route lights and the `HOLD E` interaction are visible;
+- guidance returns the player to the Heartforge after first salvage.
 
 ## Product contracts
 
@@ -168,11 +190,12 @@ Read these before changing gameplay:
 1. [`AGENTS.md`](AGENTS.md)
 2. [`docs/DESIGN_LOCKS.md`](docs/DESIGN_LOCKS.md)
 3. [`docs/FULL_GAME_ROADMAP.md`](docs/FULL_GAME_ROADMAP.md)
-4. [`docs/GAME_DESIGN_DOCUMENT.md`](docs/GAME_DESIGN_DOCUMENT.md)
-5. [`docs/AUTONOMY_AND_ANTI_CHORE.md`](docs/AUTONOMY_AND_ANTI_CHORE.md)
-6. [`docs/ENEMY_ECOLOGY.md`](docs/ENEMY_ECOLOGY.md)
-7. [`docs/AESTHETIC_OVERHAUL.md`](docs/AESTHETIC_OVERHAUL.md)
+4. [`docs/FIRST_SESSION_UX.md`](docs/FIRST_SESSION_UX.md)
+5. [`docs/GAME_DESIGN_DOCUMENT.md`](docs/GAME_DESIGN_DOCUMENT.md)
+6. [`docs/AUTONOMY_AND_ANTI_CHORE.md`](docs/AUTONOMY_AND_ANTI_CHORE.md)
+7. [`docs/ENEMY_ECOLOGY.md`](docs/ENEMY_ECOLOGY.md)
+8. [`docs/AESTHETIC_OVERHAUL.md`](docs/AESTHETIC_OVERHAUL.md)
 
 ## Current status
 
-Version `0.4.0` is the **full-game production foundation**. It is no longer only a closed 20–45 minute prototype, but it is not yet the finished commercial game. The next major implementation target is a larger persistent town with active/reduced-detail region simulation, deeper ecology, broader technology content, and longer autonomous operations.
+Version `0.5.0` is the **guided first-session production milestone** on top of the full-game foundation. It fixes critical onboarding and HUD readability defects while adding a reusable world-space guidance system. The next major development target remains the larger persistent town with active/reduced-detail region simulation, deeper ecology, broader technology content, and longer autonomous operations.
