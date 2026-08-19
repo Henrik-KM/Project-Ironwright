@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "product_id": "project_ironwright",
+  "production_status": "full_game_foundation_in_progress",
+  "authoritative_source": "current_project_conversation",
+  "engine": "Godot 4.7.1",
+  "principal_mode": "persistent_survival_sandbox",
+  "run_target_hours": {
+    "minimum": 30,
+    "maximum": 100
+  },
+  "production_milestones": [
+    "canonical_foundation",
+    "first_two_hours",
+    "autonomous_outposts",
+    "persistent_town_and_reduced_detail",
+    "autonomous_machine_society",
+    "adaptive_heartforge",
+    "deep_organic_ecology",
+    "midgame_sandbox",
+    "late_machine_war",
+    "endgame_and_first_victory",
+    "production_art_audio_narrative",
+    "alpha",
+    "beta_playtest",
+    "release_candidate"
+  ],
+  "persistent_domains": [
+    "run_state",
+    "progression",
+    "player",
+    "heartforge",
+    "robots",
+    "organic_ecology",
+    "salvage",
+    "world_sites",
+    "outposts",
+    "remote_operations",
+    "discoveries",
+    "event_history"
+  ],
+  "content_families": {
+    "robot_families_target": [6, 8],
+    "organic_species_target": [12, 18],
+    "heartforge_tiers_target": [4, 6],
+    "outpost_roles": 4,
+    "outpost_tiers": 3,
+    "fixed_world_sites_target": [20, 35],
+    "major_regions_target": [5, 8],
+    "consequential_technologies_target": [35, 60]
+  },
+  "full_game_services": [
+    "progression_director",
+    "autonomy_director",
+    "outpost_director",
+    "ecology_director",
+    "world_region_director",
+    "persistence_service",
+    "failure_analysis_service",
+    "presentation_layer"
+  ],
+  "current_foundation_deliverables": [
+    "progression_phases",
+    "technology_registry",
+    "heartforge_tiers",
+    "engineer_robot",
+    "fixed_discovered_outpost_sites",
+    "physical_escorted_construction",
+    "autonomous_outpost_operation",
+    "automatic_outpost_repair_and_rebuild",
+    "physical_resource_hauling",
+    "full_game_extension_save_state"
+  ]
+}

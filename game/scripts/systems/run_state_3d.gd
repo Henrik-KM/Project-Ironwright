@@ -10,7 +10,13 @@ signal event_logged(message: String)
 const FOCUS_DEFEND: StringName = &"defend"
 const FOCUS_SALVAGE: StringName = &"salvage"
 const FOCUS_EXPEDITION: StringName = &"expedition"
-const ROBOT_ARCHETYPES: Array[StringName] = [&"companion", &"salvager", &"guardian", &"scout"]
+const ROBOT_ARCHETYPES: Array[StringName] = [
+    &"companion",
+    &"salvager",
+    &"guardian",
+    &"scout",
+    &"engineer",
+]
 
 var scrap: int = 24
 var rare_cores: int = 0
@@ -20,6 +26,7 @@ var robot_levels: Dictionary = {
     &"salvager": 1,
     &"guardian": 1,
     &"scout": 1,
+    &"engineer": 1,
 }
 var elapsed_seconds: float = 0.0
 var manual_scrap_recovered: int = 0
@@ -64,9 +71,17 @@ func refund_scrap(amount: int) -> void:
 
 
 func add_rare_core(amount: int = 1) -> void:
-    rare_cores += max(0, amount)
-    expedition_core_recovered = rare_cores > 0
+    rare_cores += maxi(0, amount)
+    expedition_core_recovered = rare_cores > 0 or expedition_core_recovered
     rare_cores_changed.emit(rare_cores)
+
+
+func spend_rare_cores(amount: int) -> bool:
+    if amount < 0 or rare_cores < amount:
+        return false
+    rare_cores -= amount
+    rare_cores_changed.emit(rare_cores)
+    return true
 
 
 func set_focus(next_focus: StringName) -> void:
@@ -87,6 +102,8 @@ func build_cost(archetype: StringName) -> int:
             return 68
         &"scout":
             return 58
+        &"engineer":
+            return 56
         &"companion":
             return 90
         _:
@@ -101,6 +118,8 @@ func build_time(archetype: StringName) -> float:
             return 8.0
         &"scout":
             return 7.2
+        &"engineer":
+            return 7.6
         &"companion":
             return 9.5
         _:
@@ -146,8 +165,8 @@ func level_for(archetype: StringName) -> int:
 
 func log_event(message: String) -> void:
     event_log.push_front(message)
-    if event_log.size() > 32:
-        event_log.resize(32)
+    if event_log.size() > 48:
+        event_log.resize(48)
     event_logged.emit(message)
 
 
@@ -156,7 +175,7 @@ func to_dictionary() -> Dictionary:
     for archetype in ROBOT_ARCHETYPES:
         serialized_levels[String(archetype)] = int(robot_levels.get(archetype, 1))
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "scrap": scrap,
         "rare_cores": rare_cores,
         "focus": String(focus),

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the native aesthetic-overhaul integration without requiring Godot."""
+"""Validate the native aesthetic and full-game presentation integration."""
 from pathlib import Path
 import sys
 
@@ -7,6 +7,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 REQUIRED = [
     "game/scripts/main_world_beautiful_3d.gd",
+    "game/scripts/main_world_full_game_3d.gd",
+    "game/scripts/main_world_production_3d.gd",
     "game/scripts/presentation/aesthetic_director_3d.gd",
     "game/scripts/presentation/sanctuary_decorator_3d.gd",
     "game/scripts/presentation/urban_decorator_3d.gd",
@@ -29,8 +31,18 @@ def main() -> int:
                 fail(f"Missing or unexpectedly empty aesthetic file: {relative}")
 
         main_scene = (ROOT / "game/scenes/main_3d.tscn").read_text(encoding="utf-8")
-        if "main_world_beautiful_3d.gd" not in main_scene:
-            fail("The native entrypoint does not use the aesthetic world.")
+        if "main_world_production_3d.gd" not in main_scene:
+            fail("The native entrypoint does not use the production full-game world.")
+
+        production = (ROOT / "game/scripts/main_world_production_3d.gd").read_text(encoding="utf-8")
+        full_game = (ROOT / "game/scripts/main_world_full_game_3d.gd").read_text(encoding="utf-8")
+        beautiful = (ROOT / "game/scripts/main_world_beautiful_3d.gd").read_text(encoding="utf-8")
+        if "extends IronwrightFullGameWorld3D" not in production:
+            fail("Production world must preserve the full-game layer.")
+        if "extends IronwrightBeautifulWorld3D" not in full_game:
+            fail("Full-game world must preserve the aesthetic layer.")
+        if "AestheticDirector3D" not in beautiful:
+            fail("Beautiful world must still install the aesthetic director.")
 
         hud_scene = (ROOT / "game/scenes/ui/ironwright_hud_3d.tscn").read_text(encoding="utf-8")
         if "ironwright_beautiful_hud_3d.gd" not in hud_scene:

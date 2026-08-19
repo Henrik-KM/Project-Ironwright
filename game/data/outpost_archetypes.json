@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "ordinary_resource": "scrap",
+  "unlock": {
+    "heartforge_tier_minimum": 2,
+    "site_must_be_discovered": true,
+    "construction_is_physical": true,
+    "manual_placement": false
+  },
+  "roles": {
+    "resource": {
+      "display_name": "Recovery Post",
+      "description": "Extracts local Scrap into forward storage. Protected robot groups physically collect and return the cargo.",
+      "level_1_cost_scrap": 76,
+      "automatic_functions": ["local_scrap_recovery", "forward_storage", "self_repair", "automatic_rebuild"]
+    },
+    "defence": {
+      "display_name": "Proxy Defence Post",
+      "description": "Automatically engages nearby organic threats and screens remote routes.",
+      "level_1_cost_scrap": 82,
+      "automatic_functions": ["local_targeting", "proxy_defence", "self_repair", "automatic_rebuild"]
+    },
+    "scout": {
+      "display_name": "Early Warning Post",
+      "description": "Extends observation and reports organic contacts around a discovered site.",
+      "level_1_cost_scrap": 68,
+      "automatic_functions": ["early_warning", "local_observation", "self_repair", "automatic_rebuild"]
+    },
+    "repair": {
+      "display_name": "Field Repair Post",
+      "description": "Repairs friendly robots that pass through its service radius during remote operations.",
+      "level_1_cost_scrap": 88,
+      "automatic_functions": ["field_repair", "route_support", "self_repair", "automatic_rebuild"]
+    }
+  },
+  "shared_rules": {
+    "maximum_tier": 3,
+    "tier_cannot_exceed_heartforge_tier": true,
+    "builder_archetype": "engineer",
+    "escort_archetype": "guardian",
+    "optional_route_leader": "scout",
+    "player_assigns_individual_robots": false,
+    "player_draws_route": false,
+    "destroyed_outpost_rebuilds_automatically": true,
+    "resource_output_teleports_to_heartforge": false,
+    "outpost_count_is_bounded_by_discovered_sites": true
+  }
+}

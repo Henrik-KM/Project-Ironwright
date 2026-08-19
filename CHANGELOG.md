@@ -1,16 +1,33 @@
 # Changelog
 
+## 0.4.0 — 2026-08-19
+
+### Full-game production foundation
+
+- Made the current Project Ironwright conversation explicitly authoritative over stale repository contracts and prompts.
+- Added the end-to-end roadmap from the current playable build through persistent regions, autonomous machine society, adaptive Heartforge construction, deep ecology, midgame, late game, endgame, production assets, alpha, beta and launch.
+- Replaced the obsolete blanket prohibition on outposts with bounded autonomous support posts on fixed discovered sites.
+- Added machine-readable full-game, progression, technology, world-site and outpost registries.
+- Added persistent progression phases, technology prerequisites and Heartforge tiers.
+- Added the Engineer robot family with three class-wide levels.
+- Added a minimal strategic evolution interface that preserves limited high-consequence choices.
+- Added four autonomous outpost roles: resource recovery, proxy defence, early warning and field repair.
+- Added physical escorted construction, upgrades, resource hauling, destruction, self-repair and automatic rebuilding.
+- Extended the native objective flow beyond the North Ruins Cognition Core rather than ending the run.
+- Added full-game extension persistence for progression, site discovery, outpost role, tier, health, destruction and stored Scrap.
+- Added organic outpost targeting and native full-game scenario tests.
+
 ## 0.3.0 — 2026-08-19
 
 ### Native aesthetic overhaul
 
-- Regraded the native 3D world to readable blue hour with ACES tonemapping, cool ambient light, warm horizon fill and substantially lighter controlled fog.
-- Added a cozy inhabited Heartforge camp with practical lights, canopy, tools, workbench, crates, barrels, bench, blanket, kettle, puddles, embers and smoke.
-- Added wet-street reflections, warm windows, damaged shop signs, street furniture, weeds, distant organic nest silhouettes and atmospheric motes.
-- Added new silhouette detail for the Mechromancer, friendly robot roles and organic enemies.
-- Added procedural walk cycles, breathing, coat motion, pistol recoil, channel poses, robot gait, sensor motion, creature locomotion, mandibles, tails and hit reactions.
-- Added muzzle flashes, impacts, organic death bursts, salvage/fabrication sparks, visible noise rings and subtle camera impact.
-- Re-skinned the native HUD with calmer cinematic panels, stronger hierarchy, warm sanctuary status, vignette and damage feedback.
+- Regraded the native 3D world to readable blue hour with ACES tonemapping, cool ambient light, warm horizon fill and lighter controlled fog.
+- Added a cozy inhabited Heartforge camp with practical lights, workshop clutter, wet surfaces, embers and smoke.
+- Added wet-street reflections, warm windows, damaged signs, street furniture, weeds, distant organic silhouettes and atmospheric motes.
+- Added silhouette detail for the Mechromancer, friendly robot roles and organic enemies.
+- Added procedural movement, breathing, recoil, channel poses, robot gait, creature motion and hit reactions.
+- Added muzzle flashes, impacts, organic death bursts, salvage/fabrication sparks, visible noise rings and camera feedback.
+- Re-skinned the native HUD with cinematic panels, stronger hierarchy, sanctuary status, vignette and damage feedback.
 - Added static aesthetic validation and a native Godot acceptance test.
 
 ## 0.2.0 — 2026-08-19
@@ -18,13 +35,12 @@
 - Restored the complete browser launch surface and every segmented source file.
 - Added the playable First Light browser implementation.
 - Changed the Mechromancer to automatically target and shoot the nearest organic enemy within range.
-- Added the persistent urban world, compact Heartforge, organic ecology, physical North Ruins expedition, live command map, explainable robot autonomy, save/load, defeat and victory states.
-- Added deterministic simulation tests and a browser-file smoke test.
-- Added the initial native Godot 3D survival vertical slice with weak pistol, Bulwark dependence, timed salvage, manual fabrication, cohesive robot groups and North Ruins expedition.
+- Added deterministic browser simulation tests and launch smoke validation.
+- Added the first native Godot 3D survival-strategy slice with weak pistol, companion dependence, noisy salvage, manual fabrication, coordinated groups and physical North Ruins travel.
 
 ## 0.1.0 — 2026-08-18
 
 - Rebuilt the product around long-form survival strategy rather than RTS expansion.
-- Locked one constrained Heartforge, one ordinary resource, organic enemies and no scheduled-wave main loop.
+- Locked one run-critical Heartforge, one ordinary resource, organic enemies and no scheduled-wave main loop.
 - Defined autonomy as permanent removal of player work.
 - Added the revised GDD, ecology, sandbox, art, architecture, roadmap and playtest documents.

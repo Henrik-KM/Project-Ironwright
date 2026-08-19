@@ -16,6 +16,7 @@ var attack_range: float = 6.0
 var attack_interval: float = 1.1
 var attack_cooldown: float = 0.0
 var salvage_rate: float = 1.0
+var construction_rate: float = 1.0
 var state_name: StringName = &"idle"
 var decision_reason: String = "Awaiting a macro-level machine focus."
 var goal_position: Vector3
@@ -202,6 +203,8 @@ func _nearest_enemy(maximum_range: float) -> Node3D:
 
 
 func _apply_level_stats() -> void:
+    construction_rate = 1.0
+    salvage_rate = 1.0
     match archetype:
         &"companion":
             maximum_health = [180.0, 245.0, 335.0][level - 1]
@@ -221,6 +224,13 @@ func _apply_level_stats() -> void:
             move_speed = [6.2, 6.8, 7.5][level - 1]
             attack_range = 6.5
             attack_interval = 1.0
+        &"engineer":
+            maximum_health = [110.0, 150.0, 205.0][level - 1]
+            attack_damage = [5.0, 8.0, 12.0][level - 1]
+            move_speed = [4.25, 4.55, 4.9][level - 1]
+            construction_rate = [1.0, 1.35, 1.8][level - 1]
+            attack_range = 5.6
+            attack_interval = 1.18
         _:
             maximum_health = [95.0, 125.0, 165.0][level - 1]
             attack_damage = [4.0, 6.0, 9.0][level - 1]
@@ -253,11 +263,15 @@ func _refresh_visual_identity() -> void:
         glow_color = Color("e5a75c")
     elif archetype == &"scout":
         glow_color = Color("8bd879")
+    elif archetype == &"engineer":
+        glow_color = Color("efb06a")
     var glow := ModelKit3D.material(glow_color.darkened(0.55), 0.3, 0.3, glow_color, 2.8)
 
     var body_size := Vector3(1.25, 0.62, 1.55)
     if archetype == &"guardian" or archetype == &"companion":
         body_size = Vector3(1.5, 0.82, 1.7)
+    elif archetype == &"engineer":
+        body_size = Vector3(1.35, 0.72, 1.58)
     ModelKit3D.add_box(_model_root, body_size, Vector3(0.0, 0.86, 0.0), steel, Vector3.ZERO, "Chassis")
     ModelKit3D.add_box(_model_root, Vector3(body_size.x * 0.8, 0.16, body_size.z * 0.7), Vector3(0.0, 1.25, 0.0), rust, Vector3.ZERO, "ArmorPlate")
     ModelKit3D.add_sphere(_model_root, 0.22, Vector3(0.0, 1.12, -body_size.z * 0.55), glow, Vector3(1.2, 0.8, 0.6), "Sensor")
@@ -266,8 +280,8 @@ func _refresh_visual_identity() -> void:
         for front in [-1.0, 1.0]:
             var leg_x: float = float(side) * body_size.x * 0.48
             var leg_z: float = float(front) * body_size.z * 0.38
-            ModelKit3D.add_capsule(_model_root, 0.12, 0.72, Vector3(leg_x, 0.46, leg_z), dark_steel, Vector3(0.0, 0.0, side * 0.34), "Leg")
-            ModelKit3D.add_box(_model_root, Vector3(0.28, 0.12, 0.42), Vector3(leg_x + side * 0.12, 0.12, leg_z), rust, Vector3.ZERO, "Foot")
+            ModelKit3D.add_capsule(_model_root, 0.12, 0.72, Vector3(leg_x, 0.46, leg_z), dark_steel, Vector3(0.0, 0.0, float(side) * 0.34), "Leg")
+            ModelKit3D.add_box(_model_root, Vector3(0.28, 0.12, 0.42), Vector3(leg_x + float(side) * 0.12, 0.12, leg_z), rust, Vector3.ZERO, "Foot")
 
     match archetype:
         &"salvager":
@@ -279,5 +293,10 @@ func _refresh_visual_identity() -> void:
         &"scout":
             ModelKit3D.add_cylinder(_model_root, 0.06, 1.5, Vector3(0.0, 1.8, 0.15), dark_steel, Vector3.ZERO, "Antenna")
             ModelKit3D.add_sphere(_model_root, 0.11, Vector3(0.0, 2.55, 0.15), glow, Vector3.ONE, "Beacon")
+        &"engineer":
+            ModelKit3D.add_box(_model_root, Vector3(0.92, 0.4, 0.78), Vector3(0.0, 1.5, 0.24), dark_steel, Vector3.ZERO, "MaterialCradle")
+            ModelKit3D.add_cylinder(_model_root, 0.1, 1.15, Vector3(-0.72, 1.05, -0.1), rust, Vector3(0.0, 0.0, 1.05), "WelderArm")
+            ModelKit3D.add_cylinder(_model_root, 0.11, 1.2, Vector3(0.72, 1.05, 0.0), steel, Vector3(0.0, 0.0, -1.0), "AssemblyArm")
+            ModelKit3D.add_sphere(_model_root, 0.08, Vector3(-1.18, 0.74, -0.1), glow, Vector3.ONE, "WelderGlow")
 
     _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.12, -body_size.z * 0.62), glow_color, 0.85, 4.0)
