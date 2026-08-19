@@ -1,100 +1,115 @@
 # Project Ironwright
 
-**Project Ironwright** is a survival-strategy game about defending one vulnerable Heartforge in a hostile, organic, post-apocalyptic city. You begin as a nearly helpless Mechromancer with one crude Scrapling. Machines gradually learn to salvage, repair, defend, cooperate, and conduct expeditions without routine supervision.
-
-This repository contains the playable **First Light** browser prototype, the Godot production scaffold, the complete design documents, and the concept-art library.
+**Project Ironwright** is a single-player survival-strategy game about defending one vulnerable Heartforge in a hostile organic post-apocalyptic city. The player begins as a weak Mechromancer with a poor automatic pistol and one indispensable robot companion. Over a long run, machines learn to salvage, defend, repair and conduct expeditions without routine supervision.
 
 > One home. One hostile city. Machines that learn to carry the burden.
 
-## Play First Light
+## Play the native 3D version
 
-Requirements: Python 3 and a current desktop browser. Node.js 22+ is required only for validation.
+The Godot build is the primary runtime. Install Godot 4.7.1 and place `godot` or `godot4` on your `PATH`.
 
-From the repository root:
+Windows:
+
+```text
+PLAY_3D.bat
+```
+
+Linux or macOS:
+
+```bash
+./PLAY_3D.sh
+```
+
+Direct launch:
+
+```bash
+godot --path game
+```
+
+## Native controls
+
+| Input | Action |
+|---|---|
+| `WASD` | Move the Mechromancer |
+| Automatic | Fire the weak pistol at the nearest organic enemy in range |
+| Hold `E` at wreckage | Perform loud manual salvage; movement and pistol are disabled |
+| `E` at the Heartforge | Open manual fabrication and upgrades |
+| `1` / `2` / `3` | Set machine focus to defend, salvage or expedition |
+| `X` | Authorize the North Ruins expedition when the required robots exist |
+| `F` | Follow the active physical robot group |
+| `M` | Toggle the live command-map camera |
+| Mouse wheel | Adjust tactical camera height |
+| `F5` / `F9` | Save / load |
+| `Esc` | Close an interface or pause |
+
+## Playable native arc
+
+1. Leave the Heartforge light while depending on the Bulwark companion.
+2. Hold `E` at a wreck to salvage Scrap. Salvage takes time, disables the pistol, creates visible and audible disturbance, and attracts organic enemies.
+3. Return to the Heartforge and manually fabricate a Scrapper while the companion protects you.
+4. Set macro salvage focus. A coordinated robot group selects a wreck, physically travels there, salvages and physically returns.
+5. Manually fabricate a Warden and Pathfinder.
+6. Authorize the North Ruins expedition. The machines choose formation and route execution, remain cohesive, recover a Cognition Core and return through the same city.
+
+## Aesthetic direction
+
+The native build now uses a focused **beautiful, intense and cozy** presentation pass:
+
+- readable blue-hour lighting rather than crushed near-black darkness;
+- cool city ambience contrasted with warm Heartforge practical lights;
+- ACES tonemapping, controlled fog, puddles and atmospheric depth;
+- an inhabited Heartforge camp with tools, string lights, workbench clutter, crates, barrels, a bench, blanket, kettle, embers and smoke;
+- lit windows, damaged shop signs, street furniture, weeds and distant organic growth;
+- role-readable silhouette detail for the Mechromancer, robots and enemies;
+- procedural walk cycles, breathing, recoil, channel poses, robot gait and organic locomotion;
+- muzzle flashes, impact sparks, organic death effects, visible noise pulses and subtle camera response;
+- a calmer cinematic HUD with a warm sanctuary status and damage vignette.
+
+All current runtime art is original procedural Godot geometry and material work. It remains a production placeholder for later authored Blender/glTF models, but it is now designed to communicate the intended mood rather than merely prove systems.
+
+See [`docs/AESTHETIC_OVERHAUL.md`](docs/AESTHETIC_OVERHAUL.md) for the implementation contract.
+
+## Full-world simulation
+
+Remote work is not represented by detached timers. Robots, enemies, wrecks and objectives retain physical positions in one simulation.
+
+Expeditions and salvage groups:
+
+- leave the Heartforge as real actors;
+- travel through the same streets as the player;
+- slow or stop when formation cohesion breaks;
+- react locally to organic enemies;
+- can be followed by the camera;
+- return physically before cargo or objectives are credited.
+
+## Browser reference prototype
+
+The earlier deterministic 2D reference remains under `web/`:
 
 ```bash
 npm run serve
 ```
 
-Open `http://localhost:8000`, then select **New World**.
-
-The browser build has no package dependencies and downloads no runtime assets. Its visuals are rendered procedurally on Canvas.
-
-## Controls
-
-| Input | Action |
-|---|---|
-| `WASD` / arrows | Move the Mechromancer |
-| Automatic | Shoot the nearest organic enemy in range |
-| Mouse | Orient when no enemy is in firing range |
-| `Shift` or `Space` | Emergency evade |
-| `E` | Salvage, restore, evolve, recover, or install the contextual objective |
-| `X` | Authorize the North Ruins expedition when ready |
-| `R` | Emergency recall for local machines |
-| `F` | Cycle between player, Heartforge, and physical-expedition cameras |
-| `M` | Open the live command map |
-| `Tab` | Explain current machine decisions |
-| `H` | Show controls |
-| `F5` / `F9` | Save / load |
-| `Esc` | Pause or close an interface |
-
-The Mechromancer now fires automatically. Combat does not require constant clicking or individual target micro-management: the simulation selects the nearest valid enemy within the current firing range, displays that target, and fires according to weapon cooldown.
-
-## Playable arc
-
-1. Leave the weak Heartforge light to recover critical Scrap.
-2. Return and restore the only permanent base.
-3. Watch machines take over routine salvage and local defence.
-4. Choose one consequential evolution: Mechromancer, machines, or Heartforge.
-5. Authorize a North Ruins expedition.
-6. Follow the robots as they physically cross the persistent city, reach the ruins, recover the Cognition Core, and return through the same streets.
-7. Install the core and survive the causally triggered Cathedral Beast attack.
-
-The city remains one simulation. Expeditions are not timers or probability rolls: every robot retains coordinates, health, state, cargo, route progress, and a player-readable reason for its current decision. The command map is a view of those physical entities, not a separate strategic layer.
-
-There are no scheduled waves, hostile robots, power grids, production chains, territorial capture, multiple bases, individual loadouts, or recurring production-queue maintenance.
-
-## Browser implementation
-
-```text
-web/
-├── index.html
-├── styles.css
-├── src/
-│   └── loader.mjs
-├── source/
-│   ├── sim/
-│   │   ├── manifest.json
-│   │   └── part-*.txt
-│   └── game/
-│       ├── manifest.json
-│       └── part-*.txt
-└── tests/
-    ├── browser_smoke.py
-    ├── sim.test.mjs
-    └── source_loader.mjs
-```
-
-The segmented source layout keeps individual Git objects modest while still assembling normal JavaScript modules at launch. All files referenced by both manifests are committed and verified by the smoke test.
+Open `http://localhost:8000` and choose **New World**. It remains useful for fast simulation testing, while the Godot project is the production direction.
 
 ## Validate
 
+Repository, browser and design-contract validation:
+
 ```bash
 npm run validate
+python3 scripts/validate_aesthetic.py
 ```
 
-Validation checks:
+Native Godot validation:
 
-- browser launch files and every segmented source part exist and are non-empty;
-- assembled simulation and presentation modules parse;
-- automatic targeting fires at the nearest in-range enemy and remains silent out of range;
-- enemies are organic and no scheduled-wave state exists;
-- routine gathering becomes autonomous after Heartforge restoration;
-- expedition robots travel physically to the North Ruins and back;
-- save/load preserves remote positions and decision reasons;
-- the Cathedral Beast appears only after the returned core is installed;
-- Scrap remains the only ordinary stockpiled resource;
-- repository design contracts remain valid.
+```bash
+godot --headless --path game --editor --quit
+godot --headless --path game --script res://tests/test_runner.gd
+godot --headless --path game --script res://tests/aesthetic_test_runner.gd
+```
+
+GitHub Actions runs both validation tracks on every push and pull request.
 
 ## Product contract
 
@@ -105,5 +120,7 @@ Read these before expanding the game:
 3. [`docs/GAME_DESIGN_DOCUMENT.md`](docs/GAME_DESIGN_DOCUMENT.md)
 4. [`docs/AUTONOMY_AND_ANTI_CHORE.md`](docs/AUTONOMY_AND_ANTI_CHORE.md)
 5. [`docs/ENEMY_ECOLOGY.md`](docs/ENEMY_ECOLOGY.md)
+6. [`docs/AESTHETIC_OVERHAUL.md`](docs/AESTHETIC_OVERHAUL.md)
+7. [`docs/IMPLEMENTATION_STATUS.md`](docs/IMPLEMENTATION_STATUS.md)
 
-The browser prototype is a playable reference implementation, not the final 30–100-hour production game. The production-engine scaffold remains under `game/` and targets Godot 4.7.1-compatible APIs.
+The current native build is a playable systems-and-presentation vertical slice, not the final 30–100-hour production game.
