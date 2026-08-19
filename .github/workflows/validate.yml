@@ -9,8 +9,9 @@ permissions:
   contents: read
 
 jobs:
-  validate:
+  validate-browser-and-contracts:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -20,5 +21,34 @@ jobs:
         with:
           node-version: 22
 
-      - name: Validate playable slice and design contracts
+      - name: Validate browser reference and design contracts
         run: npm run validate
+
+      - name: Validate aesthetic integration
+        run: python3 scripts/validate_aesthetic.py
+
+  validate-native-godot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Godot 4.7.1
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.1
+          use-dotnet: false
+          include-templates: false
+
+      - name: Report Godot version
+        run: godot --version
+
+      - name: Import and parse native project
+        run: godot --headless --path game --editor --quit
+
+      - name: Run core native gameplay tests
+        run: godot --headless --path game --script res://tests/test_runner.gd
+
+      - name: Run native aesthetic acceptance tests
+        run: godot --headless --path game --script res://tests/aesthetic_test_runner.gd

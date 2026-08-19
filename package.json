@@ -1,6 +1,6 @@
 {
   "name": "project-ironwright",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,6 +8,6 @@
     "check": "node --check web/src/loader.mjs && node --check web/tests/source_loader.mjs && node scripts/check_web_sources.mjs",
     "test": "node --test web/tests/sim.test.mjs",
     "test:browser": "python3 web/tests/browser_smoke.py",
-    "validate": "npm run check && npm test && npm run test:browser && python3 scripts/validate_repo.py"
+    "validate": "npm run check && npm test && npm run test:browser && python3 scripts/validate_current_repo.py"
   }
 }
