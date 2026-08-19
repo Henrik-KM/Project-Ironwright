@@ -1,0 +1,222 @@
+
+function movementInput() {
+  if (commandMapOpen || diagnosticsOpen || helpOpen || evolutionOpen || paused) return { x: 0, y: 0 };
+  const x = (keys.has('KeyD') || keys.has('ArrowRight') ? 1 : 0) - (keys.has('KeyA') || keys.has('ArrowLeft') ? 1 : 0);
+  const y = (keys.has('KeyS') || keys.has('ArrowDown') ? 1 : 0) - (keys.has('KeyW') || keys.has('ArrowUp') ? 1 : 0);
+  return { x, y };
+}
+
+function update(dt) {
+  if (!world || !running) return;
+  updateCamera(dt);
+  if (!paused && !evolutionOpen && !helpOpen && !commandMapOpen && !diagnosticsOpen && world.status === 'playing') {
+    const movement = movementInput();
+    const aim = screenToWorld(mouse.x, mouse.y);
+    stepWorld(world, {
+      moveX: movement.x,
+      moveY: movement.y,
+      aimX: aim.x,
+      aimY: aim.y,
+      dash: dashQueued,
+    }, dt);
+    dashQueued = false;
+    autosaveAccumulator += dt;
+    if (autosaveAccumulator >= AUTOSAVE_SECONDS) {
+      autosaveAccumulator = 0;
+      saveWorld(false);
+    }
+  } else {
+    dashQueued = false;
+  }
+
+  if (world.status !== lastStatus) {
+    lastStatus = world.status;
+    saveWorld(false);
+    finishScreen();
+  }
+}
+
+function drawPanel(x, y, width, height, alpha = 0.88) {
+  context.fillStyle = `rgba(7, 11, 14, ${alpha})`;
+  context.fillRect(x, y, width, height);
+  context.strokeStyle = 'rgba(132, 166, 175, 0.42)';
+  context.lineWidth = 1;
+  context.strokeRect(x + 0.5, y + 0.5, width - 1, height - 1);
+}
+
+function drawText(text, x, y, size = 16, color = '#d8e0df', align = 'left', weight = 500) {
+  context.font = `${weight} ${size}px Inter, system-ui, sans-serif`;
+  context.fillStyle = color;
+  context.textAlign = align;
+  context.textBaseline = 'top';
+  context.fillText(text, x, y);
+}
+
+function wrapText(text, x, y, maxWidth, lineHeight, size = 16, color = '#d8e0df', weight = 500) {
+  context.font = `${weight} ${size}px Inter, system-ui, sans-serif`;
+  context.fillStyle = color;
+  context.textAlign = 'left';
+  context.textBaseline = 'top';
+  const words = text.split(/\s+/);
+  let line = '';
+  let currentY = y;
+  for (const word of words) {
+    const test = line ? `${line} ${word}` : word;
+    if (context.measureText(test).width > maxWidth && line) {
+      context.fillText(line, x, currentY);
+      line = word;
+      currentY += lineHeight;
+    } else {
+      line = test;
+    }
+  }
+  if (line) context.fillText(line, x, currentY);
+  return currentY + lineHeight;
+}
+
+function drawHealthBar(x, y, width, value, maximum, color = '#77d3c8') {
+  context.fillStyle = 'rgba(0, 0, 0, 0.72)';
+  context.fillRect(x, y, width, 7);
+  context.fillStyle = color;
+  context.fillRect(x + 1, y + 1, Math.max(0, (width - 2) * value / Math.max(1, maximum)), 5);
+}
+
+function drawRoads() {
+  context.fillStyle = '#17191b';
+  context.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
+
+  const roads = [
+    { x: 0, y: 650, w: WORLD_WIDTH, h: 170 },
+    { x: 0, y: 1540, w: WORLD_WIDTH, h: 245 },
+    { x: 0, y: 2490, w: WORLD_WIDTH, h: 150 },
+    { x: 610, y: 0, w: 190, h: WORLD_HEIGHT },
+    { x: 1470, y: 0, w: 190, h: WORLD_HEIGHT },
+    { x: 2390, y: 0, w: 205, h: WORLD_HEIGHT },
+    { x: 3690, y: 0, w: 180, h: WORLD_HEIGHT },
+  ];
+  for (const road of roads) {
+    const topLeft = worldToScreen(road.x, road.y);
+    context.fillStyle = '#202326';
+    context.fillRect(topLeft.x, topLeft.y, road.w, road.h);
+    context.strokeStyle = 'rgba(176, 156, 109, 0.12)';
+    context.setLineDash([18, 24]);
+    context.lineWidth = 2;
+    if (road.w > road.h) {
+      context.beginPath();
+      context.moveTo(topLeft.x, topLeft.y + road.h / 2);
+      context.lineTo(topLeft.x + road.w, topLeft.y + road.h / 2);
+      context.stroke();
+    } else {
+      context.beginPath();
+      context.moveTo(topLeft.x + road.w / 2, topLeft.y);
+      context.lineTo(topLeft.x + road.w / 2, topLeft.y + road.h);
+      context.stroke();
+    }
+    context.setLineDash([]);
+  }
+
+  for (const obstacle of world.obstacles) {
+    const point = worldToScreen(obstacle.x, obstacle.y);
+    if (point.x > VIEW_WIDTH + 80 || point.y > VIEW_HEIGHT + 80 || point.x + obstacle.w < -80 || point.y + obstacle.h < -80) continue;
+    context.fillStyle = '#101315';
+    context.fillRect(point.x, point.y, obstacle.w, obstacle.h);
+    context.strokeStyle = '#31363a';
+    context.lineWidth = 3;
+    context.strokeRect(point.x, point.y, obstacle.w, obstacle.h);
+    context.fillStyle = 'rgba(208, 184, 132, 0.07)';
+    const columns = Math.max(2, Math.floor(obstacle.w / 105));
+    const rows = Math.max(2, Math.floor(obstacle.h / 90));
+    for (let row = 0; row < rows; row += 1) {
+      for (let column = 0; column < columns; column += 1) {
+        if ((row + column) % 3 !== 1) continue;
+        context.fillRect(point.x + 30 + column * 100, point.y + 24 + row * 86, 22, 9);
+      }
+    }
+    if (obstacle.w > 500) drawText(obstacle.label.toUpperCase(), point.x + 22, point.y + 18, 12, 'rgba(163, 150, 120, 0.28)', 'left', 700);
+  }
+}
+
+function drawDecorativeProps() {
+  for (const prop of decorativeProps) {
+    const point = worldToScreen(prop.x, prop.y);
+    if (point.x < -60 || point.y < -60 || point.x > VIEW_WIDTH + 60 || point.y > VIEW_HEIGHT + 60) continue;
+    context.save();
+    context.translate(point.x, point.y);
+    context.rotate(prop.rotation);
+    context.scale(prop.scale, prop.scale);
+    if (prop.kind === 'car') {
+      context.fillStyle = '#25292b';
+      context.fillRect(-20, -9, 40, 18);
+      context.fillStyle = '#0d0f10';
+      context.fillRect(-13, -7, 17, 14);
+      context.strokeStyle = '#44484a';
+      context.strokeRect(-20, -9, 40, 18);
+    } else if (prop.kind === 'lamp') {
+      context.strokeStyle = '#3e4244';
+      context.lineWidth = 3;
+      context.beginPath();
+      context.moveTo(0, 14);
+      context.lineTo(0, -18);
+      context.stroke();
+      context.fillStyle = '#b37b3b';
+      context.fillRect(-3, -21, 6, 6);
+    } else {
+      context.fillStyle = '#2b2c2c';
+      context.beginPath();
+      context.moveTo(-13, 8);
+      context.lineTo(-7, -8);
+      context.lineTo(5, -12);
+      context.lineTo(14, 7);
+      context.closePath();
+      context.fill();
+    }
+    context.restore();
+  }
+}
+
+function drawRoute() {
+  if (!world.progress.expeditionAuthorized) return;
+  context.save();
+  context.strokeStyle = world.progress.expeditionStage === 'returning' ? 'rgba(102, 213, 188, 0.68)' : 'rgba(100, 192, 227, 0.62)';
+  context.lineWidth = 3;
+  context.setLineDash([8, 10]);
+  context.beginPath();
+  world.route.forEach((point, index) => {
+    const screen = worldToScreen(point.x, point.y);
+    if (index === 0) context.moveTo(screen.x, screen.y);
+    else context.lineTo(screen.x, screen.y);
+  });
+  context.stroke();
+  context.setLineDash([]);
+  context.restore();
+}
+
+function drawHeartforge() {
+  const point = worldToScreen(world.heartforge.x, world.heartforge.y);
+  context.save();
+  context.translate(point.x, point.y);
+  const pulse = 0.92 + Math.sin(world.time * 2.1) * 0.04;
+  context.strokeStyle = world.heartforge.restored ? 'rgba(126, 219, 234, 0.36)' : 'rgba(226, 143, 67, 0.35)';
+  context.lineWidth = 3;
+  context.beginPath();
+  context.arc(0, 0, world.heartforge.lightRadius * pulse, 0, Math.PI * 2);
+  context.stroke();
+  context.fillStyle = '#161b1d';
+  context.beginPath();
+  context.arc(0, 0, 54, 0, Math.PI * 2);
+  context.fill();
+  context.strokeStyle = '#7d725e';
+  context.lineWidth = 5;
+  context.stroke();
+  context.fillStyle = world.heartforge.restored ? '#87e9f3' : '#f39b4c';
+  context.shadowColor = context.fillStyle;
+  context.shadowBlur = 22;
+  context.beginPath();
+  context.arc(0, 0, 23, 0, Math.PI * 2);
+  context.fill();
+  context.shadowBlur = 0;
+  for (let index = 0; index < 6; index += 1) {
+    const angle = index * Math.PI / 3 + world.time * 0.12;
+    context.fillStyle = '#33393c';
+    context.fillRect(Math.cos(angle) * 68 - 7, Math.sin(angle) * 68 - 7, 14, 14);
+  }

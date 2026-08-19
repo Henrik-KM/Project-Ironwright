@@ -1,0 +1,221 @@
+
+function releaseRobotReservation(world, robot) {
+  if (!robot.reservedSalvageId) return;
+  const salvage = world.salvage.find((item) => item.id === robot.reservedSalvageId);
+  if (salvage?.reservedBy === robot.id) salvage.reservedBy = null;
+  robot.reservedSalvageId = null;
+}
+
+function selectRobotSalvage(world, robot) {
+  let best = null;
+  let bestScore = Infinity;
+  for (const salvage of world.salvage) {
+    if (salvage.amount <= 0 || salvage.reservedBy) continue;
+    if (distance(salvage, world.heartforge) > 1600) continue;
+    const score = distance(robot, salvage) + distance(salvage, world.heartforge) * 0.18;
+    if (score < bestScore) {
+      best = salvage;
+      bestScore = score;
+    }
+  }
+  if (best) {
+    best.reservedBy = robot.id;
+    robot.reservedSalvageId = best.id;
+  }
+  return best;
+}
+
+function formationOffset(slot) {
+  const offsets = [
+    { x: 0, y: 0 },
+    { x: -32, y: 42 },
+    { x: 34, y: 46 },
+    { x: -58, y: 80 },
+    { x: 58, y: 82 },
+  ];
+  return offsets[slot % offsets.length];
+}
+
+function updateExpeditionRobot(world, robot, dt) {
+  const progress = world.progress;
+  const route = progress.expeditionStage === 'returning' ? [...world.route].reverse() : world.route;
+  const offset = formationOffset(robot.expeditionSlot);
+  const routePoint = route[Math.min(robot.routeIndex, route.length - 1)];
+  const target = { x: routePoint.x + offset.x, y: routePoint.y + offset.y };
+  const remaining = moveToward(
+    world,
+    robot,
+    target,
+    robot.speed + world.tuning.robotSpeedBonus,
+    dt,
+    false,
+    robot.radius,
+  );
+  robot.state = progress.expeditionStage === 'returning' ? 'returning' : 'expedition';
+  robot.reason = progress.expeditionStage === 'returning'
+    ? 'Returning physically to the Heartforge with the recovered Cognition Core.'
+    : 'Traversing the persistent city toward the North Ruins.';
+
+  if (remaining < 34 && robot.routeIndex < route.length - 1) robot.routeIndex += 1;
+  if (remaining < 50 && robot.routeIndex >= route.length - 1) {
+    if (progress.expeditionStage === 'outbound') {
+      robot.state = 'holding_ruins';
+      robot.reason = 'Securing the North Ruins while the archive is opened.';
+    } else if (progress.expeditionStage === 'returning') {
+      robot.state = 'arrived_home';
+      robot.reason = 'The expedition has physically reached the Heartforge.';
+    }
+  }
+}
+
+function updateRobot(world, robot, dt) {
+  if (robot.disabled || robot.hp <= 0) return;
+  robot.fireCooldown = Math.max(0, robot.fireCooldown - dt);
+
+  const threat = chooseLocalRobotThreat(world, robot);
+  if (threat) {
+    robot.targetId = threat.id;
+    if (distance(robot, threat) <= robot.range && robot.fireCooldown <= 0) {
+      spawnProjectile(
+        world,
+        'robot',
+        robot,
+        threat,
+        robot.damage + world.tuning.robotDamageBonus,
+        760,
+        '#ffc267',
+      );
+      robot.fireCooldown = robot.fireInterval;
+    }
+  } else {
+    robot.targetId = null;
+  }
+
+  if (robot.expedition) {
+    updateExpeditionRobot(world, robot, dt);
+    return;
+  }
+
+  if (robot.hp < robot.maxHp * 0.42) {
+    releaseRobotReservation(world, robot);
+    robot.state = 'returning_for_repair';
+    robot.reason = 'Withdrawing to the Heartforge because continued operation risks permanent loss.';
+    const remaining = moveToward(world, robot, world.heartforge, robot.speed, dt, true, robot.radius);
+    if (remaining < world.heartforge.lightRadius * 0.8) robot.hp = Math.min(robot.maxHp, robot.hp + 13 * dt);
+    return;
+  }
+
+  if (!world.heartforge.restored || world.progress.autonomyLevel === 0) {
+    const followTarget = {
+      x: world.player.x - Math.cos(world.player.heading) * 56,
+      y: world.player.y - Math.sin(world.player.heading) * 56,
+    };
+    if (distance(robot, followTarget) > 76) moveToward(world, robot, followTarget, robot.speed, dt, true, robot.radius);
+    robot.state = threat ? 'protecting_creator' : 'following';
+    robot.reason = threat
+      ? 'Attacking the nearest organic threat to the Mechromancer.'
+      : 'Dependent behaviour: staying close to the Mechromancer.';
+    return;
+  }
+
+  const baseThreat = nearestEnemy(world, world.heartforge, 620);
+  if (baseThreat && (robot.role === 'sentry' || distance(robot, world.heartforge) < 720)) {
+    releaseRobotReservation(world, robot);
+    const standOff = Math.max(150, robot.range * 0.72);
+    if (distance(robot, baseThreat) > standOff) moveToward(world, robot, baseThreat, robot.speed, dt, true, robot.radius);
+    robot.state = 'defending';
+    robot.reason = 'Responding autonomously because an organic threat entered the Heartforge defence envelope.';
+    return;
+  }
+
+  if (robot.role === 'sentry') {
+    const angle = (Number(robot.id.split('-').pop()) * 1.9 + world.time * 0.05) % TAU;
+    const post = {
+      x: world.heartforge.x + Math.cos(angle) * 245,
+      y: world.heartforge.y + Math.sin(angle) * 245,
+    };
+    if (distance(robot, post) > 45) moveToward(world, robot, post, robot.speed * 0.75, dt, true, robot.radius);
+    robot.state = 'perimeter_guard';
+    robot.reason = 'Maintaining the compact perimeter without waiting for a placement order.';
+    return;
+  }
+
+  if (robot.cargo > 0) {
+    const remaining = moveToward(world, robot, world.heartforge, robot.speed, dt, true, robot.radius);
+    robot.state = 'delivering_scrap';
+    robot.reason = 'Returning useful Scrap to the only permanent base.';
+    if (remaining < 80) {
+      world.scrap += robot.cargo;
+      pushEvent(world, `${robot.kind} delivered ${robot.cargo} Scrap.`, 'success');
+      robot.cargo = 0;
+      releaseRobotReservation(world, robot);
+    }
+    return;
+  }
+
+  let salvage = robot.reservedSalvageId
+    ? world.salvage.find((item) => item.id === robot.reservedSalvageId && item.amount > 0)
+    : null;
+  if (!salvage) {
+    releaseRobotReservation(world, robot);
+    salvage = selectRobotSalvage(world, robot);
+  }
+
+  if (salvage) {
+    const remaining = moveToward(world, robot, salvage, robot.speed, dt, true, robot.radius);
+    robot.state = 'autonomous_salvage';
+    robot.reason = 'Collecting nearby Scrap because routine gathering has been delegated permanently.';
+    if (remaining < 42) {
+      const amount = Math.min(robot.cargoCapacity, salvage.amount);
+      salvage.amount -= amount;
+      robot.cargo += Math.round(amount * world.tuning.salvageEfficiency);
+      salvage.reservedBy = null;
+      robot.reservedSalvageId = null;
+    }
+    return;
+  }
+
+  const idleAngle = (Number(robot.id.split('-').pop()) * 2.2) % TAU;
+  const idlePoint = {
+    x: world.heartforge.x + Math.cos(idleAngle) * 150,
+    y: world.heartforge.y + Math.sin(idleAngle) * 150,
+  };
+  if (distance(robot, idlePoint) > 40) moveToward(world, robot, idlePoint, robot.speed * 0.6, dt, true, robot.radius);
+  robot.state = 'available';
+  robot.reason = 'No unresolved routine need; remaining ready near the Heartforge.';
+}
+
+function chooseEnemyTarget(world, enemy) {
+  if (enemy.type === 'cathedral_beast') {
+    if (distance(enemy, world.player) < 320) return { kind: 'player', entity: world.player };
+    return { kind: 'heartforge', entity: world.heartforge };
+  }
+
+  let best = null;
+  let bestDistance = Infinity;
+  const candidates = [
+    { kind: 'player', entity: world.player },
+    { kind: 'heartforge', entity: world.heartforge },
+    ...world.robots.filter((robot) => !robot.disabled && robot.hp > 0).map((entity) => ({ kind: 'robot', entity })),
+  ];
+  for (const candidate of candidates) {
+    const currentDistance = distance(enemy, candidate.entity);
+    const attraction = candidate.kind === 'heartforge' && world.heartforge.restored ? 0.78 : 1;
+    if (currentDistance * attraction < bestDistance) {
+      best = candidate;
+      bestDistance = currentDistance * attraction;
+    }
+  }
+  return best;
+}
+
+function damageTarget(world, targetKind, target, amount) {
+  if (targetKind === 'player' && world.player.invulnerable > 0) return;
+  target.hp -= amount;
+  if (targetKind === 'robot' && target.hp <= 0 && !target.disabled) {
+    target.disabled = true;
+    target.hp = 0;
+    releaseRobotReservation(world, target);
+    pushEvent(world, `${target.kind} disabled at ${Math.round(target.x)}, ${Math.round(target.y)}.`, 'warning');
+    if (target.id === world.progress.expeditionCoreCarrierId && world.progress.expeditionStage === 'returning') {
+      world.droppedItems.push({
