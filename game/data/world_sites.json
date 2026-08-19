@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "sites": [
+    {
+      "id": "site.north_transit_yard",
+      "display_name": "North Transit Yard",
+      "position": [-28.0, 0.0, -51.0],
+      "discovered_by": "expedition.north_ruins",
+      "recommended_outpost_role": "resource",
+      "description": "A collapsed municipal transit depot with recoverable machinery and a reinforced service foundation."
+    },
+    {
+      "id": "site.hospital_service_court",
+      "display_name": "Hospital Service Court",
+      "position": [30.0, 0.0, -31.0],
+      "discovered_by": "expedition.north_ruins",
+      "recommended_outpost_role": "repair",
+      "description": "A sheltered loading court whose surviving gantries can support field repair equipment."
+    },
+    {
+      "id": "site.south_municipal_watch",
+      "display_name": "South Municipal Watch",
+      "position": [43.0, 0.0, 30.0],
+      "discovered_by": "expedition.north_ruins",
+      "recommended_outpost_role": "scout",
+      "description": "A raised municipal observation platform with clear sight lines over southern streets."
+    },
+    {
+      "id": "site.west_substation",
+      "display_name": "West Substation",
+      "position": [-51.0, 0.0, 18.0],
+      "discovered_by": "expedition.west_grid_survey",
+      "recommended_outpost_role": "defence",
+      "description": "A concrete electrical compound overlooking a route frequently used by hunting packs."
+    }
+  ]
+}
