@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.6.0 — 2026-08-19
+
+### Complete end-to-end systemic alpha
+
+- Connected the opening, autonomous outposts, multi-region midgame, machine society, late objectives, final protocols and first victory into one playable run.
+- Added seven persistent physical regions: Heartforge District, North Ruins, West Grid, Flood Market, Cathedral Quarter, Buried Laboratories and Root Cistern.
+- Added authored procedural landmarks, discovery state, physical routes, regional pressure and suppression.
+- Added a reusable physical long-range operation director with role requirements, shared pace, cohesion, escort screening, exposed work, causal noise, local threats, physical return and delayed reward delivery.
+- Added West Grid survey, Vital Membrane recovery, Cathedral Brood suppression, Genome Prism excavation, Root Cistern mapping and optional Apex lure operations.
+- Added four persistent unique biological components without introducing another recurring currency.
+- Completed the Heartforge progression path through tiers III, IV and V.
+- Added autonomous ordinary machine replacement after Forge Assistance, without a player-maintained production queue.
+- Added continuous regional ecology, ecological capacity, disturbance memory, suppression, organic migration and additional Burrower, Sporecaster, Broodmass and Apex species.
+- Added responsive long-range operations and final-protocol interfaces.
+- Added player-triggered Severance and Containment endings.
+- Added a causal sustained final response rather than a recurring numbered-wave loop.
+- Added optional Distributed Continuity for one costly late Heartforge recovery.
+- Added complete-alpha save state for regions, operations, components, machine society, strategic ecology, final protocols, continuity and first victory.
+- Added a deterministic native start-to-victory systemic test.
+
 ## 0.5.0 — 2026-08-19
 
 ### First-session UX and world guidance
