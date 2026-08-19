@@ -1,36 +1,52 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "product_id": "project_ironwright",
+  "authority": "current_authoritative_project_chat",
   "canonical_mode": "persistent_survival_sandbox",
   "perspective": "direct_isometric_character_control",
   "hard_limits": {
-    "permanent_player_bases_max": 1,
+    "player_operated_primary_bases_max": 1,
     "ordinary_stockpiled_resources_max": 1,
     "ordinary_resource_id": "scrap",
     "principal_run_duration_hours_min": 30,
-    "principal_run_duration_hours_max": 100
+    "principal_run_duration_hours_max": 100,
+    "outpost_sites_are_bounded": true
   },
   "required": {
     "base_defence_is_primary": true,
+    "heartforge_is_only_player_operated_home": true,
     "base_is_constrained": true,
-    "base_evolves_automatically": true,
+    "base_evolves_by_tier_and_machine_construction": true,
     "robot_autonomy_removes_work": true,
     "enemy_origin": "organic",
     "continuous_ecological_pressure": true,
     "rare_major_attacks_are_causal": true,
     "early_game_is_small_dark_and_frightening": true,
-    "excursions_return_to_heartforge": true,
-    "repeated_failure_before_first_victory_is_expected": true,
-    "save_is_persistent_across_many_sessions": true,
+    "opening_is_visually_readable": true,
+    "mechromancer_begins_with_weak_automatic_pistol": true,
+    "early_survival_depends_on_companion": true,
+    "manual_salvage_is_loud_timed_and_disables_attack": true,
+    "early_robot_fabrication_is_manual_timed_and_disables_attack": true,
     "full_world_exists_at_all_times": true,
     "remote_entities_keep_physical_positions": true,
     "expeditions_physically_traverse_world": true,
-    "remote_activity_is_observable": true
+    "remote_groups_use_cohesion_and_regrouping": true,
+    "remote_activity_is_observable": true,
+    "autonomous_outposts_on_discovered_fixed_sites": true,
+    "outpost_builders_and_escorts_physically_travel": true,
+    "outposts_self_repair": true,
+    "destroyed_outposts_rebuild_automatically": true,
+    "resource_output_is_physically_hauled": true,
+    "repeated_failure_before_first_victory_is_expected": true,
+    "save_is_persistent_across_many_sessions": true
   },
   "forbidden": {
     "territory_claiming": true,
-    "permanent_outposts": true,
-    "multiple_base_network": true,
+    "freeform_outpost_placement": true,
+    "multiple_player_operated_base_network": true,
+    "per_outpost_worker_assignment": true,
+    "per_outpost_production_queues": true,
+    "manual_supply_line_management": true,
     "production_chain_economy": true,
     "player_managed_power_grid": true,
     "scheduled_recurring_wave_loop": true,
@@ -44,6 +60,8 @@
   "decision_paths": [
     "mechromancer",
     "machines",
-    "heartforge"
+    "heartforge",
+    "autonomous_outposts",
+    "doctrine_and_endgame"
   ]
 }
