@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "operations": [
+    {
+      "id": "operation.west_grid_survey",
+      "display_name": "Survey the West Grid",
+      "category": "survey",
+      "region_id": "region.west_grid",
+      "description": "Send a Pathfinder-led group through the flooded industrial corridor, map stable streets, and recover the surviving grid archive.",
+      "requirements": {
+        "heartforge_tier": 2,
+        "technology": "tech.machine.group_coordination",
+        "functioning_outposts_min": 1
+      },
+      "team_roles": ["scout", "guardian", "salvager"],
+      "scrap_cost": 45,
+      "work_seconds": 14.0,
+      "noise_radius": 35.0,
+      "threat_level": 1.0,
+      "rewards": {
+        "discover_region": "region.west_grid",
+        "rare_cores": 1,
+        "discover_sites": ["site.west_substation"]
+      }
+    },
+    {
+      "id": "operation.flood_market_recovery",
+      "display_name": "Recover the Vital Membrane",
+      "category": "recovery",
+      "region_id": "region.flood_market",
+      "description": "Cross the flooded market, cut a stabilising membrane from a living municipal generator, and carry it home intact.",
+      "requirements": {
+        "heartforge_tier": 3,
+        "completed_operation": "operation.west_grid_survey",
+        "functioning_outposts_min": 1
+      },
+      "team_roles": ["scout", "guardian", "salvager", "engineer"],
+      "scrap_cost": 85,
+      "work_seconds": 18.0,
+      "noise_radius": 42.0,
+      "threat_level": 1.3,
+      "rewards": {
+        "discover_region": "region.flood_market",
+        "rare_cores": 1,
+        "component": "component.vital_membrane"
+      }
+    },
+    {
+      "id": "operation.cathedral_brood_suppression",
+      "display_name": "Silence the Cathedral Brood",
+      "category": "suppression",
+      "region_id": "region.cathedral_quarter",
+      "description": "A heavily escorted formation must reach the brood chamber, hold position under sustained attack, and remove its resonant gland.",
+      "requirements": {
+        "heartforge_tier": 3,
+        "completed_operation": "operation.flood_market_recovery",
+        "functioning_outposts_min": 2
+      },
+      "team_roles": ["scout", "guardian", "guardian", "engineer"],
+      "scrap_cost": 120,
+      "work_seconds": 24.0,
+      "noise_radius": 50.0,
+      "threat_level": 1.7,
+      "rewards": {
+        "discover_region": "region.cathedral_quarter",
+        "rare_cores": 2,
+        "component": "component.choral_gland",
+        "suppress_region": 0.48
+      }
+    },
+    {
+      "id": "operation.buried_lab_excavation",
+      "display_name": "Excavate the Genome Prism",
+      "category": "excavation",
+      "region_id": "region.buried_labs",
+      "description": "Engineers breach the buried laboratories while escorts protect the excavation and Scrappers carry the prism back to the surface.",
+      "requirements": {
+        "heartforge_tier": 4,
+        "completed_operation": "operation.cathedral_brood_suppression",
+        "components_min": 2
+      },
+      "team_roles": ["scout", "guardian", "guardian", "engineer", "salvager"],
+      "scrap_cost": 175,
+      "work_seconds": 28.0,
+      "noise_radius": 56.0,
+      "threat_level": 2.1,
+      "rewards": {
+        "discover_region": "region.buried_labs",
+        "rare_cores": 2,
+        "component": "component.genome_prism"
+      }
+    },
+    {
+      "id": "operation.root_cistern_mapping",
+      "display_name": "Map the Root Cistern",
+      "category": "survey",
+      "region_id": "region.root_cistern",
+      "description": "A late autonomous expedition traces the ecological signalling network and identifies where a final protocol can reach it.",
+      "requirements": {
+        "heartforge_tier": 4,
+        "completed_operation": "operation.buried_lab_excavation",
+        "components_min": 3,
+        "functioning_outposts_min": 3
+      },
+      "team_roles": ["scout", "guardian", "guardian", "engineer", "salvager"],
+      "scrap_cost": 210,
+      "work_seconds": 32.0,
+      "noise_radius": 62.0,
+      "threat_level": 2.45,
+      "rewards": {
+        "discover_region": "region.root_cistern",
+        "rare_cores": 2,
+        "component": "component.root_map"
+      }
+    },
+    {
+      "id": "operation.apex_lure",
+      "display_name": "Lure the Cistern Apex",
+      "category": "optional_suppression",
+      "region_id": "region.root_cistern",
+      "description": "Draw the largest predator away from the final route. Success reduces the ecological response during the chosen endgame protocol.",
+      "requirements": {
+        "heartforge_tier": 5,
+        "completed_operation": "operation.root_cistern_mapping",
+        "technology": "tech.doctrine.deep_operations"
+      },
+      "team_roles": ["scout", "guardian", "guardian", "guardian"],
+      "scrap_cost": 240,
+      "work_seconds": 36.0,
+      "noise_radius": 72.0,
+      "threat_level": 2.8,
+      "rewards": {
+        "rare_cores": 1,
+        "endgame_pressure_reduction": 0.22
+      }
+    }
+  ]
+}
