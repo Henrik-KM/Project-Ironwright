@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the native aesthetic and full-game presentation integration."""
+"""Validate the native aesthetic and complete-game presentation integration."""
 from pathlib import Path
 import sys
 
@@ -9,12 +9,15 @@ REQUIRED = [
     "game/scripts/main_world_beautiful_3d.gd",
     "game/scripts/main_world_full_game_3d.gd",
     "game/scripts/main_world_production_3d.gd",
+    "game/scripts/main_world_complete_3d.gd",
     "game/scripts/presentation/aesthetic_director_3d.gd",
     "game/scripts/presentation/sanctuary_decorator_3d.gd",
     "game/scripts/presentation/urban_decorator_3d.gd",
     "game/scripts/presentation/presentation_feedback_3d.gd",
     "game/scripts/presentation/procedural_animator_3d.gd",
+    "game/scripts/presentation/objective_guidance_3d.gd",
     "game/scripts/ui/ironwright_beautiful_hud_3d.gd",
+    "game/scripts/ui/operations_command_hud_3d.gd",
     "game/tests/aesthetic_test_runner.gd",
 ]
 
@@ -31,12 +34,15 @@ def main() -> int:
                 fail(f"Missing or unexpectedly empty aesthetic file: {relative}")
 
         main_scene = (ROOT / "game/scenes/main_3d.tscn").read_text(encoding="utf-8")
-        if "main_world_production_3d.gd" not in main_scene:
-            fail("The native entrypoint does not use the production full-game world.")
+        if "main_world_complete_3d.gd" not in main_scene:
+            fail("The native entrypoint does not use the complete-game world.")
 
+        complete = (ROOT / "game/scripts/main_world_complete_3d.gd").read_text(encoding="utf-8")
         production = (ROOT / "game/scripts/main_world_production_3d.gd").read_text(encoding="utf-8")
         full_game = (ROOT / "game/scripts/main_world_full_game_3d.gd").read_text(encoding="utf-8")
         beautiful = (ROOT / "game/scripts/main_world_beautiful_3d.gd").read_text(encoding="utf-8")
+        if "extends IronwrightProductionWorld3D" not in complete:
+            fail("Complete-game world must preserve production UX and guidance.")
         if "extends IronwrightFullGameWorld3D" not in production:
             fail("Production world must preserve the full-game layer.")
         if "extends IronwrightBeautifulWorld3D" not in full_game:
@@ -80,6 +86,11 @@ def main() -> int:
         for token in ["AtmosphericVignette", "SanctuaryBadge", "flash_damage"]:
             if token not in hud:
                 fail(f"Beautiful HUD is missing {token}")
+
+        operations_hud = (ROOT / "game/scripts/ui/operations_command_hud_3d.gd").read_text(encoding="utf-8")
+        for token in ["LONG-RANGE OPERATIONS", "FINAL PROTOCOLS", "persistent world", "apply_safe_layout"]:
+            if token not in operations_hud:
+                fail(f"Complete-game command presentation is missing {token}")
 
         print("Project Ironwright aesthetic integration validation passed.")
         return 0

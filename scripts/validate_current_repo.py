@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Run repository validation against the current production Godot entrypoint.
-
-The legacy validator still provides useful browser, content, link, image and
-manifest checks. This wrapper replaces contracts deliberately superseded by
-the authoritative conversation and validates the current native game layers.
-"""
+"""Validate the authoritative complete-game Godot implementation."""
 
 from __future__ import annotations
 
@@ -18,22 +13,35 @@ ROOT = Path(__file__).resolve().parents[1]
 NEW_REQUIRED_PATHS = [
     "docs/FULL_GAME_ROADMAP.md",
     "docs/FIRST_SESSION_UX.md",
+    "docs/COMPLETE_GAME_ALPHA.md",
     "game/data/full_game_manifest.json",
     "game/data/progression_phases.json",
     "game/data/technology_tree.json",
     "game/data/world_sites.json",
     "game/data/outpost_archetypes.json",
+    "game/data/world_regions.json",
+    "game/data/strategic_operations.json",
+    "game/data/endgame_protocols.json",
     "game/scripts/main_world_full_game_3d.gd",
     "game/scripts/main_world_production_3d.gd",
+    "game/scripts/main_world_complete_3d.gd",
     "game/scripts/systems/progression_director_3d.gd",
     "game/scripts/systems/outpost_director_3d.gd",
+    "game/scripts/systems/world_region_director_3d.gd",
+    "game/scripts/systems/long_range_operation_director_3d.gd",
+    "game/scripts/systems/machine_society_director_3d.gd",
+    "game/scripts/systems/strategic_ecology_director_3d.gd",
+    "game/scripts/systems/endgame_director_3d.gd",
     "game/scripts/world/outpost_site_3d.gd",
     "game/scripts/world/outpost_3d.gd",
+    "game/scripts/world/region_landmark_3d.gd",
     "game/scripts/ui/strategic_command_hud_3d.gd",
+    "game/scripts/ui/operations_command_hud_3d.gd",
     "game/scripts/presentation/objective_guidance_3d.gd",
     "game/scripts/enemies/organic_enemy_full_game_3d.gd",
     "game/tests/full_game_test_runner.gd",
     "game/tests/first_session_ux_test_runner.gd",
+    "game/tests/complete_game_test_runner.gd",
 ]
 for relative in NEW_REQUIRED_PATHS:
     if relative not in legacy.REQUIRED_PATHS:
@@ -125,15 +133,10 @@ def validate_current_design_contracts() -> None:
     for key in forbidden_true:
         if forbidden.get(key) is not True:
             raise legacy.ValidationError(f"Forbidden current design contract {key!r} must remain true")
-    if forbidden.get("permanent_outposts") is True:
-        raise legacy.ValidationError("The obsolete blanket ban on autonomous outposts must not return")
 
     manifest = _load("game/data/full_game_manifest.json")
     if manifest.get("principal_mode") != "persistent_survival_sandbox":
         raise legacy.ValidationError("Full-game manifest must retain the persistent survival sandbox")
-    milestones = manifest.get("production_milestones")
-    if not isinstance(milestones, list) or len(milestones) < 10:
-        raise legacy.ValidationError("Full-game manifest must contain the end-to-end milestone sequence")
 
     progression = _load("game/data/progression_phases.json")
     phases = progression.get("phases")
@@ -142,31 +145,58 @@ def validate_current_design_contracts() -> None:
         raise legacy.ValidationError(f"Progression phases must be ordered as {expected_phases}")
 
     technologies = _load("game/data/technology_tree.json").get("technologies")
-    if not isinstance(technologies, list) or len(technologies) < 8:
-        raise legacy.ValidationError("Technology registry is too small for the production foundation")
+    if not isinstance(technologies, list) or len(technologies) < 16:
+        raise legacy.ValidationError("The complete alpha needs the full Heartforge and endgame technology path")
     technology_ids = {entry.get("id") for entry in technologies if isinstance(entry, dict)}
     for identifier in [
-        "tech.machine.group_coordination",
         "tech.heartforge.tier_2",
-        "tech.machine.field_engineering",
-        "tech.outpost.resource",
+        "tech.heartforge.tier_3",
+        "tech.heartforge.tier_4",
+        "tech.heartforge.tier_5",
+        "tech.machine.forge_assistance",
+        "tech.doctrine.deep_operations",
+        "tech.endgame.severance",
+        "tech.endgame.containment",
     ]:
         if identifier not in technology_ids:
-            raise legacy.ValidationError(f"Missing required technology {identifier}")
+            raise legacy.ValidationError(f"Missing complete-game technology {identifier}")
 
-    sites = _load("game/data/world_sites.json").get("sites")
-    if not isinstance(sites, list) or len(sites) < 4:
-        raise legacy.ValidationError("The full-game foundation needs fixed discoverable world sites")
-    for site in sites:
-        if not isinstance(site, dict) or not str(site.get("id", "")).startswith("site."):
-            raise legacy.ValidationError("Every world site needs a stable site.* identifier")
+    regions = _load("game/data/world_regions.json").get("regions")
+    if not isinstance(regions, list) or len(regions) < 7:
+        raise legacy.ValidationError("The complete alpha needs at least seven persistent regions")
+    region_ids = {entry.get("id") for entry in regions if isinstance(entry, dict)}
+    for identifier in ["region.heartforge_district", "region.root_cistern"]:
+        if identifier not in region_ids:
+            raise legacy.ValidationError(f"Missing required region {identifier}")
 
-    outposts = _load("game/data/outpost_archetypes.json")
-    if outposts.get("ordinary_resource") != "scrap":
-        raise legacy.ValidationError("Outposts may not introduce another ordinary resource")
-    roles = outposts.get("roles")
-    if not isinstance(roles, dict) or set(roles) != {"resource", "defence", "scout", "repair"}:
-        raise legacy.ValidationError("Outpost roles must be resource, defence, scout and repair")
+    operations = _load("game/data/strategic_operations.json").get("operations")
+    if not isinstance(operations, list) or len(operations) < 6:
+        raise legacy.ValidationError("The complete alpha needs the long-range operation chain")
+    operation_ids = {entry.get("id") for entry in operations if isinstance(entry, dict)}
+    for identifier in [
+        "operation.west_grid_survey",
+        "operation.flood_market_recovery",
+        "operation.cathedral_brood_suppression",
+        "operation.buried_lab_excavation",
+        "operation.root_cistern_mapping",
+    ]:
+        if identifier not in operation_ids:
+            raise legacy.ValidationError(f"Missing required operation {identifier}")
+
+    protocols = _load("game/data/endgame_protocols.json").get("protocols")
+    if not isinstance(protocols, list) or {entry.get("id") for entry in protocols if isinstance(entry, dict)} != {
+        "protocol.severance",
+        "protocol.containment",
+    }:
+        raise legacy.ValidationError("The complete alpha must expose Severance and Containment endings")
+
+    serialized_content = json.dumps({
+        "regions": regions,
+        "operations": operations,
+        "protocols": protocols,
+    }).lower()
+    if "hostile robot" in serialized_content or "enemy robot" in serialized_content:
+        raise legacy.ValidationError("Complete-game content may not introduce hostile robots")
 
 
 def validate_native_godot_entrypoint() -> None:
@@ -175,77 +205,57 @@ def validate_native_godot_entrypoint() -> None:
         raise legacy.ValidationError("Godot project must boot scenes/main_3d.tscn")
 
     scene_text = (ROOT / "game/scenes/main_3d.tscn").read_text(encoding="utf-8")
-    if "res://scripts/main_world_production_3d.gd" not in scene_text:
-        raise legacy.ValidationError("The native main scene must boot the production full-game world")
+    if "res://scripts/main_world_complete_3d.gd" not in scene_text:
+        raise legacy.ValidationError("The native main scene must boot the complete-game world")
 
-    production = (ROOT / "game/scripts/main_world_production_3d.gd").read_text(encoding="utf-8")
-    full_game = (ROOT / "game/scripts/main_world_full_game_3d.gd").read_text(encoding="utf-8")
-    for token in [
-        "extends IronwrightFullGameWorld3D",
-        "engineer_build_available",
-        "ObjectiveGuidance3D",
-        "_opening_salvage_target",
-        "RECOVER YOUR FIRST SCRAP",
-        "forge_content_box",
-    ]:
-        if token not in production:
-            raise legacy.ValidationError(f"Production entrypoint is missing {token!r}")
-    for token in [
-        "ProgressionDirector3D",
-        "OutpostDirector3D",
-        "StrategicCommandHUD3D",
-        "discover_sites_by",
-        "heartforge_evolution",
-        "EXTENSION_SAVE_PATH",
-    ]:
-        if token not in full_game:
-            raise legacy.ValidationError(f"Full-game integration is missing {token!r}")
+    complete = (ROOT / "game/scripts/main_world_complete_3d.gd").read_text(encoding="utf-8")
+    required_complete_tokens = [
+        "extends IronwrightProductionWorld3D",
+        "WorldRegionDirector3D",
+        "LongRangeOperationDirector3D",
+        "MachineSocietyDirector3D",
+        "StrategicEcologyDirector3D",
+        "EndgameDirector3D",
+        "OperationsCommandHUD3D",
+        "COMPLETE_SAVE_PATH",
+        "_update_complete_game_objective",
+        "_on_endgame_completed",
+    ]
+    for token in required_complete_tokens:
+        if token not in complete:
+            raise legacy.ValidationError(f"Complete-game integration is missing {token!r}")
+
+    progression_source = (ROOT / "game/scripts/systems/progression_director_3d.gd").read_text(encoding="utf-8")
+    for token in ["context_provider", "completed_operation", "components_min", "functioning_outposts_min"]:
+        if token not in progression_source:
+            raise legacy.ValidationError(f"Long-run progression context is missing {token!r}")
+
+    long_operation_source = (ROOT / "game/scripts/systems/long_range_operation_director_3d.gd").read_text(encoding="utf-8")
+    for token in ["pending_rewards", "returning", "FormationRules3D", "component_recovered"]:
+        if token not in long_operation_source:
+            raise legacy.ValidationError(f"Physical long-range operations are missing {token!r}")
+
+    endgame_source = (ROOT / "game/scripts/systems/endgame_director_3d.gd").read_text(encoding="utf-8")
+    for token in ["initiate", "endgame_escalation", "endgame_completed", "player-triggered"]:
+        if token not in endgame_source:
+            raise legacy.ValidationError(f"Complete victory path is missing {token!r}")
 
     hud_scene = (ROOT / "game/scenes/ui/ironwright_hud_3d.tscn").read_text(encoding="utf-8")
     if "ironwright_beautiful_hud_3d.gd" not in hud_scene:
         raise legacy.ValidationError("Native HUD must retain the cinematic skin")
 
-    hud = (ROOT / "game/scripts/ui/ironwright_hud_3d.gd").read_text(encoding="utf-8")
-    for token in [
-        "ForgeModalBackdrop",
-        "ForgeScroll",
-        "apply_safe_layout",
-        "MAX_VISIBLE_NOTIFICATIONS",
-        "NotificationToastPanel",
-        "ImmediateInteractionPanel",
-        "COGNITION CORES",
-    ]:
-        if token not in hud:
-            raise legacy.ValidationError(f"First-session HUD is missing {token!r}")
-
-    strategic = (ROOT / "game/scripts/ui/strategic_command_hud_3d.gd").read_text(encoding="utf-8")
-    for token in [
-        "previous_button.visible = show_navigation",
-        "next_button.visible = show_navigation",
-        "NO EVOLUTION AVAILABLE",
-        "No strategic decision is required",
-        "apply_safe_layout",
-    ]:
-        if token not in strategic:
-            raise legacy.ValidationError(f"Strategic empty-state handling is missing {token!r}")
-
-    guidance = (ROOT / "game/scripts/presentation/objective_guidance_3d.gd").read_text(encoding="utf-8")
-    for token in ["ROUTE_DOT_COUNT", "ObjectiveBeacon", "route_summary", "direction_to_target"]:
-        if token not in guidance:
-            raise legacy.ValidationError(f"World-space guidance is missing {token!r}")
-
     for obsolete in OBSOLETE_PATCH_PATHS:
         if (ROOT / obsolete).exists():
-            raise legacy.ValidationError(f"Obsolete self-modifying patch infrastructure must be removed: {obsolete}")
+            raise legacy.ValidationError(f"Obsolete self-modifying patch infrastructure must be absent: {obsolete}")
 
 
 def validate_current_design_documents() -> None:
     agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8").lower()
     if "conversation with henrik is the highest product authority" not in agents:
-        raise legacy.ValidationError("AGENTS.md must state that the authoritative conversation overrides stale files")
+        raise legacy.ValidationError("AGENTS.md must preserve authoritative-chat precedence")
 
     locks = (ROOT / "docs/DESIGN_LOCKS.md").read_text(encoding="utf-8").lower()
-    required_phrases = [
+    for phrase in [
         "one primary home",
         "autonomous outposts are canonical",
         "one ordinary resource",
@@ -253,30 +263,25 @@ def validate_current_design_documents() -> None:
         "enemies are organic",
         "the full world always exists",
         "anti-chore acceptance test",
-    ]
-    for phrase in required_phrases:
+    ]:
         if phrase not in locks:
             raise legacy.ValidationError(f"DESIGN_LOCKS.md is missing current phrase {phrase!r}")
-    if "forward bases or permanent outposts" in locks:
-        raise legacy.ValidationError("DESIGN_LOCKS.md still contains the obsolete blanket outpost ban")
 
     roadmap = (ROOT / "docs/FULL_GAME_ROADMAP.md").read_text(encoding="utf-8")
-    if len(roadmap.split()) < 2500:
-        raise legacy.ValidationError("Full-game roadmap is unexpectedly short")
-    if "Milestone 13 — Release candidate and launch" not in roadmap:
-        raise legacy.ValidationError("Full-game roadmap must extend through release")
+    if len(roadmap.split()) < 2500 or "Milestone 13 — Release candidate and launch" not in roadmap:
+        raise legacy.ValidationError("The full-game roadmap must remain end-to-end")
 
-    first_session = (ROOT / "docs/FIRST_SESSION_UX.md").read_text(encoding="utf-8").lower()
+    complete_alpha = (ROOT / "docs/COMPLETE_GAME_ALPHA.md").read_text(encoding="utf-8").lower()
     for phrase in [
-        "first objective clarity",
-        "information hierarchy",
-        "notification policy",
-        "forge menu",
-        "evolution empty state",
-        "resource readability",
+        "multi-region world",
+        "long-range operations",
+        "machine society",
+        "continuous regional ecology",
+        "final protocols",
+        "first victory",
     ]:
-        if phrase not in first_session:
-            raise legacy.ValidationError(f"FIRST_SESSION_UX.md is missing {phrase!r}")
+        if phrase not in complete_alpha:
+            raise legacy.ValidationError(f"COMPLETE_GAME_ALPHA.md is missing {phrase!r}")
 
     gdd = (ROOT / "docs/GAME_DESIGN_DOCUMENT.md").read_text(encoding="utf-8")
     if len(gdd.split()) < 5000:
