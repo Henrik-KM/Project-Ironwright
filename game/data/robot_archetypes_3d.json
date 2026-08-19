@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "ordinary_resource": "scrap",
   "archetypes": {
     "companion": {
@@ -26,7 +26,7 @@
     },
     "guardian": {
       "display_name": "Warden",
-      "purpose": "Defend the Heartforge and screen vulnerable salvage or expedition groups.",
+      "purpose": "Defend the Heartforge and screen vulnerable salvage, expedition, construction, and haul groups.",
       "build_cost_scrap": 68,
       "manual_build_seconds": 8.0,
       "levels": [
@@ -37,13 +37,24 @@
     },
     "scout": {
       "display_name": "Pathfinder",
-      "purpose": "Lead coherent expeditions through the persistent city and mark safer routes.",
+      "purpose": "Lead coherent expeditions and construction convoys through the persistent town.",
       "build_cost_scrap": 58,
       "manual_build_seconds": 7.2,
       "levels": [
         {"level": 1, "health": 80, "damage": 5, "speed": 6.2},
         {"level": 2, "health": 105, "damage": 7, "speed": 6.8},
         {"level": 3, "health": 140, "damage": 10, "speed": 7.5}
+      ]
+    },
+    "engineer": {
+      "display_name": "Engineer",
+      "purpose": "Build, upgrade, repair, and rebuild autonomous support posts while protected by escorts.",
+      "build_cost_scrap": 56,
+      "manual_build_seconds": 7.6,
+      "levels": [
+        {"level": 1, "health": 110, "damage": 5, "speed": 4.25, "construction_rate": 1.0},
+        {"level": 2, "health": 150, "damage": 8, "speed": 4.55, "construction_rate": 1.35},
+        {"level": 3, "health": 205, "damage": 12, "speed": 4.9, "construction_rate": 1.8}
       ]
     }
   }
