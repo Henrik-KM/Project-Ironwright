@@ -81,7 +81,6 @@ func _polish_environment() -> void:
     sky_material.ground_bottom_color = Color("1c2328")
     sky_material.sun_angle_max = 18.0
     sky_material.sun_curve = 0.11
-    sky_material.sun_energy_multiplier = 0.55
     var sky := Sky.new()
     sky.sky_material = sky_material
 
