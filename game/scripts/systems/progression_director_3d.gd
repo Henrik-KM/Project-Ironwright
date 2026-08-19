@@ -10,6 +10,7 @@ const TECHNOLOGY_PATH := "res://data/technology_tree.json"
 const PHASE_PATH := "res://data/progression_phases.json"
 
 var run_state: RunState3D
+var context_provider: Callable
 var heartforge_tier: int = 1
 var current_phase: StringName = &"embers"
 var unlocked_technologies: Array[StringName] = []
@@ -22,6 +23,12 @@ var content_errors: Array[String] = []
 
 func configure(next_run_state: RunState3D) -> void:
     run_state = next_run_state
+
+
+func set_context_provider(provider: Callable) -> void:
+    context_provider = provider
+    _evaluate_automatic_technologies()
+    _refresh_phase()
 
 
 func _ready() -> void:
@@ -117,6 +124,7 @@ func requirements_met(entry: Dictionary) -> bool:
     if run_state == null:
         return false
     var requirements: Dictionary = entry.get("requirements", {})
+    var context := _current_context()
 
     if requirements.has("manual_scrap_recovered"):
         if run_state.manual_scrap_recovered < int(requirements["manual_scrap_recovered"]):
@@ -127,13 +135,47 @@ func requirements_met(entry: Dictionary) -> bool:
     if requirements.has("technology"):
         if not has_technology(StringName(str(requirements["technology"]))):
             return false
+    if requirements.has("technologies_all"):
+        for raw_technology in requirements["technologies_all"]:
+            if not has_technology(StringName(str(raw_technology))):
+                return false
     if requirements.has("expedition_core_recovered"):
         if bool(requirements["expedition_core_recovered"]) and not run_state.expedition_core_recovered:
             return false
     if requirements.has("heartforge_tier"):
         if heartforge_tier < int(requirements["heartforge_tier"]):
             return false
+    if requirements.has("completed_operation"):
+        var completed: Array = context.get("completed_operations", [])
+        if str(requirements["completed_operation"]) not in completed:
+            return false
+    if requirements.has("completed_operations_all"):
+        var completed_all: Array = context.get("completed_operations", [])
+        for raw_operation in requirements["completed_operations_all"]:
+            if str(raw_operation) not in completed_all:
+                return false
+    if requirements.has("components_min"):
+        if int(context.get("components_count", 0)) < int(requirements["components_min"]):
+            return false
+    if requirements.has("functioning_outposts_min"):
+        if int(context.get("functioning_outposts", 0)) < int(requirements["functioning_outposts_min"]):
+            return false
+    if requirements.has("regions_discovered_min"):
+        if int(context.get("regions_discovered_count", 0)) < int(requirements["regions_discovered_min"]):
+            return false
+    if requirements.has("region_discovered"):
+        var discovered: Array = context.get("regions_discovered", [])
+        if str(requirements["region_discovered"]) not in discovered:
+            return false
     return true
+
+
+func _current_context() -> Dictionary:
+    if context_provider.is_valid():
+        var value: Variant = context_provider.call()
+        if value is Dictionary:
+            return (value as Dictionary).duplicate(true)
+    return {}
 
 
 func can_purchase(technology_id: StringName) -> bool:
@@ -249,7 +291,7 @@ func to_dictionary() -> Dictionary:
     for technology_id in unlocked_technologies:
         serialized_technologies.append(String(technology_id))
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "heartforge_tier": heartforge_tier,
         "current_phase": String(current_phase),
         "unlocked_technologies": serialized_technologies,
