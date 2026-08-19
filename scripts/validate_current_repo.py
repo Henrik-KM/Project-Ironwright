@@ -34,7 +34,7 @@ def validate_native_godot_entrypoint() -> None:
     required_tokens = [
         "extends IronwrightWorld3D",
         "AestheticDirector3D",
-        "aesthetic.configure",
+        "aesthetic_director.configure",
     ]
     for token in required_tokens:
         if token not in world_text:
