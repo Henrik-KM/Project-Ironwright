@@ -1,8 +1,8 @@
 class_name IronwrightBeautifulHUD3D
 extends IronwrightHUD3D
 
-## A quieter, warmer HUD skin for the native 3D slice. The interface keeps
-## the existing gameplay contract while reducing the debug-panel feeling.
+## A quieter, warmer HUD skin for the native 3D game. Presentation remains
+## separate from simulation while keeping first-session information readable.
 
 var vignette: ColorRect
 var impact_overlay: ColorRect
@@ -23,6 +23,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+    super._process(delta)
     elapsed += delta
     notification_flash = move_toward(notification_flash, 0.0, delta * 1.9)
     prompt_pulse = move_toward(prompt_pulse, 0.0, delta * 2.2)
@@ -58,10 +59,12 @@ func _apply_visual_theme() -> void:
         objective_label.add_theme_constant_override("outline_size", 4)
         objective_label.add_theme_color_override("font_color", Color("edf3f0"))
     if prompt_label != null:
-        prompt_label.add_theme_font_size_override("font_size", 15)
+        prompt_label.add_theme_font_size_override("font_size", 17)
         prompt_label.add_theme_constant_override("outline_size", 4)
         prompt_label.add_theme_color_override("font_color", Color("ffc77c"))
     if resource_label != null:
+        resource_label.add_theme_font_size_override("font_size", 21)
+        resource_label.add_theme_constant_override("outline_size", 4)
         resource_label.add_theme_color_override("font_color", Color("f0e7d8"))
     if focus_label != null:
         focus_label.add_theme_color_override("font_color", Color("7adce1"))
