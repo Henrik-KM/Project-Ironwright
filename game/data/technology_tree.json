@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "technologies": [
+    {
+      "id": "tech.machine.task_memory",
+      "display_name": "Task Memory",
+      "branch": "machines",
+      "description": "Scrappers remember local salvage, return and deposit routines without repeated orders.",
+      "cost": {"scrap": 0, "rare_cores": 0},
+      "requirements": {"manual_scrap_recovered": 20},
+      "effects": ["unlock_autonomous_local_salvage"],
+      "automatic": true
+    },
+    {
+      "id": "tech.machine.group_coordination",
+      "display_name": "Group Coordination",
+      "branch": "machines",
+      "description": "Machines form cohesive groups with escort roles, shared pace and regrouping.",
+      "cost": {"scrap": 55, "rare_cores": 0},
+      "requirements": {"robots_built": 3},
+      "effects": ["unlock_cohesive_operations"],
+      "automatic": false
+    },
+    {
+      "id": "tech.heartforge.tier_2",
+      "display_name": "Heartforge Tier II",
+      "branch": "heartforge",
+      "description": "Rebuild the Heartforge around the returned Cognition Core and unlock remote construction protocols.",
+      "cost": {"scrap": 90, "rare_cores": 1},
+      "requirements": {"technology": "tech.machine.group_coordination", "expedition_core_recovered": true},
+      "effects": ["heartforge_tier_2", "unlock_engineer_frame", "unlock_outpost_protocols"],
+      "automatic": false
+    },
+    {
+      "id": "tech.machine.field_engineering",
+      "display_name": "Field Engineering",
+      "branch": "machines",
+      "description": "Engineer frames can construct, upgrade and rebuild autonomous support posts under escort.",
+      "cost": {"scrap": 45, "rare_cores": 0},
+      "requirements": {"heartforge_tier": 2},
+      "effects": ["engineer_build_available", "physical_outpost_construction"],
+      "automatic": true
+    },
+    {
+      "id": "tech.outpost.resource",
+      "display_name": "Recovery Post",
+      "branch": "outposts",
+      "description": "Authorize resource outposts whose stored Scrap is collected by physical protected haulers.",
+      "cost": {"scrap": 0, "rare_cores": 0},
+      "requirements": {"heartforge_tier": 2},
+      "effects": ["outpost_role_resource"],
+      "automatic": true
+    },
+    {
+      "id": "tech.outpost.defence",
+      "display_name": "Proxy Defence Post",
+      "branch": "outposts",
+      "description": "Authorize autonomous defensive outposts at discovered sites.",
+      "cost": {"scrap": 70, "rare_cores": 0},
+      "requirements": {"heartforge_tier": 2},
+      "effects": ["outpost_role_defence"],
+      "automatic": false
+    },
+    {
+      "id": "tech.outpost.scout",
+      "display_name": "Early Warning Post",
+      "branch": "outposts",
+      "description": "Authorize sensor outposts that report organic contacts and route risk.",
+      "cost": {"scrap": 55, "rare_cores": 0},
+      "requirements": {"heartforge_tier": 2},
+      "effects": ["outpost_role_scout"],
+      "automatic": false
+    },
+    {
+      "id": "tech.outpost.repair",
+      "display_name": "Field Repair Post",
+      "branch": "outposts",
+      "description": "Authorize service outposts that repair friendly machines during remote operations.",
+      "cost": {"scrap": 75, "rare_cores": 0},
+      "requirements": {"heartforge_tier": 2},
+      "effects": ["outpost_role_repair"],
+      "automatic": false
+    },
+    {
+      "id": "tech.machine.forge_assistance",
+      "display_name": "Forge Assistance",
+      "branch": "machines",
+      "description": "Robots assist fabrication and later permit automatic replacement of ordinary losses.",
+      "cost": {"scrap": 150, "rare_cores": 1},
+      "requirements": {"heartforge_tier": 3},
+      "effects": ["reduce_manual_fabrication_time", "unlock_ordinary_replacement"],
+      "automatic": false
+    },
+    {
+      "id": "tech.doctrine.rapid_march",
+      "display_name": "Rapid March Doctrine",
+      "branch": "doctrine",
+      "description": "Remote groups accept looser cohesion for speed, increasing separation and casualty risk.",
+      "cost": {"scrap": 120, "rare_cores": 1},
+      "requirements": {"heartforge_tier": 3},
+      "effects": ["doctrine_rapid_march"],
+      "automatic": false
+    },
+    {
+      "id": "tech.heartforge.continuity",
+      "display_name": "Distributed Continuity",
+      "branch": "heartforge",
+      "description": "A late technology permits one catastrophic Heartforge failure to trigger recovery rather than immediate run loss.",
+      "cost": {"scrap": 420, "rare_cores": 3},
+      "requirements": {"heartforge_tier": 5},
+      "effects": ["single_continuity_recovery"],
+      "automatic": false
+    }
+  ]
+}
