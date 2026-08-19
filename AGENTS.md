@@ -1,86 +1,140 @@
-# AGENTS.md — Project Ironwight
+# AGENTS.md — Project Ironwright
 
 This file is the operating contract for Codex and other coding agents working in this repository.
 
-## 1. Product identity
+## 1. Authority order
 
-Project Ironwight is a single-player, long-form survival strategy game about defending one constrained Heartforge in a hostile organic world.
+The current Project Ironwright conversation with Henrik is the highest product authority.
 
-The player directly controls one Mechromancer. The machines gradually learn to gather, repair, defend, recover, and conduct expeditions without supervision. The game must become less operationally demanding as it becomes larger.
+When an explicit instruction in that conversation conflicts with repository documentation, machine-readable contracts, old prompts, prototypes, or genre conventions:
+
+1. follow the most recent explicit user instruction;
+2. update the conflicting repository contracts in the same change;
+3. preserve earlier decisions that are not actually contradicted;
+4. record the deliberate direction change in the changelog or relevant design document.
+
+Do not reject an explicit current instruction merely because an older file says otherwise. The repository exists to preserve the conversation’s current design, not to overrule it.
+
+## 2. Product identity
+
+Project Ironwright is a single-player, long-form survival-strategy sandbox about defending one vulnerable Heartforge in a hostile organic post-apocalyptic town.
+
+The player directly controls one weak Mechromancer. The opening depends on one indispensable machine companion. Over a run lasting many sessions, robots learn to salvage, defend, scout, repair, fabricate, escort, construct, rebuild, and conduct expeditions without routine supervision.
+
+The game must become less operationally demanding as it becomes larger. The primary fantasy is not commanding individual units. It is watching a machine society gradually assume the burden of survival while the player makes a small number of consequential strategic choices.
 
 Before changing gameplay, read:
 
-1. `docs/DESIGN_LOCKS.md`
-2. `docs/GAME_DESIGN_DOCUMENT.md`
-3. `docs/AUTONOMY_AND_ANTI_CHORE.md`
-4. the document relevant to the system being changed
+1. this file;
+2. `docs/DESIGN_LOCKS.md`;
+3. `docs/FULL_GAME_ROADMAP.md`;
+4. `docs/GAME_DESIGN_DOCUMENT.md`;
+5. `docs/AUTONOMY_AND_ANTI_CHORE.md`;
+6. the document relevant to the system being changed.
 
-`docs/DESIGN_LOCKS.md` overrides older assumptions and convenient genre conventions.
+## 3. Non-negotiable constraints
 
-## 2. Non-negotiable constraints
+Do not add or imply any of the following unless Henrik explicitly changes the direction:
 
-Do not add or imply any of the following unless the user explicitly changes the product direction:
-
-- multiple player bases;
+- more than one player-operated run-critical home;
 - territory claiming or map painting;
-- forward outposts or permanent supply sites;
-- production chains;
-- more than one ordinary stockpiled resource;
-- player-managed power grids;
-- scheduled recurring waves;
-- hostile robot factions;
-- routine per-unit orders;
-- individual robot loadouts;
-- production queues requiring player maintenance;
-- manual wall, turret, cable, or storage placement as the main build loop;
-- hunger, thirst, sleep, hygiene, or similar survival meters;
-- a short-run roguelite structure as the principal mode.
+- freely placed colonies or outposts;
+- manually managed supply lines;
+- per-outpost worker assignment, queues, power grids, or ammunition;
+- production-chain economy;
+- more than one ordinary stockpiled construction resource;
+- player-managed power networks;
+- scheduled recurring waves as the main loop;
+- hostile robot factions as the normal enemy fantasy;
+- routine per-unit movement or attack orders;
+- individual robot loadouts as recurring work;
+- production queues that require regular maintenance;
+- manual wall, turret, cable, storage, or module placement as the main base loop;
+- hunger, thirst, sleep, hygiene, temperature, or similar maintenance meters;
+- a short-run roguelite structure as the principal product.
 
-Enemies are organic. Large attacks must be causal and rare. The Heartforge remains the centre of the game.
+Enemies are organic. Major attacks must be causal, legible, and rare. Base defence remains the centre of play even when robots travel far away.
 
-## 3. Anti-chore rule
+## 4. Autonomous outposts
 
-For every new system, answer in the implementation plan:
+Bounded autonomous outposts are canonical.
+
+Outposts are unlocked through Heartforge progression and may only be created on fixed sites that were discovered through real excursions. The player chooses a discovered site, a broad purpose, and whether to authorize construction or an upgrade.
+
+The machines handle:
+
+- builder and escort selection;
+- physical travel through the persistent world;
+- route execution and formation cohesion;
+- exact construction geometry;
+- automatic operation;
+- routine repair;
+- resource collection and hauling;
+- rebuilding after destruction;
+- local defence and retreat decisions.
+
+Valid outpost purposes include resource recovery, proxy defence, early warning/scouting, and field repair.
+
+Outposts are not secondary player bases. The player does not move the Heartforge to them, operate production queues there, assign workers, place modules, wire power, or manage a logistics spreadsheet. Their number is bounded by authored discovered sites.
+
+## 5. Anti-chore rule
+
+For every new system, answer:
 
 1. What meaningful strategic decision does this create?
 2. What recurring task does it add?
-3. Does that task increase with machine count, base age, or run length?
+3. Does that task become more frequent with robot count, outpost count, base age, or run length?
 4. How is routine execution delegated permanently?
-5. Can the same tension be represented with fewer inputs or one aggregated choice?
+5. Can the same tension be represented with one aggregated choice?
 
-Reject designs whose routine workload scales with the number of robots, structures, attacks, objectives, or hours played.
+Reject designs whose routine workload scales roughly with robots, structures, outposts, attacks, objectives, or hours played.
 
-Autonomy must remove categories of work. Do not “solve” micro-management with a larger macro-management menu.
+Autonomy must remove categories of work. Do not “solve” micro-management with a larger macro-management dashboard.
 
-## 4. Repository boundaries
+## 6. Opening survival rules
+
+The opening must remain oppressive but visually readable:
+
+- the Mechromancer has a weak automatic pistol;
+- the companion is the primary protection;
+- manual salvage takes time, emits noise, disables attack, and can be interrupted;
+- early robot construction is performed manually at the Heartforge;
+- fabrication takes time, emits noise, and disables attack;
+- early excursions are short and frightening;
+- the Heartforge is warm and inhabited, while the surrounding town is cold and dangerous;
+- weapon strength and fabrication automation are later progression.
+
+## 7. Repository boundaries
 
 - Godot project root: `game/`
 - Gameplay scripts: `game/scripts/`
 - Scenes: `game/scenes/`
 - Machine-readable content: `game/data/`
+- Native tests: `game/tests/`
 - Design documentation: `docs/`
-- Copy-ready Codex tasks: `prompts/`
-- Repository validation: `scripts/validate_repo.py`
+- Copy-ready tasks and historical prompts: `prompts/`
+- Repository validation: `scripts/`
+- Browser reference prototype: `web/`
 
 Do not place generated caches, imported engine state, build outputs, or downloaded asset archives in Git.
 
-## 5. Implementation workflow
+## 8. Implementation workflow
 
 For each task:
 
-1. Inspect existing files and relevant design documents.
-2. Restate the observable goal and constraints in a short implementation plan.
-3. Identify the smallest coherent vertical change.
-4. Implement data and tests before broad content expansion where practical.
-5. Run repository validation.
-6. Run available Godot headless tests once the project has them.
-7. Review the diff for accidental design drift.
-8. Update documentation only when behaviour or a deliberate decision changed.
-9. Report changed files, test results, and unresolved risks.
+1. inspect existing files and relevant product contracts;
+2. define the observable gameplay or production goal;
+3. identify the smallest coherent vertical change that advances the full game;
+4. implement data and tests before broad content expansion where practical;
+5. run repository validation;
+6. run Godot headless import and relevant native tests;
+7. review the diff for accidental design drift;
+8. update documentation when behaviour or a deliberate decision changed;
+9. report changed files, test results, and unresolved risks.
 
-Do not claim a task is complete if validation or required tests fail.
+Do not claim completion when required validation fails.
 
-## 6. Code standards
+## 9. Code standards
 
 - Use Godot 4.7.1-compatible APIs.
 - Use typed GDScript for gameplay code.
@@ -93,20 +147,28 @@ Do not claim a task is complete if validation or required tests fail.
 - Log reasons for consequential autonomous decisions.
 - Handle missing data and corrupt files explicitly.
 - Avoid silent fallbacks that hide broken content.
+- Keep collections, logs, queues, and event histories bounded.
 
-## 7. Robot intelligence
+## 10. Full-game architecture
 
-Preferred hierarchy:
+The production game should be assembled from durable run-level services rather than one monolithic scene script.
+
+Preferred top-level flow:
 
 ```text
-Run-level need
-→ autonomy director
-→ base routine, defence response, or expedition goal
-→ group plan and role assignment
-→ individual utility choice
-→ execution state
-→ actuator
+Persistent world state
+→ progression director
+→ ecology and threat simulation
+→ strategic need
+→ autonomy / operation director
+→ coordinated group plan
+→ individual execution state
+→ presentation and player-facing explanation
 ```
+
+New content should be data-driven where it meaningfully enables balancing, save migration, content production, and automated validation. Do not move trivial constants into data merely for abstraction.
+
+## 11. Robot intelligence
 
 Robot behaviour must be:
 
@@ -114,62 +176,72 @@ Robot behaviour must be:
 - inspectable;
 - explainable in a short player-facing sentence;
 - robust to save/load;
-- consistent between active and aggregated simulation;
+- consistent between active and reduced-detail simulation;
 - capable of resolving routine work without player alerts.
 
-Do not use a trained machine-learning model merely to make the fiction say “learning.” Utility scoring, planners, state machines, memory, and unlocked operators are preferred until a measured need proves otherwise.
+Use utility scoring, planners, state machines, memory, and unlocked operators. Do not use a trained model merely to make the fiction say “learning.”
 
-## 8. Organic ecology
+Remote groups must use formation-relative roles, pace limits, regrouping, escort behaviour, retreat conditions, and real physical positions. Independent maximum-speed rushing is not the default.
+
+## 12. Organic ecology
 
 The ecology is a persistent simulation, not a wave generator.
 
 A major incident requires explicit world-state causes and telegraphing. Tests should verify that the incident does not occur without its predicates.
 
-Do not create a generic enemy army composition system. Species have motivations and relationships: scavenging, stalking, burrowing, infestation, pack hunting, territorial behaviour, migration, and predation.
+Species need motivations and relationships: scavenging, stalking, burrowing, infestation, pack hunting, territorial behaviour, migration, predation, attraction to noise, and response to machine activity.
 
-## 9. Base evolution
+## 13. Heartforge and outpost evolution
 
-The player chooses principles and trade-offs. Machines handle geometry and construction.
+The player chooses principles, strategic functions, and costly commitments. Machines handle geometry and execution.
 
-Start with authored layouts and modular sockets. Do not begin with unconstrained procedural base generation.
+Start with authored layouts, modular sockets, and fixed discovered sites. Do not begin with unconstrained procedural construction.
 
-Any autonomous structural change must be visually and diagnostically legible:
+Every autonomous structural change must communicate:
 
 - what problem it addresses;
-- what approach was chosen;
+- what role or doctrine was chosen;
 - what trade-off it accepts;
-- what area will change.
+- where machines are travelling;
+- whether construction, repair, hauling, or rebuilding is underway.
 
-## 10. Persistence
+## 14. Persistence
 
 Long-world save reliability is product-critical.
 
 Every persistent feature must define:
 
 - stable identifier;
-- serialised state;
+- serialized state;
 - default for missing older data;
 - schema version impact;
 - migration test when required;
 - deterministic or recorded random state.
 
-Use transactional saves and rotating backups once save implementation begins.
+Outpost saves must retain site discovery, purpose, tier, health, destruction state, stored Scrap, and rebuild-relevant state.
 
-## 11. Tests
+Use transactional saves and rotating backups before public testing.
 
-At minimum, add tests for:
+## 15. Tests
+
+At minimum, maintain tests for:
 
 - data parsing and invariants;
-- autonomy-stage gates;
+- opening pistol behaviour and channel lockout;
+- autonomy and progression gates;
 - robot decision reasons;
+- formation cohesion and regrouping;
 - ecology-event predicates;
-- save/load equivalence;
-- active/aggregated simulation transitions;
-- no unbounded task or event growth.
+- physical expedition and construction movement;
+- outpost unlock, operation, repair, destruction, rebuilding, and hauling;
+- save/load equivalence and migration;
+- active/reduced-detail transitions when implemented;
+- no unbounded task or event growth;
+- aesthetic readability and presentation attachment.
 
 Representative scenario testbeds are preferred over broad unverified systems.
 
-## 12. Assets
+## 16. Assets
 
 No external runtime asset may be committed without an entry in `ATTRIBUTION.md` containing:
 
@@ -182,19 +254,19 @@ No external runtime asset may be committed without an entry in `ATTRIBUTION.md` 
 - modifications;
 - redistribution status.
 
-Do not download assets automatically unless the task explicitly authorises it. Never substitute a robot enemy because an available asset pack contains one.
+The current procedural models are original placeholders. Concept images are references, not runtime assets or exact UI specifications.
 
-The images under `docs/concept-art/` are visual references, not runtime assets or exact UI specifications.
-
-## 13. UI
+## 17. UI
 
 Default to minimal HUD and exception-based notifications.
 
-Do not add permanent dashboards of rates, budgets, worker counts, or queues. A late-game interface must not be denser merely because the simulation is larger.
+Strategic interfaces may expose major evolution choices, machine focus, discovered site, outpost purpose, and authorization. Do not add permanent dashboards of workers, queues, route throughput, budgets, ammunition, repair assignments, or dozens of rates.
 
-## 14. Performance
+Late-game UI should be calmer than early-game UI because machines handle more work.
 
-Profile representative scenes before designing a custom optimisation architecture.
+## 18. Performance
+
+Profile representative scenes before designing custom optimisation architecture.
 
 Begin with:
 
@@ -207,14 +279,15 @@ Begin with:
 
 Introduce custom crowd systems, native extensions, or an ECS only after profiling identifies a concrete bottleneck.
 
-## 15. Definition of task completion
+## 19. Definition of task completion
 
 A gameplay task is complete only when:
 
-- the observable acceptance criteria are met;
+- observable acceptance criteria are met;
 - relevant tests pass;
-- `python scripts/validate_repo.py` passes;
-- the implementation respects `docs/DESIGN_LOCKS.md`;
+- repository validation passes;
+- Godot imports the project headlessly;
+- the implementation follows the authoritative conversation and current design locks;
 - autonomous behaviour has a diagnostic reason;
-- no new recurring player chore was introduced without explicit approval;
-- the change survives save/load if it affects persistent state, once save support exists.
+- no recurring chore was introduced without explicit approval;
+- persistent state survives save/load where applicable.
