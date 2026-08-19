@@ -1,6 +1,9 @@
 class_name EndgameDirector3D
 extends Node
 
+## Owns the player-triggered final crisis. No final response may begin from a
+## recurring timer: the player must deliberately initiate an unlocked protocol.
+
 signal endgame_started(protocol_id: StringName, display_name: String)
 signal endgame_progress(protocol_id: StringName, progress: float, detail: String)
 signal endgame_completed(protocol_id: StringName, display_name: String, ending: String)
