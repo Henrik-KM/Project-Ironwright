@@ -6,7 +6,14 @@ signal forge_upgrade_selected(archetype: StringName)
 signal forge_closed
 signal expedition_authorized
 
+const NOTIFICATION_LIFETIME_SECONDS: float = 6.5
+const MAX_VISIBLE_NOTIFICATIONS: int = 3
+
 var root_control: Control
+var objective_panel: PanelContainer
+var prompt_panel: PanelContainer
+var resource_panel: PanelContainer
+var notification_panel: PanelContainer
 var objective_label: Label
 var prompt_label: Label
 var resource_label: Label
@@ -16,17 +23,39 @@ var player_bar: ProgressBar
 var companion_bar: ProgressBar
 var forge_bar: ProgressBar
 var forge_label: Label
+var forge_backdrop: ColorRect
 var forge_panel: PanelContainer
+var forge_scroll: ScrollContainer
+var forge_content_box: VBoxContainer
 var notification_label: Label
 var map_banner: Label
 var help_label: Label
 var forge_open: bool = false
 var notifications: Array[String] = []
+var notification_ages: Array[float] = []
 
 
 func _ready() -> void:
     layer = 20
     _build_ui()
+    var viewport := get_viewport()
+    if viewport != null:
+        viewport.size_changed.connect(_on_viewport_resized)
+        call_deferred("apply_safe_layout", Vector2(viewport.get_visible_rect().size))
+
+
+func _process(delta: float) -> void:
+    if notification_ages.is_empty():
+        return
+    var changed := false
+    for index in range(notification_ages.size() - 1, -1, -1):
+        notification_ages[index] += delta
+        if notification_ages[index] >= NOTIFICATION_LIFETIME_SECONDS:
+            notification_ages.remove_at(index)
+            notifications.remove_at(index)
+            changed = true
+    if changed:
+        _refresh_notifications()
 
 
 func _build_ui() -> void:
@@ -36,55 +65,85 @@ func _build_ui() -> void:
     root_control.mouse_filter = Control.MOUSE_FILTER_IGNORE
     add_child(root_control)
 
-    var left_panel := _panel(Vector2(24, 24), Vector2(390, 176))
-    objective_label = _label(left_panel, "FIRST LIGHT\nSurvive beside the Heartforge.", 20, Color("e5ece9"))
+    objective_panel = _panel(Vector2(22, 22), Vector2(440, 148))
+    objective_panel.name = "ObjectivePanel"
+    var objective_heading := _label(objective_panel, "CURRENT OBJECTIVE", 12, Color("87a4a5"))
+    objective_heading.position = Vector2(18, 12)
+    objective_heading.size = Vector2(400, 20)
+    objective_label = _label(objective_panel, "FIRST LIGHT\nSurvive beside the Heartforge.", 19, Color("e5ece9"))
     objective_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-    objective_label.position = Vector2(18, 16)
-    objective_label.size = Vector2(350, 92)
-    prompt_label = _label(left_panel, "", 16, Color("d4a267"))
-    prompt_label.position = Vector2(18, 112)
-    prompt_label.size = Vector2(350, 48)
+    objective_label.position = Vector2(18, 34)
+    objective_label.size = Vector2(400, 96)
+    objective_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+
+    prompt_panel = _panel(Vector2(-340, -108), Vector2(680, 68), true, true)
+    prompt_panel.name = "ImmediateInteractionPanel"
+    prompt_panel.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+    prompt_panel.position = Vector2(-340, -108)
+    prompt_label = _label(prompt_panel, "", 17, Color("d4a267"))
+    prompt_label.position = Vector2(20, 12)
+    prompt_label.size = Vector2(640, 44)
     prompt_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    prompt_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
-    var right_panel := _panel(Vector2(-330, 24), Vector2(306, 150), true)
-    resource_label = _label(right_panel, "SCRAP 24\nRARE CORES 0", 18, Color("d9e1de"))
-    resource_label.position = Vector2(18, 14)
-    resource_label.size = Vector2(270, 60)
-    focus_label = _label(right_panel, "FOCUS · DEFEND", 16, Color("78d3d7"))
-    focus_label.position = Vector2(18, 78)
-    focus_label.size = Vector2(270, 28)
-    operation_label = _label(right_panel, "No remote operation", 14, Color("9aa9a6"))
-    operation_label.position = Vector2(18, 108)
-    operation_label.size = Vector2(270, 28)
+    resource_panel = _panel(Vector2(-406, 22), Vector2(384, 190), true)
+    resource_panel.name = "ResourcePanel"
+    var reserve_heading := _label(resource_panel, "MATERIAL RESERVES", 12, Color("87a4a5"))
+    reserve_heading.position = Vector2(18, 10)
+    reserve_heading.size = Vector2(344, 20)
+    resource_label = _label(resource_panel, "SCRAP  24\nCOGNITION CORES  0", 21, Color("d9e1de"))
+    resource_label.position = Vector2(18, 32)
+    resource_label.size = Vector2(344, 66)
+    resource_label.add_theme_constant_override("line_spacing", 5)
+    focus_label = _label(resource_panel, "FOCUS · DEFEND", 17, Color("78d3d7"))
+    focus_label.position = Vector2(18, 106)
+    focus_label.size = Vector2(344, 28)
+    operation_label = _label(resource_panel, "No remote operation", 14, Color("9aa9a6"))
+    operation_label.position = Vector2(18, 137)
+    operation_label.size = Vector2(344, 42)
+    operation_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
-    var health_panel := _panel(Vector2(24, -138), Vector2(360, 114), false, true)
+    notification_panel = _panel(Vector2(-446, 226), Vector2(424, 170), true)
+    notification_panel.name = "NotificationToastPanel"
+    notification_panel.visible = false
+    var notification_heading := _label(notification_panel, "MACHINE REPORTS", 12, Color("87a4a5"))
+    notification_heading.position = Vector2(18, 10)
+    notification_heading.size = Vector2(388, 20)
+    notification_label = _label(notification_panel, "", 15, Color("dce5e2"))
+    notification_label.position = Vector2(18, 34)
+    notification_label.size = Vector2(388, 122)
+    notification_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    notification_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+
+    var health_panel := _panel(Vector2(22, -142), Vector2(370, 118), false, true)
+    health_panel.name = "HealthPanel"
     var player_text := _label(health_panel, "MECHROMANCER · WEAK PISTOL", 14, Color("d9e1de"))
     player_text.position = Vector2(16, 10)
-    player_text.size = Vector2(320, 22)
-    player_bar = _progress(health_panel, Vector2(16, 34), Vector2(328, 18), Color("79d8dc"))
-    var companion_text := _label(health_panel, "COMPANION · PRIMARY PROTECTION", 14, Color("d9e1de"))
-    companion_text.position = Vector2(16, 60)
-    companion_text.size = Vector2(320, 22)
-    companion_bar = _progress(health_panel, Vector2(16, 84), Vector2(328, 16), Color("d6a665"))
+    player_text.size = Vector2(338, 22)
+    player_bar = _progress(health_panel, Vector2(16, 34), Vector2(338, 18), Color("79d8dc"))
+    var companion_text := _label(health_panel, "BULWARK · PRIMARY PROTECTION", 14, Color("d9e1de"))
+    companion_text.position = Vector2(16, 61)
+    companion_text.size = Vector2(338, 22)
+    companion_bar = _progress(health_panel, Vector2(16, 87), Vector2(338, 16), Color("d6a665"))
 
-    var focus_panel := _panel(Vector2(-500, -96), Vector2(476, 72), true, true)
-    var focus_help := _label(focus_panel, "1 DEFEND     2 SALVAGE     3 EXPEDITION     X AUTHORIZE     M MAP     F FOLLOW", 14, Color("b8c5c2"))
-    focus_help.position = Vector2(16, 15)
-    focus_help.size = Vector2(444, 42)
+    var focus_panel := _panel(Vector2(-520, -102), Vector2(498, 78), true, true)
+    focus_panel.name = "CommandHelpPanel"
+    var focus_help := _label(focus_panel, "1 DEFEND    2 SALVAGE    3 EXPEDITION    T EVOLVE    O OUTPOSTS    M MAP    F FOLLOW", 14, Color("b8c5c2"))
+    focus_help.position = Vector2(16, 13)
+    focus_help.size = Vector2(466, 50)
     focus_help.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    focus_help.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
-    var channel_panel := _panel(Vector2(-250, -178), Vector2(500, 72), true, true)
+    var channel_panel := _panel(Vector2(-250, -188), Vector2(500, 72), true, true)
+    channel_panel.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+    channel_panel.position = Vector2(-250, -188)
     channel_panel.name = "ChannelPanel"
     channel_panel.visible = false
     forge_label = _label(channel_panel, "", 15, Color("f0dfc6"))
     forge_label.position = Vector2(16, 8)
     forge_label.size = Vector2(468, 24)
     forge_bar = _progress(channel_panel, Vector2(16, 38), Vector2(468, 18), Color("d4a267"))
-
-    notification_label = _label(root_control, "", 15, Color("dce5e2"))
-    notification_label.position = Vector2(24, 212)
-    notification_label.size = Vector2(440, 180)
-    notification_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
     map_banner = _label(root_control, "COMMAND MAP · LIVE PHYSICAL POSITIONS · F TO FOLLOW ACTIVE GROUP", 17, Color("79d8dc"))
     map_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -93,7 +152,7 @@ func _build_ui() -> void:
     map_banner.offset_bottom = 52
     map_banner.visible = false
 
-    help_label = _label(root_control, "WASD MOVE · E HOLD TO SALVAGE · E AT FORGE TO OPEN · ESC CANCEL/CLOSE · F5 SAVE · F9 LOAD", 13, Color("788682"))
+    help_label = _label(root_control, "WASD MOVE · HOLD E TO SALVAGE · E AT FORGE · ESC CLOSE · F5 SAVE · F9 LOAD", 13, Color("788682"))
     help_label.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
     help_label.offset_top = -22
     help_label.offset_bottom = -4
@@ -103,49 +162,115 @@ func _build_ui() -> void:
 
 
 func _build_forge_panel() -> PanelContainer:
+    forge_backdrop = ColorRect.new()
+    forge_backdrop.name = "ForgeModalBackdrop"
+    forge_backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    forge_backdrop.color = Color(0.005, 0.012, 0.016, 0.72)
+    forge_backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+    forge_backdrop.visible = false
+    root_control.add_child(forge_backdrop)
+
     var panel := PanelContainer.new()
     panel.name = "ForgeMenu"
     panel.set_anchors_preset(Control.PRESET_CENTER)
-    panel.position = Vector2(-310, -260)
-    panel.size = Vector2(620, 520)
     panel.mouse_filter = Control.MOUSE_FILTER_STOP
     panel.visible = false
     root_control.add_child(panel)
 
-    var box := VBoxContainer.new()
-    box.add_theme_constant_override("separation", 10)
-    panel.add_child(box)
+    forge_scroll = ScrollContainer.new()
+    forge_scroll.name = "ForgeScroll"
+    forge_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    forge_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+    panel.add_child(forge_scroll)
+
+    forge_content_box = VBoxContainer.new()
+    forge_content_box.name = "ForgeContent"
+    forge_content_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    forge_content_box.add_theme_constant_override("separation", 10)
+    forge_scroll.add_child(forge_content_box)
+
     var title := Label.new()
     title.text = "HEARTFORGE · MANUAL FABRICATION"
     title.add_theme_font_size_override("font_size", 25)
     title.add_theme_color_override("font_color", Color("e8ddd0"))
-    box.add_child(title)
+    forge_content_box.add_child(title)
+
     var copy := Label.new()
     copy.text = "The Mechromancer must build every early machine personally. Fabrication takes time, emits noise, and disables the pistol. Automation is a later evolution."
     copy.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    copy.custom_minimum_size = Vector2(0, 64)
     copy.add_theme_font_size_override("font_size", 15)
     copy.add_theme_color_override("font_color", Color("aeb8b5"))
-    box.add_child(copy)
+    forge_content_box.add_child(copy)
 
-    _forge_button(box, "1  BUILD SCRAPPER · 42 Scrap · 6.5 s", func() -> void: forge_build_selected.emit(&"salvager"))
-    _forge_button(box, "2  BUILD WARDEN · 68 Scrap · 8.0 s", func() -> void: forge_build_selected.emit(&"guardian"))
-    _forge_button(box, "3  BUILD PATHFINDER · 58 Scrap · 7.2 s", func() -> void: forge_build_selected.emit(&"scout"))
-    var divider := HSeparator.new()
-    box.add_child(divider)
-    _forge_button(box, "4  UPGRADE ALL SCRAPPERS", func() -> void: forge_upgrade_selected.emit(&"salvager"))
-    _forge_button(box, "5  UPGRADE ALL WARDENS", func() -> void: forge_upgrade_selected.emit(&"guardian"))
-    _forge_button(box, "6  UPGRADE ALL PATHFINDERS", func() -> void: forge_upgrade_selected.emit(&"scout"))
-    _forge_button(box, "ESC  CLOSE", func() -> void: forge_closed.emit())
+    _forge_button(forge_content_box, "1  BUILD SCRAPPER · 42 Scrap · 6.5 s", func() -> void: forge_build_selected.emit(&"salvager"))
+    _forge_button(forge_content_box, "2  BUILD WARDEN · 68 Scrap · 8.0 s", func() -> void: forge_build_selected.emit(&"guardian"))
+    _forge_button(forge_content_box, "3  BUILD PATHFINDER · 58 Scrap · 7.2 s", func() -> void: forge_build_selected.emit(&"scout"))
+    forge_content_box.add_child(HSeparator.new())
+    _forge_button(forge_content_box, "4  UPGRADE ALL SCRAPPERS", func() -> void: forge_upgrade_selected.emit(&"salvager"))
+    _forge_button(forge_content_box, "5  UPGRADE ALL WARDENS", func() -> void: forge_upgrade_selected.emit(&"guardian"))
+    _forge_button(forge_content_box, "6  UPGRADE ALL PATHFINDERS", func() -> void: forge_upgrade_selected.emit(&"scout"))
+    _forge_button(forge_content_box, "ESC  CLOSE", func() -> void: forge_closed.emit())
     return panel
 
 
-func _forge_button(parent: VBoxContainer, text_value: String, callback: Callable) -> void:
+func _forge_button(parent: VBoxContainer, text_value: String, callback: Callable) -> Button:
     var button := Button.new()
     button.text = text_value
-    button.custom_minimum_size = Vector2(0, 46)
+    button.custom_minimum_size = Vector2(0, 48)
     button.add_theme_font_size_override("font_size", 16)
+    button.focus_mode = Control.FOCUS_NONE
     button.pressed.connect(callback)
     parent.add_child(button)
+    return button
+
+
+func apply_safe_layout(viewport_size: Vector2) -> void:
+    if forge_panel == null:
+        return
+    var safe_width := minf(720.0, maxf(300.0, viewport_size.x - 32.0))
+    var safe_height := minf(700.0, maxf(320.0, viewport_size.y - 32.0))
+    forge_panel.set_anchors_preset(Control.PRESET_CENTER)
+    forge_panel.offset_left = -safe_width * 0.5
+    forge_panel.offset_right = safe_width * 0.5
+    forge_panel.offset_top = -safe_height * 0.5
+    forge_panel.offset_bottom = safe_height * 0.5
+
+    if prompt_panel != null:
+        var prompt_width := minf(680.0, maxf(300.0, viewport_size.x - 40.0))
+        prompt_panel.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+        prompt_panel.offset_left = -prompt_width * 0.5
+        prompt_panel.offset_right = prompt_width * 0.5
+        prompt_panel.offset_top = -108.0
+        prompt_panel.offset_bottom = -40.0
+        prompt_label.size.x = prompt_width - 40.0
+
+    if viewport_size.x < 980.0:
+        objective_panel.size.x = 370.0
+        objective_label.size.x = 330.0
+        resource_panel.size.x = 330.0
+        resource_panel.position.x = -352.0
+        resource_label.size.x = 294.0
+        focus_label.size.x = 294.0
+        operation_label.size.x = 294.0
+        notification_panel.size.x = 370.0
+        notification_panel.position.x = -392.0
+        notification_label.size.x = 334.0
+    else:
+        objective_panel.size.x = 440.0
+        objective_label.size.x = 400.0
+        resource_panel.size.x = 384.0
+        resource_panel.position.x = -406.0
+        resource_label.size.x = 344.0
+        focus_label.size.x = 344.0
+        operation_label.size.x = 344.0
+        notification_panel.size.x = 424.0
+        notification_panel.position.x = -446.0
+        notification_label.size.x = 388.0
+
+
+func _on_viewport_resized() -> void:
+    apply_safe_layout(Vector2(get_viewport().get_visible_rect().size))
 
 
 func _panel(position_value: Vector2, size_value: Vector2, anchor_right: bool = false, anchor_bottom: bool = false) -> PanelContainer:
@@ -203,10 +328,11 @@ func set_objective(title: String, detail: String) -> void:
 
 func set_prompt(text_value: String) -> void:
     prompt_label.text = text_value
+    prompt_panel.visible = not text_value.strip_edges().is_empty()
 
 
 func set_resources(scrap: int, rare_cores: int) -> void:
-    resource_label.text = "SCRAP %d\nRARE CORES %d" % [scrap, rare_cores]
+    resource_label.text = "SCRAP  %d\nCOGNITION CORES  %d" % [scrap, rare_cores]
 
 
 func set_focus(focus: StringName) -> void:
@@ -239,11 +365,14 @@ func hide_channel() -> void:
 
 func show_forge_menu() -> void:
     forge_open = true
+    forge_backdrop.visible = true
     forge_panel.visible = true
+    apply_safe_layout(Vector2(get_viewport().get_visible_rect().size))
 
 
 func hide_forge_menu() -> void:
     forge_open = false
+    forge_backdrop.visible = false
     forge_panel.visible = false
 
 
@@ -252,10 +381,30 @@ func show_map_banner(visible_value: bool) -> void:
 
 
 func push_notification(message: String) -> void:
-    notifications.push_front(message)
-    if notifications.size() > 5:
-        notifications.resize(5)
-    notification_label.text = "\n".join(notifications)
+    var cleaned := message.strip_edges()
+    if cleaned.is_empty():
+        return
+    if not notifications.is_empty() and notifications[0] == cleaned:
+        notification_ages[0] = 0.0
+        _refresh_notifications()
+        return
+    notifications.push_front(cleaned)
+    notification_ages.push_front(0.0)
+    if notifications.size() > MAX_VISIBLE_NOTIFICATIONS:
+        notifications.resize(MAX_VISIBLE_NOTIFICATIONS)
+        notification_ages.resize(MAX_VISIBLE_NOTIFICATIONS)
+    _refresh_notifications()
+
+
+func _refresh_notifications() -> void:
+    notification_panel.visible = not notifications.is_empty()
+    if notifications.is_empty():
+        notification_label.text = ""
+        return
+    var formatted: Array[String] = []
+    for message in notifications:
+        formatted.append("• %s" % message.replace("\n", "  "))
+    notification_label.text = "\n\n".join(formatted)
 
 
 func show_ending(victory: bool, detail: String) -> void:
