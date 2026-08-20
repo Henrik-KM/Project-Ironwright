@@ -1,0 +1,33 @@
+{
+  "asset_id": "warden.guardian.v1",
+  "runtime_scene": "res://assets/warden/warden.gltf",
+  "source_builder": "game/assets/warden/source/build_warden_asset.py",
+  "source_type": "original_project_ironwright_shared_mesh_builder",
+  "third_party_assets": [],
+  "presentation_only": true,
+  "stable_nodes": [
+    "WardenModel",
+    "Chassis",
+    "ChassisCore",
+    "ChassisCornerCap",
+    "Sensor",
+    "OpticLens",
+    "WardenAutocannon",
+    "WeaponMuzzle",
+    "WardenHeatExchanger",
+    "ProductionAssetMarker"
+  ],
+  "animation_clips": [
+    "Idle",
+    "Walk",
+    "Fire"
+  ],
+  "socket_contract": [
+    "sensor",
+    "optic",
+    "weapon_mount",
+    "weapon_muzzle",
+    "recoil_ring",
+    "sensor_mast"
+  ]
+}

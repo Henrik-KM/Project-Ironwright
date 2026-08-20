@@ -392,6 +392,21 @@ identities. Manual channels remain finish-before-save.
 - a live release-opening review confirmed the companion remains readable beside
   the Mechromancer inside the warm Heartforge composition.
 
+## Focused Warden authored-shell milestone
+
+- replaced the guardian's procedural base silhouette with the original
+  high-definition `warden.guardian.v1` glTF shell, preserving stable sensor,
+  weapon-muzzle and recoil presentation sockets;
+- added broad escort armour, a protected autocannon breech, counterweight,
+  heat-exchanger louvers, sensor mast and warm/cyan status hardware;
+- recorded the runtime/source/animation contract in
+  `game/data/warden_asset_manifest.json` and
+  `game/assets/warden/source/README.md`;
+- kept the finish presentation-only: guardian collision, attack, formation,
+  autonomy workload, progression gates and save state are unchanged;
+- added native aesthetic coverage for the authored shell and guardian role
+  silhouette.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

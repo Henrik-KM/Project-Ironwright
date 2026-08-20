@@ -123,6 +123,10 @@ organic enemies remain procedural until their own production asset milestones.
   chassis plates, service fasteners, protected optics, twin weapon housings,
   rear shield hardware and a raised protection emitter; its stable node and
   animation contract is recorded in `game/data/bulwark_asset_manifest.json`;
+- the Warden guardian now uses a separate original authored glTF shell with
+  broad escort armour, counterweight, protected autocannon breech,
+  heat-exchanger louvers and a sensor mast; its stable contract is recorded in
+  `game/data/warden_asset_manifest.json`;
 - role-specific salvager cargo and dismantler tooling, guardian weapon and
   shield forms, scout fins and sensor mast, and engineer cradle, pistons and
   forge tooling;
