@@ -1,0 +1,224 @@
+# Project Ironwright — Commercial Release Candidate
+
+**Version:** 1.0.0-rc.1  
+**Engine:** Godot 4.7.1  
+**Primary platforms:** Windows x86-64 and Linux x86-64  
+**Status:** Repository-complete commercial release candidate under final external playtest and distribution QA
+
+Project Ironwright 1.0.0-rc.1 converts the complete start-to-victory systemic alpha into a packaged, localized, accessible and performance-bounded release candidate. The game retains the product identity established in the authoritative conversation: one weak Mechromancer, one run-critical Heartforge, organic enemies, physically travelling robot groups, bounded autonomous outposts, continuous causal pressure, and machine intelligence that removes work rather than opening more management screens.
+
+This document distinguishes what is implemented in the repository from the final external activities required before publishing a paid commercial build. A repository can contain a complete release candidate, but no code change alone can substitute for representative hardware testing, store signing, age ratings, legal review, broad external playtesting, or a final business decision to publish.
+
+## Production assets
+
+The release candidate includes an original runtime asset library created specifically for Project Ironwright. No third-party character, environment, texture, sound or music pack was inserted into the game.
+
+The production texture set contains nine authored procedural texture families:
+
+- rain-darkened asphalt;
+- ruined brick;
+- wet concrete;
+- brushed machine metal;
+- oxidized and painted steel;
+- accumulated grime and damage;
+- moss and post-collapse plant growth;
+- organic chitin;
+- living membrane.
+
+The release art director applies these textures through triplanar world-space materials to the existing procedural geometry. This is deliberate: the systems remain independent from the current art source, while the shipped world no longer presents as flat greybox geometry. Roads, buildings, vehicles, machinery, friendly robots and organisms receive materials appropriate to their role and construction.
+
+Every persistent region also receives a distinct environment-dressing kit. The Heartforge District gains a denser inhabited perimeter, cable posts and warm practical lights. The West Grid receives tanks, pipework and industrial structures. East Tenements gain balconies, suspended cloth and vertical route language. The Municipal Glasshouse receives broken frames, overgrowth and luminous mycelium. Flood Market gains stalls, drowned concrete and membrane growth. Riverworks gains pump gantries and service decks. Tram Graveyard contains derailed vehicles and overhead infrastructure. Cathedral Quarter gains brood spines and resonant sacs. Observatory Ridge receives the surviving optics. Buried Laboratories gain consoles, cylinders and cold displays. Root Cistern receives root pylons, signal organs and the final basin.
+
+The asset library is intentionally modular and generated from original source material. It can later be supplemented by externally commissioned models without rewriting the survival, autonomy, persistence or performance architecture.
+
+## Animation
+
+The previous procedural locomotion layer remains responsible for walking, recoil, breathing, work poses, hit reactions and organic movement. The release candidate adds a second animation layer for details that previously remained rigid.
+
+Secondary motion is attached dynamically to relevant world subjects and supports:
+
+- Engineer welding and assembly arms;
+- outpost extraction, repair, sensor and defensive mechanisms;
+- Glassmoth wings and Roofleaper membranes;
+- Carrion Bell signal organs;
+- Rootweaver appendages and Root Cistern pylons;
+- observatory and scout sensor dishes;
+- hanging cloth and environmental movement;
+- pulsing biological signal lights.
+
+The layer respects the reduced-motion accessibility setting. It also remains separate from simulation. A visual mechanism can be replaced with an authored skeletal animation later without changing the robot planner, outpost director or ecology.
+
+Distant actors use visual level-of-detail states. Nearby organisms and robots retain full shadow and detail treatment. Medium-distance actors disable expensive shadows. Distant actors suppress small decorative geometry while preserving their physical positions, health, goals and consequences.
+
+## Audio and music
+
+The release candidate contains an original audio library rather than silent placeholder systems.
+
+Ambient sound is layered continuously. Near the Heartforge, a warm mechanical sanctuary bed dominates. As the Mechromancer moves into the town, wind, distant structures and organic environmental sound become more prominent. The transition is spatial and continuous rather than tied to a loading screen.
+
+Music uses three adaptive states:
+
+- **Embers:** restrained opening music for vulnerability and small-scale survival;
+- **Pressure:** a more urgent layer used during dangerous ecological concentration and final-protocol escalation;
+- **Sovereignty:** broader late-game music used as the machine society matures and after victory.
+
+The audio director crossfades between states rather than restarting tracks on every event.
+
+Effects cover the weak pistol, salvage cutting, Heartforge fabrication, organic impacts, machine reports, major danger, interface confirmation and first victory. Effects use a bounded player pool to avoid unbounded node creation.
+
+Optional sound captions describe strategically meaningful sounds such as a weak pistol crack, loud metal cutting, Heartforge hammering, a nearby organic impact, an approaching major organism and a machine report. Captions follow the selected language and can be disabled independently.
+
+Music, ambience and effects each have separate volume controls in addition to master volume.
+
+## Substantially expanded content and environmental detail
+
+The persistent town expands from seven to twelve authored regions:
+
+1. Heartforge District;
+2. North Ruins;
+3. West Grid;
+4. East Tenements;
+5. Municipal Glasshouse;
+6. Flood Market;
+7. Riverworks;
+8. Tram Graveyard;
+9. Cathedral Quarter;
+10. Observatory Ridge;
+11. Buried Laboratories;
+12. Root Cistern.
+
+The operation catalogue expands to twelve physical objectives. The required start-to-victory chain remains intact, while optional operations add route knowledge, rare components, regional suppression and additional outpost foundations. These include tracing the East Roofline, recovering the Tram Servo Bank, harvesting luminous Glasshouse mycelium, restarting a Riverworks pump, calibrating the Observatory array and a post-victory archive recovery.
+
+The organic roster expands to twelve families. Five release families join the existing seven:
+
+- Roofleapers use vertical ambush movement;
+- Glassmoths form luminous spore swarms;
+- Miremaws are heavy amphibious predators;
+- Carrion Bells broadcast machine positions and support nearby organisms;
+- Rootweavers control late-game routes and respond to remote infrastructure.
+
+These are organic additions, not a hostile machine faction. Regional ecology chooses species according to district identity and continues to respond to noise, pressure, suppression and migration.
+
+The bounded outpost-site pool expands to eight fixed foundations. Optional exploration therefore creates meaningful strategic choices without introducing free placement, territory painting or a logistics spreadsheet.
+
+## Large-scale performance architecture
+
+The release candidate adds a reusable spatial index for high-frequency targeting and perception. Friendly machines, organic enemies, outposts and salvage are partitioned into world-space cells. Radius queries inspect only relevant cells rather than scanning every entity in the world.
+
+A performance director divides the physical world into three presentation and simulation bands around the current camera or followed operation:
+
+- **active:** full physics, behaviour, geometry and shadows;
+- **medium:** active behaviour with reduced visual cost;
+- **reduced detail:** coarse deterministic movement and combat updates at a slower interval.
+
+Reduced detail is not an abstract mission timer. Distant organisms retain positions, targets, health, aggression and physical movement. Returning to the area restores full simulation around the same state.
+
+The active and medium radii adapt conservatively to measured frame rate. When performance falls substantially below the selected target, the active radius contracts and distant update intervals increase. When performance recovers, detail expands again within bounded limits.
+
+Collections, effect pools, reports, save histories and telemetry remain bounded. The release tests verify that a distant organism enters reduced-detail simulation and continues moving causally.
+
+## Transactional save migration
+
+The release candidate replaces the transitional multi-file save path with a unified schema-versioned snapshot.
+
+A save contains four domains:
+
+- base world state;
+- progression and autonomous outposts;
+- complete-game regions, operations, machine society, ecology and endgame;
+- release balance, performance and audio state.
+
+Every save is wrapped in an envelope containing schema version, build identifier, timestamp, metadata and a SHA-256 checksum of the payload.
+
+Saving follows a transactional sequence:
+
+1. write a temporary file;
+2. flush and close it;
+3. reopen and verify JSON structure and checksum;
+4. rotate existing verified backups;
+5. preserve the previous current save as backup 1;
+6. atomically rename the verified temporary file into place.
+
+If the current file is corrupt or incomplete, loading tries rotating verified backups in order. A regression test writes two revisions, corrupts the current file and verifies recovery of the previous valid revision.
+
+The service also migrates the legacy base, full-game extension and complete-alpha save files into the unified schema. Existing alpha players therefore do not have to discard their world.
+
+Active physical salvage, expedition, outpost or long-range operations still defer saving because their live formation references have not been serialized transactionally. The interface states this explicitly rather than producing an unsafe partial save.
+
+## Controller and accessibility
+
+The release candidate supports keyboard and mouse plus a standard gamepad input map.
+
+Controller bindings cover movement, interaction, cancellation, pause, follow camera, command map, evolution, outposts, long-range operations, final protocols and the three macro machine focuses. Controller input is registered at runtime and protected against early-scene initialization order.
+
+Damage can produce optional controller vibration. The response scales with the proportion of health lost and can be disabled.
+
+Accessibility settings include:
+
+- text scaling from 85% to 140%;
+- high-contrast interface text;
+- color-vision mode selection;
+- reduced motion;
+- reduced flashes;
+- adjustable camera shake;
+- hold or toggle behaviour for exposed interactions;
+- controller vibration toggle;
+- subtitles and sound captions;
+- opening world-guidance toggle;
+- configurable target frame rate;
+- Story, Survival and Brutal difficulty profiles.
+
+The settings screen is controller-focusable and accessible from title and pause menus. Settings are persisted transactionally in a separate verified settings file with a backup.
+
+## Localization
+
+The complete release shell is localized into English, Swedish and German.
+
+Catalogs include title and pause menus, settings, difficulty descriptions, transactional-save reports, controller connection messages, sound captions, performance terminology and first-victory messaging.
+
+A static release gate verifies that every locale contains exactly the same keys and that no value is empty. A native runtime test switches between all three locales and verifies translated output.
+
+Gameplay content that still exists as authored English prose inside the systemic alpha remains understandable but is not yet fully externalized. The release boundary therefore distinguishes complete release-shell localization from exhaustive localization of every historical diagnostic sentence. Before a final multilingual store launch, the remaining prose should be extracted and reviewed by professional translators.
+
+## Balance and long-run QA
+
+Three data-driven balance profiles are implemented.
+
+**Story** reduces enemy health, damage, speed, pressure and operation threat while increasing Scrap recovery and outpost repair. It preserves the full survival and autonomy structure.
+
+**Survival** is the intended first-victory profile. It targets continuous pressure, meaningful loss and a limited ability to recover.
+
+**Brutal** increases health, damage, speed, pressure, enemy caps and operation danger while reducing Scrap and repair efficiency.
+
+A bounded adaptive-relief system observes recent catastrophic machine loss and critical Heartforge integrity. It can temporarily reduce regional pressure within the maximum allowed by the selected profile. It does not grant resources, cancel consequences or silently make enemies harmless.
+
+The balance director records a bounded history of machine loss, Heartforge crises and victory timing. This creates a durable foundation for external long-run balancing without introducing analytics that affect the player’s privacy or require an online service.
+
+Automated testing includes the complete accelerated start-to-victory path. This confirms systemic connectivity but cannot replace human 30–100-hour balance runs. The release candidate must still undergo external endurance playtests before a final difficulty claim is made.
+
+## Packaging and release QA
+
+Godot export presets are committed for Windows x86-64 and Linux x86-64. A release workflow installs Godot 4.7.1 export templates, validates assets and contracts, imports all resources, runs commercial release tests, runs the complete start-to-victory test, exports both platforms, packages the builds and produces SHA-256 checksums.
+
+The pull-request workflow runs all earlier regression suites in addition to the new commercial release suite. Existing opening, aesthetics, outposts, persistence, complete-game progression and victory behaviour must remain green.
+
+## Commercial-release boundary
+
+This repository now targets a commercially distributable release candidate, but the final public release decision remains outside automated implementation.
+
+Before describing a build as the final commercial 1.0, the following external gates remain necessary:
+
+- representative Windows and Linux hardware testing;
+- multi-hour and multi-day save endurance testing;
+- controller testing across actual gamepads;
+- professional language review for all player-facing prose;
+- accessibility review with affected players;
+- broad external balance and onboarding playtests;
+- crash and performance profiling on target hardware;
+- store account, signing and upload configuration;
+- age-rating and regional legal review where required;
+- privacy, licensing and trademark review;
+- final screenshots, trailer and store copy;
+- a release-support and rollback process.
+
+The codebase must not claim that these human and commercial gates have happened when they have not. The appropriate status for this branch is therefore **1.0.0 release candidate**, not an unqualified final retail release.
