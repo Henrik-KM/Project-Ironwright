@@ -112,14 +112,3 @@ func set_operation(text_value: String) -> void:
     super.set_operation(text_value)
     if operation_label != null and operation_label.text.length() > 76:
         operation_label.text = operation_label.text.left(73) + "…"
-
-
-func push_notification(message: String) -> void:
-    super.push_notification(message)
-    # Two transient reports are enough in normal play. The run log retains the
-    # history, so tactical space is not sacrificed to stacked status cards.
-    while notifications.size() > 2:
-        notifications.pop_back()
-    while notification_ages.size() > 2:
-        notification_ages.pop_back()
-    _refresh_notifications()
