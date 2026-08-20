@@ -1087,3 +1087,224 @@ func operation_summary() -> String:
             int(coverage.get("player_guardians", 0)),
         ]
     return "No remote operation"
+
+
+func to_dictionary() -> Dictionary:
+    return {
+        "schema_version": 1,
+        "salvage_operation": _serialize_salvage_operation(),
+        "expedition_operation": _serialize_field_operation(expedition_operation),
+    }
+
+
+func restore_from_dictionary(data: Dictionary) -> void:
+    salvage_operation.clear()
+    expedition_operation.clear()
+    _restore_field_operation(data.get("expedition_operation", {}))
+    if expedition_operation.is_empty():
+        _restore_salvage_operation(data.get("salvage_operation", {}))
+
+
+func _serialize_field_operation(operation: Dictionary) -> Dictionary:
+    if operation.is_empty():
+        return {}
+    var member_names: Array[String] = []
+    for member in operation.get("members", []):
+        if is_instance_valid(member) and member is RobotUnit3D:
+            member_names.append(String((member as RobotUnit3D).name))
+    var route_values: Array = []
+    var route: PackedVector3Array = operation.get("route", PackedVector3Array())
+    for point in route:
+        route_values.append(_vector_to_array(point))
+    return {
+        "id": String(operation.get("id", &"")),
+        "kind": String(operation.get("kind", &"expedition")),
+        "state": String(operation.get("state", &"outbound")),
+        "member_names": member_names,
+        "target_position": _vector_to_array(operation.get("target_position", NORTH_RUINS)),
+        "anchor": _vector_to_array(operation.get("anchor", heartforge_reference.global_position)),
+        "route": route_values,
+        "route_index": int(operation.get("route_index", 1)),
+        "work_clock": float(operation.get("work_clock", 0.0)),
+        "work_duration": float(operation.get("work_duration", 7.0)),
+        "cargo": int(operation.get("cargo", 0)),
+        "core_secured": bool(operation.get("core_secured", false)),
+        "last_forward": _vector_to_array(operation.get("last_forward", Vector3.FORWARD)),
+    }
+
+
+func _serialize_salvage_operation() -> Dictionary:
+    if salvage_operation.is_empty():
+        return {}
+    var member_names: Array[String] = []
+    for member in salvage_operation.get("members", []):
+        if is_instance_valid(member) and member is RobotUnit3D:
+            member_names.append(String((member as RobotUnit3D).name))
+    var assignments: Dictionary = {}
+    for raw_assignment in (salvage_operation.get("assignments", {}) as Dictionary).values():
+        if not (raw_assignment is Dictionary):
+            continue
+        var assignment := raw_assignment as Dictionary
+        var robot: RobotUnit3D = assignment.get("robot")
+        if robot == null or not is_instance_valid(robot):
+            continue
+        var target: SalvagePile3D = assignment.get("target") as SalvagePile3D
+        assignments[String(robot.name)] = {
+            "state": String(assignment.get("state", &"idle")),
+            "target_position": _vector_to_array(target.global_position) if target != null else [],
+            "target_display_name": target.display_name if target != null else "",
+            "cargo": int(assignment.get("cargo", 0)),
+            "work_clock": float(assignment.get("work_clock", 0.0)),
+            "cycles": int(assignment.get("cycles", 0)),
+            "site_score": float(assignment.get("site_score", 0.0)),
+        }
+    return {
+        "id": String(salvage_operation.get("id", GROUP_SALVAGE)),
+        "kind": String(salvage_operation.get("kind", &"salvage")),
+        "state": String(salvage_operation.get("state", &"distributed")),
+        "distributed": bool(salvage_operation.get("distributed", true)),
+        "member_names": member_names,
+        "assignments": assignments,
+        "salvage_guardian_names": _robot_names(salvage_operation.get("salvage_guardians", [])),
+        "player_guardian_names": _robot_names(salvage_operation.get("player_guardians", [])),
+        "salvage_scout_names": _robot_names(salvage_operation.get("salvage_scouts", [])),
+        "anchor": _vector_to_array(salvage_operation.get("anchor", heartforge_reference.global_position)),
+        "target_position": _vector_to_array(salvage_operation.get("target_position", heartforge_reference.global_position)),
+        "cargo": int(salvage_operation.get("cargo", 0)),
+        "delivered": int(salvage_operation.get("delivered", 0)),
+        "replan_clock": float(salvage_operation.get("replan_clock", 0.0)),
+        "idle_clock": float(salvage_operation.get("idle_clock", 0.0)),
+        "last_forward": _vector_to_array(salvage_operation.get("last_forward", Vector3.FORWARD)),
+    }
+
+
+func _restore_field_operation(raw_data: Variant) -> void:
+    if not (raw_data is Dictionary):
+        return
+    var saved := raw_data as Dictionary
+    var members := _robots_by_names(saved.get("member_names", []))
+    if members.is_empty():
+        return
+    var route := PackedVector3Array()
+    for raw_point in saved.get("route", []):
+        route.append(_array_to_vector(raw_point))
+    expedition_operation = {
+        "id": StringName(str(saved.get("id", GROUP_EXPEDITION))),
+        "kind": StringName(str(saved.get("kind", "expedition"))),
+        "state": StringName(str(saved.get("state", "outbound"))),
+        "members": members,
+        "target_node": null,
+        "target_position": _array_to_vector(saved.get("target_position", [NORTH_RUINS.x, NORTH_RUINS.y, NORTH_RUINS.z])),
+        "anchor": _array_to_vector(saved.get("anchor", [heartforge_reference.global_position.x, heartforge_reference.global_position.y, heartforge_reference.global_position.z])),
+        "route": route,
+        "route_index": maxi(1, int(saved.get("route_index", 1))),
+        "work_clock": maxf(0.0, float(saved.get("work_clock", 0.0))),
+        "work_duration": maxf(0.1, float(saved.get("work_duration", 7.0))),
+        "cargo": maxi(0, int(saved.get("cargo", 0))),
+        "core_secured": bool(saved.get("core_secured", false)),
+        "last_forward": _array_to_vector(saved.get("last_forward", [0.0, 0.0, -1.0])),
+    }
+    for index in range(members.size()):
+        members[index].set_group(GROUP_EXPEDITION, index)
+    set_process(false)
+    operation_changed.emit(&"expedition", StringName(expedition_operation.get("state", &"outbound")), "The saved expedition resumed its physical route.")
+
+
+func _restore_salvage_operation(raw_data: Variant) -> void:
+    if not (raw_data is Dictionary) or not bool((raw_data as Dictionary).get("distributed", false)):
+        return
+    var saved := raw_data as Dictionary
+    var members := _robots_by_names(saved.get("member_names", []))
+    if members.is_empty():
+        return
+    salvage_operation = {
+        "id": StringName(str(saved.get("id", GROUP_SALVAGE))),
+        "kind": &"salvage",
+        "state": &"distributed",
+        "distributed": true,
+        "members": members,
+        "assignments": {},
+        "salvage_guardians": _robots_by_names(saved.get("salvage_guardian_names", [])),
+        "player_guardians": _robots_by_names(saved.get("player_guardian_names", [])),
+        "salvage_scouts": _robots_by_names(saved.get("salvage_scout_names", [])),
+        "anchor": _array_to_vector(saved.get("anchor", [heartforge_reference.global_position.x, heartforge_reference.global_position.y, heartforge_reference.global_position.z])),
+        "target_node": null,
+        "target_position": _array_to_vector(saved.get("target_position", [heartforge_reference.global_position.x, heartforge_reference.global_position.y, heartforge_reference.global_position.z])),
+        "last_forward": _array_to_vector(saved.get("last_forward", [0.0, 0.0, -1.0])),
+        "cargo": maxi(0, int(saved.get("cargo", 0))),
+        "delivered": maxi(0, int(saved.get("delivered", 0))),
+        "replan_clock": maxf(0.0, float(saved.get("replan_clock", 0.0))),
+        "idle_clock": maxf(0.0, float(saved.get("idle_clock", 0.0))),
+    }
+    var saved_assignments: Dictionary = saved.get("assignments", {})
+    var restored_assignments: Dictionary = {}
+    for raw_name in saved_assignments:
+        var robot := _find_robot_by_name(str(raw_name))
+        if robot == null or robot not in members or not (saved_assignments[raw_name] is Dictionary):
+            continue
+        var saved_assignment := saved_assignments[raw_name] as Dictionary
+        var assignment := _blank_salvage_assignment(robot)
+        assignment["state"] = StringName(str(saved_assignment.get("state", "idle")))
+        assignment["cargo"] = maxi(0, int(saved_assignment.get("cargo", 0)))
+        assignment["work_clock"] = maxf(0.0, float(saved_assignment.get("work_clock", 0.0)))
+        assignment["cycles"] = maxi(0, int(saved_assignment.get("cycles", 0)))
+        assignment["site_score"] = float(saved_assignment.get("site_score", 0.0))
+        var target := _find_salvage_pile(saved_assignment.get("target_position", []), str(saved_assignment.get("target_display_name", "")))
+        if target != null and assignment["state"] != &"idle":
+            var reservation := _reservation_id(robot)
+            if target.reserve(reservation):
+                assignment["target"] = target
+                assignment["reservation"] = reservation
+            else:
+                assignment["state"] = &"idle"
+        restored_assignments[_assignment_key(robot)] = assignment
+    salvage_operation["assignments"] = restored_assignments
+    _refresh_distributed_salvagers()
+    _refresh_salvage_escort_assignments()
+    set_process(true)
+    operation_changed.emit(&"salvage", &"distributed", "The saved salvage network resumed its physical assignments.")
+
+
+func _robot_names(raw_robots: Variant) -> Array[String]:
+    var result: Array[String] = []
+    for raw_robot in raw_robots:
+        if is_instance_valid(raw_robot) and raw_robot is RobotUnit3D:
+            result.append(String((raw_robot as RobotUnit3D).name))
+    return result
+
+
+func _robots_by_names(raw_names: Variant) -> Array[RobotUnit3D]:
+    var result: Array[RobotUnit3D] = []
+    for raw_name in raw_names:
+        var robot := _find_robot_by_name(str(raw_name))
+        if robot != null and robot.is_alive() and robot not in result:
+            result.append(robot)
+    return result
+
+
+func _find_robot_by_name(robot_name: String) -> RobotUnit3D:
+    for node in get_tree().get_nodes_in_group(&"friendly_robots"):
+        if node is RobotUnit3D and String((node as RobotUnit3D).name) == robot_name:
+            return node as RobotUnit3D
+    return null
+
+
+func _find_salvage_pile(raw_position: Variant, display_name: String) -> SalvagePile3D:
+    var position := _array_to_vector(raw_position)
+    for node in get_tree().get_nodes_in_group(&"salvage_piles"):
+        if not (node is SalvagePile3D) or not is_instance_valid(node):
+            continue
+        var pile := node as SalvagePile3D
+        if pile.global_position.distance_to(position) <= 0.2 and (display_name.is_empty() or pile.display_name == display_name):
+            return pile
+    return null
+
+
+func _vector_to_array(value: Vector3) -> Array[float]:
+    return [value.x, value.y, value.z]
+
+
+func _array_to_vector(value: Variant) -> Vector3:
+    if value is Array and value.size() >= 3:
+        return Vector3(float(value[0]), float(value[1]), float(value[2]))
+    return Vector3.ZERO

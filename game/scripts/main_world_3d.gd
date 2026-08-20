@@ -559,8 +559,8 @@ func _update_objective() -> void:
 
 
 func _save_game() -> void:
-    if player.is_channeling() or not autonomy_director.expedition_operation.is_empty() or not autonomy_director.salvage_operation.is_empty():
-        hud.push_notification("SAVE DEFERRED · FINISH OR RECALL THE ACTIVE OPERATION")
+    if player.is_channeling():
+        hud.push_notification("SAVE DEFERRED · FINISH THE ACTIVE MANUAL CHANNEL")
         return
     var snapshot := {
         "foundation": {
@@ -655,11 +655,12 @@ func _load_game() -> void:
 
 
 func _save_extension_data() -> Dictionary:
-    return {}
+    return {"autonomy": autonomy_director.to_dictionary()}
 
 
-func _restore_extension_data(_extensions: Variant) -> void:
-    pass
+func _restore_extension_data(extensions: Variant) -> void:
+    if extensions is Dictionary:
+        autonomy_director.restore_from_dictionary((extensions as Dictionary).get("autonomy", {}))
 
 
 func _clear_runtime_entities() -> void:

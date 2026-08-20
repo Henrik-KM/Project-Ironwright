@@ -320,8 +320,8 @@ func _update_objective() -> void:
 
 
 func _save_game() -> void:
-    if player.is_channeling() or not autonomy_director.expedition_operation.is_empty() or not autonomy_director.salvage_operation.is_empty():
-        hud.push_notification("SAVE DEFERRED · FINISH THE ACTIVE OPERATION")
+    if player.is_channeling():
+        hud.push_notification("SAVE DEFERRED · FINISH THE ACTIVE MANUAL CHANNEL")
         return
     super._save_game()
 
@@ -332,6 +332,7 @@ func _save_extension_data() -> Dictionary:
             "schema_version": 2,
             "progression": progression.to_dictionary(),
             "outposts": outpost_director.to_dictionary(),
+            "autonomy": autonomy_director.to_dictionary(),
             "foundation_milestone_complete": full_game_milestone_complete,
         },
     }
@@ -351,6 +352,7 @@ func _restore_extension_data(extensions: Variant) -> void:
             outpost_director.discover_sites_by(&"expedition.north_ruins")
         return
     progression.restore_from_dictionary(data.get("progression", {}))
+    autonomy_director.restore_from_dictionary(data.get("autonomy", {}))
     outpost_director.restore_from_dictionary(data.get("outposts", {}))
     full_game_milestone_complete = bool(data.get("foundation_milestone_complete", false))
     hud.push_notification("FULL-GAME STATE RESTORED · PROGRESSION, DISCOVERIES AND OUTPOSTS RETAINED")
