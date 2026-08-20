@@ -1,0 +1,33 @@
+{
+  "asset_id": "scrapper.salvager.v1",
+  "runtime_scene": "res://assets/scrapper/scrapper.gltf",
+  "source_builder": "game/assets/scrapper/source/build_scrapper_asset.py",
+  "source_type": "original_project_ironwright_shared_mesh_builder",
+  "third_party_assets": [],
+  "presentation_only": true,
+  "stable_nodes": [
+    "ScrapperModel",
+    "Chassis",
+    "ChassisCore",
+    "ChassisCornerCap",
+    "Sensor",
+    "OpticLens",
+    "CargoBin",
+    "DismantlerTool",
+    "SalvageDrum",
+    "ScrapperIntake",
+    "ProductionAssetMarker"
+  ],
+  "animation_clips": [
+    "Idle",
+    "Walk",
+    "Work"
+  ],
+  "socket_contract": [
+    "sensor",
+    "optic",
+    "salvage_tool",
+    "cargo_mount",
+    "salvage_drum"
+  ]
+}
