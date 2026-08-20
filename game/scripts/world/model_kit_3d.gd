@@ -49,11 +49,25 @@ static func add_cylinder(
         rotation: Vector3 = Vector3.ZERO,
         name_hint: String = "Cylinder"
     ) -> MeshInstance3D:
+    return add_tapered_cylinder(parent, radius, radius, height, position, mat, rotation, name_hint)
+
+
+static func add_tapered_cylinder(
+        parent: Node3D,
+        top_radius: float,
+        bottom_radius: float,
+        height: float,
+        position: Vector3,
+        mat: Material,
+        rotation: Vector3 = Vector3.ZERO,
+        name_hint: String = "Cylinder"
+    ) -> MeshInstance3D:
     var mesh := CylinderMesh.new()
-    mesh.top_radius = radius
-    mesh.bottom_radius = radius
+    mesh.top_radius = top_radius
+    mesh.bottom_radius = bottom_radius
     mesh.height = height
-    mesh.radial_segments = 24
+    mesh.radial_segments = 32
+    mesh.rings = 3
     var instance := MeshInstance3D.new()
     instance.name = name_hint
     instance.mesh = mesh
@@ -75,8 +89,8 @@ static func add_sphere(
     var mesh := SphereMesh.new()
     mesh.radius = radius
     mesh.height = radius * 2.0
-    mesh.radial_segments = 24
-    mesh.rings = 16
+    mesh.radial_segments = 32
+    mesh.rings = 24
     var instance := MeshInstance3D.new()
     instance.name = name_hint
     instance.mesh = mesh
@@ -99,8 +113,8 @@ static func add_capsule(
     var mesh := CapsuleMesh.new()
     mesh.radius = radius
     mesh.height = max(height, radius * 2.05)
-    mesh.radial_segments = 24
-    mesh.rings = 12
+    mesh.radial_segments = 32
+    mesh.rings = 20
     var instance := MeshInstance3D.new()
     instance.name = name_hint
     instance.mesh = mesh
@@ -109,6 +123,58 @@ static func add_capsule(
     instance.rotation = rotation
     parent.add_child(instance)
     return instance
+
+
+static func add_surface_panel(
+        parent: Node3D,
+        size: Vector3,
+        position: Vector3,
+        base_mat: Material,
+        accent_mat: Material,
+        rotation: Vector3 = Vector3.ZERO,
+        name_hint: String = "SurfacePanel"
+    ) -> Node3D:
+    # A layered panel reads as manufactured surface detail at tactical scale:
+    # inset core, raised cap, edge rails and four fasteners. It stays composed
+    # of cheap primitives so it remains safe for large autonomous populations.
+    var panel := Node3D.new()
+    panel.name = name_hint
+    panel.position = position
+    panel.rotation = rotation
+    parent.add_child(panel)
+    var core_size := Vector3(maxf(0.04, size.x * 0.9), maxf(0.04, size.y * 0.72), maxf(0.04, size.z * 0.9))
+    add_box(panel, core_size, Vector3.ZERO, base_mat, Vector3.ZERO, "%sCore" % name_hint)
+    var cap_size := Vector3(maxf(0.03, size.x * 0.76), maxf(0.025, size.y * 0.18), maxf(0.03, size.z * 0.76))
+    add_box(panel, cap_size, Vector3(0.0, size.y * 0.43, 0.0), accent_mat, Vector3.ZERO, "%sCap" % name_hint)
+    var rail_size := Vector3(maxf(0.025, size.x * 0.045), maxf(0.025, size.y * 0.22), maxf(0.03, size.z * 0.78))
+    for side in [-1.0, 1.0]:
+        add_box(panel, rail_size, Vector3(side * size.x * 0.45, size.y * 0.2, 0.0), accent_mat, Vector3.ZERO, "%sRail" % name_hint)
+    var rivet_radius := clampf(minf(size.x, size.z) * 0.045, 0.025, 0.075)
+    for side in [-1.0, 1.0]:
+        for front in [-1.0, 1.0]:
+            add_sphere(panel, rivet_radius, Vector3(side * size.x * 0.37, size.y * 0.47, front * size.z * 0.34), accent_mat, Vector3.ONE, "%sRivet" % name_hint)
+    return panel
+
+
+static func add_organic_plate(
+        parent: Node3D,
+        radius: float,
+        position: Vector3,
+        base_mat: Material,
+        edge_mat: Material,
+        scale: Vector3 = Vector3.ONE,
+        name_hint: String = "OrganicPlate"
+    ) -> Node3D:
+    # Overlapping wet shell and dry edge give organic families a readable
+    # material break without introducing a second texture or shader pipeline.
+    var plate := Node3D.new()
+    plate.name = name_hint
+    plate.position = position
+    plate.scale = scale
+    parent.add_child(plate)
+    add_sphere(plate, radius, Vector3.ZERO, base_mat, Vector3.ONE, "%sShell" % name_hint)
+    add_sphere(plate, radius * 0.76, Vector3(0.0, radius * 0.42, -radius * 0.08), edge_mat, Vector3(1.0, 0.16, 0.88), "%sRidge" % name_hint)
+    return plate
 
 
 static func add_collision_box(parent: CollisionObject3D, size: Vector3, position: Vector3) -> CollisionShape3D:

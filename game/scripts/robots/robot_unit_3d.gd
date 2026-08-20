@@ -276,6 +276,7 @@ func _refresh_visual_identity() -> void:
     ModelKit3D.add_box(_model_root, Vector3(body_size.x * 0.84, 0.16, body_size.z * 0.72), Vector3(0.0, 1.25, 0.0), rust, Vector3.ZERO, "ArmorPlate")
     ModelKit3D.add_box(_model_root, Vector3(body_size.x * 0.68, 0.09, body_size.z * 0.82), Vector3(0.0, 0.55, body_size.z * 0.08), dark_steel, Vector3.ZERO, "LowerChassis")
     ModelKit3D.add_box(_model_root, Vector3(0.16, 0.32, body_size.z * 0.76), Vector3(0.0, 0.88, 0.0), rust, Vector3.ZERO, "ChassisSpine")
+    ModelKit3D.add_surface_panel(_model_root, Vector3(body_size.x * 0.72, 0.18, body_size.z * 0.48), Vector3(0.0, 1.34, -body_size.z * 0.05), steel, rust, Vector3(-0.04, 0.0, 0.0), "ChassisDetailPanel")
     ModelKit3D.add_sphere(_model_root, 0.22, Vector3(0.0, 1.12, -body_size.z * 0.55), glow, Vector3(1.2, 0.8, 0.6), "Sensor")
     ModelKit3D.add_box(_model_root, Vector3(0.48, 0.26, 0.12), Vector3(0.0, 1.15, -body_size.z * 0.62), dark_steel, Vector3.ZERO, "OpticHousing")
     ModelKit3D.add_sphere(_model_root, 0.075, Vector3(0.0, 1.15, -body_size.z * 0.7), glow, Vector3(1.7, 0.75, 0.5), "OpticLens")

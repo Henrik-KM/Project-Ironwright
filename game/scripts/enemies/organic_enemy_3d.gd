@@ -533,6 +533,7 @@ func _refresh_visuals() -> void:
 
     ModelKit3D.add_sphere(_model_root, body_radius, Vector3(0.0, body_radius + 0.16, 0.0), flesh, body_scale, "Torso")
     ModelKit3D.add_sphere(_model_root, body_radius * 0.62, Vector3(0.0, body_radius + 0.12, head_offset), chitin, Vector3(1.1, 0.8, 1.25), "Head")
+    ModelKit3D.add_organic_plate(_model_root, body_radius * 0.44, Vector3(-body_scale.x * 0.18, body_radius * 1.18, 0.18), wet_chitin, chitin, Vector3(1.45, 0.56, 1.65), "OrganicDorsalPlate")
 
     var leg_pairs := 3
     if species in [&"veilstalker", &"burrower", &"broodmass", &"apex"]:

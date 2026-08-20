@@ -64,6 +64,7 @@ func _run_all() -> void:
         _expect(robot.get_node_or_null("ProceduralAnimator3D") is ProceduralAnimator3D, "Robots must receive procedural gait and recoil animation.")
         _expect(_model_has_details(robot), "Robots must receive additional role-readable detail.")
         _expect(_find_named(robot, "ShoulderPlate") != null, "Robots must expose layered shoulder armour.")
+        _expect(_find_named(robot, "ChassisDetailPanel") != null, "Robots must expose a layered high-detail chassis panel.")
         _expect(_find_named(robot, "OpticLens") != null, "Robots must expose a readable optic lens.")
         _expect(_find_named(robot, "CompanionCrown") != null, "The companion must expose a distinct crown silhouette.")
 
@@ -93,6 +94,7 @@ func _run_all() -> void:
     await process_frame
     for index in enemy_samples.size():
         _expect(_enemy_model_has_details(enemy_samples[index], species_names[index]), "The %s organic family must expose a role-readable silhouette." % species_names[index])
+        _expect(_find_named(enemy_samples[index], "OrganicDorsalPlate") != null, "The %s organic family must expose a layered shell material break." % species_names[index])
         enemy_samples[index].queue_free()
 
     var veilstalker: Node3D
