@@ -129,7 +129,7 @@ The presentation milestones proceed in this order:
 2. authored Heartforge district composition — vertical slice implemented, awaiting visual review;
 3. production Mechromancer and Bulwark silhouettes — authored Mechromancer plus beveled procedural vertical-slice pass, with further authored refinement expected;
 4. one production-quality Warden/Scrapper/Pathfinder family pass — beveled procedural vertical-slice pass with shared high-detail machine panels implemented, further authored refinement expected;
-5. one complete organic enemy family with authored movement and attack language — Veilstalker layered silhouette and state-driven stalking/attack presentation implemented, still awaiting human visual acceptance;
+5. one complete organic enemy family with authored movement and attack language — Veilstalker layered silhouette and state-driven stalking/attack presentation implemented, including explicit attack-wind-up loading, still awaiting human visual acceptance;
 6. cohesive urban modular kit with damaged facades, interiors, street furniture and vegetation — opening route set-piece pass implemented, broader district breadth still required;
 7. final lighting/material pass for the opening district;
 8. human visual acceptance of representative opening gameplay;

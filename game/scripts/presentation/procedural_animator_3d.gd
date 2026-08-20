@@ -225,6 +225,7 @@ func _animate_organic(movement_blend: float) -> void:
     var state := _state_name()
     var hunting := state in [&"hunting", &"attacking", &"investigating"]
     var windup := _attack_windup_remaining()
+    var threat_blend := clampf(windup / 0.34, 0.0, 1.0)
     var pulse := 1.0 + sin(idle_phase * 2.4 + deterministic_offset) * 0.028
     model_root.scale = model_root.scale * Vector3(pulse, 1.0 / pulse, pulse)
     model_root.position.y += absf(sin(phase * 2.0)) * 0.075 * movement_blend
@@ -280,18 +281,28 @@ func _animate_organic(movement_blend: float) -> void:
         var attacking := state == &"attacking"
         var stalking := hunting or state in [&"scouting", &"patrolling"]
         var veil_sway := sin(idle_phase * (2.4 if stalking else 1.35) + deterministic_offset)
+        var veil_index := 0
         for veil in _nodes_with_prefix(model_root, "VeilstalkerVeil"):
             veil.rotation.z += veil_sway * (0.12 if stalking else 0.07)
+            var side := -1.0 if veil_index % 2 == 0 else 1.0
+            veil.rotation.y += side * (0.05 + threat_blend * 0.24)
+            veil.scale *= Vector3(1.0 + threat_blend * 0.18, 1.0 - threat_blend * 0.11, 1.0 + threat_blend * 0.08)
+            veil_index += 1
         for limb in _nodes_with_prefix(model_root, "VeilstalkerForelimb"):
-            limb.rotation.x += (0.22 if attacking else 0.06) + sin(phase + deterministic_offset) * 0.12 * movement_blend
+            limb.rotation.x += (0.22 + threat_blend * 0.58 if attacking else 0.06) + sin(phase + deterministic_offset) * 0.12 * movement_blend
+            limb.rotation.z += sin(idle_phase * 1.4 + deterministic_offset) * 0.06
         for hook in _nodes_with_prefix(model_root, "VeilstalkerHook"):
             hook.rotation.x += sin(phase * 1.4 + deterministic_offset) * 0.16 * movement_blend
+        for cowl in _nodes_with_prefix(model_root, "VeilstalkerCowl"):
+            cowl.scale *= Vector3(1.0 + threat_blend * 0.12, 1.0 - threat_blend * 0.1, 1.0 + threat_blend * 0.12)
+            cowl.rotation.x += threat_blend * 0.16
         for tendril in _nodes_with_prefix(model_root, "VeilstalkerTendril"):
-            tendril.rotation.z += sin(idle_phase * 3.2 + deterministic_offset) * (0.18 if stalking else 0.08)
+            tendril.rotation.z += sin(idle_phase * 3.2 + deterministic_offset) * (0.18 if stalking else 0.08) + threat_blend * 0.12
         for plate in _nodes_with_prefix(model_root, "VeilstalkerDorsalPlate"):
             plate.rotation.x += sin(idle_phase * 2.0 + deterministic_offset) * 0.035
         for tail in _nodes_with_prefix(model_root, "VeilstalkerTail"):
             tail.rotation.y += sin(idle_phase * (3.8 if attacking else 1.7) + deterministic_offset) * 0.16
+            tail.rotation.z += threat_blend * 0.08
         if attacking:
             model_root.position.z -= 0.08 + absf(sin(phase * 1.7)) * 0.06
             model_root.rotation.x -= 0.08 + absf(sin(phase * 1.7)) * 0.04

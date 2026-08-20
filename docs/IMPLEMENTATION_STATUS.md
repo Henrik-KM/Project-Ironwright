@@ -318,6 +318,15 @@ identities. Manual channels remain finish-before-save.
 - aesthetic coverage keeps these details attached to the role-specific
   silhouettes without changing collision, autonomy or economy state.
 
+## Focused Veilstalker threat-language milestone
+
+- added attack-wind-up motion for the Veilstalker veil membranes, forelimbs,
+  sensory cowl, tendrils and counterbalancing tail;
+- the family now visibly expands and loads its silhouette before an organic
+  attack lands, while reduced-detail simulation and combat state remain
+  unchanged;
+- the procedural motion remains presentation-only and deterministic per actor.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.
