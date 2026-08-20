@@ -1,9 +1,9 @@
 class_name OrganicNest3D
 extends StaticBody3D
 
-signal nest_destroyed(nest: OrganicNest3D, source: Node)
-signal nest_damaged(nest: OrganicNest3D, current: float, maximum: float)
-signal maturity_changed(nest: OrganicNest3D, maturity: float)
+signal nest_destroyed(nest, source: Node)
+signal nest_damaged(nest, current: float, maximum: float)
+signal maturity_changed(nest, maturity: float)
 
 var nest_id: StringName = &"nest.unknown"
 var display_name: String = "Organic nest"
@@ -40,7 +40,8 @@ func configure(data: Dictionary) -> void:
     maturity = clampf(float(data.get("initial_maturity", data.get("maturity", 0.35))), 0.0, 1.0)
     territory_radius = clampf(float(data.get("territory_radius", 24.0)), 8.0, 70.0)
     spawn_weight = maxf(0.05, float(data.get("spawn_weight", 1.0)))
-    destroy_replenishment_delta_per_minute = (data.get("destroy_replenishment_delta_per_minute", {}) as Dictionary).duplicate(true)
+    var raw_deltas: Variant = data.get("destroy_replenishment_delta_per_minute", {})
+    destroy_replenishment_delta_per_minute = (raw_deltas as Dictionary).duplicate(true) if raw_deltas is Dictionary else {}
     destroy_tier_1_growth_delta = float(data.get("destroy_tier_1_growth_delta", 0.0))
     active = bool(data.get("active", current_health > 0.0)) and current_health > 0.0
     discovered = bool(data.get("discovered", true))
@@ -65,7 +66,8 @@ func can_spawn_tier(tier: int) -> bool:
 
 func spawn_position(minimum_radius: float, maximum_radius: float) -> Vector3:
     spawn_serial += 1
-    var angle := fmod(float(spawn_serial) * 2.399963 + float(nest_id.hash() % 997) * 0.017, TAU)
+    var nest_hash := String(nest_id).hash()
+    var angle := fmod(float(spawn_serial) * 2.399963 + float(nest_hash % 997) * 0.017, TAU)
     var fraction := 0.25 + 0.75 * _deterministic_unit(spawn_serial, 11)
     var radius := lerpf(minimum_radius, maximum_radius, fraction)
     return global_position + Vector3(cos(angle) * radius, 0.0, sin(angle) * radius)
@@ -179,5 +181,6 @@ func _refresh_visuals() -> void:
 
 
 func _deterministic_unit(serial: int, salt: int) -> float:
-    var value := sin(float(nest_id.hash() % 8191) * 0.173 + float(serial) * 12.9898 + float(salt) * 4.1414) * 43758.5453
+    var nest_hash := String(nest_id).hash()
+    var value := sin(float(nest_hash % 8191) * 0.173 + float(serial) * 12.9898 + float(salt) * 4.1414) * 43758.5453
     return value - floor(value)
