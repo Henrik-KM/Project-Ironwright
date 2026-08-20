@@ -515,6 +515,15 @@ identities. Manual channels remain finish-before-save.
 - live opening combat review confirmed the revised warning/impact language,
   with aesthetic runtime coverage asserting the ring attachment.
 
+## Focused opening-plaza material milestone
+
+- the Heartforge plaza now uses a restrained dark wet-concrete variant across
+  a bounded subset of broken pavers;
+- the alternating value break strengthens rain-slick ground depth without
+  changing collision, route readability or the warm refuge lighting hierarchy;
+- live opening review confirmed the paver variation remains subordinate to the
+  forge, Mechromancer and Bulwark silhouettes.
+
 ## Focused contextual tactical-HUD milestone
 
 - the permanent control legend now clears after the onboarding window instead

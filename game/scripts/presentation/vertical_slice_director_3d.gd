@@ -23,6 +23,7 @@ var soot_masonry: StandardMaterial3D
 var interior_dark: StandardMaterial3D
 var wet_asphalt: StandardMaterial3D
 var wet_concrete: StandardMaterial3D
+var wet_concrete_dark: StandardMaterial3D
 var painted_metal: StandardMaterial3D
 var rust_metal: StandardMaterial3D
 var black_metal: StandardMaterial3D
@@ -93,7 +94,8 @@ func _create_materials() -> void:
     soot_masonry = ModelKit3D.material(Color("2d3031"), 0.02, 0.9)
     interior_dark = ModelKit3D.material(Color("0d1214"), 0.0, 0.98)
     wet_asphalt = ModelKit3D.material(Color("11181c"), 0.18, 0.34)
-    wet_concrete = ModelKit3D.material(Color("4a5051"), 0.06, 0.58)
+    wet_concrete = ModelKit3D.material(Color("424b4d"), 0.06, 0.58)
+    wet_concrete_dark = ModelKit3D.material(Color("303a3d"), 0.12, 0.66)
     painted_metal = ModelKit3D.material(Color("465458"), 0.72, 0.36)
     rust_metal = ModelKit3D.material(Color("6c3f29"), 0.48, 0.64)
     black_metal = ModelKit3D.material(Color("151c1f"), 0.82, 0.31)
@@ -229,7 +231,8 @@ func _build_heartforge_plaza() -> void:
                 continue
             var jitter_y := 0.055 + float((x * 7 + z * 11) % 5) * 0.006
             var rotation := float((x * 13 + z * 17) % 9 - 4) * 0.009
-            ModelKit3D.add_box(plaza, Vector3(1.12, 0.07, 1.12), Vector3(float(x) * 1.16, jitter_y, float(z) * 1.16), wet_concrete, Vector3(0.01 * float((x + z) % 2), rotation, 0.0), "BrokenPaver")
+            var paver_material := wet_concrete if abs(x * 3 + z * 5) % 4 != 0 else wet_concrete_dark
+            ModelKit3D.add_box(plaza, Vector3(1.12, 0.07, 1.12), Vector3(float(x) * 1.16, jitter_y, float(z) * 1.16), paver_material, Vector3(0.01 * float((x + z) % 2), rotation, 0.0), "BrokenPaver")
 
     # Drainage, patched utility cuts and old municipal markings.
     for index in range(5):
