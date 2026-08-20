@@ -109,6 +109,8 @@ organic enemies remain procedural until their own production asset milestones.
 - head probing, mandible movement, pack movement and species-specific idle
   motion;
 - red organic emissives used sparingly as threat cues.
+- organic attacks expose a short warning window with a ground telegraph,
+  anticipation pose and a real miss opportunity before damage resolves.
 
 ## Feedback and VFX
 
