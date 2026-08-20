@@ -53,6 +53,7 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - the Tram Graveyard now has an original high-definition carriage and maintenance landmark shell while retaining the existing rail encounter and operation contracts.
 - Buried Laboratories now has an original high-definition containment-hall shell while retaining the existing research encounter and operation contracts.
 - Municipal Glasshouse now has an original high-definition climate-frame shell while retaining the existing greenhouse encounter and operation contracts.
+- North Ruins now has an original high-definition civic archive shell while retaining the existing salvage and expedition contracts.
 
 ### Long-range operations
 
@@ -651,6 +652,16 @@ identities. Manual channels remain finish-before-save.
   presentation-only;
 - native aesthetic and release coverage verifies the named sockets and
   deterministic canopy/growth motion; live district review remains required.
+
+## Focused North Ruins authored-space milestone
+
+- added the original high-definition `archive.north_ruins.v1` shell with a
+  civic facade, sealed vault door, archive stacks, surviving roof beacon,
+  cold-glass windows and restrained organic creep;
+- retained the existing North Ruins encounter dressing, salvage, expedition,
+  discovery and operation ownership; the new geometry is presentation-only;
+- native aesthetic and release coverage verifies the named sockets and
+  deterministic beacon/creep motion; live district review remains required.
 
 ## Focused remote-ground continuity milestone
 
