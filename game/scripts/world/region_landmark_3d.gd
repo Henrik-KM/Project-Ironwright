@@ -126,6 +126,74 @@ func _build_visuals() -> void:
             for index in range(7):
                 ModelKit3D.add_beveled_box(_visual_root, Vector3(2.2, 0.18, 1.5), Vector3(-6.0 + float(index) * 2.0, 0.12, 7.0), metal, Vector3.ZERO, "MarketTable", 0.24)
                 ModelKit3D.add_box(_visual_root, Vector3(1.7, 0.035, 0.1), Vector3(-6.0 + float(index) * 2.0, 0.24, 6.22), rust, Vector3.ZERO, "MarketTableTrim")
+        &"archive":
+            var archive := Node3D.new()
+            archive.name = "ArchiveIdentityDetails"
+            _visual_root.add_child(archive)
+            _add_ruin_block(Vector3(-6.0, 0.0, -1.0), Vector3(8.0, 8.5, 6.0), concrete)
+            _add_ruin_block(Vector3(7.0, 0.0, 3.0), Vector3(6.0, 5.5, 5.0), brick)
+            ModelKit3D.add_beveled_box(archive, Vector3(3.8, 0.42, 1.2), Vector3(0.0, 0.24, 7.0), metal, Vector3.ZERO, "ArchiveSteps", 0.22)
+            ModelKit3D.add_surface_panel(archive, Vector3(2.6, 2.0, 0.1), Vector3(0.0, 1.65, 6.32), metal, membrane, Vector3.ZERO, "ArchiveDoor")
+            ModelKit3D.add_cylinder(archive, 0.22, 5.8, Vector3(0.0, 3.2, 7.4), membrane, Vector3.ZERO, "ArchiveSignalMast")
+        &"tenement":
+            var tenement := Node3D.new()
+            tenement.name = "TenementIdentityDetails"
+            _visual_root.add_child(tenement)
+            _add_ruin_block(Vector3(-8.0, 0.0, 0.0), Vector3(8.0, 9.0, 6.0), brick)
+            _add_ruin_block(Vector3(7.0, 0.0, -2.0), Vector3(7.0, 7.0, 5.0), concrete)
+            for level in range(3):
+                ModelKit3D.add_beveled_box(tenement, Vector3(15.0, 0.14, 0.46), Vector3(0.0, 1.65 + float(level) * 2.2, 4.2), metal, Vector3(0.02, 0.0, 0.0), "TenementWalkway", 0.24)
+                _add_beam(tenement, Vector3(-5.5, 0.4 + float(level) * 2.2, 4.2), Vector3(-5.5, 1.65 + float(level) * 2.2, 4.2), 0.07, rust, "TenementWalkwayPost")
+                _add_beam(tenement, Vector3(5.5, 0.4 + float(level) * 2.2, 4.2), Vector3(5.5, 1.65 + float(level) * 2.2, 4.2), 0.07, rust, "TenementWalkwayPost")
+            for index in range(4):
+                ModelKit3D.add_box(tenement, Vector3(1.15, 1.0, 0.05), Vector3(-5.2 + float(index) * 3.4, 2.7 + float(index % 2) * 2.2, 4.0), membrane, Vector3.ZERO, "TenementHangingCloth")
+        &"greenhouse":
+            var greenhouse := Node3D.new()
+            greenhouse.name = "GreenhouseIdentityDetails"
+            _visual_root.add_child(greenhouse)
+            var glass := ModelKit3D.material(Color("5d7d79"), 0.12, 0.28, Color("76d7c8"), 0.42)
+            for side in [-1.0, 1.0]:
+                _add_beam(greenhouse, Vector3(side * 5.5, 0.0, -5.0), Vector3(side * 5.5, 6.5, 0.0), 0.12, metal, "GreenhouseFrame")
+                _add_beam(greenhouse, Vector3(side * 5.5, 6.5, 0.0), Vector3(side * 3.8, 6.5, 6.0), 0.12, metal, "GreenhouseRoofFrame")
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_box(greenhouse, Vector3(0.05, 4.6, 5.8), Vector3(side * 5.38, 2.45, 0.2), glass, Vector3.ZERO, "GreenhouseGlassPanel")
+            for index in range(4):
+                ModelKit3D.add_beveled_box(greenhouse, Vector3(2.2, 0.26, 0.9), Vector3(-3.3 + float(index) * 2.2, 0.25, 3.2), rust, Vector3.ZERO, "GreenhousePlanter", 0.22)
+                ModelKit3D.add_membrane_fan(greenhouse, 0.48, Vector3(-3.3 + float(index) * 2.2, 0.78, 3.2), membrane, 5, "GreenhouseGrowthFan")
+        &"waterfront":
+            var waterfront := Node3D.new()
+            waterfront.name = "WaterfrontIdentityDetails"
+            _visual_root.add_child(waterfront)
+            ModelKit3D.add_beveled_box(waterfront, Vector3(16.0, 2.6, 1.0), Vector3(0.0, 1.3, 6.6), concrete, Vector3(0.0, 0.0, 0.0), "RetainingWall", 0.2)
+            var water := ModelKit3D.material(Color("193a43"), 0.38, 0.18, Color("2c8790"), 0.35)
+            ModelKit3D.add_box(waterfront, Vector3(15.0, 0.035, 5.6), Vector3(0.0, 0.06, 10.0), water, Vector3.ZERO, "Floodwater")
+            for index in range(3):
+                ModelKit3D.add_beveled_box(waterfront, Vector3(2.0, 1.8, 1.7), Vector3(-5.0 + float(index) * 5.0, 0.92, 3.8), metal, Vector3(0.0, 0.12 * float(index), 0.0), "PumpHousing", 0.18)
+                ModelKit3D.add_cylinder(waterfront, 0.16, 2.6, Vector3(-5.0 + float(index) * 5.0, 2.2, 3.8), rust, Vector3.ZERO, "PumpPipe")
+        &"rail":
+            var rail := Node3D.new()
+            rail.name = "RailIdentityDetails"
+            _visual_root.add_child(rail)
+            var rail_metal := ModelKit3D.material(Color("454d4c"), 0.74, 0.38)
+            for side in [-1.0, 1.0]:
+                _add_beam(rail, Vector3(side * 1.7, 0.16, -10.0), Vector3(side * 1.7, 0.16, 10.0), 0.09, rail_metal, "RailLine")
+            for z in range(-8, 9, 4):
+                ModelKit3D.add_beveled_box(rail, Vector3(4.4, 0.14, 0.34), Vector3(0.0, 0.12, float(z)), rust, Vector3.ZERO, "RailSleeper", 0.22)
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_beveled_box(rail, Vector3(3.6, 2.4, 0.26), Vector3(side * 5.4, 1.35, 1.5), metal, Vector3(0.04, 0.0, side * 0.05), "DerailedCarriage", 0.18)
+                ModelKit3D.add_surface_panel(rail, Vector3(1.8, 1.0, 0.08), Vector3(side * 5.4, 1.35, 1.33), membrane, rust, Vector3.ZERO, "CarriageWindow")
+            _add_beam(rail, Vector3(-7.0, 6.0, -8.0), Vector3(7.0, 6.0, -8.0), 0.11, metal, "RailOverheadBeam")
+            for side in [-1.0, 1.0]:
+                _add_beam(rail, Vector3(side * 6.4, 0.0, -8.0), Vector3(side * 6.4, 6.0, -8.0), 0.1, metal, "RailOverheadPost")
+        &"observatory":
+            var observatory := Node3D.new()
+            observatory.name = "ObservatoryIdentityDetails"
+            _visual_root.add_child(observatory)
+            ModelKit3D.add_beveled_box(observatory, Vector3(12.0, 0.55, 10.0), Vector3(0.0, 0.28, 0.0), concrete, Vector3.ZERO, "ObservatoryPlinth", 0.2)
+            ModelKit3D.add_sphere(observatory, 4.5, Vector3(0.0, 3.1, 0.0), metal, Vector3(1.0, 0.52, 1.0), "ObservatoryDome")
+            ModelKit3D.add_cylinder(observatory, 0.32, 7.0, Vector3(0.0, 4.6, 0.0), rust, Vector3.ZERO, "ObservatoryMast")
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_beveled_box(observatory, Vector3(2.4, 0.24, 0.7), Vector3(side * 3.8, 0.85, 0.0), edge, Vector3(0.0, side * 0.18, 0.0), "ObservatoryOpticRail", 0.22)
         &"nest":
             _add_ruin_block(Vector3(0.0, 0.0, 4.0), Vector3(12.0, 12.0, 8.0), brick)
             for index in range(9):
@@ -204,6 +272,23 @@ func _add_ruin_block(origin: Vector3, size: Vector3, material: Material) -> void
             var x := origin.x - size.x * 0.3 + float(window_index) * size.x * 0.3
             var y := origin.y + 1.2 + float(floor_index) * 2.0
             ModelKit3D.add_surface_panel(_visual_root, Vector3(0.7, 0.75, 0.08), Vector3(x, y, origin.z - size.z * 0.51), dark, edge, Vector3.ZERO, "DarkWindow")
+
+
+func _add_beam(parent: Node3D, start: Vector3, finish: Vector3, radius: float, material: Material, node_name: String) -> void:
+    var direction := finish - start
+    var mesh := CylinderMesh.new()
+    mesh.top_radius = radius
+    mesh.bottom_radius = radius
+    mesh.height = maxf(0.01, direction.length())
+    mesh.radial_segments = 16
+    var instance := MeshInstance3D.new()
+    instance.name = node_name
+    instance.mesh = mesh
+    instance.material_override = material
+    instance.position = (start + finish) * 0.5
+    if direction.length() > 0.001:
+        instance.quaternion = Quaternion(Vector3.UP, direction.normalized())
+    parent.add_child(instance)
 
 
 func _refresh_discovery() -> void:
