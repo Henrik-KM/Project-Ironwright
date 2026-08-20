@@ -135,6 +135,9 @@ func _run_all() -> void:
         if role_names[index] == &"salvager":
             _expect(_find_named(role_samples[index], "ScrapperAuthoredModel") != null, "The salvager must use the authored Scrapper model shell.")
             _expect(_find_named(role_samples[index], "ProductionAssetMarker") != null, "The authored Scrapper model must expose its production asset marker.")
+        elif role_names[index] == &"scout":
+            _expect(_find_named(role_samples[index], "PathfinderAuthoredModel") != null, "The scout must use the authored Pathfinder model shell.")
+            _expect(_find_named(role_samples[index], "ProductionAssetMarker") != null, "The authored Pathfinder model must expose its production asset marker.")
         role_samples[index].queue_free()
 
     var authored_warden := ROBOT_SCENE.instantiate() as RobotUnit3D

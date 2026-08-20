@@ -1,0 +1,34 @@
+{
+  "asset_id": "pathfinder.scout.v1",
+  "runtime_scene": "res://assets/pathfinder/pathfinder.gltf",
+  "source_builder": "game/assets/pathfinder/source/build_pathfinder_asset.py",
+  "source_type": "original_project_ironwright_shared_mesh_builder",
+  "third_party_assets": [],
+  "presentation_only": true,
+  "stable_nodes": [
+    "PathfinderModel",
+    "Chassis",
+    "ChassisCore",
+    "ChassisCornerCap",
+    "Sensor",
+    "OpticLens",
+    "ScoutFin",
+    "BeaconRing",
+    "ScoutOptic",
+    "PathfinderSensorPod",
+    "ProductionAssetMarker"
+  ],
+  "animation_clips": [
+    "Idle",
+    "Walk",
+    "Survey"
+  ],
+  "socket_contract": [
+    "sensor",
+    "optic",
+    "scout_optic",
+    "survey_pod",
+    "survey_mast",
+    "beacon"
+  ]
+}
