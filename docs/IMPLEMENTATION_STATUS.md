@@ -273,6 +273,17 @@ identities. Manual channels remain finish-before-save.
 - complete-game coverage verifies signal wiring, continuous progress coupling,
   completion resolution and the retained systemic victory path.
 
+## Focused Heartforge maintenance-detail milestone
+
+- added a presentation-only maintenance bay around the Heartforge with paired
+  pressure vessels, gauge panels, routed feed lines, a cyan coolant manifold
+  and a rear service rail;
+- added warm vessel and cool-manifold practicals to strengthen the existing
+  sanctuary lighting hierarchy without changing gameplay light, collision or
+  route state;
+- aesthetic coverage verifies the layer is attached to the representative
+  Heartforge slice.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

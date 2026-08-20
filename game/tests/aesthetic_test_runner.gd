@@ -27,6 +27,7 @@ func _run_all() -> void:
             _expect(audio_director.has_profile(profile), "The audio director must provide the %s profile." % profile)
     _expect(world.get_node_or_null("CozyHeartforgeCamp") != null, "The Heartforge must receive an inhabited cozy camp layer.")
     _expect(world.get_node_or_null("UrbanAestheticPass") != null, "The ruined city must receive the urban storytelling pass.")
+    _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgeMaintenanceDetail") != null, "The Heartforge must expose a dedicated presentation-only maintenance detail layer.")
     var region_atmosphere := world.get_node_or_null("RegionAtmosphereDirector") as RegionAtmosphereDirector3D
     _expect(region_atmosphere != null, "The complete world must install region-aware atmosphere presentation.")
     if region_atmosphere != null:
