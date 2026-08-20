@@ -24,8 +24,8 @@ jobs:
       - name: Validate browser reference, tier ecology and product contracts
         run: npm run validate
 
-      - name: Validate aesthetic integration
-        run: python3 scripts/validate_aesthetic.py
+      - name: Validate inherited aesthetic integration
+        run: python3 scripts/validate_tiered_aesthetic.py
 
   validate-native-godot:
     runs-on: ubuntu-latest
