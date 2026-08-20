@@ -8,8 +8,10 @@ signal destroyed
 var current_health: float = 520.0
 var interaction_radius: float = 4.1
 var active_operation: StringName = &""
+var progression_tier: int = 1
 var _core_light: OmniLight3D
 var _model_root: Node3D
+var _adaptive_geometry: Node3D
 
 
 func _ready() -> void:
@@ -18,6 +20,7 @@ func _ready() -> void:
     collision_mask = 4
     current_health = maximum_health
     _build_visuals()
+    set_progression_tier(progression_tier)
     health_changed.emit(current_health, maximum_health)
 
 
@@ -45,6 +48,22 @@ func set_operation(kind: StringName) -> void:
     active_operation = kind
     if _core_light != null:
         _core_light.light_energy = 7.0 if kind != &"" else 4.4
+
+
+func set_progression_tier(next_tier: int) -> void:
+    var clamped := clampi(next_tier, 1, 5)
+    if progression_tier == clamped and _adaptive_geometry != null and not _adaptive_geometry.get_children().is_empty():
+        return
+    progression_tier = clamped
+    if _model_root == null:
+        return
+    if _adaptive_geometry == null:
+        _adaptive_geometry = Node3D.new()
+        _adaptive_geometry.name = "AdaptiveHeartforgeGeometry"
+        _model_root.add_child(_adaptive_geometry)
+    for child in _adaptive_geometry.get_children():
+        child.free()
+    _build_adaptive_geometry(progression_tier)
 
 
 func _build_visuals() -> void:
@@ -76,3 +95,39 @@ func _build_visuals() -> void:
 
     _core_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 2.1, 0.0), Color("ff7d32"), 4.4, 19.0)
     ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.2, 3.15), Color("62e1e7"), 1.4, 7.0)
+
+
+func _build_adaptive_geometry(tier: int) -> void:
+    var iron := ModelKit3D.material(Color("394143"), 0.78, 0.42)
+    var dark := ModelKit3D.material(Color("1b2425"), 0.74, 0.5)
+    var rust := ModelKit3D.material(Color("805034"), 0.42, 0.72)
+    var heat := ModelKit3D.material(Color("9e4f18"), 0.24, 0.42, Color("ff7b2f"), 3.4)
+    var cyan := ModelKit3D.material(Color("28595c"), 0.38, 0.34, Color("70e9ee"), 2.5)
+
+    if tier >= 2:
+        for side in [-1.0, 1.0]:
+            for depth in [-1.0, 1.0]:
+                var base_position := Vector3(side * 2.18, 1.16, depth * 1.34)
+                ModelKit3D.add_beveled_box(_adaptive_geometry, Vector3(0.46, 1.72, 0.72), base_position, iron, Vector3(0.0, side * 0.12, depth * 0.08), "Tier2Buttress", 0.1)
+                ModelKit3D.add_cylinder(_adaptive_geometry, 0.09, 1.45, base_position + Vector3(0.0, 0.18, -depth * 0.34), rust, Vector3.ZERO, "Tier2ServiceColumn")
+
+    if tier >= 3:
+        for side in [-1.0, 1.0]:
+            var conduit_position := Vector3(side * 2.48, 1.62, 0.0)
+            ModelKit3D.add_cylinder(_adaptive_geometry, 0.12, 2.8, conduit_position, cyan, Vector3.ZERO, "Tier3SignalConduit")
+            ModelKit3D.add_box(_adaptive_geometry, Vector3(0.34, 0.7, 0.56), Vector3(side * 2.48, 2.6, 0.0), dark, Vector3.ZERO, "Tier3RelayHousing")
+        ModelKit3D.add_cylinder(_adaptive_geometry, 2.42, 0.12, Vector3(0.0, 3.3, 0.0), heat, Vector3.ZERO, "Tier3HeatRing")
+
+    if tier >= 4:
+        for side in [-1.0, 1.0]:
+            ModelKit3D.add_cylinder(_adaptive_geometry, 0.13, 4.7, Vector3(side * 2.72, 2.45, 0.0), iron, Vector3.ZERO, "Tier4SignalMast")
+            ModelKit3D.add_box(_adaptive_geometry, Vector3(0.24, 0.18, 3.8), Vector3(side * 2.72, 3.0, 0.0), rust, Vector3.ZERO, "Tier4MastBrace")
+        ModelKit3D.add_beveled_box(_adaptive_geometry, Vector3(5.7, 0.28, 0.34), Vector3(0.0, 4.4, 0.0), iron, Vector3.ZERO, "Tier4SignalCrossbar", 0.08)
+
+    if tier >= 5:
+        ModelKit3D.add_cylinder(_adaptive_geometry, 2.9, 0.18, Vector3(0.0, 4.72, 0.0), heat, Vector3.ZERO, "Tier5SovereigntyCrown")
+        for angle_index in range(8):
+            var angle := TAU * float(angle_index) / 8.0
+            var crown_position := Vector3(cos(angle) * 2.72, 4.9, sin(angle) * 2.72)
+            ModelKit3D.add_beveled_box(_adaptive_geometry, Vector3(0.24, 0.78, 0.52), crown_position, cyan, Vector3(0.0, -angle, 0.0), "Tier5CrownFin", 0.08)
+        ModelKit3D.add_cylinder(_adaptive_geometry, 0.34, 1.15, Vector3(0.0, 5.15, 0.0), heat, Vector3.ZERO, "Tier5CrownBeacon")

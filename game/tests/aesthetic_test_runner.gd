@@ -27,6 +27,15 @@ func _run_all() -> void:
             _expect(audio_director.has_profile(profile), "The audio director must provide the %s profile." % profile)
     _expect(world.get_node_or_null("CozyHeartforgeCamp") != null, "The Heartforge must receive an inhabited cozy camp layer.")
     _expect(world.get_node_or_null("UrbanAestheticPass") != null, "The ruined city must receive the urban storytelling pass.")
+    var heartforge := world.get_node_or_null("Heartforge") as Heartforge3D
+    _expect(heartforge != null, "The aesthetic test needs the Heartforge progression model.")
+    if heartforge != null:
+        heartforge.set_progression_tier(5)
+        _expect(heartforge.find_child("AdaptiveHeartforgeGeometry", true, false) != null, "Heartforge progression must own a dedicated adaptive geometry layer.")
+        _expect(heartforge.find_child("Tier2Buttress", true, false) != null, "Tier 2 Heartforge geometry must add structural buttresses.")
+        _expect(heartforge.find_child("Tier3SignalConduit", true, false) != null, "Tier 3 Heartforge geometry must add signal conduits.")
+        _expect(heartforge.find_child("Tier4SignalMast", true, false) != null, "Tier 4 Heartforge geometry must add the signal mast.")
+        _expect(heartforge.find_child("Tier5SovereigntyCrown", true, false) != null, "Tier 5 Heartforge geometry must culminate in a readable crown.")
 
     var environment_node := _find_world_environment(world)
     _expect(environment_node != null and environment_node.environment != null, "The world needs a configured environment.")
