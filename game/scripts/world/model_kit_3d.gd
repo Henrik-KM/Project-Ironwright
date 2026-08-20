@@ -238,6 +238,84 @@ static func add_ribbed_shell(
     return shell
 
 
+static func add_segmented_carapace(
+        parent: Node3D,
+        radius: float,
+        position: Vector3,
+        base_mat: Material,
+        edge_mat: Material,
+        scale: Vector3 = Vector3.ONE,
+        segment_count: int = 4,
+        name_hint: String = "SegmentedCarapace"
+    ) -> Node3D:
+    # Shared high-definition anatomy for the organic roster. A wet central
+    # body remains cheap to simulate, while overlapping segment plates create
+    # a readable shell construction instead of a single smooth toy sphere.
+    var shell := Node3D.new()
+    shell.name = name_hint
+    shell.position = position
+    shell.scale = scale
+    parent.add_child(shell)
+    add_sphere(shell, radius * 0.9, Vector3.ZERO, base_mat, Vector3.ONE, "%sCore" % name_hint)
+    var count := maxi(2, segment_count)
+    for index in range(count):
+        var fraction := float(index) / float(count - 1)
+        var segment_z := lerpf(-radius * 0.68, radius * 0.68, fraction)
+        var segment_radius := radius * (0.31 + 0.04 * sin(fraction * PI))
+        var segment_scale := Vector3(1.18 - absf(fraction - 0.5) * 0.16, 0.62, 0.8)
+        add_organic_plate(
+            shell,
+            segment_radius,
+            Vector3(0.0, radius * (0.31 + 0.05 * sin(fraction * PI)), segment_z),
+            base_mat,
+            edge_mat,
+            segment_scale,
+            "%sSegment%d" % [name_hint, index]
+        )
+    for side in [-1.0, 1.0]:
+        add_tapered_cylinder(
+            shell,
+            radius * 0.065,
+            radius * 0.09,
+            radius * 1.18,
+            Vector3(side * radius * 0.74, radius * 0.2, radius * 0.04),
+            edge_mat,
+            Vector3(0.0, 0.0, side * 0.5),
+            "%sLateralSeam" % name_hint
+        )
+    return shell
+
+
+static func add_membrane_fan(
+        parent: Node3D,
+        radius: float,
+        position: Vector3,
+        mat: Material,
+        fan_count: int = 5,
+        name_hint: String = "MembraneFan"
+    ) -> Node3D:
+    # Thin overlapping fins provide a family-level silhouette break for
+    # spore-bearing or veil-bearing creatures without adding a shader pass.
+    var fan := Node3D.new()
+    fan.name = name_hint
+    fan.position = position
+    parent.add_child(fan)
+    var count := maxi(3, fan_count)
+    for index in range(count):
+        var fraction := float(index) / float(count - 1)
+        var side := fraction * 2.0 - 1.0
+        var blade := add_sphere(
+            fan,
+            radius * (0.42 - absf(side) * 0.08),
+            Vector3(side * radius * 0.78, absf(side) * radius * 0.18, 0.0),
+            mat,
+            Vector3(0.34, 1.45 - absf(side) * 0.22, 0.78),
+            "%sBlade%d" % [name_hint, index]
+        )
+        blade.rotation.z = side * 0.42
+    return fan
+
+
 static func add_collision_box(parent: CollisionObject3D, size: Vector3, position: Vector3) -> CollisionShape3D:
     var shape := BoxShape3D.new()
     shape.size = size

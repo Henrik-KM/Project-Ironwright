@@ -205,21 +205,24 @@ The dependency-free browser implementation remains under `web/` for deterministi
 
 ## Commercial work still remaining
 
-Version 0.6.0 is game-complete in systemic structure, not commercially final.
+Version 1.0.0-rc.1 is game-complete in systemic structure and has a
+commercial-release candidate shell, but it is not an unqualified final retail
+release.
 
 Remaining production work includes:
 
-- authored production models and rigs beyond the Mechromancer, plus production
-  animations, VFX, sound and music;
+- authored production models, rigs, animations, VFX and encounter-space art
+  beyond the current procedural/high-definition presentation library;
 - substantially more environmental detail and authored encounter spaces;
-- true active/reduced-detail simulation for much larger world and entity scale;
-- deeper navigation and route recovery;
-- more robot families, organic species, technologies, operations and site variants;
+- profiling and tuning of active/reduced-detail simulation at much larger world
+  and entity scale;
+- deeper navigation and route recovery under long-run disruption;
+- broader content variants, technologies, operations and site dressing;
 - adaptive autonomous Heartforge geometry;
-- full controller support, input remapping, accessibility and localization;
 - performance profiling and optimization on agreed target hardware;
 - environmental narrative and run variation;
 - 30–100-hour balance and repeated full internal runs;
-- external alpha, beta, packaging, store assets and release QA.
+- professional localization review of all remaining gameplay prose;
+- external alpha, beta, packaging, store assets, signing and release QA.
 
 The roadmap now refines and expands an actual complete game loop rather than extrapolating from a disconnected prototype.
