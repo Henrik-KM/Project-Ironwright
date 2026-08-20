@@ -1,6 +1,29 @@
 class_name OrganicEnemyTiered3D
 extends OrganicEnemyRelease3D
 
+const SPECIES_TIERS: Dictionary = {
+    &"skitterling": 1,
+    &"razorhound": 2,
+    &"roofleaper": 2,
+    &"glassmoth": 2,
+    &"veilstalker": 3,
+    &"burrower": 3,
+    &"sporecaster": 3,
+    &"broodmass": 4,
+    &"miremaw": 4,
+    &"carrionbell": 4,
+    &"rootweaver": 4,
+    &"apex": 5,
+}
+
+const FALLBACK_TIER_CONFIGS: Dictionary = {
+    1: {"display_name": "Feral", "intelligence_label": "primitive roaming", "behaviour_profile": "feral", "health_multiplier": 0.78, "damage_multiplier": 0.72, "speed_multiplier": 0.68, "detection_multiplier": 0.78},
+    2: {"display_name": "Territorial", "intelligence_label": "nest defence and patrol", "behaviour_profile": "territorial", "health_multiplier": 0.94, "damage_multiplier": 0.9, "speed_multiplier": 0.9, "detection_multiplier": 0.96},
+    3: {"display_name": "Predatory", "intelligence_label": "scouting, hunting and pack memory", "behaviour_profile": "predatory", "health_multiplier": 1.0, "damage_multiplier": 1.0, "speed_multiplier": 1.0, "detection_multiplier": 1.08},
+    4: {"display_name": "Strategic", "intelligence_label": "route interception and priority targeting", "behaviour_profile": "strategic", "health_multiplier": 1.08, "damage_multiplier": 1.08, "speed_multiplier": 1.02, "detection_multiplier": 1.18},
+    5: {"display_name": "Apex", "intelligence_label": "regional strategic predator", "behaviour_profile": "apex", "health_multiplier": 1.18, "damage_multiplier": 1.16, "speed_multiplier": 1.04, "detection_multiplier": 1.28},
+}
+
 var enemy_tier: int = 1
 var tier_profile: StringName = &"feral"
 var tier_display_name: String = "Feral"
@@ -9,6 +32,13 @@ var tier_config_data: Dictionary = {}
 var _tier_base_species: StringName = &""
 var _tier_base_stats: Dictionary = {}
 var _tier_visual_root: Node3D
+
+
+func configure(next_species: StringName, next_player: Node3D, next_heartforge: Node3D) -> void:
+    super.configure(next_species, next_player, next_heartforge)
+    var canonical_tier := clampi(int(SPECIES_TIERS.get(next_species, 1)), 1, 5)
+    var fallback: Variant = FALLBACK_TIER_CONFIGS.get(canonical_tier, FALLBACK_TIER_CONFIGS[1])
+    configure_tier(canonical_tier, (fallback as Dictionary).duplicate(true), true)
 
 
 func configure_tier(tier: int, config: Dictionary, recapture_base: bool = false) -> void:
@@ -74,9 +104,9 @@ func hear_noise(position: Vector3, radius: float, intensity: float, source_kind:
 
 
 func receive_pack_alert(position: Vector3, intensity: float) -> void:
-    if enemy_tier < 3:
+    if enemy_tier < 2:
         return
-    super.receive_pack_alert(position, intensity)
+    super.receive_pack_alert(position, intensity * (0.72 if enemy_tier == 2 else 1.0))
 
 
 func _choose_target() -> Node3D:
@@ -237,6 +267,8 @@ func _resolve_directive_for_tier(requested: StringName) -> StringName:
         2:
             if requested in [&"protect_nest", &"patrol"]:
                 return requested
+            if requested == &"hunt" and species == &"razorhound":
+                return &"hunt"
             return &"protect_nest" if behaviour_serial % 3 != 0 else &"patrol"
         3:
             if requested in [&"scout", &"hunt", &"protect_nest", &"patrol"]:
