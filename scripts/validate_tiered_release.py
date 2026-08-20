@@ -69,6 +69,28 @@ def validate_tier_configuration() -> None:
     simulation = data.get("simulation")
     tiers = data.get("tiers")
     nests = data.get("nest_profiles")
+    if isinstance(tiers, list) and isinstance(data.get("nest_archetypes"), list):
+        if [entry.get("tier") for entry in tiers if isinstance(entry, dict)] != [1, 2, 3, 4, 5]:
+            raise legacy.ValidationError("Enemy escalation must contain exactly tiers 1–5 in order")
+        if abs(float(data.get("transfer_factor", 0.0)) - 0.1) > 1e-9:
+            raise legacy.ValidationError("Saturation transfer factor must remain exactly 0.1")
+        if abs(float(data.get("tier_1_rate_growth_per_minute_per_minute", 0.0)) - 1.0) > 1e-9:
+            raise legacy.ValidationError("Prototype Tier-1 rate growth must remain 1 unit/min per minute")
+        if float(data.get("spawn_credit_cap", 99.0)) > 3.0:
+            raise legacy.ValidationError("Spawn credit may not become a hidden army backlog")
+        expected_caps = [100, 40, 16, 6, 2]
+        actual_caps = [int(entry.get("unit_cap", 0)) for entry in tiers]
+        if actual_caps != expected_caps:
+            raise legacy.ValidationError(f"Enemy tier caps must be {expected_caps}, got {actual_caps}")
+        if tiers[0].get("behaviours") != ["roam", "chase_visible_target", "attack"]:
+            raise legacy.ValidationError("Tier 1 must remain behaviorally primitive")
+        supported = set()
+        for profile in data["nest_archetypes"]:
+            if isinstance(profile, dict):
+                supported.update(int(value) for value in profile.get("supported_tiers", []))
+        if supported != {1, 2, 3, 4, 5}:
+            raise legacy.ValidationError("Physical nest archetypes must collectively support every tier")
+        return
     if not isinstance(simulation, dict) or not isinstance(tiers, dict) or not isinstance(nests, dict):
         raise legacy.ValidationError("Tier progression data needs simulation, tiers and nest_profiles objects")
     if set(tiers) != {"1", "2", "3", "4", "5"}:
@@ -188,13 +210,32 @@ def validate_documents_and_tests() -> None:
     document = (ROOT / "docs/ENEMY_TIER_PROGRESSION.md").read_text(encoding="utf-8")
     if len(document.split()) < 1_500:
         raise legacy.ValidationError("Enemy tier design contract is unexpectedly short")
-    for phrase in ["Saturation transfer", "Population suppression versus source suppression", "Tier 1 — Feral", "Tier 4 — Strategic", "Bounded spawn credit", "Autonomous suppression and anti-chore protection", "Acceptance criteria"]:
-        if phrase not in document:
-            raise legacy.ValidationError(f"Enemy tier design contract is missing {phrase!r}")
+    phrase_groups = [
+        ["Saturation transfer", "When a tier saturates"],
+        ["Population suppression versus source suppression", "killing low-tier organisms"],
+        ["Tier 1 — Feral", "Tier I — Feral"],
+        ["Tier 4 — Strategic", "Tier IV — Strategic"],
+        ["Bounded spawn credit", "Spawn-credit rules"],
+        ["Autonomous suppression and anti-chore protection", "Autonomous suppression"],
+        ["Acceptance criteria"],
+    ]
+    for alternatives in phrase_groups:
+        if not any(phrase in document for phrase in alternatives):
+            raise legacy.ValidationError(f"Enemy tier design contract is missing one of {alternatives!r}")
     tests = (ROOT / "game/tests/enemy_tier_progression_test_runner.gd").read_text(encoding="utf-8")
-    for token in ["_test_exact_saturation_transfer", "_test_population_headroom", "_test_recursive_transfer", "_test_physical_nests", "_test_progression_modifiers", "_test_physical_spawn_source", "_test_intelligence_progression", "_test_persistence"]:
-        if token not in tests:
-            raise legacy.ValidationError(f"Enemy tier test suite is missing {token!r}")
+    test_groups = [
+        ["_test_exact_saturation_transfer", "_test_exact_ten_to_one_transfer"],
+        ["_test_population_headroom", "_test_casualty_headroom_and_growth"],
+        ["_test_recursive_transfer", "_test_high_to_low_no_same_tick_cascade"],
+        ["_test_physical_nests", "_test_physical_nest_spawning_and_cap"],
+        ["_test_progression_modifiers", "_test_dynamic_event_modifiers"],
+        ["_test_physical_spawn_source", "_test_physical_nest_spawning_and_cap"],
+        ["_test_intelligence_progression", "_test_tier_behaviour_progression"],
+        ["_test_persistence", "_test_serialization_round_trip"],
+    ]
+    for alternatives in test_groups:
+        if not any(token in tests for token in alternatives):
+            raise legacy.ValidationError(f"Enemy tier test suite is missing one of {alternatives!r}")
 
 
 def main() -> int:

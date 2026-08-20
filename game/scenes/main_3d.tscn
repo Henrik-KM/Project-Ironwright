@@ -1,6 +1,11 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/main_world_tiered_3d.gd" id="1_main"]
 
+[ext_resource type="Script" path="res://scripts/systems/enemy_tier_progression_bootstrap_3d.gd" id="99_enemy_tiers"]
+
 [node name="ProjectIronwrightTiered" type="Node3D"]
 script = ExtResource("1_main")
+
+[node name="EnemyTierProgressionBootstrap" type="Node" parent="."]
+script = ExtResource("99_enemy_tiers")

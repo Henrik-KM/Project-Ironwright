@@ -1,308 +1,255 @@
-# Project Ironwright — Enemy Tier Progression and Ecological Escalation
+# Project Ironwright — Enemy Tier Progression
 
-**Status:** Canonical implemented design contract  
+**Status:** Canonical implemented system
 **Authority:** The current Project Ironwright conversation with Henrik  
-**Runtime data:** `game/data/enemy_tier_progression.json`  
-**Runtime director:** `game/scripts/systems/enemy_tier_director_3d.gd`
+**Purpose:** Make organic escalation emerge from physical population pressure, nest survival, and player activity rather than a recurring wave schedule.
 
-## 1. Product purpose
+## 1. Core rule
 
-Enemy escalation is driven by the physical population of the ecology, not by a recurring wave timer or an arbitrary global difficulty level.
+Each organic difficulty tier has:
 
-The central rule is:
+- a current living population;
+- a global living-unit cap;
+- a replenishment rate measured in units per minute;
+- a bounded fractional spawn credit;
+- one or more physical nests capable of producing it.
 
-> When a lower enemy tier saturates, its future reproductive throughput is converted into a much smaller replenishment rate for the next, more dangerous and more intelligent tier.
+When a non-final tier reaches its unit cap, the tier’s entire current replenishment allocation moves to the next tier at a `0.10` factor and the saturated tier’s rate becomes zero.
 
-This makes active suppression strategically meaningful. Killing weak organisms creates population headroom and forces the ecology to spend its incoming capacity replacing those weak organisms. Clearing physical nests reduces the long-term replenishment source itself. Progression can disturb the world and increase future replenishment.
+```text
+if population[tier] >= cap[tier]:
+    replenish[tier + 1] += replenish[tier] × 0.10
+    replenish[tier] = 0
+```
 
-The player can therefore influence how quickly the world evolves upward.
+Saturation is processed from the highest non-final tier down to Tier 1. One evaluation therefore cannot instantly cascade the same replenishment through several already-full tiers.
 
-## 2. Tier state
+Tier 5 is the final tier. At its cap, spawning pauses without discarding its rate.
 
-Every enemy tier `T` owns:
+## 2. Prototype values
 
-- `N[T]`: current living physical population;
-- `C[T]`: unit cap;
-- `R[T]`: replenishment rate in organisms per minute;
-- `S[T]`: bounded fractional spawn credit.
+The initial implementation deliberately uses accelerated balancing values:
 
-The prototype values are data, not permanent balance locks:
-
-| Tier | Name | Prototype cap | Primary pressure |
+| Tier | Name | Cap | Intended role |
 |---|---|---:|---|
-| 1 | Feral | 100 | numerous, slow, primitive organisms |
-| 2 | Territorial | 40 | nest defence and patrol |
-| 3 | Predatory | 16 | scouting, hunting and pack memory |
-| 4 | Strategic | 6 | route interception and priority targeting |
-| 5 | Apex | 2 | rare regional strategic threats |
+| I | Feral | 100 | Numerous, slow, primitive population |
+| II | Territorial | 40 | Nest guards and patrol organisms |
+| III | Hunter | 16 | Scouts, route observers, coordinated hunters |
+| IV | Strategic | 6 | Ambush and infrastructure predators |
+| V | Apex | 2 | Rare regional constraints |
 
-Scrap remains the only ordinary player resource. Enemy replenishment is a simulation state, not a player currency.
+Tier 1 starts at `1.0 unit/minute`. Its replenishment rate grows by `+1.0 unit/minute per minute` during the accelerated prototype.
 
-## 3. Tier-1 growth
+These values are data, not code locks. Long-run balancing will almost certainly slow the growth substantially. The population-driven relationship is canonical; the exact numbers are not.
 
-Tier 1 is the root input to the ecological escalation ladder.
+## 3. Replenishment-source model
 
-The accelerated prototype values are:
+The implementation distinguishes anonymous replenishment pressure from named physical sources.
+
+### Anonymous pressure
+
+Anonymous pressure includes:
+
+- the continuously increasing Tier-1 background pressure;
+- permanent ecological costs from Heartforge evolution;
+- ecological consequences of technology and recovery operations;
+- broad suppressive effects from major world actions.
+
+### Named sources
+
+Every physical nest contributes one or more named rates. A source stores:
+
+- source identifier;
+- owner/nest identifier;
+- base tier and base rate;
+- current evolved tier;
+- current converted rate.
+
+When a tier saturates, every named source currently allocated there moves upward and is multiplied by `0.10`. If its physical nest is later destroyed, the source is removed from whatever tier it has evolved into. This keeps nest clearing meaningful even after ecological escalation.
+
+New Tier-1 growth enters Tier 1 when there is population headroom. If Tier 1 is still saturated, each new increment is routed upward immediately at 10:1. Previously evolved pressure does not move backward when casualties create headroom.
+
+This produces the intended strategic result:
+
+- killing low-tier organisms creates population headroom and makes new pressure refill weaker tiers;
+- clearing nests removes long-term replenishment sources;
+- allowing saturation permanently evolves existing pressure upward.
+
+## 4. Spawn-credit rules
+
+Each tier accumulates fractional spawn credit:
 
 ```text
-initial R1 = 1 organism/minute
-R1 growth = +1 organism/minute per elapsed minute
-C1 = 100
+spawn_credit += replenishment_per_minute × elapsed_seconds / 60
 ```
 
-This is deliberately fast enough to exercise the system during development. Long-run balance is expected to reduce or reshape the growth curve.
+Credit is capped at `3.0` organisms. A missing, destroyed, or unsuitable nest therefore cannot build a hidden army of hundreds of births.
 
-The invariant is more important than the placeholder number:
+An organism is materialized only if:
 
-> Unless the player suppresses the ecology, the underlying Tier-1 replenishment pressure grows over time.
+- its tier is below cap;
+- spawn credit is at least one;
+- a living physical nest supports the tier;
+- the persistent world can instantiate the organism.
 
-## 4. Saturation transfer
+It then spawns at a deterministic physical point around that nest and remains in the world. Distant simulation may reduce update detail but cannot replace the organism with a mission timer.
 
-When a non-final tier is at cap and still owns a positive replenishment rate:
+## 5. Physical nests
 
-```text
-if N[T] >= C[T] and R[T] > 0:
-    R[T + 1] += R[T] × 0.10
-    R[T] = 0
-    S[T] = 0
-```
+The initial world contains eight authored reproductive sources across the town, from small feral burrows near the Heartforge to the Root Cistern organ.
 
-The conversion is processed from high tiers downward. One Tier-1 saturation event therefore cannot cascade through several already-full tiers in the same simulation tick.
+A nest defines:
 
-The 10:1 conversion creates a natural pyramid: many primitive organisms support progressively fewer advanced organisms.
-
-At the final tier, replenishment becomes dormant while the tier is at cap and resumes when population headroom returns. It is not converted into an invisible sixth difficulty meter.
-
-## 5. Why killing weak organisms matters
-
-Suppose Tier 1 is saturated at 100/100. Its replenishment has begun flowing into Tier 2.
-
-If machines kill 25 Tier-1 organisms, Tier 1 becomes 75/100. New Tier-1 replenishment is now spent filling those 25 slots rather than being promoted upward.
-
-The player has therefore achieved two effects:
-
-1. immediate tactical relief;
-2. delayed advanced-tier escalation.
-
-Ordinary organisms need no experience drop or second currency. Their removal is strategically valuable because it changes the ecology’s future allocation.
-
-## 6. Population suppression versus source suppression
-
-Killing an organism reduces population `N[T]`.
-
-Destroying a nest reduces one or more replenishment rates `R[T]`, reduces Tier-1 rate growth, or both.
-
-These are intentionally different actions:
-
-- combat creates temporary population headroom;
-- nest clearing changes long-term ecological throughput.
-
-A player may be able to hold a high replenishment rate down for a while with machines, but eventually need to risk a physical nest-clearing operation to create durable relief.
-
-## 7. Physical nests
-
-Every replenishment spawn originates at a functioning `OrganicNest3D`.
-
-A nest has:
-
-- stable identifier;
-- physical position;
+- stable ID and physical position;
 - region;
-- health and destruction state;
 - maturity;
-- supported enemy tiers;
-- territory radius;
-- spawn weight;
-- replenishment reductions granted when destroyed.
+- health;
+- supported tiers;
+- per-tier replenishment contributions;
+- delayed regrowth time.
 
-Local Heartforge nests support early tiers. Regional mature nests support progressively higher tiers. The Root Cistern birth organ can support the complete ladder.
+Nests are targetable organic structures. Destroying one removes its active replenishment contributions immediately. A destroyed source remains physically visible and can show long-term regrowth evidence. Regrowth is slow, causal, and saved.
 
-Enemies appear around these structures and continue to exist in the same persistent world. Remote simulation may reduce detail, but it may not replace them with detached timers.
+Regional suppression reduces effective nest contribution. Noise does not permanently increase replenishment; it changes attention and behavior of organisms already present.
 
-## 8. Bounded spawn credit
+## 6. Tier intelligence
 
-Fractional replenishment is accumulated as spawn credit. Credit is capped at three organisms per tier in the prototype.
+Tier and species are separate. Several species can occupy a tier, while tier defines the maximum sophistication available to their behavior.
 
-If no valid nest can produce a tier, the rate remains but credit does not grow into a hidden mega-spawn backlog. When an appropriate nest becomes available, production resumes at the current rate.
+### Tier I — Feral
 
-A small per-tick materialization limit prevents frame spikes and keeps population entry legible.
+Tier I has only three purposeful states:
 
-## 9. Intelligence progression
+- random roaming;
+- chasing a visible machine or Mechromancer;
+- attacking.
 
-Tier is not merely a health multiplier. It defines the maximum sophistication available to an organism.
+It does not guard nests, scout, flank, observe routes, select infrastructure, or coordinate. Its threat comes from slow numerical density.
 
-### Tier 1 — Feral
+### Tier II — Territorial
 
-Tier 1 organisms:
+Tier II can:
 
-- spawn near nests;
-- move slowly;
-- choose random roaming destinations;
-- have no strategic objective;
-- ignore ordinary noise as a purposeful signal;
-- do not defend nests, scout routes, share information or choose infrastructure targets;
-- attack the Mechromancer or machines only when directly detected with line of sight.
+- protect a threatened home nest;
+- patrol a repeatable territory ring;
+- investigate disturbance;
+- drive intruders from its territory;
+- participate in primitive packs.
 
-Their threat is density, not intelligence.
+### Tier III — Hunter
 
-### Tier 2 — Territorial
+Tier III can:
 
-Tier 2 organisms can:
+- scout beyond home territory;
+- observe machine routes;
+- prioritize exposed Scrappers, Engineers, Pathfinders, and channeling Mechromancers;
+- retain last-known positions;
+- share detections with pack members;
+- retreat from an unfavorable engagement and return.
 
-- remain associated with a physical nest;
-- patrol the territory and nest rim;
-- protect brood sites from nearby intruders;
-- respond to strong local disturbance;
-- form primitive local packs.
+### Tier IV — Strategic
 
-They do not yet reason about the wider machine network.
+Tier IV can:
 
-### Tier 3 — Predatory
+- target outposts and remote support infrastructure;
+- prioritize vulnerable work frames;
+- probe defensive coverage;
+- move ahead of known routes to ambush;
+- reinforce nests;
+- abandon bad fights instead of attacking to death.
 
-Tier 3 organisms can:
+### Tier V — Apex
 
-- scout beyond their territory;
-- remember a last-known prey location;
-- share detections with compatible pack members;
-- hunt likely machine routes;
-- prioritize exposed Scrappers, Pathfinders or the Mechromancer;
-- withdraw and return rather than simply standing idle.
+Tier V can:
 
-Seeing one can mean the machine society has been observed.
+- maintain a large territory;
+- select Heartforge and remote infrastructure as regional strategic constraints;
+- influence aggression and movement of nearby lower tiers;
+- investigate major machine developments;
+- alter route planning before direct combat begins.
 
-### Tier 4 — Strategic
+Every enemy stores its tier, home nest, territory, behavior, goal, awareness, pack identity, and last-known prey information separately.
 
-Tier 4 organisms can:
+## 7. Dynamic world modifiers
 
-- intercept known machine routes;
-- prioritize Scrappers and Engineers;
-- attack outpost service zones;
-- reinforce threatened brood sites;
-- choose flanking approach points;
-- redirect existing organisms toward operation disturbances;
-- abandon poor local engagements for more valuable targets.
+Heartforge evolution and long-range operations can add or remove replenishment through data-configured effects.
 
-### Tier 5 — Apex
+Examples:
 
-Tier 5 organisms are rare regional constraints. They can prioritize critical infrastructure, maintain large territories and alter strategic planning before direct combat begins.
+- loud technology recovery may increase Tier-I and Tier-II replenishment;
+- clearing the Cathedral Brood reduces multiple tiers;
+- restarting Riverworks drainage reduces local ecological throughput;
+- mapping the Root Cistern increases late-game attention;
+- luring the Apex reduces Tier-IV and Tier-V pressure.
 
-## 10. Species and tiers
+The game reports whether a completed action increased or suppressed future reproduction. This is a strategic trade-off, not a hidden percentage difficulty increase.
 
-Tier and species are separate concepts. Several species may occupy one tier, but every species has a canonical tier assignment in `enemy_archetypes.json`.
+## 8. Autonomous suppression
 
-The ecology does not upgrade one model by silently increasing health. New tiers introduce new silhouettes, roles and behavior vocabularies.
+The design must not turn Tier-I control into a personal trash-mob chore.
 
-The implemented mapping is:
+After Heartforge Tier III, the machine society can identify dense Tier-I clusters close to the Heartforge and functioning outposts. Available Wardens autonomously form bounded suppression patrols when:
 
-- Tier 1: Skitterling;
-- Tier 2: Razorhound, Roofleaper, Glassmoth;
-- Tier 3: Veilstalker, Undermaw, Sporecaster;
-- Tier 4: Broodmass, Miremaw, Carrion Bell, Rootweaver;
-- Tier 5: Crownbeast.
+- Tier-I population exceeds the configured threshold;
+- a real local concentration exists;
+- Wardens are not needed for salvage, construction, expedition, or escort work.
 
-## 11. Dynamic modifiers
+They divide across separate population cells and return to reserve when pressure falls. The player chooses broader priorities and risky nest-clearing operations; the machines perform routine thinning.
 
-Replenishment changes through world events.
+## 9. Player-facing intelligence
 
-### Nest clearing
+Exact population and rate tables remain available for tests and diagnostics. Normal play receives qualitative command-map intelligence:
 
-A destroyed nest applies its configured long-term reductions immediately. Mature regional nests affect more than one tier.
-
-### Technology and Heartforge evolution
-
-Major technology and Heartforge upgrades can increase replenishment because they make the machine society louder, more detectable or biologically disruptive.
-
-### Physical expeditions
-
-Technology recovery and excavation operations can increase replenishment. Suppression operations such as clearing the Cathedral Brood or draining Riverworks can reduce it.
-
-The exact effects are data-driven in `enemy_tier_event_modifiers.json` and applied once per completed event.
-
-### Noise
-
-Ordinary salvage, fabrication and combat noise does not permanently increase replenishment. Noise changes attention: existing organisms investigate, share information and converge. This preserves the distinction between ecological capacity and current local attention.
-
-## 12. Operations and final protocols
-
-Operation and endgame encounter requests may materialize an organism only while its tier is below cap. If the tier is already at cap, the disturbance redirects a nearby existing organism rather than creating one above the cap.
-
-Starting a final protocol applies a configured high-tier ecological effect, but there is still no numbered wave schedule.
-
-## 13. Autonomous suppression and anti-chore protection
-
-This system must not turn into a demand that the Mechromancer personally farm Tier-1 organisms.
-
-As machine autonomy grows:
-
-- Wardens suppress dangerous low-tier concentrations;
-- patrol and defence groups keep routes usable;
-- outposts create local suppression and early warning;
-- the machine society proposes or undertakes routine responses;
-- the player chooses whether to commit capacity to a region or protect the Heartforge.
-
-The strategic choice is where to accept pressure, not which of 43 weak organisms to click next.
-
-## 14. Player-facing intelligence
-
-Exact simulation rates are available to tests and diagnostics. Normal play exposes qualitative intelligence through the command map:
-
-- density by confirmed tier;
+- Tier-I density: low, sparse, present, dense, or saturated;
 - highest confirmed tier;
-- active brood-site count;
-- broad replenishment description;
-- saturation warning;
-- overall ecological trend.
+- number of active reproductive nests;
+- ecological trend;
+- confirmed saturation transfer;
+- current autonomous suppression activity.
 
-The interface does not become a real-time strategy economy dashboard.
+The command map does not expose spawn sliders, budgets, per-nest workers, or another management economy.
 
-## 15. Persistence
+## 10. Persistence
 
-The unified world save retains:
+Enemy-tier state includes:
 
-- tier rates;
-- spawn credit;
-- total transferred throughput;
-- observed tiers;
-- Tier-1 growth rate;
-- physical nest health, maturity and destruction state;
-- applied one-time progression modifiers;
-- every living enemy’s tier, territory and ecological directive.
+- populations;
+- anonymous rates;
+- fractional spawn credits;
+- saturation states;
+- named source locations and converted rates;
+- applied world events;
+- Heartforge progression already accounted for;
+- nest health, maturity, destruction, and regrowth state;
+- deterministic spawn serial.
 
-Older saves without these fields receive safe defaults and species-derived tier assignments.
+The system writes a checksummed transactional sidecar when the main verified world save succeeds and restores it when the world save loads. A backup is retained if the current sidecar is invalid.
 
-## 16. Acceptance criteria
+## 11. Acceptance criteria
 
-The implementation is acceptable only when deterministic tests demonstrate:
+The implementation must prove that:
 
-1. no upward transfer below cap;
-2. exact 10:1 transfer at saturation;
-3. population headroom prevents transfer;
-4. recursive tiers transfer independently;
-5. no tier exceeds its cap;
-6. no destroyed nest produces organisms;
-7. nest destruction reduces the configured rates;
-8. progression effects alter rates once, not repeatedly;
-9. Tier 1 is slow and restricted to feral roaming/direct engagement;
-10. Tier 2 patrols or protects territories;
-11. Tier 3 scouts or hunts purposefully;
-12. Tier 4 chooses strategic machine/infrastructure targets;
-13. all replenishment spawns originate near a valid physical nest;
-14. save/load preserves rates, nests, tiers and applied events;
-15. there is no recurring wave timer.
+1. no upward transfer occurs below cap;
+2. `10/min` at a saturated tier becomes exactly `1/min` in the next tier;
+3. the source tier becomes zero after transfer;
+4. processing high-to-low prevents same-tick multi-tier cascades;
+5. casualties create headroom for new weak-tier growth;
+6. no tier spawns beyond its cap;
+7. spawn credit remains bounded;
+8. destroyed nests stop contributing wherever their sources evolved;
+9. technology and operation effects change the configured rates;
+10. Tier-I organisms roam without purposeful nest defense;
+11. Tier-II organisms patrol and guard;
+12. Tier-III organisms scout, hunt, remember, and share detections;
+13. Tier-IV organisms target routes, work frames, and infrastructure;
+14. Tier-V organisms operate at a regional strategic level;
+15. all tier-generated organisms emerge from valid physical nests;
+16. remote organisms remain causal physical entities;
+17. no recurring wave timer is introduced;
+18. mature machine society suppresses routine low-tier concentrations without per-unit commands.
 
-## 17. Design locks
+## 12. Design result
 
-The canonical locks are:
+The world becomes more dangerous because the player allowed biological populations to saturate, left reproductive sources active, or accepted ecological costs for machine progress.
 
-- escalation is population-driven, not wave-timer-driven;
-- Tier 1 owns the fundamental growing replenishment pressure;
-- saturation converts replenishment upward at 10:1 and zeros the lower rate;
-- combat creates headroom, while nest clearing reduces sources;
-- progression can impose ecological costs;
-- intelligence increases qualitatively by tier;
-- every birth has a physical nest source;
-- spawn backlog is bounded;
-- the top tier becomes dormant at cap;
-- routine suppression becomes autonomous;
-- Scrap remains the only ordinary player resource;
-- all enemies remain organic.
+Seeing the first purposeful nest patrol, route scout, strategic predator, or Apex is therefore evidence of what has happened in the simulation. It is not merely a timer unlocking a stronger stat block.

@@ -240,3 +240,18 @@ The game succeeds when a player can describe this transformation:
 > “At first I was afraid to leave the Heartforge light and depended on one machine to survive. Much later, coordinated robots were salvaging, defending, building and rebuilding remote support posts, and returning from deep expeditions without me telling each one what to do.”
 
 If the player instead says, “My base got large and I spent most of the time servicing it,” the design has failed.
+
+## 24. Ecological escalation is population-driven
+
+Each enemy tier has a living population cap and a replenishment rate. A
+saturated tier transfers its current replenishment upward at **10:1**, then has
+zero replenishment of its own. Saturation is evaluated from high tiers downward.
+There is no recurring wave timer hidden behind this system.
+
+Killing organisms reduces population and creates headroom. Destroying physical
+nests removes long-term replenishment sources wherever those sources have
+evolved. Major machine progress may increase future reproduction; suppressive
+world actions may reduce it. Tier I is slow, numerous and primitive. Higher
+tiers gain qualitatively smarter behavior, not merely more health and damage.
+Routine low-tier suppression must become autonomous rather than a personal
+trash-mob chore.

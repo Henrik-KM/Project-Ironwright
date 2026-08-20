@@ -1,8 +1,93 @@
 extends SceneTree
 
-const MAIN_SCENE := preload("res://scenes/main_3d.tscn")
+class FakeEnemy:
+    extends CharacterBody3D
+
+    signal killed(enemy, killer)
+
+    var species: StringName = &"skitterling"
+    var maximum_health: float = 100.0
+    var current_health: float = 100.0
+    var attack_damage: float = 10.0
+    var move_speed: float = 4.0
+    var attack_range: float = 1.5
+    var attack_interval: float = 1.0
+    var attack_cooldown: float = 0.0
+    var investigate_seconds: float = 0.0
+    var investigate_position: Vector3 = Vector3.ZERO
+    var aggression: float = 0.4
+    var state_name: StringName = &"idle"
+    var archetype: StringName = &""
+    var attacked_target: Node
+
+    func _ready() -> void:
+        add_to_group(&"organic_enemies")
+
+    func is_alive() -> bool:
+        return current_health > 0.0
+
+    func apply_damage(amount: float, source: Node = null) -> void:
+        current_health = maxf(0.0, current_health - amount)
+        if current_health <= 0.0:
+            killed.emit(self, source)
+
+    func _attack_target(target: Node) -> void:
+        attacked_target = target
+        if target != null and target.has_method(&"apply_damage"):
+            target.call(&"apply_damage", attack_damage, self)
+
+
+class FakeFriendly:
+    extends CharacterBody3D
+
+    var archetype: StringName = &"salvager"
+    var maximum_health: float = 100.0
+    var current_health: float = 100.0
+
+    func _ready() -> void:
+        add_to_group(&"friendly_robots")
+
+    func is_alive() -> bool:
+        return current_health > 0.0
+
+    func apply_damage(amount: float, source: Node = null) -> void:
+        current_health = maxf(0.0, current_health - amount)
+
+
+class FakeOutpost:
+    extends StaticBody3D
+
+    var role: StringName = &"repair"
+    var current_health: float = 200.0
+    var maximum_health: float = 200.0
+
+    func _ready() -> void:
+        add_to_group(&"outposts")
+
+    func is_alive() -> bool:
+        return current_health > 0.0
+
+    func apply_damage(amount: float, source: Node = null) -> void:
+        current_health = maxf(0.0, current_health - amount)
+
+
+class FakeWorld:
+    extends Node3D
+
+    var spawned: Array = []
+
+    func _spawn_enemy(position: Vector3, species: StringName):
+        var enemy := FakeEnemy.new()
+        enemy.species = species
+        add_child(enemy)
+        enemy.global_position = position
+        spawned.append(enemy)
+        return enemy
+
 
 var failures: Array[String] = []
+var world
+var director: EnemyTierProgressionDirector3D
 
 
 func _initialize() -> void:
@@ -10,201 +95,236 @@ func _initialize() -> void:
 
 
 func _run_all() -> void:
-    var world := MAIN_SCENE.instantiate() as IronwrightTieredWorld3D
+    world = FakeWorld.new()
     root.add_child(world)
-    for index in range(6):
-        await process_frame
-    await physics_frame
+    director = EnemyTierProgressionDirector3D.new()
+    director.configure(world)
+    world.add_child(director)
+    await process_frame
+    await process_frame
+    director.enabled = false
 
-    _expect(world != null, "The main scene must boot the tiered ecological world.")
-    if world == null:
-        _finish()
-        return
-
-    var director := world.enemy_tier_director
-    _expect(director is EnemyTierDirector3D, "The tiered world must install an EnemyTierDirector3D.")
-    if director == null:
-        _finish()
-        return
-
-    director.simulation_enabled = false
-    director.materialization_enabled = false
-    _test_configuration(director)
-    _test_exact_saturation_transfer(director)
-    _test_population_headroom(director)
-    _test_recursive_transfer(director)
-    _test_physical_nests(director)
-    _test_progression_modifiers(world, director)
-    await _test_physical_spawn_source(world, director)
-    await _test_intelligence_progression(world, director)
-    _test_command_map_intelligence(world, director)
-    _test_persistence(world, director)
+    _test_transfer_below_cap()
+    _test_exact_ten_to_one_transfer()
+    _test_high_to_low_no_same_tick_cascade()
+    _test_casualty_headroom_and_growth()
+    _test_bounded_spawn_credit()
+    await _test_physical_nest_spawning_and_cap()
+    await _test_nest_source_removal_after_evolution()
+    _test_dynamic_event_modifiers()
+    await _test_tier_behaviour_progression()
+    _test_serialization_round_trip()
 
     world.queue_free()
     await process_frame
     _finish()
 
 
-func _test_configuration(director: EnemyTierDirector3D) -> void:
-    _expect(director.sorted_tiers() == [1, 2, 3, 4, 5], "The ecological ladder must contain exactly five ordered tiers.")
-    _expect(is_equal_approx(director.saturation_transfer_factor, 0.1), "Saturation transfer must use the canonical 1/10 factor.")
-    _expect(int(director.tier_state(1).get("cap", 0)) == 100, "Tier 1 must use the prototype cap of 100.")
-    _expect(int(director.tier_state(2).get("cap", 0)) == 40, "Tier 2 must use the prototype cap of 40.")
-    _expect(is_equal_approx(director.tier_1_growth_per_minute_per_minute, 1.0), "Tier-1 replenishment must initially grow by one unit/min per minute.")
-    _expect(director.spawn_credit_cap <= 3.0, "Spawn credit must remain bounded and may not become a hidden army backlog.")
+func _reset_rates_and_population() -> void:
+    for tier in director.tier_order:
+        director.debug_set_population(tier, 0)
+        director.debug_set_anonymous_rate(tier, 0.0)
+        director.spawn_credit[tier] = 0.0
+        director.saturated[tier] = false
+    director.rate_sources.clear()
 
 
-func _test_exact_saturation_transfer(director: EnemyTierDirector3D) -> void:
-    director.clear_population_overrides_for_test()
-    director.set_population_override_for_test(1, 100)
-    director.set_population_override_for_test(2, 0)
-    director.set_tier_rate_for_test(1, 10.0)
-    director.set_tier_rate_for_test(2, 0.0)
-    director.force_simulation_step_for_test(0.0)
-    _expect(is_equal_approx(float(director.tier_state(1).get("replenishment_per_minute", -1.0)), 0.0), "A saturated tier must zero its own replenishment rate.")
-    _expect(is_equal_approx(float(director.tier_state(2).get("replenishment_per_minute", 0.0)), 1.0), "Tier 1 at cap with 10/min must transfer exactly 1/min to Tier 2.")
+func _test_transfer_below_cap() -> void:
+    _reset_rates_and_population()
+    director.debug_set_population(1, 99)
+    director.debug_set_anonymous_rate(1, 10.0)
+    director.debug_process_saturation()
+    _expect(is_equal_approx(director.replenishment_rate(1), 10.0), "Tier I replenishment must remain at Tier I below cap.")
+    _expect(is_zero_approx(director.replenishment_rate(2)), "No upward replenishment transfer may occur below cap.")
 
 
-func _test_population_headroom(director: EnemyTierDirector3D) -> void:
-    director.set_population_override_for_test(1, 75)
-    director.set_tier_rate_for_test(1, 10.0)
-    director.set_tier_rate_for_test(2, 0.0)
-    director.force_simulation_step_for_test(0.0)
-    _expect(is_equal_approx(float(director.tier_state(1).get("replenishment_per_minute", 0.0)), 10.0), "Tier-1 casualties must create headroom and keep replenishment in Tier 1.")
-    _expect(is_equal_approx(float(director.tier_state(2).get("replenishment_per_minute", 0.0)), 0.0), "No advanced-tier transfer may occur while the lower tier has population headroom.")
+func _test_exact_ten_to_one_transfer() -> void:
+    _reset_rates_and_population()
+    director.debug_set_population(1, director.unit_cap(1))
+    director.debug_set_anonymous_rate(1, 10.0)
+    director.debug_process_saturation()
+    _expect(is_zero_approx(director.replenishment_rate(1)), "Saturated source tier must become zero after transfer.")
+    _expect(is_equal_approx(director.replenishment_rate(2), 1.0), "Ten Tier-I units/min must become exactly one Tier-II unit/min.")
+    _expect(is_zero_approx(float(director.spawn_credit.get(1, -1.0))), "Saturation must clear source-tier spawn credit.")
 
 
-func _test_recursive_transfer(director: EnemyTierDirector3D) -> void:
-    director.set_population_override_for_test(1, 0)
-    director.set_population_override_for_test(2, 40)
-    director.set_population_override_for_test(3, 0)
-    director.set_tier_rate_for_test(1, 0.0)
-    director.set_tier_rate_for_test(2, 2.0)
-    director.set_tier_rate_for_test(3, 0.0)
-    director.force_simulation_step_for_test(0.0)
-    _expect(is_equal_approx(float(director.tier_state(2).get("replenishment_per_minute", -1.0)), 0.0), "Tier 2 must zero its rate when saturated.")
-    _expect(is_equal_approx(float(director.tier_state(3).get("replenishment_per_minute", 0.0)), 0.2), "Tier 2 at cap with 2/min must transfer exactly 0.2/min to Tier 3.")
+func _test_high_to_low_no_same_tick_cascade() -> void:
+    _reset_rates_and_population()
+    director.debug_set_population(1, director.unit_cap(1))
+    director.debug_set_population(2, director.unit_cap(2))
+    director.debug_set_anonymous_rate(1, 10.0)
+    director.debug_process_saturation()
+    _expect(is_equal_approx(director.replenishment_rate(2), 1.0), "A newly transferred Tier-II rate must remain at Tier II until the next evaluation.")
+    _expect(is_zero_approx(director.replenishment_rate(3)), "High-to-low processing must prevent a same-tick multi-tier cascade.")
+    director.debug_process_saturation()
+    _expect(is_zero_approx(director.replenishment_rate(2)), "Tier II must transfer on the following evaluation when still saturated.")
+    _expect(is_equal_approx(director.replenishment_rate(3), 0.1), "Second evaluation must transfer Tier II to Tier III at 10:1.")
 
 
-func _test_physical_nests(director: EnemyTierDirector3D) -> void:
-    _expect(director.nests.size() >= 15, "The complete town must have physical local and regional brood sites.")
-    var nest := director.nests[0]
-    _expect(nest is OrganicNest3D and nest.is_alive(), "Enemy replenishment must have a living physical nest source.")
-    var before_rate := 5.0
-    var before_growth := director.tier_1_growth_per_minute_per_minute
-    director.set_tier_rate_for_test(1, before_rate)
-    nest.apply_damage(nest.maximum_health + 1.0)
-    var after_rate := float(director.tier_state(1).get("replenishment_per_minute", before_rate))
-    _expect(not nest.is_alive(), "A nest must be physically destructible.")
-    _expect(after_rate < before_rate, "Destroying a nest must reduce long-term Tier-1 replenishment.")
-    _expect(director.tier_1_growth_per_minute_per_minute < before_growth, "Destroying a nest must reduce Tier-1 replenishment growth when configured.")
-    _expect(not nest.can_spawn_tier(1), "A destroyed nest may never produce another organism.")
+func _test_casualty_headroom_and_growth() -> void:
+    _reset_rates_and_population()
+    director.debug_set_population(1, 75)
+    director.debug_simulation_tick(60.0)
+    _expect(is_equal_approx(director.replenishment_rate(1), 1.0), "One prototype minute must add one unit/min to Tier-I pressure when headroom exists.")
+    _expect(is_zero_approx(director.replenishment_rate(2)), "Tier-I casualties must make new pressure refill the weak tier instead of escalating immediately.")
 
 
-func _test_progression_modifiers(world: IronwrightTieredWorld3D, director: EnemyTierDirector3D) -> void:
-    director.set_tier_rate_for_test(1, 2.0)
-    var before := float(director.tier_state(1).get("replenishment_per_minute", 0.0))
-    var applied := world.enemy_tier_event_bridge.apply_event_for_test(&"operation", &"operation.flood_market_recovery")
-    var after := float(director.tier_state(1).get("replenishment_per_minute", 0.0))
-    _expect(applied and after > before, "A disruptive technology expedition must increase configured replenishment.")
-    var second_application := world.enemy_tier_event_bridge.apply_event_for_test(&"operation", &"operation.flood_market_recovery")
-    _expect(not second_application and is_equal_approx(float(director.tier_state(1).get("replenishment_per_minute", 0.0)), after), "A completed progression event may alter replenishment only once.")
+func _test_bounded_spawn_credit() -> void:
+    _reset_rates_and_population()
+    director.debug_set_anonymous_rate(1, 500.0)
+    director.debug_simulation_tick(600.0)
+    _expect(float(director.spawn_credit.get(1, 0.0)) <= director.spawn_credit_cap + 0.0001, "Missing spawn sources must never accumulate an unbounded birth backlog.")
 
 
-func _test_physical_spawn_source(world: IronwrightTieredWorld3D, director: EnemyTierDirector3D) -> void:
-    director.clear_population_overrides_for_test()
-    for node in get_nodes_in_group(&"organic_enemies"):
-        if node is OrganicEnemy3D and is_instance_valid(node):
-            node.free()
+func _test_physical_nest_spawning_and_cap() -> void:
+    _reset_rates_and_population()
+    _remove_all_nests()
+    var nest := EnemyTierNest3D.new()
+    nest.configure({
+        "id": "nest.test_physical",
+        "display_name": "Test Physical Nest",
+        "position": [12.0, 0.0, -8.0],
+        "maturity": 1.0,
+        "maximum_health": 100.0,
+        "supported_tiers": [1],
+        "replenishment_per_minute": {"1": 120.0},
+        "regrowth_seconds": 1000.0,
+    })
+    world.add_child(nest)
+    director.register_nest(nest)
     await process_frame
-    director.materialization_enabled = true
-    director.set_tier_rate_for_test(1, 0.0)
-    var state: Dictionary = director.tier_states[1]
-    state["spawn_credit"] = 1.0
-    director.force_simulation_step_for_test(0.0)
+    director.debug_set_population(1, director.unit_cap(1) - 1)
+    director.spawn_credit[1] = 2.0
+    director._accumulate_and_spawn(1, 1.0)
+    _expect(world.spawned.size() >= 1, "Tier-generated organisms must materialize through a physical valid nest.")
+    var spawned: Node = world.spawned[-1] as Node
+    _expect(StringName(str(spawned.get_meta(&"home_nest_id", ""))) == &"nest.test_physical", "Spawned organism must retain its physical home nest.")
+    _expect(int(spawned.get_meta(&"enemy_tier", 0)) == 1, "Spawned organism must retain its assigned tier separately from species.")
+    _expect(int(director.population.get(1, 0)) == director.unit_cap(1), "Tier spawning must stop exactly at the unit cap.")
+    director.spawn_credit[1] = 3.0
+    director._accumulate_and_spawn(1, 60.0)
+    _expect(int(director.population.get(1, 0)) == director.unit_cap(1), "No replenishment source may spawn beyond a tier cap.")
+    _expect(not nest.is_in_group(&"organic_enemies"), "Physical nests must not inflate organic unit populations or legacy enemy counts.")
+    _expect(nest.is_in_group(&"enemy_tier_nests"), "Physical nests must remain addressable as a separate combat-target group.")
+
+
+func _test_nest_source_removal_after_evolution() -> void:
+    _reset_rates_and_population()
+    _remove_all_nests()
+    var nest := EnemyTierNest3D.new()
+    nest.configure({
+        "id": "nest.test_evolved_source",
+        "display_name": "Evolved Source Nest",
+        "position": [-14.0, 0.0, 9.0],
+        "maturity": 1.0,
+        "maximum_health": 80.0,
+        "supported_tiers": [1],
+        "replenishment_per_minute": {"1": 5.0},
+        "regrowth_seconds": 1000.0,
+    })
+    world.add_child(nest)
+    director.register_nest(nest)
+    director._refresh_nest_sources()
+    _expect(director.replenishment_rate(1) >= 4.99, "Living physical nest must contribute its configured replenishment.")
+    director.debug_set_population(1, director.unit_cap(1))
+    director.debug_process_saturation()
+    _expect(director.replenishment_rate(2) >= 0.499, "A nest source must evolve upward with its saturated tier.")
+    nest.apply_damage(9999.0)
     await process_frame
-    var spawned: Array[OrganicEnemyTiered3D] = []
-    for node in get_nodes_in_group(&"organic_enemies"):
-        if node is OrganicEnemyTiered3D and is_instance_valid(node):
-            spawned.append(node as OrganicEnemyTiered3D)
-    _expect(spawned.size() == 1, "One unit of spawn credit must materialize one physical organism.")
-    if not spawned.is_empty():
-        var enemy := spawned[0]
-        var nearest_nest_distance := INF
-        for nest in director.nests:
-            if is_instance_valid(nest) and nest.is_alive() and nest.can_spawn_tier(1):
-                nearest_nest_distance = minf(nearest_nest_distance, enemy.global_position.distance_to(nest.global_position))
-        _expect(nearest_nest_distance <= director.nest_spawn_radius_max + 0.25, "Every replenishment birth must appear beside a valid physical nest.")
-        _expect(enemy.enemy_tier == 1, "Tier-1 credit must create a Tier-1 organism.")
-    director.materialization_enabled = false
+    _expect(director.replenishment_rate(2) < 0.001, "Clearing a nest must remove its contribution from the tier it evolved into.")
 
 
-func _test_intelligence_progression(world: IronwrightTieredWorld3D, director: EnemyTierDirector3D) -> void:
-    var origin := Vector3(180.0, 0.0, 180.0)
-    var tier_one := world._spawn_enemy(origin, &"skitterling") as OrganicEnemyTiered3D
-    tier_one.configure_tier(1, director.tier_config(1), true)
-    tier_one.configure_ecology(origin, 24.0, &"hunt")
-    var tier_one_speed := tier_one.move_speed
-    var before_investigate := tier_one.investigate_seconds
-    tier_one.hear_noise(origin + Vector3(3.0, 0.0, 0.0), 20.0, 1.0, &"test_noise")
-    _expect(tier_one.enemy_tier == 1 and tier_one.ecology_directive == &"roam", "Tier 1 must ignore purposeful directives and remain feral roaming behavior.")
-    _expect(is_equal_approx(tier_one.investigate_seconds, before_investigate), "Tier 1 must not purposefully investigate ordinary noise.")
-    _expect(tier_one_speed < 3.5, "Tier 1 must be deliberately slow.")
+func _test_dynamic_event_modifiers() -> void:
+    _reset_rates_and_population()
+    director.applied_events.clear()
+    _expect(director.apply_event(&"operation.buried_lab_excavation"), "Configured technology expedition must apply an ecological modifier once.")
+    _expect(director.replenishment_rate(1) >= 1.399, "Disruptive technology expedition must increase future Tier-I replenishment.")
+    _expect(not director.apply_event(&"operation.buried_lab_excavation"), "The same completed operation must not apply its permanent ecological cost twice.")
+    var before := director.replenishment_rate(1)
+    _expect(director.apply_event(&"operation.cathedral_brood_suppression"), "Major brood suppression must apply its configured reduction.")
+    _expect(director.replenishment_rate(1) < before, "Brood suppression must decrease future replenishment.")
+    director._refresh_nest_sources()
+    _expect(director.replenishment_rate(1) < before, "Permanent suppression must remain after physical nest-source refresh.")
 
-    var tier_two := world._spawn_enemy(origin + Vector3(8.0, 0.0, 0.0), &"razorhound") as OrganicEnemyTiered3D
-    tier_two.configure_tier(2, director.tier_config(2), true)
-    tier_two.configure_ecology(origin, 24.0, &"scout")
-    _expect(tier_two.enemy_tier == 2 and tier_two.ecology_directive in [&"protect_nest", &"patrol"], "Tier 2 must limit itself to territorial patrol or nest defence.")
 
-    var tier_three := world._spawn_enemy(origin + Vector3(16.0, 0.0, 0.0), &"veilstalker") as OrganicEnemyTiered3D
-    tier_three.configure_tier(3, director.tier_config(3), true)
-    tier_three.configure_ecology(origin, 30.0, &"scout")
-    tier_three.receive_pack_alert(origin + Vector3(5.0, 0.0, 0.0), 0.8)
-    _expect(tier_three.enemy_tier == 3 and tier_three.ecology_directive in [&"scout", &"hunt"], "Tier 3 must support purposeful scouting or hunting.")
-    _expect(tier_three.has_last_known_prey and tier_three.investigate_seconds > 0.0, "Tier 3 must remember and act on shared prey information.")
-
-    var engineer := world._spawn_robot(&"engineer", origin + Vector3(26.0, 0.0, 0.0), 1)
-    var tier_four := world._spawn_enemy(origin + Vector3(23.0, 0.0, 3.0), &"rootweaver") as OrganicEnemyTiered3D
-    tier_four.configure_tier(4, director.tier_config(4), true)
-    tier_four.configure_ecology(origin, 38.0, &"hunt")
-    var strategic_target := tier_four._strategic_interest_target()
-    _expect(strategic_target == engineer, "Tier 4 must deliberately prioritize a nearby Engineer as a strategic operational target.")
-
-    var tier_five := world._spawn_enemy(origin + Vector3(30.0, 0.0, 0.0), &"apex") as OrganicEnemyTiered3D
-    tier_five.configure_tier(5, director.tier_config(5), true)
-    _expect(tier_five.enemy_tier == 5 and tier_five.tier_profile == &"apex", "Tier 5 must be represented as a distinct apex intelligence tier.")
-
-    tier_one.queue_free()
-    tier_two.queue_free()
-    tier_three.queue_free()
-    tier_four.queue_free()
-    tier_five.queue_free()
-    engineer.queue_free()
+func _test_tier_behaviour_progression() -> void:
+    _clear_fake_actors()
+    await process_frame
+    var target := FakeFriendly.new()
+    target.archetype = &"salvager"
+    world.add_child(target)
+    target.global_position = Vector3(7.0, 0.0, 0.0)
     await process_frame
 
+    var tier_one: FakeEnemy = _make_brained_enemy(1, Vector3.ZERO)
+    tier_one.get_node("EnemyTierBrain").call(&"_choose_next_behaviour", true)
+    _expect(StringName(str(tier_one.get_meta(&"enemy_behaviour", ""))) in [&"chase", &"roam"], "Tier I must use only primitive roam/chase behavior.")
+    target.global_position = Vector3(80.0, 0.0, 0.0)
+    tier_one.get_node("EnemyTierBrain").call(&"_choose_next_behaviour", true)
+    _expect(StringName(str(tier_one.get_meta(&"enemy_behaviour", ""))) == &"roam", "Tier I without visible prey must wander randomly, not defend nests or scout.")
 
-func _test_command_map_intelligence(world: IronwrightTieredWorld3D, director: EnemyTierDirector3D) -> void:
-    var snapshot := director.snapshot()
-    world.enemy_tier_hud.set_snapshot(snapshot)
-    world.enemy_tier_hud.set_map_visible(true)
-    _expect(world.enemy_tier_hud.panel.visible, "Ecological intelligence must be available in command-map mode.")
-    _expect("Highest confirmed tier" in world.enemy_tier_hud.summary_label.text, "The command map must summarize confirmed tier and trend without requiring a spreadsheet.")
-    world.enemy_tier_hud.set_map_visible(false)
-    _expect(not world.enemy_tier_hud.panel.visible, "Tier intelligence must not become permanent tactical HUD clutter.")
+    var nest := EnemyTierNest3D.new()
+    nest.configure({"id": "nest.behaviour", "position": [20.0, 0.0, 0.0], "supported_tiers": [1, 2, 3, 4, 5], "replenishment_per_minute": {"1": 0.1}, "maximum_health": 100.0})
+    world.add_child(nest)
+    director.register_nest(nest)
+    target.global_position = Vector3(21.0, 0.0, 0.0)
+    var tier_two: FakeEnemy = _make_brained_enemy(2, Vector3(24.0, 0.0, 0.0), &"nest.behaviour")
+    tier_two.get_node("EnemyTierBrain").call(&"_choose_next_behaviour", true)
+    _expect(StringName(str(tier_two.get_meta(&"enemy_behaviour", ""))) == &"guard_nest", "Tier II must purposefully guard a threatened home nest.")
+
+    target.global_position = Vector3(35.0, 0.0, 0.0)
+    var tier_three: FakeEnemy = _make_brained_enemy(3, Vector3(28.0, 0.0, 0.0), &"nest.behaviour")
+    tier_three.get_node("EnemyTierBrain").call(&"_choose_next_behaviour", true)
+    _expect(StringName(str(tier_three.get_meta(&"enemy_behaviour", ""))) in [&"hunt_vulnerable", &"coordinated_hunt"], "Tier III must proactively hunt vulnerable work frames.")
+
+    var outpost := FakeOutpost.new()
+    world.add_child(outpost)
+    outpost.global_position = Vector3(48.0, 0.0, 0.0)
+    var tier_four: FakeEnemy = _make_brained_enemy(4, Vector3(42.0, 0.0, 0.0), &"nest.behaviour")
+    tier_four.get_node("EnemyTierBrain").call(&"_choose_next_behaviour", true)
+    _expect(StringName(str(tier_four.get_meta(&"enemy_behaviour", ""))) in [&"strategic_attack", &"route_ambush", &"probe_defences"], "Tier IV must make strategic route or infrastructure decisions.")
+
+    var tier_five: FakeEnemy = _make_brained_enemy(5, Vector3(44.0, 0.0, 0.0), &"nest.behaviour")
+    tier_five.get_node("EnemyTierBrain").call(&"_choose_next_behaviour", true)
+    _expect(StringName(str(tier_five.get_meta(&"enemy_behaviour", ""))) in [&"regional_predation", &"maintain_large_territory"], "Tier V must operate at a regional strategic level.")
 
 
-func _test_persistence(world: IronwrightTieredWorld3D, director: EnemyTierDirector3D) -> void:
-    director.set_tier_rate_for_test(1, 6.75)
-    director.set_tier_rate_for_test(3, 0.42)
+func _make_brained_enemy(tier: int, position: Vector3, nest_id: StringName = &""):
+    var enemy := FakeEnemy.new()
+    world.add_child(enemy)
+    enemy.global_position = position
+    director.assign_enemy_tier(enemy, tier, nest_id)
+    return enemy
+
+
+func _test_serialization_round_trip() -> void:
+    director.applied_events[&"test.event"] = true
+    director.debug_set_anonymous_rate(1, 3.25)
+    director.spawn_credit[1] = 1.75
     var saved := director.to_dictionary()
-    var snapshot := world._collect_release_snapshot()
-    var release: Dictionary = snapshot.get("release", {})
-    _expect(release.has("enemy_tiers") and release.has("enemy_tier_events"), "The unified world save must contain tier and applied-event state.")
-    director.set_tier_rate_for_test(1, 0.0)
-    director.set_tier_rate_for_test(3, 0.0)
+    director.debug_set_anonymous_rate(1, 0.0)
+    director.spawn_credit[1] = 0.0
+    director.applied_events.clear()
     director.restore_from_dictionary(saved)
-    _expect(is_equal_approx(float(director.tier_state(1).get("replenishment_per_minute", 0.0)), 6.75), "Save restoration must preserve Tier-1 replenishment.")
-    _expect(is_equal_approx(float(director.tier_state(3).get("replenishment_per_minute", 0.0)), 0.42), "Save restoration must preserve advanced-tier replenishment.")
+    _expect(director.replenishment_rate(1) >= 3.249, "Tier replenishment must survive save and restore.")
+    _expect(is_equal_approx(float(director.spawn_credit.get(1, 0.0)), 1.75), "Fractional spawn credit must survive save and restore.")
+    _expect(bool(director.applied_events.get(&"test.event", false)), "Applied ecological events must survive save and restore.")
+    _expect(director.suppression_offsets.has(1), "Persistent ecological suppression offsets must survive the release save domain.")
+
+
+func _remove_all_nests() -> void:
+    for nest in director.nests.values():
+        if is_instance_valid(nest):
+            nest.queue_free()
+    director.nests.clear()
+    director.rate_sources.clear()
+
+
+func _clear_fake_actors() -> void:
+    for group_name in [&"organic_enemies", &"friendly_robots", &"outposts"]:
+        for node in get_nodes_in_group(group_name):
+            if node != null and is_instance_valid(node) and node != director:
+                node.queue_free()
 
 
 func _expect(condition: bool, message: String) -> void:

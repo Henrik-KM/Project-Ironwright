@@ -209,3 +209,21 @@ Read before changing gameplay:
 7. [`docs/AUTONOMY_AND_ANTI_CHORE.md`](docs/AUTONOMY_AND_ANTI_CHORE.md)
 8. [`docs/ENEMY_ECOLOGY.md`](docs/ENEMY_ECOLOGY.md)
 9. [`docs/AESTHETIC_OVERHAUL.md`](docs/AESTHETIC_OVERHAUL.md)
+
+## Population-driven enemy escalation
+
+Organic difficulty now emerges from the physical world. Each tier has a living
+unit cap and replenishment rate. Saturating a tier converts its replenishment
+into the next tier at 10:1; killing weak organisms creates headroom and delays
+that evolution, while clearing nests removes long-term reproductive sources.
+Technology and deep operations can carry an ecological cost.
+
+Tier-I organisms are numerous, slow and primitive wanderers. Territorial,
+hunting, strategic, and Apex tiers progressively patrol nests, scout routes,
+share detections, select vulnerable machines, attack infrastructure, retreat,
+and constrain whole regions. All births originate at physical nests. After the
+machine society matures, Wardens autonomously suppress dense feral clusters so
+population control does not become repetitive player work.
+
+Qualitative ecology intelligence appears on the command map. Exact rates remain
+debug and balancing data. See [`docs/ENEMY_TIER_PROGRESSION.md`](docs/ENEMY_TIER_PROGRESSION.md).

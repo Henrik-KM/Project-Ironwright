@@ -17,9 +17,15 @@ func _resolve_spatial_index() -> void:
 func _nearest_enemy(maximum_range: float) -> Node3D:
     if _spatial_index == null or not is_instance_valid(_spatial_index):
         _resolve_spatial_index()
-    if _spatial_index != null:
-        return _spatial_index.nearest(&"organic_enemies", global_position, maximum_range)
-    return super._nearest_enemy(maximum_range)
+    if _spatial_index == null:
+        return super._nearest_enemy(maximum_range)
+    var unit_target := _spatial_index.nearest(&"organic_enemies", global_position, maximum_range)
+    var nest_target := _spatial_index.nearest(&"enemy_tier_nests", global_position, maximum_range)
+    if unit_target == null:
+        return nest_target
+    if nest_target == null:
+        return unit_target
+    return nest_target if global_position.distance_to(nest_target.global_position) < global_position.distance_to(unit_target.global_position) else unit_target
 
 
 func set_visual_lod(level_value: int) -> void:

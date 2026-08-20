@@ -3,6 +3,7 @@ extends Node
 
 const INDEXED_GROUPS: Array[StringName] = [
     &"organic_enemies",
+    &"enemy_tier_nests",
     &"friendly_robots",
     &"outposts",
     &"salvage_piles",

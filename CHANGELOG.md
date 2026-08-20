@@ -1,5 +1,21 @@
 # Changelog
 
+## Pre-alpha ecology progression
+
+### Population-driven enemy escalation
+
+- Added five organic difficulty tiers with independent population caps and replenishment rates.
+- Added exact 10:1 upward rate transfer when a non-final tier reaches its cap.
+- Added continuously growing Tier-I background pressure and bounded fractional spawn credit.
+- Added eight physical reproductive nests with maturity, tier support, health, suppression, destruction, persistence, and slow causal regrowth.
+- Added dynamic ecological costs and suppression effects for Heartforge evolution and long-range operations.
+- Added primitive Tier-I roaming, territorial Tier-II patrols, Tier-III scouting and hunting, Tier-IV strategic targeting, and Tier-V regional Apex behavior.
+- Added pack information sharing, last-known prey memory, retreat, route ambush, infrastructure targeting, and lower-tier Apex influence.
+- Added qualitative command-map ecology intelligence.
+- Added autonomous Warden suppression patrols after Heartforge Tier III.
+- Added checksummed sidecar persistence and deterministic native/static tests.
+
+
 ## 0.7.1 — 2026-08-20
 
 ### Mechromancer authored-model realism pass
