@@ -22,6 +22,7 @@ var active_players: Array[AudioStreamPlayer3D] = []
 var event_count: int = 0
 var last_profile: StringName = &""
 var _last_heartforge_health: float = -1.0
+var _last_endgame_stage: int = -1
 
 
 func configure(next_world: Node3D, next_player: Node3D, next_heartforge: Node3D, next_noise_system: Node) -> void:
@@ -33,7 +34,7 @@ func configure(next_world: Node3D, next_player: Node3D, next_heartforge: Node3D,
 
 func _ready() -> void:
     process_mode = Node.PROCESS_MODE_ALWAYS
-    for profile in [&"pistol", &"machine_weapon", &"salvage", &"forge", &"organic_attack", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition"]:
+    for profile in [&"pistol", &"machine_weapon", &"salvage", &"forge", &"organic_attack", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition", &"endgame_start", &"endgame_stage", &"endgame_complete", &"endgame_failure"]:
         profiles[profile] = _build_profile(profile)
     _register_existing_actors()
     get_tree().node_added.connect(_on_node_added)
@@ -95,6 +96,15 @@ func register_region_atmosphere(source: Node) -> void:
     if source == null or not source.has_signal(&"atmosphere_changed"):
         return
     _connect_once(source, &"atmosphere_changed", Callable(self, "_on_region_atmosphere_changed"))
+
+
+func register_endgame(source: Node) -> void:
+    if source == null:
+        return
+    _connect_once(source, &"endgame_started", Callable(self, "_on_endgame_started"))
+    _connect_once(source, &"endgame_progress", Callable(self, "_on_endgame_progress"))
+    _connect_once(source, &"endgame_completed", Callable(self, "_on_endgame_completed"))
+    _connect_once(source, &"endgame_failed", Callable(self, "_on_endgame_failed"))
 
 
 func stop_all() -> void:
@@ -212,6 +222,30 @@ func _on_region_atmosphere_changed(_region_id: StringName, kind: StringName) -> 
     play_profile(&"region_transition", player.global_position, -12.0, pitch)
 
 
+func _on_endgame_started(_protocol_id: StringName, _display_name: String) -> void:
+    _last_endgame_stage = -1
+    if heartforge != null:
+        play_profile(&"endgame_start", heartforge.global_position, -3.5, 0.72)
+
+
+func _on_endgame_progress(_protocol_id: StringName, progress: float, _detail: String) -> void:
+    var stage := clampi(int(floor(progress * 4.0)), 0, 3)
+    if stage == _last_endgame_stage or heartforge == null:
+        return
+    _last_endgame_stage = stage
+    play_profile(&"endgame_stage", heartforge.global_position, -8.0, 0.78 + float(stage) * 0.12)
+
+
+func _on_endgame_completed(_protocol_id: StringName, _display_name: String, _ending: String) -> void:
+    if heartforge != null:
+        play_profile(&"endgame_complete", heartforge.global_position, -2.5, 1.12)
+
+
+func _on_endgame_failed(_protocol_id: StringName, _reason: String) -> void:
+    if heartforge != null:
+        play_profile(&"endgame_failure", heartforge.global_position, -5.0, 0.66)
+
+
 func _build_profile(profile: StringName) -> AudioStreamWAV:
     var duration := 0.2
     match profile:
@@ -231,6 +265,14 @@ func _build_profile(profile: StringName) -> AudioStreamWAV:
             duration = 0.16
         &"region_transition":
             duration = 0.78
+        &"endgame_start":
+            duration = 1.15
+        &"endgame_stage":
+            duration = 0.58
+        &"endgame_complete":
+            duration = 1.8
+        &"endgame_failure":
+            duration = 0.72
 
     var sample_count := maxi(1, int(duration * MIX_RATE))
     var data := PackedByteArray()
@@ -278,4 +320,17 @@ func _sample_profile(profile: StringName, normalized: float, time: float, durati
             var fifth := sin(TAU * 108.0 * time) * 0.18
             var shimmer := sin(TAU * (420.0 * time + 80.0 * time * time / duration)) * 0.16
             return (low + fifth + shimmer + noise * 0.08) * envelope
+        &"endgame_start":
+            var sub_bass := sin(TAU * (48.0 * time + 34.0 * time * time / duration)) * 0.46
+            var alarm := sin(TAU * 310.0 * time) * 0.18
+            return (sub_bass + alarm + noise * 0.08) * (0.22 + envelope * 0.78)
+        &"endgame_stage":
+            return (sin(TAU * (90.0 * time + 150.0 * time * time / duration)) * 0.42 + noise * 0.16) * envelope
+        &"endgame_complete":
+            var root := sin(TAU * (62.0 * time + 28.0 * time * time / duration)) * 0.34
+            var fifth := sin(TAU * (93.0 * time + 46.0 * time * time / duration)) * 0.24
+            var crown := sin(TAU * 372.0 * time) * 0.16
+            return (root + fifth + crown) * (0.2 + envelope * 0.8)
+        &"endgame_failure":
+            return (sin(TAU * (54.0 * time - 36.0 * time * time / duration)) * 0.48 + noise * 0.2) * envelope
     return 0.0

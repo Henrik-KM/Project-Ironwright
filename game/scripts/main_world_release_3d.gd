@@ -706,6 +706,8 @@ func _restore_release_snapshot(snapshot: Dictionary) -> void:
     machine_society_director.restore_from_dictionary(complete.get("machine_society", {}))
     strategic_ecology_director.restore_from_dictionary(complete.get("strategic_ecology", {}))
     endgame_director.restore_from_dictionary(complete.get("endgame", {}))
+    if endgame_escalation_director != null:
+        endgame_escalation_director.sync_from_endgame_state()
     continuity_used = bool(complete.get("continuity_used", false))
     first_victory_achieved = bool(complete.get("first_victory_achieved", false))
     spawned_region_salvage.clear()
