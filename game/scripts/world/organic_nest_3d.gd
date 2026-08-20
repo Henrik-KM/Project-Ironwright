@@ -149,7 +149,7 @@ func _refresh_visuals() -> void:
     var flesh := ModelKit3D.material(Color("4e192e"), 0.0, 0.72)
     var bone := ModelKit3D.material(Color("786d5d"), 0.0, 0.84)
     var signal_color := Color("da4267") if active else Color("4f2a31")
-    var signal := ModelKit3D.material(signal_color.darkened(0.62), 0.0, 0.55, signal_color, 2.8 if active else 0.15)
+    var signal_material := ModelKit3D.material(signal_color.darkened(0.62), 0.0, 0.55, signal_color, 2.8 if active else 0.15)
 
     if not active:
         ModelKit3D.add_sphere(_model_root, 1.4, Vector3(0.0, 0.55, 0.0), chitin, Vector3(1.8, 0.48, 1.6), "CollapsedNest")
@@ -176,7 +176,7 @@ func _refresh_visuals() -> void:
         )
     for index in range(5):
         var angle := TAU * float(index) / 5.0 + 0.35
-        ModelKit3D.add_sphere(_model_root, 0.12, Vector3(cos(angle) * 0.85, 1.42 + maturity * 0.4, sin(angle) * 0.85), signal, Vector3.ONE, "NestSignal_%02d" % index)
+        ModelKit3D.add_sphere(_model_root, 0.12, Vector3(cos(angle) * 0.85, 1.42 + maturity * 0.4, sin(angle) * 0.85), signal_material, Vector3.ONE, "NestSignal_%02d" % index)
     _status_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.6, 0.0), signal_color, 0.65 + maturity * 0.75, 5.5 + maturity * 4.0)
 
 
