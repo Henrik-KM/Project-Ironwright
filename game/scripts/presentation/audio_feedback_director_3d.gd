@@ -33,7 +33,7 @@ func configure(next_world: Node3D, next_player: Node3D, next_heartforge: Node3D,
 
 func _ready() -> void:
     process_mode = Node.PROCESS_MODE_ALWAYS
-    for profile in [&"pistol", &"machine_weapon", &"salvage", &"forge", &"organic_attack", &"organic_death", &"heartforge_damage", &"noise_pulse"]:
+    for profile in [&"pistol", &"machine_weapon", &"salvage", &"forge", &"organic_attack", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition"]:
         profiles[profile] = _build_profile(profile)
     _register_existing_actors()
     get_tree().node_added.connect(_on_node_added)
@@ -66,7 +66,7 @@ func has_profile(profile: StringName) -> bool:
     return profiles.has(profile) and profiles[profile] is AudioStreamWAV
 
 
-func play_profile(profile: StringName, position: Vector3, volume_db: float = -7.0) -> void:
+func play_profile(profile: StringName, position: Vector3, volume_db: float = -7.0, pitch_scale: float = 1.0) -> void:
     if not profiles.has(profile) or world == null:
         return
     while active_players.size() >= MAX_ACTIVE_PLAYERS:
@@ -77,6 +77,7 @@ func play_profile(profile: StringName, position: Vector3, volume_db: float = -7.
     audio_player.name = "Sound_%s_%03d" % [String(profile), event_count]
     audio_player.stream = profiles[profile] as AudioStreamWAV
     audio_player.volume_db = volume_db
+    audio_player.pitch_scale = clampf(pitch_scale, 0.55, 1.55)
     audio_player.unit_size = 3.0
     audio_player.max_distance = 34.0
     audio_player.attenuation_model = AudioStreamPlayer3D.ATTENUATION_INVERSE_DISTANCE
@@ -88,6 +89,12 @@ func play_profile(profile: StringName, position: Vector3, volume_db: float = -7.
     last_profile = profile
     sound_event.emit(profile, position)
     audio_player.play()
+
+
+func register_region_atmosphere(source: Node) -> void:
+    if source == null or not source.has_signal(&"atmosphere_changed"):
+        return
+    _connect_once(source, &"atmosphere_changed", Callable(self, "_on_region_atmosphere_changed"))
 
 
 func stop_all() -> void:
@@ -183,6 +190,28 @@ func _on_heartforge_health_changed(current: float, _maximum: float) -> void:
     _last_heartforge_health = current
 
 
+func _on_region_atmosphere_changed(_region_id: StringName, kind: StringName) -> void:
+    if player == null:
+        return
+    var pitch := 1.0
+    match kind:
+        &"industrial":
+            pitch = 0.82
+        &"waterfront":
+            pitch = 0.9
+        &"nest", &"endgame":
+            pitch = 0.68
+        &"research", &"observatory":
+            pitch = 1.18
+        &"greenhouse":
+            pitch = 1.08
+        &"commercial", &"tenement":
+            pitch = 1.02
+        _:
+            pitch = 0.96
+    play_profile(&"region_transition", player.global_position, -12.0, pitch)
+
+
 func _build_profile(profile: StringName) -> AudioStreamWAV:
     var duration := 0.2
     match profile:
@@ -200,6 +229,8 @@ func _build_profile(profile: StringName) -> AudioStreamWAV:
             duration = 0.34
         &"noise_pulse":
             duration = 0.16
+        &"region_transition":
+            duration = 0.78
 
     var sample_count := maxi(1, int(duration * MIX_RATE))
     var data := PackedByteArray()
@@ -242,4 +273,9 @@ func _sample_profile(profile: StringName, normalized: float, time: float, durati
             return (sin(TAU * 72.0 * time) * 0.56 + sin(TAU * 144.0 * time) * 0.18) * envelope
         &"noise_pulse":
             return sin(TAU * (280.0 * time + 210.0 * time * time / duration)) * envelope
+        &"region_transition":
+            var low := sin(TAU * 72.0 * time) * 0.36
+            var fifth := sin(TAU * 108.0 * time) * 0.18
+            var shimmer := sin(TAU * (420.0 * time + 80.0 * time * time / duration)) * 0.16
+            return (low + fifth + shimmer + noise * 0.08) * envelope
     return 0.0
