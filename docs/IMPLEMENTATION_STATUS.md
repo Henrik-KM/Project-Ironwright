@@ -550,6 +550,17 @@ identities. Manual channels remain finish-before-save.
   state or player-managed work;
 - native aesthetic coverage verifies the isolated close-range shell contract.
 
+## Focused Flood Market authored-space milestone
+
+- added three bounded market stall canopies with hanging signs, cable details
+  and a warmer/cooler commercial palette around the existing tables;
+- added two shallow presentation-only flood channels with illuminated waterline
+  breaks so the drowned market identity survives beyond the central landmark;
+- retained the existing collision, salvage, ecology, routing and persistence
+  ownership while extending only the authored remote-region presentation;
+- native aesthetic coverage verifies the market canopy and water-channel
+  signatures.
+
 ## Focused contextual tactical-HUD milestone
 
 - the permanent control legend now clears after the onboarding window instead

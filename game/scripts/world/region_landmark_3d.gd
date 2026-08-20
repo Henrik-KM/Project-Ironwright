@@ -158,6 +158,19 @@ func _build_visuals() -> void:
             for index in range(7):
                 ModelKit3D.add_beveled_box(_visual_root, Vector3(2.2, 0.18, 1.5), Vector3(-6.0 + float(index) * 2.0, 0.12, 7.0), metal, Vector3.ZERO, "MarketTable", 0.24)
                 ModelKit3D.add_box(_visual_root, Vector3(1.7, 0.035, 0.1), Vector3(-6.0 + float(index) * 2.0, 0.24, 6.22), rust, Vector3.ZERO, "MarketTableTrim")
+            var market_identity := Node3D.new()
+            market_identity.name = "FloodMarketIdentityDetails"
+            _visual_root.add_child(market_identity)
+            var canopy := ModelKit3D.material(Color("704137"), 0.08, 0.72, Color("dc714a"), 0.45)
+            var canopy_trim := ModelKit3D.material(Color("27383b"), 0.58, 0.44, Color("efaa61"), 0.72)
+            var sign_material := ModelKit3D.material(Color("1a282c"), 0.4, 0.5, Color("67d6c4"), 1.05)
+            for stall_index in range(3):
+                var x := -6.0 + float(stall_index) * 6.0
+                _add_beam(market_identity, Vector3(x - 1.5, 0.25, 5.4), Vector3(x - 1.5, 2.65, 5.4), 0.07, canopy_trim, "MarketStallPost")
+                _add_beam(market_identity, Vector3(x + 1.5, 0.25, 5.4), Vector3(x + 1.5, 2.65, 5.4), 0.07, canopy_trim, "MarketStallPost")
+                ModelKit3D.add_beveled_box(market_identity, Vector3(3.4, 0.14, 1.7), Vector3(x, 2.78, 5.4), canopy, Vector3(0.0, 0.0, 0.04 * float(stall_index - 1)), "MarketCanopy", 0.18)
+                ModelKit3D.add_surface_panel(market_identity, Vector3(1.05, 0.58, 0.08), Vector3(x, 1.95, 5.08), sign_material, canopy_trim, Vector3.ZERO, "MarketHangingSign")
+                _add_beam(market_identity, Vector3(x - 0.44, 2.36, 5.05), Vector3(x - 0.44, 2.0, 5.05), 0.025, canopy_trim, "MarketSignCable")
         &"archive":
             var archive := Node3D.new()
             archive.name = "ArchiveIdentityDetails"
@@ -463,6 +476,12 @@ func _add_region_surface_finish() -> void:
         &"commercial":
             ModelKit3D.add_surface_panel(finish, Vector3(2.4, 1.05, 0.12), Vector3(4.4, 2.0, -6.22), finish_dark, finish_glow, Vector3.ZERO, "MarketFacadeRegister")
             _add_beam(finish, Vector3(3.25, 2.55, -6.28), Vector3(5.7, 3.2, -6.35), 0.04, finish_rust, "MarketFacadeCable")
+            var floodwater := ModelKit3D.material(Color("102a31"), 0.42, 0.24, Color("2d7f83"), 0.08)
+            var waterline := ModelKit3D.material(Color("214f54"), 0.5, 0.18, Color("63c8b9"), 0.32)
+            for channel_index in range(2):
+                var channel_x := -8.0 + float(channel_index) * 16.0
+                ModelKit3D.add_beveled_box(finish, Vector3(3.1, 0.035, 1.1), Vector3(channel_x, 0.28, 10.4), floodwater, Vector3(0.0, 0.0, -0.08 + 0.16 * float(channel_index)), "MarketFloodChannel", 0.16)
+                ModelKit3D.add_beveled_box(finish, Vector3(2.55, 0.022, 0.045), Vector3(channel_x - 0.12, 0.34, 9.96), waterline, Vector3(0.0, 0.0, -0.08 + 0.16 * float(channel_index)), "MarketWaterline", 0.08)
         &"waterfront":
             ModelKit3D.add_louvered_panel(finish, Vector3(1.9, 1.3, 0.16), Vector3(-5.9, 1.75, 5.1), finish_dark, finish_glow, Vector3.ZERO, "DockFacadePumpPanel", 4)
             for index in range(3):
