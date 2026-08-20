@@ -34,6 +34,12 @@ func _run_all() -> void:
     _expect(not world.region_director.is_discovered(&"region.root_cistern"), "The Root Cistern must remain hidden during the opening.")
     _expect(world.long_operation_director.available_operations().is_empty(), "Long-range operations must be gated during the weak opening.")
     _expect(world.operations_hud != null, "The complete alpha must provide the long-range operation interface.")
+    var opening_ecology := world.strategic_ecology_director.population_state(&"region.heartforge_district")
+    _expect(opening_ecology.has("population") and opening_ecology.has("hunger") and opening_ecology.has("nesting"), "Regional ecology must persist population, hunger, and nesting state.")
+    var disturbance_before := float(opening_ecology.get("disturbance", 0.0))
+    world.strategic_ecology_director.record_disturbance(Vector3.ZERO, 1.0, &"test_signal")
+    var disturbed_ecology := world.strategic_ecology_director.population_state(&"region.heartforge_district")
+    _expect(float(disturbed_ecology.get("disturbance", 0.0)) > disturbance_before, "A causal signal must raise persistent regional disturbance.")
 
     world.run_state.scrap = 12000
     world.run_state.rare_cores = 24
@@ -135,12 +141,15 @@ func _run_all() -> void:
     var operation_save := world.long_operation_director.to_dictionary()
     var society_save := world.machine_society_director.to_dictionary()
     var ecology_save := world.strategic_ecology_director.to_dictionary()
+    _expect(ecology_save.has("population_states") and int(ecology_save.get("schema_version", 0)) >= 3, "Ecology saves must include versioned population states.")
+    var saved_population := float(world.strategic_ecology_director.population_state(&"region.heartforge_district").get("population", 0.0))
     var endgame_save := world.endgame_director.to_dictionary()
 
     world.region_director.restore_from_dictionary(region_save)
     world.long_operation_director.restore_from_dictionary(operation_save)
     world.machine_society_director.restore_from_dictionary(society_save)
     world.strategic_ecology_director.restore_from_dictionary(ecology_save)
+    _expect(is_equal_approx(float(world.strategic_ecology_director.population_state(&"region.heartforge_district").get("population", 0.0)), saved_population), "Ecology population state must survive in-memory restoration.")
     world.endgame_director.restore_from_dictionary(endgame_save)
     _expect(world.long_operation_director.component_count() >= 4, "Save restoration must preserve all recovered components.")
     _expect(world.endgame_director.completed_protocol == &"protocol.severance", "Save restoration must preserve the chosen completed ending.")

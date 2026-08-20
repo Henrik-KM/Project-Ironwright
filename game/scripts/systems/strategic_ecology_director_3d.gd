@@ -13,6 +13,7 @@ var active_enemy_cap: int = 96
 var endgame_escalation: float = 1.0
 var pressure_multiplier: float = 1.0
 var reports_cooldown: float = 0.0
+var population_states: Dictionary = {}
 
 
 func configure(next_region_director: WorldRegionDirector3D, next_spawn_enemy_callback: Callable) -> void:
@@ -23,6 +24,7 @@ func configure(next_region_director: WorldRegionDirector3D, next_spawn_enemy_cal
 func _process(delta: float) -> void:
     if region_director == null:
         return
+    _ensure_population_states()
     reports_cooldown = maxf(0.0, reports_cooldown - delta)
     evaluation_clock += delta
     migration_clock += delta
@@ -40,6 +42,7 @@ func set_release_balance(next_enemy_cap: int, next_pressure_multiplier: float) -
 
 
 func _update_regions() -> void:
+    _ensure_population_states()
     var active_total := get_tree().get_nodes_in_group(&"organic_enemies").size()
     if active_total >= active_enemy_cap:
         return
@@ -52,7 +55,10 @@ func _update_regions() -> void:
 
         var local_count := _enemy_count_in_region(region_id)
         var pressure := landmark.effective_pressure() * pressure_multiplier
-        var target_count := int(round(float(data.get("spawn_budget", 5)) * pressure * minf(endgame_escalation, 2.4)))
+        var state: Dictionary = population_states[region_id]
+        _advance_population_state(state, pressure, float(data.get("spawn_budget", 5)))
+        var target_count := int(round(float(state.get("population", 4.0)) * 0.42 * minf(endgame_escalation, 2.4)))
+        target_count += int(round(pressure * 1.5))
         target_count = clampi(target_count, 1, 28)
         if local_count < target_count and active_total < active_enemy_cap:
             _spawn_regional_organism(region_id, local_count)
@@ -69,6 +75,12 @@ func record_disturbance(position: Vector3, intensity: float, source_kind: String
     var region_id := region_director.region_for_position(position)
     var amount := clampf(intensity * 0.035 * pressure_multiplier, 0.005, 0.16)
     region_director.add_pressure(region_id, amount)
+    _ensure_population_states()
+    if population_states.has(region_id):
+        var state: Dictionary = population_states[region_id]
+        state["disturbance"] = clampf(float(state.get("disturbance", 0.0)) + intensity * 0.09, 0.0, 1.0)
+        state["food"] = maxf(0.0, float(state.get("food", 0.65)) - intensity * 0.012)
+        state["migration_tendency"] = clampf(float(state.get("migration_tendency", 0.0)) + intensity * 0.025, 0.0, 1.0)
     if reports_cooldown <= 0.0 and intensity >= 0.9:
         reports_cooldown = 5.0
         var landmark := region_director.get_landmark(region_id)
@@ -88,6 +100,17 @@ func record_organic_kill(position: Vector3, species: StringName) -> void:
     var landmark := region_director.get_landmark(region_id)
     if landmark != null:
         landmark.set_pressure(maxf(0.05, landmark.pressure - reduction))
+    _ensure_population_states()
+    if population_states.has(region_id):
+        var state: Dictionary = population_states[region_id]
+        var population_loss := 0.45
+        if species in [&"broodmass", &"rootweaver"]:
+            population_loss = 1.8
+        elif species in [&"apex", &"miremaw"]:
+            population_loss = 3.2
+        state["population"] = maxf(0.5, float(state.get("population", 4.0)) - population_loss)
+        state["hunger"] = clampf(float(state.get("hunger", 0.35)) + 0.045, 0.0, 1.0)
+        state["disturbance"] = clampf(float(state.get("disturbance", 0.0)) + 0.08, 0.0, 1.0)
 
 
 func set_endgame_escalation(value: float) -> void:
@@ -97,17 +120,20 @@ func set_endgame_escalation(value: float) -> void:
 func _attempt_migration() -> void:
     if get_tree().get_nodes_in_group(&"organic_enemies").size() >= active_enemy_cap - 4:
         return
+    _ensure_population_states()
     var source_id: StringName = &""
-    var source_pressure := 1.15
+    var source_pressure := 0.0
     for raw_region_id in region_director.region_data:
         var region_id := raw_region_id as StringName
         if region_id == &"region.heartforge_district":
             continue
         var pressure := region_director.effective_pressure(region_id) * pressure_multiplier
-        if pressure > source_pressure:
+        var state: Dictionary = population_states.get(region_id, {})
+        var migration_score := pressure * float(state.get("migration_tendency", 0.0))
+        if migration_score > source_pressure:
             source_id = region_id
-            source_pressure = pressure
-    if source_id == &"":
+            source_pressure = migration_score
+    if source_id == &"" or source_pressure < 0.46:
         return
 
     var data := region_director.get_region_data(source_id)
@@ -122,6 +148,10 @@ func _attempt_migration() -> void:
     for index in range(pack_size):
         var offset := Vector3(float(index - pack_size / 2) * 1.8, 0.0, float(index % 2) * 1.4)
         _spawn_species(origin + offset, _species_for_region(source_id, index + spawn_serial), source_id, &"hunt")
+    var source_state: Dictionary = population_states[source_id]
+    source_state["population"] = maxf(0.5, float(source_state.get("population", 4.0)) - float(pack_size) * 0.8)
+    source_state["migration_tendency"] = clampf(float(source_state.get("migration_tendency", 0.0)) - 0.22, 0.0, 1.0)
+    source_state["disturbance"] = clampf(float(source_state.get("disturbance", 0.0)) - 0.08, 0.0, 1.0)
     region_director.add_pressure(source_id, -0.035)
     var landmark := region_director.get_landmark(source_id)
     if landmark != null:
@@ -137,6 +167,57 @@ func _spawn_regional_organism(region_id: StringName, local_count: int) -> void:
     var position := center + Vector3(cos(angle) * distance, 0.0, sin(angle) * distance)
     var species := _species_for_region(region_id, local_count + spawn_serial)
     _spawn_species(position, species, region_id, _directive_for_region(region_id, species, local_count + spawn_serial))
+
+
+func _ensure_population_states() -> void:
+    if region_director == null:
+        return
+    for raw_region_id in region_director.region_data:
+        var region_id := raw_region_id as StringName
+        if population_states.has(region_id):
+            continue
+        var data := region_director.get_region_data(region_id)
+        var base_population := clampf(float(data.get("spawn_budget", 5)) * 1.8, 2.0, 38.0)
+        population_states[region_id] = {
+            "region_id": String(region_id),
+            "population": base_population,
+            "health": 0.78,
+            "food": 0.68,
+            "hunger": 0.3,
+            "territory": 0.52,
+            "nesting": 0.24 if StringName(str(data.get("kind", "urban"))) == &"nest" else 0.08,
+            "disturbance": 0.0,
+            "migration_tendency": 0.18,
+        }
+
+
+func _advance_population_state(state: Dictionary, pressure: float, spawn_budget: float) -> void:
+    var food := clampf(float(state.get("food", 0.68)), 0.0, 1.0)
+    var hunger := clampf(float(state.get("hunger", 0.3)) + 0.009 + pressure * 0.003, 0.0, 1.0)
+    var disturbance := maxf(0.0, float(state.get("disturbance", 0.0)) - 0.012)
+    food = clampf(food + 0.004 - hunger * 0.002 - disturbance * 0.001, 0.0, 1.0)
+    var population := maxf(0.5, float(state.get("population", spawn_budget * 1.8)))
+    if food > 0.48 and disturbance < 0.55:
+        population += 0.035 + float(state.get("nesting", 0.08)) * 0.02
+    elif food < 0.22 or hunger > 0.78:
+        population -= 0.06
+    var territory := clampf(float(state.get("territory", 0.52)) + (population / maxf(2.0, spawn_budget * 2.0) - 0.5) * 0.003, 0.0, 1.0)
+    var nesting := clampf(float(state.get("nesting", 0.08)) + (0.006 if food > 0.5 else -0.008), 0.0, 1.0)
+    var migration_tendency := clampf(hunger * 0.44 + disturbance * 0.42 + pressure * 0.14 - territory * 0.08, 0.0, 1.0)
+    state["population"] = clampf(population, 0.5, 42.0)
+    state["health"] = clampf(food * 0.62 + (1.0 - hunger) * 0.38, 0.0, 1.0)
+    state["food"] = food
+    state["hunger"] = hunger
+    state["territory"] = territory
+    state["nesting"] = nesting
+    state["disturbance"] = disturbance
+    state["migration_tendency"] = migration_tendency
+
+
+func population_state(region_id: StringName) -> Dictionary:
+    _ensure_population_states()
+    var state: Variant = population_states.get(region_id, {})
+    return (state as Dictionary).duplicate(true) if state is Dictionary else {}
 
 
 func _spawn_species(position: Vector3, species: StringName, region_id: StringName = &"", directive: StringName = &"") -> Node:
@@ -231,19 +312,37 @@ func pressure_summary() -> String:
 
 
 func to_dictionary() -> Dictionary:
+    _ensure_population_states()
+    var serialized_populations: Array[Dictionary] = []
+    for raw_region_id in population_states:
+        var state: Dictionary = population_states[raw_region_id]
+        serialized_populations.append(state.duplicate(true))
     return {
-        "schema_version": 2,
+        "schema_version": 3,
         "spawn_serial": spawn_serial,
         "endgame_escalation": endgame_escalation,
         "migration_clock": migration_clock,
         "active_enemy_cap": active_enemy_cap,
         "pressure_multiplier": pressure_multiplier,
+        "population_states": serialized_populations,
     }
 
 
 func restore_from_dictionary(data: Dictionary) -> void:
+    _ensure_population_states()
     spawn_serial = maxi(0, int(data.get("spawn_serial", 0)))
     endgame_escalation = clampf(float(data.get("endgame_escalation", 1.0)), 1.0, 3.5)
     migration_clock = maxf(0.0, float(data.get("migration_clock", 0.0)))
     active_enemy_cap = clampi(int(data.get("active_enemy_cap", active_enemy_cap)), 32, 180)
     pressure_multiplier = clampf(float(data.get("pressure_multiplier", pressure_multiplier)), 0.5, 1.8)
+    for raw_state in data.get("population_states", []):
+        if not raw_state is Dictionary:
+            continue
+        var saved: Dictionary = raw_state
+        var region_id := StringName(str(saved.get("region_id", "")))
+        if region_id == &"" or not population_states.has(region_id):
+            continue
+        var state: Dictionary = population_states[region_id]
+        for field in [&"population", &"health", &"food", &"hunger", &"territory", &"nesting", &"disturbance", &"migration_tendency"]:
+            if saved.has(field):
+                state[field] = float(saved[field])

@@ -37,6 +37,14 @@ Beyond the active area, the world tracks populations and pressures rather than e
 - nearby competing species;
 - environmental conditions.
 
+The complete-game regional director implements this layer as one bounded state
+record per authored region. Each record persists population, health, food,
+hunger, territory, nesting, disturbance and migration tendency. Active
+organisms are materialised from that state and regional pressure; they are not
+created by a recurring wave counter. Signals, kills and migration update the
+same state, so the reason for a later concentration remains inspectable and
+survives save/load.
+
 ### 2.3 Event materialisation
 
 When a regional state enters the active area, it materialises as a consistent group or event. A migration is not spawned from nowhere; it represents a population that moved through the regional simulation.
