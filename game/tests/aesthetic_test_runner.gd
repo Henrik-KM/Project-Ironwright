@@ -28,6 +28,19 @@ func _run_all() -> void:
     _expect(world.get_node_or_null("CozyHeartforgeCamp") != null, "The Heartforge must receive an inhabited cozy camp layer.")
     _expect(world.get_node_or_null("UrbanAestheticPass") != null, "The ruined city must receive the urban storytelling pass.")
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgeMaintenanceDetail") != null, "The Heartforge must expose a dedicated presentation-only maintenance detail layer.")
+    var presentation_feedback := world.get_node_or_null("AestheticDirector/PresentationFeedback") as Node
+    _expect(presentation_feedback != null, "The aesthetic director must own transient presentation feedback.")
+    if presentation_feedback != null:
+        var labor_pile := get_first_node_in_group(&"salvage_piles") as SalvagePile3D
+        var labor_robot := get_first_node_in_group(&"friendly_robots") as RobotUnit3D
+        if labor_pile != null and labor_robot != null:
+            paused = false
+            labor_robot.global_position = labor_pile.global_position + Vector3(1.4, 0.0, 0.0)
+            labor_robot.hold_position = true
+            labor_robot.begin_robot_salvage(labor_pile)
+            labor_robot.state_name = &"salvaging"
+            presentation_feedback.call("_refresh_autonomous_labor_signatures", 0.016)
+            _expect(int(presentation_feedback.call("active_labor_signature_count")) == 1, "Autonomous salvage must expose one bounded machine-to-wreck labor signature.")
     var encounter_dressing := world.get_node_or_null("RegionEncounterDressingDirector") as RegionEncounterDressingDirector3D
     var region_director := world.get_node_or_null("WorldRegionDirector") as WorldRegionDirector3D
     _expect(encounter_dressing != null, "The complete world must provide discovery-driven authored region dressing.")

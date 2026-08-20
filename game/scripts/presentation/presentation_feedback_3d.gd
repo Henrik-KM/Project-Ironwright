@@ -21,6 +21,7 @@ var organic_material: StandardMaterial3D
 var channel_field: Node3D
 var channel_field_material: StandardMaterial3D
 var channel_field_color: Color = Color.WHITE
+var labor_signatures: Dictionary = {}
 
 
 func configure(next_world: Node3D, next_player: Node3D, next_heartforge: Node3D, next_camera: Camera3D, next_noise_system: Node) -> void:
@@ -29,6 +30,10 @@ func configure(next_world: Node3D, next_player: Node3D, next_heartforge: Node3D,
     heartforge = next_heartforge
     camera = next_camera
     noise_system = next_noise_system
+
+
+func active_labor_signature_count() -> int:
+    return labor_signatures.size()
 
 
 func _ready() -> void:
@@ -47,6 +52,7 @@ func _process(delta: float) -> void:
     camera_shake = move_toward(camera_shake, 0.0, delta * 2.8)
     _animate_camera()
     _animate_channel_sparks(delta)
+    _refresh_autonomous_labor_signatures(delta)
 
 
 func _attach_existing_actors() -> void:
@@ -275,6 +281,100 @@ func _animate_channel_sparks(delta: float) -> void:
     channel_spark_clock = 0.0
     var color := Color("74e1e7") if active_channel_kind == &"manual_salvage" else Color("ffad54")
     _spawn_burst(player.global_position + Vector3(0.0, 0.85, -0.55), color, 4, 1.4, Vector3(0.0, -2.8, 0.0), 0.32)
+
+
+func _refresh_autonomous_labor_signatures(delta: float) -> void:
+    if world == null:
+        return
+    var active_keys: Dictionary = {}
+    for raw_robot in get_tree().get_nodes_in_group(&"friendly_robots"):
+        var robot := raw_robot as RobotUnit3D
+        if robot == null or not is_instance_valid(robot) or robot.salvage_target == null:
+            continue
+        var target := robot.salvage_target as Node3D
+        if target == null or not is_instance_valid(target) or robot.state_name != &"salvaging":
+            continue
+        var key := str(robot.get_instance_id())
+        active_keys[key] = true
+        var signature: Node3D = labor_signatures.get(key) as Node3D
+        if signature == null or not is_instance_valid(signature):
+            signature = _create_labor_signature(key)
+            labor_signatures[key] = signature
+        _update_labor_signature(signature, robot, target, delta)
+    for raw_key in labor_signatures.keys():
+        var key := str(raw_key)
+        if active_keys.has(key):
+            continue
+        var stale_signature := labor_signatures[raw_key] as Node3D
+        if stale_signature != null and is_instance_valid(stale_signature):
+            stale_signature.queue_free()
+        labor_signatures.erase(raw_key)
+
+
+func _create_labor_signature(key: String) -> Node3D:
+    var signature := Node3D.new()
+    signature.name = "AutonomousLaborSignature_%s" % key
+    world.add_child(signature)
+
+    var ring := MeshInstance3D.new()
+    ring.name = "LaborTargetRing"
+    var ring_mesh := TorusMesh.new()
+    ring_mesh.inner_radius = 0.72
+    ring_mesh.outer_radius = 0.78
+    ring_mesh.rings = 16
+    ring_mesh.ring_segments = 32
+    ring.mesh = ring_mesh
+    ring.material_override = _vfx_material(Color("ffad55"), 0.62, 2.4)
+    ring.position.y = 0.08
+    signature.add_child(ring)
+
+    var core := MeshInstance3D.new()
+    core.name = "LaborWorkCore"
+    var core_mesh := CylinderMesh.new()
+    core_mesh.top_radius = 0.055
+    core_mesh.bottom_radius = 0.12
+    core_mesh.height = 0.72
+    core_mesh.radial_segments = 12
+    core.mesh = core_mesh
+    core.material_override = _vfx_material(Color("ffd08a"), 0.72, 3.2)
+    core.position.y = 0.42
+    signature.add_child(core)
+
+    var link := MeshInstance3D.new()
+    link.name = "LaborMachineLink"
+    var link_mesh := CylinderMesh.new()
+    link_mesh.top_radius = 0.018
+    link_mesh.bottom_radius = 0.035
+    link_mesh.height = 1.0
+    link_mesh.radial_segments = 8
+    link.mesh = link_mesh
+    link.material_override = _vfx_material(Color("ff9b50"), 0.46, 1.8)
+    signature.add_child(link)
+    return signature
+
+
+func _update_labor_signature(signature: Node3D, robot: RobotUnit3D, target: Node3D, delta: float) -> void:
+    var target_position := target.global_position + Vector3.UP * 0.08
+    var robot_position := robot.global_position + Vector3.UP * 0.82
+    signature.global_position = target_position
+    var ring := signature.get_node_or_null("LaborTargetRing") as MeshInstance3D
+    if ring != null:
+        ring.rotation.y += delta * 2.4
+        var pulse := 1.0 + sin(elapsed * 5.0) * 0.08
+        ring.scale = Vector3.ONE * pulse
+    var core := signature.get_node_or_null("LaborWorkCore") as MeshInstance3D
+    if core != null:
+        core.rotation.y -= delta * 1.8
+        core.position.y = 0.42 + sin(elapsed * 4.2) * 0.08
+    var link := signature.get_node_or_null("LaborMachineLink") as MeshInstance3D
+    if link == null:
+        return
+    var direction := robot_position - target_position
+    var distance := direction.length()
+    link.position = direction * 0.5
+    link.scale = Vector3(1.0, maxf(0.15, distance), 1.0)
+    if distance > 0.01:
+        link.quaternion = Quaternion(Vector3.UP, direction.normalized())
 
 
 func _spawn_channel_field(kind: StringName) -> void:
