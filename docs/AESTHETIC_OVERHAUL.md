@@ -129,6 +129,22 @@ Implemented feedback includes:
 - spatial sound cues for weapons, salvage, fabrication, organic contact,
   causal noise and Heartforge damage.
 
+## Focused final-protocol capstone milestone
+
+- the player-triggered final crisis now raises a bounded Heartforge protocol
+  lattice with staged rings, spines and emissive organic-signal colours;
+- progress continuously changes the lattice scale, pulse, visible stages and
+  local light, making the causal escalation readable without adding a new
+  dashboard or recurring maintenance task;
+- completion resolves the crisis lattice into a cyan-and-gold sanctuary crown,
+  while failure clears the presentation without changing the underlying
+  protocol state;
+- dedicated start, stage, completion and failure cues extend the existing
+  generated spatial sound vocabulary;
+- the presentation director rehydrates active or completed capstones after
+  save/load, while all protocol costs, pressure, spawning and victory rules
+  remain owned by `EndgameDirector3D`.
+
 Effects must remain restrained enough for long sessions and large machine populations.
 
 ## UI

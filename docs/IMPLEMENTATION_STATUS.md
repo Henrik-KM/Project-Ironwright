@@ -261,6 +261,18 @@ identities. Manual channels remain finish-before-save.
 - native coverage verifies full detail for the current West Grid region and
   beacon detail for a distant endgame region.
 
+## Focused final-protocol capstone milestone
+
+- added a presentation-only Heartforge lattice for the player-triggered final
+  protocols, with bounded staged geometry driven by the existing progress
+  signal;
+- added a sanctuary crown resolution state and save/load rehydration for
+  active or completed protocol presentation;
+- added dedicated generated audio cues for protocol start, escalation stages,
+  completion and failure;
+- complete-game coverage verifies signal wiring, continuous progress coupling,
+  completion resolution and the retained systemic victory path.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

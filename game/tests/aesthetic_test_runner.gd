@@ -23,7 +23,7 @@ func _run_all() -> void:
     var audio_director := world.get_node_or_null("AudioFeedbackDirector") as AudioFeedbackDirector3D
     _expect(audio_director != null, "The world must provide spatial survival audio feedback.")
     if audio_director != null:
-        for profile in [&"pistol", &"machine_weapon", &"salvage", &"forge", &"organic_attack", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition"]:
+        for profile in [&"pistol", &"machine_weapon", &"salvage", &"forge", &"organic_attack", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition", &"endgame_start", &"endgame_stage", &"endgame_complete", &"endgame_failure"]:
             _expect(audio_director.has_profile(profile), "The audio director must provide the %s profile." % profile)
     _expect(world.get_node_or_null("CozyHeartforgeCamp") != null, "The Heartforge must receive an inhabited cozy camp layer.")
     _expect(world.get_node_or_null("UrbanAestheticPass") != null, "The ruined city must receive the urban storytelling pass.")

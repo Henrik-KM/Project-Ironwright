@@ -3,10 +3,12 @@ extends IronwrightFullGameWorld3D
 
 const REGION_ATMOSPHERE_SCRIPT := preload("res://scripts/presentation/region_atmosphere_director_3d.gd")
 const REGION_LOD_SCRIPT := preload("res://scripts/presentation/region_presentation_lod_director_3d.gd")
+const ENDGAME_ESCALATION_SCRIPT := preload("res://scripts/presentation/endgame_escalation_director_3d.gd")
 
 var region_director: WorldRegionDirector3D
 var region_atmosphere_director: RegionAtmosphereDirector3D
 var region_lod_director: RegionPresentationLodDirector3D
+var endgame_escalation_director: EndgameEscalationDirector3D
 var long_operation_director: LongRangeOperationDirector3D
 var machine_society_director: MachineSocietyDirector3D
 var strategic_ecology_director: StrategicEcologyDirector3D
@@ -153,6 +155,13 @@ func _setup_complete_game_services() -> void:
         Callable(self, "_spawn_enemy")
     )
     add_child(endgame_director)
+
+    endgame_escalation_director = ENDGAME_ESCALATION_SCRIPT.new() as EndgameEscalationDirector3D
+    endgame_escalation_director.name = "EndgameEscalationDirector"
+    endgame_escalation_director.configure(self, heartforge, endgame_director)
+    add_child(endgame_escalation_director)
+    if audio_director != null:
+        audio_director.register_endgame(endgame_director)
 
     operations_hud = OperationsCommandHUD3D.new()
     operations_hud.name = "OperationsCommandHUD"
@@ -465,6 +474,8 @@ func _restore_extension_data(extensions: Variant) -> void:
     machine_society_director.restore_from_dictionary(data.get("machine_society", {}))
     strategic_ecology_director.restore_from_dictionary(data.get("strategic_ecology", {}))
     endgame_director.restore_from_dictionary(data.get("endgame", {}))
+    if endgame_escalation_director != null:
+        endgame_escalation_director.sync_from_endgame_state()
     continuity_used = bool(data.get("continuity_used", false))
     first_victory_achieved = bool(data.get("first_victory_achieved", false))
     sanctuary_continuation = bool(data.get("sanctuary_continuation", first_victory_achieved))
