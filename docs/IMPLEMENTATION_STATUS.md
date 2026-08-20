@@ -454,8 +454,13 @@ identities. Manual channels remain finish-before-save.
 - archive, industrial, tenement, greenhouse, commercial, waterfront, rail,
   nest, observatory, research and endgame landmarks each gain a distinct
   facade, growth, signal or utility signature;
-- live West Grid review confirmed the added detail remains readable beside the
-  player and companion without adding collision, objectives or management work.
+- every non-sanctuary region now receives a bounded presentation-only ground
+  apron, inset and illuminated perimeter markers so the district reads as a
+  place when reached physically instead of a floating landmark in empty space;
+- live West Grid review confirmed the industrial apron and service vignette
+  remain readable beside the player and companion, while live Root Cistern
+  review confirmed the late authored shell remains legible inside the darker
+  organic palette, without adding collision, objectives or management work.
 
 ## Focused contextual tactical-HUD milestone
 
