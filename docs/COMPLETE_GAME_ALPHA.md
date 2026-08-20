@@ -32,7 +32,7 @@ The connected run now follows this arc:
 18. Map the Root Cistern and recover the final Root Map.
 19. Evolve the Heartforge to tier 5.
 20. Research Severance, Containment, or both.
-21. Deliberately initiate one final protocol.
+21. Deliberately initiate one final protocol: Severance or the longer Containment lattice.
 22. Defend the Heartforge while pressure rises continuously from the persistent regions.
 23. Complete the protocol and achieve the first victory.
 
@@ -287,7 +287,8 @@ It validates:
 - final protocol research and initiation;
 - sustained final-protocol completion;
 - first victory;
-- persistence of regions, components, operations, machine society, ecology, and ending state.
+- persistence of regions, components, operations, machine society, ecology, and ending state;
+- end-to-end coverage for both canonical final protocols, including their distinct costs, pressure profiles, and completion outcomes.
 
 ## 13. What remains before commercial release
 

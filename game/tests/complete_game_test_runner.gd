@@ -168,6 +168,22 @@ func _run_all() -> void:
     _expect(world.region_director.is_discovered(&"region.root_cistern"), "The unified save/load path must restore complete-world discovery state.")
     _cleanup_save_files()
 
+    # The player chooses one final protocol per run. Re-open the isolated
+    # director fixture after the Severance assertions so the alternate
+    # Containment branch is exercised through the same prerequisite, cost,
+    # sustained-response, and completion code paths.
+    world.endgame_director.completed_protocol = &""
+    world.endgame_director.active_protocol.clear()
+    world.first_victory_achieved = false
+    world.game_ended = false
+    _expect(world.progression.purchase(&"tech.endgame.containment"), "The complete run must support researching the alternate Containment protocol.")
+    _expect(world.endgame_director.available_protocols().any(func(entry: Dictionary) -> bool: return StringName(str(entry.get("id", ""))) == &"protocol.containment"), "Containment must appear only after its full technology and outpost prerequisites are met.")
+    _expect(world.endgame_director.initiate(&"protocol.containment"), "The player must be able to initiate the alternate Containment path deliberately.")
+    var containment := world.endgame_director.protocol(&"protocol.containment")
+    world.endgame_director._process(float(containment.get("duration_seconds", 300.0)) + 1.0)
+    _expect(world.endgame_director.completed_protocol == &"protocol.containment", "Containment must complete after its longer sustained defence interval.")
+    _expect(world.first_victory_achieved, "Completing Containment must produce the first victory state.")
+
     _finish()
 
 
