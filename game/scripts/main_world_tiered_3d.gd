@@ -106,7 +106,7 @@ func _spawn_enemy(position: Vector3, species: StringName) -> OrganicEnemy3D:
         tier = int(enemy_tier_director.species_to_tier.get(species, 1))
     tier = clampi(tier if tier > 0 else 1, 1, 5)
     var config := enemy_tier_director.tier_config(tier) if enemy_tier_director != null else {}
-    tiered.configure_tier(tier, config, true)
+    tiered.configure_tier(tier, config)
     if not restored.is_empty():
         var territory := _array_to_vector(restored.get("territory_origin", _vector_to_array(position)))
         var radius := float(restored.get("territory_radius", tiered.territory_radius))
