@@ -69,7 +69,9 @@ organic enemies remain procedural until their own production asset milestones.
 - authored idle, walk, fire, work and hit clips;
 - socket-based shoulder lighting and pistol muzzle;
 - HUD portrait sourced from the same character design;
-- compact silhouette that remains readable beside machines.
+- compact silhouette that remains readable beside machines;
+- 1.28 runtime presentation scale with the gameplay collision capsule kept
+  unchanged, so camera readability does not alter combat or movement logic.
 
 ### Friendly robots
 
@@ -106,7 +108,9 @@ Implemented feedback includes:
 - subtle camera impact;
 - actor hit reactions;
 - persistent forge embers and smoke;
-- HUD damage flash and sanctuary-integrity status.
+- HUD damage flash and sanctuary-integrity status;
+- spatial sound cues for weapons, salvage, fabrication, organic contact,
+  causal noise and Heartforge damage.
 
 Effects must remain restrained enough for long sessions and large machine populations.
 

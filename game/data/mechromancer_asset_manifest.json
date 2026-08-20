@@ -19,6 +19,9 @@
   "fallback_builder": "res://assets/mechromancer/source/build_mechromancer_asset.py",
   "provenance": "Original Project Ironwright asset; no third-party runtime art.",
   "world_scale_m": 1.92,
+  "source_visual_scale": 1.0,
+  "runtime_visual_scale": 1.28,
+  "collision_capsule_height_m": 1.75,
   "required_nodes": [
     "MechromancerModel",
     "PistolMuzzle",

@@ -20,6 +20,11 @@ func _run_all() -> void:
 
     _expect(world is IronwrightBeautifulWorld3D, "The main scene must boot the aesthetic-overhaul world.")
     _expect(world.get_node_or_null("AestheticDirector") is AestheticDirector3D, "The aesthetic director must exist at runtime.")
+    var audio_director := world.get_node_or_null("AudioFeedbackDirector") as AudioFeedbackDirector3D
+    _expect(audio_director != null, "The world must provide spatial survival audio feedback.")
+    if audio_director != null:
+        for profile in [&"pistol", &"machine_weapon", &"salvage", &"forge", &"organic_attack", &"organic_death", &"heartforge_damage", &"noise_pulse"]:
+            _expect(audio_director.has_profile(profile), "The audio director must provide the %s profile." % profile)
     _expect(world.get_node_or_null("CozyHeartforgeCamp") != null, "The Heartforge must receive an inhabited cozy camp layer.")
     _expect(world.get_node_or_null("UrbanAestheticPass") != null, "The ruined city must receive the urban storytelling pass.")
 
@@ -46,6 +51,11 @@ func _run_all() -> void:
             if player_presentation.animation_player != null:
                 for clip_name in [&"Idle", &"Walk", &"Fire", &"Work", &"Hit"]:
                     _expect(_animation_player_has_clip(player_presentation.animation_player, clip_name), "The authored Mechromancer must expose the %s animation clip." % clip_name)
+        if audio_director != null:
+            var event_count_before := audio_director.event_count
+            audio_director.play_profile(&"pistol", player.global_position)
+            _expect(audio_director.event_count == event_count_before + 1, "The spatial audio director must emit a pistol event at runtime.")
+            audio_director.stop_all()
 
     var robots := get_nodes_in_group("friendly_robots")
     _expect(not robots.is_empty(), "The opening companion must exist.")

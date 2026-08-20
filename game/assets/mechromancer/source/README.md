@@ -19,5 +19,6 @@ The Blender source preserves these names and clips:
 
 The model is original Project Ironwright art: charcoal hood and split coat,
 worn field metal, leather pack, cyan shoulder cognition lamp, warm utility
-light, visible face/visor, and a weak sidearm. No third-party runtime asset is
-used.
+light, visible face/visor, and a weak sidearm. The source is authored at 1.0
+scale; the gameplay presentation applies a 1.28 visual scale while retaining
+the existing collision capsule. No third-party runtime asset is used.

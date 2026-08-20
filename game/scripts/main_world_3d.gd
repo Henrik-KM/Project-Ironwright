@@ -9,6 +9,7 @@ const HEARTFORGE_SCENE := preload("res://scenes/world/heartforge_3d.tscn")
 const SALVAGE_SCENE := preload("res://scenes/world/salvage_pile_3d.tscn")
 const CITY_SCENE := preload("res://scenes/world/procedural_city_3d.tscn")
 const HUD_SCENE := preload("res://scenes/ui/ironwright_hud_3d.tscn")
+const AUDIO_DIRECTOR_SCRIPT := preload("res://scripts/presentation/audio_feedback_director_3d.gd")
 
 var run_state: RunState3D
 var noise_system: NoiseSystem3D
@@ -32,6 +33,7 @@ var active_tracers: Array[Node3D] = []
 var salvage_serial: int = 0
 var enemy_serial: int = 0
 var save_service: TransactionalSaveService3D
+var audio_director: AudioFeedbackDirector3D
 
 
 func _ready() -> void:
@@ -40,6 +42,10 @@ func _ready() -> void:
     save_service.configure()
     _setup_environment()
     _spawn_world()
+    audio_director = AUDIO_DIRECTOR_SCRIPT.new() as AudioFeedbackDirector3D
+    audio_director.name = "AudioFeedbackDirector"
+    audio_director.configure(self, player, heartforge, noise_system)
+    add_child(audio_director)
     _connect_systems()
     _update_hud_from_state()
     run_state.log_event("The Heartforge light is weak. The companion is your only reliable protection.")

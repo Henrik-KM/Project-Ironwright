@@ -37,9 +37,13 @@ def texture_image(
     pixels: list[float] = []
     for y in range(size):
         for x in range(size):
-            wave = (math.sin(x * 0.17 + seed) + math.sin(y * 0.11 - seed * 0.7)) * 0.08
-            grain = (rng.random() - 0.5) * 0.16
-            wear = max(0.0, math.sin((x + y * 1.7) * 0.065 + seed) - 0.78) * 0.8
+            wave = (
+                math.sin(x * 0.045 + seed) * 0.035
+                + math.sin(y * 0.031 - seed * 0.7) * 0.028
+                + math.sin((x - y) * 0.013 + seed * 0.2) * 0.018
+            )
+            grain = (rng.random() - 0.5) * 0.055
+            wear = max(0.0, math.sin((x + y * 1.7) * 0.023 + seed) - 0.88) * 0.34
             blend = max(0.0, min(1.0, 0.5 + wave + grain + wear))
             for channel in range(3):
                 value = base[channel] * (1.0 - blend) + accent[channel] * blend
@@ -60,8 +64,8 @@ def normal_image(filename: str, seed: int, strength: float) -> bpy.types.Image:
     for y in range(size):
         for x in range(size):
             phase = seed * 0.37
-            height_x = math.cos(x * 0.19 + phase) * 0.42 + math.sin((x + y) * 0.07) * 0.18
-            height_y = math.sin(y * 0.23 - phase) * 0.38 + math.cos((x - y) * 0.05) * 0.16
+            height_x = math.cos(x * 0.072 + phase) * 0.18 + math.sin((x + y) * 0.026) * 0.08
+            height_y = math.sin(y * 0.084 - phase) * 0.16 + math.cos((x - y) * 0.021) * 0.07
             nx = max(0.0, min(1.0, 0.5 - height_x * strength))
             ny = max(0.0, min(1.0, 0.5 - height_y * strength))
             pixels.extend((nx, ny, 1.0, 1.0))
@@ -102,7 +106,7 @@ def material(
         noise.inputs["Scale"].default_value = 18.0
         noise.inputs["Detail"].default_value = 3.0
         bump = result.node_tree.nodes.new("ShaderNodeBump")
-        bump.inputs["Strength"].default_value = 0.12
+        bump.inputs["Strength"].default_value = 0.06
         bump.inputs["Distance"].default_value = 0.035
         result.node_tree.links.new(noise.outputs["Fac"], bump.inputs["Height"])
         result.node_tree.links.new(bump.outputs["Normal"], shader.inputs["Normal"])
@@ -112,7 +116,7 @@ def material(
         normal_texture.image = normal
         normal_texture.interpolation = "Linear"
         normal_map = result.node_tree.nodes.new("ShaderNodeNormalMap")
-        normal_map.inputs["Strength"].default_value = 0.12
+        normal_map.inputs["Strength"].default_value = 0.07
         result.node_tree.links.new(normal_texture.outputs["Color"], normal_map.inputs["Color"])
         result.node_tree.links.new(normal_map.outputs["Normal"], shader.inputs["Normal"])
     if emission is not None:
@@ -160,6 +164,25 @@ def smooth_shade(obj: bpy.types.Object) -> bpy.types.Object:
     for polygon in obj.data.polygons:
         polygon.use_smooth = True
     return obj
+
+
+def project_uv(mesh: bpy.types.Mesh) -> None:
+    """Give authored meshes deterministic planar UVs for the original wear maps."""
+    if len(mesh.vertices) == 0:
+        return
+    x_values = [vertex.co.x for vertex in mesh.vertices]
+    z_values = [vertex.co.z for vertex in mesh.vertices]
+    x_center = (min(x_values) + max(x_values)) * 0.5
+    z_center = (min(z_values) + max(z_values)) * 0.5
+    x_extent = max(0.001, max(x_values) - min(x_values))
+    z_extent = max(0.001, max(z_values) - min(z_values))
+    layer = mesh.uv_layers.new(name="UVMap")
+    for loop in mesh.loops:
+        coordinate = mesh.vertices[loop.vertex_index].co
+        layer.data[loop.index].uv = (
+            (coordinate.x - x_center) / x_extent + 0.5,
+            (coordinate.z - z_center) / z_extent + 0.5,
+        )
 
 
 def box(
@@ -284,6 +307,7 @@ def tapered_prism(
     mesh = bpy.data.meshes.new(name)
     mesh.from_pydata(bottom + top, [], [(0, 3, 2, 1), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)])
     mesh.update()
+    project_uv(mesh)
     obj = bpy.data.objects.new(name, mesh)
     bpy.context.collection.objects.link(obj)
     attach(obj, parent, location)
@@ -318,6 +342,7 @@ def sectioned_form(
     mesh = bpy.data.meshes.new(name)
     mesh.from_pydata(vertices, [], faces)
     mesh.update()
+    project_uv(mesh)
     obj = bpy.data.objects.new(name, mesh)
     bpy.context.collection.objects.link(obj)
     attach(obj, parent, location)
@@ -364,14 +389,16 @@ def cloth_panel(
     mesh = bpy.data.meshes.new(name)
     mesh.from_pydata(vertices, [], faces)
     mesh.update()
+    project_uv(mesh)
     obj = bpy.data.objects.new(name, mesh)
     bpy.context.collection.objects.link(obj)
     attach(obj, parent, location)
     obj.data.materials.append(mat)
-    # The irregular front face is already softened by its surrounding cloth
-    # layers. Applying a multi-segment bevel to this n-gon is disproportionately
-    # expensive in Blender and does not improve the authored silhouette.
-    return smooth_shade(obj)
+    # Keep the bevel deliberately shallow: the panel's irregular outline is
+    # authored for silhouette readability, while a single segment catches a
+    # practical edge highlight without the pathological cost of a multi-
+    # segment bevel on an n-gon.
+    return apply_bevel(obj, min(bevel_amount, 0.020), 1)
 
 
 def limb_between(
@@ -441,6 +468,7 @@ def arc_ribbon(
     mesh = bpy.data.meshes.new(name)
     mesh.from_pydata(vertices, [], faces)
     mesh.update()
+    project_uv(mesh)
     obj = bpy.data.objects.new(name, mesh)
     bpy.context.collection.objects.link(obj)
     attach(obj, parent, center)

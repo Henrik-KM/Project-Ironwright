@@ -16,6 +16,12 @@
   isometric camera reads the human field-engineer silhouette from behind.
 - Replaced the placeholder portrait with a PNG rendered from the same Blender
   source model.
+- Enlarged and flared the two coat tails, added rear pack buckles/canister and
+  strengthened the visual-vs-collision scale contract for tactical-camera
+  readability.
+- Added deterministic UV projections and subdued woven/normal surface relief
+  so the cloth and leather read as worn materials rather than a repeating
+  high-frequency procedural grid.
 
 ## 0.7.0 — 2026-08-20
 

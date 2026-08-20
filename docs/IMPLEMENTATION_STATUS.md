@@ -133,7 +133,8 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - regenerated the editable `.blend`, separated glTF/bin export, normal-relief
   textures and portrait from that source;
 - increased only the authored presentation scale so the Mechromancer reads at
-  tactical-camera distance without changing collision or targeting;
+  tactical-camera distance without changing collision or targeting (source
+  scale 1.0, runtime visual scale 1.28);
 - added executable coverage for the imported animation player and all five
   required presentation clips.
 
@@ -167,6 +168,18 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - added restrained species-specific motion for pack tails, antennae, sacs,
   jaws, spines and broodmass lobes;
 - added executable aesthetic coverage for all seven current organic families.
+
+## Focused survival sound-feedback milestone
+
+- added a spatial audio director with a compact original sound vocabulary for
+  pistol fire, machine fire, salvage, fabrication, organic attacks and deaths,
+  causal noise pulses and Heartforge damage;
+- connected sound events to the existing gameplay signals rather than adding a
+  second simulation path or recurring player task;
+- generated deterministic WAV streams at runtime so the current alpha has real
+  audible feedback without external asset dependencies;
+- added executable coverage for all required sound profiles and a live event
+  emission.
 
 ## Browser reference retained
 

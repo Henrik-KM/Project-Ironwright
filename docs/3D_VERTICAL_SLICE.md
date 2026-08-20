@@ -69,4 +69,4 @@ without changing the gameplay architecture.
 
 ## Known limits
 
-The district is authored and compact. Navigation uses street-aware waypoints and steering rather than a baked citywide navigation mesh. Audio is not yet production-ready. Active remote operations are intentionally required to finish before saving in this slice; actor positions and ecology are otherwise persisted. The next production pass should add authored animation, sound, richer melee reactions, better obstacle avoidance, and persistent serialization of in-flight operations.
+The district is authored and compact. Navigation uses street-aware waypoints and steering rather than a baked citywide navigation mesh. The current slice now has compact spatial sound feedback for core survival events, but final authored sound design, music and species vocal signatures remain production work. Active remote operations are intentionally required to finish before saving in this slice; actor positions and ecology are otherwise persisted. The next production pass should add authored sound assets, richer melee reactions, better obstacle avoidance, and persistent serialization of in-flight operations.
