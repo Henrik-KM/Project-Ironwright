@@ -32,7 +32,9 @@ func _run_all() -> void:
     var player := get_first_node_in_group("player_character") as Node3D
     _expect(player != null, "The aesthetic test needs the Mechromancer.")
     if player != null:
-        _expect(player.get_node_or_null("ProceduralAnimator3D") is ProceduralAnimator3D, "The Mechromancer must receive procedural motion polish.")
+        _expect(player.get_node_or_null("MechromancerPresentation3D") is MechromancerPresentation3D, "The Mechromancer must receive authored animation presentation.")
+        _expect(_find_named(player, "ProductionAssetMarker") != null, "The Mechromancer must use the authored asset contract.")
+        _expect(_find_named(player, "PistolMuzzle") != null, "The authored Mechromancer must expose the pistol muzzle socket.")
         _expect(_model_has_details(player), "The Mechromancer must receive additional authored silhouette detail.")
 
     var robots := get_nodes_in_group("friendly_robots")
@@ -44,6 +46,9 @@ func _run_all() -> void:
 
     var beautiful_hud := get_first_node_in_group("beautiful_hud")
     _expect(beautiful_hud is IronwrightBeautifulHUD3D, "The native HUD must use the quieter cinematic skin.")
+    if beautiful_hud is IronwrightHUD3D:
+        _expect((beautiful_hud as IronwrightHUD3D).player_portrait != null, "The HUD must expose the Mechromancer portrait.")
+        _expect((beautiful_hud as IronwrightHUD3D).player_portrait.texture != null, "The Mechromancer portrait must have a texture.")
 
     var omni_count := _count_omni_lights(world)
     _expect(omni_count >= 10, "The environment must use deliberate local practical lighting instead of global darkness.")
@@ -86,3 +91,7 @@ func _model_has_details(actor: Node3D) -> bool:
         if model != null and model.get_node_or_null("AestheticDetails") != null:
             return true
     return false
+
+
+func _find_named(root: Node, node_name: String) -> Node:
+    return root.find_child(node_name, true, false)

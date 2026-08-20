@@ -46,6 +46,18 @@ NEW_REQUIRED_PATHS = [
     "game/tests/first_session_ux_test_runner.gd",
     "game/tests/complete_game_test_runner.gd",
     "game/tests/presentation_and_salvage_escort_test_runner.gd",
+    "game/assets/mechromancer/mechromancer.gltf",
+    "game/assets/mechromancer/mechromancer.bin",
+    "game/assets/mechromancer/source/mechromancer.blend",
+    "game/assets/mechromancer/mechromancer_portrait.png",
+    "game/assets/mechromancer/mechromancer_coat.png",
+    "game/assets/mechromancer/mechromancer_leather.png",
+    "game/assets/mechromancer/mechromancer_metal.png",
+    "game/assets/mechromancer/mechromancer_skin.png",
+    "game/assets/mechromancer/source/build_mechromancer_blend.py",
+    "game/assets/mechromancer/source/build_mechromancer_asset.py",
+    "game/assets/mechromancer/source/README.md",
+    "game/data/mechromancer_asset_manifest.json",
 ]
 for relative in NEW_REQUIRED_PATHS:
     if relative not in legacy.REQUIRED_PATHS:
@@ -261,6 +273,23 @@ def validate_native_godot_entrypoint() -> None:
     for obsolete in OBSOLETE_PATCH_PATHS:
         if (ROOT / obsolete).exists():
             raise legacy.ValidationError(f"Obsolete self-modifying patch infrastructure must be absent: {obsolete}")
+
+    manifest = json.loads((ROOT / "game/data/mechromancer_asset_manifest.json").read_text(encoding="utf-8"))
+    gltf = json.loads((ROOT / "game/assets/mechromancer/mechromancer.gltf").read_text(encoding="utf-8"))
+    if manifest.get("asset_id") != "mechromancer.player.v1":
+        raise legacy.ValidationError("Mechromancer asset manifest has an unexpected stable asset ID")
+    if manifest.get("runtime_model") != "res://assets/mechromancer/mechromancer.gltf":
+        raise legacy.ValidationError("Mechromancer manifest points at an unexpected runtime model")
+    if manifest.get("runtime_buffer") != "res://assets/mechromancer/mechromancer.bin":
+        raise legacy.ValidationError("Mechromancer manifest must document the glTF buffer")
+    node_names = {str(node.get("name")) for node in gltf.get("nodes", [])}
+    missing_nodes = set(manifest.get("required_nodes", [])).difference(node_names)
+    if missing_nodes:
+        raise legacy.ValidationError(f"Mechromancer glTF is missing required nodes: {sorted(missing_nodes)}")
+    animation_names = {str(animation.get("name")) for animation in gltf.get("animations", [])}
+    missing_animations = set(manifest.get("animation_clips", [])).difference(animation_names)
+    if missing_animations:
+        raise legacy.ValidationError(f"Mechromancer glTF is missing required clips: {sorted(missing_animations)}")
 
 
 def validate_current_design_documents() -> None:

@@ -1,6 +1,8 @@
 class_name IronwrightHUD3D
 extends CanvasLayer
 
+const MECHROMANCER_PORTRAIT: Texture2D = preload("res://assets/mechromancer/mechromancer_portrait.png")
+
 signal forge_build_selected(archetype: StringName)
 signal forge_upgrade_selected(archetype: StringName)
 signal forge_closed
@@ -22,6 +24,7 @@ var operation_label: Label
 var player_bar: ProgressBar
 var companion_bar: ProgressBar
 var forge_bar: ProgressBar
+var player_portrait: TextureRect
 var forge_label: Label
 var forge_backdrop: ColorRect
 var forge_panel: PanelContainer
@@ -116,16 +119,25 @@ func _build_ui() -> void:
     notification_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     notification_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 
-    var health_panel := _panel(Vector2(22, -142), Vector2(370, 118), false, true)
+    var health_panel := _panel(Vector2(22, -142), Vector2(440, 118), false, true)
     health_panel.name = "HealthPanel"
+    player_portrait = TextureRect.new()
+    player_portrait.name = "MechromancerPortrait"
+    player_portrait.texture = MECHROMANCER_PORTRAIT
+    player_portrait.position = Vector2(14, 14)
+    player_portrait.size = Vector2(68, 90)
+    player_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+    player_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+    player_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    _content_parent(health_panel).add_child(player_portrait)
     var player_text := _label(health_panel, "MECHROMANCER · WEAK PISTOL", 14, Color("d9e1de"))
-    player_text.position = Vector2(16, 10)
-    player_text.size = Vector2(338, 22)
-    player_bar = _progress(health_panel, Vector2(16, 34), Vector2(338, 18), Color("79d8dc"))
+    player_text.position = Vector2(96, 10)
+    player_text.size = Vector2(326, 22)
+    player_bar = _progress(health_panel, Vector2(96, 34), Vector2(326, 18), Color("79d8dc"))
     var companion_text := _label(health_panel, "BULWARK · PRIMARY PROTECTION", 14, Color("d9e1de"))
-    companion_text.position = Vector2(16, 61)
-    companion_text.size = Vector2(338, 22)
-    companion_bar = _progress(health_panel, Vector2(16, 87), Vector2(338, 16), Color("d6a665"))
+    companion_text.position = Vector2(96, 61)
+    companion_text.size = Vector2(326, 22)
+    companion_bar = _progress(health_panel, Vector2(96, 87), Vector2(326, 16), Color("d6a665"))
 
     var focus_panel := _panel(Vector2(-520, -102), Vector2(498, 78), true, true)
     focus_panel.name = "CommandHelpPanel"

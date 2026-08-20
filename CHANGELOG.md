@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.7.1 — 2026-08-20
+
+### Mechromancer authored-model realism pass
+
+- Rebuilt the player source around a human field-engineer silhouette instead of
+  the earlier primitive mannequin blockout.
+- Added rounded/tapered anatomy, hood drape and brim, visible facial forms,
+  split coat tails, offset field pack, harness, belt pouches, gloves, tool
+  attachments and a formed pistol grip/barrel.
+- Added original deterministic wear textures for cloth, leather, metal and
+  skin, plus beveled authored edges and asymmetric practical lights.
+- Replaced the placeholder portrait with a PNG rendered from the same Blender
+  source model.
+
+## 0.7.0 — 2026-08-20
+
+### Focused Mechromancer visual overhaul
+
+- Replaced the procedural Mechromancer mannequin with the original
+  `mechromancer.player.v1` glTF asset.
+- Added the hooded field-engineer silhouette, visible face/visor, split coat,
+  pack, shoulder light and weak sidearm.
+- Added authored Idle, Walk, Fire, Work and Hit presentation clips with a
+  typed presentation controller.
+- Added socket-based player lighting, muzzle resolution and a matching HUD
+  portrait without changing gameplay behavior.
+- Added stable asset manifest validation and preserved the existing procedural
+  robot and organic presentation paths.
+
 ## 0.6.0 — 2026-08-19
 
 ### Complete end-to-end systemic alpha

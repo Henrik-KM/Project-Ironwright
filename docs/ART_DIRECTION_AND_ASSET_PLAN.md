@@ -187,6 +187,11 @@ A viable final game should be built from a deliberately compact bespoke set.
 - cloth or coat treatment that remains readable from isometric distance;
 - strong silhouette separating the player from all robots.
 
+The focused first authored milestone is represented in
+`game/assets/mechromancer/`. It establishes the hooded field-engineer
+silhouette, stable glTF sockets, five presentation clips and a matching HUD
+portrait without introducing later personal evolution variants.
+
 ### 6.2 Heartforge
 
 - one persistent core;

@@ -53,7 +53,7 @@ Direct launch:
 godot --path game
 ```
 
-The runtime uses original procedural low-poly geometry, a readable blue-hour ruined-town presentation, warm Heartforge lighting, procedural animation, particles, combat feedback, world-space objective cues, and cinematic modal interfaces. These are production-facing placeholders for the authored Blender/glTF asset pass.
+The runtime uses an original authored Mechromancer glTF asset alongside procedural low-poly robot and organic placeholder geometry, a readable blue-hour ruined-town presentation, warm Heartforge lighting, typed player animation feedback, particles, combat feedback, world-space objective cues, and cinematic modal interfaces. The remaining procedural actors are production-facing placeholders for later authored asset passes.
 
 ## Controls
 

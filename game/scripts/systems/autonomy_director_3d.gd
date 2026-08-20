@@ -171,6 +171,9 @@ func _try_start_salvage_operation() -> bool:
         "idle_clock": 0.0,
     }
     _refresh_distributed_salvagers()
+    # Prime the first salvage cells immediately so a focus change has an
+    # inspectable plan before the next process tick.
+    _update_distributed_salvage(salvage_operation, 0.0)
     _refresh_salvage_escort_assignments()
     _position_salvage_scouts()
     operation_changed.emit(
@@ -627,6 +630,13 @@ func _refresh_salvage_escort_assignments() -> void:
         nearest_player_distance = minf(nearest_player_distance, player_reference.global_position.distance_to(point))
     if nearest_player_distance == INF:
         nearest_player_distance = player_reference.global_position.distance_to(heartforge_reference.global_position)
+    # The Bulwark already covers the Mechromancer at the Heartforge. Keep that
+    # guaranteed personal interception in the split decision even after the
+    # salvage network has moved its operational anchor to a remote wreck.
+    nearest_player_distance = minf(
+        nearest_player_distance,
+        player_reference.global_position.distance_to(heartforge_reference.global_position)
+    )
 
     var player_guard_count := 0
     if guardians.size() >= 2 and nearest_player_distance >= SALVAGE_PLAYER_SPLIT_DISTANCE:

@@ -1,6 +1,8 @@
 class_name Mechromancer3D
 extends CharacterBody3D
 
+const AUTHORED_MODEL_SCENE: PackedScene = preload("res://assets/mechromancer/mechromancer.gltf")
+
 signal health_changed(current: float, maximum: float)
 signal died
 signal pistol_fired(origin: Vector3, target: Vector3, target_node: Node)
@@ -34,7 +36,7 @@ var channel_noise_clock: float = 0.0
 var channel_noise_interval: float = 0.72
 
 var _body_root: Node3D
-var _pistol_muzzle: Marker3D
+var _pistol_muzzle: Node3D
 
 
 func _ready() -> void:
@@ -215,29 +217,31 @@ func is_alive() -> bool:
 
 func _build_visuals() -> void:
     ModelKit3D.add_collision_capsule(self, 0.42, 1.75, Vector3(0.0, 0.88, 0.0))
-    _body_root = Node3D.new()
-    _body_root.name = "MechromancerModel"
-    add_child(_body_root)
+    var authored_model := AUTHORED_MODEL_SCENE.instantiate() as Node3D
+    if authored_model == null:
+        push_error("Mechromancer authored glTF could not be instantiated.")
+        _body_root = Node3D.new()
+        _body_root.name = "MechromancerModel"
+        add_child(_body_root)
+    else:
+        authored_model.name = "MechromancerModel"
+        add_child(authored_model)
+        _body_root = authored_model
 
-    var coat_mat := ModelKit3D.material(Color("1b2228"), 0.15, 0.88)
-    var armor_mat := ModelKit3D.material(Color("35414a"), 0.62, 0.47)
-    var leather_mat := ModelKit3D.material(Color("392b23"), 0.05, 0.92)
-    var skin_mat := ModelKit3D.material(Color("a48d78"), 0.0, 0.8)
-    var glow_mat := ModelKit3D.material(Color("68bac0"), 0.3, 0.32, Color("63e9ef"), 2.5)
-    var gun_mat := ModelKit3D.material(Color("24282b"), 0.75, 0.35)
+    _pistol_muzzle = _find_visual_node(_body_root, &"PistolMuzzle")
+    if _pistol_muzzle == null:
+        push_error("Mechromancer authored glTF is missing the PistolMuzzle socket.")
+        _pistol_muzzle = Marker3D.new()
+        _pistol_muzzle.name = "PistolMuzzle"
+        _pistol_muzzle.position = Vector3(0.48, 1.12, -0.7)
+        _body_root.add_child(_pistol_muzzle)
 
-    ModelKit3D.add_capsule(_body_root, 0.33, 1.15, Vector3(0.0, 1.05, 0.0), coat_mat, Vector3.ZERO, "Coat")
-    ModelKit3D.add_box(_body_root, Vector3(0.72, 0.22, 0.42), Vector3(0.0, 1.45, 0.0), armor_mat, Vector3.ZERO, "Shoulders")
-    ModelKit3D.add_sphere(_body_root, 0.25, Vector3(0.0, 1.83, 0.0), skin_mat, Vector3.ONE, "Head")
-    ModelKit3D.add_box(_body_root, Vector3(0.18, 0.62, 0.18), Vector3(-0.23, 0.38, 0.0), leather_mat, Vector3.ZERO, "LeftLeg")
-    ModelKit3D.add_box(_body_root, Vector3(0.18, 0.62, 0.18), Vector3(0.23, 0.38, 0.0), leather_mat, Vector3.ZERO, "RightLeg")
-    ModelKit3D.add_box(_body_root, Vector3(0.16, 0.62, 0.16), Vector3(-0.45, 1.12, 0.0), coat_mat, Vector3(0.0, 0.0, -0.1), "LeftArm")
-    ModelKit3D.add_box(_body_root, Vector3(0.16, 0.55, 0.16), Vector3(0.44, 1.2, -0.04), coat_mat, Vector3(0.0, 0.0, 0.16), "RightArm")
-    ModelKit3D.add_box(_body_root, Vector3(0.16, 0.18, 0.55), Vector3(0.48, 1.05, -0.28), gun_mat, Vector3.ZERO, "WeakPistol")
-    ModelKit3D.add_sphere(_body_root, 0.08, Vector3(-0.18, 1.87, -0.22), glow_mat, Vector3(1.0, 0.45, 0.3), "GoggleLeft")
-    ModelKit3D.add_sphere(_body_root, 0.08, Vector3(0.18, 1.87, -0.22), glow_mat, Vector3(1.0, 0.45, 0.3), "GoggleRight")
 
-    _pistol_muzzle = Marker3D.new()
-    _pistol_muzzle.name = "PistolMuzzle"
-    _pistol_muzzle.position = Vector3(0.48, 1.05, -0.6)
-    _body_root.add_child(_pistol_muzzle)
+func _find_visual_node(root: Node, node_name: StringName) -> Node3D:
+    if root is Node3D and StringName(root.name) == node_name:
+        return root as Node3D
+    for child in root.get_children():
+        var result := _find_visual_node(child, node_name)
+        if result != null:
+            return result
+    return null

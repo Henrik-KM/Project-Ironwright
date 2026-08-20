@@ -1,6 +1,8 @@
 extends Node
 
-## Actor silhouette polish, procedural animation registration and transient VFX.
+## Actor silhouette polish, authored animation registration and transient VFX.
+
+const MECHROMANCER_PRESENTATION := preload("res://scripts/presentation/mechromancer_presentation_3d.gd")
 
 var world: Node3D
 var player: Node3D
@@ -69,7 +71,13 @@ func _polish_actor(node: Node) -> void:
     if not (node is Node3D):
         return
     var actor := node as Node3D
-    if actor.get_node_or_null("ProceduralAnimator3D") == null:
+    if actor.is_in_group(&"player_character"):
+        if actor.get_node_or_null("MechromancerPresentation3D") == null:
+            var mechromancer_presentation := MECHROMANCER_PRESENTATION.new()
+            mechromancer_presentation.name = "MechromancerPresentation3D"
+            mechromancer_presentation.configure(actor)
+            actor.add_child(mechromancer_presentation)
+    elif actor.get_node_or_null("ProceduralAnimator3D") == null:
         var animator := ProceduralAnimator3D.new()
         animator.name = "ProceduralAnimator3D"
         animator.configure(actor)
@@ -95,14 +103,18 @@ func _add_actor_details(actor: Node3D) -> void:
 
 
 func _add_player_details(details: Node3D) -> void:
-    var fabric := ModelKit3D.material(Color("273139"), 0.02, 0.9)
-    var leather := ModelKit3D.material(Color("5a3d2c"), 0.05, 0.82)
-    ModelKit3D.add_sphere(details, 0.31, Vector3(0.0, 1.88, 0.08), fabric, Vector3(1.08, 0.92, 1.1), "Hood")
-    ModelKit3D.add_box(details, Vector3(0.66, 0.82, 0.28), Vector3(0.0, 1.08, 0.32), leather, Vector3(-0.04, 0.0, 0.0), "FieldPack")
-    ModelKit3D.add_box(details, Vector3(0.46, 0.85, 0.06), Vector3(-0.21, 0.72, 0.18), fabric, Vector3(0.0, 0.0, 0.08), "CoatTailLeft")
-    ModelKit3D.add_box(details, Vector3(0.46, 0.85, 0.06), Vector3(0.21, 0.72, 0.18), fabric, Vector3(0.0, 0.0, -0.08), "CoatTailRight")
-    ModelKit3D.add_sphere(details, 0.09, Vector3(-0.38, 1.5, -0.18), cyan_material, Vector3.ONE, "ShoulderLamp")
-    _add_light(details, Vector3(-0.38, 1.5, -0.2), Color("79e4e9"), 0.55, 4.6)
+    var model_root := details.get_parent() as Node3D
+    var shoulder_lamp: Node3D
+    var warm_lamp: Node3D
+    if model_root != null:
+        shoulder_lamp = model_root.find_child("ShoulderLamp", true, false) as Node3D
+        warm_lamp = model_root.find_child("WarmLamp", true, false) as Node3D
+    if shoulder_lamp != null:
+        _add_light(shoulder_lamp, Vector3(0.0, 0.0, -0.1), Color("79e4e9"), 0.55, 4.6)
+    else:
+        push_error("Mechromancer authored model is missing the ShoulderLamp socket.")
+    if warm_lamp != null:
+        _add_light(warm_lamp, Vector3(0.0, 0.0, -0.05), Color("ff9b52"), 0.18, 2.2)
 
 
 func _add_robot_details(actor: Node3D, details: Node3D) -> void:

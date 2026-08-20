@@ -50,13 +50,18 @@ Clutter must leave important routes readable from the high-angle camera.
 
 ## Actor presentation
 
-The procedural models remain placeholders but require strong role readability.
+The Mechromancer now uses the first authored glTF character asset. Friendly
+robots and organic enemies remain procedural placeholders until their own
+production asset milestones.
 
 ### Mechromancer
 
 - coat, hood, field pack and shoulder light;
 - clearly visible weak pistol;
-- breathing, walk cycle, coat motion, recoil and exposed work pose;
+- visible face/visor and layered field gear;
+- authored idle, walk, fire, work and hit clips;
+- socket-based shoulder lighting and pistol muzzle;
+- HUD portrait sourced from the same character design;
 - compact silhouette that remains readable beside machines.
 
 ### Friendly robots
@@ -111,7 +116,8 @@ IronwrightBeautifulWorld3D
     ├── SanctuaryDecorator3D
     ├── UrbanDecorator3D
     └── PresentationFeedback3D
-        └── ProceduralAnimator3D per actor
+        ├── MechromancerPresentation3D for the authored player asset
+        └── ProceduralAnimator3D per procedural actor
 ```
 
 This separation allows authored Blender/glTF assets and animation libraries to replace procedural geometry later without rewriting the game loop.
@@ -127,3 +133,13 @@ The aesthetic pass is acceptable when:
 5. firing, damage, salvage and noise have visible response;
 6. the HUD feels like a game interface rather than debug output;
 7. the existing gameplay and deterministic tests continue to pass.
+
+## Focused Mechromancer milestone
+
+The runtime asset contract is defined by
+`game/data/mechromancer_asset_manifest.json`. The original Blender source lives
+under `game/assets/mechromancer/source/`, exports the textured glTF runtime
+asset and baked portrait, and exposes stable sockets for the weapon, shoulder
+lamp, face and field equipment. This is a presentation-only change: the
+existing player collision, weak pistol, channels, health and autonomy
+interfaces remain authoritative.

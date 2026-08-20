@@ -50,16 +50,16 @@ Machines handle exact group composition, local positioning, target selection, fo
 
 ## Art implementation
 
-All runtime 3D geometry is currently original procedural low-poly geometry assembled from Godot primitive meshes. It includes:
+The current runtime combines the original authored Mechromancer glTF asset with original procedural low-poly geometry for the remaining actors and world dressing. It includes:
 
-- Mechromancer body, coat, goggles, and weak pistol;
+- authored Mechromancer hood, face/visor, split coat, field pack, shoulder lamp, and weak pistol;
 - Bulwark, Scrapper, Warden, and Pathfinder silhouettes;
 - chitinous organic enemies with multiple legs, mandibles, and emissive eyes;
 - the Heartforge and its manual assembly plate;
 - wrecked machinery and live salvage cables;
 - ruined buildings, roads, street lamps, vehicle wrecks, rubble, and North Ruins.
 
-These are actual runtime 3D assets and collision structures, not concept images. They are designed to be replaced incrementally by authored Blender/GLTF assets without changing the gameplay architecture.
+These are actual runtime 3D assets and collision structures, not concept images. The Mechromancer asset contract is documented in `game/data/mechromancer_asset_manifest.json`; the remaining procedural actors are designed to be replaced incrementally by authored Blender/GLTF assets without changing the gameplay architecture.
 
 ## Known limits
 

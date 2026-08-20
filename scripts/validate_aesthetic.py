@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate the native aesthetic, vertical slice and pre-alpha presentation integration."""
 from pathlib import Path
+import json
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -16,6 +17,7 @@ REQUIRED = [
     "game/scripts/presentation/urban_decorator_3d.gd",
     "game/scripts/presentation/presentation_feedback_3d.gd",
     "game/scripts/presentation/procedural_animator_3d.gd",
+    "game/scripts/presentation/mechromancer_presentation_3d.gd",
     "game/scripts/presentation/objective_guidance_3d.gd",
     "game/scripts/presentation/vertical_slice_director_3d.gd",
     "game/scripts/presentation/vertical_slice_actor_art_3d.gd",
@@ -27,11 +29,60 @@ REQUIRED = [
     "game/tests/intelligence_and_vertical_slice_test_runner.gd",
     "docs/PRESENTATION_QUALITY_GATE.md",
     "docs/VERTICAL_SLICE_INTELLIGENCE.md",
+    "game/assets/mechromancer/mechromancer.gltf",
+    "game/assets/mechromancer/mechromancer.bin",
+    "game/assets/mechromancer/source/mechromancer.blend",
+    "game/assets/mechromancer/mechromancer_portrait.png",
+    "game/assets/mechromancer/mechromancer_coat.png",
+    "game/assets/mechromancer/mechromancer_leather.png",
+    "game/assets/mechromancer/mechromancer_metal.png",
+    "game/assets/mechromancer/mechromancer_skin.png",
+    "game/assets/mechromancer/source/build_mechromancer_blend.py",
+    "game/assets/mechromancer/source/build_mechromancer_asset.py",
+    "game/data/mechromancer_asset_manifest.json",
 ]
 
 
 def fail(message: str) -> None:
     raise RuntimeError(message)
+
+
+def validate_mechromancer_asset() -> None:
+    manifest_path = ROOT / "game/data/mechromancer_asset_manifest.json"
+    gltf_path = ROOT / "game/assets/mechromancer/mechromancer.gltf"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    gltf = json.loads(gltf_path.read_text(encoding="utf-8"))
+    if manifest.get("asset_id") != "mechromancer.player.v1":
+        fail("Mechromancer asset manifest has an unexpected stable asset ID.")
+    if manifest.get("runtime_model") != "res://assets/mechromancer/mechromancer.gltf":
+        fail("Mechromancer asset manifest points at an unexpected runtime model.")
+    if manifest.get("runtime_buffer") != "res://assets/mechromancer/mechromancer.bin":
+        fail("Mechromancer asset manifest must document the glTF buffer.")
+    root_node_extras = next(
+        (
+            node.get("extras", {})
+            for node in gltf.get("nodes", [])
+            if node.get("name") == "MechromancerModel"
+        ),
+        {},
+    )
+    gltf_asset_id = gltf.get("extras", {}).get("ironwright_asset_id") or root_node_extras.get("ironwright_asset_id")
+    if gltf_asset_id != manifest["asset_id"]:
+        fail("Mechromancer glTF and manifest asset IDs must match.")
+    node_names = {str(node.get("name")) for node in gltf.get("nodes", [])}
+    for required in manifest.get("required_nodes", []):
+        if required not in node_names:
+            fail(f"Mechromancer glTF is missing required node: {required}")
+    animation_names = {str(animation.get("name")) for animation in gltf.get("animations", [])}
+    for required in manifest.get("animation_clips", []):
+        if required not in animation_names:
+            fail(f"Mechromancer glTF is missing required animation clip: {required}")
+    if not str(manifest.get("portrait", "")).endswith("mechromancer_portrait.png"):
+        fail("Mechromancer manifest must point to the authored portrait.")
+    image_uris = {str(image.get("uri")) for image in gltf.get("images", [])}
+    for texture_path in manifest.get("textures", []):
+        if Path(str(texture_path)).name not in image_uris:
+            fail(f"Mechromancer glTF is missing manifest texture: {texture_path}")
 
 
 def main() -> int:
@@ -40,6 +91,8 @@ def main() -> int:
             path = ROOT / relative
             if not path.is_file() or path.stat().st_size < 100:
                 fail(f"Missing or unexpectedly empty aesthetic file: {relative}")
+
+        validate_mechromancer_asset()
 
         main_scene = (ROOT / "game/scenes/main_3d.tscn").read_text(encoding="utf-8")
         if "main_world_prealpha_3d.gd" not in main_scene:

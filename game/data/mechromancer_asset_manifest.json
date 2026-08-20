@@ -1,0 +1,28 @@
+{
+  "asset_id": "mechromancer.player.v1",
+  "display_name": "Mechromancer",
+  "runtime_model": "res://assets/mechromancer/mechromancer.gltf",
+  "runtime_buffer": "res://assets/mechromancer/mechromancer.bin",
+  "portrait": "res://assets/mechromancer/mechromancer_portrait.png",
+  "textures": [
+    "res://assets/mechromancer/mechromancer_coat.png",
+    "res://assets/mechromancer/mechromancer_leather.png",
+    "res://assets/mechromancer/mechromancer_metal.png",
+    "res://assets/mechromancer/mechromancer_skin.png"
+  ],
+  "source": "res://assets/mechromancer/source/mechromancer.blend",
+  "source_builder": "res://assets/mechromancer/source/build_mechromancer_blend.py",
+  "fallback_builder": "res://assets/mechromancer/source/build_mechromancer_asset.py",
+  "provenance": "Original Project Ironwright asset; no third-party runtime art.",
+  "world_scale_m": 1.92,
+  "required_nodes": [
+    "MechromancerModel",
+    "PistolMuzzle",
+    "ShoulderLamp",
+    "FaceAnchor",
+    "FieldPack",
+    "CoatTailLeft",
+    "CoatTailRight"
+  ],
+  "animation_clips": ["Idle", "Walk", "Fire", "Work", "Hit"]
+}

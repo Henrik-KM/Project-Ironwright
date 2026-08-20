@@ -108,7 +108,22 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - combat, interaction, construction and noise feedback;
 - responsive forge, evolution, outpost, operation and endgame interfaces;
 - physical region landmarks and discovery beacons;
-- bounded transient notifications and clear objective hierarchy.
+  - bounded transient notifications and clear objective hierarchy.
+
+## Focused Mechromancer asset milestone
+
+- replaced the procedural player mannequin with the original
+  `mechromancer.player.v1` glTF asset;
+- rebuilt the source around a human field-engineer silhouette with a rounded
+  hood and brim, visible face forms, split coat tails, offset field pack,
+  harness, belt pouches, gloves, tool attachments and readable weak sidearm;
+- added original wear textures and beveled/tapered forms for fabric, leather,
+  oxidized metal and skin;
+- added authored Idle, Walk, Fire, Work and Hit presentation clips;
+- added socket-based player lighting and muzzle resolution;
+- added a baked HUD portrait rendered from the same Blender source model while
+  preserving all gameplay interfaces;
+- left friendly robots and organic enemies on their existing procedural assets.
 
 ## Browser reference retained
 
