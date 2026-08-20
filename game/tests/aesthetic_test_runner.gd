@@ -23,7 +23,7 @@ func _run_all() -> void:
     var audio_director := world.get_node_or_null("AudioFeedbackDirector") as AudioFeedbackDirector3D
     _expect(audio_director != null, "The world must provide spatial survival audio feedback.")
     if audio_director != null:
-        for profile in [&"pistol", &"machine_weapon", &"salvage", &"forge", &"organic_attack", &"organic_death", &"heartforge_damage", &"noise_pulse"]:
+        for profile in [&"pistol", &"machine_weapon", &"salvage", &"forge", &"organic_attack", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition"]:
             _expect(audio_director.has_profile(profile), "The audio director must provide the %s profile." % profile)
     _expect(world.get_node_or_null("CozyHeartforgeCamp") != null, "The Heartforge must receive an inhabited cozy camp layer.")
     _expect(world.get_node_or_null("UrbanAestheticPass") != null, "The ruined city must receive the urban storytelling pass.")
@@ -35,9 +35,14 @@ func _run_all() -> void:
         _expect(float(industrial_palette.get("fog_density", 0.0)) > float(region_atmosphere.palette_for_kind(&"sanctuary").get("fog_density", 0.0)), "Industrial regions must carry a denser particulate atmosphere than the sanctuary.")
         _expect(industrial_palette.get("fog") != endgame_palette.get("fog"), "Late organic regions must have a distinct fog palette from industrial districts.")
         world.player.global_position = Vector3(-92.0, 0.0, 18.0)
+        var audio_event_count_before_region := audio_director.event_count if audio_director != null else 0
         region_atmosphere.refresh_now()
         _expect(region_atmosphere.current_region_id == &"region.west_grid", "Moving the player to West Grid must select the persistent industrial region.")
         _expect(region_atmosphere.current_kind == &"industrial", "West Grid must resolve to its authored industrial atmosphere kind.")
+        if audio_director != null:
+            _expect(audio_director.event_count > audio_event_count_before_region, "Crossing into a region must emit one restrained spatial transition cue.")
+            _expect(audio_director.last_profile == &"region_transition", "Region crossing audio must use the dedicated transition profile.")
+            audio_director.stop_all()
     var heartforge := world.get_node_or_null("Heartforge") as Heartforge3D
     _expect(heartforge != null, "The aesthetic test needs the Heartforge progression model.")
     if heartforge != null:

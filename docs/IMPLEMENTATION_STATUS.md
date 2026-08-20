@@ -243,6 +243,15 @@ identities. Manual channels remain finish-before-save.
 - native coverage verifies the West Grid transition and palette separation
   without changing discovery, pressure, routing or player obligations.
 
+## Focused regional audio identity milestone
+
+- the existing generated spatial audio library now includes a bounded regional
+  transition profile;
+- region kind shapes the cue’s pitch and the cue is emitted only from the
+  existing atmosphere transition signal;
+- native coverage verifies the West Grid cue without introducing ambient
+  chatter, a new resource, or a player-managed audio setting.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

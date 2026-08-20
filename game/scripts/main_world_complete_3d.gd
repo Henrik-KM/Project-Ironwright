@@ -92,6 +92,8 @@ func _setup_complete_game_services() -> void:
     region_atmosphere_director.process_mode = Node.PROCESS_MODE_ALWAYS
     region_atmosphere_director.configure(self, region_director, player)
     add_child(region_atmosphere_director)
+    if audio_director != null:
+        audio_director.register_region_atmosphere(region_atmosphere_director)
 
     long_operation_director = LongRangeOperationDirector3D.new()
     long_operation_director.name = "LongRangeOperationDirector"
