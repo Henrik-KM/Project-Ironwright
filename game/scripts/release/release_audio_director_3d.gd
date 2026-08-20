@@ -5,11 +5,11 @@ signal mood_changed(mood: StringName)
 
 const AUDIO_ROOT := "res://assets/release/audio"
 const STREAM_PATHS: Dictionary = {
-    &"ambience_city": AUDIO_ROOT + "/ambience_city.ogg",
-    &"ambience_sanctuary": AUDIO_ROOT + "/ambience_sanctuary.ogg",
-    &"music_embers": AUDIO_ROOT + "/music_embers.ogg",
-    &"music_pressure": AUDIO_ROOT + "/music_pressure.ogg",
-    &"music_sovereignty": AUDIO_ROOT + "/music_sovereignty.ogg",
+    &"ambience_city": AUDIO_ROOT + "/ambience_city.wav",
+    &"ambience_sanctuary": AUDIO_ROOT + "/ambience_sanctuary.wav",
+    &"music_embers": AUDIO_ROOT + "/music_embers.wav",
+    &"music_pressure": AUDIO_ROOT + "/music_pressure.wav",
+    &"music_sovereignty": AUDIO_ROOT + "/music_sovereignty.wav",
     &"pistol": AUDIO_ROOT + "/sfx_pistol.wav",
     &"salvage": AUDIO_ROOT + "/sfx_salvage.wav",
     &"forge": AUDIO_ROOT + "/sfx_forge.wav",
@@ -89,12 +89,18 @@ func _load_streams() -> void:
     for raw_id in STREAM_PATHS:
         var stream_id := raw_id as StringName
         var path := str(STREAM_PATHS[stream_id])
-        if ResourceLoader.exists(path):
-            var stream := load(path) as AudioStream
-            if stream != null:
-                if stream is AudioStreamOggVorbis:
-                    (stream as AudioStreamOggVorbis).loop = true if String(stream_id).begins_with("music_") or String(stream_id).begins_with("ambience_") else false
-                stream_library[stream_id] = stream
+        if not ResourceLoader.exists(path):
+            continue
+        var stream := load(path) as AudioStream
+        if stream == null:
+            continue
+        if stream is AudioStreamWAV and (String(stream_id).begins_with("music_") or String(stream_id).begins_with("ambience_")):
+            var wav := stream as AudioStreamWAV
+            wav.loop_mode = AudioStreamWAV.LOOP_FORWARD
+            wav.loop_begin = 0
+            var channels := 2 if wav.stereo else 1
+            wav.loop_end = maxi(1, wav.data.size() / maxi(1, channels * 2))
+        stream_library[stream_id] = stream
 
 
 func _build_players() -> void:
