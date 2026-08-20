@@ -1,7 +1,6 @@
 class_name IronwrightFullGameWorld3D
 extends IronwrightBeautifulWorld3D
 
-const EXTENSION_SAVE_PATH := "user://ironwright_full_game_extension.json"
 const WORLD_SITES_PATH := "res://data/world_sites.json"
 
 var progression: ProgressionDirector3D
@@ -328,16 +327,17 @@ func _save_game() -> void:
         hud.push_notification("SAVE DEFERRED · FINISH THE ACTIVE OPERATION")
         return
     super._save_game()
-    var file := FileAccess.open(EXTENSION_SAVE_PATH, FileAccess.WRITE)
-    if file == null:
-        hud.push_notification("FULL-GAME EXTENSION SAVE FAILED")
-        return
-    file.store_string(JSON.stringify({
-        "schema_version": 1,
-        "progression": progression.to_dictionary(),
-        "outposts": outpost_director.to_dictionary(),
-        "foundation_milestone_complete": full_game_milestone_complete,
-    }))
+
+
+func _save_extension_data() -> Dictionary:
+    return {
+        "full_game": {
+            "schema_version": 2,
+            "progression": progression.to_dictionary(),
+            "outposts": outpost_director.to_dictionary(),
+            "foundation_milestone_complete": full_game_milestone_complete,
+        },
+    }
 
 
 func _load_game() -> void:
@@ -345,22 +345,17 @@ func _load_game() -> void:
         hud.push_notification("LOAD DEFERRED · FINISH THE ACTIVE OUTPOST CONVOY")
         return
     super._load_game()
-    call_deferred("_restore_full_game_extension")
 
 
-func _restore_full_game_extension() -> void:
-    if not FileAccess.file_exists(EXTENSION_SAVE_PATH):
+func _restore_extension_data(extensions: Variant) -> void:
+    if not (extensions is Dictionary):
+        return
+    var extension_map := extensions as Dictionary
+    var data: Dictionary = extension_map.get("full_game", {})
+    if data.is_empty():
         if run_state.expedition_core_recovered:
             outpost_director.discover_sites_by(&"expedition.north_ruins")
         return
-    var file := FileAccess.open(EXTENSION_SAVE_PATH, FileAccess.READ)
-    if file == null:
-        return
-    var parsed: Variant = JSON.parse_string(file.get_as_text())
-    if not (parsed is Dictionary):
-        hud.push_notification("FULL-GAME EXTENSION SAVE INVALID")
-        return
-    var data := parsed as Dictionary
     progression.restore_from_dictionary(data.get("progression", {}))
     outpost_director.restore_from_dictionary(data.get("outposts", {}))
     full_game_milestone_complete = bool(data.get("foundation_milestone_complete", false))

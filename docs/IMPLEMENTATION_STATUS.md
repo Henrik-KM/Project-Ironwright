@@ -89,14 +89,16 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 
 ### Persistence and validation
 
-- original world save;
-- progression/outpost extension save;
-- complete-alpha save for regions, operations, components, machine society, strategic ecology, endgame, continuity and victory;
+- one transactional run save with a versioned envelope;
+- atomic temporary-file promotion with two rotating backups;
+- migration from the original foundation save and full-game extension save;
+- unified foundation, progression, outpost, region, operation, ecology, machine-society, endgame, continuity and victory state;
 - browser and repository contract tests;
 - core native tests;
 - aesthetic tests;
 - first-session UX tests;
 - outpost/progression tests;
+- transactional persistence tests including backup recovery and legacy migration;
 - accelerated native start-to-victory complete-alpha test.
 
 ## Presentation implemented
@@ -117,8 +119,10 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - rebuilt the source around a human field-engineer silhouette with a rounded
   hood and brim, visible face forms, split coat tails, offset field pack,
   harness, belt pouches, gloves, tool attachments and readable weak sidearm;
-- added original wear textures and beveled/tapered forms for fabric, leather,
-  oxidized metal and skin;
+- added original wear textures, normal relief and beveled/tapered forms for
+  fabric, leather, oxidized metal and skin;
+- corrected rear-facing coat, hood and pack placement for the production
+  isometric camera rather than validating only the front portrait;
 - added authored Idle, Walk, Fire, Work and Hit presentation clips;
 - added socket-based player lighting and muzzle resolution;
 - added a baked HUD portrait rendered from the same Blender source model while
@@ -151,7 +155,6 @@ Remaining production work includes:
 - deeper navigation and route recovery;
 - more robot families, organic species, technologies, operations and site variants;
 - adaptive autonomous Heartforge geometry;
-- one transactional versioned save with migration and rotating backups;
 - full controller support, input remapping, accessibility and localization;
 - performance profiling and optimization on agreed target hardware;
 - environmental narrative and run variation;

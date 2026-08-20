@@ -338,6 +338,149 @@ def cloth_surface(obj: bpy.types.Object, level: int = 1) -> bpy.types.Object:
     return smooth_shade(obj)
 
 
+def cloth_panel(
+    name: str,
+    outline: list[tuple[float, float]],
+    depth: float,
+    location: tuple[float, float, float],
+    parent: bpy.types.Object,
+    mat: bpy.types.Material,
+    bevel_amount: float = 0.028,
+) -> bpy.types.Object:
+    """Extrude an irregular X/Z cloth panel with enough volume to catch light."""
+    count = len(outline)
+    vertices: list[tuple[float, float, float]] = []
+    for x, z in outline:
+        vertices.append((x, -depth * 0.5, z))
+    for x, z in outline:
+        vertices.append((x, depth * 0.5, z))
+    faces: list[tuple[int, ...]] = [
+        tuple(range(count - 1, -1, -1)),
+        tuple(count + index for index in range(count)),
+    ]
+    for index in range(count):
+        next_index = (index + 1) % count
+        faces.append((index, next_index, count + next_index, count + index))
+    mesh = bpy.data.meshes.new(name)
+    mesh.from_pydata(vertices, [], faces)
+    mesh.update()
+    obj = bpy.data.objects.new(name, mesh)
+    bpy.context.collection.objects.link(obj)
+    attach(obj, parent, location)
+    obj.data.materials.append(mat)
+    return apply_bevel(obj, bevel_amount, 3)
+
+
+def limb_between(
+    name: str,
+    start: tuple[float, float, float],
+    end: tuple[float, float, float],
+    radius: float,
+    parent: bpy.types.Object,
+    mat: bpy.types.Material,
+    taper: float = 1.0,
+    bevel_amount: float = 0.018,
+) -> bpy.types.Object:
+    """Create a softly tapered limb between two authored anatomical landmarks."""
+    start_vector = Vector(start)
+    end_vector = Vector(end)
+    direction = end_vector - start_vector
+    length = direction.length
+    bpy.ops.mesh.primitive_cone_add(
+        vertices=14,
+        radius1=radius,
+        radius2=radius * taper,
+        depth=length,
+        location=(0.0, 0.0, 0.0),
+    )
+    obj = finish_mesh(bpy.context.object, name, parent, mat)
+    obj.location = (start_vector + end_vector) * 0.5
+    obj.rotation_euler = direction.to_track_quat("Z", "Y").to_euler()
+    return smooth_shade(apply_bevel(obj, bevel_amount, 2))
+
+
+def arc_ribbon(
+    name: str,
+    center: tuple[float, float, float],
+    radius: float,
+    width: float,
+    depth: float,
+    parent: bpy.types.Object,
+    mat: bpy.types.Material,
+    start_angle: float,
+    end_angle: float,
+) -> bpy.types.Object:
+    """Make a broad curved fabric rim instead of a hard circular sensor-like tube."""
+    segments = 18
+    vertices: list[tuple[float, float, float]] = []
+    for y in (-depth * 0.5, depth * 0.5):
+        for radius_offset in (width * 0.5, -width * 0.5):
+            for index in range(segments + 1):
+                angle = start_angle + (end_angle - start_angle) * index / segments
+                current_radius = radius + radius_offset
+                vertices.append((
+                    math.cos(angle) * current_radius,
+                    y,
+                    math.sin(angle) * current_radius,
+                ))
+    ring = segments + 1
+    faces: list[tuple[int, ...]] = []
+    for index in range(segments):
+        next_index = index + 1
+        faces.append((index, next_index, ring + next_index, ring + index))
+        faces.append((2 * ring + index, 3 * ring + index, 3 * ring + next_index, 2 * ring + next_index))
+        faces.append((index, 2 * ring + index, 2 * ring + next_index, next_index))
+        faces.append((ring + index, ring + next_index, 3 * ring + next_index, 3 * ring + index))
+    faces.extend([
+        (0, ring, 3 * ring, 2 * ring),
+        (segments, 2 * ring - 1, 4 * ring - 1, 3 * ring + segments),
+    ])
+    mesh = bpy.data.meshes.new(name)
+    mesh.from_pydata(vertices, [], faces)
+    mesh.update()
+    obj = bpy.data.objects.new(name, mesh)
+    bpy.context.collection.objects.link(obj)
+    attach(obj, parent, center)
+    obj.data.materials.append(mat)
+    return apply_bevel(obj, 0.012, 2)
+
+
+def arc_band(
+    name: str,
+    center: tuple[float, float, float],
+    radius: float,
+    tube_radius: float,
+    parent: bpy.types.Object,
+    mat: bpy.types.Material,
+    start_angle: float = 0.0,
+    end_angle: float = math.pi,
+) -> bpy.types.Object:
+    """Create a curved cloth rim in the X/Z plane for a hood or collar opening."""
+    curve_data = bpy.data.curves.new(name, type="CURVE")
+    curve_data.dimensions = "3D"
+    curve_data.resolution_u = 16
+    curve_data.bevel_depth = tube_radius
+    curve_data.bevel_resolution = 3
+    spline = curve_data.splines.new("NURBS")
+    point_count = 13
+    spline.points.add(point_count - 1)
+    for index, point in enumerate(spline.points):
+        angle = start_angle + (end_angle - start_angle) * index / (point_count - 1)
+        point.co = (
+            center[0] + math.cos(angle) * radius,
+            center[1],
+            center[2] + math.sin(angle) * radius,
+            1.0,
+        )
+    spline.order_u = 3
+    spline.use_endpoint_u = True
+    obj = bpy.data.objects.new(name, curve_data)
+    bpy.context.collection.objects.link(obj)
+    attach(obj, parent, (0.0, 0.0, 0.0))
+    curve_data.materials.append(mat)
+    return obj
+
+
 def socket(name: str, parent: bpy.types.Object, location: tuple[float, float, float]) -> bpy.types.Object:
     obj = bpy.data.objects.new(name, None)
     bpy.context.collection.objects.link(obj)
@@ -424,19 +567,19 @@ def main() -> None:
     root.empty_display_size = 0.1
     root["ironwright_asset_id"] = "mechromancer.player.v1"
 
-    coat_texture = texture_image("mechromancer_coat.png", (0.035, 0.048, 0.060), (0.16, 0.13, 0.10), 11)
-    metal_texture = texture_image("mechromancer_metal.png", (0.10, 0.13, 0.15), (0.34, 0.20, 0.12), 23)
-    leather_texture = texture_image("mechromancer_leather.png", (0.075, 0.034, 0.018), (0.27, 0.12, 0.045), 37)
-    skin_texture = texture_image("mechromancer_skin.png", (0.17, 0.085, 0.055), (0.40, 0.21, 0.13), 47)
+    coat_texture = texture_image("mechromancer_coat.png", (0.025, 0.035, 0.045), (0.10, 0.12, 0.13), 11)
+    metal_texture = texture_image("mechromancer_metal.png", (0.10, 0.12, 0.13), (0.30, 0.24, 0.17), 23)
+    leather_texture = texture_image("mechromancer_leather.png", (0.075, 0.028, 0.012), (0.31, 0.13, 0.045), 37)
+    skin_texture = texture_image("mechromancer_skin.png", (0.24, 0.10, 0.055), (0.56, 0.28, 0.15), 47)
     coat_normal = normal_image("mechromancer_coat_normal.png", 11, 0.20)
     metal_normal = normal_image("mechromancer_metal_normal.png", 23, 0.16)
     leather_normal = normal_image("mechromancer_leather_normal.png", 37, 0.18)
     skin_normal = normal_image("mechromancer_skin_normal.png", 47, 0.08)
-    coat = material("Worn charcoal coat", (0.035, 0.048, 0.060, 1.0), 0.04, 0.92, image=coat_texture, normal=coat_normal)
-    coat_fold = material("Faded coat folds", (0.055, 0.065, 0.070, 1.0), 0.02, 0.96, image=coat_texture, normal=coat_normal)
-    metal = material("Oxidized field metal", (0.10, 0.13, 0.15, 1.0), 0.68, 0.50, image=metal_texture, normal=metal_normal)
-    leather = material("Weathered leather", (0.075, 0.034, 0.018, 1.0), 0.02, 0.88, image=leather_texture, normal=leather_normal)
-    skin = material("Skin", (0.17, 0.085, 0.055, 1.0), 0.0, 0.78, image=skin_texture, normal=skin_normal)
+    coat = material("Worn charcoal coat", (0.025, 0.035, 0.045, 1.0), 0.04, 0.92, image=coat_texture, normal=coat_normal)
+    coat_fold = material("Faded coat folds", (0.075, 0.090, 0.100, 1.0), 0.02, 0.96, image=coat_texture, normal=coat_normal)
+    metal = material("Oxidized field metal", (0.13, 0.15, 0.16, 1.0), 0.68, 0.50, image=metal_texture, normal=metal_normal)
+    leather = material("Weathered leather", (0.11, 0.040, 0.014, 1.0), 0.02, 0.88, image=leather_texture, normal=leather_normal)
+    skin = material("Skin", (0.30, 0.13, 0.070, 1.0), 0.0, 0.70, image=skin_texture, normal=skin_normal)
     hood_inner = material("Hood interior", (0.026, 0.032, 0.036, 1.0), 0.0, 0.98)
     glass = material("Smoked cyan visor", (0.018, 0.08, 0.09, 1.0), 0.34, 0.24, (0.06, 0.45, 0.52, 1.0))
     cyan = material("Cognition cyan", (0.025, 0.24, 0.27, 1.0), 0.28, 0.25, (0.12, 0.8, 0.85, 1.0))
@@ -462,7 +605,7 @@ def main() -> None:
     scarf_tail.rotation_euler.y = -0.18
     box("Collar", (0.38, 0.20, 0.11), (0.0, -0.08, 1.80), root, coat, 0.030)
 
-    hood = uv_sphere("Hood", (0.35, 0.23, 0.27), (0.0, 0.22, 2.11), root, coat)
+    hood = uv_sphere("Hood", (0.31, 0.21, 0.23), (0.0, 0.23, 2.12), root, coat)
     hood.rotation_euler.x = -0.10
     tapered_prism("HoodBackDrape", 0.62, 0.40, 0.18, 0.10, 0.56, (0.0, 0.29, 1.91), root, coat, 0.040)
     hood_drape_left = tapered_prism("HoodDrapeLeft", 0.22, 0.12, 0.10, 0.07, 0.38, (-0.23, 0.24, 1.78), root, coat, 0.025)
@@ -477,7 +620,8 @@ def main() -> None:
     hood_brim = tapered_prism("HoodBrim", 0.46, 0.38, 0.16, 0.12, 0.055, (0.0, -0.16, 2.255), root, coat, 0.022)
     hood_brim.rotation_euler.x = -0.12
     box("HoodBrimTrim", (0.36, 0.020, 0.022), (0.0, -0.255, 2.235), root, leather, 0.008)
-    tapered_prism("HoodShadow", 0.38, 0.31, 0.045, 0.035, 0.32, (0.0, -0.18, 2.06), root, hood_inner, 0.020)
+    tapered_prism("HoodShadow", 0.36, 0.29, 0.045, 0.035, 0.30, (0.0, -0.18, 2.06), root, hood_inner, 0.020)
+    arc_band("HoodRim", (0.0, -0.30, 2.03), 0.24, 0.022, root, coat, math.pi * 0.08, math.pi * 0.92)
     hood_left = tapered_prism("HoodSideLeft", 0.18, 0.12, 0.08, 0.06, 0.38, (-0.235, -0.01, 2.08), root, coat, 0.020)
     hood_left.rotation_euler.y = -0.18
     hood_right = tapered_prism("HoodSideRight", 0.18, 0.12, 0.08, 0.06, 0.38, (0.235, -0.01, 2.08), root, coat, 0.020)

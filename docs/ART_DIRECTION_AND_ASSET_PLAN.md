@@ -190,7 +190,10 @@ A viable final game should be built from a deliberately compact bespoke set.
 The focused first authored milestone is represented in
 `game/assets/mechromancer/`. It establishes the hooded field-engineer
 silhouette, stable glTF sockets, five presentation clips and a matching HUD
-portrait without introducing later personal evolution variants.
+portrait without introducing later personal evolution variants. The source
+also includes original cloth/leather/metal/skin wear and normal maps, with the
+pack, hood drape and split coat deliberately checked from the rear-facing
+production camera.
 
 ### 6.2 Heartforge
 

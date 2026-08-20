@@ -1,7 +1,5 @@
 class_name IronwrightCompleteGameWorld3D
-extends IronwrightProductionWorld3D
-
-const COMPLETE_SAVE_PATH := "user://ironwright_complete_game_state.json"
+extends IronwrightFullGameWorld3D
 
 var region_director: WorldRegionDirector3D
 var long_operation_director: LongRangeOperationDirector3D
@@ -399,12 +397,12 @@ func _save_game() -> void:
         hud.push_notification("SAVE DEFERRED · FINISH OR LOSE THE ACTIVE LONG-RANGE OPERATION")
         return
     super._save_game()
-    var file := FileAccess.open(COMPLETE_SAVE_PATH, FileAccess.WRITE)
-    if file == null:
-        hud.push_notification("COMPLETE GAME STATE SAVE FAILED")
-        return
-    file.store_string(JSON.stringify({
-        "schema_version": 1,
+
+
+func _save_extension_data() -> Dictionary:
+    var extensions := super._save_extension_data()
+    var full_game_data: Dictionary = extensions.get("full_game", {})
+    full_game_data.merge({
         "regions": region_director.to_dictionary(),
         "long_operations": long_operation_director.to_dictionary(),
         "machine_society": machine_society_director.to_dictionary(),
@@ -413,7 +411,9 @@ func _save_game() -> void:
         "continuity_used": continuity_used,
         "first_victory_achieved": first_victory_achieved,
         "spawned_region_salvage": _serialize_stringname_dictionary(spawned_region_salvage),
-    }))
+    }, true)
+    extensions["full_game"] = full_game_data
+    return extensions
 
 
 func _load_game() -> void:
@@ -422,22 +422,18 @@ func _load_game() -> void:
         return
     _close_operations_hud()
     super._load_game()
-    call_deferred("_restore_complete_game_state")
 
 
-func _restore_complete_game_state() -> void:
-    if not FileAccess.file_exists(COMPLETE_SAVE_PATH):
+func _restore_extension_data(extensions: Variant) -> void:
+    super._restore_extension_data(extensions)
+    if not (extensions is Dictionary):
+        return
+    var extension_map := extensions as Dictionary
+    var data: Dictionary = extension_map.get("full_game", {})
+    if data.is_empty():
         if run_state.expedition_core_recovered:
             region_director.discover_region(&"region.north_ruins")
         return
-    var file := FileAccess.open(COMPLETE_SAVE_PATH, FileAccess.READ)
-    if file == null:
-        return
-    var parsed: Variant = JSON.parse_string(file.get_as_text())
-    if not (parsed is Dictionary):
-        hud.push_notification("COMPLETE GAME STATE INVALID · BASE WORLD WAS STILL LOADED")
-        return
-    var data := parsed as Dictionary
     region_director.restore_from_dictionary(data.get("regions", {}))
     long_operation_director.restore_from_dictionary(data.get("long_operations", {}))
     machine_society_director.restore_from_dictionary(data.get("machine_society", {}))

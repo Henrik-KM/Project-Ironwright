@@ -1,6 +1,7 @@
 extends SceneTree
 
 const MAIN_SCENE := preload("res://scenes/main_3d.tscn")
+const TEST_SAVE_PATH := "user://ironwright_complete_integration_test.json"
 
 var failures: Array[String] = []
 
@@ -124,6 +125,18 @@ func _run_all() -> void:
     _expect(world.endgame_director.completed_protocol == &"protocol.severance", "Save restoration must preserve the chosen completed ending.")
     _expect(world.region_director.is_discovered(&"region.root_cistern"), "Save restoration must preserve late-region discovery.")
 
+    world.save_service.configure(TEST_SAVE_PATH)
+    _expect(world.save_service != null, "The complete world must install the transactional save service.")
+    world._save_game()
+    _expect(FileAccess.file_exists(TEST_SAVE_PATH), "The complete-world save hook must write the unified envelope.")
+    world.first_victory_achieved = false
+    world.game_ended = false
+    world.region_director.region_data[&"region.root_cistern"]["discovered"] = false
+    world._load_game()
+    _expect(world.first_victory_achieved, "The unified save/load path must restore complete-world victory state.")
+    _expect(world.region_director.is_discovered(&"region.root_cistern"), "The unified save/load path must restore complete-world discovery state.")
+    _cleanup_save_files()
+
     _finish()
 
 
@@ -174,6 +187,12 @@ func _clear_enemies() -> void:
 func _expect(condition: bool, message: String) -> void:
     if not condition:
         failures.append(message)
+
+
+func _cleanup_save_files() -> void:
+    for path in [TEST_SAVE_PATH, TEST_SAVE_PATH + ".bak1", TEST_SAVE_PATH + ".bak2", TEST_SAVE_PATH + ".tmp"]:
+        if FileAccess.file_exists(path):
+            DirAccess.remove_absolute(path)
 
 
 func _finish() -> void:

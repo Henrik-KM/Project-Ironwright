@@ -1,5 +1,5 @@
 class_name IronwrightProductionWorld3D
-extends IronwrightFullGameWorld3D
+extends IronwrightCompleteGameWorld3D
 
 ## Production entrypoint. It preserves the long-run systems while owning the
 ## first-session guidance and progression gates that should not leak into the

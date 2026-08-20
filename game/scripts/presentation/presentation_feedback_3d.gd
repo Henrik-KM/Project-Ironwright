@@ -60,8 +60,10 @@ func _on_node_added(node: Node) -> void:
         call_deferred("_try_polish_actor", node)
 
 
-func _try_polish_actor(node: Node) -> void:
+func _try_polish_actor(node: Variant) -> void:
     if not is_instance_valid(node):
+        return
+    if not (node is Node):
         return
     if node.is_in_group(&"player_character") or node.is_in_group(&"friendly_robots") or node.is_in_group(&"organic_enemies"):
         _polish_actor(node)
