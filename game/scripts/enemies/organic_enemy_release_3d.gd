@@ -152,29 +152,56 @@ func _refresh_visuals() -> void:
     var bone := ModelKit3D.material(Color("817762"), 0.0, 0.84)
     var membrane := ModelKit3D.material(Color("53172f"), 0.0, 0.78, Color("b52e59"), 1.3)
     var cold_membrane := ModelKit3D.material(Color("234046"), 0.0, 0.72, Color("6ce4dd"), 1.8)
+    var wet_chitin := ModelKit3D.material(Color("241a25"), 0.2, 0.36)
+    var tendon := ModelKit3D.material(Color("713c4a"), 0.0, 0.64)
+    var eye := ModelKit3D.material(Color("4b0b0a"), 0.0, 0.42, Color("f04426"), 3.2)
 
     match species:
         &"roofleaper":
+            ModelKit3D.add_organic_plate(_model_root, 0.34, Vector3(0.0, 1.34, -0.86), chitin, bone, Vector3(1.35, 0.55, 1.08), "RoofleaperCrown")
             for side in [-1.0, 1.0]:
                 ModelKit3D.add_capsule(_model_root, 0.075, 1.8, Vector3(side * 0.78, 1.0, 0.15), bone, Vector3(0.0, 0.0, side * 1.08), "LeapLeg")
                 ModelKit3D.add_box(_model_root, Vector3(0.08, 0.85, 1.15), Vector3(side * 0.7, 1.1, 0.25), membrane, Vector3(0.0, 0.0, side * 0.42), "GlideMembrane")
+                for rib in range(3):
+                    ModelKit3D.add_capsule(_model_root, 0.028, 0.78 - float(rib) * 0.08, Vector3(side * (0.46 + float(rib) * 0.2), 1.12, 0.28 + float(rib) * 0.18), bone, Vector3(0.0, 0.0, side * 0.82), "RoofleaperWingStrut%d" % rib)
+                ModelKit3D.add_capsule(_model_root, 0.04, 0.72, Vector3(side * 0.3, 0.76, 1.32), tendon, Vector3(-0.35, 0.0, side * 0.16), "RoofleaperTailTendon")
+            ModelKit3D.add_sphere(_model_root, 0.095, Vector3(0.0, 1.54, -1.12), eye, Vector3(1.0, 0.76, 0.86), "RoofleaperCrownOculus")
         &"glassmoth":
             for side in [-1.0, 1.0]:
                 ModelKit3D.add_box(_model_root, Vector3(1.45, 0.05, 1.2), Vector3(side * 0.92, 1.0, 0.15), cold_membrane, Vector3(0.12, 0.08, side * 0.22), "Wing")
                 for vein in range(3):
                     ModelKit3D.add_cylinder(_model_root, 0.025, 1.25, Vector3(side * (0.55 + vein * 0.27), 1.02, 0.15), bone, Vector3(0.0, 0.0, side * 0.95), "WingVein")
+                    ModelKit3D.add_capsule(_model_root, 0.022, 0.62, Vector3(side * (0.6 + float(vein) * 0.25), 1.09, 0.38), cold_membrane, Vector3(0.0, 0.0, side * 0.72), "GlassmothWingRib%d" % vein)
+            ModelKit3D.add_ribbed_shell(_model_root, 0.34, Vector3(0.0, 1.0, -0.12), chitin, bone, Vector3(1.18, 0.9, 1.28), "GlassmothThorax")
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_capsule(_model_root, 0.025, 0.72, Vector3(side * 0.16, 1.34, -0.72), bone, Vector3(0.42, 0.0, side * 0.2), "GlassmothAntenna")
+            ModelKit3D.add_sphere(_model_root, 0.1, Vector3(0.0, 1.3, -0.92), cold_membrane, Vector3(1.0, 0.72, 0.82), "GlassmothOculus")
         &"miremaw":
             ModelKit3D.add_sphere(_model_root, 0.92, Vector3(0.0, 0.82, -0.25), chitin, Vector3(2.0, 0.85, 2.2), "MireCarapace")
+            ModelKit3D.add_ribbed_shell(_model_root, 0.64, Vector3(0.0, 1.12, 0.22), wet_chitin, bone, Vector3(1.58, 0.72, 1.72), "MiremawDorsalShell")
+            for index in range(4):
+                var shell_z := -0.62 + float(index) * 0.42
+                ModelKit3D.add_organic_plate(_model_root, 0.25 - float(index) * 0.02, Vector3(-0.18 + float(index % 2) * 0.12, 1.38 - float(index) * 0.04, shell_z), chitin, bone, Vector3(1.32, 0.42, 0.72), "MiremawDorsalPlate%d" % index)
             for side in [-1.0, 1.0]:
                 ModelKit3D.add_capsule(_model_root, 0.15, 1.35, Vector3(side * 0.5, 0.45, -1.15), bone, Vector3(1.0, 0.0, side * 0.35), "MireJaw")
+                ModelKit3D.add_capsule(_model_root, 0.065, 0.62, Vector3(side * 0.72, 0.56, -1.55), bone, Vector3(0.82, 0.0, side * 0.18), "MiremawTusk")
+            ModelKit3D.add_membrane_fan(_model_root, 0.32, Vector3(0.0, 0.82, 0.64), membrane, 5, "MiremawGillFan")
         &"carrionbell":
             ModelKit3D.add_sphere(_model_root, 0.72, Vector3(0.0, 1.65, 0.25), membrane, Vector3(1.15, 1.6, 1.15), "SignalBell")
+            ModelKit3D.add_ribbed_shell(_model_root, 0.48, Vector3(0.0, 1.2, 0.18), chitin, bone, Vector3(1.28, 0.9, 1.32), "CarrionbellMantle")
             for index in range(5):
                 var angle := TAU * float(index) / 5.0
                 ModelKit3D.add_capsule(_model_root, 0.055, 1.0, Vector3(cos(angle) * 0.42, 2.2, sin(angle) * 0.42), bone, Vector3(0.0, 0.0, angle), "BellTendril")
+                ModelKit3D.add_capsule(_model_root, 0.028, 0.64, Vector3(cos(angle) * 0.7, 1.54, sin(angle) * 0.7), tendon, Vector3(0.35, 0.0, angle + 0.42), "CarrionbellSignalTendril%d" % index)
+            ModelKit3D.add_organic_plate(_model_root, 0.3, Vector3(0.0, 2.32, 0.24), membrane, bone, Vector3(1.25, 0.32, 1.18), "CarrionbellCrownPlate")
+            ModelKit3D.add_sphere(_model_root, 0.1, Vector3(0.0, 2.48, 0.2), eye, Vector3(1.0, 0.72, 0.82), "CarrionbellResonator")
         &"rootweaver":
             ModelKit3D.add_sphere(_model_root, 0.86, Vector3(0.0, 1.05, 0.0), chitin, Vector3(1.7, 1.35, 1.8), "RootCore")
+            ModelKit3D.add_ribbed_shell(_model_root, 0.58, Vector3(0.0, 1.52, 0.08), wet_chitin, bone, Vector3(1.42, 0.86, 1.46), "RootweaverCrown")
             for index in range(8):
                 var angle := TAU * float(index) / 8.0
                 var direction := Vector3(cos(angle), 0.0, sin(angle))
                 ModelKit3D.add_capsule(_model_root, 0.1, 2.0, direction * 1.05 + Vector3.UP * 0.42, bone, Vector3(0.0, -angle, 1.05), "RootArm")
+                ModelKit3D.add_capsule(_model_root, 0.042, 1.18, direction * 0.74 + Vector3.UP * (1.12 + float(index % 2) * 0.12), tendon, Vector3(0.0, -angle + 0.34, 1.0), "RootweaverTendril%d" % index)
+            ModelKit3D.add_membrane_fan(_model_root, 0.42, Vector3(0.0, 1.98, 0.18), membrane, 6, "RootweaverSporeFan")
+            ModelKit3D.add_sphere(_model_root, 0.11, Vector3(-0.18, 1.82, -0.6), eye, Vector3(1.0, 0.78, 0.82), "RootweaverOculus")
