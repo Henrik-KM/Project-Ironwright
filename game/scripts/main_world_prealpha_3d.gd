@@ -6,7 +6,7 @@ extends IronwrightCompleteGameWorld3D
 ## systemic game remains underneath it. This is still a pre-alpha production
 ## prototype until representative gameplay receives explicit human approval.
 
-const VERTICAL_SLICE_DIRECTOR := preload("res://scripts/presentation/vertical_slice_director_3d.gd")
+const VERTICAL_SLICE_DIRECTOR := preload("res://scripts/presentation/vertical_slice_readable_director_3d.gd")
 const VERTICAL_SLICE_ACTOR_ART := preload("res://scripts/presentation/vertical_slice_actor_art_3d.gd")
 
 var _last_map_label_mode: bool = false
