@@ -18,6 +18,7 @@ var _beacon_root: Node3D
 var _label: Label3D
 var _light: OmniLight3D
 var _practical_lights: Array[OmniLight3D] = []
+var _nest_shell: Node3D
 var _elapsed: float = 0.0
 var _map_emphasis: bool = false
 var presentation_detail_level: int = 0
@@ -75,6 +76,11 @@ func set_presentation_detail_level(level: int) -> void:
         var base_energy := 1.0 if _map_emphasis else 0.28
         _light.light_energy = base_energy if presentation_detail_level == 0 else base_energy * 0.58
         _light.omni_range = 9.0 if _map_emphasis else (4.5 if presentation_detail_level == 0 else 3.0)
+
+
+func set_player_proximity(distance: float) -> void:
+    if _nest_shell != null:
+        _nest_shell.visible = not (region_kind == &"nest" and distance <= 12.0)
 
 
 func add_presentation_detail(node: Node3D) -> bool:
@@ -221,7 +227,10 @@ func _build_visuals() -> void:
             for side in [-1.0, 1.0]:
                 ModelKit3D.add_beveled_box(observatory, Vector3(2.4, 0.24, 0.7), Vector3(side * 3.8, 0.85, 0.0), edge, Vector3(0.0, side * 0.18, 0.0), "ObservatoryOpticRail", 0.22)
         &"nest":
-            _add_ruin_block(Vector3(0.0, 0.0, 4.0), Vector3(12.0, 12.0, 8.0), brick)
+            _nest_shell = Node3D.new()
+            _nest_shell.name = "NestOccluderShell"
+            _visual_root.add_child(_nest_shell)
+            _add_ruin_block(Vector3(-8.0, 0.0, 3.0), Vector3(5.5, 6.0, 5.5), brick, _nest_shell)
             for index in range(9):
                 var angle := TAU * float(index) / 9.0
                 ModelKit3D.add_capsule(_visual_root, 0.55, 5.2 + float(index % 3), Vector3(cos(angle) * 8.0, 2.4, sin(angle) * 8.0), organic, Vector3(0.2, angle, 0.25), "BroodSpire")
@@ -318,13 +327,14 @@ func _build_authored_root_cistern_visuals() -> void:
     _visual_root.add_child(authored_marker)
 
 
-func _add_ruin_block(origin: Vector3, size: Vector3, material: Material) -> void:
-    ModelKit3D.add_beveled_box(_visual_root, size, origin + Vector3(0.0, size.y * 0.5, 0.0), material, Vector3.ZERO, "RuinBlock", 0.12)
+func _add_ruin_block(origin: Vector3, size: Vector3, material: Material, parent: Node3D = null) -> void:
+    var target_root: Node3D = parent if parent != null else _visual_root
+    ModelKit3D.add_beveled_box(target_root, size, origin + Vector3(0.0, size.y * 0.5, 0.0), material, Vector3.ZERO, "RuinBlock", 0.12)
     var edge := ModelKit3D.material(Color("1f292b"), 0.52, 0.46)
     var pier_height := minf(size.y * 0.86, 7.2)
     for side in [-1.0, 1.0]:
         ModelKit3D.add_beveled_box(
-            _visual_root,
+            target_root,
             Vector3(0.22, pier_height, 0.24),
             origin + Vector3(side * size.x * 0.4, pier_height * 0.5, -size.z * 0.52),
             edge,
@@ -333,7 +343,7 @@ func _add_ruin_block(origin: Vector3, size: Vector3, material: Material) -> void
             0.3
         )
     ModelKit3D.add_beveled_box(
-        _visual_root,
+        target_root,
         Vector3(size.x * 0.9, 0.16, size.z * 0.9),
         origin + Vector3(0.0, size.y + 0.08, 0.0),
         edge,
@@ -346,7 +356,7 @@ func _add_ruin_block(origin: Vector3, size: Vector3, material: Material) -> void
         for window_index in range(3):
             var x := origin.x - size.x * 0.3 + float(window_index) * size.x * 0.3
             var y := origin.y + 1.2 + float(floor_index) * 2.0
-            ModelKit3D.add_surface_panel(_visual_root, Vector3(0.7, 0.75, 0.08), Vector3(x, y, origin.z - size.z * 0.51), dark, edge, Vector3.ZERO, "DarkWindow")
+            ModelKit3D.add_surface_panel(target_root, Vector3(0.7, 0.75, 0.08), Vector3(x, y, origin.z - size.z * 0.51), dark, edge, Vector3.ZERO, "DarkWindow")
 
     # A small service spine breaks up the broad ruin masses with believable
     # authored hardware. It is presentation-only and remains under the
@@ -359,7 +369,7 @@ func _add_ruin_block(origin: Vector3, size: Vector3, material: Material) -> void
     var panel_y := origin.y + minf(size.y * 0.52, 2.9)
     var panel_z := origin.z - size.z * 0.51 - 0.08
     ModelKit3D.add_louvered_panel(
-        _visual_root,
+        target_root,
         Vector3(panel_width, panel_height, 0.16),
         Vector3(panel_x, panel_y, panel_z),
         service_material,
@@ -369,7 +379,7 @@ func _add_ruin_block(origin: Vector3, size: Vector3, material: Material) -> void
         4
     )
     ModelKit3D.add_surface_panel(
-        _visual_root,
+        target_root,
         Vector3(panel_width * 0.82, panel_height * 0.76, 0.1),
         Vector3(panel_x, panel_y, panel_z - 0.105),
         service_material,
@@ -378,7 +388,7 @@ func _add_ruin_block(origin: Vector3, size: Vector3, material: Material) -> void
         "RuinFacadeServicePlate"
     )
     _add_beam(
-        _visual_root,
+        target_root,
         Vector3(panel_x + panel_width * 0.34, panel_y + panel_height * 0.46, panel_z - 0.03),
         Vector3(panel_x + size.x * 0.28, origin.y + size.y - 0.24, panel_z - 0.04),
         0.028,
@@ -386,7 +396,7 @@ func _add_ruin_block(origin: Vector3, size: Vector3, material: Material) -> void
         "RuinFacadeServiceCable"
     )
     ModelKit3D.add_beveled_box(
-        _visual_root,
+        target_root,
         Vector3(size.x * 0.34, 0.12, 0.12),
         Vector3(origin.x - size.x * 0.22, origin.y + minf(size.y * 0.76, size.y - 0.35), panel_z - 0.02),
         edge,

@@ -537,6 +537,18 @@ identities. Manual channels remain finish-before-save.
 - native aesthetic coverage verifies both practical sockets on every
   non-sanctuary region.
 
+## Focused hostile-nest composition milestone
+
+- tightened the Cathedral Quarter nest shell into a side-weighted ruin mass so
+  the brood core, membrane fan and surrounding organic spires carry the frame;
+- the close-range opaque shell now yields to the organic read inside the
+  existing tactical approach envelope, preventing presentation-only geometry
+  from intersecting the camera while leaving the persistent landmark intact;
+- live Cathedral Quarter movement review confirmed the nest remains readable
+  before and during approach without changing collision, ecology, objective
+  state or player-managed work;
+- native aesthetic coverage verifies the isolated close-range shell contract.
+
 ## Focused contextual tactical-HUD milestone
 
 - the permanent control legend now clears after the onboarding window instead
