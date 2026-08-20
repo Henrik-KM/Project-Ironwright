@@ -127,7 +127,18 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - added socket-based player lighting and muzzle resolution;
 - added a baked HUD portrait rendered from the same Blender source model while
   preserving all gameplay interfaces;
-- left friendly robots and organic enemies on their existing procedural assets.
+- left organic enemies on their existing procedural assets while beginning the
+  friendly robot production pass with higher-resolution modular family geometry.
+
+## Focused robot family presentation milestone
+
+- added layered chassis, armour, optic, joint and service-cable details shared
+  across the friendly machine family;
+- added role-readable salvager, guardian, scout and engineer silhouettes with
+  cargo, weapon, sensor and construction-tool details;
+- added subtle role-specific presentation motion for salvage drums, pistons,
+  tools, scout fins, forge coils and guardian shield ribs;
+- added executable aesthetic coverage for each robot archetype's detail sockets.
 
 ## Focused Veilstalker presentation milestone
 
@@ -149,7 +160,8 @@ Version 0.6.0 is game-complete in systemic structure, not commercially final.
 
 Remaining production work includes:
 
-- authored production models, rigs, animations, VFX, sound and music;
+- authored production models and rigs beyond the Mechromancer, plus production
+  animations, VFX, sound and music;
 - substantially more environmental detail and authored encounter spaces;
 - true active/reduced-detail simulation for much larger world and entity scale;
 - deeper navigation and route recovery;

@@ -273,8 +273,19 @@ func _refresh_visual_identity() -> void:
     elif archetype == &"engineer":
         body_size = Vector3(1.35, 0.72, 1.58)
     ModelKit3D.add_box(_model_root, body_size, Vector3(0.0, 0.86, 0.0), steel, Vector3.ZERO, "Chassis")
-    ModelKit3D.add_box(_model_root, Vector3(body_size.x * 0.8, 0.16, body_size.z * 0.7), Vector3(0.0, 1.25, 0.0), rust, Vector3.ZERO, "ArmorPlate")
+    ModelKit3D.add_box(_model_root, Vector3(body_size.x * 0.84, 0.16, body_size.z * 0.72), Vector3(0.0, 1.25, 0.0), rust, Vector3.ZERO, "ArmorPlate")
+    ModelKit3D.add_box(_model_root, Vector3(body_size.x * 0.68, 0.09, body_size.z * 0.82), Vector3(0.0, 0.55, body_size.z * 0.08), dark_steel, Vector3.ZERO, "LowerChassis")
+    ModelKit3D.add_box(_model_root, Vector3(0.16, 0.32, body_size.z * 0.76), Vector3(0.0, 0.88, 0.0), rust, Vector3.ZERO, "ChassisSpine")
     ModelKit3D.add_sphere(_model_root, 0.22, Vector3(0.0, 1.12, -body_size.z * 0.55), glow, Vector3(1.2, 0.8, 0.6), "Sensor")
+    ModelKit3D.add_box(_model_root, Vector3(0.48, 0.26, 0.12), Vector3(0.0, 1.15, -body_size.z * 0.62), dark_steel, Vector3.ZERO, "OpticHousing")
+    ModelKit3D.add_sphere(_model_root, 0.075, Vector3(0.0, 1.15, -body_size.z * 0.7), glow, Vector3(1.7, 0.75, 0.5), "OpticLens")
+
+    for side in [-1.0, 1.0]:
+        var shoulder_x := float(side) * body_size.x * 0.57
+        ModelKit3D.add_box(_model_root, Vector3(0.22, 0.24, body_size.z * 0.58), Vector3(shoulder_x, 1.0, 0.0), steel, Vector3(0.0, 0.0, float(side) * 0.12), "ShoulderPlate")
+        ModelKit3D.add_sphere(_model_root, 0.115, Vector3(shoulder_x, 0.77, -0.02), rust, Vector3.ONE, "Joint")
+        ModelKit3D.add_box(_model_root, Vector3(0.09, 0.18, body_size.z * 0.5), Vector3(shoulder_x + float(side) * 0.13, 0.9, 0.0), dark_steel, Vector3(0.0, 0.0, float(side) * 0.14), "SidePanel")
+        ModelKit3D.add_cylinder(_model_root, 0.035, body_size.z * 0.45, Vector3(shoulder_x - float(side) * 0.05, 0.86, -0.02), rust, Vector3(1.5708, 0.0, 0.0), "ExposedCable")
 
     for side in [-1.0, 1.0]:
         for front in [-1.0, 1.0]:
@@ -286,17 +297,40 @@ func _refresh_visual_identity() -> void:
     match archetype:
         &"salvager":
             ModelKit3D.add_box(_model_root, Vector3(0.95, 0.55, 0.82), Vector3(0.0, 1.45, 0.2), dark_steel, Vector3.ZERO, "CargoBin")
+            ModelKit3D.add_box(_model_root, Vector3(1.05, 0.08, 0.92), Vector3(0.0, 1.75, 0.2), rust, Vector3.ZERO, "CargoLip")
+            ModelKit3D.add_box(_model_root, Vector3(0.12, 0.48, 0.9), Vector3(0.0, 1.46, 0.2), rust, Vector3.ZERO, "CargoStrap")
+            ModelKit3D.add_sphere(_model_root, 0.14, Vector3(0.66, 0.95, -0.35), dark_steel, Vector3.ONE, "DismantlerJoint")
             ModelKit3D.add_cylinder(_model_root, 0.12, 0.8, Vector3(0.66, 0.95, -0.35), rust, Vector3(0.0, 0.0, 1.15), "Dismantler")
+            ModelKit3D.add_box(_model_root, Vector3(0.28, 0.18, 0.32), Vector3(0.66, 0.95, -0.82), dark_steel, Vector3(0.0, 0.0, 0.15), "DismantlerTool")
+            ModelKit3D.add_cylinder(_model_root, 0.11, 0.18, Vector3(0.0, 1.46, 0.2), rust, Vector3(1.5708, 0.0, 0.0), "SalvageDrum")
+            ModelKit3D.add_box(_model_root, Vector3(0.18, 0.34, 0.56), Vector3(-0.66, 1.08, 0.15), steel, Vector3(0.0, 0.0, -0.18), "SalvageClamp")
         &"guardian", &"companion":
-            ModelKit3D.add_cylinder(_model_root, 0.12, 1.1, Vector3(0.0, 1.35, -0.65), dark_steel, Vector3(1.5708, 0.0, 0.0), "Weapon")
             ModelKit3D.add_box(_model_root, Vector3(1.72, 0.82, 0.14), Vector3(0.0, 0.78, 0.7), steel, Vector3.ZERO, "RearShield")
+            ModelKit3D.add_box(_model_root, Vector3(1.38, 0.52, 0.12), Vector3(0.0, 1.02, 0.84), rust, Vector3.ZERO, "ShieldRib")
+            ModelKit3D.add_cylinder(_model_root, 0.12, 1.1, Vector3(-0.25, 1.35, -0.65), dark_steel, Vector3(1.5708, 0.0, 0.0), "Weapon")
+            ModelKit3D.add_cylinder(_model_root, 0.12, 1.1, Vector3(0.25, 1.35, -0.65), dark_steel, Vector3(1.5708, 0.0, 0.0), "WeaponBarrel")
+            ModelKit3D.add_cylinder(_model_root, 0.16, 0.12, Vector3(-0.25, 1.35, -1.18), glow, Vector3(1.5708, 0.0, 0.0), "WeaponMuzzle")
+            ModelKit3D.add_cylinder(_model_root, 0.16, 0.12, Vector3(0.25, 1.35, -1.18), glow, Vector3(1.5708, 0.0, 0.0), "WeaponMuzzle")
+            if archetype == &"companion":
+                ModelKit3D.add_box(_model_root, Vector3(0.68, 0.12, 0.18), Vector3(0.0, 1.46, 0.1), rust, Vector3.ZERO, "CompanionCrown")
         &"scout":
+            ModelKit3D.add_box(_model_root, Vector3(0.18, 0.3, 0.9), Vector3(-body_size.x * 0.54, 1.02, 0.08), steel, Vector3(0.0, 0.0, -0.16), "ScoutFin")
+            ModelKit3D.add_box(_model_root, Vector3(0.18, 0.3, 0.9), Vector3(body_size.x * 0.54, 1.02, 0.08), steel, Vector3(0.0, 0.0, 0.16), "ScoutFin")
             ModelKit3D.add_cylinder(_model_root, 0.06, 1.5, Vector3(0.0, 1.8, 0.15), dark_steel, Vector3.ZERO, "Antenna")
+            ModelKit3D.add_cylinder(_model_root, 0.15, 0.08, Vector3(0.0, 2.46, 0.15), rust, Vector3.ZERO, "BeaconRing")
             ModelKit3D.add_sphere(_model_root, 0.11, Vector3(0.0, 2.55, 0.15), glow, Vector3.ONE, "Beacon")
+            ModelKit3D.add_sphere(_model_root, 0.08, Vector3(-0.22, 1.14, -body_size.z * 0.66), glow, Vector3.ONE, "ScoutOptic")
+            ModelKit3D.add_sphere(_model_root, 0.08, Vector3(0.22, 1.14, -body_size.z * 0.66), glow, Vector3.ONE, "ScoutOptic")
         &"engineer":
             ModelKit3D.add_box(_model_root, Vector3(0.92, 0.4, 0.78), Vector3(0.0, 1.5, 0.24), dark_steel, Vector3.ZERO, "MaterialCradle")
+            ModelKit3D.add_box(_model_root, Vector3(1.02, 0.08, 0.86), Vector3(0.0, 1.72, 0.24), rust, Vector3.ZERO, "CradleLip")
+            ModelKit3D.add_sphere(_model_root, 0.13, Vector3(-0.72, 1.05, -0.1), dark_steel, Vector3.ONE, "PistonJoint")
+            ModelKit3D.add_sphere(_model_root, 0.13, Vector3(0.72, 1.05, 0.0), dark_steel, Vector3.ONE, "PistonJoint")
             ModelKit3D.add_cylinder(_model_root, 0.1, 1.15, Vector3(-0.72, 1.05, -0.1), rust, Vector3(0.0, 0.0, 1.05), "WelderArm")
             ModelKit3D.add_cylinder(_model_root, 0.11, 1.2, Vector3(0.72, 1.05, 0.0), steel, Vector3(0.0, 0.0, -1.0), "AssemblyArm")
+            ModelKit3D.add_box(_model_root, Vector3(0.22, 0.18, 0.34), Vector3(-1.18, 0.74, -0.1), dark_steel, Vector3(0.0, 0.0, 0.2), "ToolHead")
+            ModelKit3D.add_box(_model_root, Vector3(0.26, 0.18, 0.32), Vector3(1.18, 0.72, 0.0), dark_steel, Vector3(0.0, 0.0, -0.2), "AssemblyToolHead")
+            ModelKit3D.add_cylinder(_model_root, 0.12, 0.16, Vector3(0.0, 1.44, 0.22), glow, Vector3(1.5708, 0.0, 0.0), "ForgeCoil")
             ModelKit3D.add_sphere(_model_root, 0.08, Vector3(-1.18, 0.74, -0.1), glow, Vector3.ONE, "WelderGlow")
 
     _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.12, -body_size.z * 0.62), glow_color, 0.85, 4.0)

@@ -50,8 +50,9 @@ Clutter must leave important routes readable from the high-angle camera.
 
 ## Actor presentation
 
-The Mechromancer now uses the first authored glTF character asset. Friendly
-robots and organic enemies remain procedural placeholders until their own
+The Mechromancer now uses the first authored glTF character asset. The first
+friendly robot family pass now uses higher-resolution modular geometry with
+role-readable silhouettes; organic enemies remain procedural until their own
 production asset milestones.
 
 ### Mechromancer
@@ -70,9 +71,14 @@ production asset milestones.
 
 ### Friendly robots
 
-- shared machine family language;
-- role-specific armor, tools, optics and cargo forms;
-- walking gait, foot lift, body weight, sensor movement and recoil;
+- shared layered chassis language with shoulder plates, armour bands, optics,
+  joints and exposed service cabling;
+- role-specific salvager cargo and dismantler tooling, guardian weapon and
+  shield forms, scout fins and sensor mast, and engineer cradle, pistons and
+  forge tooling;
+- higher-resolution cylinders, spheres and capsules for close-camera
+  readability;
+- walking gait, foot lift, body weight, sensor movement, tool motion and recoil;
 - warm or cyan friendly lights distinct from organic enemies.
 
 ### Organic enemies

@@ -39,6 +39,8 @@ Before release-candidate status, representative opening, mid-game and late-game 
 - authored composition with no dominant debug/prototype labels;
 - unobstructed tactical camera framing;
 - coherent scale and silhouettes for player, robots, enemies and structures;
+- every friendly robot archetype has a distinct readable tool, sensor or cargo
+  silhouette at tactical-camera distance;
 - environment art that reads as an actual ruined urban place rather than isolated primitives;
 - strong material separation and lighting hierarchy;
 - animation that communicates weight, function and threat;

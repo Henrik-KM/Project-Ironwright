@@ -1,6 +1,7 @@
 extends SceneTree
 
 const MAIN_SCENE := preload("res://scenes/main_3d.tscn")
+const ROBOT_SCENE := preload("res://scenes/actors/robot_unit_3d.tscn")
 
 var failures: Array[String] = []
 
@@ -43,6 +44,22 @@ func _run_all() -> void:
         var robot := robots[0] as Node3D
         _expect(robot.get_node_or_null("ProceduralAnimator3D") is ProceduralAnimator3D, "Robots must receive procedural gait and recoil animation.")
         _expect(_model_has_details(robot), "Robots must receive additional role-readable detail.")
+        _expect(_find_named(robot, "ShoulderPlate") != null, "Robots must expose layered shoulder armour.")
+        _expect(_find_named(robot, "OpticLens") != null, "Robots must expose a readable optic lens.")
+        _expect(_find_named(robot, "CompanionCrown") != null, "The companion must expose a distinct crown silhouette.")
+
+    var role_samples: Array[RobotUnit3D] = []
+    var role_names := [&"salvager", &"guardian", &"scout", &"engineer"]
+    for index in role_names.size():
+        var sample := ROBOT_SCENE.instantiate() as RobotUnit3D
+        sample.configure(role_names[index], 1)
+        sample.position = Vector3(15.0 + float(index) * 2.4, 0.0, 10.0)
+        root.add_child(sample)
+        role_samples.append(sample)
+    await process_frame
+    for index in role_samples.size():
+        _expect(_role_model_has_details(role_samples[index], role_names[index]), "The %s robot must expose a role-readable high-detail silhouette." % role_names[index])
+        role_samples[index].queue_free()
 
     var veilstalker: Node3D
     for enemy in get_nodes_in_group("organic_enemies"):
@@ -107,3 +124,18 @@ func _model_has_details(actor: Node3D) -> bool:
 
 func _find_named(root: Node, node_name: String) -> Node:
     return root.find_child(node_name, true, false)
+
+
+func _role_model_has_details(robot: RobotUnit3D, role: StringName) -> bool:
+    if robot == null or robot.get_node_or_null("RobotModel") == null:
+        return false
+    match role:
+        &"salvager":
+            return _find_named(robot, "CargoLip") != null and _find_named(robot, "DismantlerTool") != null and _find_named(robot, "SalvageDrum") != null
+        &"guardian":
+            return _find_named(robot, "WeaponBarrel") != null and _find_named(robot, "WeaponMuzzle") != null and _find_named(robot, "ShieldRib") != null
+        &"scout":
+            return _find_named(robot, "ScoutFin") != null and _find_named(robot, "BeaconRing") != null and _find_named(robot, "ScoutOptic") != null
+        &"engineer":
+            return _find_named(robot, "PistonJoint") != null and _find_named(robot, "ToolHead") != null and _find_named(robot, "ForgeCoil") != null
+    return false

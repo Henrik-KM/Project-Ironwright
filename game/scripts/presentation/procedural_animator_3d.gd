@@ -112,7 +112,7 @@ func _process(delta: float) -> void:
     if subject.is_in_group(&"player_character"):
         _animate_mechromancer(movement_blend)
     elif subject.is_in_group(&"friendly_robots"):
-        _animate_robot(movement_blend)
+        _animate_robot(movement_blend, delta)
     elif subject.is_in_group(&"organic_enemies"):
         _animate_organic(movement_blend)
 
@@ -168,7 +168,7 @@ func _animate_mechromancer(movement_blend: float) -> void:
             arm.rotation.z += 0.22
 
 
-func _animate_robot(movement_blend: float) -> void:
+func _animate_robot(movement_blend: float, delta: float) -> void:
     var state := _state_name()
     var working := state in [&"salvaging", &"repairing", &"building"]
     var bob := absf(sin(phase * 2.0)) * 0.055 * movement_blend
@@ -190,6 +190,8 @@ func _animate_robot(movement_blend: float) -> void:
         weapon.position.z += recoil * 0.16
     for sensor in _nodes_with_prefix(model_root, "Sensor"):
         sensor.rotation.y += sin(idle_phase * 0.75 + deterministic_offset) * 0.18
+    for optic in _nodes_with_prefix(model_root, "Optic"):
+        optic.rotation.y += sin(idle_phase * 1.1 + deterministic_offset) * 0.08
     for cable in _nodes_with_prefix(model_root, "ExposedCable"):
         cable.rotation.z += sin(idle_phase * 2.2 + deterministic_offset) * 0.045
     for antenna in _nodes_with_prefix(model_root, "Antenna"):
@@ -200,6 +202,23 @@ func _animate_robot(movement_blend: float) -> void:
         for tool in _nodes_with_prefix(model_root, "Dismantler"):
             tool.rotation.y += idle_phase * 2.3
             tool.rotation.x += sin(idle_phase * 5.5) * 0.22
+
+    for drum in _nodes_with_prefix(model_root, "SalvageDrum"):
+        drum.rotation.x += delta * 0.9 if working else delta * 0.18
+    for joint in _nodes_with_prefix(model_root, "PistonJoint"):
+        joint.rotation.z += sin(idle_phase * 2.2 + deterministic_offset) * 0.08
+    for piston in _nodes_with_prefix(model_root, "WelderArm"):
+        piston.rotation.x += sin(idle_phase * 2.1 + deterministic_offset) * (0.08 if working else 0.025)
+    for piston in _nodes_with_prefix(model_root, "AssemblyArm"):
+        piston.rotation.x += cos(idle_phase * 1.9 + deterministic_offset) * (0.07 if working else 0.022)
+    for tool_head in _nodes_with_prefix(model_root, "ToolHead"):
+        tool_head.rotation.y += sin(idle_phase * 4.5 + deterministic_offset) * (0.18 if working else 0.04)
+    for coil in _nodes_with_prefix(model_root, "ForgeCoil"):
+        coil.rotation.y += delta * (2.2 if working else 0.55)
+    for fin in _nodes_with_prefix(model_root, "ScoutFin"):
+        fin.rotation.z += sin(idle_phase * 1.35 + deterministic_offset) * 0.035
+    for shield_rib in _nodes_with_prefix(model_root, "ShieldRib"):
+        shield_rib.rotation.x += sin(idle_phase * 1.4 + deterministic_offset) * 0.018
 
 
 func _animate_organic(movement_blend: float) -> void:
