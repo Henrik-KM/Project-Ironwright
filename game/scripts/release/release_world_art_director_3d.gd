@@ -34,6 +34,7 @@ func configure(next_world: Node3D, next_regions: WorldRegionDirector3D, next_set
 
 func _ready() -> void:
     add_to_group(&"release_world_art_director")
+    get_tree().node_added.connect(_on_node_added)
     _load_textures()
     dressing_root = Node3D.new()
     dressing_root.name = "ReleaseWorldDressing"
@@ -41,6 +42,15 @@ func _ready() -> void:
         world = get_parent() as Node3D
     world.add_child.call_deferred(dressing_root)
     call_deferred("_apply_release_art")
+
+
+func _on_node_added(node: Node) -> void:
+    # Actors, outpost upgrades and discovered-region dressing are created
+    # throughout a run. Keep the release material pass live instead of
+    # leaving late-created meshes on their greybox fallback materials.
+    if node == null:
+        return
+    call_deferred("_texture_subtree_id", node.get_instance_id())
 
 
 func _load_textures() -> void:
@@ -79,7 +89,16 @@ func _texture_recursive(node: Node) -> void:
         _texture_recursive(child)
 
 
+func _texture_subtree_id(instance_id: int) -> void:
+    var node := instance_from_id(instance_id) as Node
+    if node == null or not is_instance_valid(node) or node == dressing_root:
+        return
+    _texture_recursive(node)
+
+
 func _texture_mesh(mesh_instance: MeshInstance3D) -> void:
+    if mesh_instance.has_meta(&"release_material_family"):
+        return
     var category := _texture_category(mesh_instance)
     if category == &"" or not textures.has(category):
         return
@@ -98,6 +117,7 @@ func _texture_mesh(mesh_instance: MeshInstance3D) -> void:
         material.roughness = 0.58
     mesh_instance.material_override = material
     mesh_instance.visibility_range_end = 250.0
+    mesh_instance.set_meta(&"release_material_family", category)
     meshes_textured += 1
 
 

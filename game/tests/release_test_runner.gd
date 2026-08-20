@@ -28,6 +28,7 @@ func _run_all() -> void:
     _test_controller_and_accessibility(world)
     _test_release_assets_and_art(world)
     _test_content_breadth(world)
+    await _test_runtime_material_continuity(world)
     await _test_spatial_and_performance(world)
     _test_transactional_save_service()
     _test_unified_snapshot(world)
@@ -149,6 +150,23 @@ func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.balance_director.set_profile(&"brutal"), "Brutal profile must be selectable.")
     _expect(world.balance_director.regional_pressure_multiplier() > 1.0, "Brutal profile must increase regional pressure.")
     world.balance_director.set_profile(&"survival")
+
+
+func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
+    var textured_before := world.release_world_art.meshes_textured
+    var late_robot := world._spawn_robot(&"salvager", world.player.global_position + Vector3(3.0, 0.0, -3.0), 1)
+    var late_enemy := world._spawn_enemy(world.player.global_position + Vector3(-4.0, 0.0, -4.0), &"veilstalker")
+    await process_frame
+    await process_frame
+
+    var robot_core := late_robot.get_node_or_null("RobotModel/Chassis/ChassisCore") as MeshInstance3D
+    var enemy_core := late_enemy.get_node_or_null("OrganicModel/Torso/TorsoCore") as MeshInstance3D
+    _expect(robot_core != null and robot_core.get_meta(&"release_material_family", &"") == &"metal", "Late-fabricated robots must receive the release metal material pass.")
+    _expect(enemy_core != null and enemy_core.get_meta(&"release_material_family", &"") == &"chitin", "Late-spawned organic families must receive the release chitin material pass.")
+    _expect(world.release_world_art.meshes_textured > textured_before, "Runtime release art must texture meshes added after initial boot.")
+
+    late_robot.queue_free()
+    late_enemy.queue_free()
 
 
 func _test_spatial_and_performance(world: IronwrightReleaseWorld3D) -> void:

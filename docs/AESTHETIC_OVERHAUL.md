@@ -61,6 +61,12 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
   archive records, substation tanks, tenement laundry, greenhouse beds,
   market awnings, dock service decks, rail signals, brood ribs, survey optics,
   lab cases and cistern protocol pylons.
+- the release material pass remains live for late-created robots, organic
+  families, outpost upgrades and discovered-region dressing, so the visual
+  language does not regress after the opening scene.
+- friendly frames share a final inset-panel, fastener, cable-run and joint
+  collar finish while cargo, weapon, sensor and construction silhouettes
+  remain role-specific.
 
 Clutter must leave important routes readable from the high-angle camera.
 

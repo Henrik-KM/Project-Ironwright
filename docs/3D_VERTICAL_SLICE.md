@@ -70,6 +70,10 @@ It includes:
   structures while reducing distant regions to persistent beacons;
 - discovery-driven authored encounter dressing across the persistent regions,
   with each district receiving a specific human-scale functional vignette;
+- runtime material continuity for late-created actors, outpost upgrades and
+  discovered-region dressing;
+- a shared high-definition manufacturing finish on friendly frames with inset
+  panels, protected cable runs, joint collars and status lighting;
 - wrecked machinery and live salvage cables;
 - ruined buildings, roads, street lamps, vehicle wrecks, rubble, and North Ruins.
 
