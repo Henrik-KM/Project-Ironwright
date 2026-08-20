@@ -1,0 +1,102 @@
+name: Prepare and certify enemy tier progression v3
+
+on:
+  push:
+    branches:
+      - agent/enemy-tier-ecology-progression
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: enemy-tier-progression-certification
+  cancel-in-progress: true
+
+jobs:
+  prepare-certify-merge:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - name: Check out enemy-tier branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/enemy-tier-ecology-progression
+          fetch-depth: 0
+
+      - name: Apply all integration, hardening, and type-safety patches
+        run: python3 scripts/prepare_enemy_tier_progression_v3.py
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Set up Godot 4.7.1
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.1
+          use-dotnet: false
+          include-templates: false
+
+      - name: Validate browser reference and all static product contracts
+        run: npm run validate
+
+      - name: Import and parse the complete Godot project
+        run: godot --headless --path game --editor --quit
+
+      - name: Run population-driven enemy escalation tests
+        run: godot --headless --path game --script res://tests/enemy_tier_progression_test_runner.gd
+
+      - name: Run every existing native regression suite
+        run: |
+          set -euo pipefail
+          for test in \
+            game/tests/test_runner.gd \
+            game/tests/aesthetic_test_runner.gd \
+            game/tests/full_game_test_runner.gd \
+            game/tests/first_session_ux_test_runner.gd \
+            game/tests/complete_game_test_runner.gd \
+            game/tests/vertical_slice_intelligence_test_runner.gd \
+            game/tests/distributed_salvage_test_runner.gd \
+            game/tests/salvage_escort_test_runner.gd \
+            game/tests/organic_behaviour_test_runner.gd \
+            game/tests/presentation_reset_test_runner.gd \
+            game/tests/release_test_runner.gd; do
+            if [ -f "$test" ]; then
+              echo "Running $test"
+              godot --headless --path game --script "res://${test#game/}"
+            fi
+          done
+
+      - name: Commit exact validated source and remove branch-only workflows
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -f --ignore-unmatch \
+            .github/workflows/apply-enemy-tier-progression.yml \
+            .github/workflows/finalize-enemy-tier-progression.yml \
+            .github/workflows/certify-enemy-tier-progression.yml \
+            .github/workflows/harden-and-certify-enemy-tier.yml \
+            .github/workflows/prepare-certify-enemy-tier-v2.yml \
+            .github/workflows/prepare-certify-enemy-tier-v3.yml
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Validated source already matches the branch."
+          else
+            git commit -m "Certify population-driven enemy tier escalation"
+            git push origin HEAD:agent/enemy-tier-ecology-progression
+          fi
+
+      - name: Squash-merge validated implementation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr merge 11 \
+            --repo "$GITHUB_REPOSITORY" \
+            --squash \
+            --delete-branch \
+            --subject "Implement population-driven enemy tier escalation" \
+            --body "Add five population-capped organic tiers, exact 10:1 saturation transfer, continuously growing Tier-I pressure, physical reproductive nests, dynamic ecological operation effects, qualitatively smarter higher-tier behavior, autonomous low-tier suppression, command-map ecology intelligence, persistence, and deterministic regression tests."
