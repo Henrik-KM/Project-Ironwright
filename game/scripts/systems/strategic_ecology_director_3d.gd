@@ -52,8 +52,6 @@ func _update_regions() -> void:
             _spawn_regional_organism(region_id, local_count)
             active_total += 1
 
-        # Undisturbed districts slowly settle; repeatedly disturbed districts
-        # retain pressure. Suppression is handled by the landmark separately.
         var drift := -0.0025 if local_count <= target_count else 0.001
         if region_id == &"region.heartforge_district":
             drift += 0.0012
@@ -108,8 +106,6 @@ func _attempt_migration() -> void:
     var raw_route: Array = data.get("route_from_heartforge", [])
     if raw_route.size() < 2:
         return
-    # Migration enters along the route from the source side. It is a causal
-    # ecological movement, not a scheduled wave or countdown event.
     var source_point: Array = raw_route[raw_route.size() - 2]
     if source_point.size() < 3:
         return
@@ -117,7 +113,7 @@ func _attempt_migration() -> void:
     var pack_size := clampi(1 + int(floor(source_pressure)), 2, 4)
     for index in range(pack_size):
         var offset := Vector3(float(index - pack_size / 2) * 1.8, 0.0, float(index % 2) * 1.4)
-        _spawn_species(origin + offset, _species_for_region(source_id, index + spawn_serial))
+        _spawn_species(origin + offset, _species_for_region(source_id, index + spawn_serial), source_id, &"hunt")
     region_director.add_pressure(source_id, -0.035)
     var landmark := region_director.get_landmark(source_id)
     if landmark != null:
@@ -131,12 +127,47 @@ func _spawn_regional_organism(region_id: StringName, local_count: int) -> void:
     var angle := fmod(float(spawn_serial) * 2.399963, TAU)
     var distance := radius * (0.48 + fmod(float(spawn_serial * 13), 40.0) / 100.0)
     var position := center + Vector3(cos(angle) * distance, 0.0, sin(angle) * distance)
-    _spawn_species(position, _species_for_region(region_id, local_count + spawn_serial))
+    var species := _species_for_region(region_id, local_count + spawn_serial)
+    _spawn_species(position, species, region_id, _directive_for_region(region_id, species, local_count + spawn_serial))
 
 
-func _spawn_species(position: Vector3, species: StringName) -> void:
-    if spawn_enemy_callback.is_valid():
-        spawn_enemy_callback.call(position, species)
+func _spawn_species(position: Vector3, species: StringName, region_id: StringName = &"", directive: StringName = &"") -> Node:
+    if not spawn_enemy_callback.is_valid():
+        return null
+    var spawned: Variant = spawn_enemy_callback.call(position, species)
+    if spawned is OrganicEnemy3D:
+        var enemy := spawned as OrganicEnemy3D
+        var resolved_region := region_id if region_id != &"" else region_director.region_for_position(position)
+        var home := region_director.center(resolved_region)
+        var radius := maxf(10.0, region_director.radius(resolved_region) * 0.58)
+        var resolved_directive := directive if directive != &"" else _directive_for_region(resolved_region, species, spawn_serial)
+        enemy.configure_ecology(home, radius, resolved_directive)
+        enemy.set_meta(&"ecology_region", String(resolved_region))
+        enemy.set_meta(&"ecology_origin", "regional")
+        return enemy
+    return spawned as Node if spawned is Node else null
+
+
+func _directive_for_region(region_id: StringName, species: StringName, selector: int) -> StringName:
+    var data := region_director.get_region_data(region_id)
+    var kind := StringName(str(data.get("kind", "urban")))
+    if species in [&"broodmass", &"sporecaster"]:
+        return &"protect_nest"
+    if species == &"razorhound":
+        return &"hunt"
+    if species == &"veilstalker":
+        return &"scout"
+    if species == &"burrower":
+        return &"patrol"
+    match kind:
+        &"nest", &"endgame":
+            return &"protect_nest" if selector % 3 != 0 else &"hunt"
+        &"industrial", &"research":
+            return &"patrol" if selector % 2 == 0 else &"scout"
+        &"commercial":
+            return &"feed" if selector % 3 != 0 else &"scout"
+        _:
+            return &"roam" if selector % 3 != 0 else &"hunt"
 
 
 func _species_for_region(region_id: StringName, selector: int) -> StringName:
@@ -183,7 +214,7 @@ func pressure_summary() -> String:
 
 func to_dictionary() -> Dictionary:
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "spawn_serial": spawn_serial,
         "endgame_escalation": endgame_escalation,
         "migration_clock": migration_clock,
