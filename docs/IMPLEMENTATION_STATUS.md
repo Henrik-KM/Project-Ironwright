@@ -530,7 +530,8 @@ identities. Manual channels remain finish-before-save.
   the authored region palette, so district geometry remains readable outside
   the Heartforge lighting envelope;
 - practical energy follows the existing landmark presentation LOD and reduces
-  at distance without changing discovery, routing, ecology or save state;
+  at distance, while the 24m local falloff keeps moving actors readable across
+  a district apron without changing discovery, routing, ecology or save state;
 - live East Tenements review confirmed the residential walkways, hanging cloth,
   facade details and actor silhouettes remain readable in the remote blue-hour
   frame;

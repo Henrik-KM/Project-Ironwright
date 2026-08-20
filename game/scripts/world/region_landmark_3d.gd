@@ -301,7 +301,7 @@ func _add_region_practical_lights() -> void:
         practical_light.position = light_data[index][0]
         practical_light.light_color = light_data[index][1]
         practical_light.light_energy = 0.72
-        practical_light.omni_range = 16.0
+        practical_light.omni_range = 24.0
         practical_light.shadow_enabled = false
         _visual_root.add_child(practical_light)
         _practical_lights.append(practical_light)
