@@ -188,6 +188,10 @@ func _test_vertical_slice_presentation() -> void:
         if central != null:
             var shell := central.get_node_or_null("Shell") as MeshInstance3D
             _expect(shell != null and not shell.visible, "The old solid central-building shell must be hidden in the representative slice.")
+        var distant := city.get_node_or_null("RuinedBuilding04")
+        _expect(distant != null and distant.get_node_or_null("BuildingFacadeCrown") != null, "Distant city buildings must inherit the high-definition facade kit rather than remain unbroken boxes.")
+        _expect(city.get_node_or_null("HighDefinitionStreetEdges") != null, "The city street grid must have authored curb edges at tactical scale.")
+        _expect(city.get_node_or_null("VehicleWreck00/VehicleBrokenGlass") != null, "Vehicle wrecks must carry layered presentation detail beyond a single block.")
 
     var player_art := world.player.get_node_or_null("MechromancerModel/VerticalSliceCharacterArt")
     var companion_art := world.companion.get_node_or_null("RobotModel/VerticalSliceMachineArt")
