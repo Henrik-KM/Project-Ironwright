@@ -462,6 +462,18 @@ identities. Manual channels remain finish-before-save.
   review confirmed the late authored shell remains legible inside the darker
   organic palette, without adding collision, objectives or management work.
 
+## Focused Heartforge service-surface readability milestone
+
+- replaced the broad emissive assembly plate with a recessed high-definition
+  service surface and three dark access slots;
+- reduced the cyan service-material bloom so the plate reads as powered
+  hardware without flattening into a white screen in the tactical frame;
+- live opening-run review confirmed the Heartforge, Mechromancer and Bulwark
+  retain their visual hierarchy while the forge interaction surface remains
+  legible;
+- the broader opening composition remains pre-alpha and still requires the
+  final lighting/material pass plus explicit human acceptance.
+
 ## Focused contextual tactical-HUD milestone
 
 - the permanent control legend now clears after the onboarding window instead

@@ -126,7 +126,7 @@ Automated presence tests only prove the slice exists technically. Actual screens
 The presentation milestones proceed in this order:
 
 1. camera, world-label and HUD cleanup — implemented, still subject to review;
-2. authored Heartforge district composition — vertical slice implemented, awaiting visual review;
+2. authored Heartforge district composition — vertical slice implemented, with live review now confirming the forge service surface no longer blooms into a dominant white card; full opening composition acceptance is still outstanding;
 3. production Mechromancer and Bulwark silhouettes — authored Mechromancer plus an authored Bulwark glTF shell with layered chassis, protection hardware, stable sockets and deterministic runtime animation; the Mechromancer now has a finished asymmetric field-kit pass with communications hardware, and the Bulwark retains its explicit shield-emitter/guard signature, with further authored refinement expected;
 4. one production-quality Warden/Scrapper/Pathfinder family pass — the Warden now has an authored high-definition guardian shell with protected autocannon and heat-exchanger language, the Scrapper now has an authored cargo/tool shell with salvage hardware, Pathfinder now has an authored survey shell with mast/dish/optic language, and Engineer now has an authored construction/tool shell; further refinement remains expected;
 5. complete organic enemy families with authored movement and attack language — Veilstalker, Razorhound, Sporecaster, Broodmass, Burrower, Skitterling and the Cistern Apex now have authored glTF shells plus state-driven stalking/attack presentation; live acceptance completed for representative opening frames, with broader hostile-family review still required;
