@@ -39,6 +39,7 @@ func _ready() -> void:
         hud.notification_ages.clear()
         hud._refresh_notifications()
         hud.push_notification("PRE-ALPHA VERTICAL SLICE · HEARTFORGE DISTRICT PRESENTATION IN ACTIVE PRODUCTION")
+    run_state.log_event("Presentation status: pre-alpha production prototype. The Heartforge district is the current representative vertical slice.")
     run_state.log_event("The Heartforge district now uses the representative vertical presentation slice. The remainder of the world inherits this quality only after the slice passes human review.")
 
 
