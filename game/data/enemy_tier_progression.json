@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "system_id": "population_driven_enemy_escalation",
+  "simulation": {
+    "tick_seconds": 1.0,
+    "saturation_transfer_factor": 0.1,
+    "tier_1_rate_growth_per_minute_per_minute": 1.0,
+    "tier_1_rate_growth_floor": 0.15,
+    "spawn_credit_cap": 3.0,
+    "maximum_materializations_per_tick": 4,
+    "top_tier_dormant_at_cap": true,
+    "population_refresh_seconds": 1.0,
+    "nest_maturity_per_minute": 0.004,
+    "nest_spawn_radius_min": 2.4,
+    "nest_spawn_radius_max": 6.2
+  },
+  "tiers": {
+    "1": {
+      "display_name": "Feral",
+      "intelligence_label": "primitive roaming",
+      "unit_cap": 100,
+      "initial_replenishment_per_minute": 1.0,
+      "initial_spawn_credit": 7.0,
+      "behaviour_profile": "feral",
+      "health_multiplier": 0.78,
+      "damage_multiplier": 0.72,
+      "speed_multiplier": 0.68,
+      "detection_multiplier": 0.78,
+      "species_weights": {
+        "skitterling": 1.0
+      }
+    },
+    "2": {
+      "display_name": "Territorial",
+      "intelligence_label": "nest defence and patrol",
+      "unit_cap": 40,
+      "initial_replenishment_per_minute": 0.0,
+      "initial_spawn_credit": 0.0,
+      "behaviour_profile": "territorial",
+      "health_multiplier": 0.94,
+      "damage_multiplier": 0.9,
+      "speed_multiplier": 0.9,
+      "detection_multiplier": 0.96,
+      "species_weights": {
+        "razorhound": 0.5,
+        "roofleaper": 0.27,
+        "glassmoth": 0.23
+      }
+    },
+    "3": {
+      "display_name": "Predatory",
+      "intelligence_label": "scouting, hunting and pack memory",
+      "unit_cap": 16,
+      "initial_replenishment_per_minute": 0.0,
+      "initial_spawn_credit": 0.0,
+      "behaviour_profile": "predatory",
+      "health_multiplier": 1.0,
+      "damage_multiplier": 1.0,
+      "speed_multiplier": 1.0,
+      "detection_multiplier": 1.08,
+      "species_weights": {
+        "veilstalker": 0.38,
+        "burrower": 0.32,
+        "sporecaster": 0.3
+      }
+    },
+    "4": {
+      "display_name": "Strategic",
+      "intelligence_label": "route interception and priority targeting",
+      "unit_cap": 6,
+      "initial_replenishment_per_minute": 0.0,
+      "initial_spawn_credit": 0.0,
+      "behaviour_profile": "strategic",
+      "health_multiplier": 1.08,
+      "damage_multiplier": 1.08,
+      "speed_multiplier": 1.02,
+      "detection_multiplier": 1.18,
+      "species_weights": {
+        "broodmass": 0.28,
+        "miremaw": 0.24,
+        "carrionbell": 0.24,
+        "rootweaver": 0.24
+      }
+    },
+    "5": {
+      "display_name": "Apex",
+      "intelligence_label": "regional strategic predator",
+      "unit_cap": 2,
+      "initial_replenishment_per_minute": 0.0,
+      "initial_spawn_credit": 0.0,
+      "behaviour_profile": "apex",
+      "health_multiplier": 1.18,
+      "damage_multiplier": 1.16,
+      "speed_multiplier": 1.04,
+      "detection_multiplier": 1.28,
+      "species_weights": {
+        "apex": 1.0
+      }
+    }
+  },
+  "nest_profiles": {
+    "local_minor": {
+      "display_name": "Feral Brood Nest",
+      "maximum_health": 185,
+      "supported_tiers": [1, 2],
+      "initial_maturity": 0.35,
+      "territory_radius": 24.0,
+      "spawn_weight": 1.0,
+      "destroy_replenishment_delta_per_minute": {"1": -0.5},
+      "destroy_tier_1_growth_delta": -0.08
+    },
+    "regional_standard": {
+      "display_name": "Regional Brood Site",
+      "maximum_health": 340,
+      "supported_tiers": [1, 2, 3],
+      "initial_maturity": 0.55,
+      "territory_radius": 34.0,
+      "spawn_weight": 1.2,
+      "destroy_replenishment_delta_per_minute": {"1": -0.8, "2": -0.06},
+      "destroy_tier_1_growth_delta": -0.06
+    },
+    "regional_advanced": {
+      "display_name": "Mature Brood Colony",
+      "maximum_health": 560,
+      "supported_tiers": [1, 2, 3, 4],
+      "initial_maturity": 0.72,
+      "territory_radius": 42.0,
+      "spawn_weight": 1.45,
+      "destroy_replenishment_delta_per_minute": {"1": -1.25, "2": -0.12, "3": -0.025},
+      "destroy_tier_1_growth_delta": -0.1
+    },
+    "endgame_root": {
+      "display_name": "Root Cistern Birth Organ",
+      "maximum_health": 920,
+      "supported_tiers": [1, 2, 3, 4, 5],
+      "initial_maturity": 0.9,
+      "territory_radius": 54.0,
+      "spawn_weight": 1.8,
+      "destroy_replenishment_delta_per_minute": {"1": -1.8, "2": -0.2, "3": -0.05, "4": -0.01},
+      "destroy_tier_1_growth_delta": -0.12
+    }
+  },
+  "density_labels": [
+    {"maximum_fraction": 0.15, "label": "trace"},
+    {"maximum_fraction": 0.4, "label": "sparse"},
+    {"maximum_fraction": 0.7, "label": "established"},
+    {"maximum_fraction": 0.9, "label": "dense"},
+    {"maximum_fraction": 1.0, "label": "saturated"}
+  ]
+}
