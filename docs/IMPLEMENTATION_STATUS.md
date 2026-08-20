@@ -234,6 +234,15 @@ identities. Manual channels remain finish-before-save.
   add placement, power-grid or recurring maintenance work;
 - aesthetic coverage verifies the tier-5 result and its lower-tier landmarks.
 
+## Focused persistent-region atmosphere milestone
+
+- a presentation-only director resolves the player’s physical position against
+  the authored region registry;
+- sanctuary, industrial, commercial, nest, research and endgame families now
+  carry distinct ambient, fog, grading and glow targets with smooth crossing;
+- native coverage verifies the West Grid transition and palette separation
+  without changing discovery, pressure, routing or player obligations.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

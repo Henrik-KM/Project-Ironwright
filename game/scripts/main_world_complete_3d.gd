@@ -1,7 +1,10 @@
 class_name IronwrightCompleteGameWorld3D
 extends IronwrightFullGameWorld3D
 
+const REGION_ATMOSPHERE_SCRIPT := preload("res://scripts/presentation/region_atmosphere_director_3d.gd")
+
 var region_director: WorldRegionDirector3D
+var region_atmosphere_director: RegionAtmosphereDirector3D
 var long_operation_director: LongRangeOperationDirector3D
 var machine_society_director: MachineSocietyDirector3D
 var strategic_ecology_director: StrategicEcologyDirector3D
@@ -83,6 +86,12 @@ func _setup_complete_game_services() -> void:
     region_director.process_mode = Node.PROCESS_MODE_PAUSABLE
     region_director.configure(self)
     add_child(region_director)
+
+    region_atmosphere_director = REGION_ATMOSPHERE_SCRIPT.new() as RegionAtmosphereDirector3D
+    region_atmosphere_director.name = "RegionAtmosphereDirector"
+    region_atmosphere_director.process_mode = Node.PROCESS_MODE_ALWAYS
+    region_atmosphere_director.configure(self, region_director, player)
+    add_child(region_atmosphere_director)
 
     long_operation_director = LongRangeOperationDirector3D.new()
     long_operation_director.name = "LongRangeOperationDirector"
