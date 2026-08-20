@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "operations": {
+    "operation.west_grid_survey": {
+      "replenishment_delta_per_minute": {"1": 1.25, "2": 0.08},
+      "tier_1_growth_delta": 0.02,
+      "reason": "The West Grid survey disturbed dormant industrial brood corridors."
+    },
+    "operation.east_tenement_roofline": {
+      "replenishment_delta_per_minute": {"1": 0.7},
+      "reason": "Roofline scouting exposed the machine routes to territorial organisms."
+    },
+    "operation.tram_graveyard_recovery": {
+      "replenishment_delta_per_minute": {"1": 1.1, "2": 0.1},
+      "tier_1_growth_delta": 0.015,
+      "reason": "Cutting the tram servo bank awakened brood sites beneath the maintenance pits."
+    },
+    "operation.glasshouse_spore_harvest": {
+      "replenishment_delta_per_minute": {"1": 1.6, "2": 0.13},
+      "tier_1_growth_delta": 0.025,
+      "reason": "Harvesting the Glasshouse lattice dispersed reproductive spores."
+    },
+    "operation.flood_market_recovery": {
+      "replenishment_delta_per_minute": {"1": 2.0, "2": 0.18},
+      "tier_1_growth_delta": 0.03,
+      "spawn_credit_delta": {"1": 0.8},
+      "reason": "Removing the Vital Membrane destabilized the Flood Market ecology."
+    },
+    "operation.riverworks_pump_recovery": {
+      "replenishment_delta_per_minute": {"1": -0.8, "2": -0.06},
+      "tier_1_growth_delta": -0.02,
+      "reason": "Restarting the Riverworks pump destroyed a flooded breeding basin."
+    },
+    "operation.cathedral_brood_suppression": {
+      "replenishment_delta_per_minute": {"1": -1.2, "2": -0.12, "3": -0.03},
+      "tier_1_growth_delta": -0.03,
+      "reason": "Silencing the Cathedral Brood removed a major regional reproductive organ."
+    },
+    "operation.observatory_migration_map": {
+      "replenishment_delta_per_minute": {"1": 1.2, "3": 0.08},
+      "reason": "The restored observatory transmission attracted scouts from distant territories."
+    },
+    "operation.buried_lab_excavation": {
+      "replenishment_delta_per_minute": {"1": 2.8, "2": 0.25, "3": 0.04},
+      "tier_1_growth_delta": 0.05,
+      "spawn_credit_delta": {"2": 0.5},
+      "reason": "Excavating the Genome Prism awakened deep laboratory populations."
+    },
+    "operation.root_cistern_mapping": {
+      "replenishment_delta_per_minute": {"1": 3.5, "2": 0.35, "3": 0.06},
+      "tier_1_growth_delta": 0.06,
+      "spawn_credit_delta": {"3": 0.5},
+      "reason": "Mapping the Root Cistern exposed the machine society to the coordinating ecology."
+    },
+    "operation.apex_lure": {
+      "replenishment_delta_per_minute": {"4": -0.03, "5": -0.015},
+      "reason": "The Cistern Apex was drawn away from the final approach."
+    },
+    "operation.post_victory_archive": {
+      "replenishment_delta_per_minute": {"1": 0.25},
+      "reason": "Archive recovery caused limited local disturbance after first victory."
+    }
+  },
+  "technologies": {
+    "tech.heartforge.tier_2": {
+      "replenishment_delta_per_minute": {"1": 0.8},
+      "tier_1_growth_delta": 0.01,
+      "reason": "Heartforge Tier II created a stronger machine signature."
+    },
+    "tech.heartforge.tier_3": {
+      "replenishment_delta_per_minute": {"1": 1.5, "2": 0.08},
+      "tier_1_growth_delta": 0.02,
+      "reason": "Heartforge Tier III disturbed multiple connected territories."
+    },
+    "tech.heartforge.tier_4": {
+      "replenishment_delta_per_minute": {"1": 2.2, "2": 0.15, "3": 0.025},
+      "tier_1_growth_delta": 0.035,
+      "reason": "Heartforge Tier IV became legible to advanced predators."
+    },
+    "tech.heartforge.tier_5": {
+      "replenishment_delta_per_minute": {"1": 3.0, "2": 0.22, "3": 0.04, "4": 0.008},
+      "tier_1_growth_delta": 0.05,
+      "reason": "Heartforge Tier V activated a town-scale biological response."
+    },
+    "tech.machine.forge_assistance": {
+      "replenishment_delta_per_minute": {"1": 0.6},
+      "reason": "Automated fabrication increased the sanctuary's continuous mechanical activity."
+    },
+    "tech.doctrine.deep_operations": {
+      "replenishment_delta_per_minute": {"2": 0.08, "3": 0.02},
+      "reason": "Deep-operation doctrine made remote machine routes more predictable to hunters."
+    },
+    "tech.endgame.severance": {
+      "replenishment_delta_per_minute": {"3": 0.08, "4": 0.025, "5": 0.01},
+      "reason": "Severance research provoked the most sophisticated ecological forms."
+    },
+    "tech.endgame.containment": {
+      "replenishment_delta_per_minute": {"2": 0.1, "3": 0.04, "4": 0.015},
+      "reason": "Containment research caused a slower but broader ecological adaptation."
+    }
+  },
+  "endgame": {
+    "protocol.severance": {
+      "replenishment_delta_per_minute": {"2": 0.35, "3": 0.12, "4": 0.045, "5": 0.02},
+      "spawn_credit_delta": {"3": 1.0, "4": 0.5},
+      "reason": "The active Severance protocol triggered an immediate advanced response."
+    },
+    "protocol.containment": {
+      "replenishment_delta_per_minute": {"1": 2.0, "2": 0.2, "3": 0.07, "4": 0.025},
+      "spawn_credit_delta": {"2": 1.0, "3": 0.5},
+      "reason": "The active Containment protocol drew organisms from across the network."
+    }
+  }
+}
