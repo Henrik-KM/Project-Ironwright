@@ -3,6 +3,7 @@ extends SceneTree
 const MAIN_SCENE := preload("res://scenes/main_3d.tscn")
 const ROBOT_SCENE := preload("res://scenes/actors/robot_unit_3d.tscn")
 const ENEMY_SCENE := preload("res://scenes/actors/organic_enemy_3d.tscn")
+const OUTPOST_SCENE := preload("res://scenes/world/outpost_3d.tscn")
 
 var failures: Array[String] = []
 
@@ -221,6 +222,23 @@ func _run_all() -> void:
     _expect(_find_named(evolved_robot, "Tier3CrownRing") != null and _find_named(evolved_robot, "Tier3CrownBeacon") != null, "Level 3 frames must culminate in a readable crown and status beacons.")
     evolved_robot.queue_free()
 
+    var outpost_samples: Array[Outpost3D] = []
+    var outpost_roles := [&"resource", &"defence", &"scout", &"repair"]
+    for index in outpost_roles.size():
+        var outpost := OUTPOST_SCENE.instantiate() as Outpost3D
+        outpost.configure(StringName("aesthetic.site.%d" % index), outpost_roles[index], 3, world.run_state)
+        outpost.position = Vector3(42.0 + float(index) * 7.0, 0.0, 12.0)
+        root.add_child(outpost)
+        outpost_samples.append(outpost)
+    await process_frame
+    for index in outpost_samples.size():
+        var sample := outpost_samples[index]
+        _expect(_find_named(sample, "OutpostRoleSignature") != null, "Outposts must expose one bounded role-signature presentation root.")
+        _expect(_find_named(sample, "CoreShelterCore") != null and _find_named(sample, "CoreVent") != null, "Outposts must use the high-definition shelter and service-surface treatment.")
+        _expect(_find_named(sample, "TierFrame1") != null and _find_named(sample, "TierFrame2") != null and _find_named(sample, "TierFrame3") != null, "Tier 3 outposts must expose three stable structural frames.")
+        _expect(_outpost_model_has_details(sample, outpost_roles[index]), "The %s outpost must expose a role-readable high-detail silhouette." % outpost_roles[index])
+        sample.queue_free()
+
     var enemy_samples: Array[OrganicEnemy3D] = []
     var species_names := [&"skitterling", &"razorhound", &"roofleaper", &"glassmoth", &"veilstalker", &"burrower", &"sporecaster", &"broodmass", &"miremaw", &"carrionbell", &"rootweaver", &"apex"]
     var sample_player := get_first_node_in_group("player_character") as Node3D
@@ -352,6 +370,21 @@ func _role_model_has_details(robot: RobotUnit3D, role: StringName) -> bool:
             return _find_named(robot, "ScoutFin") != null and _find_named(robot, "BeaconRing") != null and _find_named(robot, "ScoutOptic") != null and _find_named(robot, "PathfinderSensorPod") != null
         &"engineer":
             return _find_named(robot, "PistonJoint") != null and _find_named(robot, "ToolHead") != null and _find_named(robot, "ForgeCoil") != null
+    return false
+
+
+func _outpost_model_has_details(outpost: Outpost3D, role: StringName) -> bool:
+    if outpost == null or outpost.get_node_or_null("OutpostModel") == null:
+        return false
+    match role:
+        &"resource":
+            return _find_named(outpost, "ResourceHopper") != null and _find_named(outpost, "ResourceHopperLouver") != null and _find_named(outpost, "ResourceExtractorArm") != null
+        &"defence":
+            return _find_named(outpost, "DefenceTurretHousing") != null and _find_named(outpost, "DefenceBarrel") != null and _find_named(outpost, "DefenceMuzzleGlow") != null
+        &"scout":
+            return _find_named(outpost, "ScoutSensorHousing") != null and _find_named(outpost, "ScoutSensorDish") != null and _find_named(outpost, "ScoutDishRib") != null
+        &"repair":
+            return _find_named(outpost, "RepairPad") != null and _find_named(outpost, "RepairPadPanel") != null and _find_named(outpost, "RepairFieldEmitter") != null
     return false
 
 

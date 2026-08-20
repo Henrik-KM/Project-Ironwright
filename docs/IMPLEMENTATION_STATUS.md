@@ -724,6 +724,20 @@ identities. Manual channels remain finish-before-save.
 - live presentation-gallery review confirmed the five previously thin families
   now have distinct, readable silhouettes at gameplay scale.
 
+## Focused autonomous-outpost presentation milestone
+
+- upgraded the existing four autonomous outpost roles with high-definition
+  hard-surface treatment, including beveled shelters, service panels, vents,
+  role-specific machinery and readable tier frames;
+- retained one bounded `OutpostRoleSignature` assembly per outpost so role
+  identity is visible without introducing worker, queue, inventory or power
+  management;
+- preserved the existing outpost save, repair, combat, haul and rebuild
+  contracts while adding aesthetic coverage for Resource, Defence, Scout and
+  Repair role silhouettes at tier 3;
+- live presentation review remains required for the next authored encounter
+  space/content pass; this milestone does not claim final retail art.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.
