@@ -130,6 +130,9 @@ organic enemies remain procedural until their own production asset milestones.
 - the Scrapper salvager now uses an original authored glTF shell with a deep
   cargo hopper, paired dismantler arms, magnetic claws, intake head and salvage
   drum; its stable contract is recorded in `game/data/scrapper_asset_manifest.json`;
+- the Pathfinder scout now uses an original authored glTF shell with asymmetric
+  fins, paired optics, protected sensor pod, survey mast, dish and beacon ring;
+  its stable contract is recorded in `game/data/pathfinder_asset_manifest.json`;
 - role-specific salvager cargo and dismantler tooling, guardian weapon and
   shield forms, scout fins and sensor mast, and engineer cradle, pistons and
   forge tooling;

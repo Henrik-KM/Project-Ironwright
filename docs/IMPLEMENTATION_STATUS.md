@@ -422,6 +422,21 @@ identities. Manual channels remain finish-before-save.
 - added native aesthetic coverage for the authored shell and salvage role
   silhouette.
 
+## Focused Pathfinder authored-shell milestone
+
+- replaced the scout's procedural base silhouette with the original
+  high-definition `pathfinder.scout.v1` glTF shell, preserving stable sensor,
+  survey-mast, scout-optic and beacon presentation sockets;
+- added asymmetric fins, paired optics, a protected sensor pod, tall survey mast,
+  dish, hub and beacon ring;
+- recorded the runtime/source/animation contract in
+  `game/data/pathfinder_asset_manifest.json` and
+  `game/assets/pathfinder/source/README.md`;
+- kept the finish presentation-only: route selection, physical travel,
+  formation screening, reduced-detail simulation and save state are unchanged;
+- added native aesthetic coverage for the authored shell and scout role
+  silhouette.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.
