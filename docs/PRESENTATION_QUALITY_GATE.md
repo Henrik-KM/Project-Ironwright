@@ -130,10 +130,10 @@ The presentation milestones proceed in this order:
 3. production Mechromancer and Bulwark silhouettes — authored Mechromancer plus an authored Bulwark glTF shell with layered chassis, protection hardware, stable sockets and deterministic runtime animation; the Mechromancer now has a finished asymmetric field-kit pass with communications hardware, and the Bulwark retains its explicit shield-emitter/guard signature, with further authored refinement expected;
 4. one production-quality Warden/Scrapper/Pathfinder family pass — the Warden now has an authored high-definition guardian shell with protected autocannon and heat-exchanger language, the Scrapper now has an authored cargo/tool shell with salvage hardware, Pathfinder now has an authored survey shell with mast/dish/optic language, and Engineer now has an authored construction/tool shell; further refinement remains expected;
 5. complete organic enemy families with authored movement and attack language — Veilstalker, Razorhound, Sporecaster, Broodmass, Burrower, Skitterling and the Cistern Apex now have authored glTF shells plus state-driven stalking/attack presentation; live acceptance completed for representative opening frames, with broader hostile-family review still required;
-6. cohesive urban modular kit with damaged facades, interiors, street furniture and vegetation — opening route set-piece pass implemented, and the late Root Cistern now has an authored root-organ landmark shell; broader district breadth still required;
+6. cohesive urban modular kit with damaged facades, interiors, street furniture and vegetation — opening route set-piece pass implemented, every remote landmark now has a bounded presentation-only district apron and the late Root Cistern has an authored root-organ shell; broader district breadth still required;
 7. final lighting/material pass for the opening district;
 8. human visual acceptance of representative opening gameplay;
-9. repeat the accepted bar across mid- and late-game regions;
+9. repeat the accepted bar across mid- and late-game regions — representative West Grid and Root Cistern live review now passes for framing and landmark readability, with the remaining region families still requiring review;
 10. only then expand asset breadth further.
 
 Breadth must not outrun quality again.

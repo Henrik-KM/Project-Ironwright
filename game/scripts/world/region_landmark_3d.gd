@@ -366,10 +366,38 @@ func _add_region_surface_finish() -> void:
     var finish := Node3D.new()
     finish.name = "AuthoredDistrictSurfaceFinish"
     _visual_root.add_child(finish)
+    var district_ground := ModelKit3D.material(Color("26363a"), 0.38, 0.78)
+    var district_inset := ModelKit3D.material(Color("1b2529"), 0.62, 0.88)
     var finish_metal := ModelKit3D.material(Color("3d4b4f"), 0.58, 0.46)
     var finish_dark := ModelKit3D.material(Color("20282b"), 0.76, 0.38)
     var finish_rust := ModelKit3D.material(Color("864a32"), 0.32, 0.7)
     var finish_glow := ModelKit3D.material(_region_color().darkened(0.5), 0.3, 0.42, _region_color(), 1.25)
+
+    # Remote districts need a readable foreground when the player reaches
+    # them physically. This is presentation-only geometry: it creates no
+    # collision, resources, routing or additional player-managed structure.
+    ModelKit3D.add_beveled_box(
+        finish,
+        Vector3(38.0, 0.16, 34.0),
+        Vector3(0.0, 0.08, 0.0),
+        district_ground,
+        Vector3.ZERO,
+        "RegionalGroundApron",
+        0.26
+    )
+    ModelKit3D.add_beveled_box(
+        finish,
+        Vector3(30.0, 0.06, 24.0),
+        Vector3(0.0, 0.19, 0.0),
+        district_inset,
+        Vector3.ZERO,
+        "RegionalGroundInset",
+        0.18
+    )
+    ModelKit3D.add_beveled_box(finish, Vector3(33.0, 0.12, 0.18), Vector3(0.0, 0.25, -15.9), finish_glow, Vector3.ZERO, "RegionalFrontMarker", 0.08)
+    ModelKit3D.add_beveled_box(finish, Vector3(33.0, 0.12, 0.18), Vector3(0.0, 0.25, 15.9), finish_glow, Vector3.ZERO, "RegionalRearMarker", 0.08)
+    ModelKit3D.add_beveled_box(finish, Vector3(0.18, 0.12, 30.0), Vector3(-17.9, 0.25, 0.0), finish_glow, Vector3.ZERO, "RegionalLeftMarker", 0.08)
+    ModelKit3D.add_beveled_box(finish, Vector3(0.18, 0.12, 30.0), Vector3(17.9, 0.25, 0.0), finish_glow, Vector3.ZERO, "RegionalRightMarker", 0.08)
 
     match region_kind:
         &"archive":
