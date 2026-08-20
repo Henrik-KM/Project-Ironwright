@@ -51,6 +51,9 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
 - the systemic city grid carries a shared curb and facade-edge kit, while
   vehicle wrecks use layered glass, wheel and body treatment without changing
   their collision or salvage contracts.
+- persistent archive, tenement, greenhouse, waterfront, rail and observatory
+  regions now carry their own structural landmark signatures instead of
+  falling back to generic urban ruin geometry.
 
 Clutter must leave important routes readable from the high-angle camera.
 

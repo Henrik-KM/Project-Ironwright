@@ -117,6 +117,22 @@ func _test_world_labels_are_not_screen_fixed() -> void:
     _expect(landmark._label.visible, "District names should appear when the player deliberately enters command-map mode.")
     landmark.free()
 
+    for kind in [&"archive", &"tenement", &"greenhouse", &"waterfront", &"rail", &"observatory"]:
+        var identity_landmark := REGION_SCRIPT.new() as RegionLandmark3D
+        identity_landmark.configure({
+            "id": "region.%s.test" % String(kind),
+            "display_name": "%s Test District" % String(kind).capitalize(),
+            "kind": String(kind),
+            "center": [60.0 + float(identity_landmark.get_instance_id() % 30), 0.0, 60.0],
+            "radius": 20.0,
+            "initially_discovered": true,
+            "base_pressure": 0.8,
+        })
+        root.add_child(identity_landmark)
+        await process_frame
+        _expect(identity_landmark.get_node_or_null("PersistentRegionGeometry/%sIdentityDetails" % String(kind.capitalize())) != null, "%s regions must have an identity-specific landmark signature." % String(kind))
+        identity_landmark.free()
+
 
 func _test_prealpha_hud_is_quiet() -> void:
     var world := MAIN_SCENE.instantiate() as IronwrightReleaseWorld3D
