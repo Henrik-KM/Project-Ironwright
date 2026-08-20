@@ -543,8 +543,9 @@ func to_dictionary() -> Dictionary:
     for site in sites:
         serialized_sites.append(site.to_dictionary())
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "sites": serialized_sites,
+        "active_operation": _serialize_active_operation(),
     }
 
 
@@ -565,6 +566,7 @@ func restore_from_dictionary(data: Dictionary) -> void:
             var tier := int(outpost_data.get("tier", 1))
             var outpost := _spawn_outpost(site, role, tier)
             outpost.restore_from_dictionary(outpost_data)
+    _restore_active_operation(data.get("active_operation", {}))
 
 
 func clear_outposts() -> void:
@@ -575,6 +577,92 @@ func clear_outposts() -> void:
             outpost.free()
     for site in sites:
         site.outpost = null
+
+
+func _serialize_active_operation() -> Dictionary:
+    if operation.is_empty():
+        return {}
+    var route_values: Array = []
+    var route: PackedVector3Array = operation.get("route", PackedVector3Array())
+    for point in route:
+        route_values.append(_vector_to_array(point))
+    var member_names: Array[String] = []
+    for member in operation.get("members", []):
+        if is_instance_valid(member) and member is RobotUnit3D:
+            member_names.append(String((member as RobotUnit3D).name))
+    var site := operation.get("site") as OutpostSite3D
+    return {
+        "kind": String(operation.get("kind", &"build")),
+        "state": String(operation.get("state", &"outbound")),
+        "site_id": String(site.site_id) if site != null else "",
+        "member_names": member_names,
+        "role": String(operation.get("role", &"resource")),
+        "target_tier": int(operation.get("target_tier", 1)),
+        "committed_scrap": int(operation.get("committed_scrap", 0)),
+        "route": route_values,
+        "route_index": int(operation.get("route_index", 1)),
+        "anchor": _vector_to_array(operation.get("anchor", heartforge.global_position)),
+        "last_forward": _vector_to_array(operation.get("last_forward", Vector3.FORWARD)),
+        "work_clock": float(operation.get("work_clock", 0.0)),
+        "noise_clock": float(operation.get("noise_clock", 0.0)),
+        "cargo": int(operation.get("cargo", 0)),
+    }
+
+
+func _restore_active_operation(raw_data: Variant) -> void:
+    if not (raw_data is Dictionary):
+        return
+    var saved := raw_data as Dictionary
+    var site := get_site(StringName(str(saved.get("site_id", ""))))
+    if site == null or not site.discovered:
+        return
+    var members: Array[RobotUnit3D] = []
+    for raw_name in saved.get("member_names", []):
+        var member := _find_robot_by_name(str(raw_name))
+        if member != null and member.is_alive() and member not in members:
+            members.append(member)
+    if members.is_empty():
+        return
+    var route := PackedVector3Array()
+    for raw_point in saved.get("route", []):
+        route.append(_array_to_vector(raw_point))
+    operation = {
+        "kind": StringName(str(saved.get("kind", "build"))),
+        "state": StringName(str(saved.get("state", "outbound"))),
+        "site": site,
+        "members": members,
+        "role": StringName(str(saved.get("role", "resource"))),
+        "target_tier": maxi(1, int(saved.get("target_tier", 1))),
+        "committed_scrap": maxi(0, int(saved.get("committed_scrap", 0))),
+        "route": route,
+        "route_index": maxi(1, int(saved.get("route_index", 1))),
+        "anchor": _array_to_vector(saved.get("anchor", [heartforge.global_position.x, heartforge.global_position.y, heartforge.global_position.z])),
+        "last_forward": _array_to_vector(saved.get("last_forward", [0.0, 0.0, -1.0])),
+        "work_clock": maxf(0.0, float(saved.get("work_clock", 0.0))),
+        "noise_clock": maxf(0.0, float(saved.get("noise_clock", 0.0))),
+        "cargo": maxi(0, int(saved.get("cargo", 0))),
+    }
+    for index in range(members.size()):
+        members[index].set_group(StringName("outpost_%s" % String(operation.get("kind", &"build"))), index)
+    autonomy_director.set_process(false)
+    operation_changed.emit(StringName(operation.get("kind", &"outpost")), StringName(operation.get("state", &"outbound")), "The saved outpost convoy resumed its physical route.")
+
+
+func _find_robot_by_name(robot_name: String) -> RobotUnit3D:
+    for node in get_tree().get_nodes_in_group(&"friendly_robots"):
+        if node is RobotUnit3D and String((node as RobotUnit3D).name) == robot_name:
+            return node as RobotUnit3D
+    return null
+
+
+func _vector_to_array(value: Vector3) -> Array[float]:
+    return [value.x, value.y, value.z]
+
+
+func _array_to_vector(value: Variant) -> Vector3:
+    if value is Array and value.size() >= 3:
+        return Vector3(float(value[0]), float(value[1]), float(value[2]))
+    return Vector3.ZERO
 
 
 func _on_site_discovered(site: OutpostSite3D) -> void:

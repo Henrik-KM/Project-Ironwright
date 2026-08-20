@@ -1,6 +1,7 @@
 extends SceneTree
 
 const MAIN_SCENE := preload("res://scenes/main_3d.tscn")
+const TEST_SAVE_PATH := "user://ironwright_outpost_checkpoint_test.json"
 
 var failures: Array[String] = []
 
@@ -63,6 +64,15 @@ func _run_all() -> void:
     _expect(not world.outpost_director.operation.is_empty(), "Authorization must create a physical operation rather than an instant structure.")
     var initial_anchor: Vector3 = world.outpost_director.operation.get("anchor", start_position)
     _expect(initial_anchor.distance_to(site.global_position) > 10.0, "The construction team must begin at the Heartforge.")
+
+    world.save_service.configure(TEST_SAVE_PATH)
+    world._save_game()
+    _expect(FileAccess.file_exists(TEST_SAVE_PATH), "The full-game save hook must write while an outpost convoy is in flight.")
+    world._load_game()
+    site = world.outpost_director.get_site(&"site.north_transit_yard")
+    _expect(StringName(world.outpost_director.operation.get("kind", &"")) == &"build", "Loading must restore the active outpost convoy kind.")
+    var restored_anchor: Vector3 = world.outpost_director.operation.get("anchor", Vector3.ZERO)
+    _expect(restored_anchor.distance_to(initial_anchor) < 0.1, "Loading must restore the convoy physical anchor.")
 
     world.outpost_director._update_operation(0.5)
     var moved_anchor: Vector3 = world.outpost_director.operation.get("anchor", initial_anchor)
@@ -131,12 +141,14 @@ func _run_all() -> void:
 
     if failures.is_empty():
         print("Project Ironwright full-game foundation tests passed.")
+        _cleanup_save_files()
         world.free()
         quit(0)
         return
     for failure in failures:
         push_error(failure)
     print("Project Ironwright full-game foundation tests failed: %d" % failures.size())
+    _cleanup_save_files()
     world.free()
     quit(1)
 
@@ -151,3 +163,9 @@ func _force_operation_arrival(director: OutpostDirector3D) -> void:
 func _expect(condition: bool, message: String) -> void:
     if not condition:
         failures.append(message)
+
+
+func _cleanup_save_files() -> void:
+    for path in [TEST_SAVE_PATH, TEST_SAVE_PATH + ".bak1", TEST_SAVE_PATH + ".bak2", TEST_SAVE_PATH + ".tmp"]:
+        if FileAccess.file_exists(path):
+            DirAccess.remove_absolute(ProjectSettings.globalize_path(path))

@@ -103,8 +103,9 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 
 The complete-game save path now checkpoints active long-range operations with
 their stable operation id, route, physical anchor, work clocks and robot names;
-loading resumes the group through the same world-space operation director.
-Outpost convoys and local salvage remain finish-before-save until their actor
+loading resumes the group through the same world-space operation director. The
+full-game outpost path applies the same contract to build, upgrade, rebuild and
+haul convoys. Local salvage remains finish-before-save until its assignment
 references receive the same restoration contract.
 
 ## Presentation implemented

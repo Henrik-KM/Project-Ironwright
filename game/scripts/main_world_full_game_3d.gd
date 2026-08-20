@@ -320,9 +320,6 @@ func _update_objective() -> void:
 
 
 func _save_game() -> void:
-    if outpost_director != null and not outpost_director.operation.is_empty():
-        hud.push_notification("SAVE DEFERRED · FINISH THE ACTIVE OUTPOST CONVOY")
-        return
     if player.is_channeling() or not autonomy_director.expedition_operation.is_empty() or not autonomy_director.salvage_operation.is_empty():
         hud.push_notification("SAVE DEFERRED · FINISH THE ACTIVE OPERATION")
         return
@@ -341,9 +338,6 @@ func _save_extension_data() -> Dictionary:
 
 
 func _load_game() -> void:
-    if outpost_director != null and not outpost_director.operation.is_empty():
-        hud.push_notification("LOAD DEFERRED · FINISH THE ACTIVE OUTPOST CONVOY")
-        return
     super._load_game()
 
 
