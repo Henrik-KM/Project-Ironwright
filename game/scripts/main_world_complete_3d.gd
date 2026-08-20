@@ -4,11 +4,13 @@ extends IronwrightFullGameWorld3D
 const REGION_ATMOSPHERE_SCRIPT := preload("res://scripts/presentation/region_atmosphere_director_3d.gd")
 const REGION_LOD_SCRIPT := preload("res://scripts/presentation/region_presentation_lod_director_3d.gd")
 const ENDGAME_ESCALATION_SCRIPT := preload("res://scripts/presentation/endgame_escalation_director_3d.gd")
+const REGION_ENCOUNTER_SCRIPT := preload("res://scripts/presentation/region_encounter_dressing_director_3d.gd")
 
 var region_director: WorldRegionDirector3D
 var region_atmosphere_director: RegionAtmosphereDirector3D
 var region_lod_director: RegionPresentationLodDirector3D
 var endgame_escalation_director: EndgameEscalationDirector3D
+var region_encounter_dressing_director: RegionEncounterDressingDirector3D
 var long_operation_director: LongRangeOperationDirector3D
 var machine_society_director: MachineSocietyDirector3D
 var strategic_ecology_director: StrategicEcologyDirector3D
@@ -104,6 +106,11 @@ func _setup_complete_game_services() -> void:
     region_lod_director.process_mode = Node.PROCESS_MODE_ALWAYS
     region_lod_director.configure(region_director, player)
     add_child(region_lod_director)
+
+    region_encounter_dressing_director = REGION_ENCOUNTER_SCRIPT.new() as RegionEncounterDressingDirector3D
+    region_encounter_dressing_director.name = "RegionEncounterDressingDirector"
+    region_encounter_dressing_director.configure(region_director)
+    add_child(region_encounter_dressing_director)
 
     long_operation_director = LongRangeOperationDirector3D.new()
     long_operation_director.name = "LongRangeOperationDirector"

@@ -81,6 +81,8 @@ func _run_all() -> void:
     _expect(world.region_director.is_discovered(&"region.west_grid"), "The West Grid must be physically discovered by the returned operation.")
     _expect(world.run_state.rare_cores == cores_before_west + 1, "Operation rewards must be delivered only after physical return.")
     _expect(world.outpost_director.get_site(&"site.west_substation").discovered, "The West Grid survey must reveal its fixed support site.")
+    await process_frame
+    _expect(world.region_director.get_landmark(&"region.west_grid").get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing") != null, "Discovering a remote region must attach its authored encounter dressing without changing the operation contract.")
 
     _expect(world.progression.purchase(&"tech.heartforge.tier_3"), "West Grid data and one outpost must permit Heartforge tier 3.")
     _expect(world.progression.heartforge_tier == 3, "The run must reach Heartforge tier 3.")

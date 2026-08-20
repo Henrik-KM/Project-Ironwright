@@ -284,6 +284,19 @@ identities. Manual channels remain finish-before-save.
 - aesthetic coverage verifies the layer is attached to the representative
   Heartforge slice.
 
+## Focused authored-region encounter-dressing milestone
+
+- added a discovery-driven presentation director that attaches one bounded
+  human-scale vignette to every non-sanctuary region;
+- region identities now gain specific encounter-space props such as archive
+  record crates, substation tanks, laundry rails, irrigation beds, market
+  awnings, dock bollards, rail signals, brood arches, survey optics, lab
+  specimen cases and Root Cistern signal pylons;
+- all dressing is parented under persistent landmark presentation geometry, so
+  landmark LOD continues to reduce distant visuals while discovery, pressure,
+  save state, routing and collision remain unchanged;
+- aesthetic and complete-game coverage verify attachment on discovery.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.
