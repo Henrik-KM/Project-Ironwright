@@ -764,6 +764,18 @@ identities. Manual channels remain finish-before-save.
 - aesthetic coverage now verifies the stable core-cladding and service-surface
   signatures in the opening Heartforge model.
 
+## Focused North-Ruins archive encounter-space milestone
+
+- added an authored civic archive facade with a recessed vault door, varied
+  record-room windows, climate grille, service rail and surviving roof beacon;
+- added one warm occupied archive room and one cool powered reader so the first
+  expedition destination communicates preserved human infrastructure under
+  organic intrusion rather than reading as generic crates and a plinth;
+- retained the archive’s discovery, route, salvage, operation and pressure
+  contracts; all new geometry remains presentation-only;
+- aesthetic coverage now verifies the archive facade, vault entrance and roof
+  beacon signatures after discovery.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

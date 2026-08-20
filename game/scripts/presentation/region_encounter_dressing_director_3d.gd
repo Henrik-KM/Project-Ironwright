@@ -99,6 +99,35 @@ func _create_materials() -> void:
 
 
 func _build_archive_vignette(parent: Node3D) -> void:
+    var civic_archive := Node3D.new()
+    civic_archive.name = "ArchiveCivicFacade"
+    parent.add_child(civic_archive)
+    var archive_masonry := ModelKit3D.material(Color("4b4d4a"), 0.35, 0.62)
+    var archive_edge := ModelKit3D.material(Color("805137"), 0.42, 0.66)
+    var archive_dark := ModelKit3D.material(Color("182326"), 0.4, 0.34)
+    var archive_warm := ModelKit3D.material(Color("7a512f"), 0.18, 0.34, Color("e7a05c"), 1.15)
+    var archive_cyan := ModelKit3D.material(Color("245058"), 0.3, 0.3, Color("67d9df"), 1.65)
+
+    ModelKit3D.add_beveled_box(civic_archive, Vector3(7.4, 4.8, 0.5), Vector3(4.5, 2.4, 7.05), archive_masonry, Vector3(0.0, 0.0, 0.02), "ArchiveFacadeShell", 0.16)
+    ModelKit3D.add_beveled_box(civic_archive, Vector3(7.85, 0.24, 0.76), Vector3(4.5, 4.86, 7.0), archive_edge, Vector3.ZERO, "ArchiveRoofCoping", 0.2)
+    for level in range(2):
+        var y := 1.05 + float(level) * 1.82
+        for bay in range(3):
+            var x := 2.25 + float(bay) * 2.25
+            var lit := level == 0 and bay == 1
+            ModelKit3D.add_surface_panel(civic_archive, Vector3(1.28, 0.96, 0.1), Vector3(x, y, 7.34), archive_masonry, archive_warm if lit else archive_dark, Vector3.ZERO, "ArchiveWindowBay%d%d" % [level, bay])
+    ModelKit3D.add_beveled_box(civic_archive, Vector3(1.45, 2.1, 0.12), Vector3(4.5, 1.32, 7.42), archive_dark, Vector3.ZERO, "ArchiveVaultDoor", 0.14)
+    ModelKit3D.add_surface_panel(civic_archive, Vector3(0.64, 0.58, 0.08), Vector3(4.5, 1.34, 7.52), archive_dark, archive_cyan, Vector3.ZERO, "ArchiveAccessReader")
+    for side in [-1.0, 1.0]:
+        _add_beam(civic_archive, Vector3(4.5 + side * 3.05, 0.55, 7.5), Vector3(4.5 + side * 2.35, 4.4, 7.5), 0.065, archive_edge, "ArchiveStructuralPier")
+    ModelKit3D.add_louvered_panel(civic_archive, Vector3(1.05, 0.7, 0.08), Vector3(6.9, 2.9, 7.42), archive_dark, archive_cyan, Vector3.ZERO, "ArchiveClimateGrille", 4)
+    _add_beam(civic_archive, Vector3(1.25, 4.1, 7.0), Vector3(7.45, 4.1, 7.0), 0.045, archive_cyan, "ArchiveServiceRail")
+    ModelKit3D.add_tapered_cylinder(civic_archive, 0.42, 0.58, 1.05, Vector3(7.4, 5.38, 6.9), archive_edge, Vector3.ZERO, "ArchiveRoofBeacon")
+    ModelKit3D.add_cylinder(civic_archive, 0.07, 1.4, Vector3(7.4, 6.6, 6.9), archive_cyan, Vector3.ZERO, "ArchiveBeaconMast")
+    ModelKit3D.add_membrane_fan(civic_archive, 0.52, Vector3(2.1, 0.72, 7.52), _membrane, 5, "ArchiveRootIntrusion")
+    _add_light(civic_archive, Vector3(4.5, 1.45, 7.62), Color("e8a15c"), 0.9, 6.5)
+    _add_light(civic_archive, Vector3(6.9, 2.8, 7.65), Color("67d9df"), 0.62, 5.2)
+
     ModelKit3D.add_beveled_box(parent, Vector3(5.8, 0.24, 3.0), Vector3(-1.4, 0.25, -6.3), _dark_steel, Vector3.ZERO, "ArchiveReadingPlinth", 0.22)
     for index in range(3):
         var x := -3.2 + float(index) * 1.8
