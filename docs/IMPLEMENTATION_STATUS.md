@@ -128,6 +128,8 @@ identities. Manual channels remain finish-before-save.
   frame so the authored Mechromancer and companion remain legible beside the
   Heartforge without adding a permanent HUD or changing gameplay reach;
 - added executable coverage for the tighter actor-scale framing contract.
+- removed the oversized anchored portrait from the tactical render while
+  retaining the source texture and node contract for non-tactical presentation.
 
 ## Focused Mechromancer asset milestone
 

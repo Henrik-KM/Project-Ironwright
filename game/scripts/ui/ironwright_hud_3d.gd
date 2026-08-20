@@ -125,6 +125,11 @@ func _build_ui() -> void:
     player_portrait = TextureRect.new()
     player_portrait.name = "MechromancerPortrait"
     player_portrait.texture = MECHROMANCER_PORTRAIT
+    # The authored portrait remains available to the character/HUD contract,
+    # but the square source is not rendered into the tactical frame. The
+    # previous anchored layout could expand it into a screen-fixed figure that
+    # obscured the world and competed with the real in-world Mechromancer.
+    player_portrait.visible = false
     player_portrait.position = Vector2(14, 14)
     player_portrait.size = Vector2(68, 90)
     player_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE

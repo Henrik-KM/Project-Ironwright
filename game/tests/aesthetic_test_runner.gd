@@ -213,6 +213,7 @@ func _run_all() -> void:
     if beautiful_hud is IronwrightHUD3D:
         _expect((beautiful_hud as IronwrightHUD3D).player_portrait != null, "The HUD must expose the Mechromancer portrait.")
         _expect((beautiful_hud as IronwrightHUD3D).player_portrait.texture != null, "The Mechromancer portrait must have a texture.")
+        _expect(not (beautiful_hud as IronwrightHUD3D).player_portrait.visible, "The tactical HUD must keep the portrait asset out of the world frame so it cannot expand into a screen-fixed figure.")
     if beautiful_hud is IronwrightBeautifulHUD3D:
         var cinematic_hud := beautiful_hud as IronwrightBeautifulHUD3D
         cinematic_hud._process(IronwrightBeautifulHUD3D.TACTICAL_HINT_SECONDS + 2.0)
