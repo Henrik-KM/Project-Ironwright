@@ -788,6 +788,17 @@ identities. Manual channels remain finish-before-save.
 - aesthetic coverage now verifies the canopy, climate hardware and broken
   skylight signatures after discovery.
 
+## Focused Tram-Graveyard encounter-space milestone
+
+- added an authored maintenance bay with a readable carriage shell, windows,
+  service door, infestation, overhead hoist and inspection pit;
+- added restrained cyan work lighting and warm pit lighting so the district
+  communicates abandoned municipal maintenance rather than only parallel rails;
+- retained the tram region’s discovery, physical route, rare-stock, ecology and
+  operation contracts; the new geometry remains presentation-only;
+- aesthetic coverage now verifies the maintenance bay, carriage door and pit
+  signatures after discovery.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

@@ -255,6 +255,33 @@ func _build_waterfront_vignette(parent: Node3D) -> void:
 
 
 func _build_rail_vignette(parent: Node3D) -> void:
+    var maintenance_bay := Node3D.new()
+    maintenance_bay.name = "TramMaintenanceBay"
+    parent.add_child(maintenance_bay)
+    var carriage_metal := ModelKit3D.material(Color("3e4949"), 0.62, 0.4)
+    var carriage_edge := ModelKit3D.material(Color("7b4b32"), 0.4, 0.68)
+    var carriage_dark := ModelKit3D.material(Color("172426"), 0.44, 0.34)
+    var carriage_glass := ModelKit3D.material(Color("28545a"), 0.22, 0.28, Color("5ed1d3"), 1.15)
+    var maintenance_cyan := ModelKit3D.material(Color("24565c"), 0.32, 0.3, Color("6cdde0"), 1.55)
+    var infestation := ModelKit3D.material(Color("321a26"), 0.0, 0.8, Color("a43862"), 0.58)
+
+    ModelKit3D.add_beveled_box(maintenance_bay, Vector3(6.6, 2.55, 2.55), Vector3(4.6, 1.48, -5.1), carriage_metal, Vector3(0.0, 0.0, 0.025), "TramCarriageShell", 0.18)
+    ModelKit3D.add_beveled_box(maintenance_bay, Vector3(6.95, 0.18, 2.82), Vector3(4.6, 2.84, -5.1), carriage_edge, Vector3(0.0, 0.0, 0.02), "TramCarriageRoof", 0.2)
+    for bay in range(3):
+        var x := 2.2 + float(bay) * 2.4
+        ModelKit3D.add_surface_panel(maintenance_bay, Vector3(1.45, 0.88, 0.1), Vector3(x, 1.75, -6.43), carriage_metal, carriage_glass, Vector3.ZERO, "TramCarriageWindow%d" % bay)
+    ModelKit3D.add_beveled_box(maintenance_bay, Vector3(1.1, 1.85, 0.12), Vector3(4.6, 1.12, -6.47), carriage_dark, Vector3.ZERO, "TramCarriageDoor", 0.14)
+    ModelKit3D.add_surface_panel(maintenance_bay, Vector3(0.48, 0.5, 0.08), Vector3(4.6, 1.3, -6.58), carriage_dark, maintenance_cyan, Vector3.ZERO, "TramCarriageDoorReader")
+    _add_beam(maintenance_bay, Vector3(1.15, 0.42, -6.4), Vector3(8.05, 0.42, -6.4), 0.045, carriage_edge, "TramCarriageLowerRail")
+    ModelKit3D.add_membrane_fan(maintenance_bay, 0.7, Vector3(7.25, 0.82, -6.52), infestation, 6, "TramCarriageInfestation")
+    ModelKit3D.add_beveled_box(maintenance_bay, Vector3(5.0, 0.22, 1.75), Vector3(-4.1, 0.22, 5.3), carriage_dark, Vector3.ZERO, "TramInspectionPit", 0.16)
+    for side in [-1.0, 1.0]:
+        _add_beam(maintenance_bay, Vector3(-6.0, 0.45, 4.55 + side * 0.72), Vector3(-2.2, 0.45, 4.55 + side * 0.72), 0.045, maintenance_cyan, "TramPitServiceRail")
+    _add_beam(maintenance_bay, Vector3(1.2, 4.75, -4.6), Vector3(8.0, 4.75, -4.6), 0.07, carriage_metal, "TramMaintenanceGantry")
+    _add_beam(maintenance_bay, Vector3(4.6, 4.7, -4.6), Vector3(4.6, 2.78, -5.1), 0.04, maintenance_cyan, "TramHoistCable")
+    _add_light(maintenance_bay, Vector3(4.6, 2.0, -6.65), Color("62d9dd"), 0.72, 5.5)
+    _add_light(maintenance_bay, Vector3(-4.1, 0.75, 5.0), Color("df985c"), 0.5, 4.5)
+
     for side in [-1.0, 1.0]:
         _add_beam(parent, Vector3(side * 1.7, 0.2, -8.5), Vector3(side * 1.7, 0.2, 8.5), 0.08, _steel, "RailServiceLine")
     for z in range(-6, 9, 3):
