@@ -15,7 +15,7 @@ func _ready() -> void:
     _connect_enemy_tier_progression()
     _last_tier_map_mode = map_mode
     enemy_tier_hud.set_map_visible(map_mode)
-    run_state.log_event("Enemy escalation is now population-driven. Saturated lower tiers convert reproductive capacity into rarer, more intelligent organisms.")
+    run_state.log_event("Enemy escalation is population-driven. Saturated lower tiers convert reproductive capacity into rarer, more intelligent organisms.")
 
 
 func _process(delta: float) -> void:
@@ -26,10 +26,11 @@ func _process(delta: float) -> void:
 
 
 func _disable_legacy_population_materialization() -> void:
-    # The former directors still own noise propagation, regional pressure and
-    # ecological memory. Only their free-standing spawn callbacks are removed;
-    # every new organism now passes through population caps and physical nests.
+    # Earlier directors retain noise propagation, pressure, ecological memory,
+    # and behavior context. They no longer own births: every ordinary organism
+    # must pass through a tier cap and a living physical nest.
     if ecology_director != null:
+        ecology_director.set_external_population_control(true)
         ecology_director.spawn_enemy_callable = Callable()
     if strategic_ecology_director != null:
         strategic_ecology_director.spawn_enemy_callback = Callable()
@@ -124,8 +125,8 @@ func _spawn_capped_operation_threat(position: Vector3, species: StringName) -> N
     var state := enemy_tier_director.tier_state(tier)
     var living := _living_enemies_of_tier(tier)
     if living.size() >= int(state.get("cap", 1)):
-        # Operation and final-protocol disturbances may redirect an organism
-        # that already exists, but never create a population above the tier cap.
+        # An operation may redirect a real organism already in the world, but
+        # it may never create an entity above the tier's population cap.
         if living.is_empty():
             return null
         var existing := _nearest_enemy_to_position(living, position)
@@ -214,6 +215,7 @@ func _restore_release_snapshot(snapshot: Dictionary) -> void:
         enemy_tier_director.simulation_enabled = true
     if enemy_tier_event_bridge != null:
         enemy_tier_event_bridge.restore_from_dictionary(release.get("enemy_tier_events", {}))
+        enemy_tier_event_bridge.reconcile_existing_state()
     if enemy_tier_hud != null and enemy_tier_director != null:
         enemy_tier_hud.set_snapshot(enemy_tier_director.snapshot())
 
