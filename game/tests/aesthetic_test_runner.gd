@@ -37,6 +37,12 @@ func _run_all() -> void:
     var presentation_feedback := world.get_node_or_null("AestheticDirector/PresentationFeedback") as Node
     _expect(presentation_feedback != null, "The aesthetic director must own transient presentation feedback.")
     if presentation_feedback != null:
+        var hostile_sample := get_first_node_in_group(&"organic_enemies") as OrganicEnemy3D
+        if hostile_sample != null and world.player != null:
+            presentation_feedback.call("_on_attack_started", hostile_sample, world.player)
+            var telegraph := world.get_node_or_null("OrganicAttackTelegraph") as Node3D
+            _expect(telegraph != null, "Organic attacks must create a bounded world-space warning telegraph.")
+            _expect(telegraph != null and telegraph.get_node_or_null("OrganicAttackTelegraphRing") != null, "Organic attack warnings must expose a bright readable ring at the target area.")
         var labor_pile := get_first_node_in_group(&"salvage_piles") as SalvagePile3D
         var labor_robot := get_first_node_in_group(&"friendly_robots") as RobotUnit3D
         if labor_pile != null and labor_robot != null:
