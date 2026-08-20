@@ -1,0 +1,200 @@
+{
+  "schema_version": 1,
+  "system_id": "population_driven_organic_escalation",
+  "transfer_factor": 0.1,
+  "simulation_tick_seconds": 1.0,
+  "population_reconcile_seconds": 2.0,
+  "spawn_credit_cap": 3.0,
+  "tier_1_initial_replenishment_per_minute": 1.0,
+  "tier_1_rate_growth_per_minute_per_minute": 1.0,
+  "prototype_acceleration": true,
+  "top_tier_overflow_policy": "pause_without_discarding_rate",
+  "tiers": [
+    {
+      "tier": 1,
+      "display_name": "Feral",
+      "unit_cap": 100,
+      "intelligence": "primitive",
+      "behaviours": ["roam", "chase_visible_target", "attack"],
+      "species": ["skitterling", "skitterling", "skitterling", "razorhound"],
+      "spawn_radius_min": 3.5,
+      "spawn_radius_max": 8.0,
+      "speed_multiplier": 0.72,
+      "health_multiplier": 0.78,
+      "damage_multiplier": 0.72
+    },
+    {
+      "tier": 2,
+      "display_name": "Territorial",
+      "unit_cap": 40,
+      "intelligence": "territorial",
+      "behaviours": ["guard_nest", "patrol_territory", "investigate_noise", "primitive_pack"],
+      "species": ["razorhound", "burrower", "roofleaper"],
+      "spawn_radius_min": 5.0,
+      "spawn_radius_max": 11.0,
+      "speed_multiplier": 0.94,
+      "health_multiplier": 1.0,
+      "damage_multiplier": 1.0
+    },
+    {
+      "tier": 3,
+      "display_name": "Hunter",
+      "unit_cap": 16,
+      "intelligence": "coordinated",
+      "behaviours": ["scout", "observe_routes", "hunt_vulnerable_targets", "share_detections", "retreat_and_return"],
+      "species": ["veilstalker", "sporecaster", "carrionbell", "roofleaper"],
+      "spawn_radius_min": 7.0,
+      "spawn_radius_max": 14.0,
+      "speed_multiplier": 1.08,
+      "health_multiplier": 1.18,
+      "damage_multiplier": 1.18
+    },
+    {
+      "tier": 4,
+      "display_name": "Strategic",
+      "unit_cap": 6,
+      "intelligence": "strategic",
+      "behaviours": ["ambush_machine_routes", "target_scrappers_and_engineers", "attack_outposts", "reinforce_nests", "probe_defences", "withdraw_from_bad_fights"],
+      "species": ["broodmass", "rootweaver", "miremaw"],
+      "spawn_radius_min": 9.0,
+      "spawn_radius_max": 17.0,
+      "speed_multiplier": 1.12,
+      "health_multiplier": 1.48,
+      "damage_multiplier": 1.42
+    },
+    {
+      "tier": 5,
+      "display_name": "Apex",
+      "unit_cap": 2,
+      "intelligence": "regional",
+      "behaviours": ["maintain_large_territory", "influence_lower_tiers", "investigate_major_technology", "destroy_remote_infrastructure", "test_heartforge"],
+      "species": ["apex", "rootweaver"],
+      "spawn_radius_min": 12.0,
+      "spawn_radius_max": 22.0,
+      "speed_multiplier": 1.06,
+      "health_multiplier": 2.35,
+      "damage_multiplier": 2.05
+    }
+  ],
+  "nest_archetypes": [
+    {
+      "id": "nest.heartforge_outer_1",
+      "display_name": "Feral Burrow",
+      "position": [-34.0, 0.0, -28.0],
+      "region_id": "region.heartforge_district",
+      "maturity": 0.45,
+      "maximum_health": 220.0,
+      "supported_tiers": [1],
+      "replenishment_per_minute": {"1": 0.45},
+      "regrowth_seconds": 1800.0
+    },
+    {
+      "id": "nest.heartforge_outer_2",
+      "display_name": "Drain Brood",
+      "position": [38.0, 0.0, 24.0],
+      "region_id": "region.heartforge_district",
+      "maturity": 0.55,
+      "maximum_health": 260.0,
+      "supported_tiers": [1, 2],
+      "replenishment_per_minute": {"1": 0.55, "2": 0.05},
+      "regrowth_seconds": 2100.0
+    },
+    {
+      "id": "nest.north_ruins_archive",
+      "display_name": "Archive Brood",
+      "position": [4.0, 0.0, -73.0],
+      "region_id": "region.north_ruins",
+      "maturity": 0.62,
+      "maximum_health": 310.0,
+      "supported_tiers": [1, 2],
+      "replenishment_per_minute": {"1": 0.7, "2": 0.08},
+      "regrowth_seconds": 2400.0
+    },
+    {
+      "id": "nest.west_grid_substation",
+      "display_name": "Grid Hunting Den",
+      "position": [-98.0, 0.0, 23.0],
+      "region_id": "region.west_grid",
+      "maturity": 0.72,
+      "maximum_health": 390.0,
+      "supported_tiers": [1, 2, 3],
+      "replenishment_per_minute": {"1": 0.85, "2": 0.1, "3": 0.015},
+      "regrowth_seconds": 3000.0
+    },
+    {
+      "id": "nest.flood_market_membrane",
+      "display_name": "Membrane Nursery",
+      "position": [91.0, 0.0, 67.0],
+      "region_id": "region.flood_market",
+      "maturity": 0.8,
+      "maximum_health": 460.0,
+      "supported_tiers": [1, 2, 3],
+      "replenishment_per_minute": {"1": 1.05, "2": 0.13, "3": 0.02},
+      "regrowth_seconds": 3300.0
+    },
+    {
+      "id": "nest.cathedral_brood",
+      "display_name": "Cathedral Brood",
+      "position": [44.0, 0.0, -130.0],
+      "region_id": "region.cathedral_quarter",
+      "maturity": 0.92,
+      "maximum_health": 620.0,
+      "supported_tiers": [1, 2, 3, 4],
+      "replenishment_per_minute": {"1": 1.35, "2": 0.18, "3": 0.035, "4": 0.004},
+      "regrowth_seconds": 4200.0
+    },
+    {
+      "id": "nest.buried_labs_root",
+      "display_name": "Laboratory Root Colony",
+      "position": [-132.0, 0.0, -111.0],
+      "region_id": "region.buried_labs",
+      "maturity": 0.96,
+      "maximum_health": 740.0,
+      "supported_tiers": [1, 2, 3, 4],
+      "replenishment_per_minute": {"1": 1.5, "2": 0.22, "3": 0.045, "4": 0.006},
+      "regrowth_seconds": 4800.0
+    },
+    {
+      "id": "nest.root_cistern_core",
+      "display_name": "Cistern Root Organ",
+      "position": [131.0, 0.0, -121.0],
+      "region_id": "region.root_cistern",
+      "maturity": 1.0,
+      "maximum_health": 980.0,
+      "supported_tiers": [1, 2, 3, 4, 5],
+      "replenishment_per_minute": {"1": 1.8, "2": 0.28, "3": 0.06, "4": 0.01, "5": 0.001},
+      "regrowth_seconds": 6000.0
+    }
+  ],
+  "event_modifiers": {
+    "heartforge_tier_2": {"1": 0.75},
+    "heartforge_tier_3": {"1": 1.25, "2": 0.08},
+    "heartforge_tier_4": {"1": 1.75, "2": 0.12, "3": 0.015},
+    "heartforge_tier_5": {"1": 2.5, "2": 0.2, "3": 0.025, "4": 0.003},
+    "operation.west_grid_survey": {"1": 0.45},
+    "operation.east_tenement_roofline": {"1": 0.35},
+    "operation.tram_graveyard_recovery": {"1": 0.75, "2": 0.05},
+    "operation.glasshouse_spore_harvest": {"1": 0.9, "2": 0.06},
+    "operation.flood_market_recovery": {"1": 1.0, "2": 0.08},
+    "operation.riverworks_pump_recovery": {"1": -0.6, "2": -0.04},
+    "operation.cathedral_brood_suppression": {"1": -1.2, "2": -0.12, "3": -0.015},
+    "operation.observatory_migration_map": {"1": 0.5, "2": 0.04},
+    "operation.buried_lab_excavation": {"1": 1.4, "2": 0.12, "3": 0.018},
+    "operation.root_cistern_mapping": {"1": 1.8, "2": 0.18, "3": 0.025},
+    "operation.apex_lure": {"4": -0.006, "5": -0.001}
+  },
+  "autonomous_suppression": {
+    "unlock_heartforge_tier": 3,
+    "tier_1_density_threshold": 18,
+    "maximum_wardens": 3,
+    "patrol_radius": 52.0,
+    "reevaluation_seconds": 8.0,
+    "minimum_distance_from_active_operation": 18.0
+  },
+  "intel_thresholds": {
+    "sparse_fraction": 0.2,
+    "present_fraction": 0.45,
+    "dense_fraction": 0.75,
+    "saturated_fraction": 0.98
+  }
+}
