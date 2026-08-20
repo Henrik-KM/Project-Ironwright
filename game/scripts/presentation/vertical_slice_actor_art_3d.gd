@@ -108,6 +108,34 @@ func _polish_player(player: Mechromancer3D) -> void:
     ModelKit3D.add_cylinder(detail, 0.045, 0.62, Vector3(0.48, 1.08, -0.72), steel, Vector3(1.5708, 0.0, 0.0), "PistolBarrel")
     ModelKit3D.add_box(detail, Vector3(0.14, 0.38, 0.16), Vector3(0.48, 0.83, -0.27), leather, Vector3(0.1, 0.0, 0.0), "PistolGrip")
 
+    # Final field-kit pass: asymmetric protection and communications hardware
+    # reinforce the Mechromancer as a vulnerable technician who survives by
+    # carrying tools, not as a clean heroic avatar. These pieces are visual
+    # only and do not alter the gameplay capsule or weapon sockets.
+    ModelKit3D.add_beveled_box(
+        detail,
+        Vector3(0.5, 0.18, 0.46),
+        Vector3(-0.44, 1.48, 0.08),
+        steel,
+        Vector3(-0.08, 0.0, 0.12),
+        "FieldShoulderGuard",
+        0.22
+    )
+    ModelKit3D.add_surface_panel(
+        detail,
+        Vector3(0.38, 0.42, 0.08),
+        Vector3(0.38, 1.42, 0.08),
+        dark_steel,
+        cyan,
+        Vector3(-0.04, 0.0, 0.0),
+        "FieldCommsPanel"
+    )
+    ModelKit3D.add_cylinder(detail, 0.028, 0.58, Vector3(0.56, 1.78, 0.1), dark_steel, Vector3(0.08, 0.0, -0.12), "FieldCommsAntenna")
+    ModelKit3D.add_sphere(detail, 0.05, Vector3(0.53, 2.06, 0.07), cyan, Vector3.ONE, "FieldCommsBeacon")
+    ModelKit3D.add_beveled_box(detail, Vector3(0.18, 0.12, 0.32), Vector3(-0.34, 0.28, -0.34), rust, Vector3(0.0, 0.0, 0.08), "FieldBootCuff", 0.2)
+    ModelKit3D.add_beveled_box(detail, Vector3(0.18, 0.12, 0.32), Vector3(0.34, 0.28, -0.34), rust, Vector3(0.0, 0.0, -0.08), "FieldBootCuff", 0.2)
+    ModelKit3D.add_box(detail, Vector3(0.1, 0.34, 0.14), Vector3(-0.52, 0.86, -0.38), leather, Vector3(0.0, 0.0, 0.12), "WristToolLoop")
+
     # One practical lamp rather than glowing eyes all over the model.
     ModelKit3D.add_sphere(detail, 0.085, Vector3(-0.38, 1.48, -0.22), cyan, Vector3(1.0, 0.75, 0.55), "WorkLamp")
     var lamp := OmniLight3D.new()
