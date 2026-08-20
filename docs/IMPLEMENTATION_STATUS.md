@@ -375,6 +375,14 @@ identities. Manual channels remain finish-before-save.
   frames remain readable around the tactical camera while the full aesthetic
   and native matrix passes stay green.
 
+## Focused Bulwark protection-finish milestone
+
+- added a restrained cyan shield arc, protected emitter spine and side guard
+  panels to the opening Bulwark silhouette;
+- kept the finish presentation-only: existing personal-interception behavior,
+  collision, save state and autonomy workload are unchanged;
+- added native aesthetic coverage for the Bulwark protection signature.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

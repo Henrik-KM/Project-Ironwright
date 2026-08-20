@@ -116,6 +116,8 @@ func _run_all() -> void:
         _expect(_find_named(robot, "Chassis") != null and _find_named(robot, "ChassisCore") != null and _find_named(robot, "ChassisCornerCap") != null, "Robots must use the original beveled chassis treatment.")
         _expect(_find_named(robot, "OpticLens") != null, "Robots must expose a readable optic lens.")
         _expect(_find_named(robot, "CompanionCrown") != null, "The companion must expose a distinct crown silhouette.")
+        _expect(_find_named(robot, "BulwarkShieldArc") != null, "The Bulwark must expose a readable protection field signature.")
+        _expect(_find_named(robot, "BulwarkShieldEmitter") != null, "The Bulwark must expose a dedicated shield emitter.")
 
     var role_samples: Array[RobotUnit3D] = []
     var role_names := [&"salvager", &"guardian", &"scout", &"engineer"]

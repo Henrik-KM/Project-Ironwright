@@ -235,3 +235,11 @@ asset, normal maps and baked portrait, and exposes stable sockets for the
 weapon, shoulder lamp, face and field equipment. This is a presentation-only change: the
 existing player collision, weak pistol, channels, health and autonomy
 interfaces remain authoritative.
+
+## Focused Bulwark protection milestone
+
+The opening companion now carries a dedicated shield language: a low cyan
+protection arc, raised emitter spine and side guard panels. These additions
+make the Bulwark's personal-interception role readable before an attack starts,
+while remaining presentation-only and leaving the existing protection rules,
+collision and autonomous workload unchanged.

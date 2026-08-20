@@ -246,6 +246,25 @@ func _build_bulwark_detail(parent: Node3D) -> void:
     ModelKit3D.add_cylinder(parent, 0.11, 1.3, Vector3(-0.4, 1.4, -0.72), dark_steel, Vector3(1.5708, 0.0, 0.0), "BulwarkGunLeft")
     ModelKit3D.add_cylinder(parent, 0.11, 1.3, Vector3(0.4, 1.4, -0.72), dark_steel, Vector3(1.5708, 0.0, 0.0), "BulwarkGunRight")
     ModelKit3D.add_beveled_box(parent, Vector3(1.3, 0.16, 0.62), Vector3(0.0, 1.64, 0.42), black_metal(), Vector3.ZERO, "BulwarkRadiator", 0.2)
+    # The companion's defining promise is protection. A low, restrained field
+    # ring and protected emitter spine make that role legible before combat
+    # starts without adding a second gameplay resource or a management task.
+    var shield_material := ModelKit3D.material(Color("18383f"), 0.34, 0.24, Color("67dce2"), 2.3)
+    var shield_ring := MeshInstance3D.new()
+    shield_ring.name = "BulwarkShieldArc"
+    var shield_mesh := TorusMesh.new()
+    shield_mesh.inner_radius = 0.86
+    shield_mesh.outer_radius = 0.93
+    shield_mesh.rings = 18
+    shield_mesh.ring_segments = 36
+    shield_ring.mesh = shield_mesh
+    shield_ring.material_override = shield_material
+    shield_ring.position = Vector3(0.0, 0.34, 0.08)
+    parent.add_child(shield_ring)
+    ModelKit3D.add_tapered_cylinder(parent, 0.12, 0.18, 0.62, Vector3(0.0, 1.94, 0.46), dark_steel, Vector3.ZERO, "BulwarkShieldEmitterSpine")
+    ModelKit3D.add_sphere(parent, 0.13, Vector3(0.0, 2.28, 0.46), shield_material, Vector3(1.2, 0.7, 1.2), "BulwarkShieldEmitter")
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(parent, Vector3(0.16, 0.62, 0.46), Vector3(float(side) * 0.92, 1.08, 0.72), shield_material, Vector3(0.0, 0.0, float(side) * 0.08), "BulwarkShieldGuard", 0.14)
     _add_machine_lamp(parent, Vector3(0.0, 1.42, -1.0), Color("f0a65a"), 0.42)
 
 
