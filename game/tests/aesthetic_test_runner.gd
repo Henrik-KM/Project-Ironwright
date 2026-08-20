@@ -44,6 +44,18 @@ func _run_all() -> void:
         _expect(robot.get_node_or_null("ProceduralAnimator3D") is ProceduralAnimator3D, "Robots must receive procedural gait and recoil animation.")
         _expect(_model_has_details(robot), "Robots must receive additional role-readable detail.")
 
+    var veilstalker: Node3D
+    for enemy in get_nodes_in_group("organic_enemies"):
+        if enemy is Node3D and StringName(enemy.get("species")) == &"veilstalker":
+            veilstalker = enemy as Node3D
+            break
+    _expect(veilstalker != null, "The opening presentation needs a visible Veilstalker family member.")
+    if veilstalker != null:
+        _expect(veilstalker.get_node_or_null("ProceduralAnimator3D") is ProceduralAnimator3D, "The authored organic family must receive readable motion presentation.")
+        _expect(veilstalker.find_child("VeilstalkerCowl", true, false) != null, "The Veilstalker must expose a distinct sensory crown silhouette.")
+        _expect(veilstalker.find_child("VeilstalkerVeil", true, false) != null, "The Veilstalker must expose layered membrane anatomy.")
+        _expect(veilstalker.find_child("VeilstalkerTendril", true, false) != null, "The Veilstalker must expose readable sensory tendrils.")
+
     var beautiful_hud := get_first_node_in_group("beautiful_hud")
     _expect(beautiful_hud is IronwrightBeautifulHUD3D, "The native HUD must use the quieter cinematic skin.")
     if beautiful_hud is IronwrightHUD3D:

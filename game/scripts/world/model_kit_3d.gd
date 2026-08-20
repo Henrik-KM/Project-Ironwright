@@ -53,7 +53,7 @@ static func add_cylinder(
     mesh.top_radius = radius
     mesh.bottom_radius = radius
     mesh.height = height
-    mesh.radial_segments = 10
+    mesh.radial_segments = 16
     var instance := MeshInstance3D.new()
     instance.name = name_hint
     instance.mesh = mesh
@@ -75,8 +75,8 @@ static func add_sphere(
     var mesh := SphereMesh.new()
     mesh.radius = radius
     mesh.height = radius * 2.0
-    mesh.radial_segments = 12
-    mesh.rings = 6
+    mesh.radial_segments = 18
+    mesh.rings = 10
     var instance := MeshInstance3D.new()
     instance.name = name_hint
     instance.mesh = mesh
@@ -99,8 +99,8 @@ static func add_capsule(
     var mesh := CapsuleMesh.new()
     mesh.radius = radius
     mesh.height = max(height, radius * 2.05)
-    mesh.radial_segments = 10
-    mesh.rings = 5
+    mesh.radial_segments = 16
+    mesh.rings = 8
     var instance := MeshInstance3D.new()
     instance.name = name_hint
     instance.mesh = mesh

@@ -125,6 +125,16 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
   preserving all gameplay interfaces;
 - left friendly robots and organic enemies on their existing procedural assets.
 
+## Focused Veilstalker presentation milestone
+
+- added a layered authored family pass with asymmetric thorax, dorsal plates,
+  veil membranes, tendon forelimbs, hooks and sensory tendrils;
+- added state-driven stalking, membrane sway, tendril motion and attack lunge
+  presentation while keeping ecology and combat simulation unchanged;
+- increased shared primitive mesh resolution for smoother high-definition
+  procedural presentation;
+- retained the pre-alpha requirement for human visual acceptance of the family.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

@@ -10,7 +10,10 @@
   split coat tails, offset field pack, harness, belt pouches, gloves, tool
   attachments and a formed pistol grip/barrel.
 - Added original deterministic wear textures for cloth, leather, metal and
-  skin, plus beveled authored edges and asymmetric practical lights.
+  skin, plus authored normal relief, beveled edges and asymmetric practical
+  lights.
+- Reworked the rear-facing pack, hood drape and split coat so the production
+  isometric camera reads the human field-engineer silhouette from behind.
 - Replaced the placeholder portrait with a PNG rendered from the same Blender
   source model.
 

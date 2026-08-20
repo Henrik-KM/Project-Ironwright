@@ -140,7 +140,12 @@ func _add_enemy_details(actor: Node3D, details: Node3D) -> void:
     for index in range(spine_count):
         var z := -0.55 + float(index) * 0.28
         ModelKit3D.add_capsule(details, 0.045, 0.55 + float(index % 2) * 0.2, Vector3(0.0, 1.18, z), organic_material, Vector3(0.48, 0.0, 0.0), "BackSpine")
-    ModelKit3D.add_capsule(details, 0.08, 1.4 if species != &"veilstalker" else 2.0, Vector3(0.0, 0.72, 1.15), organic_material, Vector3(1.2, 0.0, 0.0), "Tail")
+    if species == &"veilstalker":
+        for side in [-1.0, 1.0]:
+            ModelKit3D.add_sphere(details, 0.24, Vector3(side * 1.06, 1.05, -0.15), organic_material, Vector3(0.18, 1.35, 0.72), "VeilstalkerDetailMembrane")
+            ModelKit3D.add_capsule(details, 0.035, 0.85, Vector3(side * 0.3, 1.18, -1.55), organic_material, Vector3(0.52, 0.0, side * 0.14), "VeilstalkerDetailTendril")
+    else:
+        ModelKit3D.add_capsule(details, 0.08, 1.4, Vector3(0.0, 0.72, 1.15), organic_material, Vector3(1.2, 0.0, 0.0), "Tail")
 
 
 func _connect_world_feedback() -> void:

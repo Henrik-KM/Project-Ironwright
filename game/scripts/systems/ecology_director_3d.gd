@@ -86,7 +86,7 @@ func _on_noise(position: Vector3, radius: float, intensity: float, source_kind: 
 
 func _spawn_initial_ecology() -> void:
     _spawn_enemy(Vector3(-16.0, 0.0, -22.0), &"skitterling", 0, &"feed")
-    _spawn_enemy(Vector3(21.0, 0.0, -31.0), &"razorhound", 1, &"hunt")
+    _spawn_enemy(Vector3(21.0, 0.0, -31.0), &"veilstalker", 1, &"scout")
     _spawn_enemy(Vector3(-34.0, 0.0, 13.0), &"skitterling", 2, &"roam")
 
 

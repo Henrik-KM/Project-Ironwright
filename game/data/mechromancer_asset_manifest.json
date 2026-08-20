@@ -8,7 +8,11 @@
     "res://assets/mechromancer/mechromancer_coat.png",
     "res://assets/mechromancer/mechromancer_leather.png",
     "res://assets/mechromancer/mechromancer_metal.png",
-    "res://assets/mechromancer/mechromancer_skin.png"
+    "res://assets/mechromancer/mechromancer_skin.png",
+    "res://assets/mechromancer/mechromancer_coat_normal.png",
+    "res://assets/mechromancer/mechromancer_leather_normal.png",
+    "res://assets/mechromancer/mechromancer_metal_normal.png",
+    "res://assets/mechromancer/mechromancer_skin_normal.png"
   ],
   "source": "res://assets/mechromancer/source/mechromancer.blend",
   "source_builder": "res://assets/mechromancer/source/build_mechromancer_blend.py",

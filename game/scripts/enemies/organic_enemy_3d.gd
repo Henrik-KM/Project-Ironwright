@@ -509,6 +509,8 @@ func _refresh_visuals() -> void:
     var bone := ModelKit3D.material(Color("786f60"), 0.0, 0.82)
     var membrane := ModelKit3D.material(Color("421727"), 0.0, 0.78, Color("9f2947"), 0.75)
     var eye := ModelKit3D.material(Color("4b0b0a"), 0.0, 0.42, Color("f04426"), 3.2)
+    var wet_chitin := ModelKit3D.material(Color("241a25"), 0.2, 0.36)
+    var tendon := ModelKit3D.material(Color("713c4a"), 0.0, 0.64)
 
     var body_scale := Vector3(1.35, 0.7, 1.7)
     var body_radius := 0.62
@@ -545,6 +547,28 @@ func _refresh_visuals() -> void:
                 leg_length = 1.8
             ModelKit3D.add_capsule(_model_root, 0.09 * body_radius / 0.62, leg_length, Vector3(side * body_scale.x * 0.48, body_radius * 0.62, z_position), chitin, Vector3(0.0, 0.0, side * 0.92), "Leg")
             ModelKit3D.add_capsule(_model_root, 0.07 * body_radius / 0.62, leg_length * 0.62, Vector3(side * body_scale.x * 0.82, 0.16, z_position + 0.08), bone, Vector3(0.0, 0.0, side * 0.45), "Talon")
+
+    if species == &"veilstalker":
+        # First authored organic family pass: the asymmetric thorax, layered
+        # veil membranes and forward sensory crown establish a predator
+        # silhouette before the creature enters combat range.
+        ModelKit3D.add_sphere(_model_root, 0.56, Vector3(0.0, 0.99, -0.22), wet_chitin, Vector3(1.84, 0.76, 1.52), "VeilstalkerThorax")
+        ModelKit3D.add_sphere(_model_root, 0.42, Vector3(-0.22, 1.18, 0.72), flesh, Vector3(1.28, 0.82, 1.08), "VeilstalkerAbdomen")
+        for index in range(3):
+            var plate_z := -0.68 + float(index) * 0.44
+            ModelKit3D.add_sphere(_model_root, 0.34, Vector3(0.0, 1.42 - float(index) * 0.045, plate_z), chitin, Vector3(1.48, 0.18, 0.62), "VeilstalkerDorsalPlate")
+        for side in [-1.0, 1.0]:
+            ModelKit3D.add_sphere(_model_root, 0.34, Vector3(side * 0.98, 1.1, -0.18), membrane, Vector3(0.22, 1.6, 0.9), "VeilstalkerVeil")
+            ModelKit3D.add_capsule(_model_root, 0.075, 1.75, Vector3(side * 0.78, 0.72, -0.62), tendon, Vector3(0.22, 0.0, side * 0.34), "VeilstalkerForelimb")
+            ModelKit3D.add_capsule(_model_root, 0.06, 0.92, Vector3(side * 0.93, 0.22, -1.02), bone, Vector3(0.58, 0.0, side * 0.2), "VeilstalkerHook")
+        ModelKit3D.add_sphere(_model_root, 0.4, Vector3(0.0, 1.36, -1.04), chitin, Vector3(1.12, 0.8, 1.15), "VeilstalkerCowl")
+        for index in range(3):
+            var tendril_side := -1.0 if index % 2 == 0 else 1.0
+            var tendril_x := tendril_side * (0.16 + float(index) * 0.08)
+            ModelKit3D.add_capsule(_model_root, 0.035, 0.72 + float(index) * 0.14, Vector3(tendril_x, 1.12, -1.52 - float(index) * 0.05), tendon, Vector3(0.55, 0.0, tendril_side * 0.18), "VeilstalkerTendril")
+        for index in range(3):
+            var tail_z := 0.72 + float(index) * 0.38
+            ModelKit3D.add_sphere(_model_root, 0.19 - float(index) * 0.025, Vector3(-0.22 + float(index) * 0.08, 0.98 - float(index) * 0.06, tail_z), flesh, Vector3(1.35, 0.74, 1.28), "VeilstalkerTail")
 
     if species == &"sporecaster":
         for index in range(5):
