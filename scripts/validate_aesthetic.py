@@ -51,6 +51,9 @@ REQUIRED = [
     "game/assets/cathedral/source/build_cathedral_asset.py",
     "game/assets/cathedral/cathedral.gltf",
     "game/data/cathedral_asset_manifest.json",
+    "game/assets/observatory/source/build_observatory_asset.py",
+    "game/assets/observatory/observatory.gltf",
+    "game/data/observatory_asset_manifest.json",
 ]
 
 AUTHORED_ORGANIC_ASSETS = {
@@ -106,6 +109,18 @@ AUTHORED_REGION_ASSETS = {
             "CathedralChoirCore",
             "CathedralChoirSignal",
             "CathedralBell",
+            "ProductionAssetMarker",
+        ],
+    },
+    "observatory": {
+        "asset_id": "observatory.ridge.v1",
+        "root": "ObservatoryModel",
+        "required": [
+            "ObservatoryModel",
+            "ObservatoryDish",
+            "ObservatoryFeedSignal",
+            "ObservatoryMast",
+            "ObservatoryConsole",
             "ProductionAssetMarker",
         ],
     },

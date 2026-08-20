@@ -1,0 +1,15 @@
+{
+  "asset_id": "observatory.ridge.v1",
+  "kind": "world_landmark",
+  "source": "game/assets/observatory/source/build_observatory_asset.py",
+  "runtime_model": "game/assets/observatory/observatory.gltf",
+  "required_nodes": [
+    "ObservatoryModel",
+    "ObservatoryDish",
+    "ObservatoryFeedSignal",
+    "ObservatoryMast",
+    "ObservatoryConsole",
+    "ProductionAssetMarker"
+  ],
+  "presentation_only": true
+}
