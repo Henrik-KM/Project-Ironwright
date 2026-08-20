@@ -495,6 +495,15 @@ identities. Manual channels remain finish-before-save.
 - live review at the North Transit Yard confirmed the construction frame reads
   above the existing site marker while the machine escort remains visible.
 
+## Focused autonomous-construction audio milestone
+
+- `outpost_construction` noise now reaches the spatial audio director instead
+  of being silently omitted;
+- the cue reuses the bounded noise-pulse vocabulary with a lower mechanical
+  pitch so construction is distinct from manual salvage and forge work;
+- live construction-site review confirmed the cue path alongside the elevated
+  work frame, with runtime coverage asserting the spatial event.
+
 ## Focused contextual tactical-HUD milestone
 
 - the permanent control legend now clears after the onboarding window instead

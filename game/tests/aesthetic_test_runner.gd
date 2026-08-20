@@ -25,6 +25,12 @@ func _run_all() -> void:
     if audio_director != null:
         for profile in [&"pistol", &"machine_weapon", &"salvage", &"forge", &"organic_attack", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition", &"endgame_start", &"endgame_stage", &"endgame_complete", &"endgame_failure"]:
             _expect(audio_director.has_profile(profile), "The audio director must provide the %s profile." % profile)
+        if world.noise_system != null:
+            var construction_audio_before := audio_director.event_count
+            world.noise_system.emit_noise(Vector3(0.0, 0.0, -12.0), 27.0, 0.72, &"outpost_construction")
+            _expect(audio_director.event_count > construction_audio_before, "Outpost construction noise must produce spatial audio feedback.")
+            _expect(audio_director.last_profile == &"noise_pulse", "Outpost construction noise must use the bounded noise-pulse audio language.")
+            audio_director.stop_all()
     _expect(world.get_node_or_null("CozyHeartforgeCamp") != null, "The Heartforge must receive an inhabited cozy camp layer.")
     _expect(world.get_node_or_null("UrbanAestheticPass") != null, "The ruined city must receive the urban storytelling pass.")
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgeMaintenanceDetail") != null, "The Heartforge must expose a dedicated presentation-only maintenance detail layer.")

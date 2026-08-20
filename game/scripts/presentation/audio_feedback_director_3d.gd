@@ -178,8 +178,9 @@ func _on_actor_killed(enemy: Node, _killer: Node) -> void:
 
 
 func _on_noise_emitted(position: Vector3, _radius: float, intensity: float, source_kind: StringName) -> void:
-    if source_kind in [&"manual_salvage", &"forge_build", &"forge_upgrade"]:
-        play_profile(&"noise_pulse", position, -10.0 + clampf(intensity, 0.0, 1.0) * 2.0)
+    if source_kind in [&"manual_salvage", &"forge_build", &"forge_upgrade", &"outpost_construction"]:
+        var construction_pitch := 0.78 if source_kind == &"outpost_construction" else 1.0
+        play_profile(&"noise_pulse", position, -10.0 + clampf(intensity, 0.0, 1.0) * 2.0, construction_pitch)
 
 
 func _on_channel_started(kind: StringName, _duration: float, _description: String) -> void:
