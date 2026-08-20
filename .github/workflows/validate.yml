@@ -44,6 +44,13 @@ jobs:
       - name: Report Godot version
         run: godot --version
 
+      - name: Check tier scripts directly
+        run: |
+          godot --headless --path game --check-only --script res://scripts/world/organic_nest_3d.gd
+          godot --headless --path game --check-only --script res://scripts/enemies/organic_enemy_tiered_3d.gd
+          godot --headless --path game --check-only --script res://scripts/systems/enemy_tier_director_3d.gd
+          godot --headless --path game --check-only --script res://scripts/main_world_tiered_3d.gd
+
       - name: Import and parse native project
         run: godot --headless --path game --editor --quit
 
