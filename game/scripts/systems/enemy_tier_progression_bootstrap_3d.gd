@@ -82,7 +82,8 @@ func _disable_generator_recursive(node: Node) -> void:
     var class_name_text := node.get_class()
     var script := node.get_script()
     if script != null:
-        class_name_text = str(script.get_global_name())
+        if script.has_method(&"get_global_name"):
+            class_name_text = str(script.call(&"get_global_name"))
     if (
         class_name_text in ["EcologyDirector3D", "StrategicEcologyDirector3D"]
         or node.has_method(&"_spawn_regional_organism")

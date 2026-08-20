@@ -73,9 +73,12 @@ func _evaluate_suppression_need() -> void:
     if wardens.is_empty():
         _release_all("All Wardens are committed to higher-priority protection or remote operations.")
         return
-    target_cells = clusters.slice(0, mini(clusters.size(), maximum_wardens))
+    target_cells.clear()
+    var target_count := mini(clusters.size(), maximum_wardens)
+    for index in range(target_count):
+        target_cells.append(clusters[index])
     assigned_wardens.clear()
-    for index in range(mini(wardens.size(), target_cells.size(), maximum_wardens)):
+    for index in range(mini(mini(wardens.size(), target_cells.size()), maximum_wardens)):
         var warden := wardens[index]
         assigned_wardens.append(warden)
         _assign_warden(warden, target_cells[index], index)

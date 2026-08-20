@@ -245,6 +245,7 @@ func _test_dynamic_event_modifiers() -> void:
 
 func _test_tier_behaviour_progression() -> void:
     _clear_fake_actors()
+    await process_frame
     var target := FakeFriendly.new()
     target.archetype = &"salvager"
     world.add_child(target)

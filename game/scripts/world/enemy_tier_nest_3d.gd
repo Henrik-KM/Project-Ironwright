@@ -184,7 +184,10 @@ func set_maturity(value: float) -> void:
 
 func status_summary() -> String:
     if alive:
-        return "%s · %d%% mature · supports tiers %s" % [display_name, int(round(maturity * 100.0)), ", ".join(supported_tiers.map(func(value: int) -> String: return str(value)))]
+        var tier_labels: Array[String] = []
+        for tier in supported_tiers:
+            tier_labels.append(str(tier))
+        return "%s · %d%% mature · supports tiers %s" % [display_name, int(round(maturity * 100.0)), ", ".join(tier_labels)]
     if state_name == &"regrowing":
         return "%s · regrowing · %d%%" % [display_name, int(round(regrowth_progress * 100.0))]
     return "%s · destroyed · regrowth evidence in %d min" % [display_name, int(ceil(maxf(0.0, regrowth_seconds - destroyed_elapsed) / 60.0))]
@@ -220,7 +223,7 @@ func restore_from_dictionary(data: Dictionary) -> void:
 
 
 func _build_visuals() -> void:
-    ModelKit3D.add_collision_cylinder(self, 2.6, 2.2, Vector3(0.0, 1.1, 0.0))
+    ModelKit3D.add_collision_capsule(self, 2.1, 1.6, Vector3(0.0, 1.1, 0.0))
     _model_root = Node3D.new()
     _model_root.name = "TierNestModel"
     add_child(_model_root)

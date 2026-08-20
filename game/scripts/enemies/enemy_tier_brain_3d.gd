@@ -56,7 +56,11 @@ func _initialize() -> void:
     initialized = true
     world = get_tree().current_scene
     spatial_index = get_tree().get_first_node_in_group(&"spatial_index_service")
-    home_nest = director.nests.get(home_nest_id, null) as Node3D if director != null else null
+    home_nest = null
+    if director != null:
+        var raw_home_nest: Variant = director.nests.get(home_nest_id, null)
+        if raw_home_nest is Node3D:
+            home_nest = raw_home_nest as Node3D
     territory_center = home_nest.global_position if home_nest != null else enemy.global_position
     territory_radius = [28.0, 24.0, 42.0, 58.0, 92.0][enemy_tier - 1]
     pack_id = StringName("pack.%s.tier_%d" % [String(home_nest_id) if home_nest_id != &"" else "feral", enemy_tier])
@@ -76,6 +80,7 @@ func _physics_process(delta: float) -> void:
         return
     decision_clock += delta
     state_elapsed += delta
+    enemy.set("attack_cooldown", maxf(0.0, float(enemy.get("attack_cooldown")) - delta))
     last_known_target_seconds = maxf(0.0, last_known_target_seconds - delta)
     var focus := _simulation_focus_position()
     var remote := enemy.global_position.distance_to(focus) > active_distance
