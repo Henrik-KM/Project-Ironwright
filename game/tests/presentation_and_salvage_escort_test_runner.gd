@@ -78,7 +78,7 @@ func _test_salvage_escort_split() -> void:
         _expect(guardian.assigned_group == &"mechromancer_escort", "Player-cover Wardens must use the Mechromancer escort assignment.")
         _expect(guardian.goal_position.distance_to(world.player.global_position) <= 5.0, "Player-cover Wardens must occupy a useful protective radius around the Mechromancer.")
 
-    _expect("escort" in world.autonomy_director.operation_summary().to_lower(), "The permanent operation summary must communicate the distributed escort state.")
+    _expect(world.autonomy_director.operation_summary().to_lower().contains("escort"), "The permanent operation summary must communicate the distributed escort state.")
     world.free()
     await process_frame
 
