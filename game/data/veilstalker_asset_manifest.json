@@ -1,0 +1,19 @@
+{
+  "asset_id": "veilstalker.predator.v1",
+  "display_name": "Veilstalker predator shell",
+  "source": "game/assets/veilstalker/source/build_veilstalker_asset.py",
+  "runtime_path": "res://assets/veilstalker/veilstalker.gltf",
+  "quality": "authored_high_definition",
+  "license": "Original Project Ironwright asset",
+  "required_nodes": [
+    "VeilstalkerModel",
+    "Torso",
+    "TorsoCore",
+    "VeilstalkerCowl",
+    "VeilstalkerVeil",
+    "VeilstalkerTendril",
+    "VeilstalkerThoraxDorsalRib",
+    "ProductionAssetMarker"
+  ],
+  "animation_clips": ["Idle", "Walk", "Attack"]
+}

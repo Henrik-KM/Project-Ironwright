@@ -89,9 +89,10 @@ Clutter must leave important routes readable from the high-angle camera.
 ## Actor presentation
 
 The Mechromancer now uses a regenerated authored glTF character asset with
-denser cloth, face and equipment forms. The first friendly robot family pass
-now uses higher-resolution modular geometry with role-readable silhouettes;
-organic enemies remain procedural until their own production asset milestones.
+denser cloth, face and equipment forms. The friendly machine roster now uses
+authored glTF shells with role-readable silhouettes. Veilstalker is the first
+hostile family to receive the same authored-shell treatment; the other organic
+families remain procedural until their own production asset milestones.
 
 ### Mechromancer
 
@@ -153,7 +154,11 @@ organic enemies remain procedural until their own production asset milestones.
 - species-specific sensory fans, gill membranes, cheek plates, drill rings and
   dorsal frills for stronger close-camera silhouettes;
 - a ribbed, layered Veilstalker thorax and plated dorsal construction for the
-  first focused hostile-family quality pass;
+  first focused hostile-family quality pass, now backed by an original authored
+  glTF shell with cowl, threat eyes, veil membranes, hooks and tendrils;
+- a stable authored contract recorded in `game/data/veilstalker_asset_manifest.json`,
+  with the imported shell flattened under the existing `OrganicModel` release
+  path so late-spawned threats retain material continuity;
 - asymmetrical chitin, flesh, spines and tails;
 - twitching idle movement and multi-leg locomotion;
 - head probing, mandible movement, pack movement and species-specific idle

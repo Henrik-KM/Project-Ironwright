@@ -192,6 +192,7 @@ func _run_all() -> void:
         _expect(veilstalker.find_child("VeilstalkerVeil", true, false) != null, "The Veilstalker must expose layered membrane anatomy.")
         _expect(veilstalker.find_child("VeilstalkerTendril", true, false) != null, "The Veilstalker must expose readable sensory tendrils.")
         _expect(veilstalker.find_child("VeilstalkerThoraxDorsalRib", true, false) != null, "The Veilstalker must expose a ribbed high-detail thorax construction.")
+        _expect(veilstalker.find_child("VeilstalkerAuthoredModel", true, false) != null and _find_named(veilstalker, "ProductionAssetMarker") != null, "The Veilstalker must expose its authored production asset contract.")
         if veilstalker_animator != null:
             var veil := veilstalker.find_child("VeilstalkerVeil", true, false) as Node3D
             var veil_before := veil.transform if veil != null else Transform3D.IDENTITY

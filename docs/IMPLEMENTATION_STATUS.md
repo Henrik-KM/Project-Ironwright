@@ -160,6 +160,11 @@ identities. Manual channels remain finish-before-save.
 
 ## Focused Veilstalker presentation milestone
 
+- added the original `veilstalker.predator.v1` high-definition glTF shell and
+  manifest, with layered thorax ribs, shell plates, sensory cowl, threat eyes,
+  veil membranes, hooks and tendrils;
+- flattened the imported shell under `OrganicModel` so the existing release
+  material path and late-spawn continuity remain stable;
 - added a layered authored family pass with asymmetric thorax, dorsal plates,
   veil membranes, tendon forelimbs, hooks and sensory tendrils;
 - added state-driven stalking, membrane sway, tendril motion and attack lunge
@@ -322,6 +327,8 @@ identities. Manual channels remain finish-before-save.
 
 ## Focused Veilstalker threat-language milestone
 
+- the authored shell is now wired into `OrganicEnemy3D` without changing
+  species stats, collision, ecology or reduced-detail simulation;
 - added attack-wind-up motion for the Veilstalker veil membranes, forelimbs,
   sensory cowl, tendrils and counterbalancing tail;
 - the family now visibly expands and loads its silhouette before an organic
