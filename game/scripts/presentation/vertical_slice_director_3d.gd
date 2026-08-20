@@ -1,0 +1,492 @@
+class_name VerticalSliceDirector3D
+extends Node
+
+## A deliberately concentrated presentation pass for the opening Heartforge
+## district. The purpose is not to spread more placeholder geometry across the
+## whole world; it is to establish one representative frame with stronger
+## composition, material hierarchy, silhouettes, weather, environmental story
+## and readable combat space before that language is propagated outward.
+
+var world: Node3D
+var heartforge: Heartforge3D
+var player: Mechromancer3D
+var camera: Camera3D
+var ecology: EcologyDirector3D
+var root: Node3D
+var elapsed: float = 0.0
+var steam_emitters: Array[CPUParticles3D] = []
+var practical_lights: Array[OmniLight3D] = []
+var flicker_phase: Dictionary = {}
+
+var masonry: StandardMaterial3D
+var soot_masonry: StandardMaterial3D
+var interior_dark: StandardMaterial3D
+var wet_asphalt: StandardMaterial3D
+var wet_concrete: StandardMaterial3D
+var painted_metal: StandardMaterial3D
+var rust_metal: StandardMaterial3D
+var black_metal: StandardMaterial3D
+var warm_glass: StandardMaterial3D
+var cold_glass: StandardMaterial3D
+var fabric: StandardMaterial3D
+var organic: StandardMaterial3D
+var warning_paint: StandardMaterial3D
+
+
+func configure(
+        next_world: Node3D,
+        next_heartforge: Heartforge3D,
+        next_player: Mechromancer3D,
+        next_camera: Camera3D,
+        next_ecology: EcologyDirector3D
+    ) -> void:
+    world = next_world
+    heartforge = next_heartforge
+    player = next_player
+    camera = next_camera
+    ecology = next_ecology
+
+
+func _ready() -> void:
+    if world == null:
+        world = get_parent() as Node3D
+    _create_materials()
+    root = Node3D.new()
+    root.name = "HeartforgeVerticalSlice"
+    world.add_child.call_deferred(root)
+    call_deferred("_build_vertical_slice")
+
+
+func _process(delta: float) -> void:
+    elapsed += delta
+    for light in practical_lights:
+        if not is_instance_valid(light):
+            continue
+        if not flicker_phase.has(light):
+            flicker_phase[light] = float(light.get_instance_id() % 181) * 0.071
+        var phase := float(flicker_phase[light])
+        var base := float(light.get_meta(&"vertical_base_energy", light.light_energy))
+        light.light_energy = base * (0.96 + sin(elapsed * 2.7 + phase) * 0.028 + sin(elapsed * 17.0 + phase * 1.9) * 0.009)
+
+
+func _build_vertical_slice() -> void:
+    if root == null or not is_instance_valid(root):
+        return
+    _polish_environment()
+    _replace_central_building_visuals()
+    _build_heartforge_plaza()
+    _build_service_lane()
+    _build_sanctuary_perimeter()
+    _build_workshop_gantry()
+    _build_street_story_props()
+    _build_local_nest_landmarks()
+    _build_weather()
+    _build_atmospheric_steam()
+    _build_lighting_rig()
+
+
+func _create_materials() -> void:
+    masonry = ModelKit3D.material(Color("504b46"), 0.02, 0.86)
+    soot_masonry = ModelKit3D.material(Color("2d3031"), 0.02, 0.9)
+    interior_dark = ModelKit3D.material(Color("0d1214"), 0.0, 0.98)
+    wet_asphalt = ModelKit3D.material(Color("11181c"), 0.18, 0.34)
+    wet_concrete = ModelKit3D.material(Color("4a5051"), 0.06, 0.58)
+    painted_metal = ModelKit3D.material(Color("465458"), 0.72, 0.36)
+    rust_metal = ModelKit3D.material(Color("6c3f29"), 0.48, 0.64)
+    black_metal = ModelKit3D.material(Color("151c1f"), 0.82, 0.31)
+    warm_glass = ModelKit3D.material(Color("6b4829"), 0.16, 0.28, Color("f49a4a"), 1.8)
+    cold_glass = ModelKit3D.material(Color("21444a"), 0.22, 0.26, Color("65ccd2"), 1.4)
+    fabric = ModelKit3D.material(Color("4b3b34"), 0.0, 0.96)
+    organic = ModelKit3D.material(Color("351820"), 0.0, 0.78, Color("812738"), 0.32)
+    warning_paint = ModelKit3D.material(Color("a65c2c"), 0.12, 0.66)
+
+
+func _polish_environment() -> void:
+    var environment_node := _find_world_environment(world)
+    if environment_node == null or environment_node.environment == null:
+        return
+    var environment := environment_node.environment
+    environment.tonemap_exposure = 1.08
+    environment.tonemap_white = 2.15
+    environment.adjustment_brightness = 0.98
+    environment.adjustment_contrast = 1.13
+    environment.adjustment_saturation = 0.92
+    environment.ambient_light_energy = 0.43
+    environment.fog_density = 0.0115
+    environment.fog_light_color = Color("607581")
+    environment.fog_light_energy = 0.62
+    environment.glow_intensity = 0.52
+    environment.glow_strength = 0.86
+    environment.glow_bloom = 0.11
+
+
+func _replace_central_building_visuals() -> void:
+    var city := _find_procedural_city(world)
+    if city == null:
+        return
+    var definitions := [
+        ["RuinedBuilding00", Vector3(-14.0, 0.0, -14.0), 6.4, &"pharmacy"],
+        ["RuinedBuilding01", Vector3(14.0, 0.0, -14.0), 7.1, &"apartments"],
+        ["RuinedBuilding02", Vector3(-14.0, 0.0, 14.0), 5.8, &"workshop"],
+        ["RuinedBuilding03", Vector3(14.0, 0.0, 14.0), 6.8, &"municipal"],
+    ]
+    for definition in definitions:
+        var body := city.get_node_or_null(str(definition[0])) as StaticBody3D
+        if body == null:
+            continue
+        for child in body.get_children():
+            if child is MeshInstance3D:
+                (child as MeshInstance3D).visible = false
+        _build_cutaway_facade(body, float(definition[2]), definition[3] as StringName)
+
+
+func _build_cutaway_facade(body: StaticBody3D, height: float, identity: StringName) -> void:
+    var facade := Node3D.new()
+    facade.name = "VerticalSliceFacade"
+    body.add_child(facade)
+    var width := 13.2
+    var depth := 12.4
+    var floors := maxi(2, int(round(height / 2.35)))
+
+    # The street-facing volume is made from structure and rooms rather than a
+    # single opaque cube. It reads as a ruined building but preserves view into
+    # the Heartforge plaza from the tactical camera.
+    for corner_x in [-1.0, 1.0]:
+        for corner_z in [-1.0, 1.0]:
+            ModelKit3D.add_box(
+                facade,
+                Vector3(0.42, height, 0.42),
+                Vector3(corner_x * width * 0.46, height * 0.5, corner_z * depth * 0.46),
+                soot_masonry,
+                Vector3.ZERO,
+                "StructuralPier"
+            )
+
+    for floor_index in range(floors + 1):
+        var y := minf(height, float(floor_index) * 2.25)
+        ModelKit3D.add_box(facade, Vector3(width * 0.92, 0.18, 0.34), Vector3(0.0, y, -depth * 0.46), masonry, Vector3.ZERO, "FloorEdge")
+        ModelKit3D.add_box(facade, Vector3(0.34, 0.18, depth * 0.92), Vector3(-width * 0.46, y, 0.0), masonry, Vector3.ZERO, "SideFloorEdge")
+
+    # Rear and one side stay mostly intact; the plaza-facing edges are broken
+    # into wall panels with gaps, balconies and visible dark interior depth.
+    ModelKit3D.add_box(facade, Vector3(width * 0.92, height * 0.86, 0.28), Vector3(0.0, height * 0.43, depth * 0.46), soot_masonry, Vector3.ZERO, "RearWall")
+    ModelKit3D.add_box(facade, Vector3(0.28, height * 0.78, depth * 0.64), Vector3(width * 0.46, height * 0.39, 1.2), masonry, Vector3.ZERO, "OuterWall")
+
+    for floor_index in range(floors):
+        var y := 1.15 + float(floor_index) * 2.25
+        for bay in range(3):
+            if (floor_index + bay + int(body.get_instance_id() % 3)) % 4 == 0:
+                continue
+            var x := -4.0 + float(bay) * 4.0
+            ModelKit3D.add_box(facade, Vector3(2.7, 1.72, 0.18), Vector3(x, y, -depth * 0.46), masonry, Vector3.ZERO, "FacadePanel")
+            ModelKit3D.add_box(facade, Vector3(1.1, 0.92, 0.07), Vector3(x, y + 0.08, -depth * 0.485), interior_dark, Vector3.ZERO, "WindowVoid")
+        if floor_index > 0:
+            ModelKit3D.add_box(facade, Vector3(width * 0.7, 0.12, 0.78), Vector3(-0.6, y - 0.78, -depth * 0.56), black_metal, Vector3(0.0, 0.0, 0.02 * float(floor_index % 2)), "BrokenBalcony")
+
+    _add_facade_identity(facade, identity, width, depth)
+    _add_roof_damage(facade, width, depth, height)
+
+
+func _add_facade_identity(parent: Node3D, identity: StringName, width: float, depth: float) -> void:
+    match identity:
+        &"pharmacy":
+            ModelKit3D.add_box(parent, Vector3(3.8, 0.48, 0.13), Vector3(-1.8, 2.7, -depth * 0.52), cold_glass, Vector3(0.0, 0.0, -0.03), "PharmacySign")
+            ModelKit3D.add_box(parent, Vector3(2.8, 1.8, 0.12), Vector3(2.6, 1.25, -depth * 0.52), warm_glass, Vector3.ZERO, "OccupiedWindow")
+        &"workshop":
+            ModelKit3D.add_box(parent, Vector3(5.0, 0.52, 0.13), Vector3(0.5, 2.4, -depth * 0.52), warning_paint, Vector3(0.0, 0.0, 0.04), "WorkshopFascia")
+            for index in range(4):
+                ModelKit3D.add_box(parent, Vector3(0.16, 2.1, 0.15), Vector3(-3.0 + float(index) * 2.0, 1.05, -depth * 0.53), black_metal, Vector3.ZERO, "ShutterRib")
+        &"municipal":
+            for index in range(3):
+                ModelKit3D.add_cylinder(parent, 0.16, 2.7, Vector3(-3.0 + float(index) * 3.0, 1.35, -depth * 0.54), masonry, Vector3.ZERO, "MunicipalColumn")
+            ModelKit3D.add_box(parent, Vector3(7.8, 0.42, 0.18), Vector3(0.0, 3.0, -depth * 0.53), masonry, Vector3.ZERO, "MunicipalLintel")
+        &"apartments":
+            for index in range(3):
+                ModelKit3D.add_box(parent, Vector3(2.2, 0.1, 0.62), Vector3(-3.2 + float(index) * 3.2, 3.0 + float(index % 2) * 2.15, -depth * 0.56), black_metal, Vector3.ZERO, "FireEscape")
+                _add_hanging_cloth(parent, Vector3(-3.2 + float(index) * 3.2, 3.1 + float(index % 2) * 2.15, -depth * 0.67), index)
+
+
+func _add_roof_damage(parent: Node3D, width: float, depth: float, height: float) -> void:
+    for index in range(5):
+        var x := -width * 0.35 + float(index) * width * 0.17
+        ModelKit3D.add_box(parent, Vector3(width * 0.2, 0.35 + float(index % 2) * 0.3, depth * 0.34), Vector3(x, height + 0.16 + float(index % 2) * 0.22, 1.4 + float(index % 3) * 0.7), soot_masonry, Vector3(0.04 * index, 0.12 * index, 0.08 - float(index) * 0.025), "BrokenRoofSlab")
+
+
+func _build_heartforge_plaza() -> void:
+    var plaza := Node3D.new()
+    plaza.name = "HeartforgePlazaDetail"
+    root.add_child(plaza)
+
+    # Broken municipal pavers create human scale around the forge instead of a
+    # single featureless grey polygon.
+    for x in range(-5, 6):
+        for z in range(-5, 6):
+            if abs(x) <= 2 and abs(z) <= 2:
+                continue
+            var jitter_y := 0.055 + float((x * 7 + z * 11) % 5) * 0.006
+            var rotation := float((x * 13 + z * 17) % 9 - 4) * 0.009
+            ModelKit3D.add_box(plaza, Vector3(1.12, 0.07, 1.12), Vector3(float(x) * 1.16, jitter_y, float(z) * 1.16), wet_concrete, Vector3(0.01 * float((x + z) % 2), rotation, 0.0), "BrokenPaver")
+
+    # Drainage, patched utility cuts and old municipal markings.
+    for index in range(5):
+        ModelKit3D.add_box(plaza, Vector3(1.65, 0.04, 0.62), Vector3(-5.0 + float(index) * 2.5, 0.105, 7.15), black_metal, Vector3.ZERO, "DrainGrate")
+        for bar in range(5):
+            ModelKit3D.add_box(plaza, Vector3(0.08, 0.025, 0.58), Vector3(-5.55 + float(index) * 2.5 + float(bar) * 0.27, 0.132, 7.15), painted_metal, Vector3.ZERO, "DrainSlot")
+    ModelKit3D.add_box(plaza, Vector3(9.6, 0.045, 1.2), Vector3(0.0, 0.09, -8.0), wet_asphalt, Vector3(0.0, -0.08, 0.0), "UtilityPatch")
+    for index in range(7):
+        ModelKit3D.add_box(plaza, Vector3(0.16, 0.025, 1.3), Vector3(-4.5 + float(index) * 1.5, 0.12, -8.0), warning_paint, Vector3(0.0, -0.08, 0.0), "OldHazardStripe")
+
+    _add_puddle(plaza, Vector3(-7.0, 0.115, 3.2), Vector2(2.6, 1.1), -0.22)
+    _add_puddle(plaza, Vector3(6.4, 0.115, -5.6), Vector2(2.0, 0.8), 0.31)
+    _add_puddle(plaza, Vector3(1.8, 0.115, 8.4), Vector2(1.6, 0.62), -0.12)
+
+
+func _build_service_lane() -> void:
+    var lane := Node3D.new()
+    lane.name = "ForgeServiceLane"
+    root.add_child(lane)
+    # A readable escape / expedition lane extending north keeps the opening
+    # composition from feeling like a boxed arena.
+    for z in range(-28, -8, 2):
+        ModelKit3D.add_box(lane, Vector3(5.4, 0.035, 1.72), Vector3(0.0, 0.11, float(z)), wet_asphalt, Vector3.ZERO, "ServiceLanePatch")
+    for z in range(-27, -9, 4):
+        ModelKit3D.add_box(lane, Vector3(0.12, 0.025, 1.8), Vector3(-2.25, 0.145, float(z)), warning_paint, Vector3.ZERO, "ServiceEdgeMark")
+        ModelKit3D.add_box(lane, Vector3(0.12, 0.025, 1.8), Vector3(2.25, 0.145, float(z)), warning_paint, Vector3.ZERO, "ServiceEdgeMark")
+
+
+func _build_sanctuary_perimeter() -> void:
+    var perimeter := Node3D.new()
+    perimeter.name = "ImprovisedSanctuaryPerimeter"
+    root.add_child(perimeter)
+    var positions := [
+        [Vector3(-9.0, 0.0, -6.8), 0.2], [Vector3(-9.5, 0.0, -2.8), -0.1],
+        [Vector3(9.2, 0.0, 4.8), -0.18], [Vector3(8.6, 0.0, 8.0), 0.12],
+        [Vector3(-5.8, 0.0, 9.4), 1.5], [Vector3(5.2, 0.0, 9.5), 1.56],
+    ]
+    for index in range(positions.size()):
+        var position: Vector3 = positions[index][0]
+        var yaw := float(positions[index][1])
+        ModelKit3D.add_box(perimeter, Vector3(3.2, 1.05, 0.38), position + Vector3.UP * 0.53, rust_metal if index % 2 == 0 else painted_metal, Vector3(0.0, yaw, 0.0), "WeldedBarricade")
+        ModelKit3D.add_box(perimeter, Vector3(2.8, 0.1, 0.08), position + Vector3(0.0, 1.2, 0.0), warning_paint, Vector3(0.0, yaw, 0.0), "BarricadeStripe")
+        for leg in [-1.0, 1.0]:
+            ModelKit3D.add_box(perimeter, Vector3(0.16, 0.72, 0.6), position + Vector3(leg * 1.25, 0.34, 0.0), black_metal, Vector3(0.0, yaw, 0.1 * leg), "BarricadeFoot")
+
+    # Open northern throat: the base is a refuge, not a sealed RTS compound.
+    for x in [-4.4, 4.4]:
+        ModelKit3D.add_cylinder(perimeter, 0.12, 4.2, Vector3(x, 2.1, -9.4), black_metal, Vector3.ZERO, "GatePost")
+        ModelKit3D.add_box(perimeter, Vector3(0.45, 0.45, 0.25), Vector3(x, 3.65, -9.5), cold_glass, Vector3.ZERO, "GateSensor")
+
+
+func _build_workshop_gantry() -> void:
+    if heartforge == null:
+        return
+    var gantry := Node3D.new()
+    gantry.name = "ForgeMaintenanceGantry"
+    root.add_child(gantry)
+    for x in [-3.7, 3.7]:
+        ModelKit3D.add_cylinder(gantry, 0.14, 5.1, Vector3(x, 2.55, 1.8), painted_metal, Vector3.ZERO, "GantryColumn")
+    _add_beam(gantry, Vector3(-3.7, 5.0, 1.8), Vector3(3.7, 5.0, 1.8), 0.12, black_metal, "GantryBeam")
+    _add_beam(gantry, Vector3(0.0, 4.9, 1.8), Vector3(0.0, 4.2, -1.8), 0.08, rust_metal, "ServiceBoom")
+    ModelKit3D.add_box(gantry, Vector3(0.8, 0.55, 0.62), Vector3(0.0, 4.5, -1.5), black_metal, Vector3(0.0, 0.0, -0.08), "ChainHoist")
+    _add_beam(gantry, Vector3(0.0, 4.25, -1.5), Vector3(0.0, 2.6, -1.5), 0.028, black_metal, "HoistChain")
+    ModelKit3D.add_box(gantry, Vector3(0.62, 0.25, 0.22), Vector3(0.0, 2.45, -1.5), rust_metal, Vector3(0.0, 0.0, 0.18), "HoistHook")
+
+    # Thick routed power lines connect the inhabited workshop to the forge.
+    _add_beam(gantry, Vector3(-3.6, 3.7, 1.8), Vector3(-2.0, 2.4, 0.7), 0.055, black_metal, "PowerUmbilical")
+    _add_beam(gantry, Vector3(3.6, 3.7, 1.8), Vector3(2.0, 2.4, 0.7), 0.055, black_metal, "PowerUmbilical")
+
+
+func _build_street_story_props() -> void:
+    var props := Node3D.new()
+    props.name = "OpeningEnvironmentalStory"
+    root.add_child(props)
+
+    # Abandoned evacuation point.
+    ModelKit3D.add_box(props, Vector3(4.4, 0.1, 2.2), Vector3(9.2, 0.12, -5.5), fabric, Vector3(0.03, -0.18, 0.0), "CollapsedTentRoof")
+    for position in [Vector3(7.4, 0.85, -6.4), Vector3(10.8, 0.85, -4.7)]:
+        ModelKit3D.add_cylinder(props, 0.05, 1.7, position, black_metal, Vector3.ZERO, "TentPole")
+    for index in range(4):
+        ModelKit3D.add_box(props, Vector3(0.72, 0.48, 0.52), Vector3(7.8 + float(index % 2) * 0.85, 0.24, -4.1 + float(index / 2) * 0.7), rust_metal, Vector3(0.04 * index, 0.2 * index, 0.0), "EvacuationCase")
+
+    # A dead municipal drone, implying the Mechromancer is rebuilding from a
+    # world that already failed rather than spawning generic fantasy robots.
+    ModelKit3D.add_box(props, Vector3(1.5, 0.25, 1.05), Vector3(-8.1, 0.26, -4.0), painted_metal, Vector3(0.16, 0.55, 0.24), "DeadMunicipalDrone")
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_cylinder(props, 0.22, 0.16, Vector3(-8.1 + side * 0.78, 0.22, -4.0), black_metal, Vector3(1.5708, 0.0, 0.0), "DroneWheel")
+
+    # Hanging cables create depth and parallax without becoming giant text.
+    var cable_points := [
+        [Vector3(-9.0, 3.8, -6.8), Vector3(-3.7, 4.8, 1.8)],
+        [Vector3(9.2, 3.6, 4.8), Vector3(3.7, 4.6, 1.8)],
+        [Vector3(-5.8, 3.2, 9.4), Vector3(-2.4, 3.7, 3.8)],
+    ]
+    for pair in cable_points:
+        _add_beam(props, pair[0], pair[1], 0.022, black_metal, "HangingCable")
+
+
+func _build_local_nest_landmarks() -> void:
+    if ecology == null:
+        return
+    var nests := Node3D.new()
+    nests.name = "VisibleOrganicNests"
+    root.add_child(nests)
+    var snapshots := ecology.nest_snapshot()
+    for data in snapshots:
+        var position: Vector3 = data.get("position", Vector3.ZERO)
+        var nest := Node3D.new()
+        nest.name = "Nest_%02d" % int(data.get("index", 0))
+        nest.position = position
+        nests.add_child(nest)
+        ModelKit3D.add_sphere(nest, 1.4, Vector3(0.0, 0.46, 0.0), organic, Vector3(1.55, 0.48, 1.35), "RootMat")
+        for index in range(11):
+            var angle := TAU * float(index) / 11.0
+            var radius := 1.4 + float(index % 3) * 0.5
+            var height := 1.2 + float((index * 5) % 4) * 0.45
+            ModelKit3D.add_capsule(nest, 0.1, height, Vector3(cos(angle) * radius, height * 0.45, sin(angle) * radius), organic, Vector3(cos(angle) * 0.5, 0.0, -sin(angle) * 0.5), "NestSpine")
+        var light := _add_light(nest, Vector3(0.0, 0.9, 0.0), Color("8f2639"), 0.34, 5.5, false)
+        light.set_meta(&"vertical_base_energy", 0.34)
+        practical_lights.append(light)
+
+
+func _build_weather() -> void:
+    var rain := CPUParticles3D.new()
+    rain.name = "LocalRain"
+    rain.amount = 520
+    rain.lifetime = 1.4
+    rain.preprocess = 1.4
+    rain.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+    rain.emission_box_extents = Vector3(28.0, 10.0, 28.0)
+    rain.position = Vector3(0.0, 10.0, 0.0)
+    rain.direction = Vector3(0.18, -1.0, 0.08)
+    rain.spread = 5.0
+    rain.gravity = Vector3(0.0, -12.0, 0.0)
+    rain.initial_velocity_min = 9.0
+    rain.initial_velocity_max = 14.0
+    rain.scale_amount_min = 0.42
+    rain.scale_amount_max = 0.9
+    var streak := QuadMesh.new()
+    streak.size = Vector2(0.018, 0.42)
+    var material := StandardMaterial3D.new()
+    material.albedo_color = Color(0.7, 0.82, 0.88, 0.28)
+    material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+    material.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+    material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+    streak.material = material
+    rain.mesh = streak
+    root.add_child(rain)
+
+
+func _build_atmospheric_steam() -> void:
+    for position in [Vector3(-6.8, 0.15, -7.8), Vector3(7.4, 0.15, 6.9), Vector3(2.4, 0.15, -10.2)]:
+        var steam := CPUParticles3D.new()
+        steam.name = "StreetSteam"
+        steam.position = position
+        steam.amount = 18
+        steam.lifetime = 3.8
+        steam.preprocess = 2.0
+        steam.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+        steam.emission_sphere_radius = 0.18
+        steam.direction = Vector3.UP
+        steam.spread = 16.0
+        steam.gravity = Vector3(0.12, 0.2, 0.08)
+        steam.initial_velocity_min = 0.3
+        steam.initial_velocity_max = 0.8
+        steam.scale_amount_min = 0.32
+        steam.scale_amount_max = 1.0
+        var cloud := QuadMesh.new()
+        cloud.size = Vector2(0.9, 0.9)
+        var material := StandardMaterial3D.new()
+        material.albedo_color = Color(0.55, 0.62, 0.65, 0.13)
+        material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+        material.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+        cloud.material = material
+        steam.mesh = cloud
+        root.add_child(steam)
+        steam_emitters.append(steam)
+
+
+func _build_lighting_rig() -> void:
+    var definitions := [
+        [Vector3(0.0, 5.2, 1.6), Color("ff8d42"), 2.7, 15.0, true],
+        [Vector3(-6.8, 3.2, 2.0), Color("ffb36a"), 1.15, 8.5, true],
+        [Vector3(7.8, 3.0, -2.0), Color("9fcbd8"), 0.85, 10.0, false],
+        [Vector3(0.0, 3.4, -10.0), Color("7ec4d1"), 0.72, 9.5, false],
+        [Vector3(-9.0, 3.8, -7.0), Color("dca46d"), 0.68, 7.0, false],
+    ]
+    for data in definitions:
+        var light := _add_light(root, data[0], data[1], float(data[2]), float(data[3]), bool(data[4]))
+        light.set_meta(&"vertical_base_energy", float(data[2]))
+        practical_lights.append(light)
+
+
+func _add_hanging_cloth(parent: Node3D, position: Vector3, index: int) -> void:
+    ModelKit3D.add_box(parent, Vector3(1.35, 1.1, 0.045), position, fabric, Vector3(0.0, 0.04 * float(index), 0.08 * (-1.0 if index % 2 == 0 else 1.0)), "HangingCloth")
+
+
+func _add_puddle(parent: Node3D, position: Vector3, size: Vector2, rotation_y: float) -> void:
+    var mesh := CylinderMesh.new()
+    mesh.top_radius = 1.0
+    mesh.bottom_radius = 1.0
+    mesh.height = 0.018
+    mesh.radial_segments = 32
+    var material := StandardMaterial3D.new()
+    material.albedo_color = Color(0.08, 0.15, 0.19, 0.44)
+    material.metallic = 0.5
+    material.roughness = 0.08
+    material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+    var instance := MeshInstance3D.new()
+    instance.name = "VerticalSlicePuddle"
+    instance.mesh = mesh
+    instance.material_override = material
+    instance.position = position
+    instance.rotation.y = rotation_y
+    instance.scale = Vector3(size.x, 1.0, size.y)
+    parent.add_child(instance)
+
+
+func _add_light(parent: Node3D, position: Vector3, color: Color, energy: float, light_range: float, shadows: bool) -> OmniLight3D:
+    var light := OmniLight3D.new()
+    light.position = position
+    light.light_color = color
+    light.light_energy = energy
+    light.omni_range = light_range
+    light.shadow_enabled = shadows
+    parent.add_child(light)
+    return light
+
+
+func _add_beam(parent: Node3D, start: Vector3, finish: Vector3, radius: float, material: Material, node_name: String) -> void:
+    var direction := finish - start
+    var mesh := CylinderMesh.new()
+    mesh.top_radius = radius
+    mesh.bottom_radius = radius
+    mesh.height = maxf(0.01, direction.length())
+    mesh.radial_segments = 8
+    var instance := MeshInstance3D.new()
+    instance.name = node_name
+    instance.mesh = mesh
+    instance.material_override = material
+    instance.position = (start + finish) * 0.5
+    if direction.length() > 0.001:
+        instance.quaternion = Quaternion(Vector3.UP, direction.normalized())
+    parent.add_child(instance)
+
+
+func _find_procedural_city(node: Node) -> ProceduralCity3D:
+    if node is ProceduralCity3D:
+        return node as ProceduralCity3D
+    for child in node.get_children():
+        var found := _find_procedural_city(child)
+        if found != null:
+            return found
+    return null
+
+
+func _find_world_environment(node: Node) -> WorldEnvironment:
+    if node is WorldEnvironment:
+        return node as WorldEnvironment
+    for child in node.get_children():
+        var found := _find_world_environment(child)
+        if found != null:
+            return found
+    return null
