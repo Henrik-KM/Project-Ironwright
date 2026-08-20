@@ -484,6 +484,17 @@ identities. Manual channels remain finish-before-save.
 - live opening review confirmed the player can move across the threshold while
   the forge, companion and objective remain readable.
 
+## Focused autonomous-construction staging milestone
+
+- active build, upgrade and automatic-rebuild operations now expose one
+  bounded elevated work frame above the real outpost site;
+- the frame uses a rotating target ring, central work core, four construction
+  pylons and links to the physically present operation members;
+- the signature is presentation-only, clears outside the working state, and
+  does not add a queue, worker assignment or player maintenance surface;
+- live review at the North Transit Yard confirmed the construction frame reads
+  above the existing site marker while the machine escort remains visible.
+
 ## Focused contextual tactical-HUD milestone
 
 - the permanent control legend now clears after the onboarding window instead
