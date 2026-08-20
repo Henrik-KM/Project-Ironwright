@@ -6,6 +6,7 @@ const AUTHORED_RIVERWORKS_MODEL_SCENE: PackedScene = preload("res://assets/river
 const AUTHORED_CATHEDRAL_MODEL_SCENE: PackedScene = preload("res://assets/cathedral/cathedral.gltf")
 const AUTHORED_OBSERVATORY_MODEL_SCENE: PackedScene = preload("res://assets/observatory/observatory.gltf")
 const AUTHORED_TRAM_GRAVEYARD_MODEL_SCENE: PackedScene = preload("res://assets/tram_graveyard/tram_graveyard.gltf")
+const AUTHORED_BURIED_LABS_MODEL_SCENE: PackedScene = preload("res://assets/buried_labs/buried_labs.gltf")
 
 signal landmark_changed(landmark: RegionLandmark3D)
 
@@ -287,10 +288,9 @@ func _build_visuals() -> void:
                 var vessel_x := -4.5 + float(vessel_index) * 4.5
                 _add_beam(research, Vector3(vessel_x, 4.4, 4.2), Vector3(vessel_x, 3.6, 4.2), 0.055, lab_trim, "LabTransferDrop")
             ModelKit3D.add_beveled_box(research, Vector3(11.6, 0.12, 0.18), Vector3(0.0, 4.62, 4.2), lab_signal, Vector3.ZERO, "LabTransferSignal", 0.1)
-            _add_ruin_block(Vector3(-6.5, -1.0, 0.0), Vector3(10.0, 3.0, 11.0), concrete)
-            _add_ruin_block(Vector3(7.0, -1.6, -5.0), Vector3(8.0, 2.2, 7.0), metal)
             ModelKit3D.add_beveled_box(_visual_root, Vector3(6.6, 0.32, 2.0), Vector3(0.0, 0.18, 9.0), edge, Vector3.ZERO, "LabAccess", 0.24)
             ModelKit3D.add_surface_panel(_visual_root, Vector3(2.2, 0.8, 0.1), Vector3(0.0, 0.62, 7.92), edge, membrane, Vector3.ZERO, "LabAccessPanel")
+            _build_authored_buried_labs_visuals()
         &"endgame":
             _build_authored_root_cistern_visuals()
         _:
@@ -465,6 +465,26 @@ func _build_authored_tram_graveyard_visuals() -> void:
     _visual_root.add_child(authored_marker)
 
 
+func _build_authored_buried_labs_visuals() -> void:
+    # The research vignette remains owned by this landmark; the authored shell
+    # makes its containment hall and sealed biological work legible at range.
+    var authored_scene_instance := AUTHORED_BURIED_LABS_MODEL_SCENE.instantiate()
+    var imported_root := authored_scene_instance.get_node_or_null("BuriedLabsModel") as Node
+    if imported_root == null:
+        imported_root = authored_scene_instance
+    var authored_children := imported_root.get_children()
+    for child in authored_children:
+        child.owner = null
+        imported_root.remove_child(child)
+        _visual_root.add_child(child)
+    if imported_root != authored_scene_instance:
+        imported_root.free()
+    authored_scene_instance.free()
+    var authored_marker := Node3D.new()
+    authored_marker.name = "BuriedLabsAuthoredModel"
+    _visual_root.add_child(authored_marker)
+
+
 func _capture_region_motion_nodes() -> void:
     _motion_nodes.clear()
     _motion_base_transforms.clear()
@@ -519,6 +539,11 @@ func _animate_region_details() -> void:
         elif node_name.begins_with("TramOrganicSeep"):
             node.rotation.y += sin(local_phase * 0.9) * 0.06
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.25) * 0.06)
+        elif node_name.begins_with("BuriedLabsVesselLight") or node_name.begins_with("BuriedLabsTransferLight"):
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 2.0) * 0.10)
+        elif node_name.begins_with("BuriedLabsOrganicSeep"):
+            node.rotation.y += sin(local_phase * 0.8) * 0.06
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.2) * 0.07)
         elif node_name.begins_with("RiverworksGrowth") or node_name.begins_with("RiverbankGrowth"):
             node.rotation.y += sin(local_phase * 1.15) * 0.12
             node.scale *= Vector3(1.0, 1.0 + sin(local_phase * 1.8) * 0.08, 1.0)
@@ -540,6 +565,9 @@ func _is_region_motion_name(node_name: String) -> bool:
         "ObservatoryMastLight",
         "TramSignalLamp",
         "TramOrganicSeep",
+        "BuriedLabsVesselLight",
+        "BuriedLabsTransferLight",
+        "BuriedLabsOrganicSeep",
     ]:
         if node_name.begins_with(prefix):
             return true

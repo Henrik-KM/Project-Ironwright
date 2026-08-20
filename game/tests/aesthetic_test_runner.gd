@@ -159,6 +159,17 @@ func _run_all() -> void:
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/BuriedLaboratoriesIdentityDetails") != null, "Buried Laboratories must expose its authored containment vignette.")
                 _expect(landmark.find_child("LabContainmentVessel", true, false) != null, "Buried Laboratories must expose readable containment vessels.")
                 _expect(landmark.find_child("LabTransferRail", true, false) != null, "Buried Laboratories must expose an overhead transfer rail.")
+                _expect(landmark.get_node_or_null("PersistentRegionGeometry/BuriedLabsAuthoredModel") != null, "Buried Laboratories must expose its authored containment-hall landmark shell.")
+                var labs_light := landmark.find_child("BuriedLabsVesselLight0", true, false) as Node3D
+                var labs_seep := landmark.find_child("BuriedLabsOrganicSeep0", true, false) as Node3D
+                _expect(labs_light != null and labs_seep != null, "Buried Laboratories must expose named containment-light and organic-contamination motion sockets.")
+                if labs_light != null and labs_seep != null:
+                    landmark.set_presentation_detail_level(0)
+                    var labs_light_before := labs_light.scale
+                    var labs_seep_before := labs_seep.scale
+                    landmark.call("_process", 0.5)
+                    _expect(not labs_light.scale.is_equal_approx(labs_light_before), "Buried Laboratories containment light must pulse as a restrained presentation cue.")
+                    _expect(not labs_seep.scale.is_equal_approx(labs_seep_before), "Buried Laboratories organic contamination must carry deterministic presentation motion.")
             if landmark.region_kind == &"tenement":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing/TenementVerticalLifeDetails") != null, "East Tenements must expose an authored vertical residential vignette.")
                 _expect(landmark.find_child("TenementFireEscapeLadder", true, false) != null, "East Tenements must expose a readable fire-escape route signature.")
