@@ -192,6 +192,37 @@ func _build_tenement_vignette(parent: Node3D) -> void:
 
 
 func _build_greenhouse_vignette(parent: Node3D) -> void:
+    var light_canopy := Node3D.new()
+    light_canopy.name = "GreenhouseLightCanopy"
+    light_canopy.position = Vector3(0.0, 0.0, 8.0)
+    parent.add_child(light_canopy)
+    var frame := ModelKit3D.material(Color("3e5552"), 0.58, 0.34)
+    var frame_edge := ModelKit3D.material(Color("79513a"), 0.42, 0.62)
+    var glass_dark := ModelKit3D.material(Color("254b4b"), 0.18, 0.3, Color("4faaa0"), 0.42)
+    var glass_warm := ModelKit3D.material(Color("6f6038"), 0.12, 0.3, Color("d9cb70"), 0.8)
+    var utility_cyan := ModelKit3D.material(Color("24585b"), 0.34, 0.28, Color("6ce1d6"), 1.7)
+    var growth_material := ModelKit3D.material(Color("2a4b38"), 0.0, 0.8, Color("67d0a0"), 0.52)
+
+    ModelKit3D.add_beveled_box(light_canopy, Vector3(7.8, 4.5, 0.42), Vector3(4.6, 2.25, -6.95), frame, Vector3(0.0, 0.0, 0.02), "GreenhouseFacadeShell", 0.16)
+    ModelKit3D.add_beveled_box(light_canopy, Vector3(8.2, 0.22, 0.7), Vector3(4.6, 4.62, -6.92), frame_edge, Vector3.ZERO, "GreenhouseRoofCoping", 0.2)
+    for bay in range(3):
+        var x := 1.9 + float(bay) * 2.7
+        var lit := bay == 1
+        ModelKit3D.add_surface_panel(light_canopy, Vector3(1.65, 1.45, 0.1), Vector3(x, 2.45, -6.5), frame, glass_warm if lit else glass_dark, Vector3.ZERO, "GreenhouseLightBay%d" % bay)
+    for side in [-1.0, 1.0]:
+        _add_beam(light_canopy, Vector3(4.6 + side * 3.45, 0.3, -6.5), Vector3(4.6 + side * 3.05, 4.45, -6.5), 0.075, frame_edge, "GreenhouseFacadePier")
+    ModelKit3D.add_louvered_panel(light_canopy, Vector3(1.18, 0.72, 0.08), Vector3(7.25, 1.2, -6.45), frame, utility_cyan, Vector3.ZERO, "GreenhouseClimateLouver", 4)
+    _add_beam(light_canopy, Vector3(1.3, 4.0, -6.5), Vector3(7.8, 4.0, -6.5), 0.045, utility_cyan, "GreenhouseIrrigationRail")
+    for index in range(3):
+        var x := 2.25 + float(index) * 2.35
+        _add_beam(light_canopy, Vector3(x, 3.95, -6.5), Vector3(x, 1.05, -6.45), 0.035, utility_cyan, "GreenhouseDropLine")
+        ModelKit3D.add_membrane_fan(light_canopy, 0.42 + float(index % 2) * 0.12, Vector3(x, 0.72, -6.4), growth_material, 5, "GreenhouseFacadeGrowth")
+    ModelKit3D.add_tapered_cylinder(light_canopy, 0.48, 0.65, 1.25, Vector3(8.1, 5.35, -6.8), frame_edge, Vector3.ZERO, "GreenhouseRoofTank")
+    ModelKit3D.add_cylinder(light_canopy, 0.07, 1.3, Vector3(8.1, 6.62, -6.8), utility_cyan, Vector3.ZERO, "GreenhouseRoofVent")
+    ModelKit3D.add_beveled_box(light_canopy, Vector3(2.4, 0.1, 1.2), Vector3(2.2, 4.86, -6.3), glass_dark, Vector3(0.0, 0.0, 0.2), "GreenhouseBrokenSkylight", 0.14)
+    _add_light(light_canopy, Vector3(4.6, 2.55, -6.3), Color("d8ce79"), 0.85, 6.8)
+    _add_light(light_canopy, Vector3(7.25, 1.4, -6.3), Color("6ce1d6"), 0.55, 4.8)
+
     for index in range(4):
         var x := -4.5 + float(index) * 3.0
         ModelKit3D.add_beveled_box(parent, Vector3(2.2, 0.28, 1.15), Vector3(x, 0.25, -4.7), _rust, Vector3.ZERO, "GreenhouseBed", 0.22)
