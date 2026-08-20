@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Validate browser reference, release assets and product contracts
+      - name: Validate browser reference, tier ecology and product contracts
         run: npm run validate
 
       - name: Validate aesthetic integration
@@ -29,7 +29,7 @@ jobs:
 
   validate-native-godot:
     runs-on: ubuntu-latest
-    timeout-minutes: 32
+    timeout-minutes: 36
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -73,3 +73,6 @@ jobs:
 
       - name: Run commercial release tests
         run: godot --headless --path game --script res://tests/release_test_runner.gd
+
+      - name: Run population-driven enemy tier tests
+        run: godot --headless --path game --script res://tests/enemy_tier_progression_test_runner.gd
