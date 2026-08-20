@@ -45,6 +45,9 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
 - weeds and opportunistic vegetation;
 - distant organic growth near nest territories;
 - suspended dust, drizzle or atmospheric motes.
+- persistent region landmarks use beveled ruin shells, layered window frames,
+  roof caps and identity-specific industrial, commercial, research, nest and
+  endgame details rather than one primitive block per district.
 
 Clutter must leave important routes readable from the high-angle camera.
 
