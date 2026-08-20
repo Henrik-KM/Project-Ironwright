@@ -2,6 +2,7 @@ class_name RobotUnit3D
 extends CharacterBody3D
 
 const AUTHORED_BULWARK_MODEL_SCENE: PackedScene = preload("res://assets/bulwark/bulwark.gltf")
+const AUTHORED_WARDEN_MODEL_SCENE: PackedScene = preload("res://assets/warden/warden.gltf")
 
 signal destroyed(robot: RobotUnit3D)
 signal health_changed(robot: RobotUnit3D, current: float, maximum: float)
@@ -295,6 +296,9 @@ func _refresh_visual_identity() -> void:
     if archetype == &"companion":
         _build_authored_companion_visuals()
         return
+    if archetype == &"guardian":
+        _build_authored_warden_visuals()
+        return
 
     var steel := ModelKit3D.material(Color("3f4648"), 0.78, 0.4)
     var dark_steel := ModelKit3D.material(Color("202628"), 0.85, 0.38)
@@ -509,3 +513,80 @@ func _build_authored_companion_visuals() -> void:
             )
 
     _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.15, -1.04), glow_color, 0.9, 4.2)
+
+
+func _build_authored_warden_visuals() -> void:
+    # Warden is the second production silhouette: an escort machine whose
+    # broad armour, counterweight and heat hardware communicate a defensive
+    # doctrine without adding a new player-managed role or resource.
+    var authored_model := AUTHORED_WARDEN_MODEL_SCENE.instantiate()
+    authored_model.name = "WardenAuthoredModel"
+    _model_root.add_child(authored_model)
+
+    var steel := ModelKit3D.material(Color("53656a"), 0.78, 0.3)
+    var dark_steel := ModelKit3D.material(Color("182326"), 0.86, 0.34)
+    var glow_color := Color("e5a75c")
+    var glow := ModelKit3D.material(glow_color.darkened(0.5), 0.34, 0.28, glow_color, 2.8)
+
+    # Keep the guardian's original escort read explicit in the authored shell:
+    # rear protection remains a stable role cue and is also used by the
+    # presentation animator for a restrained rib motion.
+    ModelKit3D.add_box(_model_root, Vector3(1.78, 0.74, 0.14), Vector3(0.0, 0.8, 0.86), steel, Vector3.ZERO, "RearShield")
+    ModelKit3D.add_box(_model_root, Vector3(1.44, 0.12, 0.12), Vector3(0.0, 1.05, 0.96), dark_steel, Vector3.ZERO, "ShieldRib")
+
+    if level >= 2:
+        for side in [-1.0, 1.0]:
+            var side_sign := float(side)
+            ModelKit3D.add_beveled_box(
+                _model_root,
+                Vector3(0.2, 0.36, 1.2),
+                Vector3(side_sign * 1.1, 1.12, 0.0),
+                steel,
+                Vector3(0.0, 0.0, side_sign * 0.08),
+                "Tier2ShoulderRail",
+                0.22
+            )
+            ModelKit3D.add_box(
+                _model_root,
+                Vector3(0.06, 0.08, 0.84),
+                Vector3(side_sign * 1.18, 1.12, -0.03),
+                glow,
+                Vector3(0.0, 0.0, side_sign * 0.08),
+                "Tier2SignalStrip"
+            )
+        ModelKit3D.add_louvered_panel(
+            _model_root,
+            Vector3(0.82, 0.3, 0.16),
+            Vector3(0.0, 1.64, 0.56),
+            dark_steel,
+            steel,
+            Vector3.ZERO,
+            "Tier2DorsalServicePanel",
+            4
+        )
+
+    if level >= 3:
+        var crown_ring := MeshInstance3D.new()
+        crown_ring.name = "Tier3CrownRing"
+        var crown_mesh := TorusMesh.new()
+        crown_mesh.inner_radius = 0.54
+        crown_mesh.outer_radius = 0.6
+        crown_mesh.rings = 16
+        crown_mesh.ring_segments = 32
+        crown_ring.mesh = crown_mesh
+        crown_ring.material_override = glow
+        crown_ring.position = Vector3(0.0, 2.1, 0.18)
+        _model_root.add_child(crown_ring)
+        ModelKit3D.add_cylinder(_model_root, 0.05, 0.6, Vector3(0.0, 2.38, 0.18), glow, Vector3.ZERO, "Tier3CrownMast")
+        for index in range(3):
+            var crown_angle := TAU * float(index) / 3.0
+            ModelKit3D.add_sphere(
+                _model_root,
+                0.078,
+                Vector3(cos(crown_angle) * 0.6, 2.12, 0.18 + sin(crown_angle) * 0.6),
+                glow,
+                Vector3.ONE,
+                "Tier3CrownBeacon"
+            )
+
+    _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.18, -1.07), glow_color, 0.9, 4.2)

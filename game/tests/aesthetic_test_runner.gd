@@ -134,6 +134,15 @@ func _run_all() -> void:
         _expect(_role_model_has_details(role_samples[index], role_names[index]), "The %s robot must expose a role-readable high-detail silhouette." % role_names[index])
         role_samples[index].queue_free()
 
+    var authored_warden := ROBOT_SCENE.instantiate() as RobotUnit3D
+    authored_warden.configure(&"guardian", 1)
+    authored_warden.position = Vector3(30.0, 0.0, 28.0)
+    root.add_child(authored_warden)
+    await process_frame
+    _expect(_find_named(authored_warden, "WardenAuthoredModel") != null, "The guardian must use the authored Warden model shell.")
+    _expect(_find_named(authored_warden, "ProductionAssetMarker") != null, "The authored Warden model must expose its production asset marker.")
+    authored_warden.queue_free()
+
     var evolved_robot := ROBOT_SCENE.instantiate() as RobotUnit3D
     evolved_robot.configure(&"guardian", 3)
     evolved_robot.position = Vector3(20.0, 0.0, 28.0)
