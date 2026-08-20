@@ -89,6 +89,8 @@ organic enemies remain procedural until their own production asset milestones.
 
 - species-specific carapace, muzzle, feeler, drill, sac, lobe and crown
   silhouettes across all seven current organic families;
+- a ribbed, layered Veilstalker thorax and plated dorsal construction for the
+  first focused hostile-family quality pass;
 - asymmetrical chitin, flesh, spines and tails;
 - twitching idle movement and multi-leg locomotion;
 - head probing, mandible movement, pack movement and species-specific idle

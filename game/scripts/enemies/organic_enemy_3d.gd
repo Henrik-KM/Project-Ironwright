@@ -570,11 +570,11 @@ func _refresh_visuals() -> void:
         # First authored organic family pass: the asymmetric thorax, layered
         # veil membranes and forward sensory crown establish a predator
         # silhouette before the creature enters combat range.
-        ModelKit3D.add_sphere(_model_root, 0.56, Vector3(0.0, 0.99, -0.22), wet_chitin, Vector3(1.84, 0.76, 1.52), "VeilstalkerThorax")
+        ModelKit3D.add_ribbed_shell(_model_root, 0.56, Vector3(0.0, 0.99, -0.22), wet_chitin, chitin, Vector3(1.84, 0.76, 1.52), "VeilstalkerThorax")
         ModelKit3D.add_sphere(_model_root, 0.42, Vector3(-0.22, 1.18, 0.72), flesh, Vector3(1.28, 0.82, 1.08), "VeilstalkerAbdomen")
         for index in range(3):
             var plate_z := -0.68 + float(index) * 0.44
-            ModelKit3D.add_sphere(_model_root, 0.34, Vector3(0.0, 1.42 - float(index) * 0.045, plate_z), chitin, Vector3(1.48, 0.18, 0.62), "VeilstalkerDorsalPlate")
+            ModelKit3D.add_organic_plate(_model_root, 0.34, Vector3(0.0, 1.42 - float(index) * 0.045, plate_z), chitin, bone, Vector3(1.48, 0.55, 0.62), "VeilstalkerDorsalPlate")
         for side in [-1.0, 1.0]:
             ModelKit3D.add_sphere(_model_root, 0.34, Vector3(side * 0.98, 1.1, -0.18), membrane, Vector3(0.22, 1.6, 0.9), "VeilstalkerVeil")
             ModelKit3D.add_capsule(_model_root, 0.075, 1.75, Vector3(side * 0.78, 0.72, -0.62), tendon, Vector3(0.22, 0.0, side * 0.34), "VeilstalkerForelimb")

@@ -211,6 +211,33 @@ static func add_organic_plate(
     return plate
 
 
+static func add_ribbed_shell(
+        parent: Node3D,
+        radius: float,
+        position: Vector3,
+        base_mat: Material,
+        ridge_mat: Material,
+        scale: Vector3 = Vector3.ONE,
+        name_hint: String = "RibbedShell"
+    ) -> Node3D:
+    # A layered thorax has a readable biological construction: wet core,
+    # lateral shell lobes and raised dorsal ribs. The ribs are deliberately
+    # asymmetric so the family does not read like a mirrored prop.
+    var shell := Node3D.new()
+    shell.name = name_hint
+    shell.position = position
+    shell.scale = scale
+    parent.add_child(shell)
+    add_sphere(shell, radius, Vector3.ZERO, base_mat, Vector3.ONE, "%sCore" % name_hint)
+    for side in [-1.0, 1.0]:
+        add_sphere(shell, radius * 0.58, Vector3(side * radius * 0.78, radius * 0.12, radius * 0.05), ridge_mat, Vector3(0.62, 0.9, 1.2), "%sLateralLobe" % name_hint)
+    for index in range(4):
+        var rib_z := -radius * 0.65 + float(index) * radius * 0.43
+        var rib_height := radius * (1.18 + (0.08 if index == 1 else 0.0))
+        add_capsule(shell, radius * 0.075, rib_height, Vector3(-radius * 0.04 + (0.04 if index == 2 else 0.0), radius * 0.62, rib_z), ridge_mat, Vector3(0.0, 0.0, PI * 0.5), "%sDorsalRib" % name_hint)
+    return shell
+
+
 static func add_collision_box(parent: CollisionObject3D, size: Vector3, position: Vector3) -> CollisionShape3D:
     var shape := BoxShape3D.new()
     shape.size = size
