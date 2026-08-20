@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "defaults": {
+    "language": "en",
+    "difficulty": "survival",
+    "master_volume": 0.88,
+    "music_volume": 0.68,
+    "ambience_volume": 0.78,
+    "effects_volume": 0.86,
+    "text_scale": 1.0,
+    "high_contrast_ui": false,
+    "colorblind_mode": "off",
+    "reduced_motion": false,
+    "reduced_flashes": false,
+    "camera_shake": 0.65,
+    "hold_interactions": true,
+    "controller_vibration": true,
+    "subtitles": true,
+    "show_world_guidance": true,
+    "target_fps": 60
+  },
+  "ranges": {
+    "master_volume": [0.0, 1.0],
+    "music_volume": [0.0, 1.0],
+    "ambience_volume": [0.0, 1.0],
+    "effects_volume": [0.0, 1.0],
+    "text_scale": [0.85, 1.4],
+    "camera_shake": [0.0, 1.0],
+    "target_fps": [30, 120]
+  },
+  "supported_colorblind_modes": ["off", "deuteranopia", "protanopia", "tritanopia"],
+  "supported_difficulties": ["story", "survival", "brutal"]
+}
