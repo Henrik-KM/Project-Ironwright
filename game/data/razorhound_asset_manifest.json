@@ -1,0 +1,10 @@
+{
+  "asset_id": "razorhound.predator.v1",
+  "display_name": "Razorhound predator shell",
+  "source": "game/assets/razorhound/source/build_razorhound_asset.py",
+  "runtime_path": "res://assets/razorhound/razorhound.gltf",
+  "quality": "authored_high_definition",
+  "license": "Original Project Ironwright asset",
+  "required_nodes": ["RazorhoundModel", "Torso", "TorsoCore", "RazorhoundSnout", "RazorhoundCheekPlate", "RazorhoundFang", "RazorhoundSpine", "RazorhoundTail", "ProductionAssetMarker"],
+  "animation_clips": ["Idle", "Walk", "Attack"]
+}

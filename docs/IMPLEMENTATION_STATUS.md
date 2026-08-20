@@ -175,6 +175,9 @@ identities. Manual channels remain finish-before-save.
 
 ## Focused organic family presentation milestone
 
+- added an authored `razorhound.predator.v1` shell and manifest for the common
+  early predator, preserving the stable `OrganicModel/Torso/TorsoCore` release
+  path;
 - added species-specific silhouettes for Skitterling, Razorhound, Burrower,
   Sporecaster, Broodmass and Apex instead of relying on the shared torso/head
   blockout alone;

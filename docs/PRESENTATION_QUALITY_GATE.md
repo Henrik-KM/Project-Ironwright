@@ -6,7 +6,7 @@ The current build is not release-ready merely because its systemic gameplay path
 
 The current visual state is explicitly classified as **pre-alpha production prototype** until the following gates are met.
 
-The shared model kit now has a high-detail baseline: curved primitives use denser radial/ring resolution, machine chassis and representative cutaway facades use original beveled core/rail/cap geometry, and organic shells receive layered surface panels, fasteners and material-break ridges. The opening Mechromancer equipment and full friendly machine roster use authored shells, and Veilstalker now has the first authored hostile shell, without changing gameplay collision or introducing a per-unit maintenance burden. It is a production-facing pass, not a claim that final authored meshes have replaced the remaining procedural families.
+The shared model kit now has a high-detail baseline: curved primitives use denser radial/ring resolution, machine chassis and representative cutaway facades use original beveled core/rail/cap geometry, and organic shells receive layered surface panels, fasteners and material-break ridges. The opening Mechromancer equipment and full friendly machine roster use authored shells, and Veilstalker plus the common Razorhound now have authored hostile shells, without changing gameplay collision or introducing a per-unit maintenance burden. It is a production-facing pass, not a claim that final authored meshes have replaced the remaining procedural families.
 
 ## Immediate failures identified from the first full-game screenshot review
 
@@ -129,7 +129,7 @@ The presentation milestones proceed in this order:
 2. authored Heartforge district composition — vertical slice implemented, awaiting visual review;
 3. production Mechromancer and Bulwark silhouettes — authored Mechromancer plus an authored Bulwark glTF shell with layered chassis, protection hardware, stable sockets and deterministic runtime animation; the Mechromancer now has a finished asymmetric field-kit pass with communications hardware, and the Bulwark retains its explicit shield-emitter/guard signature, with further authored refinement expected;
 4. one production-quality Warden/Scrapper/Pathfinder family pass — the Warden now has an authored high-definition guardian shell with protected autocannon and heat-exchanger language, the Scrapper now has an authored cargo/tool shell with salvage hardware, Pathfinder now has an authored survey shell with mast/dish/optic language, and Engineer now has an authored construction/tool shell; further refinement remains expected;
-5. one complete organic enemy family with authored movement and attack language — Veilstalker now has an authored glTF shell plus state-driven stalking/attack presentation, including explicit attack-wind-up loading; live acceptance completed for the opening frame, with broader hostile-family review still required;
+5. complete organic enemy families with authored movement and attack language — Veilstalker and Razorhound now have authored glTF shells plus state-driven stalking/attack presentation; live acceptance completed for representative opening frames, with broader hostile-family review still required;
 6. cohesive urban modular kit with damaged facades, interiors, street furniture and vegetation — opening route set-piece pass implemented, broader district breadth still required;
 7. final lighting/material pass for the opening district;
 8. human visual acceptance of representative opening gameplay;

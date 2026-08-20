@@ -177,6 +177,8 @@ func _run_all() -> void:
         _expect(_enemy_model_has_details(enemy_samples[index], species_names[index]), "The %s organic family must expose a role-readable silhouette." % species_names[index])
         _expect(_find_named(enemy_samples[index], "OrganicDorsalPlate") != null, "The %s organic family must expose a layered shell material break." % species_names[index])
         _expect(_find_named(enemy_samples[index], "TorsoCore") != null and _find_named(enemy_samples[index], "TorsoSegment0") != null, "The %s organic family must expose segmented high-definition torso anatomy." % species_names[index])
+        if species_names[index] == &"razorhound":
+            _expect(_find_named(enemy_samples[index], "RazorhoundAuthoredModel") != null and _find_named(enemy_samples[index], "ProductionAssetMarker") != null, "The Razorhound must expose its authored production asset contract.")
         enemy_samples[index].queue_free()
 
     var veilstalker: Node3D

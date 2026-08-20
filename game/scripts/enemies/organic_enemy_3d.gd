@@ -2,6 +2,7 @@ class_name OrganicEnemy3D
 extends CharacterBody3D
 
 const AUTHORED_VEILSTALKER_MODEL_SCENE: PackedScene = preload("res://assets/veilstalker/veilstalker.gltf")
+const AUTHORED_RAZORHOUND_MODEL_SCENE: PackedScene = preload("res://assets/razorhound/razorhound.gltf")
 
 signal killed(enemy: OrganicEnemy3D, killer: Node)
 signal attack_started(enemy: OrganicEnemy3D, target: Node)
@@ -579,6 +580,9 @@ func _refresh_visuals() -> void:
     if species == &"veilstalker":
         _build_authored_veilstalker_visuals()
         return
+    if species == &"razorhound":
+        _build_authored_razorhound_visuals()
+        return
     var flesh := ModelKit3D.material(Color("201719"), 0.0, 0.91)
     var chitin := ModelKit3D.material(Color("332529"), 0.12, 0.66)
     var bone := ModelKit3D.material(Color("786f60"), 0.0, 0.82)
@@ -739,4 +743,25 @@ func _build_authored_veilstalker_visuals() -> void:
     authored_scene_instance.free()
     var authored_marker := Node3D.new()
     authored_marker.name = "VeilstalkerAuthoredModel"
+    _model_root.add_child(authored_marker)
+
+
+func _build_authored_razorhound_visuals() -> void:
+    # Razorhound is a common early predator, so its authored shell carries
+    # most of the hostile roster's day-to-day silhouette without changing the
+    # ecology or combat contract.
+    var authored_scene_instance := AUTHORED_RAZORHOUND_MODEL_SCENE.instantiate()
+    var imported_root := authored_scene_instance.get_node_or_null("RazorhoundModel") as Node
+    if imported_root == null:
+        imported_root = authored_scene_instance
+    var authored_children := imported_root.get_children()
+    for child in authored_children:
+        child.owner = null
+        imported_root.remove_child(child)
+        _model_root.add_child(child)
+    if imported_root != authored_scene_instance:
+        imported_root.free()
+    authored_scene_instance.free()
+    var authored_marker := Node3D.new()
+    authored_marker.name = "RazorhoundAuthoredModel"
     _model_root.add_child(authored_marker)
