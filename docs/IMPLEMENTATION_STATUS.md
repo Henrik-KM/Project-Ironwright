@@ -327,6 +327,16 @@ identities. Manual channels remain finish-before-save.
   unchanged;
 - the procedural motion remains presentation-only and deterministic per actor.
 
+## Focused channel-and-tracer feedback milestone
+
+- weapon fire now leaves a short-lived directional tracer between the firing
+  socket and physical target before the existing impact burst;
+- manual salvage and fabrication channels now show a restrained three-ring
+  field and vertical core that follows the player while the existing spark
+  cadence remains bounded;
+- cancellation fades the field without changing channel lockout, save or
+  simulation state, and vertical-slice coverage verifies both feedback forms.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

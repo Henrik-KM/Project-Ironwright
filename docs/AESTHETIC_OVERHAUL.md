@@ -130,6 +130,13 @@ organic enemies remain procedural until their own production asset milestones.
 
 ## Feedback and VFX
 
+Combat and survival actions should have a clear visual grammar: direction for
+projectiles, anticipation for threats, and a distinct active field for manual
+work. The current runtime provides bounded weapon tracers, organic attack
+telegraphs and impact bursts, plus a three-ring channel field for salvage and
+fabrication. These effects are presentation-only and do not introduce a new
+resource, queue or recurring player task.
+
 The presentation layer may improve feel without changing simulation outcomes.
 
 Implemented feedback includes:
