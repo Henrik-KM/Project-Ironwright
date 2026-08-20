@@ -115,6 +115,8 @@ func _spawn_enemy(position: Vector3, species: StringName) -> OrganicEnemy3D:
         tiered.configure_ecology(territory, radius, directive)
         tiered.last_known_prey_position = _array_to_vector(restored.get("last_known_prey_position", [0.0, 0.0, 0.0]))
         tiered.has_last_known_prey = bool(restored.get("has_last_known_prey", false))
+    if release_world_art != null:
+        release_world_art.apply_to_node(tiered)
     return tiered
 
 

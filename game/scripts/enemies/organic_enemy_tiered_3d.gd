@@ -32,9 +32,18 @@ var tier_config_data: Dictionary = {}
 var _tier_base_species: StringName = &""
 var _tier_base_stats: Dictionary = {}
 var _tier_visual_root: Node3D
+var _requested_ecology_directive: StringName = &""
+
+
+func _ready() -> void:
+    super._ready()
+    if _requested_ecology_directive != &"":
+        ecology_directive = _resolve_directive_for_tier(_requested_ecology_directive)
+        _choose_next_ecological_behaviour(true)
 
 
 func configure(next_species: StringName, next_player: Node3D, next_heartforge: Node3D) -> void:
+    _requested_ecology_directive = &""
     super.configure(next_species, next_player, next_heartforge)
     var canonical_tier := clampi(int(SPECIES_TIERS.get(next_species, 1)), 1, 5)
     var fallback: Variant = FALLBACK_TIER_CONFIGS.get(canonical_tier, FALLBACK_TIER_CONFIGS[1])
@@ -82,6 +91,7 @@ func configure_tier(tier: int, config: Dictionary, recapture_base: bool = false)
 
 
 func configure_ecology(home_position: Vector3, radius: float, directive: StringName = &"") -> void:
+    _requested_ecology_directive = directive
     var expanded_radius := radius
     if enemy_tier == 1:
         expanded_radius = radius * 1.55

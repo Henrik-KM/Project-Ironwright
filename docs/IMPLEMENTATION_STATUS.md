@@ -696,6 +696,21 @@ identities. Manual channels remain finish-before-save.
   collision, operations and persistence are unchanged;
 - added native aesthetic coverage for the containment vessels and transfer rail.
 
+## Focused population-driven enemy escalation milestone
+
+- pulled the latest population-driven ecology PR into the integration branch and
+  preserved its tier director, physical nest sources, capped replenishment,
+  tier-aware enemy intelligence, command-map report and persistent save fields;
+- kept lower-tier population headroom distinct from long-term nest suppression,
+  with no recurring wave timer or new player resource;
+- preserved explicit patrol, brood-protection and scouting directives when
+  tiered enemies are configured before entering the scene tree;
+- fixed presentation teardown handling for freed model nodes and extended the
+  repository/aesthetic validators to recognize the tiered entrypoint while still
+  requiring the release presentation chain;
+- live tiered opening review reached the title screen and opening tactical frame;
+  broader balance and long-run ecological review remain part of pre-alpha work.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

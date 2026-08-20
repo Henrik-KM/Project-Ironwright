@@ -242,7 +242,10 @@ func _run_all() -> void:
 
     var veilstalker: Node3D
     for enemy in get_nodes_in_group("organic_enemies"):
-        if enemy is Node3D and StringName(enemy.get("species")) == &"veilstalker":
+        if not enemy is Node3D:
+            continue
+        var species_value: Variant = enemy.get("species")
+        if species_value != null and StringName(str(species_value)) == &"veilstalker":
             veilstalker = enemy as Node3D
             break
     _expect(veilstalker != null, "The opening presentation needs a visible Veilstalker family member.")

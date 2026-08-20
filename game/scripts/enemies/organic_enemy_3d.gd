@@ -581,7 +581,11 @@ func _refresh_visuals() -> void:
     if _model_root == null:
         return
     for child in _model_root.get_children():
-        child.queue_free()
+        # Visuals are rebuilt synchronously when a tier or authored shell is
+        # applied. Free the old presentation tree immediately so stable
+        # lookup names (for example OrganicModel/Torso/TorsoCore) do not gain
+        # numeric suffixes while queued nodes still occupy the parent.
+        child.free()
     if species == &"veilstalker":
         _build_authored_veilstalker_visuals()
         return
@@ -761,6 +765,14 @@ func _build_authored_veilstalker_visuals() -> void:
     if imported_root != authored_scene_instance:
         imported_root.free()
     authored_scene_instance.free()
+    # Keep the production shell's torso anchor stable for release material
+    # continuity and secondary-animation lookup. The compact core sits inside
+    # the imported thorax, adding depth without changing the authored outline.
+    var torso := Node3D.new()
+    torso.name = "Torso"
+    _model_root.add_child(torso, true)
+    var torso_material := ModelKit3D.material(Color("422934"), 0.08, 0.68)
+    ModelKit3D.add_sphere(torso, 0.34, Vector3(0.0, 0.98, 0.1), torso_material, Vector3(1.55, 0.68, 1.2), "TorsoCore")
     var authored_marker := Node3D.new()
     authored_marker.name = "VeilstalkerAuthoredModel"
     _model_root.add_child(authored_marker)

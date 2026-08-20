@@ -119,9 +119,10 @@ func _process(delta: float) -> void:
 
 func _restore_base_transforms() -> void:
     for key in base_transforms.keys():
+        if not is_instance_valid(key) or not key is Node3D:
+            continue
         var node := key as Node3D
-        if node != null and is_instance_valid(node):
-            node.transform = base_transforms[key]
+        node.transform = base_transforms[key]
 
 
 func _animate_mechromancer(movement_blend: float) -> void:
