@@ -165,6 +165,7 @@ func _connect_world_feedback() -> void:
 func _connect_actor_feedback(actor: Node3D) -> void:
     _connect_once(actor, &"pistol_fired", Callable(self, "_on_weapon_fired"))
     _connect_once(actor, &"weapon_fired", Callable(self, "_on_weapon_fired"))
+    _connect_once(actor, &"attack_started", Callable(self, "_on_attack_started"))
     _connect_once(actor, &"killed", Callable(self, "_on_enemy_killed"))
 
 
@@ -179,6 +180,20 @@ func _on_weapon_fired(origin: Vector3, target: Vector3, target_node: Node) -> vo
     _spawn_flash(origin, color, 2.3, 4.5, 0.08)
     _spawn_burst(target, color, 9, 1.6, Vector3(0.0, -2.2, 0.0), 0.42)
     camera_shake = maxf(camera_shake, 0.12)
+
+
+func _on_attack_started(enemy: Node, target: Node) -> void:
+    if not enemy is Node3D or not target is Node3D:
+        return
+    var attacker := enemy as Node3D
+    var victim := target as Node3D
+    var radius := 0.9
+    if enemy.get("attack_range") != null:
+        radius = maxf(0.72, float(enemy.get("attack_range")) * 0.72)
+    var warning_position := victim.global_position + Vector3(0.0, 0.045, 0.0)
+    _spawn_attack_telegraph(warning_position, radius)
+    _spawn_flash(attacker.global_position + Vector3.UP * 0.7, Color("d14b55"), 0.55, 3.8, 0.12)
+    camera_shake = maxf(camera_shake, 0.035)
 
 
 func _on_enemy_killed(enemy: Node, _killer: Node) -> void:
@@ -258,6 +273,34 @@ func _spawn_flash(position: Vector3, color: Color, energy: float, light_range: f
     var tween := light.create_tween()
     tween.tween_property(light, "light_energy", 0.0, lifetime)
     tween.tween_callback(light.queue_free)
+
+
+func _spawn_attack_telegraph(position: Vector3, radius: float) -> void:
+    if world == null:
+        return
+    var telegraph := MeshInstance3D.new()
+    telegraph.name = "OrganicAttackTelegraph"
+    var mesh := CylinderMesh.new()
+    mesh.top_radius = 1.0
+    mesh.bottom_radius = 1.0
+    mesh.height = 0.018
+    mesh.radial_segments = 32
+    var material := StandardMaterial3D.new()
+    material.albedo_color = Color(0.78, 0.12, 0.2, 0.34)
+    material.emission_enabled = true
+    material.emission = Color("8f2636")
+    material.emission_energy_multiplier = 1.3
+    material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+    material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+    mesh.material = material
+    telegraph.mesh = mesh
+    telegraph.position = position
+    telegraph.scale = Vector3(radius * 0.68, 1.0, radius * 0.68)
+    world.add_child(telegraph)
+    var tween := telegraph.create_tween().set_parallel(true)
+    tween.tween_property(telegraph, "scale", Vector3(radius, 1.0, radius), 0.24)
+    tween.tween_property(material, "albedo_color", Color(0.78, 0.12, 0.2, 0.0), 0.24)
+    tween.chain().tween_callback(telegraph.queue_free)
 
 
 func _spawn_burst(position: Vector3, color: Color, amount: int, speed: float, gravity: Vector3, lifetime: float) -> void:

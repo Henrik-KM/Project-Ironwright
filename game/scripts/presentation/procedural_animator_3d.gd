@@ -224,6 +224,7 @@ func _animate_robot(movement_blend: float, delta: float) -> void:
 func _animate_organic(movement_blend: float) -> void:
     var state := _state_name()
     var hunting := state in [&"hunting", &"attacking", &"investigating"]
+    var windup := _attack_windup_remaining()
     var pulse := 1.0 + sin(idle_phase * 2.4 + deterministic_offset) * 0.028
     model_root.scale = model_root.scale * Vector3(pulse, 1.0 / pulse, pulse)
     model_root.position.y += absf(sin(phase * 2.0)) * 0.075 * movement_blend
@@ -244,6 +245,8 @@ func _animate_organic(movement_blend: float) -> void:
         head.rotation.x += sin(idle_phase * 3.1 + deterministic_offset) * 0.035
     for mandible in _nodes_with_prefix(model_root, "Mandible"):
         mandible.rotation.y += sin(idle_phase * (5.0 if hunting else 2.6) + deterministic_offset) * 0.19
+        if windup > 0.0:
+            mandible.rotation.y += 0.18 * clampf(windup / 0.34, 0.0, 1.0)
     for tail in _nodes_with_prefix(model_root, "Tail"):
         tail.rotation.y += sin(idle_phase * (3.4 if hunting else 1.6) + deterministic_offset) * 0.24
         tail.rotation.z += cos(idle_phase * 1.8 + deterministic_offset) * 0.08
@@ -261,10 +264,17 @@ func _animate_organic(movement_blend: float) -> void:
         spine.rotation.x += sin(idle_phase * 1.7 + deterministic_offset) * 0.035
     for jaw in _nodes_with_prefix(model_root, "ApexJaw"):
         jaw.rotation.y += sin(idle_phase * (2.4 if hunting else 1.2) + deterministic_offset) * 0.1
+        if windup > 0.0:
+            jaw.rotation.y += 0.24 * clampf(windup / 0.34, 0.0, 1.0)
     for lobe in _nodes_with_prefix(model_root, "BroodmassLobe"):
         lobe.rotation.z += sin(idle_phase * 1.6 + deterministic_offset) * 0.04
     for spine in _nodes_with_prefix(model_root, "BackSpine"):
         spine.rotation.z += sin(idle_phase * 2.9 + deterministic_offset) * 0.035
+
+    if windup > 0.0:
+        var charge := clampf(windup / 0.34, 0.0, 1.0)
+        model_root.position.z += 0.06 * charge
+        model_root.rotation.x += 0.1 * charge
 
     if _organic_species() == &"veilstalker":
         var attacking := state == &"attacking"
@@ -291,6 +301,12 @@ func _organic_species() -> StringName:
     if subject == null or not _property_exists(subject, &"species"):
         return &""
     return StringName(subject.get(&"species"))
+
+
+func _attack_windup_remaining() -> float:
+    if subject == null or not _property_exists(subject, &"attack_windup_remaining"):
+        return 0.0
+    return maxf(0.0, float(subject.get(&"attack_windup_remaining")))
 
 
 func _nodes_with_prefix(root: Node, prefix: String) -> Array[Node3D]:

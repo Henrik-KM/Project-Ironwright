@@ -2,6 +2,7 @@ class_name OrganicEnemy3D
 extends CharacterBody3D
 
 signal killed(enemy: OrganicEnemy3D, killer: Node)
+signal attack_started(enemy: OrganicEnemy3D, target: Node)
 signal attack_landed(enemy: OrganicEnemy3D, target: Node)
 signal behaviour_changed(enemy: OrganicEnemy3D, behaviour: StringName)
 
@@ -14,6 +15,8 @@ var attack_range: float = 1.35
 var attack_interval: float = 1.25
 var detection_range: float = 14.0
 var attack_cooldown: float = 0.0
+var attack_windup_remaining: float = 0.0
+var pending_attack_target: Node3D
 var state_name: StringName = &"lurking"
 var investigate_position: Vector3
 var investigate_seconds: float = 0.0
@@ -104,6 +107,13 @@ func _physics_process(delta: float) -> void:
     if not alive:
         return
     attack_cooldown = maxf(0.0, attack_cooldown - delta)
+    if attack_windup_remaining > 0.0:
+        attack_windup_remaining = maxf(0.0, attack_windup_remaining - delta)
+        _set_state(&"attacking")
+        _slow_to_stop(delta)
+        if attack_windup_remaining <= 0.0:
+            _resolve_pending_attack()
+        return
     investigate_seconds = maxf(0.0, investigate_seconds - delta)
     pack_alert_cooldown = maxf(0.0, pack_alert_cooldown - delta)
     behaviour_clock += delta
@@ -399,12 +409,36 @@ func _slow_to_stop(delta: float) -> void:
 
 func _attack_target(target: Node) -> void:
     _set_state(&"attacking")
-    if attack_cooldown > 0.0:
+    if attack_cooldown > 0.0 or attack_windup_remaining > 0.0 or not (target is Node3D):
         return
     attack_cooldown = attack_interval
+    pending_attack_target = target as Node3D
+    attack_windup_remaining = _attack_windup_duration()
+    attack_started.emit(self, target)
+
+
+func _resolve_pending_attack() -> void:
+    var target := pending_attack_target
+    pending_attack_target = null
+    if target == null or not is_instance_valid(target):
+        return
+    if global_position.distance_to(target.global_position) > attack_range * 1.35:
+        return
     if target.has_method(&"apply_damage"):
         target.call(&"apply_damage", attack_damage, self)
     attack_landed.emit(self, target)
+
+
+func _attack_windup_duration() -> float:
+    match species:
+        &"sporecaster":
+            return 0.34
+        &"broodmass", &"apex":
+            return 0.3
+        &"veilstalker":
+            return 0.26
+        _:
+            return 0.22
 
 
 func apply_damage(amount: float, source: Node = null) -> void:

@@ -177,6 +177,15 @@ identities. Manual channels remain finish-before-save.
   jaws, spines and broodmass lobes;
 - added executable aesthetic coverage for all seven current organic families.
 
+## Focused combat-feel milestone
+
+- organic attacks now enter a species-scaled wind-up before applying damage;
+- attack-start signals drive a bounded ground warning, local flash and subtle
+  camera response;
+- organic jaws, mandibles and bodies visibly anticipate the strike;
+- attacks can miss when the target leaves the telegraphed resolution radius;
+- executable coverage proves warning-before-damage and post-wind-up resolution.
+
 ## Focused survival sound-feedback milestone
 
 - added a spatial audio director with a compact original sound vocabulary for

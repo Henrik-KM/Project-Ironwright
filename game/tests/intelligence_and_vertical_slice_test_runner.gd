@@ -2,6 +2,7 @@ extends SceneTree
 
 const MAIN_SCENE := preload("res://scenes/main_3d.tscn")
 const ENEMY_SCENE := preload("res://scenes/actors/organic_enemy_3d.tscn")
+const ROBOT_SCENE := preload("res://scenes/actors/robot_unit_3d.tscn")
 const TEST_SAVE_ROOT := "user://ironwright_autonomy_checkpoint_test"
 const TEST_SAVE_PATH := "user://ironwright_autonomy_checkpoint_test/world_0.json"
 
@@ -146,11 +147,33 @@ func _test_organic_ecology_behaviours() -> void:
     _expect(pack_b.investigate_seconds > 0.0, "Razorhounds should share nearby prey/noise information as a hunting pack.")
     _expect(pack_b.state_name in [&"pack_hunt", &"investigating", &"hunting"], "Pack alerts should produce an active hunting response.")
 
+    var attack_target := ROBOT_SCENE.instantiate() as RobotUnit3D
+    attack_target.configure(&"guardian", 1)
+    attack_target.position = Vector3(1.0, 0.0, 0.0)
+    root.add_child(attack_target)
+    await process_frame
+    attack_target.set_physics_process(false)
+    var attacker := ENEMY_SCENE.instantiate() as OrganicEnemy3D
+    attacker.configure(&"razorhound", null, forge)
+    attacker.position = Vector3(0.0, 0.0, 0.0)
+    root.add_child(attacker)
+    await process_frame
+    var health_before_attack := attack_target.current_health
+    attacker._attack_target(attack_target)
+    _expect(attacker.attack_windup_remaining > 0.0, "Organic attacks must expose a readable wind-up window before damage lands.")
+    await physics_frame
+    _expect(is_equal_approx(attack_target.current_health, health_before_attack), "Organic attack damage must not land on the same frame as the warning telegraph.")
+    for index in range(24):
+        await physics_frame
+    _expect(attack_target.current_health < health_before_attack, "A completed organic wind-up must resolve its damage after the telegraph window.")
+
     patrol.free()
     guard.free()
     scout.free()
     pack_a.free()
     pack_b.free()
+    attacker.free()
+    attack_target.free()
     forge.free()
     await process_frame
 
