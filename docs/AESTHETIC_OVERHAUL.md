@@ -30,6 +30,9 @@ The immediate Heartforge area must read as an improvised home and workshop, not 
 - string lights and local practical lights;
 - wet pavement and puddles;
 - forge embers and smoke;
+- high-definition pressure vessels, service gauges, a routed coolant manifold,
+  rear service rail and warm/cool practical lights that make maintenance work
+  legible around the forge;
 - lighting response to Heartforge integrity.
 
 Later authored assets should preserve this lived-in density and warm composition.

@@ -58,6 +58,8 @@ It includes:
 - Bulwark, Scrapper, Warden, and Pathfinder silhouettes;
 - chitinous organic enemies with multiple legs, mandibles, and emissive eyes;
 - the Heartforge and its manual assembly plate;
+- a high-definition Heartforge maintenance bay with pressure vessels, gauges,
+  routed coolant, service rail and contrasting practicals;
 - adaptive Heartforge tier geometry that grows from buttresses and service
   conduits into signal masts and a sovereignty crown;
 - region-aware atmosphere that shifts the persistent town’s ambient, fog and

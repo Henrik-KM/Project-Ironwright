@@ -79,6 +79,7 @@ func _build_vertical_slice() -> void:
     _build_street_encounter_dressing()
     _build_sanctuary_perimeter()
     _build_workshop_gantry()
+    _build_heartforge_maintenance_detail()
     _build_street_story_props()
     _build_local_nest_landmarks()
     _build_weather()
@@ -359,6 +360,63 @@ func _build_workshop_gantry() -> void:
     # Thick routed power lines connect the inhabited workshop to the forge.
     _add_beam(gantry, Vector3(-3.6, 3.7, 1.8), Vector3(-2.0, 2.4, 0.7), 0.055, black_metal, "PowerUmbilical")
     _add_beam(gantry, Vector3(3.6, 3.7, 1.8), Vector3(2.0, 2.4, 0.7), 0.055, black_metal, "PowerUmbilical")
+
+
+func _build_heartforge_maintenance_detail() -> void:
+    if heartforge == null:
+        return
+    var detail := Node3D.new()
+    detail.name = "HeartforgeMaintenanceDetail"
+    root.add_child(detail)
+
+    # The refuge is a working machine, not a decorative cylinder. These two
+    # pressure vessels and their gauges give the forge a believable service
+    # scale while staying outside the player route and all gameplay collision.
+    for side in [-1.0, 1.0]:
+        var tank := Node3D.new()
+        tank.name = "PressureVessel%s" % ("West" if side < 0.0 else "East")
+        tank.position = Vector3(side * 5.15, 0.0, 2.75)
+        detail.add_child(tank)
+        ModelKit3D.add_beveled_box(tank, Vector3(1.34, 0.32, 1.18), Vector3(0.0, 0.18, 0.0), black_metal, Vector3(0.0, side * 0.08, 0.0), "TankFoot", 0.2)
+        ModelKit3D.add_tapered_cylinder(tank, 0.5, 0.62, 1.7, Vector3(0.0, 1.12, 0.0), painted_metal, Vector3.ZERO, "TankBody")
+        for y in [0.36, 1.88]:
+            ModelKit3D.add_cylinder(tank, 0.57, 0.09, Vector3(0.0, y, 0.0), rust_metal, Vector3.ZERO, "TankBand")
+        ModelKit3D.add_surface_panel(tank, Vector3(0.56, 0.7, 0.08), Vector3(0.0, 1.05, -0.56), black_metal, warning_paint, Vector3.ZERO, "TankGaugePanel")
+        ModelKit3D.add_cylinder(tank, 0.16, 0.06, Vector3(0.0, 1.24, -0.62), warm_glass, Vector3(1.5708, 0.0, 0.0), "TankGauge")
+        _add_beam(tank, Vector3(side * -0.18, 1.94, -0.04), Vector3(side * -0.18, 2.42, -0.04), 0.07, black_metal, "TankValveStem")
+        _add_beam(detail, tank.position + Vector3(side * 0.42, 1.48, 0.0), Vector3(side * 2.32, 2.05, -1.48), 0.055, rust_metal, "TankForgeFeed")
+        var tank_light := _add_light(tank, Vector3(0.0, 1.55, -0.6), Color("e77a3e"), 0.2, 2.7, false)
+        tank_light.set_meta(&"vertical_base_energy", 0.2)
+        practical_lights.append(tank_light)
+
+    # A cyan coolant manifold contrasts with the warm furnace and explains
+    # the exposed cables that already cross the workshop gantry.
+    var manifold := Node3D.new()
+    manifold.name = "CoolantManifold"
+    manifold.position = Vector3(4.15, 0.0, -1.35)
+    detail.add_child(manifold)
+    ModelKit3D.add_beveled_box(manifold, Vector3(1.5, 0.22, 0.92), Vector3(0.0, 0.34, 0.0), black_metal, Vector3(0.0, -0.1, 0.0), "ManifoldBase", 0.22)
+    for index in range(3):
+        var x := -0.48 + float(index) * 0.48
+        ModelKit3D.add_cylinder(manifold, 0.11, 1.35, Vector3(x, 1.08, 0.0), painted_metal, Vector3.ZERO, "CoolantRiser")
+        ModelKit3D.add_cylinder(manifold, 0.15, 0.08, Vector3(x, 1.78, 0.0), cold_glass, Vector3.ZERO, "CoolantValve")
+        _add_beam(manifold, Vector3(x, 0.45, -0.12), Vector3(x * 0.58, 0.45, -0.92), 0.045, black_metal, "CoolantReturn")
+    _add_beam(detail, Vector3(4.15, 1.72, -1.35), Vector3(2.0, 2.35, 0.72), 0.06, black_metal, "CoolantForgeFeed")
+    var manifold_light := _add_light(manifold, Vector3(0.0, 1.35, -0.45), Color("62dbe4"), 0.36, 4.2, false)
+    manifold_light.set_meta(&"vertical_base_energy", 0.36)
+    practical_lights.append(manifold_light)
+
+    # The rear service rail, its insulated handles and a small warning plate
+    # make the forge maintenance loop legible from the tactical camera.
+    var rail := Node3D.new()
+    rail.name = "ForgeServiceRail"
+    rail.position = Vector3(0.0, 0.0, -2.75)
+    detail.add_child(rail)
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_cylinder(rail, 0.08, 2.6, Vector3(side * 1.55, 1.32, 0.0), black_metal, Vector3.ZERO, "ServiceRailPost")
+    for index in range(4):
+        ModelKit3D.add_beveled_box(rail, Vector3(3.1, 0.1, 0.16), Vector3(0.0, 0.38 + float(index) * 0.63, 0.0), painted_metal, Vector3.ZERO, "ServiceRailRung", 0.18)
+    ModelKit3D.add_surface_panel(rail, Vector3(0.86, 0.62, 0.08), Vector3(1.96, 1.22, -0.08), black_metal, warning_paint, Vector3.ZERO, "ServiceWarningPlate")
 
 
 func _build_street_story_props() -> void:
