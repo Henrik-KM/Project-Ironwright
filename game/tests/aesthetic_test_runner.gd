@@ -2,6 +2,7 @@ extends SceneTree
 
 const MAIN_SCENE := preload("res://scenes/main_3d.tscn")
 const ROBOT_SCENE := preload("res://scenes/actors/robot_unit_3d.tscn")
+const ENEMY_SCENE := preload("res://scenes/actors/organic_enemy_3d.tscn")
 
 var failures: Array[String] = []
 
@@ -60,6 +61,21 @@ func _run_all() -> void:
     for index in role_samples.size():
         _expect(_role_model_has_details(role_samples[index], role_names[index]), "The %s robot must expose a role-readable high-detail silhouette." % role_names[index])
         role_samples[index].queue_free()
+
+    var enemy_samples: Array[OrganicEnemy3D] = []
+    var species_names := [&"skitterling", &"razorhound", &"veilstalker", &"burrower", &"sporecaster", &"broodmass", &"apex"]
+    var sample_player := get_first_node_in_group("player_character") as Node3D
+    var sample_forge := world.get_node_or_null("Heartforge") as Node3D
+    for index in species_names.size():
+        var sample := ENEMY_SCENE.instantiate() as OrganicEnemy3D
+        sample.configure(species_names[index], sample_player, sample_forge)
+        sample.position = Vector3(20.0 + float(index) * 2.4, 0.0, 18.0)
+        root.add_child(sample)
+        enemy_samples.append(sample)
+    await process_frame
+    for index in enemy_samples.size():
+        _expect(_enemy_model_has_details(enemy_samples[index], species_names[index]), "The %s organic family must expose a role-readable silhouette." % species_names[index])
+        enemy_samples[index].queue_free()
 
     var veilstalker: Node3D
     for enemy in get_nodes_in_group("organic_enemies"):
@@ -138,4 +154,25 @@ func _role_model_has_details(robot: RobotUnit3D, role: StringName) -> bool:
             return _find_named(robot, "ScoutFin") != null and _find_named(robot, "BeaconRing") != null and _find_named(robot, "ScoutOptic") != null
         &"engineer":
             return _find_named(robot, "PistonJoint") != null and _find_named(robot, "ToolHead") != null and _find_named(robot, "ForgeCoil") != null
+    return false
+
+
+func _enemy_model_has_details(enemy: OrganicEnemy3D, species: StringName) -> bool:
+    if enemy == null or enemy.get_node_or_null("OrganicModel") == null:
+        return false
+    match species:
+        &"skitterling":
+            return _find_named(enemy, "SkitterlingCarapace") != null and _find_named(enemy, "SkitterlingAntenna") != null
+        &"razorhound":
+            return _find_named(enemy, "RazorhoundSnout") != null and _find_named(enemy, "RazorhoundTail") != null and _find_named(enemy, "RazorhoundSpine") != null
+        &"veilstalker":
+            return _find_named(enemy, "VeilstalkerCowl") != null and _find_named(enemy, "VeilstalkerVeil") != null and _find_named(enemy, "VeilstalkerTendril") != null
+        &"burrower":
+            return _find_named(enemy, "BurrowerDrill") != null and _find_named(enemy, "BurrowerTip") != null
+        &"sporecaster":
+            return _find_named(enemy, "SporecasterSac") != null and _find_named(enemy, "SporecasterStem") != null and _find_named(enemy, "SporecasterOculus") != null
+        &"broodmass":
+            return _find_named(enemy, "BroodmassLobe") != null and _find_named(enemy, "CrownSpine") != null
+        &"apex":
+            return _find_named(enemy, "ApexCrown") != null and _find_named(enemy, "ApexJaw") != null
     return false

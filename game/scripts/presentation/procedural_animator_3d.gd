@@ -247,6 +247,22 @@ func _animate_organic(movement_blend: float) -> void:
     for tail in _nodes_with_prefix(model_root, "Tail"):
         tail.rotation.y += sin(idle_phase * (3.4 if hunting else 1.6) + deterministic_offset) * 0.24
         tail.rotation.z += cos(idle_phase * 1.8 + deterministic_offset) * 0.08
+    for tail in _nodes_with_prefix(model_root, "RazorhoundTail"):
+        tail.rotation.y += sin(idle_phase * (3.2 if hunting else 1.45) + deterministic_offset) * 0.16
+    for antenna in _nodes_with_prefix(model_root, "SkitterlingAntenna"):
+        antenna.rotation.z += sin(idle_phase * 2.8 + deterministic_offset) * 0.1
+    for ear in _nodes_with_prefix(model_root, "RazorhoundEar"):
+        ear.rotation.z += sin(idle_phase * 2.1 + deterministic_offset) * 0.06
+    for sac in _nodes_with_prefix(model_root, "SporecasterSac"):
+        sac.scale = sac.scale * (1.0 + sin(idle_phase * 2.0 + deterministic_offset) * 0.025)
+    for oculus in _nodes_with_prefix(model_root, "SporecasterOculus"):
+        oculus.rotation.y += sin(idle_phase * 1.5 + deterministic_offset) * 0.12
+    for spine in _nodes_with_prefix(model_root, "RazorhoundSpine"):
+        spine.rotation.x += sin(idle_phase * 1.7 + deterministic_offset) * 0.035
+    for jaw in _nodes_with_prefix(model_root, "ApexJaw"):
+        jaw.rotation.y += sin(idle_phase * (2.4 if hunting else 1.2) + deterministic_offset) * 0.1
+    for lobe in _nodes_with_prefix(model_root, "BroodmassLobe"):
+        lobe.rotation.z += sin(idle_phase * 1.6 + deterministic_offset) * 0.04
     for spine in _nodes_with_prefix(model_root, "BackSpine"):
         spine.rotation.z += sin(idle_phase * 2.9 + deterministic_offset) * 0.035
 

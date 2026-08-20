@@ -150,6 +150,17 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
   procedural presentation;
 - retained the pre-alpha requirement for human visual acceptance of the family.
 
+## Focused organic family presentation milestone
+
+- added species-specific silhouettes for Skitterling, Razorhound, Burrower,
+  Sporecaster, Broodmass and Apex instead of relying on the shared torso/head
+  blockout alone;
+- added readable feelers, muzzle and tail anatomy, drill tooling, breathing
+  spore sacs, mass lobes and apex crown/jaw forms;
+- added restrained species-specific motion for pack tails, antennae, sacs,
+  jaws, spines and broodmass lobes;
+- added executable aesthetic coverage for all seven current organic families.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

@@ -83,9 +83,12 @@ production asset milestones.
 
 ### Organic enemies
 
+- species-specific carapace, muzzle, feeler, drill, sac, lobe and crown
+  silhouettes across all seven current organic families;
 - asymmetrical chitin, flesh, spines and tails;
 - twitching idle movement and multi-leg locomotion;
-- head probing, mandible movement and aggressive acceleration;
+- head probing, mandible movement, pack movement and species-specific idle
+  motion;
 - red organic emissives used sparingly as threat cues.
 
 ## Feedback and VFX

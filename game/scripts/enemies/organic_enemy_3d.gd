@@ -548,6 +548,23 @@ func _refresh_visuals() -> void:
             ModelKit3D.add_capsule(_model_root, 0.09 * body_radius / 0.62, leg_length, Vector3(side * body_scale.x * 0.48, body_radius * 0.62, z_position), chitin, Vector3(0.0, 0.0, side * 0.92), "Leg")
             ModelKit3D.add_capsule(_model_root, 0.07 * body_radius / 0.62, leg_length * 0.62, Vector3(side * body_scale.x * 0.82, 0.16, z_position + 0.08), bone, Vector3(0.0, 0.0, side * 0.45), "Talon")
 
+    if species == &"skitterling":
+        for index in range(3):
+            var shell_z := -0.42 + float(index) * 0.42
+            ModelKit3D.add_sphere(_model_root, 0.28 - float(index) * 0.025, Vector3(0.0, 0.84 + float(index) * 0.05, shell_z), wet_chitin, Vector3(1.16, 0.42, 0.78), "SkitterlingCarapace")
+        for side in [-1.0, 1.0]:
+            ModelKit3D.add_capsule(_model_root, 0.035, 0.58, Vector3(side * 0.22, 1.08, -1.02), tendon, Vector3(0.5, 0.0, side * 0.18), "SkitterlingAntenna")
+            ModelKit3D.add_capsule(_model_root, 0.045, 0.5, Vector3(side * 0.2, 0.66, -1.18), bone, Vector3(0.78, 0.0, side * 0.25), "SkitterlingMandible")
+
+    if species == &"razorhound":
+        ModelKit3D.add_sphere(_model_root, 0.34, Vector3(0.0, 0.78, -1.0), wet_chitin, Vector3(1.22, 0.7, 1.42), "RazorhoundSnout")
+        for side in [-1.0, 1.0]:
+            ModelKit3D.add_sphere(_model_root, 0.16, Vector3(side * 0.27, 1.12, -0.95), bone, Vector3(0.7, 1.25, 0.72), "RazorhoundEar")
+            ModelKit3D.add_capsule(_model_root, 0.055, 0.66, Vector3(side * 0.28, 0.62, -1.22), bone, Vector3(0.8, 0.0, side * 0.18), "RazorhoundFang")
+        for index in range(4):
+            ModelKit3D.add_capsule(_model_root, 0.065, 0.62 + float(index % 2) * 0.12, Vector3(0.0, 1.0 + float(index) * 0.08, 0.1 + float(index) * 0.36), bone, Vector3(0.0, 0.0, 0.18), "RazorhoundSpine")
+        ModelKit3D.add_capsule(_model_root, 0.08, 1.15, Vector3(0.0, 0.8, 1.42), tendon, Vector3(-0.42, 0.0, 0.0), "RazorhoundTail")
+
     if species == &"veilstalker":
         # First authored organic family pass: the asymmetric thorax, layered
         # veil membranes and forward sensory crown establish a predator
@@ -573,15 +590,27 @@ func _refresh_visuals() -> void:
     if species == &"sporecaster":
         for index in range(5):
             var angle := TAU * float(index) / 5.0
-            ModelKit3D.add_sphere(_model_root, 0.34, Vector3(cos(angle) * 0.55, 1.55, sin(angle) * 0.45), membrane, Vector3(0.8, 1.35, 0.8), "SporeSac")
+            var sac_position := Vector3(cos(angle) * 0.55, 1.55, sin(angle) * 0.45)
+            ModelKit3D.add_cylinder(_model_root, 0.055, 0.5, sac_position + Vector3(0.0, -0.25, 0.0), tendon, Vector3.ZERO, "SporecasterStem")
+            ModelKit3D.add_sphere(_model_root, 0.34, sac_position, membrane, Vector3(0.8, 1.35, 0.8), "SporecasterSac")
+            ModelKit3D.add_sphere(_model_root, 0.09, sac_position + Vector3(0.0, 0.25, 0.0), eye, Vector3.ONE, "SporecasterOculus")
     elif species == &"burrower":
         for index in range(5):
             ModelKit3D.add_capsule(_model_root, 0.1, 0.8, Vector3(-0.8 + float(index) * 0.4, 0.9, 0.1), bone, Vector3(0.0, 0.0, -0.35 + float(index) * 0.16), "BurrowSpine")
+        ModelKit3D.add_cylinder(_model_root, 0.22, 0.42, Vector3(0.0, 0.76, -1.52), bone, Vector3(1.5708, 0.0, 0.0), "BurrowerDrill")
+        ModelKit3D.add_sphere(_model_root, 0.19, Vector3(0.0, 0.76, -1.76), wet_chitin, Vector3(1.0, 0.72, 1.2), "BurrowerTip")
     elif species in [&"broodmass", &"apex"]:
         var spine_count := 6 if species == &"broodmass" else 9
         for index in range(spine_count):
             var x := -1.2 + float(index) * (2.4 / maxf(1.0, float(spine_count - 1)))
             ModelKit3D.add_capsule(_model_root, 0.12, 1.1 + float(index % 3) * 0.3, Vector3(x, body_radius * 1.8, 0.1), bone, Vector3(0.0, 0.0, -0.3 + float(index) * 0.08), "CrownSpine")
+        if species == &"broodmass":
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_sphere(_model_root, 0.36, Vector3(side * 0.64, 1.3, 0.48), flesh, Vector3(1.1, 0.78, 1.2), "BroodmassLobe")
+        else:
+            ModelKit3D.add_sphere(_model_root, 0.5, Vector3(0.0, 2.15, -0.35), wet_chitin, Vector3(1.24, 0.72, 1.3), "ApexCrown")
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_capsule(_model_root, 0.1, 1.0, Vector3(side * 0.42, 1.08, -1.76), bone, Vector3(0.82, 0.0, side * 0.15), "ApexJaw")
 
     # Small asymmetric silhouette details help creatures read as animals rather
     # than mirrored game pieces from the tactical camera.
