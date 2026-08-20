@@ -1,0 +1,64 @@
+name: Apply one-off canonical tier difficulty fix
+
+on:
+  push:
+    branches:
+      - agent/enemy-tier-ecological-escalation
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/enemy-tier-ecological-escalation
+          fetch-depth: 0
+
+      - name: Avoid re-scaling enemies after release balance is applied
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          world_path = Path('game/scripts/main_world_tiered_3d.gd')
+          world = world_path.read_text(encoding='utf-8')
+          old_spawn = '    tiered.configure_tier(tier, config)\n'
+          new_spawn = '    if tiered.enemy_tier != tier:\n        tiered.configure_tier(tier, config)\n'
+          if old_spawn not in world:
+              raise SystemExit('World tier assignment was not found')
+          world = world.replace(old_spawn, new_spawn, 1)
+
+          old_balance = '''func _apply_balance_to_existing_world() -> void:\n    super._apply_balance_to_existing_world()\n    if enemy_tier_director == null:\n        return\n    for node in get_tree().get_nodes_in_group(&"organic_enemies"):\n        if node is OrganicEnemyTiered3D and is_instance_valid(node):\n            var enemy := node as OrganicEnemyTiered3D\n            enemy.configure_tier(enemy.enemy_tier, enemy_tier_director.tier_config(enemy.enemy_tier), true)\n'''
+          new_balance = '''func _apply_balance_to_existing_world() -> void:\n    # BalanceDirector stores its baseline after the canonical tier modifier has\n    # already been applied. Reapplying the tier here would scale it twice.\n    super._apply_balance_to_existing_world()\n'''
+          if old_balance not in world:
+              raise SystemExit('World balance override was not found')
+          world = world.replace(old_balance, new_balance, 1)
+          world_path.write_text(world, encoding='utf-8')
+
+          director_path = Path('game/scripts/systems/enemy_tier_director_3d.gd')
+          director = director_path.read_text(encoding='utf-8')
+          spawn_old = '''    if enemy.has_method("configure_tier"):\n        enemy.call("configure_tier", tier, tier_config(tier))\n    else:\n        enemy.set_meta(&"enemy_tier", tier)\n'''
+          spawn_new = '''    if enemy_tier_for(enemy) != tier and enemy.has_method("configure_tier"):\n        enemy.call("configure_tier", tier, tier_config(tier))\n    else:\n        enemy.set_meta(&"enemy_tier", tier)\n'''
+          adopt_old = '''        if enemy.has_method("configure_tier"):\n            enemy.call("configure_tier", tier, tier_config(tier))\n        enemy.set_meta(&"enemy_tier", tier)\n'''
+          adopt_new = '''        if enemy_tier_for(enemy) != tier and enemy.has_method("configure_tier"):\n            enemy.call("configure_tier", tier, tier_config(tier))\n        enemy.set_meta(&"enemy_tier", tier)\n'''
+          if spawn_old not in director or adopt_old not in director:
+              raise SystemExit('Director tier assignment blocks were not found')
+          director = director.replace(spawn_old, spawn_new, 1).replace(adopt_old, adopt_new, 1)
+          director_path.write_text(director, encoding='utf-8')
+          PY
+
+      - name: Commit the difficulty composition fix and remove this workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -- .github/workflows/one-off-preserve-tier-difficulty.yml
+          git add -- \
+            game/scripts/main_world_tiered_3d.gd \
+            game/scripts/systems/enemy_tier_director_3d.gd
+          git commit -m "Preserve difficulty beneath canonical enemy tiers"
+          git push origin HEAD:agent/enemy-tier-ecological-escalation
