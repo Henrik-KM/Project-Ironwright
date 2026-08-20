@@ -421,6 +421,19 @@ identities. Manual channels remain finish-before-save.
 - complete-world aesthetic coverage confirms the authored shell attaches to the
   persistent Root Cistern landmark without adding collision or player work.
 
+## Focused autonomous-labor staging milestone
+
+- added a bounded presentation signature for an autonomous Scrapper actively
+  dismantling a wreck: one amber target ring, work core and short machine-to-
+  wreck link;
+- derives the signature from the existing `salvage_target` and `salvaging`
+  state, removes it when work ends, and keeps all autonomy, cargo, noise and
+  persistence rules unchanged;
+- added runtime aesthetic coverage proving one active labor signature is
+  created without an unbounded effect list or new player-managed queue;
+- live release-opening review confirmed the work actor and wreck remain
+  readable inside the normal tactical frame.
+
 ## Focused channel-and-tracer feedback milestone
 
 - weapon fire now leaves a short-lived directional tracer between the firing
