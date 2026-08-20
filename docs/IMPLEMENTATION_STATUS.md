@@ -122,6 +122,13 @@ identities. Manual channels remain finish-before-save.
 - physical region landmarks and discovery beacons;
   - bounded transient notifications and clear objective hierarchy.
 
+## Focused tactical framing milestone
+
+- tightened the release opening camera to a 16.8 height and 10.0 distance
+  frame so the authored Mechromancer and companion remain legible beside the
+  Heartforge without adding a permanent HUD or changing gameplay reach;
+- added executable coverage for the tighter actor-scale framing contract.
+
 ## Focused Mechromancer asset milestone
 
 - replaced the procedural player mannequin with the original
