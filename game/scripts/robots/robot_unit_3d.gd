@@ -272,8 +272,8 @@ func _refresh_visual_identity() -> void:
         body_size = Vector3(1.5, 0.82, 1.7)
     elif archetype == &"engineer":
         body_size = Vector3(1.35, 0.72, 1.58)
-    ModelKit3D.add_box(_model_root, body_size, Vector3(0.0, 0.86, 0.0), steel, Vector3.ZERO, "Chassis")
-    ModelKit3D.add_box(_model_root, Vector3(body_size.x * 0.84, 0.16, body_size.z * 0.72), Vector3(0.0, 1.25, 0.0), rust, Vector3.ZERO, "ArmorPlate")
+    ModelKit3D.add_beveled_box(_model_root, body_size, Vector3(0.0, 0.86, 0.0), steel, Vector3.ZERO, "Chassis", 0.16)
+    ModelKit3D.add_beveled_box(_model_root, Vector3(body_size.x * 0.84, 0.16, body_size.z * 0.72), Vector3(0.0, 1.25, 0.0), rust, Vector3.ZERO, "ArmorPlate", 0.22)
     ModelKit3D.add_box(_model_root, Vector3(body_size.x * 0.68, 0.09, body_size.z * 0.82), Vector3(0.0, 0.55, body_size.z * 0.08), dark_steel, Vector3.ZERO, "LowerChassis")
     ModelKit3D.add_box(_model_root, Vector3(0.16, 0.32, body_size.z * 0.76), Vector3(0.0, 0.88, 0.0), rust, Vector3.ZERO, "ChassisSpine")
     ModelKit3D.add_surface_panel(_model_root, Vector3(body_size.x * 0.72, 0.18, body_size.z * 0.48), Vector3(0.0, 1.34, -body_size.z * 0.05), steel, rust, Vector3(-0.04, 0.0, 0.0), "ChassisDetailPanel")
@@ -283,7 +283,7 @@ func _refresh_visual_identity() -> void:
 
     for side in [-1.0, 1.0]:
         var shoulder_x := float(side) * body_size.x * 0.57
-        ModelKit3D.add_box(_model_root, Vector3(0.22, 0.24, body_size.z * 0.58), Vector3(shoulder_x, 1.0, 0.0), steel, Vector3(0.0, 0.0, float(side) * 0.12), "ShoulderPlate")
+        ModelKit3D.add_beveled_box(_model_root, Vector3(0.22, 0.24, body_size.z * 0.58), Vector3(shoulder_x, 1.0, 0.0), steel, Vector3(0.0, 0.0, float(side) * 0.12), "ShoulderPlate", 0.2)
         ModelKit3D.add_sphere(_model_root, 0.115, Vector3(shoulder_x, 0.77, -0.02), rust, Vector3.ONE, "Joint")
         ModelKit3D.add_box(_model_root, Vector3(0.09, 0.18, body_size.z * 0.5), Vector3(shoulder_x + float(side) * 0.13, 0.9, 0.0), dark_steel, Vector3(0.0, 0.0, float(side) * 0.14), "SidePanel")
         ModelKit3D.add_cylinder(_model_root, 0.035, body_size.z * 0.45, Vector3(shoulder_x - float(side) * 0.05, 0.86, -0.02), rust, Vector3(1.5708, 0.0, 0.0), "ExposedCable")
@@ -293,7 +293,7 @@ func _refresh_visual_identity() -> void:
             var leg_x: float = float(side) * body_size.x * 0.48
             var leg_z: float = float(front) * body_size.z * 0.38
             ModelKit3D.add_capsule(_model_root, 0.12, 0.72, Vector3(leg_x, 0.46, leg_z), dark_steel, Vector3(0.0, 0.0, float(side) * 0.34), "Leg")
-            ModelKit3D.add_box(_model_root, Vector3(0.28, 0.12, 0.42), Vector3(leg_x + float(side) * 0.12, 0.12, leg_z), rust, Vector3.ZERO, "Foot")
+            ModelKit3D.add_beveled_box(_model_root, Vector3(0.28, 0.12, 0.42), Vector3(leg_x + float(side) * 0.12, 0.12, leg_z), rust, Vector3.ZERO, "Foot", 0.2)
 
     match archetype:
         &"salvager":

@@ -46,6 +46,7 @@ func _run_all() -> void:
         _expect(_model_has_details(player), "The Mechromancer must receive additional authored silhouette detail.")
         var player_model := player.get_node_or_null("MechromancerModel") as Node3D
         _expect(player_model != null and player_model.scale.x >= 1.2, "The authored Mechromancer must be legible at tactical-camera distance.")
+        _expect(_find_named(player, "RespiratorCollarCore") != null and _find_named(player, "FieldPackCornerCap") != null, "The Mechromancer must receive beveled authored equipment surfaces.")
         if player_presentation != null:
             _expect(player_presentation.animation_player != null, "The authored Mechromancer must expose an imported animation player.")
             if player_presentation.animation_player != null:
@@ -65,6 +66,7 @@ func _run_all() -> void:
         _expect(_model_has_details(robot), "Robots must receive additional role-readable detail.")
         _expect(_find_named(robot, "ShoulderPlate") != null, "Robots must expose layered shoulder armour.")
         _expect(_find_named(robot, "ChassisDetailPanel") != null, "Robots must expose a layered high-detail chassis panel.")
+        _expect(_find_named(robot, "Chassis") != null and _find_named(robot, "ChassisCore") != null and _find_named(robot, "ChassisCornerCap") != null, "Robots must use the original beveled chassis treatment.")
         _expect(_find_named(robot, "OpticLens") != null, "Robots must expose a readable optic lens.")
         _expect(_find_named(robot, "CompanionCrown") != null, "The companion must expose a distinct crown silhouette.")
 

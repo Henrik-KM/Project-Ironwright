@@ -40,6 +40,40 @@ static func add_box(
     return instance
 
 
+static func add_beveled_box(
+        parent: Node3D,
+        size: Vector3,
+        position: Vector3,
+        mat: Material,
+        rotation: Vector3 = Vector3.ZERO,
+        name_hint: String = "BeveledBox",
+        bevel_ratio: float = 0.14
+    ) -> Node3D:
+    # Original high-definition hard-surface treatment. A recessed core, raised
+    # top skin, rounded rails and corner caps replace the toy-like razor edges
+    # of a single BoxMesh while keeping the same authored proportions.
+    var shell := Node3D.new()
+    shell.name = name_hint
+    shell.position = position
+    shell.rotation = rotation
+    parent.add_child(shell)
+    var smallest := minf(size.x, minf(size.y, size.z))
+    var bevel := clampf(smallest * bevel_ratio, 0.018, smallest * 0.42)
+    var core_size := Vector3(maxf(0.02, size.x - bevel * 2.0), maxf(0.02, size.y - bevel * 2.0), maxf(0.02, size.z - bevel * 2.0))
+    add_box(shell, core_size, Vector3(0.0, -bevel * 0.22, 0.0), mat, Vector3.ZERO, "%sCore" % name_hint)
+    var top_size := Vector3(maxf(0.02, size.x - bevel * 1.45), maxf(0.02, size.y * 0.12), maxf(0.02, size.z - bevel * 1.45))
+    add_box(shell, top_size, Vector3(0.0, size.y * 0.5 - bevel * 0.5, 0.0), mat, Vector3.ZERO, "%sTopSkin" % name_hint)
+    var edge_x := maxf(0.02, size.x - bevel * 2.0)
+    var edge_z := maxf(0.02, size.z - bevel * 2.0)
+    var top_y := size.y * 0.5 - bevel
+    for side in [-1.0, 1.0]:
+        add_tapered_cylinder(shell, bevel, bevel * 0.92, edge_x, Vector3(0.0, top_y, side * (size.z * 0.5 - bevel)), mat, Vector3(0.0, 0.0, PI * 0.5), "%sTopRail" % name_hint)
+        add_tapered_cylinder(shell, bevel, bevel * 0.92, edge_z, Vector3(side * (size.x * 0.5 - bevel), top_y, 0.0), mat, Vector3(PI * 0.5, 0.0, 0.0), "%sSideRail" % name_hint)
+        for front in [-1.0, 1.0]:
+            add_sphere(shell, bevel, Vector3(side * (size.x * 0.5 - bevel), top_y, front * (size.z * 0.5 - bevel)), mat, Vector3.ONE, "%sCornerCap" % name_hint)
+    return shell
+
+
 static func add_cylinder(
         parent: Node3D,
         radius: float,

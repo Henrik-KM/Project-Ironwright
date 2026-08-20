@@ -6,7 +6,7 @@ The current build is not release-ready merely because its systemic gameplay path
 
 The current visual state is explicitly classified as **pre-alpha production prototype** until the following gates are met.
 
-The shared model kit now has a high-detail baseline: curved primitives use denser radial/ring resolution, while machine chassis and organic shells receive layered surface panels, fasteners and material-break ridges. This improves tactical readability and material separation across the cast without changing gameplay collision or introducing a per-unit maintenance burden. It is a production-facing procedural quality pass, not a claim that final authored meshes have replaced the remaining procedural families.
+The shared model kit now has a high-detail baseline: curved primitives use denser radial/ring resolution, machine chassis use original beveled core/rail/cap geometry, and organic shells receive layered surface panels, fasteners and material-break ridges. The opening Mechromancer equipment, Bulwark, Warden, Scrapper and Engineer silhouettes use that treatment without changing gameplay collision or introducing a per-unit maintenance burden. It is a production-facing procedural quality pass, not a claim that final authored meshes have replaced the remaining procedural families.
 
 ## Immediate failures identified from the first full-game screenshot review
 
@@ -125,8 +125,8 @@ The presentation milestones proceed in this order:
 
 1. camera, world-label and HUD cleanup — implemented, still subject to review;
 2. authored Heartforge district composition — vertical slice implemented, awaiting visual review;
-3. production Mechromancer and Bulwark silhouettes — authored Mechromancer plus procedural vertical-slice pass, with shared high-detail surface treatment implemented; further authored refinement expected;
-4. one production-quality Warden/Scrapper/Pathfinder family pass — procedural vertical-slice pass with shared high-detail machine panels implemented, further authored refinement expected;
+3. production Mechromancer and Bulwark silhouettes — authored Mechromancer plus beveled procedural vertical-slice pass, with further authored refinement expected;
+4. one production-quality Warden/Scrapper/Pathfinder family pass — beveled procedural vertical-slice pass with shared high-detail machine panels implemented, further authored refinement expected;
 5. one complete organic enemy family with authored movement and attack language — Veilstalker layered silhouette and state-driven stalking/attack presentation implemented, still awaiting human visual acceptance;
 6. cohesive urban modular kit with damaged facades, interiors, street furniture and vegetation;
 7. final lighting/material pass for the opening district;
