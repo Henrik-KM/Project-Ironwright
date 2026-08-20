@@ -136,6 +136,7 @@ func _build_greenhouse_vignette(parent: Node3D) -> void:
             ModelKit3D.add_membrane_fan(parent, 0.35, Vector3(x - 0.55 + float(growth) * 0.55, 0.76, -4.7), _membrane, 4, "GreenhouseGrowth")
         _add_beam(parent, Vector3(x, 0.65, -4.1), Vector3(x, 2.0, -2.9), 0.04, _cool, "GreenhouseIrrigation")
     ModelKit3D.add_cylinder(parent, 0.72, 1.45, Vector3(6.1, 0.9, -4.8), _steel, Vector3.ZERO, "GreenhouseWaterTank")
+    _add_light(parent, Vector3(0.0, 2.0, -4.7), Color("73d8be"), 0.9, 7.5)
 
 
 func _build_commercial_vignette(parent: Node3D) -> void:
@@ -145,7 +146,7 @@ func _build_commercial_vignette(parent: Node3D) -> void:
         _add_beam(parent, Vector3(x, 0.0, -6.9), Vector3(x, 3.25, -7.2), 0.05, _dark_steel, "MarketAwningPost")
         ModelKit3D.add_beveled_box(parent, Vector3(1.8, 0.62, 1.0), Vector3(x, 0.55, -5.4), _steel, Vector3(0.0, 0.05 * index, 0.0), "MarketCrateStack", 0.16)
     ModelKit3D.add_surface_panel(parent, Vector3(2.7, 0.8, 0.08), Vector3(-4.9, 2.6, -6.85), _dark_steel, _warm, Vector3.ZERO, "MarketSign")
-    _add_light(parent, Vector3(0.0, 2.9, 6.5), Color("f2a057"), 1.1, 8.0)
+    _add_light(parent, Vector3(0.0, 2.9, -6.5), Color("f2a057"), 1.1, 8.0)
 
 
 func _build_waterfront_vignette(parent: Node3D) -> void:
@@ -156,7 +157,7 @@ func _build_waterfront_vignette(parent: Node3D) -> void:
         _add_beam(parent, Vector3(x, 1.35, -6.45), Vector3(x + 1.1, 0.7, -9.2), 0.045, _warning, "DockMooringLine")
     ModelKit3D.add_beveled_box(parent, Vector3(3.3, 0.68, 1.4), Vector3(5.0, 0.62, -8.2), _dark_steel, Vector3(0.0, 0.1, 0.0), "DockPumpCase", 0.2)
     ModelKit3D.add_cylinder(parent, 0.12, 2.4, Vector3(5.0, 1.8, -8.2), _cool, Vector3.ZERO, "DockPumpPipe")
-    _add_light(parent, Vector3(0.0, 2.2, 7.0), Color("63cbd9"), 1.0, 8.0)
+    _add_light(parent, Vector3(0.0, 2.2, -7.0), Color("63cbd9"), 1.0, 8.0)
 
 
 func _build_rail_vignette(parent: Node3D) -> void:
@@ -187,7 +188,7 @@ func _build_observatory_vignette(parent: Node3D) -> void:
     ModelKit3D.add_sphere(parent, 1.05, Vector3(0.0, 2.7, -5.0), _steel, Vector3(1.5, 0.42, 1.0), "SurveyDish")
     ModelKit3D.add_cylinder(parent, 0.11, 2.2, Vector3(0.0, 3.2, -5.0), _cool, Vector3.ZERO, "SurveyReceiver")
     ModelKit3D.add_surface_panel(parent, Vector3(1.3, 0.72, 0.08), Vector3(-2.0, 0.95, -4.7), _dark_steel, _cool, Vector3.ZERO, "SurveyConsole")
-    _add_light(parent, Vector3(0.0, 2.4, 4.7), Color("8bc9ed"), 0.9, 7.5)
+    _add_light(parent, Vector3(0.0, 2.4, -4.7), Color("8bc9ed"), 0.9, 7.5)
 
 
 func _build_research_vignette(parent: Node3D) -> void:
@@ -197,7 +198,7 @@ func _build_research_vignette(parent: Node3D) -> void:
         ModelKit3D.add_beveled_box(parent, Vector3(1.2, 1.55, 0.86), Vector3(x, 1.05, -6.6), _steel, Vector3.ZERO, "LabSpecimenCase", 0.16)
         ModelKit3D.add_surface_panel(parent, Vector3(0.58, 0.7, 0.08), Vector3(x, 1.12, -6.14), _dark_steel, _membrane, Vector3.ZERO, "LabSpecimenPanel")
     _add_beam(parent, Vector3(-5.0, 0.5, -7.9), Vector3(5.0, 0.5, -7.9), 0.06, _warning, "LabHazardRail")
-    _add_light(parent, Vector3(0.0, 2.3, 6.5), Color("a97de0"), 1.0, 8.0)
+    _add_light(parent, Vector3(0.0, 2.3, -6.5), Color("a97de0"), 1.0, 8.0)
 
 
 func _build_endgame_vignette(parent: Node3D) -> void:
