@@ -367,6 +367,7 @@ func _on_phase_changed(phase_id: StringName, display_name: String) -> void:
 
 
 func _on_heartforge_tier_changed(tier: int) -> void:
+    heartforge.set_progression_tier(tier)
     heartforge.maximum_health = 520.0 + float(tier - 1) * 190.0
     heartforge.current_health = minf(heartforge.maximum_health, heartforge.current_health + 190.0)
     heartforge.health_changed.emit(heartforge.current_health, heartforge.maximum_health)

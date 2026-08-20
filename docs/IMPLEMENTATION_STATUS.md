@@ -225,6 +225,15 @@ identities. Manual channels remain finish-before-save.
 - executable vertical-slice coverage verifies the dedicated landing impact is
   attached to the presentation feedback director.
 
+## Focused adaptive Heartforge milestone
+
+- Heartforge progression tiers now rebuild a presentation-only geometry layer
+  from structural buttresses through signal conduits, masts and a sovereignty
+  crown;
+- the tier change is driven by the existing progression signal and does not
+  add placement, power-grid or recurring maintenance work;
+- aesthetic coverage verifies the tier-5 result and its lower-tier landmarks.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.
@@ -245,7 +254,6 @@ Remaining production work includes:
 - deeper navigation, baked-region pathing and route recovery under long-run
   disruption;
 - broader content variants, technologies, operations and site dressing;
-- adaptive autonomous Heartforge geometry;
 - performance profiling and optimization on agreed target hardware;
 - environmental narrative and run variation;
 - 30–100-hour balance and repeated full internal runs;

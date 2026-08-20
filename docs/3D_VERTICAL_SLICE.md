@@ -58,6 +58,8 @@ It includes:
 - Bulwark, Scrapper, Warden, and Pathfinder silhouettes;
 - chitinous organic enemies with multiple legs, mandibles, and emissive eyes;
 - the Heartforge and its manual assembly plate;
+- adaptive Heartforge tier geometry that grows from buttresses and service
+  conduits into signal masts and a sovereignty crown;
 - wrecked machinery and live salvage cables;
 - ruined buildings, roads, street lamps, vehicle wrecks, rubble, and North Ruins.
 
