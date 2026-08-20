@@ -27,6 +27,7 @@ func configure(
 func _ready() -> void:
     _load_modifiers()
     _connect_events()
+    call_deferred("reconcile_existing_state")
 
 
 func _load_modifiers() -> void:
@@ -56,6 +57,23 @@ func _connect_events() -> void:
         var endgame_callback := Callable(self, "_on_endgame_started")
         if not endgame_director.endgame_started.is_connected(endgame_callback):
             endgame_director.endgame_started.connect(endgame_callback)
+
+
+func reconcile_existing_state() -> void:
+    # Older saves may already contain completed operations and unlocked
+    # technologies but no tier-event ledger. Reconcile once, then persist the
+    # ledger so a load can never apply the same ecological consequence twice.
+    if long_operation_director != null:
+        for operation_id in long_operation_director.completed_operations:
+            _apply_event_once(&"operation", operation_id, "operations")
+    if progression_director != null:
+        for technology_id in progression_director.unlocked_technologies:
+            _apply_event_once(&"technology", technology_id, "technologies")
+    if endgame_director != null:
+        if endgame_director.active_protocol != &"":
+            _apply_event_once(&"endgame", endgame_director.active_protocol, "endgame")
+        elif endgame_director.completed_protocol != &"":
+            _apply_event_once(&"endgame", endgame_director.completed_protocol, "endgame")
 
 
 func _on_operation_returned(operation_id: StringName, display_name: String, rewards: Dictionary) -> void:
