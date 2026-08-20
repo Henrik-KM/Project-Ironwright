@@ -50,7 +50,9 @@ Machines handle exact group composition, local positioning, target selection, fo
 
 ## Art implementation
 
-The current runtime combines the original authored Mechromancer glTF asset with original procedural low-poly geometry for the remaining actors and world dressing. It includes:
+The current runtime combines the regenerated authored Mechromancer glTF asset
+with original procedural geometry for the remaining actors and world dressing.
+It includes:
 
 - authored Mechromancer hood, face/visor, split coat, field pack, shoulder lamp, and weak pistol;
 - Bulwark, Scrapper, Warden, and Pathfinder silhouettes;
@@ -59,7 +61,11 @@ The current runtime combines the original authored Mechromancer glTF asset with 
 - wrecked machinery and live salvage cables;
 - ruined buildings, roads, street lamps, vehicle wrecks, rubble, and North Ruins.
 
-These are actual runtime 3D assets and collision structures, not concept images. The Mechromancer asset contract is documented in `game/data/mechromancer_asset_manifest.json`; the remaining procedural actors are designed to be replaced incrementally by authored Blender/GLTF assets without changing the gameplay architecture.
+These are actual runtime 3D assets and collision structures, not concept images.
+The Mechromancer asset contract is documented in
+`game/data/mechromancer_asset_manifest.json`; the remaining procedural actors
+are designed to be replaced incrementally by authored Blender/GLTF assets
+without changing the gameplay architecture.
 
 ## Known limits
 

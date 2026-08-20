@@ -34,10 +34,18 @@ func _run_all() -> void:
     var player := get_first_node_in_group("player_character") as Node3D
     _expect(player != null, "The aesthetic test needs the Mechromancer.")
     if player != null:
-        _expect(player.get_node_or_null("MechromancerPresentation3D") is MechromancerPresentation3D, "The Mechromancer must receive authored animation presentation.")
+        var player_presentation := player.get_node_or_null("MechromancerPresentation3D") as MechromancerPresentation3D
+        _expect(player_presentation != null, "The Mechromancer must receive authored animation presentation.")
         _expect(_find_named(player, "ProductionAssetMarker") != null, "The Mechromancer must use the authored asset contract.")
         _expect(_find_named(player, "PistolMuzzle") != null, "The authored Mechromancer must expose the pistol muzzle socket.")
         _expect(_model_has_details(player), "The Mechromancer must receive additional authored silhouette detail.")
+        var player_model := player.get_node_or_null("MechromancerModel") as Node3D
+        _expect(player_model != null and player_model.scale.x >= 1.2, "The authored Mechromancer must be legible at tactical-camera distance.")
+        if player_presentation != null:
+            _expect(player_presentation.animation_player != null, "The authored Mechromancer must expose an imported animation player.")
+            if player_presentation.animation_player != null:
+                for clip_name in [&"Idle", &"Walk", &"Fire", &"Work", &"Hit"]:
+                    _expect(_animation_player_has_clip(player_presentation.animation_player, clip_name), "The authored Mechromancer must expose the %s animation clip." % clip_name)
 
     var robots := get_nodes_in_group("friendly_robots")
     _expect(not robots.is_empty(), "The opening companion must exist.")
@@ -140,6 +148,15 @@ func _model_has_details(actor: Node3D) -> bool:
 
 func _find_named(root: Node, node_name: String) -> Node:
     return root.find_child(node_name, true, false)
+
+
+func _animation_player_has_clip(player: AnimationPlayer, clip_name: StringName) -> bool:
+    if player.has_animation(clip_name):
+        return true
+    for candidate in player.get_animation_list():
+        if String(candidate).ends_with("/" + String(clip_name)) or String(candidate).ends_with(String(clip_name)):
+            return true
+    return false
 
 
 func _role_model_has_details(robot: RobotUnit3D, role: StringName) -> bool:

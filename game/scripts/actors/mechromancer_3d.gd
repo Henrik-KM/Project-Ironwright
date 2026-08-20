@@ -227,6 +227,10 @@ func _build_visuals() -> void:
         authored_model.name = "MechromancerModel"
         add_child(authored_model)
         _body_root = authored_model
+        # Presentation scale is intentionally independent from the gameplay
+        # capsule: the authored technician must remain legible at the normal
+        # isometric camera distance without changing collision or targeting.
+        _body_root.scale = Vector3(1.28, 1.28, 1.28)
 
     _pistol_muzzle = _find_visual_node(_body_root, &"PistolMuzzle")
     if _pistol_muzzle == null:

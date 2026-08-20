@@ -50,10 +50,10 @@ Clutter must leave important routes readable from the high-angle camera.
 
 ## Actor presentation
 
-The Mechromancer now uses the first authored glTF character asset. The first
-friendly robot family pass now uses higher-resolution modular geometry with
-role-readable silhouettes; organic enemies remain procedural until their own
-production asset milestones.
+The Mechromancer now uses a regenerated authored glTF character asset with
+denser cloth, face and equipment forms. The first friendly robot family pass
+now uses higher-resolution modular geometry with role-readable silhouettes;
+organic enemies remain procedural until their own production asset milestones.
 
 ### Mechromancer
 
@@ -62,6 +62,8 @@ production asset milestones.
 - visible face/visor and layered field gear;
 - charcoal cloth, worn leather, oxidized metal and skin hierarchy with authored
   normal relief for close camera detail;
+- smoother cloth panels, curved hood/scarf transitions, cheek and mouth forms,
+  layered pack construction, refined boots and heavier split coat tails;
 - rear-camera readability through the asymmetrical pack, hood drape and split
   coat tails;
 - authored idle, walk, fire, work and hit clips;

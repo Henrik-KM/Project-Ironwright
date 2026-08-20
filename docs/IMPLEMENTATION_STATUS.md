@@ -127,8 +127,15 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - added socket-based player lighting and muzzle resolution;
 - added a baked HUD portrait rendered from the same Blender source model while
   preserving all gameplay interfaces;
-- left organic enemies on their existing procedural assets while beginning the
-  friendly robot production pass with higher-resolution modular family geometry.
+- rebuilt the canonical Blender source/export path with smoother cloth panels,
+  curved hood and scarf forms, cheek and mouth facial detail, refined boots,
+  pack layers and heavier coat tails;
+- regenerated the editable `.blend`, separated glTF/bin export, normal-relief
+  textures and portrait from that source;
+- increased only the authored presentation scale so the Mechromancer reads at
+  tactical-camera distance without changing collision or targeting;
+- added executable coverage for the imported animation player and all five
+  required presentation clips.
 
 ## Focused robot family presentation milestone
 

@@ -368,7 +368,10 @@ def cloth_panel(
     bpy.context.collection.objects.link(obj)
     attach(obj, parent, location)
     obj.data.materials.append(mat)
-    return apply_bevel(obj, bevel_amount, 3)
+    # The irregular front face is already softened by its surrounding cloth
+    # layers. Applying a multi-segment bevel to this n-gon is disproportionately
+    # expensive in Blender and does not improve the authored silhouette.
+    return smooth_shade(obj)
 
 
 def limb_between(
@@ -433,7 +436,7 @@ def arc_ribbon(
         faces.append((ring + index, ring + next_index, 3 * ring + next_index, 3 * ring + index))
     faces.extend([
         (0, ring, 3 * ring, 2 * ring),
-        (segments, 2 * ring - 1, 4 * ring - 1, 3 * ring + segments),
+        (segments, 3 * ring - 1, 4 * ring - 1, 2 * ring - 1),
     ])
     mesh = bpy.data.meshes.new(name)
     mesh.from_pydata(vertices, [], faces)
@@ -442,7 +445,7 @@ def arc_ribbon(
     bpy.context.collection.objects.link(obj)
     attach(obj, parent, center)
     obj.data.materials.append(mat)
-    return apply_bevel(obj, 0.012, 2)
+    return smooth_shade(obj)
 
 
 def arc_band(
@@ -577,6 +580,7 @@ def main() -> None:
     skin_normal = normal_image("mechromancer_skin_normal.png", 47, 0.08)
     coat = material("Worn charcoal coat", (0.025, 0.035, 0.045, 1.0), 0.04, 0.92, image=coat_texture, normal=coat_normal)
     coat_fold = material("Faded coat folds", (0.075, 0.090, 0.100, 1.0), 0.02, 0.96, image=coat_texture, normal=coat_normal)
+    coat_tail = material("Heavy charcoal coat tails", (0.050, 0.068, 0.078, 1.0), 0.03, 0.94, image=coat_texture, normal=coat_normal)
     metal = material("Oxidized field metal", (0.13, 0.15, 0.16, 1.0), 0.68, 0.50, image=metal_texture, normal=metal_normal)
     leather = material("Weathered leather", (0.11, 0.040, 0.014, 1.0), 0.02, 0.88, image=leather_texture, normal=leather_normal)
     skin = material("Skin", (0.30, 0.13, 0.070, 1.0), 0.0, 0.70, image=skin_texture, normal=skin_normal)
@@ -588,155 +592,141 @@ def main() -> None:
 
     torso = sectioned_form(
         "Torso",
-        [(-0.40, 0.23, 0.15), (-0.28, 0.28, 0.17), (0.02, 0.31, 0.19), (0.28, 0.34, 0.18), (0.40, 0.15, 0.12)],
-        (0.0, 0.0, 1.42),
+        [(-0.37, 0.21, 0.13), (-0.27, 0.25, 0.15), (0.00, 0.29, 0.17), (0.25, 0.28, 0.15), (0.37, 0.19, 0.12)],
+        (0.0, 0.0, 1.34),
         root,
         coat,
+        20,
     )
-    tapered_prism("FieldVest", 0.36, 0.29, 0.08, 0.06, 0.36, (0.0, -0.245, 1.47), root, leather, 0.030)
-    tapered_prism("ChestInset", 0.25, 0.20, 0.035, 0.028, 0.17, (0.0, -0.292, 1.51), root, metal, 0.012)
-    vest_left = box("VestLapelsLeft", (0.07, 0.035, 0.34), (-0.16, -0.285, 1.52), root, coat, 0.014)
-    vest_left.rotation_euler.y = -0.18
-    vest_right = box("VestLapelsRight", (0.07, 0.035, 0.34), (0.16, -0.285, 1.52), root, coat, 0.014)
-    vest_right.rotation_euler.y = 0.18
-    scarf = tapered_prism("Scarf", 0.40, 0.32, 0.18, 0.14, 0.11, (0.0, -0.03, 1.79), root, leather, 0.025)
-    scarf.rotation_euler.y = -0.04
-    scarf_tail = box("ScarfTail", (0.12, 0.05, 0.22), (-0.12, -0.15, 1.69), root, leather, 0.015)
-    scarf_tail.rotation_euler.y = -0.18
-    box("Collar", (0.38, 0.20, 0.11), (0.0, -0.08, 1.80), root, coat, 0.030)
+    cloth_panel("FieldVest", [(-0.22, -0.20), (0.22, -0.20), (0.19, 0.20), (0.10, 0.29), (-0.11, 0.28), (-0.20, 0.18)], 0.105, (0.0, -0.20, 1.43), root, leather, 0.026)
+    cloth_panel("ChestInset", [(-0.13, -0.08), (0.14, -0.08), (0.12, 0.11), (0.04, 0.16), (-0.09, 0.14)], 0.035, (0.0, -0.265, 1.49), root, metal, 0.014)
+    vest_left = limb_between("VestLapelsLeft", (-0.16, -0.275, 1.29), (-0.08, -0.275, 1.67), 0.026, root, coat, 0.88, 0.008)
+    vest_right = limb_between("VestLapelsRight", (0.16, -0.275, 1.29), (0.08, -0.275, 1.67), 0.026, root, coat, 0.88, 0.008)
+    scarf = torus("ScarfCollar", 0.205, 0.045, (0.0, -0.005, 1.78), root, leather)
+    scarf_tail = cloth_panel("ScarfTail", [(-0.08, 0.13), (0.10, 0.12), (0.08, -0.20), (-0.04, -0.26)], 0.075, (-0.10, -0.20, 1.62), root, leather, 0.018)
+    scarf_tail.rotation_euler.y = -0.12
+    cloth_panel("Collar", [(-0.23, -0.03), (0.23, -0.03), (0.16, 0.12), (-0.16, 0.12)], 0.13, (0.0, -0.06, 1.79), root, coat, 0.028)
 
-    hood = uv_sphere("Hood", (0.31, 0.21, 0.23), (0.0, 0.23, 2.12), root, coat)
+    hood = uv_sphere("Hood", (0.33, 0.23, 0.28), (0.0, 0.16, 2.08), root, coat)
     hood.rotation_euler.x = -0.10
-    tapered_prism("HoodBackDrape", 0.62, 0.40, 0.18, 0.10, 0.56, (0.0, 0.29, 1.91), root, coat, 0.040)
-    hood_drape_left = tapered_prism("HoodDrapeLeft", 0.22, 0.12, 0.10, 0.07, 0.38, (-0.23, 0.24, 1.78), root, coat, 0.025)
+    cloth_panel("HoodBackDrape", [(-0.28, 0.26), (0.30, 0.25), (0.23, -0.28), (-0.24, -0.30)], 0.18, (0.0, 0.28, 1.88), root, coat, 0.035)
+    hood_drape_left = cloth_panel("HoodDrapeLeft", [(-0.13, 0.20), (0.10, 0.18), (0.08, -0.22), (-0.12, -0.25)], 0.10, (-0.22, 0.18, 1.83), root, coat, 0.022)
     hood_drape_left.rotation_euler.y = -0.12
-    hood_drape_right = tapered_prism("HoodDrapeRight", 0.22, 0.12, 0.10, 0.07, 0.38, (0.23, 0.24, 1.78), root, coat, 0.025)
+    hood_drape_right = cloth_panel("HoodDrapeRight", [(-0.10, 0.18), (0.13, 0.20), (0.12, -0.24), (-0.08, -0.22)], 0.10, (0.22, 0.18, 1.83), root, coat, 0.022)
     hood_drape_right.rotation_euler.y = 0.12
-    box("HoodBackSeam", (0.045, 0.035, 0.36), (0.0, 0.385, 1.92), root, leather, 0.012)
-    hood_fold_left = box("HoodFoldLeft", (0.035, 0.025, 0.26), (-0.18, 0.405, 2.06), root, coat_fold, 0.010)
-    hood_fold_left.rotation_euler.y = -0.12
-    hood_fold_right = box("HoodFoldRight", (0.035, 0.025, 0.24), (0.18, 0.405, 2.05), root, coat_fold, 0.010)
-    hood_fold_right.rotation_euler.y = 0.12
-    hood_brim = tapered_prism("HoodBrim", 0.46, 0.38, 0.16, 0.12, 0.055, (0.0, -0.16, 2.255), root, coat, 0.022)
-    hood_brim.rotation_euler.x = -0.12
-    box("HoodBrimTrim", (0.36, 0.020, 0.022), (0.0, -0.255, 2.235), root, leather, 0.008)
-    tapered_prism("HoodShadow", 0.36, 0.29, 0.045, 0.035, 0.30, (0.0, -0.18, 2.06), root, hood_inner, 0.020)
-    arc_band("HoodRim", (0.0, -0.30, 2.03), 0.24, 0.022, root, coat, math.pi * 0.08, math.pi * 0.92)
-    hood_left = tapered_prism("HoodSideLeft", 0.18, 0.12, 0.08, 0.06, 0.38, (-0.235, -0.01, 2.08), root, coat, 0.020)
-    hood_left.rotation_euler.y = -0.18
-    hood_right = tapered_prism("HoodSideRight", 0.18, 0.12, 0.08, 0.06, 0.38, (0.235, -0.01, 2.08), root, coat, 0.020)
-    hood_right.rotation_euler.y = 0.18
-    socket("FaceAnchor", root, (0.0, -0.275, 2.05))["socket_type"] = "face_anchor"
-    uv_sphere("Face", (0.16, 0.115, 0.21), (0.0, -0.245, 2.05), root, skin)
-    uv_sphere("Chin", (0.105, 0.075, 0.085), (0.0, -0.32, 1.93), root, skin)
-    uv_sphere("Nose", (0.024, 0.024, 0.036), (0.0, -0.362, 2.015), root, skin)
-    uv_sphere("EarLeft", (0.035, 0.025, 0.055), (-0.17, -0.245, 2.04), root, skin)
-    uv_sphere("EarRight", (0.035, 0.025, 0.055), (0.17, -0.245, 2.04), root, skin)
-    box("Brow", (0.20, 0.045, 0.045), (0.0, -0.35, 2.145), root, skin, 0.012)
-    box("VisorFrame", (0.26, 0.055, 0.088), (0.0, -0.335, 2.08), root, metal, 0.022)
-    box("Visor", (0.21, 0.022, 0.043), (0.0, -0.372, 2.085), root, glass, 0.012)
-    box("VisorGlow", (0.15, 0.010, 0.014), (0.0, -0.389, 2.085), root, cyan, 0.005)
-    cylinder("Neck", 0.12, 0.17, (0.0, 0.0, 1.83), root, skin, 16, 0.015)
+    limb_between("HoodBackSeam", (0.0, 0.39, 1.78), (0.0, 0.39, 2.18), 0.018, root, leather, 0.80, 0.006)
+    limb_between("HoodFoldLeft", (-0.20, 0.38, 1.92), (-0.15, 0.38, 2.19), 0.014, root, coat_fold, 0.80, 0.004)
+    limb_between("HoodFoldRight", (0.20, 0.38, 1.92), (0.15, 0.38, 2.19), 0.014, root, coat_fold, 0.80, 0.004)
+    arc_ribbon("HoodRim", (0.0, -0.32, 2.03), 0.245, 0.082, 0.050, root, coat_fold, math.pi * 0.10, math.pi * 0.90)
+    cloth_panel("HoodOpening", [(-0.18, 0.10), (0.18, 0.10), (0.16, -0.12), (-0.16, -0.12)], 0.028, (0.0, -0.35, 2.05), root, hood_inner, 0.010)
+    socket("FaceAnchor", root, (0.0, -0.30, 2.05))["socket_type"] = "face_anchor"
+    uv_sphere("Face", (0.17, 0.12, 0.21), (0.0, -0.35, 2.05), root, skin)
+    uv_sphere("Chin", (0.11, 0.08, 0.085), (0.0, -0.42, 1.93), root, skin)
+    uv_sphere("CheekLeft", (0.065, 0.050, 0.075), (-0.095, -0.415, 2.00), root, skin)
+    uv_sphere("CheekRight", (0.065, 0.050, 0.075), (0.095, -0.415, 2.00), root, skin)
+    uv_sphere("Nose", (0.026, 0.027, 0.040), (0.0, -0.47, 2.015), root, skin)
+    uv_sphere("EarLeft", (0.036, 0.027, 0.060), (-0.175, -0.35, 2.04), root, skin)
+    uv_sphere("EarRight", (0.036, 0.027, 0.060), (0.175, -0.35, 2.04), root, skin)
+    box("Brow", (0.20, 0.040, 0.040), (0.0, -0.455, 2.145), root, skin, 0.012)
+    box("MouthShadow", (0.105, 0.018, 0.016), (0.0, -0.475, 1.955), root, hood_inner, 0.006)
+    box("VisorFrame", (0.27, 0.052, 0.090), (0.0, -0.445, 2.085), root, metal, 0.022)
+    box("Visor", (0.21, 0.024, 0.044), (0.0, -0.478, 2.085), root, glass, 0.012)
+    box("VisorGlow", (0.15, 0.012, 0.014), (0.0, -0.495, 2.085), root, cyan, 0.005)
+    cylinder("Neck", 0.11, 0.16, (0.0, 0.0, 1.83), root, skin, 16, 0.015)
 
-    left_shoulder = uv_sphere("LeftShoulder", (0.22, 0.18, 0.14), (-0.39, -0.01, 1.68), root, coat)
-    right_shoulder = uv_sphere("RightShoulder", (0.22, 0.18, 0.14), (0.39, -0.01, 1.68), root, coat)
-    box("LeftShoulderPad", (0.25, 0.24, 0.075), (-0.41, -0.03, 1.76), root, leather, 0.030).rotation_euler.y = -0.12
-    box("RightShoulderPad", (0.25, 0.24, 0.075), (0.41, -0.03, 1.76), root, leather, 0.030).rotation_euler.y = 0.12
+    left_shoulder = uv_sphere("LeftShoulder", (0.19, 0.16, 0.12), (-0.37, -0.01, 1.66), root, coat)
+    right_shoulder = uv_sphere("RightShoulder", (0.19, 0.16, 0.12), (0.37, -0.01, 1.66), root, coat)
+    left_pad = cloth_panel("LeftShoulderPad", [(-0.14, 0.05), (0.14, 0.07), (0.10, -0.08), (-0.12, -0.10)], 0.11, (-0.39, -0.08, 1.70), root, leather, 0.020)
+    left_pad.rotation_euler.y = -0.16
+    right_pad = cloth_panel("RightShoulderPad", [(-0.14, 0.07), (0.14, 0.05), (0.12, -0.10), (-0.10, -0.08)], 0.11, (0.39, -0.08, 1.70), root, leather, 0.020)
+    right_pad.rotation_euler.y = 0.16
 
-    left_arm = cone("LeftArm", 0.095, 0.125, 0.70, (-0.49, -0.01, 1.36), root, coat, 0.025)
-    left_arm.rotation_euler.y = -0.10
-    right_arm = cone("RightArm", 0.095, 0.125, 0.70, (0.49, -0.01, 1.36), root, coat, 0.025)
-    right_arm.rotation_euler.y = 0.10
-    cylinder("LeftForearmGuard", 0.105, 0.20, (-0.52, -0.10, 1.12), root, metal, 10, 0.018).rotation_euler.x = math.pi * 0.5
-    cylinder("RightForearmGuard", 0.105, 0.20, (0.52, -0.10, 1.12), root, metal, 10, 0.018).rotation_euler.x = math.pi * 0.5
-    left_glove = box("LeftGlove", (0.14, 0.12, 0.18), (-0.53, -0.19, 0.98), root, leather, 0.040)
-    left_glove.rotation_euler.y = -0.12
-    right_glove = box("RightGlove", (0.14, 0.12, 0.18), (0.53, -0.19, 0.98), root, leather, 0.040)
-    right_glove.rotation_euler.y = 0.12
-    uv_sphere("LeftGloveThumb", (0.045, 0.040, 0.065), (-0.60, -0.245, 0.99), root, leather)
-    uv_sphere("RightGloveThumb", (0.045, 0.040, 0.065), (0.60, -0.245, 0.99), root, leather)
+    left_arm = limb_between("LeftArm", (-0.36, 0.0, 1.62), (-0.48, -0.04, 1.30), 0.105, root, coat, 0.88, 0.025)
+    right_arm = limb_between("RightArm", (0.36, 0.0, 1.62), (0.48, -0.04, 1.30), 0.105, root, coat, 0.88, 0.025)
+    limb_between("LeftForearmGuard", (-0.48, -0.04, 1.30), (-0.47, -0.22, 1.08), 0.082, root, metal, 0.88, 0.016)
+    limb_between("RightForearmGuard", (0.48, -0.04, 1.30), (0.55, -0.22, 1.08), 0.082, root, metal, 0.88, 0.016)
+    left_glove = uv_sphere("LeftGlove", (0.105, 0.095, 0.11), (-0.47, -0.27, 1.01), root, leather)
+    right_glove = uv_sphere("RightGlove", (0.105, 0.095, 0.11), (0.57, -0.28, 1.01), root, leather)
+    uv_sphere("LeftGloveThumb", (0.045, 0.040, 0.065), (-0.55, -0.33, 1.03), root, leather)
+    uv_sphere("RightGloveThumb", (0.045, 0.040, 0.065), (0.64, -0.33, 1.03), root, leather)
 
-    left_leg = cone("LeftLeg", 0.115, 0.145, 0.68, (-0.19, 0.02, 0.52), root, leather, 0.025)
-    right_leg = cone("RightLeg", 0.115, 0.145, 0.68, (0.19, 0.02, 0.52), root, leather, 0.025)
-    box("LeftBoot", (0.25, 0.38, 0.17), (-0.19, -0.11, 0.14), root, leather, 0.045)
-    box("RightBoot", (0.25, 0.38, 0.17), (0.19, -0.11, 0.14), root, leather, 0.045)
-    box("LeftBootToe", (0.25, 0.16, 0.055), (-0.19, -0.235, 0.10), root, metal, 0.018)
-    box("RightBootToe", (0.25, 0.16, 0.055), (0.19, -0.235, 0.10), root, metal, 0.018)
-    box("LeftBootStrap", (0.26, 0.045, 0.045), (-0.19, -0.315, 0.19), root, leather, 0.010)
-    box("RightBootStrap", (0.26, 0.045, 0.045), (0.19, -0.315, 0.19), root, leather, 0.010)
+    left_leg = limb_between("LeftLeg", (-0.17, 0.04, 0.98), (-0.20, 0.01, 0.57), 0.12, root, leather, 0.86, 0.024)
+    right_leg = limb_between("RightLeg", (0.17, 0.04, 0.98), (0.20, 0.01, 0.57), 0.12, root, leather, 0.86, 0.024)
+    limb_between("LeftShin", (-0.20, 0.01, 0.57), (-0.17, -0.01, 0.26), 0.105, root, leather, 0.88, 0.020)
+    limb_between("RightShin", (0.20, 0.01, 0.57), (0.17, -0.01, 0.26), 0.105, root, leather, 0.88, 0.020)
+    uv_sphere("LeftBoot", (0.15, 0.22, 0.105), (-0.17, -0.07, 0.16), root, leather)
+    uv_sphere("RightBoot", (0.15, 0.22, 0.105), (0.17, -0.07, 0.16), root, leather)
+    tapered_prism("LeftBootToe", 0.27, 0.23, 0.34, 0.27, 0.13, (-0.17, -0.18, 0.13), root, leather, 0.028)
+    tapered_prism("RightBootToe", 0.27, 0.23, 0.34, 0.27, 0.13, (0.17, -0.18, 0.13), root, leather, 0.028)
+    box("LeftBootStrap", (0.26, 0.045, 0.040), (-0.17, -0.30, 0.19), root, metal, 0.010)
+    box("RightBootStrap", (0.26, 0.045, 0.040), (0.17, -0.30, 0.19), root, metal, 0.010)
 
-    coat_left = tapered_prism("CoatTailLeft", 0.44, 0.32, 0.24, 0.16, 0.98, (-0.24, 0.07, 0.70), root, coat, 0.045)
-    coat_left.rotation_euler.y = -0.035
-    cloth_surface(coat_left)
-    coat_right = tapered_prism("CoatTailRight", 0.44, 0.32, 0.24, 0.16, 0.98, (0.24, 0.07, 0.70), root, coat, 0.045)
-    coat_right.rotation_euler.y = 0.055
-    cloth_surface(coat_right)
-    box("CoatHemLeft", (0.42, 0.20, 0.055), (-0.24, 0.06, 0.225), root, leather, 0.018)
-    box("CoatHemRight", (0.42, 0.20, 0.055), (0.24, 0.06, 0.225), root, leather, 0.018)
-    box("CoatBackSplit", (0.045, 0.035, 0.76), (0.0, 0.205, 0.72), root, leather, 0.012)
-    box("CoatBackStrapLeft", (0.045, 0.035, 0.68), (-0.36, 0.205, 0.70), root, leather, 0.010).rotation_euler.y = -0.08
-    box("CoatBackStrapRight", (0.045, 0.035, 0.68), (0.36, 0.205, 0.70), root, leather, 0.010).rotation_euler.y = 0.08
-    coat_fold_left = box("CoatFabricFoldLeft", (0.035, 0.025, 0.64), (-0.13, 0.215, 0.72), root, coat_fold, 0.010)
-    coat_fold_left.rotation_euler.y = -0.06
-    coat_fold_right = box("CoatFabricFoldRight", (0.035, 0.025, 0.58), (0.13, 0.215, 0.68), root, coat_fold, 0.010)
-    coat_fold_right.rotation_euler.y = 0.08
-    box("CoatTailStrapLeft", (0.045, 0.035, 0.70), (-0.36, -0.18, 0.70), root, leather, 0.010).rotation_euler.y = -0.08
-    box("CoatTailStrapRight", (0.045, 0.035, 0.70), (0.36, -0.18, 0.70), root, leather, 0.010).rotation_euler.y = 0.08
-
-    box("UtilityBelt", (0.64, 0.09, 0.13), (0.0, -0.22, 1.08), root, leather, 0.028)
-    box("BeltBuckle", (0.12, 0.035, 0.10), (0.0, -0.285, 1.08), root, metal, 0.016)
-    for side in (-1.0, 1.0):
-        box("BeltPouch" + ("Left" if side < 0 else "Right"), (0.14, 0.13, 0.16), (side * 0.28, -0.25, 1.00), root, leather, 0.025)
-    harness_left = box("HarnessLeft", (0.055, 0.040, 0.62), (-0.17, -0.255, 1.42), root, leather, 0.012)
-    harness_left.rotation_euler.y = -0.24
-    harness_right = box("HarnessRight", (0.055, 0.040, 0.62), (0.17, -0.255, 1.42), root, leather, 0.012)
-    harness_right.rotation_euler.y = 0.24
-    harness_cross = box("HarnessCross", (0.055, 0.040, 0.72), (-0.03, -0.268, 1.43), root, leather, 0.012)
-    harness_cross.rotation_euler.y = -0.52
-    coat_fold_left = box("CoatFoldLeft", (0.035, 0.022, 0.58), (-0.28, -0.215, 0.70), root, leather, 0.009)
-    coat_fold_left.rotation_euler.y = -0.06
-    coat_fold_right = box("CoatFoldRight", (0.035, 0.022, 0.48), (0.28, -0.215, 0.66), root, leather, 0.009)
+    coat_left = cloth_panel("CoatTailLeft", [(-0.19, 0.50), (0.17, 0.47), (0.25, 0.22), (0.28, -0.20), (0.18, -0.52), (-0.22, -0.50), (-0.27, -0.19), (-0.23, 0.16)], 0.23, (-0.24, 0.09, 0.70), root, coat_tail, 0.040)
+    coat_left.rotation_euler.y = -0.045
+    coat_right = cloth_panel("CoatTailRight", [(-0.17, 0.47), (0.20, 0.50), (0.24, 0.18), (0.19, -0.24), (0.24, -0.50), (-0.16, -0.52), (-0.24, -0.20), (-0.21, 0.22)], 0.23, (0.24, 0.10, 0.70), root, coat_tail, 0.040)
+    coat_right.rotation_euler.y = 0.065
+    cloth_panel("CoatHemLeft", [(-0.22, 0.03), (0.19, 0.03), (0.20, -0.05), (-0.20, -0.05)], 0.25, (-0.24, 0.05, 0.19), root, leather, 0.012)
+    cloth_panel("CoatHemRight", [(-0.20, 0.03), (0.22, 0.03), (0.21, -0.05), (-0.21, -0.05)], 0.25, (0.24, 0.06, 0.19), root, leather, 0.012)
+    limb_between("CoatBackSplit", (0.0, 0.23, 1.12), (0.0, 0.23, 0.21), 0.018, root, leather, 0.70, 0.006)
+    coat_fold_left = limb_between("CoatFabricFoldLeft", (-0.14, 0.23, 1.10), (-0.18, 0.23, 0.27), 0.016, root, coat_fold, 0.80, 0.006)
+    coat_fold_left.rotation_euler.y = -0.08
+    coat_fold_right = limb_between("CoatFabricFoldRight", (0.15, 0.23, 1.08), (0.19, 0.23, 0.27), 0.016, root, coat_fold, 0.80, 0.006)
     coat_fold_right.rotation_euler.y = 0.10
+    limb_between("CoatTailEdgeLeft", (-0.34, 0.23, 1.04), (-0.42, 0.23, 0.30), 0.013, root, coat_fold, 0.80, 0.006)
+    limb_between("CoatTailEdgeRight", (0.34, 0.23, 1.04), (0.42, 0.23, 0.30), 0.013, root, coat_fold, 0.80, 0.006)
+    harness_left = limb_between("HarnessLeft", (-0.18, -0.28, 1.70), (0.02, -0.28, 1.12), 0.020, root, leather, 0.80, 0.006)
+    harness_right = limb_between("HarnessRight", (0.18, -0.28, 1.70), (-0.02, -0.28, 1.12), 0.020, root, leather, 0.80, 0.006)
 
-    pack = tapered_prism("FieldPack", 0.50, 0.39, 0.30, 0.22, 0.66, (-0.23, 0.31, 1.33), root, leather, 0.065)
+    box("UtilityBelt", (0.68, 0.10, 0.12), (0.0, -0.20, 1.06), root, leather, 0.026)
+    box("BeltBuckle", (0.12, 0.040, 0.095), (0.0, -0.265, 1.06), root, metal, 0.015)
+    for side in (-1.0, 1.0):
+        pouch = tapered_prism("BeltPouch" + ("Left" if side < 0 else "Right"), 0.16, 0.12, 0.14, 0.11, 0.18, (side * 0.29, -0.23, 0.98), root, leather, 0.026)
+        pouch.rotation_euler.y = side * 0.10
+    box("ToolLoop", (0.055, 0.035, 0.22), (-0.38, -0.24, 1.12), root, leather, 0.010)
+
+    pack = tapered_prism("FieldPack", 0.58, 0.45, 0.34, 0.22, 0.72, (-0.25, 0.32, 1.35), root, leather, 0.070)
     pack["socket_type"] = "equipment_mount"
-    pack_roll = cylinder("PackTopRoll", 0.095, 0.40, (-0.23, 0.31, 1.70), root, leather, 16, 0.025)
+    pack_roll = cylinder("PackTopRoll", 0.105, 0.45, (-0.25, 0.32, 1.75), root, leather, 16, 0.026)
     pack_roll.rotation_euler.y = math.pi * 0.5
-    box("PackBackPanel", (0.30, 0.035, 0.34), (-0.23, 0.475, 1.33), root, metal, 0.025)
-    box("PackPocketLeft", (0.18, 0.14, 0.20), (-0.47, 0.43, 1.20), root, leather, 0.040)
-    box("PackPocketRight", (0.18, 0.14, 0.20), (0.01, 0.43, 1.20), root, leather, 0.040)
-    box("PackStrapLeft", (0.045, 0.025, 0.50), (-0.36, 0.50, 1.36), root, leather, 0.012)
-    box("PackStrapRight", (0.045, 0.025, 0.50), (-0.10, 0.50, 1.36), root, leather, 0.012)
-    back_harness = box("BackHarness", (0.055, 0.035, 0.88), (0.10, 0.23, 1.30), root, leather, 0.012)
-    back_harness.rotation_euler.y = -0.34
+    cloth_panel("PackFlap", [(-0.20, 0.13), (0.20, 0.13), (0.16, -0.15), (-0.17, -0.15)], 0.045, (-0.25, 0.50, 1.53), root, leather, 0.022)
+    box("PackBackPanel", (0.34, 0.040, 0.38), (-0.25, 0.51, 1.33), root, metal, 0.026)
+    box("PackBuckleLeft", (0.055, 0.025, 0.070), (-0.36, 0.545, 1.56), root, metal, 0.010)
+    box("PackBuckleRight", (0.055, 0.025, 0.070), (-0.14, 0.545, 1.56), root, metal, 0.010)
+    tapered_prism("PackPocketLeft", 0.20, 0.15, 0.15, 0.11, 0.22, (-0.50, 0.45, 1.22), root, leather, 0.040)
+    tapered_prism("PackPocketRight", 0.19, 0.14, 0.14, 0.10, 0.20, (0.00, 0.45, 1.22), root, leather, 0.040)
+    cylinder("PackSideCanister", 0.075, 0.25, (-0.57, 0.34, 1.36), root, metal, 12, 0.018).rotation_euler.y = math.pi * 0.5
+    limb_between("PackStrapLeft", (-0.39, 0.53, 1.61), (-0.28, 0.53, 1.12), 0.018, root, leather, 0.80, 0.006)
+    limb_between("PackStrapRight", (-0.12, 0.53, 1.61), (-0.22, 0.53, 1.12), 0.018, root, leather, 0.80, 0.006)
+    back_harness = limb_between("BackHarness", (0.10, 0.23, 1.72), (-0.12, 0.23, 1.05), 0.020, root, leather, 0.80, 0.006)
+    back_harness.rotation_euler.y = -0.18
 
-    shoulder_lamp = socket("ShoulderLamp", root, (-0.43, -0.20, 1.78))
+    shoulder_lamp = socket("ShoulderLamp", root, (-0.43, -0.19, 1.77))
     shoulder_lamp["socket_type"] = "light_mount"
-    tapered_prism("ShoulderLampHousing", 0.17, 0.13, 0.16, 0.11, 0.14, (-0.43, -0.20, 1.78), root, metal, 0.030)
-    cylinder("LampRing", 0.068, 0.045, (-0.43, -0.315, 1.78), root, metal, 12, 0.012).rotation_euler.x = math.pi * 0.5
-    cylinder("LampCore", 0.041, 0.035, (-0.43, -0.345, 1.78), root, cyan, 12, 0.008).rotation_euler.x = math.pi * 0.5
-    box("LampMount", (0.055, 0.20, 0.06), (-0.43, -0.12, 1.69), root, leather, 0.012)
-    cylinder("WarmLamp", 0.048, 0.11, (0.31, -0.22, 1.46), root, warm, 10, 0.010).rotation_euler.x = math.pi * 0.5
+    tapered_prism("ShoulderLampHousing", 0.19, 0.14, 0.17, 0.11, 0.15, (-0.43, -0.19, 1.77), root, metal, 0.032)
+    cylinder("LampRing", 0.072, 0.050, (-0.43, -0.315, 1.77), root, metal, 12, 0.012).rotation_euler.x = math.pi * 0.5
+    cylinder("LampCore", 0.044, 0.038, (-0.43, -0.348, 1.77), root, cyan, 12, 0.008).rotation_euler.x = math.pi * 0.5
+    box("LampMount", (0.060, 0.22, 0.065), (-0.43, -0.11, 1.68), root, leather, 0.012)
+    cylinder("WarmLamp", 0.050, 0.115, (0.31, -0.21, 1.45), root, warm, 10, 0.010).rotation_euler.x = math.pi * 0.5
 
-    pistol = box("WeakPistol", (0.18, 0.27, 0.115), (0.54, -0.29, 1.08), root, gun, 0.025)
+    pistol = tapered_prism("WeakPistol", 0.19, 0.15, 0.32, 0.23, 0.13, (0.60, -0.31, 1.08), root, gun, 0.028)
     pistol["socket_type"] = "weapon_mount"
-    barrel = cylinder("PistolBarrel", 0.040, 0.30, (0.0, -0.27, 0.015), pistol, gun, 10, 0.010)
+    barrel = cylinder("PistolBarrel", 0.042, 0.34, (0.0, -0.28, 0.030), pistol, gun, 12, 0.010)
     barrel.rotation_euler.x = math.pi * 0.5
-    grip = box("PistolGrip", (0.11, 0.13, 0.25), (0.0, 0.02, -0.14), pistol, gun, 0.022)
+    grip = tapered_prism("PistolGrip", 0.11, 0.085, 0.13, 0.10, 0.25, (0.0, 0.02, -0.15), pistol, gun, 0.022)
     grip.rotation_euler.x = -0.20
-    box("PistolSlide", (0.16, 0.18, 0.055), (0.0, -0.39, 0.07), pistol, gun, 0.014)
-    trigger_guard = torus("PistolTriggerGuard", 0.055, 0.012, (0.0, -0.02, -0.02), pistol, gun)
+    box("PistolSlide", (0.17, 0.19, 0.055), (0.0, -0.40, 0.07), pistol, gun, 0.014)
+    trigger_guard = torus("PistolTriggerGuard", 0.058, 0.012, (0.0, -0.02, -0.02), pistol, gun)
     trigger_guard.rotation_euler.x = math.pi * 0.5
     trigger_guard.scale.x = 0.80
     bpy.context.view_layer.objects.active = trigger_guard
     trigger_guard.select_set(True)
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     trigger_guard.select_set(False)
-    muzzle = socket("PistolMuzzle", pistol, (0.0, -0.43, 0.015))
+    muzzle = socket("PistolMuzzle", pistol, (0.0, -0.47, 0.030))
     muzzle["socket_type"] = "weapon_muzzle"
-    field_tool = box("FieldTool", (0.075, 0.075, 0.34), (-0.34, -0.20, 1.28), root, metal, 0.020)
+    field_tool = limb_between("FieldTool", (-0.42, -0.20, 1.04), (-0.40, -0.20, 1.38), 0.038, root, metal, 0.80, 0.012)
     field_tool.rotation_euler.y = -0.18
-    box("FieldToolHead", (0.20, 0.08, 0.075), (-0.39, -0.21, 1.43), root, metal, 0.018).rotation_euler.y = -0.18
+    box("FieldToolHead", (0.20, 0.08, 0.075), (-0.43, -0.21, 1.43), root, metal, 0.018).rotation_euler.y = -0.18
     marker = socket("ProductionAssetMarker", root, (0.0, 0.0, 0.0))
     marker["asset_contract"] = "mechromancer.player.v1"
 
