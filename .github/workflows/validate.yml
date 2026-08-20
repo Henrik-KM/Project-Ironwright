@@ -11,7 +11,7 @@ permissions:
 jobs:
   validate-browser-and-contracts:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Validate browser reference and design contracts
+      - name: Validate browser reference, release assets and product contracts
         run: npm run validate
 
       - name: Validate aesthetic integration
@@ -29,7 +29,7 @@ jobs:
 
   validate-native-godot:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -59,5 +59,8 @@ jobs:
       - name: Run first-session UX and guidance tests
         run: godot --headless --path game --script res://tests/first_session_ux_test_runner.gd
 
-      - name: Run complete start-to-victory alpha test
+      - name: Run complete start-to-victory systemic test
         run: godot --headless --path game --script res://tests/complete_game_test_runner.gd
+
+      - name: Run commercial release tests
+        run: godot --headless --path game --script res://tests/release_test_runner.gd
