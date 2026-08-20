@@ -291,3 +291,26 @@ A gameplay task is complete only when:
 - autonomous behaviour has a diagnostic reason;
 - no recurring chore was introduced without explicit approval;
 - persistent state survives save/load where applicable.
+
+## 20. Population-driven ecological escalation
+
+Enemy difficulty is population-driven rather than unlocked by a recurring timer.
+Each organic tier has a population cap and replenishment rate. When a non-final
+tier is saturated, its current replenishment allocation moves to the next tier
+at 10:1 and becomes zero in the source tier. Process saturation from high tiers
+downward so one update cannot instantly cascade the same pressure through the
+whole ladder.
+
+Tier I is numerous, slow and behaviorally primitive: roam, chase visible prey,
+and attack. Higher tiers add territorial defense, patrol, scouting, hunting,
+information sharing, route observation, infrastructure targeting, retreat, and
+regional Apex behavior. Tier and species remain separate data.
+
+All replenishment materializes through physical living nests. Killing organisms
+creates population headroom; clearing nests removes long-term rate sources;
+progression and operations may increase or suppress rates. Noise changes
+attention, not permanent global reproduction. Mature machine society handles
+routine Tier-I thinning without individual robot orders.
+
+Read `docs/ENEMY_TIER_PROGRESSION.md` before changing enemy spawning, nests,
+regional ecology, operation rewards, or autonomous suppression.

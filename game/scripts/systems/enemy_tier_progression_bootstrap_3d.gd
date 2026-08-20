@@ -14,6 +14,7 @@ var main_hud: Node
 var map_mode_last: bool = false
 var initialized: bool = false
 var pending_restore: bool = false
+var prefer_backup_restore: bool = false
 
 
 func _ready() -> void:
@@ -24,13 +25,14 @@ func _ready() -> void:
 func _process(delta: float) -> void:
     if not initialized or world == null or not is_instance_valid(world):
         return
-    var map_mode := bool(world.get("map_mode"))
+    var map_mode := bool(world.get("map_mode")) if _has_property(world, &"map_mode") else false if _has_property(world, &"map_mode") else false
     if map_mode != map_mode_last:
         map_mode_last = map_mode
         intel_hud.set_command_map_visible(map_mode)
     if pending_restore:
         pending_restore = false
-        _restore_sidecar()
+        _restore_sidecar(prefer_backup_restore)
+        prefer_backup_restore = false
 
 
 func _initialize() -> void:
@@ -80,7 +82,7 @@ func _disable_generator_recursive(node: Node) -> void:
     if node == null or node == director:
         return
     var class_name_text := node.get_class()
-    var script := node.get_script()
+    var script: Script = node.get_script() as Script
     if script != null:
         if script.has_method(&"get_global_name"):
             class_name_text = str(script.call(&"get_global_name"))
@@ -89,6 +91,8 @@ func _disable_generator_recursive(node: Node) -> void:
         or node.has_method(&"_spawn_regional_organism")
     ):
         node.set_meta(&"population_controlled_by_enemy_tiers", true)
+        node.set_process(false)
+        node.set_physics_process(false)
         if _has_property(node, &"active_enemy_cap"):
             node.set("active_enemy_cap", 0)
         if _has_property(node, &"spawn_interval"):
@@ -161,6 +165,7 @@ func _on_world_save_completed(slot_id: StringName, path: String) -> void:
 
 
 func _on_world_load_completed(slot_id: StringName, source_path: String, recovered_backup: bool) -> void:
+    prefer_backup_restore = recovered_backup
     pending_restore = true
 
 
@@ -190,10 +195,10 @@ func _save_sidecar() -> bool:
     return DirAccess.rename_absolute(ProjectSettings.globalize_path(SIDECAR_TEMP_PATH), ProjectSettings.globalize_path(SIDECAR_PATH)) == OK
 
 
-func _restore_sidecar() -> bool:
-    var envelope := _read_verified(SIDECAR_PATH)
+func _restore_sidecar(prefer_backup: bool = false) -> bool:
+    var envelope := _read_verified(SIDECAR_BACKUP_PATH if prefer_backup else SIDECAR_PATH)
     if envelope.is_empty():
-        envelope = _read_verified(SIDECAR_BACKUP_PATH)
+        envelope = _read_verified(SIDECAR_PATH if prefer_backup else SIDECAR_BACKUP_PATH)
     if envelope.is_empty():
         return false
     var payload: Variant = envelope.get("payload", {})

@@ -20,6 +20,7 @@ var tier_order: Array[int] = []
 var population: Dictionary = {}
 var anonymous_rates: Dictionary = {}
 var spawn_credit: Dictionary = {}
+var suppression_offsets: Dictionary = {}
 var saturated: Dictionary = {}
 var rate_sources: Dictionary = {}
 var nests: Dictionary = {}
@@ -102,6 +103,7 @@ func _initialize_state() -> void:
     population.clear()
     anonymous_rates.clear()
     spawn_credit.clear()
+    suppression_offsets.clear()
     saturated.clear()
     rate_sources.clear()
     var raw_tiers: Array = config.get("tiers", [])
@@ -117,6 +119,7 @@ func _initialize_state() -> void:
         population[tier] = 0
         anonymous_rates[tier] = 0.0
         spawn_credit[tier] = 0.0
+        suppression_offsets[tier] = 0.0
         saturated[tier] = false
     tier_order.sort()
     maximum_tier = tier_order[-1] if not tier_order.is_empty() else 5
@@ -157,8 +160,11 @@ func _on_tree_node_added(node: Node) -> void:
     call_deferred("_consider_new_node", node)
 
 
-func _consider_new_node(node: Node) -> void:
-    if not is_instance_valid(node):
+func _consider_new_node(raw_node: Variant) -> void:
+    if not is_instance_valid(raw_node):
+        return
+    var node: Node = raw_node as Node
+    if node == null:
         return
     if node.is_in_group(&"organic_enemies") and not node.is_in_group(&"enemy_tier_nests"):
         _register_enemy(node)
@@ -180,7 +186,7 @@ func _spawn_configured_nests() -> void:
         var nest_id := StringName(str(entry.get("id", "")))
         if nest_id == &"" or existing.has(nest_id):
             continue
-        var nest := NEST_SCRIPT.new()
+        var nest := NEST_SCRIPT.new() as EnemyTierNest3D
         nest.configure(entry)
         world.add_child(nest)
         register_nest(nest)
@@ -220,8 +226,12 @@ func _sync_nest_sources(nest: Node) -> void:
     var alive := true
     if nest.has_method(&"is_alive"):
         alive = bool(nest.call(&"is_alive"))
-    var raw_rates: Variant = nest.call(&"effective_replenishment") if nest.has_method(&"effective_replenishment") else {}
-    var rates: Dictionary = raw_rates as Dictionary if raw_rates is Dictionary else {}
+    var raw_rates: Variant = {}
+    if nest.has_method(&"effective_replenishment"):
+        raw_rates = nest.call(&"effective_replenishment")
+    var rates: Dictionary = {}
+    if raw_rates is Dictionary:
+        rates = (raw_rates as Dictionary).duplicate(true)
     for tier in tier_order:
         var source_id := StringName("%s.tier_%d" % [String(nest_id), tier])
         var desired := maxf(0.0, float(rates.get(str(tier), rates.get(tier, 0.0)))) if alive else 0.0
@@ -301,6 +311,8 @@ func _on_nest_restored(nest: Node) -> void:
 func _register_enemy(enemy: Node) -> void:
     if enemy == null or not is_instance_valid(enemy) or enemy.is_in_group(&"enemy_tier_nests"):
         return
+    if enemy.get("maximum_health") == null or enemy.get("current_health") == null:
+        return
     var instance_id := enemy.get_instance_id()
     if connected_enemies.has(instance_id):
         return
@@ -345,7 +357,7 @@ func assign_enemy_tier(enemy: Node, tier: int, home_nest_id: StringName) -> void
         brain = ENEMY_BRAIN_SCRIPT.new()
         brain.name = "EnemyTierBrain"
         enemy.add_child(brain)
-    brain.configure(enemy, self, tier, home_nest_id)
+    brain.call(&"configure", enemy, self, tier, home_nest_id)
 
 
 func _on_enemy_killed(enemy: Node, killer: Node = null) -> void:
@@ -386,7 +398,31 @@ func _reconcile_population() -> void:
         saturated[tier] = after >= unit_cap(tier)
 
 
+func _enforce_population_caps() -> void:
+    for tier in tier_order:
+        var cap := unit_cap(tier)
+        var members: Array[Node] = []
+        for enemy in get_tree().get_nodes_in_group(StringName("enemy_tier_%d" % tier)):
+            if enemy == null or not is_instance_valid(enemy) or enemy.is_in_group(&"enemy_tier_nests"):
+                continue
+            if enemy.has_method(&"is_alive") and not bool(enemy.call(&"is_alive")):
+                continue
+            members.append(enemy)
+        members.sort_custom(func(a: Node, b: Node) -> bool:
+            return a.get_instance_id() < b.get_instance_id()
+        )
+        if members.size() <= cap:
+            continue
+        for index in range(cap, members.size()):
+            var excess := members[index]
+            excess.set_meta(&"removed_by_tier_cap", true)
+            excess.queue_free()
+        population[tier] = cap
+        tier_population_changed.emit(tier, cap, cap)
+
+
 func _simulation_tick(delta: float) -> void:
+    _enforce_population_caps()
     _add_anonymous_rate(1, tier_1_growth_per_second * delta)
     _process_saturation_high_to_low()
     for tier in tier_order:
@@ -421,6 +457,9 @@ func _transfer_tier_rate(tier: int) -> void:
     if anonymous > 0.0:
         anonymous_rates[tier] = 0.0
         anonymous_rates[next_tier] = float(anonymous_rates.get(next_tier, 0.0)) + anonymous * transfer_factor
+    var suppression := maxf(0.0, float(suppression_offsets.get(tier, 0.0)))
+    suppression_offsets[tier] = 0.0
+    suppression_offsets[next_tier] = maxf(0.0, float(suppression_offsets.get(next_tier, 0.0)) + suppression * transfer_factor)
     for raw_source_id in rate_sources.keys():
         var source_id := raw_source_id as StringName
         var source: Dictionary = rate_sources.get(source_id, {})
@@ -470,30 +509,11 @@ func reduce_replenishment(base_tier: int, base_amount: float) -> float:
 
 
 func _remove_rate_from_tier(tier: int, amount: float) -> void:
-    var remaining := maxf(0.0, amount)
-    var anonymous := float(anonymous_rates.get(tier, 0.0))
-    var take := minf(anonymous, remaining)
-    anonymous_rates[tier] = anonymous - take
-    remaining -= take
-    if remaining > 0.000001:
-        for raw_source_id in rate_sources.keys():
-            var source_id := raw_source_id as StringName
-            var source: Dictionary = rate_sources.get(source_id, {})
-            if int(source.get("current_tier", -1)) != tier:
-                continue
-            var source_rate := float(source.get("current_rate", 0.0))
-            take = minf(source_rate, remaining)
-            source_rate -= take
-            remaining -= take
-            if source_rate <= 0.000001:
-                rate_sources.erase(source_id)
-            else:
-                source["current_rate"] = source_rate
-                var base_tier := int(source.get("base_tier", tier))
-                source["base_rate"] = source_rate / pow(transfer_factor, maxi(0, tier - base_tier))
-                rate_sources[source_id] = source
-            if remaining <= 0.000001:
-                break
+    var current_net := replenishment_rate(tier)
+    var reduction := minf(maxf(0.0, amount), current_net)
+    if reduction <= 0.000001:
+        return
+    suppression_offsets[tier] = maxf(0.0, float(suppression_offsets.get(tier, 0.0)) + reduction)
     tier_replenishment_changed.emit(tier, replenishment_rate(tier))
 
 
@@ -630,7 +650,7 @@ func replenishment_rate(tier: int) -> float:
     for source in rate_sources.values():
         if source is Dictionary and int(source.get("current_tier", -1)) == tier:
             total += maxf(0.0, float(source.get("current_rate", 0.0)))
-    return total
+    return maxf(0.0, total - maxf(0.0, float(suppression_offsets.get(tier, 0.0))))
 
 
 func active_nest_count() -> int:
@@ -714,6 +734,8 @@ func debug_set_population(tier: int, value: int) -> void:
 
 func debug_set_anonymous_rate(tier: int, value: float) -> void:
     anonymous_rates[tier] = maxf(0.0, value)
+    suppression_offsets[tier] = 0.0
+    suppression_offsets[tier] = 0.0
 
 
 func debug_process_saturation() -> void:
@@ -740,6 +762,7 @@ func to_dictionary() -> Dictionary:
         "population": _stringify_numeric_dictionary(population),
         "anonymous_rates": _stringify_numeric_dictionary(anonymous_rates),
         "spawn_credit": _stringify_numeric_dictionary(spawn_credit),
+        "suppression_offsets": _stringify_numeric_dictionary(suppression_offsets),
         "saturated": _stringify_numeric_dictionary(saturated),
         "rate_sources": serialized_sources,
         "applied_events": _stringify_key_dictionary(applied_events),
@@ -749,11 +772,13 @@ func to_dictionary() -> Dictionary:
 
 
 func restore_from_dictionary(data: Dictionary) -> void:
+    _spawn_configured_nests()
     elapsed_seconds = maxf(0.0, float(data.get("elapsed_seconds", 0.0)))
     spawn_serial = maxi(0, int(data.get("spawn_serial", 0)))
     _restore_numeric_dictionary(population, data.get("population", {}), true)
     _restore_numeric_dictionary(anonymous_rates, data.get("anonymous_rates", {}), false)
     _restore_numeric_dictionary(spawn_credit, data.get("spawn_credit", {}), false)
+    _restore_numeric_dictionary(suppression_offsets, data.get("suppression_offsets", {}), false)
     _restore_numeric_dictionary(saturated, data.get("saturated", {}), false)
     rate_sources.clear()
     var saved_sources: Dictionary = data.get("rate_sources", {})

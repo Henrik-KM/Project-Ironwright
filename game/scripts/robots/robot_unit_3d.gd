@@ -240,6 +240,15 @@ func _nearest_enemy(maximum_range: float) -> Node3D:
         if current_distance < best_distance:
             best = candidate
             best_distance = current_distance
+    for candidate in get_tree().get_nodes_in_group(&"enemy_tier_nests"):
+        if not is_instance_valid(candidate) or not (candidate is Node3D):
+            continue
+        if candidate.has_method(&"is_alive") and not bool(candidate.call(&"is_alive")):
+            continue
+        var nest_distance := global_position.distance_to(candidate.global_position)
+        if nest_distance < best_distance:
+            best = candidate
+            best_distance = nest_distance
     return best
 
 

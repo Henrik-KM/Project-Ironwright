@@ -169,7 +169,8 @@ func _find_tier_one_clusters() -> Array[Vector3]:
             buckets[cell] = {"count": 0, "sum": Vector3.ZERO}
         var bucket: Dictionary = buckets[cell]
         bucket["count"] = int(bucket["count"]) + 1
-        bucket["sum"] = (bucket["sum"] as Vector3) + position
+        var accumulated: Vector3 = bucket.get("sum", Vector3.ZERO)
+        bucket["sum"] = accumulated + position
         buckets[cell] = bucket
     var scored: Array[Dictionary] = []
     for cell in buckets:
@@ -183,13 +184,16 @@ func _find_tier_one_clusters() -> Array[Vector3]:
     )
     var result: Array[Vector3] = []
     for entry in scored:
-        result.append(entry["position"] as Vector3)
+        var position: Vector3 = entry.get("position", Vector3.ZERO)
+        result.append(position)
     return result
 
 
 func _available_wardens() -> Array[Node]:
     var result: Array[Node] = []
-    var raw: Variant = autonomy_node.call(&"living_robots", &"guardian") if autonomy_node.has_method(&"living_robots") else []
+    var raw: Variant = []
+    if autonomy_node.has_method(&"living_robots"):
+        raw = autonomy_node.call(&"living_robots", &"guardian")
     if not (raw is Array):
         return result
     for robot in raw:

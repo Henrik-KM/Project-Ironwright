@@ -321,3 +321,12 @@ Goal: demonstrate a causal major incident without a wave timer.
 Run Veilstalkers, Gleaners, and one regional apex influence together.
 
 Goal: prove that changing one population affects another and produces non-scripted pressure.
+
+## Enemy tier progression
+
+The quantitative population, replenishment, nest-source and intelligence ladder
+is specified in [`ENEMY_TIER_PROGRESSION.md`](ENEMY_TIER_PROGRESSION.md). This
+system is the authoritative source for how organisms are replenished and how
+population saturation evolves ecological pressure upward. Existing regional
+pressure and noise systems describe attention and local conditions; they may
+not independently create an unbounded or scheduled enemy population.

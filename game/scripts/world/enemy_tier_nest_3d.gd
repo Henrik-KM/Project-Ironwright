@@ -37,7 +37,10 @@ func configure(data: Dictionary) -> void:
     current_health = maximum_health
     regrowth_seconds = maxf(60.0, float(data.get("regrowth_seconds", 1800.0)))
     can_regrow = bool(data.get("can_regrow", true))
-    replenishment_per_minute = (data.get("replenishment_per_minute", {}) as Dictionary).duplicate(true)
+    var raw_replenishment: Variant = data.get("replenishment_per_minute", {})
+    replenishment_per_minute = {}
+    if raw_replenishment is Dictionary:
+        replenishment_per_minute = (raw_replenishment as Dictionary).duplicate(true)
     supported_tiers.clear()
     for raw_tier in data.get("supported_tiers", [1]):
         supported_tiers.append(maxi(1, int(raw_tier)))
@@ -48,7 +51,7 @@ func configure(data: Dictionary) -> void:
 
 func _ready() -> void:
     add_to_group(&"enemy_tier_nests")
-    add_to_group(&"organic_enemies")
+    add_to_group(&"organic_structures")
     add_to_group(&"organic_ecology_sources")
     collision_layer = 4
     collision_mask = 2
@@ -169,7 +172,9 @@ func next_spawn_position(tier: int, serial: int) -> Vector3:
 func _tier_config(tier: int) -> Dictionary:
     var progression := get_tree().get_first_node_in_group(&"enemy_tier_progression")
     if progression != null and progression.has_method(&"get_tier_data"):
-        return progression.call(&"get_tier_data", tier)
+        var raw: Variant = progression.call(&"get_tier_data", tier)
+        if raw is Dictionary:
+            return (raw as Dictionary).duplicate(true)
     return {}
 
 

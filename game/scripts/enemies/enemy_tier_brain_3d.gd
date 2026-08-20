@@ -5,7 +5,7 @@ signal behaviour_changed(enemy: Node3D, tier: int, behaviour: StringName, reason
 signal detection_shared(enemy: Node3D, target: Node3D, position: Vector3)
 
 var enemy: CharacterBody3D
-var director: EnemyTierProgressionDirector3D
+var director
 var enemy_tier: int = 1
 var home_nest_id: StringName = &""
 var home_nest: Node3D
@@ -33,7 +33,7 @@ var initialized: bool = false
 
 func configure(
         next_enemy: Node,
-        next_director: EnemyTierProgressionDirector3D,
+        next_director,
         next_tier: int,
         next_home_nest_id: StringName
     ) -> void:
@@ -50,6 +50,13 @@ func _ready() -> void:
     call_deferred("_initialize")
 
 
+func _process(delta: float) -> void:
+    # Release LOD systems may try to re-enable the parent enemy's legacy
+    # physics loop. Tier intelligence remains the single movement authority.
+    if enemy != null and is_instance_valid(enemy) and enemy.is_physics_processing():
+        enemy.set_physics_process(false)
+
+
 func _initialize() -> void:
     if initialized or enemy == null or not is_instance_valid(enemy):
         return
@@ -64,7 +71,7 @@ func _initialize() -> void:
     territory_center = home_nest.global_position if home_nest != null else enemy.global_position
     territory_radius = [28.0, 24.0, 42.0, 58.0, 92.0][enemy_tier - 1]
     pack_id = StringName("pack.%s.tier_%d" % [String(home_nest_id) if home_nest_id != &"" else "feral", enemy_tier])
-    enemy.add_to_group(&"enemy_tier_%d" % enemy_tier)
+    enemy.add_to_group(StringName("enemy_tier_%d" % enemy_tier))
     enemy.add_to_group(&"enemy_tier_brained")
     enemy.set_meta(&"enemy_behaviour", String(behaviour))
     enemy.set_meta(&"enemy_behaviour_reason", behaviour_reason)
@@ -80,6 +87,8 @@ func _physics_process(delta: float) -> void:
         return
     decision_clock += delta
     state_elapsed += delta
+    enemy.set("attack_cooldown", maxf(0.0, float(enemy.get("attack_cooldown")) - delta))
+    enemy.set("attack_cooldown", maxf(0.0, float(enemy.get("attack_cooldown")) - delta))
     enemy.set("attack_cooldown", maxf(0.0, float(enemy.get("attack_cooldown")) - delta))
     last_known_target_seconds = maxf(0.0, last_known_target_seconds - delta)
     var focus := _simulation_focus_position()
@@ -106,6 +115,14 @@ func _choose_next_behaviour(force: bool) -> void:
     if enemy == null:
         return
     current_target = _validate_target(current_target)
+    if current_target != null:
+        var retention_radius: float = [16.0, 30.0, 58.0, 88.0, 145.0][enemy_tier - 1]
+        if enemy.global_position.distance_to(current_target.global_position) > retention_radius:
+            current_target = null
+    if current_target != null:
+        var retention_radius: float = [16.0, 30.0, 58.0, 88.0, 145.0][enemy_tier - 1]
+        if enemy.global_position.distance_to(current_target.global_position) > retention_radius:
+            current_target = null
     if current_target != null:
         last_known_target_position = current_target.global_position
         last_known_target_seconds = 9.0 + float(enemy_tier) * 4.0
@@ -136,9 +153,13 @@ func _decide_tier_one(force: bool) -> void:
         return
     if force or not has_goal or enemy.global_position.distance_to(goal_position) < 1.4 or state_elapsed > 13.0:
         roam_serial += 1
-        goal_position = _random_point(territory_center, territory_radius * 1.45, roam_serial * 31 + 7)
+        # Feral organisms perform a broad random walk. A very weak home bias
+        # prevents permanent drift outside the authored world without turning
+        # the movement into nest patrol or purposeful defense.
+        var wandering_center := enemy.global_position.lerp(territory_center, 0.12)
+        goal_position = _random_point(wandering_center, territory_radius * 1.45, roam_serial * 31 + 7)
         has_goal = true
-        _set_behaviour(&"roam", "Wandering randomly from its birth nest without a strategic purpose.")
+        _set_behaviour(&"roam", "Wandering continuously through the town without patrol, scouting, or a strategic purpose.")
 
 
 func _decide_tier_two(force: bool) -> void:
@@ -235,6 +256,14 @@ func _decide_tier_five(force: bool) -> void:
 func _execute_behaviour(delta: float, remote: bool) -> void:
     current_target = _validate_target(current_target)
     if current_target != null:
+        var retention_radius: float = [16.0, 30.0, 58.0, 88.0, 145.0][enemy_tier - 1]
+        if enemy.global_position.distance_to(current_target.global_position) > retention_radius:
+            current_target = null
+    if current_target != null:
+        var retention_radius: float = [16.0, 30.0, 58.0, 88.0, 145.0][enemy_tier - 1]
+        if enemy.global_position.distance_to(current_target.global_position) > retention_radius:
+            current_target = null
+    if current_target != null:
         last_known_target_position = current_target.global_position
         last_known_target_seconds = maxf(last_known_target_seconds, 4.0)
         var distance := enemy.global_position.distance_to(current_target.global_position)
@@ -306,7 +335,7 @@ func _attack_target(target: Node3D) -> void:
 
 
 func _best_visible_target() -> Node3D:
-    var radius := [11.0, 18.0, 30.0, 42.0, 58.0][enemy_tier - 1]
+    var radius: float = [11.0, 18.0, 30.0, 42.0, 58.0][enemy_tier - 1]
     var candidates := _query_targets(radius)
     var best: Node3D
     var best_score := -INF

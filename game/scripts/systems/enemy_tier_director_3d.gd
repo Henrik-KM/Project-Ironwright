@@ -45,6 +45,7 @@ var simulation_clock: float = 0.0
 var spawn_serial: int = 0
 var simulation_enabled: bool = true
 var materialization_enabled: bool = true
+var legacy_runtime_disabled: bool = false
 var load_errors: Array[String] = []
 var last_snapshot: Dictionary = {}
 
@@ -77,6 +78,10 @@ func configure(
 func _ready() -> void:
     add_to_group(&"enemy_tier_director")
     _load_configuration()
+    if legacy_runtime_disabled:
+        simulation_enabled = false
+        materialization_enabled = false
+        return
     _initialize_tier_states()
     _create_physical_nest_network()
     _adopt_existing_enemies()
@@ -110,6 +115,12 @@ func _load_configuration() -> void:
         load_errors.append("Enemy tier progression data is not a JSON object")
         return
     var data := parsed as Dictionary
+    if data.get("tiers", null) is Array:
+        # The canonical population-driven director owns the array-shaped
+        # contract. Keep this legacy node as a compatibility surface without
+        # parsing or simulating the newer runtime state in parallel.
+        legacy_runtime_disabled = true
+        return
     var simulation: Dictionary = data.get("simulation", {})
     tick_seconds = maxf(0.1, float(simulation.get("tick_seconds", 1.0)))
     saturation_transfer_factor = clampf(float(simulation.get("saturation_transfer_factor", 0.1)), 0.001, 1.0)
