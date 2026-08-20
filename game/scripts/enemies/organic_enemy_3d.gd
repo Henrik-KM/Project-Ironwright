@@ -1,6 +1,8 @@
 class_name OrganicEnemy3D
 extends CharacterBody3D
 
+const AUTHORED_VEILSTALKER_MODEL_SCENE: PackedScene = preload("res://assets/veilstalker/veilstalker.gltf")
+
 signal killed(enemy: OrganicEnemy3D, killer: Node)
 signal attack_started(enemy: OrganicEnemy3D, target: Node)
 signal attack_landed(enemy: OrganicEnemy3D, target: Node)
@@ -574,6 +576,9 @@ func _refresh_visuals() -> void:
         return
     for child in _model_root.get_children():
         child.queue_free()
+    if species == &"veilstalker":
+        _build_authored_veilstalker_visuals()
+        return
     var flesh := ModelKit3D.material(Color("201719"), 0.0, 0.91)
     var chitin := ModelKit3D.material(Color("332529"), 0.12, 0.66)
     var bone := ModelKit3D.material(Color("786f60"), 0.0, 0.82)
@@ -714,3 +719,24 @@ func _refresh_visuals() -> void:
     ModelKit3D.add_capsule(_model_root, 0.06 * body_radius / 0.62, 0.72 * body_radius / 0.62, Vector3(-0.2, body_radius * 0.86, eye_z - 0.18), bone, Vector3(0.85, 0.0, -0.3), "MandibleLeft")
     ModelKit3D.add_capsule(_model_root, 0.06 * body_radius / 0.62, 0.72 * body_radius / 0.62, Vector3(0.2, body_radius * 0.86, eye_z - 0.18), bone, Vector3(0.85, 0.0, 0.3), "MandibleRight")
     ModelKit3D.add_glow_light(_model_root, Vector3(0.0, eye_y, eye_z + 0.05), Color("e43725"), 0.42 + body_radius * 0.28, 2.2 + body_radius * 1.7)
+
+
+func _build_authored_veilstalker_visuals() -> void:
+    # Keep the imported production shell flat under OrganicModel so the
+    # release material pass and existing animation lookup retain their stable
+    # paths. Only presentation changes; species stats and ecology stay here.
+    var authored_scene_instance := AUTHORED_VEILSTALKER_MODEL_SCENE.instantiate()
+    var imported_root := authored_scene_instance.get_node_or_null("VeilstalkerModel") as Node
+    if imported_root == null:
+        imported_root = authored_scene_instance
+    var authored_children := imported_root.get_children()
+    for child in authored_children:
+        child.owner = null
+        imported_root.remove_child(child)
+        _model_root.add_child(child)
+    if imported_root != authored_scene_instance:
+        imported_root.free()
+    authored_scene_instance.free()
+    var authored_marker := Node3D.new()
+    authored_marker.name = "VeilstalkerAuthoredModel"
+    _model_root.add_child(authored_marker)
