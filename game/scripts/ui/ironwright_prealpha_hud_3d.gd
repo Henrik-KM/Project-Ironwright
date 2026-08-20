@@ -36,7 +36,10 @@ func _apply_desktop_density() -> void:
     if resource_panel != null:
         resource_panel.modulate = Color(1.0, 1.0, 1.0, 0.88)
     if resource_label != null:
-        resource_label.add_theme_font_size_override("font_size", 17)
+        # Reduce dashboard chrome around the data, not the legibility of the
+        # actual reserve values. The constrained-resolution regression keeps
+        # this at desktop-readable size.
+        resource_label.add_theme_font_size_override("font_size", 20)
     if focus_label != null:
         focus_label.add_theme_font_size_override("font_size", 14)
     if operation_label != null:
