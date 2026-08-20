@@ -6,7 +6,7 @@ The current build is not release-ready merely because its systemic gameplay path
 
 The current visual state is explicitly classified as **pre-alpha production prototype** until the following gates are met.
 
-The shared model kit now has a high-detail baseline: curved primitives use denser radial/ring resolution, machine chassis use original beveled core/rail/cap geometry, and organic shells receive layered surface panels, fasteners and material-break ridges. The opening Mechromancer equipment, Bulwark, Warden, Scrapper and Engineer silhouettes use that treatment without changing gameplay collision or introducing a per-unit maintenance burden. It is a production-facing procedural quality pass, not a claim that final authored meshes have replaced the remaining procedural families.
+The shared model kit now has a high-detail baseline: curved primitives use denser radial/ring resolution, machine chassis and representative cutaway facades use original beveled core/rail/cap geometry, and organic shells receive layered surface panels, fasteners and material-break ridges. The opening Mechromancer equipment, Bulwark, Warden, Scrapper and Engineer silhouettes use that treatment without changing gameplay collision or introducing a per-unit maintenance burden. It is a production-facing procedural quality pass, not a claim that final authored meshes have replaced the remaining procedural families.
 
 ## Immediate failures identified from the first full-game screenshot review
 

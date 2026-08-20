@@ -153,24 +153,25 @@ func _build_cutaway_facade(body: StaticBody3D, height: float, identity: StringNa
     # the Heartforge plaza from the tactical camera.
     for corner_x in [-1.0, 1.0]:
         for corner_z in [-1.0, 1.0]:
-            ModelKit3D.add_box(
+            ModelKit3D.add_beveled_box(
                 facade,
                 Vector3(0.42, height, 0.42),
                 Vector3(corner_x * width * 0.46, height * 0.5, corner_z * depth * 0.46),
                 soot_masonry,
                 Vector3.ZERO,
-                "StructuralPier"
+                "StructuralPier",
+                0.13
             )
 
     for floor_index in range(floors + 1):
         var y := minf(height, float(floor_index) * 2.25)
-        ModelKit3D.add_box(facade, Vector3(width * 0.92, 0.18, 0.34), Vector3(0.0, y, -depth * 0.46), masonry, Vector3.ZERO, "FloorEdge")
-        ModelKit3D.add_box(facade, Vector3(0.34, 0.18, depth * 0.92), Vector3(-width * 0.46, y, 0.0), masonry, Vector3.ZERO, "SideFloorEdge")
+        ModelKit3D.add_beveled_box(facade, Vector3(width * 0.92, 0.18, 0.34), Vector3(0.0, y, -depth * 0.46), masonry, Vector3.ZERO, "FloorEdge", 0.18)
+        ModelKit3D.add_beveled_box(facade, Vector3(0.34, 0.18, depth * 0.92), Vector3(-width * 0.46, y, 0.0), masonry, Vector3.ZERO, "SideFloorEdge", 0.18)
 
     # Rear and one side stay mostly intact; the plaza-facing edges are broken
     # into wall panels with gaps, balconies and visible dark interior depth.
-    ModelKit3D.add_box(facade, Vector3(width * 0.92, height * 0.86, 0.28), Vector3(0.0, height * 0.43, depth * 0.46), soot_masonry, Vector3.ZERO, "RearWall")
-    ModelKit3D.add_box(facade, Vector3(0.28, height * 0.78, depth * 0.64), Vector3(width * 0.46, height * 0.39, 1.2), masonry, Vector3.ZERO, "OuterWall")
+    ModelKit3D.add_beveled_box(facade, Vector3(width * 0.92, height * 0.86, 0.28), Vector3(0.0, height * 0.43, depth * 0.46), soot_masonry, Vector3.ZERO, "RearWall", 0.12)
+    ModelKit3D.add_beveled_box(facade, Vector3(0.28, height * 0.78, depth * 0.64), Vector3(width * 0.46, height * 0.39, 1.2), masonry, Vector3.ZERO, "OuterWall", 0.12)
 
     for floor_index in range(floors):
         var y := 1.15 + float(floor_index) * 2.25
@@ -178,10 +179,10 @@ func _build_cutaway_facade(body: StaticBody3D, height: float, identity: StringNa
             if (floor_index + bay + int(body.get_instance_id() % 3)) % 4 == 0:
                 continue
             var x := -4.0 + float(bay) * 4.0
-            ModelKit3D.add_box(facade, Vector3(2.7, 1.72, 0.18), Vector3(x, y, -depth * 0.46), masonry, Vector3.ZERO, "FacadePanel")
+            ModelKit3D.add_beveled_box(facade, Vector3(2.7, 1.72, 0.18), Vector3(x, y, -depth * 0.46), masonry, Vector3.ZERO, "FacadePanel", 0.16)
             ModelKit3D.add_box(facade, Vector3(1.1, 0.92, 0.07), Vector3(x, y + 0.08, -depth * 0.485), interior_dark, Vector3.ZERO, "WindowVoid")
         if floor_index > 0:
-            ModelKit3D.add_box(facade, Vector3(width * 0.7, 0.12, 0.78), Vector3(-0.6, y - 0.78, -depth * 0.56), black_metal, Vector3(0.0, 0.0, 0.02 * float(floor_index % 2)), "BrokenBalcony")
+            ModelKit3D.add_beveled_box(facade, Vector3(width * 0.7, 0.12, 0.78), Vector3(-0.6, y - 0.78, -depth * 0.56), black_metal, Vector3(0.0, 0.0, 0.02 * float(floor_index % 2)), "BrokenBalcony", 0.2)
 
     _add_facade_identity(facade, identity, width, depth)
     _add_roof_damage(facade, width, depth, height)
@@ -209,7 +210,7 @@ func _add_facade_identity(parent: Node3D, identity: StringName, width: float, de
 func _add_roof_damage(parent: Node3D, width: float, depth: float, height: float) -> void:
     for index in range(5):
         var x := -width * 0.35 + float(index) * width * 0.17
-        ModelKit3D.add_box(parent, Vector3(width * 0.2, 0.35 + float(index % 2) * 0.3, depth * 0.34), Vector3(x, height + 0.16 + float(index % 2) * 0.22, 1.4 + float(index % 3) * 0.7), soot_masonry, Vector3(0.04 * index, 0.12 * index, 0.08 - float(index) * 0.025), "BrokenRoofSlab")
+        ModelKit3D.add_beveled_box(parent, Vector3(width * 0.2, 0.35 + float(index % 2) * 0.3, depth * 0.34), Vector3(x, height + 0.16 + float(index % 2) * 0.22, 1.4 + float(index % 3) * 0.7), soot_masonry, Vector3(0.04 * index, 0.12 * index, 0.08 - float(index) * 0.025), "BrokenRoofSlab", 0.14)
 
 
 func _build_heartforge_plaza() -> void:
