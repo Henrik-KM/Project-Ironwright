@@ -61,6 +61,11 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
   archive records, substation tanks, tenement laundry, greenhouse beds,
   market awnings, dock service decks, rail signals, brood ribs, survey optics,
   lab cases and cistern protocol pylons.
+- every non-sanctuary landmark now also carries a bounded authored surface
+  finish: ruin service spines use louvered panels, inset plates, cable runs and
+  scar rails, while the bespoke regions use distinct facade, utility, signal or
+  organic-growth signatures. These details remain presentation-only and under
+  the landmark LOD boundary.
 - the release material pass remains live for late-created robots, organic
   families, outpost upgrades and discovered-region dressing, so the visual
   language does not regress after the opening scene.

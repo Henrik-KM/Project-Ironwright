@@ -337,6 +337,19 @@ identities. Manual channels remain finish-before-save.
 - cancellation fades the field without changing channel lockout, save or
   simulation state, and vertical-slice coverage verifies both feedback forms.
 
+## Focused authored-region surface-finish milestone
+
+- added a bounded surface-finish layer to every non-sanctuary landmark, keeping
+  district identity under the persistent presentation geometry and its existing
+  distance LOD;
+- ruin bodies now carry layered service spines with louvered panels, inset
+  plates, cable runs and scar rails instead of exposing only broad shell masses;
+- archive, industrial, tenement, greenhouse, commercial, waterfront, rail,
+  nest, observatory, research and endgame landmarks each gain a distinct
+  facade, growth, signal or utility signature;
+- live West Grid review confirmed the added detail remains readable beside the
+  player and companion without adding collision, objectives or management work.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

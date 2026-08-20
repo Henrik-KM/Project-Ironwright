@@ -40,6 +40,8 @@ func _run_all() -> void:
             if landmark == null or landmark.region_kind == &"sanctuary":
                 continue
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing") != null, "Each non-sanctuary region must receive stable authored encounter dressing on discovery.")
+            _expect(landmark.get_node_or_null("PersistentRegionGeometry/AuthoredDistrictSurfaceFinish") != null, "Each non-sanctuary region must receive a bounded authored surface-finish layer.")
+            _expect(landmark.find_child("*Facade*", true, false) != null, "Each non-sanctuary region must expose a readable district-specific surface signature.")
     var region_atmosphere := world.get_node_or_null("RegionAtmosphereDirector") as RegionAtmosphereDirector3D
     _expect(region_atmosphere != null, "The complete world must install region-aware atmosphere presentation.")
     if region_atmosphere != null:
