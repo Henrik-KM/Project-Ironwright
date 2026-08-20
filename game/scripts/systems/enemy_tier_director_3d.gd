@@ -668,7 +668,7 @@ func _emit_snapshot() -> void:
 func to_dictionary() -> Dictionary:
     var serialized_states: Dictionary = {}
     for tier in sorted_tiers():
-        serialized_states[String(tier)] = tier_state(tier)
+        serialized_states[str(tier)] = tier_state(tier)
     var serialized_nests: Array[Dictionary] = []
     for nest in nests:
         if is_instance_valid(nest):
