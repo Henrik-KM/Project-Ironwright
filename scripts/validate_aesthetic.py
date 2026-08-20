@@ -54,6 +54,9 @@ REQUIRED = [
     "game/assets/observatory/source/build_observatory_asset.py",
     "game/assets/observatory/observatory.gltf",
     "game/data/observatory_asset_manifest.json",
+    "game/assets/tram_graveyard/source/build_tram_graveyard_asset.py",
+    "game/assets/tram_graveyard/tram_graveyard.gltf",
+    "game/data/tram_graveyard_asset_manifest.json",
 ]
 
 AUTHORED_ORGANIC_ASSETS = {
@@ -121,6 +124,20 @@ AUTHORED_REGION_ASSETS = {
             "ObservatoryFeedSignal",
             "ObservatoryMast",
             "ObservatoryConsole",
+            "ProductionAssetMarker",
+        ],
+    },
+    "tram_graveyard": {
+        "asset_id": "tram.graveyard.v1",
+        "root": "TramGraveyardModel",
+        "required": [
+            "TramGraveyardModel",
+            "TramCarriageA",
+            "TramCarriageADoor",
+            "TramMaintenancePit",
+            "TramSignalMast",
+            "TramSignalLamp",
+            "TramOrganicSeep0",
             "ProductionAssetMarker",
         ],
     },
