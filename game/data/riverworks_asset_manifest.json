@@ -1,0 +1,17 @@
+{
+  "asset_id": "riverworks.landmark.v1",
+  "kind": "world_landmark",
+  "source": "game/assets/riverworks/source/build_riverworks_asset.py",
+  "runtime_model": "game/assets/riverworks/riverworks.gltf",
+  "required_nodes": [
+    "RiverworksModel",
+    "RiverworksPumpCore",
+    "RiverworksPumpHousing",
+    "RiverworksRotor",
+    "RiverworksSluiceGate",
+    "RiverworksSluiceSignal",
+    "RiverworksGrowth0",
+    "ProductionAssetMarker"
+  ],
+  "presentation_only": true
+}

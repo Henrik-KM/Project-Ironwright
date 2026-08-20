@@ -185,8 +185,8 @@ def validate_current_design_contracts() -> None:
             raise legacy.ValidationError(f"Missing complete-game technology {identifier}")
 
     regions = _load("game/data/world_regions.json").get("regions")
-    if not isinstance(regions, list) or len(regions) < 7:
-        raise legacy.ValidationError("The complete alpha needs at least seven persistent regions")
+    if not isinstance(regions, list) or len(regions) < 12:
+        raise legacy.ValidationError("The complete alpha needs all twelve persistent regions")
     region_ids = {entry.get("id") for entry in regions if isinstance(entry, dict)}
     for identifier in ["region.heartforge_district", "region.root_cistern"]:
         if identifier not in region_ids:

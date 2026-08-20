@@ -29,7 +29,7 @@ func _run_all() -> void:
     world.endgame_director.spawn_enemy_callback = Callable()
     _clear_enemies()
 
-    _expect(world.region_director.region_data.size() >= 7, "The complete alpha must load all persistent regions.")
+    _expect(world.region_director.region_data.size() >= 12, "The complete alpha must load all twelve persistent regions.")
     _expect(world.region_director.is_discovered(&"region.heartforge_district"), "The Heartforge district must begin discovered.")
     _expect(not world.region_director.is_discovered(&"region.root_cistern"), "The Root Cistern must remain hidden during the opening.")
     _expect(world.long_operation_director.available_operations().is_empty(), "Long-range operations must be gated during the weak opening.")

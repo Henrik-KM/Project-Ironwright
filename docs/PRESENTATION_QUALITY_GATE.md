@@ -133,7 +133,7 @@ The presentation milestones proceed in this order:
 6. cohesive urban modular kit with damaged facades, interiors, street furniture and vegetation — opening route set-piece pass implemented, every remote landmark now has a bounded presentation-only district apron and the late Root Cistern has an authored root-organ shell; broader district breadth still required;
 7. final lighting/material pass for the opening district;
 8. human visual acceptance of representative opening gameplay;
-9. repeat the accepted bar across mid- and late-game regions — representative West Grid and Root Cistern live review now passes for framing and landmark readability, with the remaining region families still requiring review;
+9. repeat the accepted bar across mid- and late-game regions — representative West Grid, Riverworks and Root Cistern live review now passes for framing and landmark readability, with the remaining region families still requiring review;
 10. only then expand asset breadth further.
 
 Breadth must not outrun quality again.

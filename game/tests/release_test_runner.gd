@@ -144,6 +144,8 @@ func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.region_director.region_data.size() >= 12, "Commercial release must contain at least twelve persistent regions.")
     _expect(world.long_operation_director.operations.size() >= 12, "Commercial release must contain at least twelve physical long-range operations.")
     _expect(world.outpost_sites.size() >= 8, "Commercial release must contain at least eight bounded outpost sites.")
+    var riverworks := world.region_director.get_landmark(&"region.riverworks")
+    _expect(riverworks != null and riverworks.find_child("RiverworksRotor", true, false) != null, "Commercial release must retain the authored Riverworks pump landmark.")
     _expect(world.balance_director.profile_ids().size() == 3, "Story, Survival and Brutal profiles must be present.")
     _expect(world.balance_director.set_profile(&"story"), "Story profile must be selectable.")
     _expect(world.balance_director.active_enemy_cap() < 96, "Story profile must lower the active enemy cap.")
