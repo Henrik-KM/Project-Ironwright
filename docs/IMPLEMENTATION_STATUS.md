@@ -752,6 +752,18 @@ identities. Manual channels remain finish-before-save.
 - aesthetic coverage now verifies the tenement vertical-life, fire-escape and
   rooftop-service signatures after region discovery.
 
+## Focused Heartforge core-cladding milestone
+
+- added a layered eight-segment armored core cladding, raised caps and side
+  signal rails so the indispensable machine reads as an engineered civic
+  furnace rather than a bare stack of cylinders;
+- added a front powered service louver and inspection port with restrained
+  cyan emission, preserving the warm furnace/cool infrastructure hierarchy;
+- retained the Heartforge collision, interaction radius, progression geometry,
+  health and save contracts; this is presentation-only model detail;
+- aesthetic coverage now verifies the stable core-cladding and service-surface
+  signatures in the opening Heartforge model.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

@@ -79,12 +79,69 @@ func _build_visuals() -> void:
     # Cyan service surfaces should read as powered hardware without blooming
     # into a flat white card in the tactical frame.
     var cyan := ModelKit3D.material(Color("214b50"), 0.42, 0.36, Color("42b8c0"), 0.34)
+    var cladding := ModelKit3D.material(Color("3d484a"), 0.78, 0.36)
+    var cladding_edge := ModelKit3D.material(Color("7b4c31"), 0.54, 0.62)
+    var core_signal := ModelKit3D.material(Color("24565a"), 0.44, 0.3, Color("6fdfe4"), 1.6)
 
     ModelKit3D.add_cylinder(_model_root, 2.55, 0.7, Vector3(0.0, 0.35, 0.0), dark, Vector3.ZERO, "Foundation")
     ModelKit3D.add_cylinder(_model_root, 1.75, 3.4, Vector3(0.0, 2.0, 0.0), iron, Vector3.ZERO, "CoreHousing")
     ModelKit3D.add_cylinder(_model_root, 1.1, 2.5, Vector3(0.0, 2.0, 0.0), heat, Vector3.ZERO, "FurnaceCore")
     ModelKit3D.add_cylinder(_model_root, 2.15, 0.22, Vector3(0.0, 1.0, 0.0), rust, Vector3.ZERO, "LowerRing")
     ModelKit3D.add_cylinder(_model_root, 2.08, 0.22, Vector3(0.0, 2.9, 0.0), rust, Vector3.ZERO, "UpperRing")
+
+    var cladding_detail := Node3D.new()
+    cladding_detail.name = "CoreCladdingDetail"
+    _model_root.add_child(cladding_detail)
+    for segment in range(8):
+        var angle := TAU * float(segment) / 8.0 + PI * 0.125
+        var cladding_position := Vector3(cos(angle) * 1.7, 2.0, sin(angle) * 1.7)
+        ModelKit3D.add_beveled_box(
+            cladding_detail,
+            Vector3(0.34, 2.42, 0.62),
+            cladding_position,
+            cladding,
+            Vector3(0.0, -angle, 0.0),
+            "CoreCladdingSegment",
+            0.18
+        )
+        ModelKit3D.add_beveled_box(
+            cladding_detail,
+            Vector3(0.38, 0.12, 0.68),
+            cladding_position + Vector3.UP * 1.08,
+            cladding_edge,
+            Vector3(0.0, -angle, 0.0),
+            "CoreCladdingCap",
+            0.2
+        )
+    ModelKit3D.add_louvered_panel(
+        cladding_detail,
+        Vector3(0.72, 0.92, 0.1),
+        Vector3(0.0, 2.12, 1.84),
+        dark,
+        core_signal,
+        Vector3.ZERO,
+        "CoreServiceLouver",
+        4
+    )
+    ModelKit3D.add_surface_panel(
+        cladding_detail,
+        Vector3(0.56, 0.64, 0.1),
+        Vector3(0.0, 1.12, 1.88),
+        dark,
+        core_signal,
+        Vector3.ZERO,
+        "CoreInspectionPort"
+    )
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_cylinder(
+            cladding_detail,
+            0.08,
+            1.8,
+            Vector3(side * 1.86, 2.05, 0.0),
+            core_signal,
+            Vector3.ZERO,
+            "CoreSignalRail"
+        )
     ModelKit3D.add_cylinder(_model_root, 0.36, 2.6, Vector3(-1.85, 1.7, 0.0), iron, Vector3.ZERO, "WestStack")
     ModelKit3D.add_cylinder(_model_root, 0.36, 2.6, Vector3(1.85, 1.7, 0.0), iron, Vector3.ZERO, "EastStack")
     ModelKit3D.add_box(_model_root, Vector3(3.0, 0.35, 1.8), Vector3(0.0, 0.48, 3.25), iron, Vector3.ZERO, "ForgeBench")
