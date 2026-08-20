@@ -147,7 +147,13 @@ If the current file is corrupt or incomplete, loading tries rotating verified ba
 
 The service also migrates the legacy base, full-game extension and complete-alpha save files into the unified schema. Existing alpha players therefore do not have to discard their world.
 
-Active physical salvage, expedition, outpost or long-range operations still defer saving because their live formation references have not been serialized transactionally. The interface states this explicitly rather than producing an unsafe partial save.
+Active physical salvage, expedition, outpost and long-range operations are
+serialized transactionally. Their stable robot names, route or assignment
+state, formation anchor, progress clocks, cargo and pending rewards are restored
+into the live runtime, so loading resumes the physical work rather than
+teleporting or silently completing it. The only player save deferral is an
+in-progress manual channel, because interrupting salvage or fabrication would
+otherwise create an unsafe partial action.
 
 ## Controller and accessibility
 

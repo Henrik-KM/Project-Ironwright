@@ -244,9 +244,12 @@ It retains:
 - the recovered post-victory town archive component;
 - which regions have received persistent salvage content.
 
-Active long-range operations still defer saving because their live robot references
-and formation state are not yet transactionally serialized. Active final protocols
-are serialized in the unified envelope.
+Active long-range operations are serialized transactionally by stable robot names,
+route waypoints, formation anchor, route progress, work clocks and pending
+rewards; loading restores the live group and resumes its physical route. Active
+final protocols are serialized in the same unified envelope. The only player
+save deferral is an in-progress manual channel, because interrupting salvage or
+fabrication would otherwise create an unsafe partial action.
 
 The save service writes to a temporary file, promotes it atomically, and keeps two
 bounded rotating backups. Older foundation and full-game extension files are read
@@ -296,16 +299,18 @@ The end-to-end systemic alpha is game-complete in structure, but not content-com
 
 The roadmap still requires:
 
-- authored production models, rigs, animations, VFX, audio, and music;
-- a larger and more detailed urban environment;
-- active/reduced-detail simulation for much larger entity counts;
-- more organic species and robot families;
-- full controller and accessibility support;
-- transactional saves and migration;
+- authored production models, rigs, animations, VFX and encounter-space art
+  beyond the current procedural/high-definition presentation library;
+- a larger and more detailed urban environment with authored encounter spaces;
+- profiling and tuning of active/reduced-detail simulation for much larger
+  entity counts;
+- deeper navigation and route recovery under long-run disruption;
+- adaptive autonomous Heartforge geometry;
 - performance profiling on target hardware;
 - narrative and environmental storytelling;
 - 30–100-hour economy and pressure balancing;
 - repeated full internal runs;
+- professional review of remaining gameplay prose localization;
 - external alpha and beta testing;
 - localization, packaging, store assets, and release QA.
 

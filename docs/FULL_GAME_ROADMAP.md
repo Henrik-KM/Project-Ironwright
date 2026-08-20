@@ -4,7 +4,11 @@
 **Authority:** The current Project Ironwright conversation with Henrik is authoritative.  
 **Product target:** A polished, single-player, long-form survival-strategy sandbox in Godot 4.7.1, built around one vulnerable Mechromancer, one run-critical Heartforge, an increasingly autonomous machine population, bounded autonomous outposts, and a persistent organic world.
 
-This roadmap starts from the playable native 3D slice. It is an end-to-end path to a complete commercial game, not a claim that the present repository already contains the final content set.
+This roadmap started from the playable native 3D slice. The repository now
+contains a complete start-to-victory systemic run and a 1.0.0 release-candidate
+shell; this document remains the plan for closing the remaining content,
+production-art, scale, balance and external-release gates rather than a claim
+that those gates have already happened.
 
 ## 1. Definition of the finished game
 
@@ -53,26 +57,25 @@ The game should often feel close to collapse, but the cause of pressure and the 
 
 ## 3. Current baseline
 
-The repository already demonstrates:
+The repository currently demonstrates the complete game-shaped systemic arc:
 
-- a native Godot 3D world;
-- a readable blue-hour ruined-town aesthetic;
-- a warm Heartforge sanctuary;
-- direct Mechromancer movement;
-- weak automatic pistol fire;
-- companion dependence;
-- loud timed manual salvage;
-- manual early robot fabrication;
-- Scrapper, Warden, Pathfinder, and companion frames;
-- class-wide robot levels;
-- macro defend, salvage, and expedition focus;
-- physical coordinated salvage and North Ruins travel;
-- organic continuous pressure;
-- save/load for the initial world state;
-- procedural animation and combat/interact feedback;
-- browser and native automated tests.
+- a native Godot 3D release entrypoint with a readable blue-hour ruined town;
+- a warm, inhabited Heartforge and the weak Mechromancer/Bulwark opening;
+- loud manual salvage and fabrication followed by autonomous machine society;
+- class-wide robot progression, physical salvage, expeditions and outposts;
+- persistent multi-region ecology, causal pressure and reduced-detail continuity;
+- both canonical sustained endgame protocols, first victory and explicit
+  post-victory sanctuary continuation;
+- transactional unified saves, backups, legacy migration and active remote-work
+  restoration;
+- controller/accessibility/localization release shell, original audio feedback,
+  release assets and Windows/Linux export configuration;
+- browser, repository, Godot import, native gameplay, persistence, aesthetic,
+  release and complete-run validation.
 
-The baseline remains a vertical slice. It does not yet contain the full progression, world scale, content breadth, authored production assets, endgame, or release-grade persistence.
+The current baseline is therefore a complete systemic alpha and commercial
+release candidate, not a final retail content or external-QA claim. Remaining
+work is tracked in the release boundary and the milestones below.
 
 ## 4. Milestone map
 

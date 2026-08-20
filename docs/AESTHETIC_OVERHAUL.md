@@ -89,6 +89,10 @@ organic enemies remain procedural until their own production asset milestones.
 
 - species-specific carapace, muzzle, feeler, drill, sac, lobe and crown
   silhouettes across all seven current organic families;
+- shared segmented torso shells with wet cores, overlapping edge plates and
+  lateral seams across the full organic roster;
+- species-specific sensory fans, gill membranes, cheek plates, drill rings and
+  dorsal frills for stronger close-camera silhouettes;
 - a ribbed, layered Veilstalker thorax and plated dorsal construction for the
   first focused hostile-family quality pass;
 - asymmetrical chitin, flesh, spines and tails;

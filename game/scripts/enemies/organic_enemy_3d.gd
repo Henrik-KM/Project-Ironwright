@@ -531,7 +531,19 @@ func _refresh_visuals() -> void:
         body_scale = Vector3(2.5, 1.65, 2.8)
         head_offset = -2.0
 
-    ModelKit3D.add_sphere(_model_root, body_radius, Vector3(0.0, body_radius + 0.16, 0.0), flesh, body_scale, "Torso")
+    var segment_count := 3
+    if species in [&"veilstalker", &"burrower", &"broodmass", &"apex"]:
+        segment_count = 5
+    ModelKit3D.add_segmented_carapace(
+        _model_root,
+        body_radius,
+        Vector3(0.0, body_radius + 0.16, 0.0),
+        flesh,
+        wet_chitin,
+        body_scale,
+        segment_count,
+        "Torso"
+    )
     ModelKit3D.add_sphere(_model_root, body_radius * 0.62, Vector3(0.0, body_radius + 0.12, head_offset), chitin, Vector3(1.1, 0.8, 1.25), "Head")
     ModelKit3D.add_organic_plate(_model_root, body_radius * 0.44, Vector3(-body_scale.x * 0.18, body_radius * 1.18, 0.18), wet_chitin, chitin, Vector3(1.45, 0.56, 1.65), "OrganicDorsalPlate")
 
@@ -552,13 +564,16 @@ func _refresh_visuals() -> void:
     if species == &"skitterling":
         for index in range(3):
             var shell_z := -0.42 + float(index) * 0.42
-            ModelKit3D.add_sphere(_model_root, 0.28 - float(index) * 0.025, Vector3(0.0, 0.84 + float(index) * 0.05, shell_z), wet_chitin, Vector3(1.16, 0.42, 0.78), "SkitterlingCarapace")
+            ModelKit3D.add_organic_plate(_model_root, 0.28 - float(index) * 0.025, Vector3(0.0, 0.84 + float(index) * 0.05, shell_z), wet_chitin, chitin, Vector3(1.16, 0.42, 0.78), "SkitterlingCarapace")
         for side in [-1.0, 1.0]:
             ModelKit3D.add_capsule(_model_root, 0.035, 0.58, Vector3(side * 0.22, 1.08, -1.02), tendon, Vector3(0.5, 0.0, side * 0.18), "SkitterlingAntenna")
             ModelKit3D.add_capsule(_model_root, 0.045, 0.5, Vector3(side * 0.2, 0.66, -1.18), bone, Vector3(0.78, 0.0, side * 0.25), "SkitterlingMandible")
+        ModelKit3D.add_membrane_fan(_model_root, 0.2, Vector3(0.0, 1.05, 0.2), tendon, 3, "SkitterlingSensoryFan")
 
     if species == &"razorhound":
         ModelKit3D.add_sphere(_model_root, 0.34, Vector3(0.0, 0.78, -1.0), wet_chitin, Vector3(1.22, 0.7, 1.42), "RazorhoundSnout")
+        for side in [-1.0, 1.0]:
+            ModelKit3D.add_organic_plate(_model_root, 0.23, Vector3(side * 0.46, 0.96, -0.12), chitin, bone, Vector3(0.9, 0.42, 1.3), "RazorhoundCheekPlate")
         for side in [-1.0, 1.0]:
             ModelKit3D.add_sphere(_model_root, 0.16, Vector3(side * 0.27, 1.12, -0.95), bone, Vector3(0.7, 1.25, 0.72), "RazorhoundEar")
             ModelKit3D.add_capsule(_model_root, 0.055, 0.66, Vector3(side * 0.28, 0.62, -1.22), bone, Vector3(0.8, 0.0, side * 0.18), "RazorhoundFang")
@@ -589,6 +604,7 @@ func _refresh_visuals() -> void:
             ModelKit3D.add_sphere(_model_root, 0.19 - float(index) * 0.025, Vector3(-0.22 + float(index) * 0.08, 0.98 - float(index) * 0.06, tail_z), flesh, Vector3(1.35, 0.74, 1.28), "VeilstalkerTail")
 
     if species == &"sporecaster":
+        ModelKit3D.add_membrane_fan(_model_root, 0.42, Vector3(0.0, 1.18, 0.18), membrane, 7, "SporecasterGillFan")
         for index in range(5):
             var angle := TAU * float(index) / 5.0
             var sac_position := Vector3(cos(angle) * 0.55, 1.55, sin(angle) * 0.45)
@@ -596,6 +612,8 @@ func _refresh_visuals() -> void:
             ModelKit3D.add_sphere(_model_root, 0.34, sac_position, membrane, Vector3(0.8, 1.35, 0.8), "SporecasterSac")
             ModelKit3D.add_sphere(_model_root, 0.09, sac_position + Vector3(0.0, 0.25, 0.0), eye, Vector3.ONE, "SporecasterOculus")
     elif species == &"burrower":
+        for index in range(3):
+            ModelKit3D.add_tapered_cylinder(_model_root, 0.29 - float(index) * 0.025, 0.2, 0.1, Vector3(0.0, 0.76, -1.23 - float(index) * 0.18), wet_chitin, Vector3(1.5708, 0.0, 0.0), "BurrowerDrillRing")
         for index in range(5):
             ModelKit3D.add_capsule(_model_root, 0.1, 0.8, Vector3(-0.8 + float(index) * 0.4, 0.9, 0.1), bone, Vector3(0.0, 0.0, -0.35 + float(index) * 0.16), "BurrowSpine")
         ModelKit3D.add_cylinder(_model_root, 0.22, 0.42, Vector3(0.0, 0.76, -1.52), bone, Vector3(1.5708, 0.0, 0.0), "BurrowerDrill")
@@ -606,9 +624,11 @@ func _refresh_visuals() -> void:
             var x := -1.2 + float(index) * (2.4 / maxf(1.0, float(spine_count - 1)))
             ModelKit3D.add_capsule(_model_root, 0.12, 1.1 + float(index % 3) * 0.3, Vector3(x, body_radius * 1.8, 0.1), bone, Vector3(0.0, 0.0, -0.3 + float(index) * 0.08), "CrownSpine")
         if species == &"broodmass":
+            ModelKit3D.add_membrane_fan(_model_root, 0.64, Vector3(0.0, 1.42, 0.38), membrane, 7, "BroodmassDorsalFan")
             for side in [-1.0, 1.0]:
                 ModelKit3D.add_sphere(_model_root, 0.36, Vector3(side * 0.64, 1.3, 0.48), flesh, Vector3(1.1, 0.78, 1.2), "BroodmassLobe")
         else:
+            ModelKit3D.add_membrane_fan(_model_root, 0.9, Vector3(0.0, 1.62, 0.24), membrane, 9, "ApexDorsalFan")
             ModelKit3D.add_sphere(_model_root, 0.5, Vector3(0.0, 2.15, -0.35), wet_chitin, Vector3(1.24, 0.72, 1.3), "ApexCrown")
             for side in [-1.0, 1.0]:
                 ModelKit3D.add_capsule(_model_root, 0.1, 1.0, Vector3(side * 0.42, 1.08, -1.76), bone, Vector3(0.82, 0.0, side * 0.15), "ApexJaw")
