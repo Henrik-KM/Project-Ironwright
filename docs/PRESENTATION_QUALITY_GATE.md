@@ -20,6 +20,8 @@ The shared model kit now has a high-detail baseline: curved primitives use dense
 
 The initial presentation-reset pass fixed the most disruptive screen-space labels, camera occlusion handling, and HUD clutter. The current Heartforge vertical-slice pass goes further by rebuilding the representative opening composition, silhouettes and environmental detail. Neither step by itself is proof of final quality.
 
+The opening route now also has a bounded authored street-dressing pass: a collapsed transit shelter, flooded utility relay and organic breach marker establish civic history, infrastructure failure and ecological escalation beyond the plaza. These are presentation landmarks only; they do not add collision, wave scheduling or a new recurring management task.
+
 ## Release-readiness rule
 
 No agent may describe Project Ironwright as commercially finished, release-ready, or a release candidate based solely on:
@@ -128,7 +130,7 @@ The presentation milestones proceed in this order:
 3. production Mechromancer and Bulwark silhouettes — authored Mechromancer plus beveled procedural vertical-slice pass, with further authored refinement expected;
 4. one production-quality Warden/Scrapper/Pathfinder family pass — beveled procedural vertical-slice pass with shared high-detail machine panels implemented, further authored refinement expected;
 5. one complete organic enemy family with authored movement and attack language — Veilstalker layered silhouette and state-driven stalking/attack presentation implemented, still awaiting human visual acceptance;
-6. cohesive urban modular kit with damaged facades, interiors, street furniture and vegetation;
+6. cohesive urban modular kit with damaged facades, interiors, street furniture and vegetation — opening route set-piece pass implemented, broader district breadth still required;
 7. final lighting/material pass for the opening district;
 8. human visual acceptance of representative opening gameplay;
 9. repeat the accepted bar across mid- and late-game regions;

@@ -76,6 +76,7 @@ func _build_vertical_slice() -> void:
     _replace_central_building_visuals()
     _build_heartforge_plaza()
     _build_service_lane()
+    _build_street_encounter_dressing()
     _build_sanctuary_perimeter()
     _build_workshop_gantry()
     _build_street_story_props()
@@ -253,6 +254,69 @@ func _build_service_lane() -> void:
     for z in range(-27, -9, 4):
         ModelKit3D.add_box(lane, Vector3(0.12, 0.025, 1.8), Vector3(-2.25, 0.145, float(z)), warning_paint, Vector3.ZERO, "ServiceEdgeMark")
         ModelKit3D.add_box(lane, Vector3(0.12, 0.025, 1.8), Vector3(2.25, 0.145, float(z)), warning_paint, Vector3.ZERO, "ServiceEdgeMark")
+
+
+func _build_street_encounter_dressing() -> void:
+    var dressing := Node3D.new()
+    dressing.name = "AuthoredStreetEncounterDressing"
+    root.add_child(dressing)
+
+    # A transit shelter gives the escape lane a human civic history and a
+    # readable scale reference. It is deliberately presentation-only: the
+    # route remains open and the systemic city owns all collision geometry.
+    var shelter := Node3D.new()
+    shelter.name = "CollapsedTransitShelter"
+    shelter.position = Vector3(-4.9, 0.0, -15.8)
+    dressing.add_child(shelter)
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_cylinder(shelter, 0.075, 2.65, Vector3(side * 1.45, 1.33, 0.0), black_metal, Vector3.ZERO, "ShelterFrame")
+        ModelKit3D.add_cylinder(shelter, 0.06, 2.25, Vector3(side * 1.45, 1.12, -1.15), rust_metal, Vector3(0.08 * side, 0.0, 0.05), "ShelterRearFrame")
+    ModelKit3D.add_beveled_box(shelter, Vector3(3.0, 0.12, 1.7), Vector3(0.0, 2.62, 0.08), rust_metal, Vector3(0.05, 0.0, -0.08), "ShelterCanopy", 0.22)
+    ModelKit3D.add_box(shelter, Vector3(2.65, 1.55, 0.045), Vector3(0.0, 1.25, 0.03), cold_glass, Vector3(0.0, 0.0, 0.08), "ShelterGlass")
+    ModelKit3D.add_beveled_box(shelter, Vector3(2.1, 0.16, 0.48), Vector3(0.0, 0.72, -0.6), painted_metal, Vector3(0.0, 0.0, 0.04), "ShelterBench", 0.2)
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_cylinder(shelter, 0.055, 0.68, Vector3(side * 0.78, 0.36, -0.6), black_metal, Vector3.ZERO, "BenchSupport")
+    ModelKit3D.add_beveled_box(shelter, Vector3(0.55, 0.78, 0.1), Vector3(-1.72, 1.68, -0.55), warning_paint, Vector3(0.0, 0.0, 0.03), "RouteMarker", 0.16)
+    var shelter_light := _add_light(shelter, Vector3(0.0, 2.33, -0.42), Color("6fc8d3"), 0.42, 4.2, false)
+    shelter_light.set_meta(&"vertical_base_energy", 0.42)
+    practical_lights.append(shelter_light)
+
+    # A municipal relay cabinet and exposed conduit establish a second,
+    # functional story beat: the town's infrastructure failed before the
+    # Heartforge became the only dependable light.
+    var relay := Node3D.new()
+    relay.name = "FloodedUtilityRelay"
+    relay.position = Vector3(4.55, 0.0, -22.4)
+    dressing.add_child(relay)
+    ModelKit3D.add_beveled_box(relay, Vector3(1.25, 1.75, 0.72), Vector3(0.0, 0.88, 0.0), painted_metal, Vector3(0.0, -0.06, 0.0), "RelayCabinet", 0.18)
+    ModelKit3D.add_surface_panel(relay, Vector3(0.62, 0.72, 0.08), Vector3(0.0, 1.0, -0.39), black_metal, warning_paint, Vector3.ZERO, "RelayAccessPanel")
+    ModelKit3D.add_cylinder(relay, 0.14, 1.55, Vector3(-0.42, 1.86, 0.0), rust_metal, Vector3.ZERO, "RelayConduit")
+    ModelKit3D.add_cylinder(relay, 0.1, 1.25, Vector3(0.38, 1.72, 0.0), black_metal, Vector3.ZERO, "RelayConduit")
+    _add_beam(relay, Vector3(-0.42, 1.15, 0.0), Vector3(-1.8, 0.36, 0.0), 0.045, rust_metal, "RelayGroundCable")
+    for index in range(3):
+        ModelKit3D.add_box(relay, Vector3(0.12, 0.04, 0.42), Vector3(-0.28 + float(index) * 0.28, 0.22, -0.4), warning_paint, Vector3(0.0, 0.0, -0.28), "RelayHazardStripe")
+    var relay_light := _add_light(relay, Vector3(0.0, 1.3, -0.48), Color("ed6042"), 0.28, 2.8, false)
+    relay_light.set_meta(&"vertical_base_energy", 0.28)
+    practical_lights.append(relay_light)
+    _add_puddle(dressing, Vector3(4.2, 0.12, -23.2), Vector2(2.0, 0.68), -0.18)
+
+    # The first visible biological breach is a landmark, not an encounter
+    # trigger. It tells the player that the danger ahead is ecological and
+    # gives the lane a memorable silhouette without scheduling a wave.
+    var breach := Node3D.new()
+    breach.name = "OrganicBreachMarker"
+    breach.position = Vector3(0.0, 0.0, -30.4)
+    dressing.add_child(breach)
+    ModelKit3D.add_ribbed_shell(breach, 1.1, Vector3(0.0, 0.72, 0.0), organic, warning_paint, Vector3(1.15, 0.7, 1.35), "BreachRootMass")
+    for side in [-1.0, 1.0]:
+        var start := Vector3(side * 0.42, 0.7, 0.0)
+        var finish := Vector3(side * 1.7, 2.9, 0.2)
+        _add_beam(breach, start, finish, 0.12, organic, "BreachSpine")
+        _add_beam(breach, finish, Vector3(side * 2.2, 1.25, 0.0), 0.075, organic, "BreachSpine")
+    ModelKit3D.add_membrane_fan(breach, 0.8, Vector3(0.0, 1.4, 0.0), organic, 5, "BreachMembrane")
+    var breach_light := _add_light(breach, Vector3(0.0, 1.05, -0.35), Color("a82f47"), 0.38, 5.0, false)
+    breach_light.set_meta(&"vertical_base_energy", 0.38)
+    practical_lights.append(breach_light)
 
 
 func _build_sanctuary_perimeter() -> void:
