@@ -97,7 +97,7 @@ func _setup_full_game_services() -> void:
     outpost_director = OutpostDirector3D.new()
     outpost_director.name = "OutpostDirector"
     outpost_director.process_mode = Node.PROCESS_MODE_PAUSABLE
-    outpost_director.configure(run_state, progression, noise_system, autonomy_director, heartforge, self)
+    outpost_director.configure(run_state, progression, noise_system, autonomy_director, heartforge, self, operation_detail_director)
     add_child(outpost_director)
 
     strategic_hud = StrategicCommandHUD3D.new()

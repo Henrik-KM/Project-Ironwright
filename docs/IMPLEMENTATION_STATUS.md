@@ -189,6 +189,16 @@ identities. Manual channels remain finish-before-save.
 - added executable coverage for all required sound profiles and a live event
   emission.
 
+## Focused remote-detail continuity milestone
+
+- added a shared operation-detail director with active/reduced hysteresis based
+  on camera distance;
+- long-range, outpost and local autonomy directors retain the same route or
+  assignment state while reduced-detail groups skip per-frame actor steering;
+- reduced-detail formation and salvage placement remains deterministic and
+  returns to active steering when the player approaches;
+- added executable coverage for transition thresholds and hysteresis.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

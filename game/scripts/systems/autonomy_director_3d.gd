@@ -19,6 +19,7 @@ var run_state: RunState3D
 var noise_system: NoiseSystem3D
 var player_reference: Mechromancer3D
 var heartforge_reference: Heartforge3D
+var operation_detail_director: Variant
 var robots: Array[RobotUnit3D] = []
 var salvage_operation: Dictionary = {}
 var expedition_operation: Dictionary = {}
@@ -30,12 +31,14 @@ func configure(
         next_run_state: RunState3D,
         next_noise_system: NoiseSystem3D,
         player: Mechromancer3D,
-        heartforge: Heartforge3D
+        heartforge: Heartforge3D,
+        next_operation_detail_director: Variant = null
     ) -> void:
     run_state = next_run_state
     noise_system = next_noise_system
     player_reference = player
     heartforge_reference = heartforge
+    operation_detail_director = next_operation_detail_director
 
 
 func register_robot(robot: RobotUnit3D) -> void:
@@ -308,8 +311,13 @@ func _update_distributed_salvage(operation: Dictionary, delta: float) -> void:
     operation["assignments"] = assignments
     operation["cargo"] = total_carried
     _update_salvage_network_anchor(operation)
+    if operation_detail_director != null:
+        var detail_mode: StringName = operation_detail_director.update_operation(GROUP_SALVAGE, operation.get("anchor", heartforge_reference.global_position))
+        operation["detail_mode"] = detail_mode
     _refresh_salvage_escort_assignments()
     _position_salvage_scouts()
+    if operation_detail_director != null and StringName(operation.get("detail_mode", &"active")) == &"reduced":
+        operation_detail_director.apply_reduced_salvage(assignments, heartforge_reference.global_position)
 
     var available := _available_salvage_piles()
     if not has_work and available.is_empty() and total_carried <= 0:
@@ -544,6 +552,8 @@ func _complete_distributed_salvage(operation: Dictionary) -> void:
         if is_instance_valid(robot):
             robot.set_group(&"reserve", 0)
     salvage_operation.clear()
+    if operation_detail_director != null:
+        operation_detail_director.clear_operation(GROUP_SALVAGE)
     operation_changed.emit(&"salvage", &"complete", "The distributed salvage network exhausted its currently useful wrecks after returning %d Scrap." % delivered)
 
 
@@ -823,6 +833,7 @@ func _update_operation(operation: Dictionary, delta: float) -> void:
     if state == &"working":
         _update_operation_work(operation, delta)
         _position_members(operation, 0.0)
+        _apply_reduced_detail(operation, members)
         return
 
     var route: PackedVector3Array = operation.get("route", PackedVector3Array())
@@ -857,6 +868,21 @@ func _update_operation(operation: Dictionary, delta: float) -> void:
     anchor += direction * base_pace * pace_multiplier * delta
     operation["anchor"] = anchor
     _position_members(operation, base_pace * pace_multiplier)
+    _apply_reduced_detail(operation, members)
+
+
+func _apply_reduced_detail(operation: Dictionary, members: Array[RobotUnit3D]) -> void:
+    if operation_detail_director == null:
+        return
+    var operation_id := StringName(operation.get("id", &"operation"))
+    var detail_mode: StringName = operation_detail_director.update_operation(operation_id, operation.get("anchor", heartforge_reference.global_position))
+    operation["detail_mode"] = detail_mode
+    if detail_mode == &"reduced":
+        operation_detail_director.apply_reduced_formation(
+            operation.get("anchor", heartforge_reference.global_position),
+            operation.get("last_forward", Vector3.FORWARD),
+            members
+        )
 
 
 func _position_members(operation: Dictionary, group_speed: float) -> void:
@@ -899,6 +925,8 @@ func _complete_return(operation: Dictionary) -> void:
         run_state.add_rare_core(1)
         run_state.log_event("North Ruins expedition returned with a rare Cognition Core.")
     expedition_operation.clear()
+    if operation_detail_director != null:
+        operation_detail_director.clear_operation(GROUP_EXPEDITION)
     expedition_returned.emit()
     operation_changed.emit(&"expedition", &"complete", "The coordinated expedition has returned to the Heartforge.")
 
@@ -924,6 +952,8 @@ func _abort_operation(operation: Dictionary, reason: String) -> void:
             if is_instance_valid(robot):
                 robot.set_group(&"reserve", 0)
                 robot.set_goal(heartforge_reference.global_position, reason, robot.move_speed * 0.78)
+        if operation_detail_director != null:
+            operation_detail_director.clear_operation(GROUP_SALVAGE)
         operation_changed.emit(&"salvage", &"aborted", reason)
         return
 
@@ -934,6 +964,9 @@ func _abort_operation(operation: Dictionary, reason: String) -> void:
         robot.set_group(&"reserve", 0)
         robot.set_goal(heartforge_reference.global_position, reason, robot.move_speed * 0.7)
     operation_changed.emit(operation.get("kind", &"operation"), &"aborted", reason)
+    var operation_id := StringName(operation.get("id", &""))
+    if operation_detail_director != null and operation_id != &"":
+        operation_detail_director.clear_operation(operation_id)
 
 
 func _on_robot_destroyed(robot: RobotUnit3D) -> void:

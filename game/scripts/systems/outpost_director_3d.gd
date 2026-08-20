@@ -21,6 +21,7 @@ var noise_system: NoiseSystem3D
 var autonomy_director: AutonomyDirector3D
 var heartforge: Heartforge3D
 var world_parent: Node3D
+var operation_detail_director: Variant
 var sites: Array[OutpostSite3D] = []
 var operation: Dictionary = {}
 var maintenance_clock: float = 0.0
@@ -33,7 +34,8 @@ func configure(
         next_noise_system: NoiseSystem3D,
         next_autonomy_director: AutonomyDirector3D,
         next_heartforge: Heartforge3D,
-        next_world_parent: Node3D
+        next_world_parent: Node3D,
+        next_operation_detail_director: Variant = null
     ) -> void:
     run_state = next_run_state
     progression = next_progression
@@ -41,6 +43,7 @@ func configure(
     autonomy_director = next_autonomy_director
     heartforge = next_heartforge
     world_parent = next_world_parent
+    operation_detail_director = next_operation_detail_director
 
 
 func register_site(site: OutpostSite3D) -> void:
@@ -224,10 +227,14 @@ func _update_operation(delta: float) -> void:
         _abort_operation("Every robot assigned to the remote operation was lost.")
         return
 
+    if operation_detail_director != null:
+        operation["detail_mode"] = operation_detail_director.update_operation(StringName("outpost_%s" % String(operation.get("kind", &"operation"))), operation.get("anchor", heartforge.global_position))
+
     var state := StringName(operation.get("state", &"outbound"))
     if state == &"working":
         _update_work(delta)
         _position_members(0.0)
+        _apply_reduced_detail()
         return
 
     var route: PackedVector3Array = operation.get("route", PackedVector3Array())
@@ -260,6 +267,17 @@ func _update_operation(delta: float) -> void:
     anchor += direction * pace * delta
     operation["anchor"] = anchor
     _position_members(pace)
+    _apply_reduced_detail()
+
+
+func _apply_reduced_detail() -> void:
+    if operation_detail_director == null or StringName(operation.get("detail_mode", &"active")) != &"reduced":
+        return
+    operation_detail_director.apply_reduced_formation(
+        operation.get("anchor", heartforge.global_position),
+        operation.get("last_forward", Vector3.FORWARD),
+        operation.get("members", [])
+    )
 
 
 func _position_members(group_speed: float) -> void:
@@ -336,6 +354,7 @@ func _begin_return() -> void:
 
 
 func _complete_return() -> void:
+    var detail_key := StringName("outpost_%s" % String(operation.get("kind", &"operation")))
     var cargo := int(operation.get("cargo", 0))
     if cargo > 0:
         run_state.add_scrap(cargo, true)
@@ -344,15 +363,20 @@ func _complete_return() -> void:
         robot.set_group(&"reserve", 0)
         robot.set_goal(heartforge.global_position, "Remote operation complete; returning to the general machine pool.", robot.move_speed * 0.72)
     operation.clear()
+    if operation_detail_director != null:
+        operation_detail_director.clear_operation(detail_key)
     autonomy_director.set_process(true)
     operation_changed.emit(&"outpost", &"idle", "The remote group has returned to the Heartforge.")
 
 
 func _abort_operation(reason: String) -> void:
+    var detail_key := StringName("outpost_%s" % String(operation.get("kind", &"operation")))
     for robot in _living_operation_members():
         robot.set_group(&"reserve", 0)
         robot.set_goal(heartforge.global_position, reason, robot.move_speed * 0.72)
     operation.clear()
+    if operation_detail_director != null:
+        operation_detail_director.clear_operation(detail_key)
     if autonomy_director != null:
         autonomy_director.set_process(true)
     operation_changed.emit(&"outpost", &"aborted", reason)

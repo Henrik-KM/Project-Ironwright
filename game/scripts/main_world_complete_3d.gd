@@ -87,7 +87,8 @@ func _setup_complete_game_services() -> void:
         autonomy_director,
         outpost_director,
         heartforge,
-        Callable(self, "_spawn_enemy")
+        Callable(self, "_spawn_enemy"),
+        operation_detail_director
     )
     add_child(long_operation_director)
 

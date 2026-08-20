@@ -10,6 +10,7 @@ const SALVAGE_SCENE := preload("res://scenes/world/salvage_pile_3d.tscn")
 const CITY_SCENE := preload("res://scenes/world/procedural_city_3d.tscn")
 const HUD_SCENE := preload("res://scenes/ui/ironwright_hud_3d.tscn")
 const AUDIO_DIRECTOR_SCRIPT := preload("res://scripts/presentation/audio_feedback_director_3d.gd")
+const OPERATION_DETAIL_SCRIPT := preload("res://scripts/systems/operation_detail_director_3d.gd")
 
 var run_state: RunState3D
 var noise_system: NoiseSystem3D
@@ -34,6 +35,7 @@ var salvage_serial: int = 0
 var enemy_serial: int = 0
 var save_service: TransactionalSaveService3D
 var audio_director: AudioFeedbackDirector3D
+var operation_detail_director: Variant
 
 
 func _ready() -> void:
@@ -41,6 +43,10 @@ func _ready() -> void:
     save_service = SAVE_SERVICE_SCRIPT.new() as TransactionalSaveService3D
     save_service.configure()
     _setup_environment()
+    operation_detail_director = OPERATION_DETAIL_SCRIPT.new()
+    operation_detail_director.name = "OperationDetailDirector"
+    operation_detail_director.configure(camera)
+    add_child(operation_detail_director)
     _spawn_world()
     audio_director = AUDIO_DIRECTOR_SCRIPT.new() as AudioFeedbackDirector3D
     audio_director.name = "AudioFeedbackDirector"
@@ -189,7 +195,7 @@ func _spawn_world() -> void:
     autonomy_director = AutonomyDirector3D.new()
     autonomy_director.name = "AutonomyDirector"
     autonomy_director.process_mode = Node.PROCESS_MODE_PAUSABLE
-    autonomy_director.configure(run_state, noise_system, player, heartforge)
+    autonomy_director.configure(run_state, noise_system, player, heartforge, operation_detail_director)
     add_child(autonomy_director)
 
     ecology_director = EcologyDirector3D.new()
