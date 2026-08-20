@@ -208,6 +208,15 @@ identities. Manual channels remain finish-before-save.
   returns to active steering when the player approaches;
 - added executable coverage for transition thresholds and hysteresis.
 
+## Focused collision-aware movement milestone
+
+- active robots and organic actors detect repeated physical blockage after
+  `move_and_slide()` and take a bounded lateral recovery arc;
+- recovery preserves the existing macro goal, formation abstraction and
+  ecological objective rather than introducing per-unit route orders;
+- both actor paths expose a short diagnostic reason and have regression
+  coverage against a physical wall and floor.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.
@@ -225,7 +234,8 @@ Remaining production work includes:
 - substantially more environmental detail and authored encounter spaces;
 - profiling and tuning of active/reduced-detail simulation at much larger world
   and entity scale;
-- deeper navigation and route recovery under long-run disruption;
+- deeper navigation, baked-region pathing and route recovery under long-run
+  disruption;
 - broader content variants, technologies, operations and site dressing;
 - adaptive autonomous Heartforge geometry;
 - performance profiling and optimization on agreed target hardware;

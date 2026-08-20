@@ -16,6 +16,7 @@ func _initialize() -> void:
 func _run_all() -> void:
     await _test_distributed_scrapper_decisions()
     await _test_organic_ecology_behaviours()
+    await _test_collision_aware_route_recovery()
     await _test_vertical_slice_presentation()
 
     if failures.is_empty():
@@ -229,6 +230,62 @@ func _test_vertical_slice_presentation() -> void:
 
     world.free()
     await process_frame
+
+
+func _test_collision_aware_route_recovery() -> void:
+    var floor_body := _build_test_box_body("RouteTestFloor", Vector3(12.0, 0.2, 16.0), Vector3(0.0, -0.1, -1.0))
+    var wall_body := _build_test_box_body("RouteTestWall", Vector3(4.0, 2.0, 0.3), Vector3(0.0, 1.0, 0.0))
+    root.add_child(floor_body)
+    root.add_child(wall_body)
+
+    var robot := ROBOT_SCENE.instantiate() as RobotUnit3D
+    robot.configure(&"scout", 1)
+    robot.position = Vector3(0.0, 0.0, 2.8)
+    root.add_child(robot)
+    await process_frame
+    var robot_start := robot.global_position
+    robot.set_goal(Vector3(0.0, 0.0, -5.0), "Testing a physical route through a blocked street.", robot.move_speed)
+    for index in range(90):
+        await physics_frame
+    _expect(robot.decision_reason.contains("recovery arc"), "A robot blocked by a physical wall must expose an explainable route-recovery decision.")
+    _expect(absf(robot.global_position.x - robot_start.x) > 0.12, "A blocked robot route should generate lateral clearance rather than repeatedly pushing into the obstacle.")
+    _expect(robot.global_position.z < robot_start.z - 0.45, "A robot using route recovery must continue making progress toward its assigned goal.")
+    robot.free()
+    await process_frame
+
+    var enemy := ENEMY_SCENE.instantiate() as OrganicEnemy3D
+    enemy.configure(&"razorhound", null, null)
+    enemy.position = Vector3(0.0, 0.0, 2.8)
+    root.add_child(enemy)
+    await process_frame
+    enemy.behaviour_has_target = true
+    enemy.behaviour_target = Vector3(0.0, 0.0, -5.0)
+    enemy.behaviour_duration = 30.0
+    enemy.state_name = &"tracking"
+    var enemy_start := enemy.global_position
+    for index in range(90):
+        await physics_frame
+    _expect(enemy.movement_reason.contains("recovery arc"), "An organic route blocked by a physical wall must expose an explainable recovery decision.")
+    _expect(absf(enemy.global_position.x - enemy_start.x) > 0.12, "A blocked organic route should generate lateral clearance rather than repeatedly pushing into the obstacle.")
+    _expect(enemy.global_position.z < enemy_start.z - 0.35, "An organic route recovery must preserve forward progress toward its ecological objective.")
+    enemy.free()
+    floor_body.free()
+    wall_body.free()
+    await process_frame
+
+
+func _build_test_box_body(node_name: String, size: Vector3, position: Vector3) -> StaticBody3D:
+    var body := StaticBody3D.new()
+    body.name = node_name
+    body.collision_layer = 1
+    body.collision_mask = 2 | 4
+    body.position = position
+    var shape_node := CollisionShape3D.new()
+    var shape := BoxShape3D.new()
+    shape.size = size
+    shape_node.shape = shape
+    body.add_child(shape_node)
+    return body
 
 
 func _find_city(node: Node) -> ProceduralCity3D:
