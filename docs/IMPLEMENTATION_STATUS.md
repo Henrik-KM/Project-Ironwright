@@ -504,6 +504,17 @@ identities. Manual channels remain finish-before-save.
 - live construction-site review confirmed the cue path alongside the elevated
   work frame, with runtime coverage asserting the spatial event.
 
+## Focused organic-attack telegraph milestone
+
+- attack warnings now use a brighter emissive target disc and ring with four
+  short perimeter pylons, so the wind-up remains readable in the busy
+  Heartforge frame;
+- the warning remains transient and bounded to the existing organic wind-up,
+  while the impact burst and spatial audio caption continue to resolve on
+  contact;
+- live opening combat review confirmed the revised warning/impact language,
+  with aesthetic runtime coverage asserting the ring attachment.
+
 ## Focused contextual tactical-HUD milestone
 
 - the permanent control legend now clears after the onboarding window instead

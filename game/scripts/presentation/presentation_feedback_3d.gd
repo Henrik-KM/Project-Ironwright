@@ -621,28 +621,76 @@ func _spawn_flash(position: Vector3, color: Color, energy: float, light_range: f
 func _spawn_attack_telegraph(position: Vector3, radius: float) -> void:
     if world == null:
         return
-    var telegraph := MeshInstance3D.new()
+    var telegraph := Node3D.new()
     telegraph.name = "OrganicAttackTelegraph"
-    var mesh := CylinderMesh.new()
-    mesh.top_radius = 1.0
-    mesh.bottom_radius = 1.0
-    mesh.height = 0.018
-    mesh.radial_segments = 32
-    var material := StandardMaterial3D.new()
-    material.albedo_color = Color(0.78, 0.12, 0.2, 0.34)
-    material.emission_enabled = true
-    material.emission = Color("8f2636")
-    material.emission_energy_multiplier = 1.3
-    material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-    material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-    mesh.material = material
-    telegraph.mesh = mesh
-    telegraph.position = position
+    telegraph.position = position + Vector3.UP * 0.06
+
+    var disc := MeshInstance3D.new()
+    disc.name = "OrganicAttackTelegraphDisc"
+    var disc_mesh := CylinderMesh.new()
+    disc_mesh.top_radius = 1.0
+    disc_mesh.bottom_radius = 1.0
+    disc_mesh.height = 0.024
+    disc_mesh.radial_segments = 32
+    var disc_material := StandardMaterial3D.new()
+    disc_material.albedo_color = Color(1.0, 0.08, 0.14, 0.38)
+    disc_material.emission_enabled = true
+    disc_material.emission = Color("ff3048")
+    disc_material.emission_energy_multiplier = 2.1
+    disc_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+    disc_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+    disc_mesh.material = disc_material
+    disc.mesh = disc_mesh
+    telegraph.add_child(disc)
+
+    var ring := MeshInstance3D.new()
+    ring.name = "OrganicAttackTelegraphRing"
+    var ring_mesh := TorusMesh.new()
+    ring_mesh.inner_radius = 0.78
+    ring_mesh.outer_radius = 1.0
+    ring_mesh.rings = 32
+    ring_mesh.ring_segments = 8
+    var ring_material := StandardMaterial3D.new()
+    ring_material.albedo_color = Color(1.0, 0.2, 0.24, 0.9)
+    ring_material.emission_enabled = true
+    ring_material.emission = Color("ff4058")
+    ring_material.emission_energy_multiplier = 3.2
+    ring_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+    ring_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+    ring_mesh.material = ring_material
+    ring.mesh = ring_mesh
+    ring.position.y = 0.045
+    telegraph.add_child(ring)
+
+    var pylon_materials: Array[StandardMaterial3D] = []
+    var pylon_offsets := [Vector2(-0.82, 0.0), Vector2(0.82, 0.0), Vector2(0.0, -0.82), Vector2(0.0, 0.82)]
+    for pylon_index in pylon_offsets.size():
+        var pylon := MeshInstance3D.new()
+        pylon.name = "OrganicAttackTelegraphPylon%d" % pylon_index
+        var pylon_mesh := BoxMesh.new()
+        pylon_mesh.size = Vector3(0.08, 0.62, 0.08)
+        var pylon_material := StandardMaterial3D.new()
+        pylon_material.albedo_color = Color(1.0, 0.24, 0.28, 0.9)
+        pylon_material.emission_enabled = true
+        pylon_material.emission = Color("ff4058")
+        pylon_material.emission_energy_multiplier = 3.6
+        pylon_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+        pylon_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+        pylon_mesh.material = pylon_material
+        pylon.mesh = pylon_mesh
+        var pylon_offset: Vector2 = pylon_offsets[pylon_index]
+        pylon.position = Vector3(pylon_offset.x, 0.31, pylon_offset.y)
+        telegraph.add_child(pylon)
+        pylon_materials.append(pylon_material)
+
     telegraph.scale = Vector3(radius * 0.68, 1.0, radius * 0.68)
     world.add_child(telegraph)
     var tween := telegraph.create_tween().set_parallel(true)
-    tween.tween_property(telegraph, "scale", Vector3(radius, 1.0, radius), 0.24)
-    tween.tween_property(material, "albedo_color", Color(0.78, 0.12, 0.2, 0.0), 0.24)
+    tween.tween_property(telegraph, "scale", Vector3(radius, 1.0, radius), 0.34)
+    tween.tween_property(disc_material, "albedo_color", Color(1.0, 0.08, 0.14, 0.0), 0.34)
+    tween.tween_property(ring_material, "albedo_color", Color(1.0, 0.2, 0.24, 0.0), 0.34)
+    for pylon_material in pylon_materials:
+        tween.tween_property(pylon_material, "albedo_color", Color(1.0, 0.24, 0.28, 0.0), 0.34)
     tween.chain().tween_callback(telegraph.queue_free)
 
 
