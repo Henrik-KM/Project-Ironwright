@@ -92,6 +92,10 @@ func _run_all() -> void:
             if landmark.region_kind == &"commercial":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/FloodMarketIdentityDetails") != null, "Flood Market must expose authored stall canopies and hanging signs.")
                 _expect(landmark.find_child("MarketFloodChannel", true, false) != null, "Flood Market must expose bounded presentation-only water channels.")
+            if landmark.region_kind == &"waterfront":
+                _expect(landmark.get_node_or_null("PersistentRegionGeometry/WaterfrontIdentityDetails/RiverworksSluiceDetails") != null, "Riverworks must expose an authored sluice assembly.")
+                _expect(landmark.find_child("RiverWaterlineBreak", true, false) != null, "Riverworks must expose bounded waterline breaks at the dock edge.")
+                _expect(landmark.find_child("RiverWaterChannel", true, false) != null, "Riverworks must expose a readable shallow water channel.")
     var region_atmosphere := world.get_node_or_null("RegionAtmosphereDirector") as RegionAtmosphereDirector3D
     _expect(region_atmosphere != null, "The complete world must install region-aware atmosphere presentation.")
     if region_atmosphere != null:

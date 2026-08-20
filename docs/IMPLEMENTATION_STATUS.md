@@ -561,6 +561,18 @@ identities. Manual channels remain finish-before-save.
 - native aesthetic coverage verifies the market canopy and water-channel
   signatures.
 
+## Focused Riverworks authored-space milestone
+
+- added a bounded sluice assembly with a darkened retaining wall, cap rail and
+  control panel so the waterfront landmark reads as infrastructure rather than
+  a generic ruin block;
+- added a shallow water channel, dock pylons, waterline breaks and restrained
+  organic bank growth around the existing pump housings;
+- retained the existing collision, routing, ecology, discovery and persistence
+  ownership while extending only the authored remote-region presentation;
+- native aesthetic coverage verifies the sluice, waterline and channel
+  signatures, and the live release review accepted the resulting frame.
+
 ## Focused contextual tactical-HUD milestone
 
 - the permanent control legend now clears after the onboarding window instead
