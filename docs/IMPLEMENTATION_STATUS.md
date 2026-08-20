@@ -437,6 +437,22 @@ identities. Manual channels remain finish-before-save.
 - added native aesthetic coverage for the authored shell and scout role
   silhouette.
 
+## Focused Engineer authored-shell milestone
+
+- replaced the constructor's procedural base silhouette with the original
+  high-definition `engineer.constructor.v1` glTF shell, preserving stable
+  sensor, construction-tool, material-cradle and forge-coil presentation
+  sockets;
+- added the material cradle, piston joints, welder and assembly arms, tool
+  heads, forge coil and warm construction status hardware;
+- recorded the runtime/source/animation contract in
+  `game/data/engineer_asset_manifest.json` and
+  `game/assets/engineer/source/README.md`;
+- kept the finish presentation-only: construction authorization, physical
+  travel, assembly behavior, collision and save state are unchanged;
+- added native aesthetic coverage for the authored shell and constructor role
+  silhouette.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

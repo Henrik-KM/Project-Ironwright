@@ -1,0 +1,34 @@
+{
+  "asset_id": "engineer.constructor.v1",
+  "runtime_scene": "res://assets/engineer/engineer.gltf",
+  "source_builder": "game/assets/engineer/source/build_engineer_asset.py",
+  "source_type": "original_project_ironwright_shared_mesh_builder",
+  "third_party_assets": [],
+  "presentation_only": true,
+  "stable_nodes": [
+    "EngineerModel",
+    "Chassis",
+    "ChassisCore",
+    "ChassisCornerCap",
+    "Sensor",
+    "OpticLens",
+    "MaterialCradle",
+    "PistonJoint",
+    "WelderArm",
+    "ToolHead",
+    "ForgeCoil",
+    "ProductionAssetMarker"
+  ],
+  "animation_clips": [
+    "Idle",
+    "Walk",
+    "Work"
+  ],
+  "socket_contract": [
+    "sensor",
+    "optic",
+    "material_cradle",
+    "construction_tool",
+    "forge_coil"
+  ]
+}
