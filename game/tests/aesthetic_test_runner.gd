@@ -106,6 +106,10 @@ func _run_all() -> void:
                 _expect(landmark.find_child("TramMaintenanceBay", true, false) != null, "Tram Graveyard must expose an authored maintenance bay.")
                 _expect(landmark.find_child("TramCarriageDoor", true, false) != null, "Tram Graveyard must expose a readable carriage door.")
                 _expect(landmark.find_child("TramInspectionPit", true, false) != null, "Tram Graveyard must expose a bounded inspection-pit signature.")
+            if landmark.region_kind == &"observatory":
+                _expect(landmark.find_child("ObservatoryOpticsStation", true, false) != null, "Observatory Ridge must expose an authored optics station.")
+                _expect(landmark.find_child("ObservatoryLensBarrel", true, false) != null, "Observatory Ridge must expose a readable survey lens.")
+                _expect(landmark.find_child("ObservatoryStarMapPanel", true, false) != null, "Observatory Ridge must expose a readable survey console.")
             if landmark.region_kind == &"waterfront":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/WaterfrontIdentityDetails/RiverworksSluiceDetails") != null, "Riverworks must expose an authored sluice assembly.")
                 _expect(landmark.find_child("RiverWaterlineBreak", true, false) != null, "Riverworks must expose bounded waterline breaks at the dock edge.")
