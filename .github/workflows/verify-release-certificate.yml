@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - agent/commercial-release-candidate
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:
