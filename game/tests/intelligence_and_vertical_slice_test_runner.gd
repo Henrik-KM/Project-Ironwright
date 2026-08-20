@@ -189,6 +189,12 @@ func _test_vertical_slice_presentation() -> void:
     _expect(world.vertical_slice != null, "The main world must install the serious Heartforge vertical presentation slice.")
     _expect(world.vertical_slice_actor_art != null, "The vertical slice must include the stronger opening actor silhouette pass.")
     _expect(world.camera.fov <= 44.0, "The representative tactical frame should use the tighter cinematic camera.")
+    var feedback := world.get_node_or_null("AestheticDirector/PresentationFeedback")
+    _expect(feedback != null, "The world must install the presentation feedback director for readable combat contact.")
+    var impact_enemy := get_first_node_in_group(&"organic_enemies") as Node3D
+    if feedback != null and impact_enemy != null and world.companion != null:
+        feedback.call("_on_attack_landed", impact_enemy, world.companion)
+        _expect(world.get_node_or_null("OrganicAttackImpact") != null, "A landed organic attack must create a bounded dedicated impact burst.")
 
     var slice_root := world.get_node_or_null("HeartforgeVerticalSlice") as Node3D
     _expect(slice_root != null, "The Heartforge vertical slice must build a dedicated environment root.")

@@ -217,6 +217,14 @@ identities. Manual channels remain finish-before-save.
 - both actor paths expose a short diagnostic reason and have regression
   coverage against a physical wall and floor.
 
+## Focused organic contact-feedback milestone
+
+- organic attack wind-up, landing and damage remain separate readable events;
+- landed strikes now emit a bounded impact burst, local flash and restrained
+  camera response at the physical contact point;
+- executable vertical-slice coverage verifies the dedicated landing impact is
+  attached to the presentation feedback director.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.
