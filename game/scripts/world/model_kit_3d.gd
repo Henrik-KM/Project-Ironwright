@@ -190,6 +190,42 @@ static func add_surface_panel(
     return panel
 
 
+static func add_louvered_panel(
+        parent: Node3D,
+        size: Vector3,
+        position: Vector3,
+        base_mat: Material,
+        accent_mat: Material,
+        rotation: Vector3 = Vector3.ZERO,
+        name_hint: String = "LouveredPanel",
+        slat_count: int = 4
+    ) -> Node3D:
+    # Repeated inset louvers give a machine surface a believable heat or air
+    # path. The assembly remains a bounded set of cheap meshes for autonomous
+    # populations while reading as manufactured hardware from the tactical
+    # camera.
+    var panel := Node3D.new()
+    panel.name = name_hint
+    panel.position = position
+    panel.rotation = rotation
+    parent.add_child(panel)
+    add_beveled_box(panel, size, Vector3.ZERO, base_mat, Vector3.ZERO, "%sHousing" % name_hint, 0.18)
+    var count := maxi(2, slat_count)
+    for index in range(count):
+        var fraction := float(index) / float(count - 1)
+        var slat_y := lerpf(-size.y * 0.29, size.y * 0.29, fraction)
+        add_beveled_box(
+            panel,
+            Vector3(size.x * 0.74, maxf(0.025, size.y * 0.085), maxf(0.018, size.z * 0.11)),
+            Vector3(0.0, slat_y, -size.z * 0.5 - 0.012),
+            accent_mat,
+            Vector3(-0.16, 0.0, 0.0),
+            "%sSlat%d" % [name_hint, index],
+            0.2
+        )
+    return panel
+
+
 static func add_organic_plate(
         parent: Node3D,
         radius: float,

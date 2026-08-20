@@ -308,6 +308,16 @@ identities. Manual channels remain finish-before-save.
 - release coverage verifies that late-created robot and organic meshes receive
   their intended high-definition material families.
 
+## Focused friendly-machine role-signature milestone
+
+- added a shared louvered hard-surface kit for believable heat and air paths;
+- Warden frames now expose a heat exchanger, ammunition panel and recoil rings;
+- Scrapper frames now expose a dedicated salvage intake and paired magnetic
+  collection heads;
+- Pathfinder frames now expose a sensor pod, dish hub and paired range lenses;
+- aesthetic coverage keeps these details attached to the role-specific
+  silhouettes without changing collision, autonomy or economy state.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.
