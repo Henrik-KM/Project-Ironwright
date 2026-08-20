@@ -64,6 +64,8 @@ It includes:
   color-grade palette by authored district kind;
 - restrained spatial transition cues that give industrial, organic and
   research districts distinct audio signatures;
+- distance-based landmark presentation LOD that retains nearby authored
+  structures while reducing distant regions to persistent beacons;
 - wrecked machinery and live salvage cables;
 - ruined buildings, roads, street lamps, vehicle wrecks, rubble, and North Ruins.
 
@@ -75,4 +77,4 @@ without changing the gameplay architecture.
 
 ## Known limits
 
-The district is authored and compact. Navigation uses street-aware waypoints, collision-aware recovery steering and deterministic route state rather than a baked citywide navigation mesh. The persistent town now also shifts atmosphere and emits a restrained spatial transition cue by authored region kind while the player moves through it. The current slice now has compact spatial sound feedback for core survival events, organic attack wind-up telegraphs and dedicated organic attack landing impacts, but final authored sound design, music and species vocal signatures remain production work. Complete-game long-range groups, full-game outpost convoys and local autonomy groups checkpoint their route or assignment state, physical anchor and member identities; distant groups also transition through deterministic reduced detail while preserving that same state; manual channels still finish before saving. The next production pass should add authored sound assets, streamed authored regions and larger-scale reduced-detail simulation.
+The district is authored and compact. Navigation uses street-aware waypoints, collision-aware recovery steering and deterministic route state rather than a baked citywide navigation mesh. The persistent town now also shifts atmosphere, emits a restrained spatial transition cue by authored region kind, and reduces distant landmark rendering to persistent beacons while the player moves through it. The current slice now has compact spatial sound feedback for core survival events, organic attack wind-up telegraphs and dedicated organic attack landing impacts, but final authored sound design, music and species vocal signatures remain production work. Complete-game long-range groups, full-game outpost convoys and local autonomy groups checkpoint their route or assignment state, physical anchor and member identities; distant groups also transition through deterministic reduced detail while preserving that same state; manual channels still finish before saving. The next production pass should add authored sound assets, streamed authored regions and larger-scale reduced-detail simulation for actors and encounter dressing.

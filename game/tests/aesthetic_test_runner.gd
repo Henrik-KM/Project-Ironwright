@@ -43,6 +43,12 @@ func _run_all() -> void:
             _expect(audio_director.event_count > audio_event_count_before_region, "Crossing into a region must emit one restrained spatial transition cue.")
             _expect(audio_director.last_profile == &"region_transition", "Region crossing audio must use the dedicated transition profile.")
             audio_director.stop_all()
+    var region_lod := world.get_node_or_null("RegionPresentationLodDirector") as RegionPresentationLodDirector3D
+    _expect(region_lod != null, "The complete world must install presentation LOD for persistent region landmarks.")
+    if region_lod != null and region_atmosphere != null:
+        region_lod.refresh_now()
+        _expect(region_lod.detail_mode_for(&"region.west_grid") == 0, "The player’s current region must retain full landmark detail.")
+        _expect(region_lod.detail_mode_for(&"region.root_cistern") == 2, "Distant endgame landmarks must reduce to beacon detail without leaving the world state.")
     var heartforge := world.get_node_or_null("Heartforge") as Heartforge3D
     _expect(heartforge != null, "The aesthetic test needs the Heartforge progression model.")
     if heartforge != null:
