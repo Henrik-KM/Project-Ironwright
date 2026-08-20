@@ -91,6 +91,16 @@ func _run_all() -> void:
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/RootCisternAuthoredModel") != null, "The Root Cistern must expose its authored landmark shell.")
             if landmark.region_kind == &"nest":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/NestOccluderShell") != null, "The nest must isolate its close-range opaque shell for camera-safe presentation.")
+                _expect(landmark.get_node_or_null("PersistentRegionGeometry/CathedralAuthoredModel") != null, "Cathedral Quarter must expose its authored nave and choir landmark shell.")
+                var cathedral_choir_signal := landmark.find_child("CathedralChoirSignal", true, false) as Node3D
+                var cathedral_bell := landmark.find_child("CathedralBell", true, false) as Node3D
+                _expect(cathedral_choir_signal != null and cathedral_bell != null, "Cathedral Quarter must expose named choir and bell motion sockets.")
+                if cathedral_choir_signal != null and cathedral_bell != null:
+                    var choir_signal_before := cathedral_choir_signal.scale
+                    var bell_before := cathedral_bell.rotation.z
+                    landmark.call("_process", 0.5)
+                    _expect(not cathedral_choir_signal.scale.is_equal_approx(choir_signal_before), "Cathedral choir signal must pulse as a restrained presentation cue.")
+                    _expect(absf(cathedral_bell.rotation.z - bell_before) > 0.001, "Cathedral bell must carry deterministic presentation motion.")
             if landmark.region_kind == &"commercial":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/FloodMarketIdentityDetails") != null, "Flood Market must expose authored stall canopies and hanging signs.")
                 _expect(landmark.find_child("MarketFloodChannel", true, false) != null, "Flood Market must expose bounded presentation-only water channels.")

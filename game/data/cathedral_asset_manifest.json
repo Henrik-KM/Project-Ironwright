@@ -1,0 +1,16 @@
+{
+  "asset_id": "cathedral.quarter.v1",
+  "kind": "world_landmark",
+  "source": "game/assets/cathedral/source/build_cathedral_asset.py",
+  "runtime_model": "game/assets/cathedral/cathedral.gltf",
+  "required_nodes": [
+    "CathedralModel",
+    "CathedralNave",
+    "CathedralRoseWindow",
+    "CathedralChoirCore",
+    "CathedralChoirSignal",
+    "CathedralBell",
+    "ProductionAssetMarker"
+  ],
+  "presentation_only": true
+}
