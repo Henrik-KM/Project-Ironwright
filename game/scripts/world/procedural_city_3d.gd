@@ -8,12 +8,14 @@ var sidewalk_material: StandardMaterial3D
 var building_materials: Array[StandardMaterial3D] = []
 var rubble_material: StandardMaterial3D
 var metal_material: StandardMaterial3D
+var curb_material: StandardMaterial3D
 
 
 func _ready() -> void:
     _create_materials()
     _build_ground()
     _build_street_grid()
+    _build_street_edges()
     _build_buildings()
     _build_wrecks_and_debris()
     _build_lighting()
@@ -25,6 +27,7 @@ func _create_materials() -> void:
     sidewalk_material = ModelKit3D.material(Color("252728"), 0.0, 0.94)
     rubble_material = ModelKit3D.material(Color("4a4038"), 0.0, 0.94)
     metal_material = ModelKit3D.material(Color("2e3435"), 0.72, 0.52)
+    curb_material = ModelKit3D.material(Color("3a4140"), 0.08, 0.84)
     building_materials = [
         ModelKit3D.material(Color("312c2a"), 0.0, 0.95),
         ModelKit3D.material(Color("282b2c"), 0.0, 0.92),
@@ -58,6 +61,22 @@ func _build_street_grid() -> void:
             ModelKit3D.add_box(road, Vector3(3.2, 0.03, 0.18), Vector3(float(x), 0.075, z), sidewalk_material, Vector3.ZERO, "LaneMark")
 
 
+func _build_street_edges() -> void:
+    var edges := Node3D.new()
+    edges.name = "HighDefinitionStreetEdges"
+    add_child(edges)
+    # Raised curb segments give the town a consistent street scale while the
+    # systemic ground and road bodies remain authoritative for collision.
+    for x in [-28.0, 0.0, 28.0]:
+        for side in [-1.0, 1.0]:
+            for z in range(-70, 71, 12):
+                ModelKit3D.add_beveled_box(edges, Vector3(0.46, 0.16, 9.2), Vector3(x + side * 4.34, 0.14, float(z)), curb_material, Vector3(0.0, 0.0, 0.012 * float(int(z / 12.0) % 2)), "StreetCurb", 0.28)
+    for z in [-28.0, 0.0, 28.0]:
+        for side in [-1.0, 1.0]:
+            for x in range(-70, 71, 12):
+                ModelKit3D.add_beveled_box(edges, Vector3(9.2, 0.16, 0.46), Vector3(float(x), 0.14, z + side * 4.34), curb_material, Vector3(0.0, 0.012 * float(int(x / 12.0) % 2), 0.0), "StreetCurb", 0.28)
+
+
 func _build_buildings() -> void:
     var blocks := [
         Vector3(-14.0, 0.0, -14.0), Vector3(14.0, 0.0, -14.0),
@@ -88,6 +107,11 @@ func _create_ruined_building(position: Vector3, size: Vector3, index: int) -> vo
     ModelKit3D.add_box(body, size, Vector3(0.0, size.y * 0.5, 0.0), material, Vector3.ZERO, "Shell")
     ModelKit3D.add_collision_box(body, size, Vector3(0.0, size.y * 0.5, 0.0))
 
+    var frame_material := ModelKit3D.material(Color("1f2526"), 0.42, 0.58)
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(body, Vector3(0.24, size.y * 0.84, 0.28), Vector3(side * size.x * 0.41, size.y * 0.43, -size.z * 0.53), frame_material, Vector3.ZERO, "BuildingCornerFrame", 0.24)
+    ModelKit3D.add_beveled_box(body, Vector3(size.x * 0.88, 0.18, 0.32), Vector3(0.0, size.y + 0.12, -size.z * 0.12), frame_material, Vector3(0.0, 0.02, 0.0), "BuildingFacadeCrown", 0.22)
+
     var roof_damage_side := -1.0 if index % 2 == 0 else 1.0
     ModelKit3D.add_box(body, Vector3(size.x * 0.42, 1.0, size.z * 0.5), Vector3(roof_damage_side * size.x * 0.26, size.y + 0.35, -size.z * 0.15), rubble_material, Vector3(0.12, 0.16, roof_damage_side * 0.18), "CollapsedRoof")
     for floor_index in range(1, int(size.y / 2.6)):
@@ -109,7 +133,10 @@ func _build_wrecks_and_debris() -> void:
         wreck.position = car_positions[index]
         wreck.rotation.y = 0.22 * float(index % 3)
         add_child(wreck)
-        ModelKit3D.add_box(wreck, Vector3(2.8, 0.65, 1.45), Vector3(0.0, 0.48, 0.0), metal_material, Vector3(0.08, 0.0, 0.04), "Vehicle")
+        ModelKit3D.add_beveled_box(wreck, Vector3(2.8, 0.65, 1.45), Vector3(0.0, 0.48, 0.0), metal_material, Vector3(0.08, 0.0, 0.04), "Vehicle", 0.18)
+        ModelKit3D.add_surface_panel(wreck, Vector3(1.1, 0.38, 0.08), Vector3(0.0, 0.82, -0.7), rubble_material, metal_material, Vector3(0.08, 0.0, 0.0), "VehicleBrokenGlass")
+        for side in [-1.0, 1.0]:
+            ModelKit3D.add_cylinder(wreck, 0.18, 0.12, Vector3(side * 0.92, 0.28, -0.7), metal_material, Vector3(PI * 0.5, 0.0, 0.0), "VehicleWheel")
         ModelKit3D.add_collision_box(wreck, Vector3(2.8, 0.65, 1.45), Vector3(0.0, 0.48, 0.0))
 
     var debris_positions := [
