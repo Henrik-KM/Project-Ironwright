@@ -1,7 +1,8 @@
 extends SceneTree
 
 const MAIN_SCENE := preload("res://scenes/main_3d.tscn")
-const TEST_SAVE_PATH := "user://ironwright_complete_integration_test.json"
+const TEST_SAVE_ROOT := "user://ironwright_complete_integration_test"
+const TEST_SAVE_PATH := "user://ironwright_complete_integration_test/world_0.json"
 
 var failures: Array[String] = []
 
@@ -11,7 +12,7 @@ func _initialize() -> void:
 
 
 func _run_all() -> void:
-    var world := MAIN_SCENE.instantiate() as IronwrightCompleteGameWorld3D
+    var world := MAIN_SCENE.instantiate() as IronwrightReleaseWorld3D
     root.add_child(world)
     await process_frame
     await physics_frame
@@ -59,7 +60,7 @@ func _run_all() -> void:
     world.outpost_director._spawn_outpost(first_site, &"resource", 1)
 
     var cores_before_west := world.run_state.rare_cores
-    world.save_service.configure(TEST_SAVE_PATH)
+    world.transactional_save_service.configure(TEST_SAVE_ROOT, 3)
     _expect(world.long_operation_director.authorize(&"operation.west_grid_survey"), "A long-range operation must be authorizable before checkpoint testing.")
     var checkpoint_id := StringName(world.long_operation_director.active_operation.get("id", &""))
     world._save_game()
@@ -135,8 +136,8 @@ func _run_all() -> void:
     _expect(world.endgame_director.completed_protocol == &"protocol.severance", "Save restoration must preserve the chosen completed ending.")
     _expect(world.region_director.is_discovered(&"region.root_cistern"), "Save restoration must preserve late-region discovery.")
 
-    world.save_service.configure(TEST_SAVE_PATH)
-    _expect(world.save_service != null, "The complete world must install the transactional save service.")
+    world.transactional_save_service.configure(TEST_SAVE_ROOT, 3)
+    _expect(world.transactional_save_service != null, "The complete world must install the transactional save service.")
     world._save_game()
     _expect(FileAccess.file_exists(TEST_SAVE_PATH), "The complete-world save hook must write the unified envelope.")
     world.first_victory_achieved = false
@@ -212,7 +213,7 @@ func _expect(condition: bool, message: String) -> void:
 
 
 func _cleanup_save_files() -> void:
-    for path in [TEST_SAVE_PATH, TEST_SAVE_PATH + ".bak1", TEST_SAVE_PATH + ".bak2", TEST_SAVE_PATH + ".tmp"]:
+    for path in [TEST_SAVE_PATH, TEST_SAVE_ROOT + "/world_0.backup_1.json", TEST_SAVE_ROOT + "/world_0.backup_2.json", TEST_SAVE_ROOT + "/world_0.backup_3.json", TEST_SAVE_ROOT + "/world_0.tmp"]:
         if FileAccess.file_exists(path):
             DirAccess.remove_absolute(path)
 

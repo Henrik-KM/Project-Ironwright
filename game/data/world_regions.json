@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "regions": [
     {
       "id": "region.heartforge_district",
@@ -38,6 +38,30 @@
       "description": "A flooded substation and tram-maintenance corridor threaded through hunting territory."
     },
     {
+      "id": "region.east_tenements",
+      "display_name": "East Tenements",
+      "kind": "tenement",
+      "center": [124.0, 0.0, 24.0],
+      "radius": 48.0,
+      "initially_discovered": false,
+      "base_pressure": 0.92,
+      "spawn_budget": 11,
+      "route_from_heartforge": [[28.0, 0.0, 0.0], [58.0, 0.0, 8.0], [92.0, 0.0, 18.0], [124.0, 0.0, 24.0]],
+      "description": "Tight residential courtyards, hanging walkways and rooflines used by fast pack organisms."
+    },
+    {
+      "id": "region.glasshouse",
+      "display_name": "Municipal Glasshouse",
+      "kind": "greenhouse",
+      "center": [88.0, 0.0, -48.0],
+      "radius": 44.0,
+      "initially_discovered": false,
+      "base_pressure": 1.02,
+      "spawn_budget": 12,
+      "route_from_heartforge": [[28.0, 0.0, -8.0], [52.0, 0.0, -24.0], [72.0, 0.0, -38.0], [88.0, 0.0, -48.0]],
+      "description": "A shattered botanical complex where luminous membrane growth and glass-wing organisms compete for light."
+    },
+    {
       "id": "region.flood_market",
       "display_name": "Flood Market",
       "kind": "commercial",
@@ -50,6 +74,30 @@
       "description": "A drowned market hall where membrane growth traps intact municipal machinery."
     },
     {
+      "id": "region.riverworks",
+      "display_name": "Riverworks",
+      "kind": "waterfront",
+      "center": [-72.0, 0.0, 98.0],
+      "radius": 50.0,
+      "initially_discovered": false,
+      "base_pressure": 1.14,
+      "spawn_budget": 14,
+      "route_from_heartforge": [[-20.0, 0.0, 28.0], [-38.0, 0.0, 52.0], [-56.0, 0.0, 76.0], [-72.0, 0.0, 98.0]],
+      "description": "Pumping halls, retaining walls and drowned service roads occupied by heavy amphibious predators."
+    },
+    {
+      "id": "region.tram_graveyard",
+      "display_name": "Tram Graveyard",
+      "kind": "rail",
+      "center": [-154.0, 0.0, 32.0],
+      "radius": 52.0,
+      "initially_discovered": false,
+      "base_pressure": 1.18,
+      "spawn_budget": 15,
+      "route_from_heartforge": [[-30.0, 0.0, 4.0], [-66.0, 0.0, 12.0], [-108.0, 0.0, 24.0], [-154.0, 0.0, 32.0]],
+      "description": "A maze of derailed carriages, overhead lines and maintenance pits that can yield rare machine stock."
+    },
+    {
       "id": "region.cathedral_quarter",
       "display_name": "Cathedral Quarter",
       "kind": "nest",
@@ -60,6 +108,18 @@
       "spawn_budget": 16,
       "route_from_heartforge": [[0.0, 0.0, -34.0], [8.0, 0.0, -68.0], [24.0, 0.0, -98.0], [42.0, 0.0, -124.0]],
       "description": "A vertical district wrapped around a resonant brood colony beneath the old cathedral."
+    },
+    {
+      "id": "region.observatory_ridge",
+      "display_name": "Observatory Ridge",
+      "kind": "observatory",
+      "center": [34.0, 0.0, 148.0],
+      "radius": 48.0,
+      "initially_discovered": false,
+      "base_pressure": 1.38,
+      "spawn_budget": 16,
+      "route_from_heartforge": [[8.0, 0.0, 30.0], [18.0, 0.0, 68.0], [26.0, 0.0, 108.0], [34.0, 0.0, 148.0]],
+      "description": "A hilltop observatory whose surviving optics can map migration patterns across the entire town."
     },
     {
       "id": "region.buried_labs",

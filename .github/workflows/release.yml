@@ -1,0 +1,77 @@
+name: Build commercial release candidate
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  package-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Set up Godot 4.7.1 with export templates
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.1
+          use-dotnet: false
+          include-templates: true
+
+      - name: Validate release contracts and assets
+        run: npm run validate
+
+      - name: Import release resources
+        run: godot --headless --path game --editor --quit
+
+      - name: Run commercial release tests
+        run: godot --headless --path game --script res://tests/release_test_runner.gd
+
+      - name: Run complete start-to-victory test
+        run: godot --headless --path game --script res://tests/complete_game_test_runner.gd
+
+      - name: Export Windows and Linux builds
+        run: |
+          mkdir -p dist/windows dist/linux
+          godot --headless --path game --export-release "Windows Desktop" ../dist/windows/ProjectIronwright.exe
+          godot --headless --path game --export-release "Linux/X11" ../dist/linux/ProjectIronwright.x86_64
+          chmod +x dist/linux/ProjectIronwright.x86_64
+
+      - name: Write checksums and package archives
+        run: |
+          cd dist
+          sha256sum windows/ProjectIronwright.exe windows/ProjectIronwright.pck linux/ProjectIronwright.x86_64 linux/ProjectIronwright.pck > SHA256SUMS.txt
+          (cd windows && zip -9 -r ../ProjectIronwright-1.0.0-rc.1-Windows.zip .)
+          (cd linux && tar -czf ../ProjectIronwright-1.0.0-rc.1-Linux.tar.gz .)
+
+      - name: Upload Windows release candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: ProjectIronwright-1.0.0-rc.1-Windows
+          path: dist/ProjectIronwright-1.0.0-rc.1-Windows.zip
+          if-no-files-found: error
+
+      - name: Upload Linux release candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: ProjectIronwright-1.0.0-rc.1-Linux
+          path: dist/ProjectIronwright-1.0.0-rc.1-Linux.tar.gz
+          if-no-files-found: error
+
+      - name: Upload release checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: ProjectIronwright-1.0.0-rc.1-Checksums
+          path: dist/SHA256SUMS.txt
+          if-no-files-found: error

@@ -27,7 +27,7 @@ func _run_all() -> void:
 
 
 func _test_salvage_escort_split() -> void:
-    var world := MAIN_SCENE.instantiate() as IronwrightPreAlphaWorld3D
+    var world := MAIN_SCENE.instantiate() as IronwrightReleaseWorld3D
     root.add_child(world)
     await process_frame
     await physics_frame
@@ -116,7 +116,7 @@ func _test_world_labels_are_not_screen_fixed() -> void:
 
 
 func _test_prealpha_hud_is_quiet() -> void:
-    var world := MAIN_SCENE.instantiate() as IronwrightPreAlphaWorld3D
+    var world := MAIN_SCENE.instantiate() as IronwrightReleaseWorld3D
     root.add_child(world)
     await process_frame
     var hud := world.hud as IronwrightPreAlphaHUD3D

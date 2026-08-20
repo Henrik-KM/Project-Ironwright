@@ -614,7 +614,7 @@ func _load_game() -> void:
     if save_service == null:
         hud.push_notification("SAVE INVALID · SERVICE UNAVAILABLE")
         return
-    var snapshot := save_service.read_snapshot()
+    var snapshot: Dictionary = save_service.read_snapshot()
     if snapshot.is_empty():
         hud.push_notification("NO VALID SAVE FOUND · %s" % save_service.last_error)
         return

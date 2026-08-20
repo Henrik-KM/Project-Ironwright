@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "default_profile": "survival",
+  "profiles": {
+    "story": {
+      "display_name": "Story",
+      "description": "Preserves the survival structure while allowing more recovery from mistakes.",
+      "enemy_health_multiplier": 0.78,
+      "enemy_damage_multiplier": 0.72,
+      "enemy_speed_multiplier": 0.94,
+      "regional_pressure_multiplier": 0.78,
+      "active_enemy_cap": 62,
+      "scrap_yield_multiplier": 1.28,
+      "outpost_repair_multiplier": 1.25,
+      "operation_threat_multiplier": 0.8,
+      "continuity_scrap_loss": 110,
+      "target_first_victory_hours": [24, 55],
+      "adaptive_relief": 0.22
+    },
+    "survival": {
+      "display_name": "Survival",
+      "description": "The intended first-victory experience: continuous pressure, meaningful losses and limited recovery.",
+      "enemy_health_multiplier": 1.0,
+      "enemy_damage_multiplier": 1.0,
+      "enemy_speed_multiplier": 1.0,
+      "regional_pressure_multiplier": 1.0,
+      "active_enemy_cap": 96,
+      "scrap_yield_multiplier": 1.0,
+      "outpost_repair_multiplier": 1.0,
+      "operation_threat_multiplier": 1.0,
+      "continuity_scrap_loss": 180,
+      "target_first_victory_hours": [35, 80],
+      "adaptive_relief": 0.12
+    },
+    "brutal": {
+      "display_name": "Brutal",
+      "description": "For experienced players who want denser ecology, harsher attrition and fewer recovery windows.",
+      "enemy_health_multiplier": 1.18,
+      "enemy_damage_multiplier": 1.22,
+      "enemy_speed_multiplier": 1.06,
+      "regional_pressure_multiplier": 1.24,
+      "active_enemy_cap": 124,
+      "scrap_yield_multiplier": 0.9,
+      "outpost_repair_multiplier": 0.82,
+      "operation_threat_multiplier": 1.22,
+      "continuity_scrap_loss": 260,
+      "target_first_victory_hours": [45, 100],
+      "adaptive_relief": 0.05
+    }
+  },
+  "guardrails": {
+    "maximum_pressure_multiplier": 1.8,
+    "minimum_scrap_yield_multiplier": 0.75,
+    "minimum_heartforge_recovery_window_seconds": 18.0,
+    "critical_integrity_threshold": 0.28,
+    "critical_machine_loss_window_seconds": 45.0,
+    "telemetry_history_limit": 256
+  }
+}

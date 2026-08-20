@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "sites": [
     {
       "id": "site.north_transit_yard",
@@ -29,9 +29,41 @@
       "id": "site.west_substation",
       "display_name": "West Substation",
       "position": [-51.0, 0.0, 18.0],
-      "discovered_by": "expedition.west_grid_survey",
+      "discovered_by": "operation.west_grid_survey",
       "recommended_outpost_role": "defence",
       "description": "A concrete electrical compound overlooking a route frequently used by hunting packs."
+    },
+    {
+      "id": "site.east_courtyard",
+      "display_name": "East Courtyard",
+      "position": [92.0, 0.0, 20.0],
+      "discovered_by": "operation.east_tenement_roofline",
+      "recommended_outpost_role": "scout",
+      "description": "A walled residential court beneath the roofline survey, suitable for early warning and route observation."
+    },
+    {
+      "id": "site.tram_switchhouse",
+      "display_name": "Tram Switchhouse",
+      "position": [-112.0, 0.0, 26.0],
+      "discovered_by": "operation.tram_graveyard_recovery",
+      "recommended_outpost_role": "resource",
+      "description": "A reinforced switchhouse beside recoverable rail machinery and sheltered access pits."
+    },
+    {
+      "id": "site.riverworks_gantry",
+      "display_name": "Riverworks Gantry",
+      "position": [-57.0, 0.0, 75.0],
+      "discovered_by": "operation.riverworks_pump_recovery",
+      "recommended_outpost_role": "repair",
+      "description": "A dry maintenance gantry created by the restarted pump, ideal for servicing long southern operations."
+    },
+    {
+      "id": "site.observatory_service_ring",
+      "display_name": "Observatory Service Ring",
+      "position": [29.0, 0.0, 111.0],
+      "discovered_by": "operation.observatory_migration_map",
+      "recommended_outpost_role": "scout",
+      "description": "A surviving service ring below the observatory optics with exceptional town-wide sight lines."
     }
   ]
 }

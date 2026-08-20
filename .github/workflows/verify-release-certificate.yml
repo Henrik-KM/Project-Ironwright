@@ -1,0 +1,26 @@
+name: Verify release certificate
+
+on:
+  push:
+    branches:
+      - agent/commercial-release-candidate
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-certificate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out complete certification history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Verify certified source, outputs and package records
+        run: python3 scripts/verify_release_certificate.py

@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "operations": [
     {
       "id": "operation.west_grid_survey",
@@ -7,21 +7,55 @@
       "category": "survey",
       "region_id": "region.west_grid",
       "description": "Send a Pathfinder-led group through the flooded industrial corridor, map stable streets, and recover the surviving grid archive.",
-      "requirements": {
-        "heartforge_tier": 2,
-        "technology": "tech.machine.group_coordination",
-        "functioning_outposts_min": 1
-      },
+      "requirements": {"heartforge_tier": 2, "technology": "tech.machine.group_coordination", "functioning_outposts_min": 1},
       "team_roles": ["scout", "guardian", "salvager"],
       "scrap_cost": 45,
       "work_seconds": 14.0,
       "noise_radius": 35.0,
       "threat_level": 1.0,
-      "rewards": {
-        "discover_region": "region.west_grid",
-        "rare_cores": 1,
-        "discover_sites": ["site.west_substation"]
-      }
+      "rewards": {"discover_region": "region.west_grid", "rare_cores": 1, "discover_sites": ["site.west_substation"]}
+    },
+    {
+      "id": "operation.east_tenement_roofline",
+      "display_name": "Trace the East Roofline",
+      "category": "optional_survey",
+      "region_id": "region.east_tenements",
+      "description": "A light Pathfinder group crosses exposed roofs and suspended walkways to map a safer eastern approach and mark a viable observation court.",
+      "requirements": {"heartforge_tier": 2, "technology": "tech.machine.group_coordination", "functioning_outposts_min": 1},
+      "team_roles": ["scout", "guardian", "salvager"],
+      "scrap_cost": 52,
+      "work_seconds": 16.0,
+      "noise_radius": 34.0,
+      "threat_level": 1.08,
+      "rewards": {"discover_region": "region.east_tenements", "rare_cores": 1, "discover_sites": ["site.east_courtyard"]}
+    },
+    {
+      "id": "operation.tram_graveyard_recovery",
+      "display_name": "Recover the Tram Servo Bank",
+      "category": "optional_recovery",
+      "region_id": "region.tram_graveyard",
+      "description": "Engineers cut a matched servo bank from derailed municipal trams while Wardens hold the maintenance pits.",
+      "requirements": {"heartforge_tier": 3, "completed_operation": "operation.west_grid_survey", "functioning_outposts_min": 1},
+      "team_roles": ["scout", "guardian", "engineer", "salvager"],
+      "scrap_cost": 82,
+      "work_seconds": 20.0,
+      "noise_radius": 43.0,
+      "threat_level": 1.34,
+      "rewards": {"discover_region": "region.tram_graveyard", "rare_cores": 1, "component": "component.tram_servo_bank", "discover_sites": ["site.tram_switchhouse"]}
+    },
+    {
+      "id": "operation.glasshouse_spore_harvest",
+      "display_name": "Harvest the Glasshouse Mycelium",
+      "category": "optional_recovery",
+      "region_id": "region.glasshouse",
+      "description": "A protected work group enters the shattered glasshouse at dusk and extracts a luminous mycelial lattice without spreading its spores home.",
+      "requirements": {"heartforge_tier": 3, "completed_operation": "operation.east_tenement_roofline", "functioning_outposts_min": 1},
+      "team_roles": ["scout", "guardian", "engineer", "salvager"],
+      "scrap_cost": 88,
+      "work_seconds": 21.0,
+      "noise_radius": 40.0,
+      "threat_level": 1.42,
+      "rewards": {"discover_region": "region.glasshouse", "rare_cores": 1, "component": "component.luminous_mycelium", "suppress_region": 0.18}
     },
     {
       "id": "operation.flood_market_recovery",
@@ -29,21 +63,27 @@
       "category": "recovery",
       "region_id": "region.flood_market",
       "description": "Cross the flooded market, cut a stabilising membrane from a living municipal generator, and carry it home intact.",
-      "requirements": {
-        "heartforge_tier": 3,
-        "completed_operation": "operation.west_grid_survey",
-        "functioning_outposts_min": 1
-      },
+      "requirements": {"heartforge_tier": 3, "completed_operation": "operation.west_grid_survey", "functioning_outposts_min": 1},
       "team_roles": ["scout", "guardian", "salvager", "engineer"],
       "scrap_cost": 85,
       "work_seconds": 18.0,
       "noise_radius": 42.0,
       "threat_level": 1.3,
-      "rewards": {
-        "discover_region": "region.flood_market",
-        "rare_cores": 1,
-        "component": "component.vital_membrane"
-      }
+      "rewards": {"discover_region": "region.flood_market", "rare_cores": 1, "component": "component.vital_membrane"}
+    },
+    {
+      "id": "operation.riverworks_pump_recovery",
+      "display_name": "Restart the Riverworks Pump",
+      "category": "optional_suppression",
+      "region_id": "region.riverworks",
+      "description": "Engineers restart one municipal flood pump, draining a hunting basin and creating a calmer southern route for future machine groups.",
+      "requirements": {"heartforge_tier": 3, "completed_operation": "operation.flood_market_recovery", "functioning_outposts_min": 2},
+      "team_roles": ["scout", "guardian", "guardian", "engineer"],
+      "scrap_cost": 112,
+      "work_seconds": 23.0,
+      "noise_radius": 48.0,
+      "threat_level": 1.58,
+      "rewards": {"discover_region": "region.riverworks", "rare_cores": 1, "suppress_region": 0.36, "discover_sites": ["site.riverworks_gantry"]}
     },
     {
       "id": "operation.cathedral_brood_suppression",
@@ -51,22 +91,27 @@
       "category": "suppression",
       "region_id": "region.cathedral_quarter",
       "description": "A heavily escorted formation must reach the brood chamber, hold position under sustained attack, and remove its resonant gland.",
-      "requirements": {
-        "heartforge_tier": 3,
-        "completed_operation": "operation.flood_market_recovery",
-        "functioning_outposts_min": 2
-      },
+      "requirements": {"heartforge_tier": 3, "completed_operation": "operation.flood_market_recovery", "functioning_outposts_min": 2},
       "team_roles": ["scout", "guardian", "guardian", "engineer"],
       "scrap_cost": 120,
       "work_seconds": 24.0,
       "noise_radius": 50.0,
       "threat_level": 1.7,
-      "rewards": {
-        "discover_region": "region.cathedral_quarter",
-        "rare_cores": 2,
-        "component": "component.choral_gland",
-        "suppress_region": 0.48
-      }
+      "rewards": {"discover_region": "region.cathedral_quarter", "rare_cores": 2, "component": "component.choral_gland", "suppress_region": 0.48}
+    },
+    {
+      "id": "operation.observatory_migration_map",
+      "display_name": "Calibrate the Observatory Array",
+      "category": "optional_survey",
+      "region_id": "region.observatory_ridge",
+      "description": "Pathfinders and Engineers restore the ridge optics long enough to chart migration corridors across the whole town.",
+      "requirements": {"heartforge_tier": 4, "completed_operation": "operation.cathedral_brood_suppression", "functioning_outposts_min": 2},
+      "team_roles": ["scout", "scout", "guardian", "engineer"],
+      "scrap_cost": 145,
+      "work_seconds": 26.0,
+      "noise_radius": 46.0,
+      "threat_level": 1.72,
+      "rewards": {"discover_region": "region.observatory_ridge", "rare_cores": 1, "component": "component.migration_ephemeris", "suppress_region": 0.24, "discover_sites": ["site.observatory_service_ring"]}
     },
     {
       "id": "operation.buried_lab_excavation",
@@ -74,21 +119,13 @@
       "category": "excavation",
       "region_id": "region.buried_labs",
       "description": "Engineers breach the buried laboratories while escorts protect the excavation and Scrappers carry the prism back to the surface.",
-      "requirements": {
-        "heartforge_tier": 4,
-        "completed_operation": "operation.cathedral_brood_suppression",
-        "components_min": 2
-      },
+      "requirements": {"heartforge_tier": 4, "completed_operation": "operation.cathedral_brood_suppression", "components_min": 2},
       "team_roles": ["scout", "guardian", "guardian", "engineer", "salvager"],
       "scrap_cost": 175,
       "work_seconds": 28.0,
       "noise_radius": 56.0,
       "threat_level": 2.1,
-      "rewards": {
-        "discover_region": "region.buried_labs",
-        "rare_cores": 2,
-        "component": "component.genome_prism"
-      }
+      "rewards": {"discover_region": "region.buried_labs", "rare_cores": 2, "component": "component.genome_prism"}
     },
     {
       "id": "operation.root_cistern_mapping",
@@ -96,22 +133,13 @@
       "category": "survey",
       "region_id": "region.root_cistern",
       "description": "A late autonomous expedition traces the ecological signalling network and identifies where a final protocol can reach it.",
-      "requirements": {
-        "heartforge_tier": 4,
-        "completed_operation": "operation.buried_lab_excavation",
-        "components_min": 3,
-        "functioning_outposts_min": 3
-      },
+      "requirements": {"heartforge_tier": 4, "completed_operation": "operation.buried_lab_excavation", "components_min": 3, "functioning_outposts_min": 3},
       "team_roles": ["scout", "guardian", "guardian", "engineer", "salvager"],
       "scrap_cost": 210,
       "work_seconds": 32.0,
       "noise_radius": 62.0,
       "threat_level": 2.45,
-      "rewards": {
-        "discover_region": "region.root_cistern",
-        "rare_cores": 2,
-        "component": "component.root_map"
-      }
+      "rewards": {"discover_region": "region.root_cistern", "rare_cores": 2, "component": "component.root_map"}
     },
     {
       "id": "operation.apex_lure",
@@ -119,20 +147,27 @@
       "category": "optional_suppression",
       "region_id": "region.root_cistern",
       "description": "Draw the largest predator away from the final route. Success reduces the ecological response during the chosen endgame protocol.",
-      "requirements": {
-        "heartforge_tier": 5,
-        "completed_operation": "operation.root_cistern_mapping",
-        "technology": "tech.doctrine.deep_operations"
-      },
+      "requirements": {"heartforge_tier": 5, "completed_operation": "operation.root_cistern_mapping", "technology": "tech.doctrine.deep_operations"},
       "team_roles": ["scout", "guardian", "guardian", "guardian"],
       "scrap_cost": 240,
       "work_seconds": 36.0,
       "noise_radius": 72.0,
       "threat_level": 2.8,
-      "rewards": {
-        "rare_cores": 1,
-        "endgame_pressure_reduction": 0.22
-      }
+      "rewards": {"rare_cores": 1, "endgame_pressure_reduction": 0.22}
+    },
+    {
+      "id": "operation.post_victory_archive",
+      "display_name": "Recover the Town Archive",
+      "category": "post_victory",
+      "region_id": "region.north_ruins",
+      "description": "After first victory, a small autonomous group recovers civil records and machine names from the archive for the continuing sanctuary.",
+      "requirements": {"heartforge_tier": 5, "completed_operation": "operation.root_cistern_mapping", "technology": "tech.endgame.severance"},
+      "team_roles": ["scout", "guardian", "salvager"],
+      "scrap_cost": 95,
+      "work_seconds": 18.0,
+      "noise_radius": 28.0,
+      "threat_level": 1.05,
+      "rewards": {"rare_cores": 1, "component": "component.town_archive"}
     }
   ]
 }

@@ -11,10 +11,12 @@ config_version=5
 [application]
 
 config/name="Project Ironwright"
-config/description="A 3D survival-strategy game about one weak Mechromancer and increasingly autonomous machines."
-run/main_scene="res://scenes/main_3d.tscn"
+config/version="1.0.0-rc.1"
+config/description="A long-form survival-strategy game about one weak Mechromancer and an increasingly autonomous machine society defending a single Heartforge."
 config/features=PackedStringArray("4.7", "GL Compatibility")
+run/main_scene="res://scenes/main_3d.tscn"
 config/icon="res://icon.svg"
+boot_splash/bg_color=Color(0.008, 0.018, 0.024, 1)
 
 [display]
 
@@ -22,11 +24,14 @@ window/size/viewport_width=1600
 window/size/viewport_height=900
 window/size/window_width_override=1280
 window/size/window_height_override=720
+window/size/resizable=true
 window/stretch/mode="canvas_items"
 window/handheld/orientation=1
+window/vsync/vsync_mode=1
 
 [physics]
 
+common/physics_ticks_per_second=60
 3d/default_gravity=18.0
 
 [rendering]
@@ -34,3 +39,12 @@ window/handheld/orientation=1
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 environment/defaults/default_clear_color=Color(0.01, 0.012, 0.015, 1)
+
+[audio]
+
+driver/enable_input=false
+default_bus_layout="res://default_bus_layout.tres"
+
+[internationalization]
+
+locale/fallback="en"

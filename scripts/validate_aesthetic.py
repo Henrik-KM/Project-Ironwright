@@ -99,10 +99,11 @@ def main() -> int:
         validate_mechromancer_asset()
 
         main_scene = (ROOT / "game/scenes/main_3d.tscn").read_text(encoding="utf-8")
-        if "main_world_prealpha_3d.gd" not in main_scene:
-            fail("The native entrypoint must boot the pre-alpha vertical-slice world.")
+        if "main_world_prealpha_3d.gd" not in main_scene and "main_world_release_3d.gd" not in main_scene:
+            fail("The native entrypoint must boot the merged vertical-slice or release world.")
 
         prealpha = (ROOT / "game/scripts/main_world_prealpha_3d.gd").read_text(encoding="utf-8")
+        release = (ROOT / "game/scripts/main_world_release_3d.gd").read_text(encoding="utf-8")
         complete = (ROOT / "game/scripts/main_world_complete_3d.gd").read_text(encoding="utf-8")
         production = (ROOT / "game/scripts/main_world_production_3d.gd").read_text(encoding="utf-8")
         full_game = (ROOT / "game/scripts/main_world_full_game_3d.gd").read_text(encoding="utf-8")
@@ -120,6 +121,10 @@ def main() -> int:
             fail("Full-game world must preserve the aesthetic layer.")
         if "AestheticDirector3D" not in beautiful:
             fail("Beautiful world must still install the aesthetic director.")
+        if "main_world_release_3d.gd" in main_scene:
+            for token in ["extends IronwrightProductionWorld3D", "_setup_vertical_slice_presentation", "VerticalSliceDirector3D", "VerticalSliceActorArt3D"]:
+                if token not in release:
+                    fail(f"Release entrypoint is missing merged presentation behaviour: {token}")
 
         hud_scene = (ROOT / "game/scenes/ui/ironwright_hud_3d.tscn").read_text(encoding="utf-8")
         if "ironwright_prealpha_hud_3d.gd" not in hud_scene:

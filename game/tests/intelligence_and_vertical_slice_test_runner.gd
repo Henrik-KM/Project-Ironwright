@@ -2,7 +2,8 @@ extends SceneTree
 
 const MAIN_SCENE := preload("res://scenes/main_3d.tscn")
 const ENEMY_SCENE := preload("res://scenes/actors/organic_enemy_3d.tscn")
-const TEST_SAVE_PATH := "user://ironwright_autonomy_checkpoint_test.json"
+const TEST_SAVE_ROOT := "user://ironwright_autonomy_checkpoint_test"
+const TEST_SAVE_PATH := "user://ironwright_autonomy_checkpoint_test/world_0.json"
 
 var failures: Array[String] = []
 
@@ -27,7 +28,7 @@ func _run_all() -> void:
 
 
 func _test_distributed_scrapper_decisions() -> void:
-    var world := MAIN_SCENE.instantiate() as IronwrightPreAlphaWorld3D
+    var world := MAIN_SCENE.instantiate() as IronwrightReleaseWorld3D
     root.add_child(world)
     await process_frame
     await physics_frame
@@ -69,7 +70,7 @@ func _test_distributed_scrapper_decisions() -> void:
     _expect(int(snapshot.get("active_sites", 0)) >= 2, "The salvage network should span more than one physical site.")
     _expect("sites" in world.autonomy_director.operation_summary().to_lower(), "The operation summary must communicate that salvage is distributed over several sites.")
 
-    world.save_service.configure(TEST_SAVE_PATH)
+    world.transactional_save_service.configure(TEST_SAVE_ROOT, 3)
     world._save_game()
     _expect(FileAccess.file_exists(TEST_SAVE_PATH), "The save hook must write while distributed salvage is active.")
     world._load_game()
@@ -155,7 +156,7 @@ func _test_organic_ecology_behaviours() -> void:
 
 
 func _test_vertical_slice_presentation() -> void:
-    var world := MAIN_SCENE.instantiate() as IronwrightPreAlphaWorld3D
+    var world := MAIN_SCENE.instantiate() as IronwrightReleaseWorld3D
     root.add_child(world)
     await process_frame
     await process_frame
@@ -215,6 +216,6 @@ func _expect(condition: bool, message: String) -> void:
 
 
 func _cleanup_save_files() -> void:
-    for path in [TEST_SAVE_PATH, TEST_SAVE_PATH + ".bak1", TEST_SAVE_PATH + ".bak2", TEST_SAVE_PATH + ".tmp"]:
+    for path in [TEST_SAVE_PATH, TEST_SAVE_ROOT + "/world_0.backup_1.json", TEST_SAVE_ROOT + "/world_0.backup_2.json", TEST_SAVE_ROOT + "/world_0.backup_3.json", TEST_SAVE_ROOT + "/world_0.tmp"]:
         if FileAccess.file_exists(path):
             DirAccess.remove_absolute(ProjectSettings.globalize_path(path))

@@ -140,3 +140,7 @@ func _opening_salvage_target() -> SalvagePile3D:
             best = pile
             best_distance = distance
     return best
+
+
+func _on_heartforge_destroyed() -> void:
+    super._on_heartforge_destroyed()

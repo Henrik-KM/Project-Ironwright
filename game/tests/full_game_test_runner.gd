@@ -1,7 +1,8 @@
 extends SceneTree
 
 const MAIN_SCENE := preload("res://scenes/main_3d.tscn")
-const TEST_SAVE_PATH := "user://ironwright_outpost_checkpoint_test.json"
+const TEST_SAVE_ROOT := "user://ironwright_outpost_checkpoint_test"
+const TEST_SAVE_PATH := "user://ironwright_outpost_checkpoint_test/world_0.json"
 
 var failures: Array[String] = []
 
@@ -11,7 +12,7 @@ func _initialize() -> void:
 
 
 func _run_all() -> void:
-    var world := MAIN_SCENE.instantiate() as IronwrightFullGameWorld3D
+    var world := MAIN_SCENE.instantiate() as IronwrightReleaseWorld3D
     root.add_child(world)
     await process_frame
     await physics_frame
@@ -65,7 +66,7 @@ func _run_all() -> void:
     var initial_anchor: Vector3 = world.outpost_director.operation.get("anchor", start_position)
     _expect(initial_anchor.distance_to(site.global_position) > 10.0, "The construction team must begin at the Heartforge.")
 
-    world.save_service.configure(TEST_SAVE_PATH)
+    world.transactional_save_service.configure(TEST_SAVE_ROOT, 3)
     world._save_game()
     _expect(FileAccess.file_exists(TEST_SAVE_PATH), "The full-game save hook must write while an outpost convoy is in flight.")
     world._load_game()
@@ -166,6 +167,6 @@ func _expect(condition: bool, message: String) -> void:
 
 
 func _cleanup_save_files() -> void:
-    for path in [TEST_SAVE_PATH, TEST_SAVE_PATH + ".bak1", TEST_SAVE_PATH + ".bak2", TEST_SAVE_PATH + ".tmp"]:
+    for path in [TEST_SAVE_PATH, TEST_SAVE_ROOT + "/world_0.backup_1.json", TEST_SAVE_ROOT + "/world_0.backup_2.json", TEST_SAVE_ROOT + "/world_0.backup_3.json", TEST_SAVE_ROOT + "/world_0.tmp"]:
         if FileAccess.file_exists(path):
             DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
