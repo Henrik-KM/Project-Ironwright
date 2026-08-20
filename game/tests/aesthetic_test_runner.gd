@@ -298,7 +298,7 @@ func _enemy_model_has_details(enemy: OrganicEnemy3D, species: StringName) -> boo
         return false
     match species:
         &"skitterling":
-            return _find_named(enemy, "SkitterlingCarapace") != null and _find_named(enemy, "SkitterlingAntenna") != null
+            return _find_named(enemy, "SkitterlingCarapace0") != null and _find_named(enemy, "SkitterlingAntennaL") != null and _find_named(enemy, "SkitterlingMandibleL") != null
         &"razorhound":
             return _find_named(enemy, "RazorhoundSnout") != null and _find_named(enemy, "RazorhoundTail") != null and _find_named(enemy, "RazorhoundSpine") != null
         &"veilstalker":

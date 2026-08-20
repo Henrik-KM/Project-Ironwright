@@ -1,0 +1,10 @@
+{
+  "asset_id": "skitterling.scavenger.v1",
+  "display_name": "Skitterling scavenger shell",
+  "source": "game/assets/skitterling/source/build_skitterling_asset.py",
+  "runtime_path": "res://assets/skitterling/skitterling.gltf",
+  "quality": "authored_high_definition",
+  "license": "Original Project Ironwright asset",
+  "required_nodes": ["SkitterlingModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SkitterlingCarapace0", "SkitterlingAntennaL", "SkitterlingMandibleL", "SkitterlingSensoryFan0", "ProductionAssetMarker"],
+  "animation_clips": ["Idle", "Walk", "Attack"]
+}

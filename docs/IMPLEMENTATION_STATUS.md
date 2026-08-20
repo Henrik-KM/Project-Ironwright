@@ -396,6 +396,18 @@ identities. Manual channels remain finish-before-save.
 - live opening-route review confirmed the drilling silhouette remains readable
   without adding a new objective or recurring management task.
 
+## Focused authored Skitterling milestone
+
+- added an original high-definition glTF shell for the common scavenger, with
+  layered carapace ridges, paired antennae, mandibles, sensory fins and
+  articulated legs;
+- wired the shell into `OrganicEnemy3D` without changing noise attraction,
+  feeding, fleeing, attack timing or ecology;
+- retained stable carapace, antenna, mandible and sensory-fan names for import
+  validation and future state-driven motion refinement;
+- live opening-route review confirmed the common silhouette reads at gameplay
+  scale without adding a new objective or recurring management task.
+
 ## Focused channel-and-tracer feedback milestone
 
 - weapon fire now leaves a short-lived directional tracer between the firing
