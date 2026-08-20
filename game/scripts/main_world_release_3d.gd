@@ -345,8 +345,6 @@ func _start_release_world() -> void:
     release_front_end.hide_all()
     settings_service.apply_accessibility_to_tree(self)
     hud.push_notification("PROJECT IRONWRIGHT 1.0 RELEASE CANDIDATE · %s" % balance_director.current_profile_id.to_upper())
-
-
 func _show_pause_menu() -> void:
     if not release_started:
         return
