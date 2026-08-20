@@ -685,6 +685,17 @@ identities. Manual channels remain finish-before-save.
 - added native aesthetic coverage for the authored shell and constructor role
   silhouette.
 
+## Focused Buried Laboratories authored-vignette milestone
+
+- added a bounded containment-vessel bank with specimen consoles, protected
+  signal cores and capped vessels to give Buried Laboratories a readable
+  research identity at the normal tactical camera distance;
+- added an overhead transfer rail with three physical drop arms and a restrained
+  violet/cyan instrumentation palette;
+- kept the vignette presentation-only: region discovery, salvage, ecology,
+  collision, operations and persistence are unchanged;
+- added native aesthetic coverage for the containment vessels and transfer rail.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

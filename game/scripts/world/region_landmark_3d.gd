@@ -284,6 +284,24 @@ func _build_visuals() -> void:
             ModelKit3D.add_segmented_carapace(_visual_root, 3.6, Vector3(0.0, 2.2, -2.0), membrane, organic, Vector3(1.4, 0.9, 1.6), 5, "BroodMass")
             ModelKit3D.add_membrane_fan(_visual_root, 1.9, Vector3(0.0, 4.1, -2.0), membrane, 7, "BroodMembraneFan")
         &"research":
+            var research := Node3D.new()
+            research.name = "BuriedLaboratoriesIdentityDetails"
+            _visual_root.add_child(research)
+            var lab_glass := ModelKit3D.material(Color("31505a"), 0.12, 0.2, Color("6fc7d7"), 0.34)
+            var lab_signal := ModelKit3D.material(Color("262243"), 0.22, 0.38, Color("b08ce9"), 0.9)
+            var lab_trim := ModelKit3D.material(Color("7b503c"), 0.32, 0.72, Color("d78355"), 0.22)
+            for vessel_index in range(3):
+                var vessel_x := -4.5 + float(vessel_index) * 4.5
+                ModelKit3D.add_beveled_box(research, Vector3(2.45, 0.22, 1.7), Vector3(vessel_x, 0.3, 4.2), edge, Vector3.ZERO, "LabContainmentPlinth", 0.2)
+                ModelKit3D.add_cylinder(research, 0.82, 2.8, Vector3(vessel_x, 1.82, 4.2), lab_glass, Vector3.ZERO, "LabContainmentVessel")
+                ModelKit3D.add_cylinder(research, 0.1, 3.45, Vector3(vessel_x, 2.1, 4.2), lab_signal, Vector3.ZERO, "LabContainmentCore")
+                ModelKit3D.add_surface_panel(research, Vector3(1.35, 0.56, 0.1), Vector3(vessel_x, 0.88, 3.28), edge, lab_signal, Vector3.ZERO, "LabSpecimenConsole")
+                ModelKit3D.add_cylinder(research, 0.12, 1.4, Vector3(vessel_x, 3.55, 4.2), lab_trim, Vector3.ZERO, "LabVesselCap")
+            _add_beam(research, Vector3(-6.0, 4.45, 4.2), Vector3(6.0, 4.45, 4.2), 0.085, metal, "LabTransferRail")
+            for vessel_index in range(3):
+                var vessel_x := -4.5 + float(vessel_index) * 4.5
+                _add_beam(research, Vector3(vessel_x, 4.4, 4.2), Vector3(vessel_x, 3.6, 4.2), 0.055, lab_trim, "LabTransferDrop")
+            ModelKit3D.add_beveled_box(research, Vector3(11.6, 0.12, 0.18), Vector3(0.0, 4.62, 4.2), lab_signal, Vector3.ZERO, "LabTransferSignal", 0.1)
             _add_ruin_block(Vector3(-6.5, -1.0, 0.0), Vector3(10.0, 3.0, 11.0), concrete)
             _add_ruin_block(Vector3(7.0, -1.6, -5.0), Vector3(8.0, 2.2, 7.0), metal)
             ModelKit3D.add_beveled_box(_visual_root, Vector3(6.6, 0.32, 2.0), Vector3(0.0, 0.18, 9.0), edge, Vector3.ZERO, "LabAccess", 0.24)
