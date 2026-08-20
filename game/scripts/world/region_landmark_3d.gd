@@ -209,9 +209,31 @@ func _build_visuals() -> void:
             var waterfront := Node3D.new()
             waterfront.name = "WaterfrontIdentityDetails"
             _visual_root.add_child(waterfront)
-            ModelKit3D.add_beveled_box(waterfront, Vector3(16.0, 2.6, 1.0), Vector3(0.0, 1.3, 6.6), concrete, Vector3(0.0, 0.0, 0.0), "RetainingWall", 0.2)
-            var water := ModelKit3D.material(Color("193a43"), 0.38, 0.18, Color("2c8790"), 0.35)
+            var retaining := ModelKit3D.material(Color("2d3c3f"), 0.28, 0.78)
+            ModelKit3D.add_beveled_box(waterfront, Vector3(16.0, 2.6, 1.0), Vector3(0.0, 1.3, 6.6), retaining, Vector3(0.0, 0.0, 0.0), "RetainingWall", 0.2)
+            var water := ModelKit3D.material(Color("0c303a"), 0.3, 0.24, Color("2a7f8a"), 0.16)
+            var waterline := ModelKit3D.material(Color("1b5960"), 0.46, 0.2, Color("69d4c7"), 0.42)
+            var sluice_metal := ModelKit3D.material(Color("26383b"), 0.68, 0.42)
+            var sluice_rust := ModelKit3D.material(Color("855035"), 0.36, 0.68, Color("dd7748"), 0.3)
+            var river_growth := ModelKit3D.material(Color("1a4540"), 0.04, 0.78, Color("5fd0a3"), 0.3)
             ModelKit3D.add_box(waterfront, Vector3(15.0, 0.035, 5.6), Vector3(0.0, 0.06, 10.0), water, Vector3.ZERO, "Floodwater")
+            var sluice := Node3D.new()
+            sluice.name = "RiverworksSluiceDetails"
+            waterfront.add_child(sluice)
+            ModelKit3D.add_beveled_box(sluice, Vector3(16.0, 0.12, 0.18), Vector3(0.0, 2.64, 6.58), sluice_metal, Vector3.ZERO, "RetainingWallCap", 0.12)
+            ModelKit3D.add_beveled_box(sluice, Vector3(13.2, 0.035, 1.35), Vector3(0.0, 0.13, 7.48), water, Vector3(0.0, 0.0, 0.02), "RiverWaterChannel", 0.12)
+            ModelKit3D.add_beveled_box(sluice, Vector3(6.0, 1.95, 0.24), Vector3(0.0, 1.18, 6.02), sluice_metal, Vector3.ZERO, "SluiceGate", 0.16)
+            for rib_index in range(3):
+                var rib_x := -2.0 + float(rib_index) * 2.0
+                _add_beam(sluice, Vector3(rib_x, 0.38, 5.84), Vector3(rib_x, 2.05, 5.84), 0.065, sluice_rust, "SluiceGateRib")
+            ModelKit3D.add_surface_panel(sluice, Vector3(1.2, 0.62, 0.1), Vector3(0.0, 1.38, 5.82), sluice_metal, waterline, Vector3.ZERO, "SluiceControlPanel")
+            for pylon_index in range(4):
+                var pylon_x := -6.0 + float(pylon_index) * 4.0
+                ModelKit3D.add_cylinder(sluice, 0.12, 2.8, Vector3(pylon_x, 1.42, 8.25), sluice_metal, Vector3.ZERO, "RiverDockPylon")
+                ModelKit3D.add_beveled_box(sluice, Vector3(2.6, 0.055, 0.08), Vector3(pylon_x, 0.22, 8.12), waterline, Vector3(0.0, 0.0, 0.04 * float(pylon_index - 1)), "RiverWaterlineBreak", 0.1)
+            for growth_index in range(3):
+                var growth_x := -5.0 + float(growth_index) * 5.0
+                ModelKit3D.add_membrane_fan(sluice, 0.55, Vector3(growth_x, 0.42, 9.1), river_growth, 5, "RiverbankGrowth")
             for index in range(3):
                 ModelKit3D.add_beveled_box(waterfront, Vector3(2.0, 1.8, 1.7), Vector3(-5.0 + float(index) * 5.0, 0.92, 3.8), metal, Vector3(0.0, 0.12 * float(index), 0.0), "PumpHousing", 0.18)
                 ModelKit3D.add_cylinder(waterfront, 0.16, 2.6, Vector3(-5.0 + float(index) * 5.0, 2.2, 3.8), rust, Vector3.ZERO, "PumpPipe")
