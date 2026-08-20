@@ -75,6 +75,7 @@ func _build_vertical_slice() -> void:
     _polish_environment()
     _replace_central_building_visuals()
     _build_heartforge_plaza()
+    _build_foreground_refuge_threshold()
     _build_service_lane()
     _build_street_encounter_dressing()
     _build_sanctuary_perimeter()
@@ -242,6 +243,63 @@ func _build_heartforge_plaza() -> void:
     _add_puddle(plaza, Vector3(-7.0, 0.115, 3.2), Vector2(2.6, 1.1), -0.22)
     _add_puddle(plaza, Vector3(6.4, 0.115, -5.6), Vector2(2.0, 0.8), 0.31)
     _add_puddle(plaza, Vector3(1.8, 0.115, 8.4), Vector2(1.6, 0.62), -0.12)
+
+
+func _build_foreground_refuge_threshold() -> void:
+    var threshold := Node3D.new()
+    threshold.name = "ForegroundRefugeThreshold"
+    root.add_child(threshold)
+
+    var slab := ModelKit3D.material(Color("39484b"), 0.28, 0.62)
+    var slab_edge := ModelKit3D.material(Color("1b2528"), 0.62, 0.48)
+    var route_glow := ModelKit3D.material(Color("315b60"), 0.32, 0.46, Color("74d6db"), 0.72)
+
+    # The lower tactical frame is the player's first lived-in threshold, not
+    # an empty camera margin. Broken service slabs add scale and depth while
+    # remaining presentation-only and outside the collision-owning city kit.
+    for index in range(6):
+        var z := 7.0 + float(index) * 1.75
+        var width := 5.5 - float(index % 3) * 0.34
+        var offset_x := -0.16 if index % 2 == 0 else 0.12
+        ModelKit3D.add_beveled_box(
+            threshold,
+            Vector3(width, 0.09, 1.18),
+            Vector3(offset_x, 0.12, z),
+            slab,
+            Vector3(0.0, 0.012 * float(index % 2), 0.0),
+            "ThresholdSlab",
+            0.22
+        )
+        ModelKit3D.add_beveled_box(
+            threshold,
+            Vector3(width * 0.78, 0.035, 0.08),
+            Vector3(offset_x, 0.19, z - 0.42),
+            slab_edge,
+            Vector3.ZERO,
+            "ThresholdSeam",
+            0.12
+        )
+
+    for side in [-1.0, 1.0]:
+        for index in range(3):
+            var z := 8.2 + float(index) * 3.5
+            ModelKit3D.add_beveled_box(
+                threshold,
+                Vector3(0.14, 0.16, 1.4),
+                Vector3(side * 2.82, 0.2, z),
+                route_glow,
+                Vector3.ZERO,
+                "ThresholdRouteMarker",
+                0.16
+            )
+
+    _add_puddle(threshold, Vector3(0.4, 0.19, 14.3), Vector2(2.3, 0.58), 0.18)
+    var left_light := _add_light(threshold, Vector3(-2.75, 0.72, 11.0), Color("6ebac3"), 0.22, 5.2, false)
+    left_light.set_meta(&"vertical_base_energy", 0.22)
+    practical_lights.append(left_light)
+    var right_light := _add_light(threshold, Vector3(2.75, 0.72, 15.1), Color("d58c56"), 0.18, 5.2, false)
+    right_light.set_meta(&"vertical_base_energy", 0.18)
+    practical_lights.append(right_light)
 
 
 func _build_service_lane() -> void:
