@@ -79,6 +79,10 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
   contextual onboarding cues: they fade from settled play while objectives,
   reserves, health, operation state, direct interaction prompts and map mode
   remain legible.
+- level 2 and level 3 machine frames now visibly evolve with raised shoulder
+  rails, signal strips, dorsal service panels and a final crown/status assembly,
+  so late autonomous capability changes the town's material language instead
+  of remaining a hidden stat multiplier.
 
 Clutter must leave important routes readable from the high-angle camera.
 
