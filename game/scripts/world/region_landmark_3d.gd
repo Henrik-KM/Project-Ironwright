@@ -109,6 +109,7 @@ func _build_visuals() -> void:
     var rust := ModelKit3D.material(Color("774a32"), 0.34, 0.79)
     var organic := ModelKit3D.material(Color("25171d"), 0.0, 0.96)
     var membrane := ModelKit3D.material(Color("3c1827"), 0.0, 0.82, Color("8e233a"), 0.65)
+    var edge := ModelKit3D.material(Color("1f292b"), 0.52, 0.46)
 
     match region_kind:
         &"sanctuary":
@@ -117,26 +118,33 @@ func _build_visuals() -> void:
             _add_ruin_block(Vector3(-7.0, 0.0, -5.0), Vector3(8.0, 7.0, 5.0), metal)
             _add_ruin_block(Vector3(7.0, 0.0, 6.0), Vector3(10.0, 4.5, 6.0), concrete)
             ModelKit3D.add_cylinder(_visual_root, 1.4, 7.5, Vector3(11.0, 3.75, -7.0), rust, Vector3.ZERO, "SubstationTank")
+            ModelKit3D.add_beveled_box(_visual_root, Vector3(3.4, 0.28, 2.5), Vector3(11.0, 0.18, -7.0), edge, Vector3.ZERO, "SubstationTankPlinth", 0.22)
+            ModelKit3D.add_surface_panel(_visual_root, Vector3(1.5, 1.0, 0.1), Vector3(11.0, 3.1, -8.38), edge, rust, Vector3.ZERO, "SubstationAccessPanel")
         &"commercial":
             _add_ruin_block(Vector3(-8.0, 0.0, 0.0), Vector3(7.0, 5.0, 12.0), brick)
             _add_ruin_block(Vector3(8.0, 0.0, -2.0), Vector3(7.0, 6.5, 10.0), concrete)
             for index in range(7):
-                ModelKit3D.add_box(_visual_root, Vector3(2.2, 0.18, 1.5), Vector3(-6.0 + float(index) * 2.0, 0.12, 7.0), metal, Vector3.ZERO, "MarketTable")
+                ModelKit3D.add_beveled_box(_visual_root, Vector3(2.2, 0.18, 1.5), Vector3(-6.0 + float(index) * 2.0, 0.12, 7.0), metal, Vector3.ZERO, "MarketTable", 0.24)
+                ModelKit3D.add_box(_visual_root, Vector3(1.7, 0.035, 0.1), Vector3(-6.0 + float(index) * 2.0, 0.24, 6.22), rust, Vector3.ZERO, "MarketTableTrim")
         &"nest":
             _add_ruin_block(Vector3(0.0, 0.0, 4.0), Vector3(12.0, 12.0, 8.0), brick)
             for index in range(9):
                 var angle := TAU * float(index) / 9.0
                 ModelKit3D.add_capsule(_visual_root, 0.55, 5.2 + float(index % 3), Vector3(cos(angle) * 8.0, 2.4, sin(angle) * 8.0), organic, Vector3(0.2, angle, 0.25), "BroodSpire")
-            ModelKit3D.add_sphere(_visual_root, 3.6, Vector3(0.0, 2.2, -2.0), membrane, Vector3(1.4, 0.9, 1.6), "BroodMass")
+            ModelKit3D.add_segmented_carapace(_visual_root, 3.6, Vector3(0.0, 2.2, -2.0), membrane, organic, Vector3(1.4, 0.9, 1.6), 5, "BroodMass")
+            ModelKit3D.add_membrane_fan(_visual_root, 1.9, Vector3(0.0, 4.1, -2.0), membrane, 7, "BroodMembraneFan")
         &"research":
             _add_ruin_block(Vector3(-6.5, -1.0, 0.0), Vector3(10.0, 3.0, 11.0), concrete)
             _add_ruin_block(Vector3(7.0, -1.6, -5.0), Vector3(8.0, 2.2, 7.0), metal)
-            ModelKit3D.add_cylinder(_visual_root, 3.2, 0.45, Vector3(0.0, 0.15, 9.0), metal, Vector3.ZERO, "LabAccess")
+            ModelKit3D.add_beveled_box(_visual_root, Vector3(6.6, 0.32, 2.0), Vector3(0.0, 0.18, 9.0), edge, Vector3.ZERO, "LabAccess", 0.24)
+            ModelKit3D.add_surface_panel(_visual_root, Vector3(2.2, 0.8, 0.1), Vector3(0.0, 0.62, 7.92), edge, membrane, Vector3.ZERO, "LabAccessPanel")
         &"endgame":
             for index in range(6):
                 var angle := TAU * float(index) / 6.0
-                ModelKit3D.add_cylinder(_visual_root, 1.15, 8.0, Vector3(cos(angle) * 8.5, 4.0, sin(angle) * 8.5), concrete, Vector3.ZERO, "CisternPillar")
-            ModelKit3D.add_sphere(_visual_root, 4.4, Vector3(0.0, 1.4, 0.0), membrane, Vector3(1.35, 0.48, 1.35), "RootOrgan")
+                ModelKit3D.add_tapered_cylinder(_visual_root, 0.98, 1.25, 8.0, Vector3(cos(angle) * 8.5, 4.0, sin(angle) * 8.5), concrete, Vector3.ZERO, "CisternPillar")
+                ModelKit3D.add_beveled_box(_visual_root, Vector3(1.9, 0.28, 1.9), Vector3(cos(angle) * 8.5, 0.18, sin(angle) * 8.5), edge, Vector3.ZERO, "CisternFoot", 0.26)
+            ModelKit3D.add_segmented_carapace(_visual_root, 4.4, Vector3(0.0, 1.4, 0.0), membrane, organic, Vector3(1.35, 0.48, 1.35), 6, "RootOrgan")
+            ModelKit3D.add_membrane_fan(_visual_root, 2.2, Vector3(0.0, 2.8, 0.0), membrane, 7, "RootOrganFan")
         _:
             _add_ruin_block(Vector3(-5.0, 0.0, 0.0), Vector3(7.0, 6.0, 8.0), brick)
             _add_ruin_block(Vector3(6.0, 0.0, -4.0), Vector3(6.0, 4.0, 7.0), concrete)
@@ -168,13 +176,34 @@ func _build_visuals() -> void:
 
 
 func _add_ruin_block(origin: Vector3, size: Vector3, material: Material) -> void:
-    ModelKit3D.add_box(_visual_root, size, origin + Vector3(0.0, size.y * 0.5, 0.0), material, Vector3.ZERO, "RuinBlock")
+    ModelKit3D.add_beveled_box(_visual_root, size, origin + Vector3(0.0, size.y * 0.5, 0.0), material, Vector3.ZERO, "RuinBlock", 0.12)
+    var edge := ModelKit3D.material(Color("1f292b"), 0.52, 0.46)
+    var pier_height := minf(size.y * 0.86, 7.2)
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(
+            _visual_root,
+            Vector3(0.22, pier_height, 0.24),
+            origin + Vector3(side * size.x * 0.4, pier_height * 0.5, -size.z * 0.52),
+            edge,
+            Vector3.ZERO,
+            "RuinCornerPier",
+            0.3
+        )
+    ModelKit3D.add_beveled_box(
+        _visual_root,
+        Vector3(size.x * 0.9, 0.16, size.z * 0.9),
+        origin + Vector3(0.0, size.y + 0.08, 0.0),
+        edge,
+        Vector3(0.0, 0.02, 0.0),
+        "RuinRoofCap",
+        0.24
+    )
     var dark := ModelKit3D.material(Color("171a1b"), 0.0, 0.98)
     for floor_index in range(maxi(1, int(size.y / 2.2))):
         for window_index in range(3):
             var x := origin.x - size.x * 0.3 + float(window_index) * size.x * 0.3
             var y := origin.y + 1.2 + float(floor_index) * 2.0
-            ModelKit3D.add_box(_visual_root, Vector3(0.7, 0.75, 0.08), Vector3(x, y, origin.z - size.z * 0.51), dark, Vector3.ZERO, "DarkWindow")
+            ModelKit3D.add_surface_panel(_visual_root, Vector3(0.7, 0.75, 0.08), Vector3(x, y, origin.z - size.z * 0.51), dark, edge, Vector3.ZERO, "DarkWindow")
 
 
 func _refresh_discovery() -> void:
