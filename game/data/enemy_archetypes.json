@@ -1,18 +1,19 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "enemy_origin": "organic",
+  "tier_system": "population_driven_enemy_escalation",
   "archetypes": [
-    {"id": "enemy.skitterling", "runtime_species": "skitterling", "display_name": "Skitterling", "role": "scavenger", "core_behaviours": ["approach_noise", "feed_on_loose_material", "flee_strong_resistance"]},
-    {"id": "enemy.razorhound", "runtime_species": "razorhound", "display_name": "Razorhound", "role": "pack_hunter", "core_behaviours": ["pressure_front", "circle_isolated_machine", "pursue_retreat"]},
-    {"id": "enemy.veilstalker", "runtime_species": "veilstalker", "display_name": "Veilstalker", "role": "excursion_predator", "core_behaviours": ["remain_near_light_edge", "test_vulnerability", "attack_opportunity", "retreat_from_static_defence"]},
-    {"id": "enemy.burrower", "runtime_species": "burrower", "display_name": "Undermaw", "role": "subterranean_pressure", "core_behaviours": ["follow_vibration", "bypass_perimeter", "surface_briefly", "retreat_when_exposed"]},
-    {"id": "enemy.sporecaster", "runtime_species": "sporecaster", "display_name": "Sporecaster", "role": "ranged_infestation", "core_behaviours": ["hold_distance", "seed_machine_routes", "impair_sensors", "retreat_from_pursuit"]},
-    {"id": "enemy.broodmass", "runtime_species": "broodmass", "display_name": "Broodmass", "role": "nest_guardian", "core_behaviours": ["protect_brood", "anchor_local_pressure", "draw_lesser_organisms", "advance_slowly"]},
-    {"id": "enemy.apex", "runtime_species": "apex", "display_name": "Crownbeast", "role": "apex_organism", "core_behaviours": ["alter_lesser_movement", "patrol_territory", "respond_to_major_provocation", "create_regional_constraint"]},
-    {"id": "enemy.roofleaper", "runtime_species": "roofleaper", "display_name": "Roofleaper", "role": "vertical_ambusher", "core_behaviours": ["use_tenement_rooflines", "leap_between_cover", "target_pathfinders", "break_contact_quickly"]},
-    {"id": "enemy.glassmoth", "runtime_species": "glassmoth", "display_name": "Glassmoth", "role": "luminous_spore_swarm", "core_behaviours": ["orbit_light_sources", "release_disorienting_spores", "scatter_when_hit", "reform_near_membrane_growth"]},
-    {"id": "enemy.miremaw", "runtime_species": "miremaw", "display_name": "Miremaw", "role": "amphibious_heavy", "core_behaviours": ["hide_in_floodwater", "charge_heavy_machines", "drag_disabled_targets", "defend_water_routes"]},
-    {"id": "enemy.carrionbell", "runtime_species": "carrionbell", "display_name": "Carrion Bell", "role": "ecological_signal_support", "core_behaviours": ["broadcast_machine_location", "amplify_nearby_aggression", "withdraw_behind_pack", "feed_on_carcasses"]},
-    {"id": "enemy.rootweaver", "runtime_species": "rootweaver", "display_name": "Rootweaver", "role": "late_game_route_controller", "core_behaviours": ["grow_temporary_root_barriers", "redirect_pack_movement", "target_outpost_service_zones", "retreat_toward_cistern"]}
+    {"id": "enemy.skitterling", "runtime_species": "skitterling", "display_name": "Skitterling", "tier": 1, "tier_role": "feral_population", "role": "scavenger", "core_behaviours": ["random_roam", "direct_visual_engagement"]},
+    {"id": "enemy.razorhound", "runtime_species": "razorhound", "display_name": "Razorhound", "tier": 2, "tier_role": "territorial_pack", "role": "pack_hunter", "core_behaviours": ["patrol_nest_territory", "protect_brood", "primitive_pack_response"]},
+    {"id": "enemy.roofleaper", "runtime_species": "roofleaper", "display_name": "Roofleaper", "tier": 2, "tier_role": "territorial_ambusher", "role": "vertical_ambusher", "core_behaviours": ["patrol_tenement_edges", "ambush_visible_intruders", "return_to_territory"]},
+    {"id": "enemy.glassmoth", "runtime_species": "glassmoth", "display_name": "Glassmoth", "tier": 2, "tier_role": "territorial_swarm", "role": "luminous_spore_swarm", "core_behaviours": ["orbit_brood_growth", "respond_to_nearby_disturbance", "defend_membrane_territory"]},
+    {"id": "enemy.veilstalker", "runtime_species": "veilstalker", "display_name": "Veilstalker", "tier": 3, "tier_role": "purposeful_scout", "role": "excursion_predator", "core_behaviours": ["scout_machine_routes", "remember_last_known_prey", "test_vulnerability", "withdraw_and_return"]},
+    {"id": "enemy.burrower", "runtime_species": "burrower", "display_name": "Undermaw", "tier": 3, "tier_role": "purposeful_hunter", "role": "subterranean_pressure", "core_behaviours": ["patrol_vibration_routes", "bypass_perimeter", "hunt_known_activity", "retreat_when_exposed"]},
+    {"id": "enemy.sporecaster", "runtime_species": "sporecaster", "display_name": "Sporecaster", "tier": 3, "tier_role": "purposeful_route_denial", "role": "ranged_infestation", "core_behaviours": ["scout_machine_routes", "hold_distance", "seed_known_approaches", "share_detection"]},
+    {"id": "enemy.broodmass", "runtime_species": "broodmass", "display_name": "Broodmass", "tier": 4, "tier_role": "strategic_nest_anchor", "role": "nest_guardian", "core_behaviours": ["reinforce_threatened_nests", "anchor_local_pressure", "draw_lesser_organisms", "target_assault_groups"]},
+    {"id": "enemy.miremaw", "runtime_species": "miremaw", "display_name": "Miremaw", "tier": 4, "tier_role": "strategic_interceptor", "role": "amphibious_heavy", "core_behaviours": ["intercept_machine_routes", "target_heavy_escorts", "control_water_crossings", "retreat_to_ambush"]},
+    {"id": "enemy.carrionbell", "runtime_species": "carrionbell", "display_name": "Carrion Bell", "tier": 4, "tier_role": "strategic_signal_support", "role": "ecological_signal_support", "core_behaviours": ["broadcast_machine_routes", "amplify_nearby_aggression", "withdraw_behind_pack", "prioritize_remote_operations"]},
+    {"id": "enemy.rootweaver", "runtime_species": "rootweaver", "display_name": "Rootweaver", "tier": 4, "tier_role": "strategic_route_controller", "role": "late_game_route_controller", "core_behaviours": ["intercept_known_routes", "target_engineers_and_scrappers", "pressure_outpost_service_zones", "retreat_toward_cistern"]},
+    {"id": "enemy.apex", "runtime_species": "apex", "display_name": "Crownbeast", "tier": 5, "tier_role": "regional_apex", "role": "apex_organism", "core_behaviours": ["maintain_regional_territory", "alter_lesser_movement", "respond_to_major_provocation", "pressure_critical_infrastructure"]}
   ]
 }

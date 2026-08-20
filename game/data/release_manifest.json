@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "release_id": "ironwright_1_0_rc1",
   "display_version": "1.0.0-rc.1",
   "release_channel": "release_candidate",
@@ -19,7 +19,10 @@
     "spatial_index",
     "performance_director",
     "balance_director",
-    "release_front_end"
+    "release_front_end",
+    "enemy_tier_director",
+    "physical_nest_network",
+    "enemy_tier_event_bridge"
   ],
   "release_gates": {
     "headless_import": true,
@@ -30,7 +33,11 @@
     "localization_catalog_parity_test": true,
     "performance_lod_test": true,
     "release_asset_presence_test": true,
-    "export_presets_present": true
+    "export_presets_present": true,
+    "population_cap_test": true,
+    "saturation_transfer_test": true,
+    "physical_nest_source_test": true,
+    "tier_intelligence_test": true
   },
   "commercial_scope": {
     "single_player": true,
@@ -38,9 +45,12 @@
     "complete_victory_paths": 2,
     "ordinary_resources": ["scrap"],
     "organic_enemy_families_target": 12,
+    "enemy_intelligence_tiers": 5,
     "world_regions_target": 12,
     "long_range_operations_target": 12,
     "outpost_roles": 4,
-    "heartforge_tiers": 5
+    "heartforge_tiers": 5,
+    "recurring_wave_loop": false,
+    "ordinary_enemy_birth_source": "physical_organic_nests"
   }
 }

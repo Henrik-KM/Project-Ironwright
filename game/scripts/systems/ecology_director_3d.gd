@@ -3,6 +3,7 @@ extends Node
 
 signal pressure_changed(value: float)
 signal nest_activity_changed(index: int, activity: StringName)
+signal nest_destroyed(index: int)
 
 var noise_system: NoiseSystem3D
 var player_reference: Node3D
@@ -17,6 +18,7 @@ var nest_positions: Array[Vector3] = [
 var nest_population: Array[float] = [2.5, 2.0, 2.2, 1.8]
 var nest_activity: Array[StringName] = [&"guard", &"scout", &"roam", &"hunt"]
 var nest_radii: Array[float] = [18.0, 20.0, 19.0, 21.0]
+var nest_active: Array[bool] = [true, true, true, true]
 var world_pressure: float = 0.18
 var pending_noise_budget: float = 0.0
 var last_noise_position: Vector3 = Vector3.ZERO
@@ -25,6 +27,7 @@ var passive_clock: float = 0.0
 var strategic_clock: float = 0.0
 var initial_spawned: bool = false
 var spawn_serial: int = 0
+var external_population_control: bool = false
 
 
 func configure(
@@ -41,33 +44,66 @@ func configure(
         noise_system.noise_emitted.connect(_on_noise)
 
 
+func set_external_population_control(value: bool) -> void:
+    external_population_control = value
+    if value:
+        # Existing organisms remain real and continue reacting to sound, but
+        # the tier director becomes the only system allowed to create births.
+        initial_spawned = true
+        spawn_cooldown = 0.0
+        passive_clock = 0.0
+        pending_noise_budget = minf(pending_noise_budget, 3.0)
+
+
+func mark_nest_destroyed(index: int) -> void:
+    if index < 0 or index >= nest_active.size() or not nest_active[index]:
+        return
+    nest_active[index] = false
+    nest_population[index] = 0.0
+    nest_activity[index] = &"dormant"
+    nest_activity_changed.emit(index, &"dormant")
+    nest_destroyed.emit(index)
+
+
 func _process(delta: float) -> void:
     spawn_cooldown = maxf(0.0, spawn_cooldown - delta)
     passive_clock += delta
     strategic_clock += delta
-    for index in range(nest_population.size()):
-        nest_population[index] = minf(8.0, nest_population[index] + delta * (0.014 + world_pressure * 0.018))
 
-    if not initial_spawned:
-        initial_spawned = true
-        _spawn_initial_ecology()
+    if not external_population_control:
+        for index in range(nest_population.size()):
+            if nest_active[index]:
+                nest_population[index] = minf(8.0, nest_population[index] + delta * (0.014 + world_pressure * 0.018))
+
+        if not initial_spawned:
+            initial_spawned = true
+            _spawn_initial_ecology()
 
     if strategic_clock >= 13.0:
         strategic_clock = 0.0
         _reassess_nest_activity()
+
+    if external_population_control:
+        # Noise remains an attention signal for organisms already in the
+        # physical world. It is not an uncapped second spawning economy.
+        pending_noise_budget = minf(pending_noise_budget, 3.0)
+        return
 
     var active_count := get_tree().get_nodes_in_group(&"organic_enemies").size()
     var passive_cap := 5 + int(world_pressure * 7.0)
     if passive_clock >= 7.0 and active_count < passive_cap and spawn_cooldown <= 0.0:
         passive_clock = 0.0
         var nest_index := _best_nest_for_position(heartforge_reference.global_position)
-        _spawn_from_nest(nest_index, _ambient_species(), _directive_for_spawn(nest_index, _ambient_species()))
+        if nest_index >= 0:
+            var species := _ambient_species()
+            _spawn_from_nest(nest_index, species, _directive_for_spawn(nest_index, species))
 
     if pending_noise_budget >= 0.72 and spawn_cooldown <= 0.0:
         pending_noise_budget -= 0.72
         var nest_index := _best_nest_for_position(last_noise_position)
-        var species := _species_for_pressure()
-        _spawn_from_nest(nest_index, species, &"hunt" if world_pressure >= 0.42 else _directive_for_spawn(nest_index, species))
+        if nest_index >= 0:
+            var species := _species_for_pressure()
+            _spawn_from_nest(nest_index, species, &"hunt" if world_pressure >= 0.42 else _directive_for_spawn(nest_index, species))
 
 
 func _on_noise(position: Vector3, radius: float, intensity: float, source_kind: StringName) -> void:
@@ -91,7 +127,12 @@ func _spawn_initial_ecology() -> void:
 
 
 func _spawn_from_nest(index: int, species: StringName, directive: StringName = &"") -> void:
-    if index < 0 or index >= nest_positions.size() or nest_population[index] < 1.0:
+    if (
+        index < 0
+        or index >= nest_positions.size()
+        or not nest_active[index]
+        or nest_population[index] < 1.0
+    ):
         return
     nest_population[index] -= 1.0
     spawn_serial += 1
@@ -121,6 +162,11 @@ func _spawn_enemy(position: Vector3, species: StringName, nest_index: int = -1, 
 
 func _reassess_nest_activity() -> void:
     for index in range(nest_positions.size()):
+        if not nest_active[index]:
+            if nest_activity[index] != &"dormant":
+                nest_activity[index] = &"dormant"
+                nest_activity_changed.emit(index, &"dormant")
+            continue
         var previous := nest_activity[index]
         var distance_to_player := nest_positions[index].distance_to(player_reference.global_position) if player_reference != null else 999.0
         var distance_to_noise := nest_positions[index].distance_to(last_noise_position)
@@ -167,10 +213,10 @@ func _directive_for_spawn(index: int, species: StringName) -> StringName:
 
 
 func _best_nest_for_position(position: Vector3) -> int:
-    var best_index := 0
+    var best_index := -1
     var best_distance := INF
     for index in range(nest_positions.size()):
-        if nest_population[index] < 1.0:
+        if not nest_active[index] or nest_population[index] < 1.0:
             continue
         var current_distance := nest_positions[index].distance_to(position)
         if current_distance < best_distance:
@@ -183,6 +229,8 @@ func _nearest_nest_index(position: Vector3) -> int:
     var best_index := -1
     var best_distance := INF
     for index in range(nest_positions.size()):
+        if not nest_active[index]:
+            continue
         var current_distance := nest_positions[index].distance_to(position)
         if current_distance < best_distance:
             best_index = index
@@ -217,6 +265,7 @@ func nest_snapshot() -> Array[Dictionary]:
             "population": nest_population[index],
             "activity": nest_activity[index],
             "radius": nest_radii[index],
+            "active": nest_active[index],
         })
     return result
 
@@ -229,9 +278,11 @@ func to_dictionary() -> Dictionary:
         "world_pressure": world_pressure,
         "nest_population": nest_population.duplicate(),
         "nest_activity": activities,
+        "nest_active": nest_active.duplicate(),
         "pending_noise_budget": pending_noise_budget,
         "last_noise_position": [last_noise_position.x, last_noise_position.y, last_noise_position.z],
         "spawn_serial": spawn_serial,
+        "external_population_control": external_population_control,
     }
 
 
@@ -243,8 +294,15 @@ func restore_from_dictionary(data: Dictionary) -> void:
     var saved_activity: Array = data.get("nest_activity", [])
     for index in range(mini(saved_activity.size(), nest_activity.size())):
         nest_activity[index] = StringName(str(saved_activity[index]))
+    var saved_active: Array = data.get("nest_active", [])
+    for index in range(mini(saved_active.size(), nest_active.size())):
+        nest_active[index] = bool(saved_active[index])
+        if not nest_active[index]:
+            nest_population[index] = 0.0
+            nest_activity[index] = &"dormant"
     pending_noise_budget = float(data.get("pending_noise_budget", 0.0))
     spawn_serial = maxi(0, int(data.get("spawn_serial", spawn_serial)))
+    external_population_control = bool(data.get("external_population_control", external_population_control))
     var saved_position: Array = data.get("last_noise_position", [])
     if saved_position.size() >= 3:
         last_noise_position = Vector3(float(saved_position[0]), float(saved_position[1]), float(saved_position[2]))

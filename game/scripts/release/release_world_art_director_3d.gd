@@ -96,6 +96,12 @@ func _texture_subtree_id(instance_id: int) -> void:
     _texture_recursive(node)
 
 
+func apply_to_node(node: Node) -> void:
+    if node == null or not is_instance_valid(node) or node == dressing_root:
+        return
+    _texture_recursive(node)
+
+
 func _texture_mesh(mesh_instance: MeshInstance3D) -> void:
     if mesh_instance.has_meta(&"release_material_family"):
         return

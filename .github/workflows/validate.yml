@@ -11,7 +11,7 @@ permissions:
 jobs:
   validate-browser-and-contracts:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 18
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -21,15 +21,15 @@ jobs:
         with:
           node-version: 22
 
-      - name: Validate browser reference, release assets and product contracts
+      - name: Validate browser reference, tier ecology and product contracts
         run: npm run validate
 
-      - name: Validate aesthetic integration
-        run: python3 scripts/validate_aesthetic.py
+      - name: Validate inherited aesthetic integration
+        run: python scripts/validate_tiered_aesthetic.py
 
   validate-native-godot:
     runs-on: ubuntu-latest
-    timeout-minutes: 32
+    timeout-minutes: 38
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -70,6 +70,9 @@ jobs:
 
       - name: Run operation detail transition tests
         run: godot --headless --path game --script res://tests/operation_detail_test_runner.gd
+
+      - name: Run population-driven enemy tier tests
+        run: godot --headless --path game --script res://tests/enemy_tier_progression_test_runner.gd
 
       - name: Run commercial release tests
         run: godot --headless --path game --script res://tests/release_test_runner.gd
