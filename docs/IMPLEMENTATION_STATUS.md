@@ -50,6 +50,7 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - discovery, ecological pressure and suppression state;
 - region-specific physical salvage after discovery;
 - authored visual identity for every district kind, including original high-definition Riverworks pump/sluice, Cathedral nave/choir and Observatory survey landmark shells plus the authored Root Cistern organ shell.
+- the Tram Graveyard now has an original high-definition carriage and maintenance landmark shell while retaining the existing rail encounter and operation contracts.
 
 ### Long-range operations
 
@@ -614,6 +615,17 @@ identities. Manual channels remain finish-before-save.
 - native aesthetic and release coverage verifies the named dish/feed sockets
   and deterministic survey motion; live district review remains required for
   this new slice.
+
+## Focused Tram Graveyard authored-space milestone
+
+- added the original high-definition `tram.graveyard.v1` shell with damaged
+  carriages, readable windows and door hardware, rails and sleepers,
+  maintenance pit, overhead service frame, signal mast and restrained organic
+  seepage;
+- retained the existing rail encounter dressing, salvage, route, ecology,
+  discovery and operation ownership; the new geometry is presentation-only;
+- native aesthetic and release coverage verifies the named sockets and
+  deterministic signal/seepage motion; live district review remains required.
 
 ## Focused remote-ground continuity milestone
 

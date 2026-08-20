@@ -116,6 +116,17 @@ func _run_all() -> void:
                 _expect(landmark.find_child("TramMaintenanceBay", true, false) != null, "Tram Graveyard must expose an authored maintenance bay.")
                 _expect(landmark.find_child("TramCarriageDoor", true, false) != null, "Tram Graveyard must expose a readable carriage door.")
                 _expect(landmark.find_child("TramInspectionPit", true, false) != null, "Tram Graveyard must expose a bounded inspection-pit signature.")
+                _expect(landmark.get_node_or_null("PersistentRegionGeometry/TramGraveyardAuthoredModel") != null, "Tram Graveyard must expose its authored carriage and maintenance landmark shell.")
+                var tram_signal := landmark.find_child("TramSignalLamp", true, false) as Node3D
+                var tram_seep := landmark.find_child("TramOrganicSeep0", true, false) as Node3D
+                _expect(tram_signal != null and tram_seep != null, "Tram Graveyard must expose named signal and organic seepage motion sockets.")
+                if tram_signal != null and tram_seep != null:
+                    landmark.set_presentation_detail_level(0)
+                    var signal_before := tram_signal.scale
+                    var seep_before := tram_seep.scale
+                    landmark.call("_process", 0.5)
+                    _expect(not tram_signal.scale.is_equal_approx(signal_before), "Tram signal lamp must pulse as a restrained presentation cue.")
+                    _expect(not tram_seep.scale.is_equal_approx(seep_before), "Tram organic seepage must carry deterministic presentation motion.")
             if landmark.region_kind == &"observatory":
                 _expect(landmark.find_child("ObservatoryOpticsStation", true, false) != null, "Observatory Ridge must expose an authored optics station.")
                 _expect(landmark.find_child("ObservatoryLensBarrel", true, false) != null, "Observatory Ridge must expose a readable survey lens.")

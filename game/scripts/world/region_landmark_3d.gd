@@ -5,6 +5,7 @@ const AUTHORED_ROOT_CISTERN_MODEL_SCENE: PackedScene = preload("res://assets/roo
 const AUTHORED_RIVERWORKS_MODEL_SCENE: PackedScene = preload("res://assets/riverworks/riverworks.gltf")
 const AUTHORED_CATHEDRAL_MODEL_SCENE: PackedScene = preload("res://assets/cathedral/cathedral.gltf")
 const AUTHORED_OBSERVATORY_MODEL_SCENE: PackedScene = preload("res://assets/observatory/observatory.gltf")
+const AUTHORED_TRAM_GRAVEYARD_MODEL_SCENE: PackedScene = preload("res://assets/tram_graveyard/tram_graveyard.gltf")
 
 signal landmark_changed(landmark: RegionLandmark3D)
 
@@ -255,20 +256,7 @@ func _build_visuals() -> void:
                 ModelKit3D.add_membrane_fan(sluice, 0.55, Vector3(growth_x, 0.42, 9.1), river_growth, 5, "RiverbankGrowth")
             _build_authored_riverworks_visuals()
         &"rail":
-            var rail := Node3D.new()
-            rail.name = "RailIdentityDetails"
-            _visual_root.add_child(rail)
-            var rail_metal := ModelKit3D.material(Color("454d4c"), 0.74, 0.38)
-            for side in [-1.0, 1.0]:
-                _add_beam(rail, Vector3(side * 1.7, 0.16, -10.0), Vector3(side * 1.7, 0.16, 10.0), 0.09, rail_metal, "RailLine")
-            for z in range(-8, 9, 4):
-                ModelKit3D.add_beveled_box(rail, Vector3(4.4, 0.14, 0.34), Vector3(0.0, 0.12, float(z)), rust, Vector3.ZERO, "RailSleeper", 0.22)
-            for side in [-1.0, 1.0]:
-                ModelKit3D.add_beveled_box(rail, Vector3(3.6, 2.4, 0.26), Vector3(side * 5.4, 1.35, 1.5), metal, Vector3(0.04, 0.0, side * 0.05), "DerailedCarriage", 0.18)
-                ModelKit3D.add_surface_panel(rail, Vector3(1.8, 1.0, 0.08), Vector3(side * 5.4, 1.35, 1.33), membrane, rust, Vector3.ZERO, "CarriageWindow")
-            _add_beam(rail, Vector3(-7.0, 6.0, -8.0), Vector3(7.0, 6.0, -8.0), 0.11, metal, "RailOverheadBeam")
-            for side in [-1.0, 1.0]:
-                _add_beam(rail, Vector3(side * 6.4, 0.0, -8.0), Vector3(side * 6.4, 6.0, -8.0), 0.1, metal, "RailOverheadPost")
+            _build_authored_tram_graveyard_visuals()
         &"observatory":
             _build_authored_observatory_visuals()
         &"nest":
@@ -453,6 +441,30 @@ func _build_authored_observatory_visuals() -> void:
     _visual_root.add_child(authored_marker)
 
 
+func _build_authored_tram_graveyard_visuals() -> void:
+    # Tram Graveyard keeps its encounter dressing and rail simulation in this
+    # landmark while the authored shell supplies the readable maintenance
+    # infrastructure and damaged carriage silhouettes.
+    var identity_details := Node3D.new()
+    identity_details.name = "RailIdentityDetails"
+    _visual_root.add_child(identity_details)
+    var authored_scene_instance := AUTHORED_TRAM_GRAVEYARD_MODEL_SCENE.instantiate()
+    var imported_root := authored_scene_instance.get_node_or_null("TramGraveyardModel") as Node
+    if imported_root == null:
+        imported_root = authored_scene_instance
+    var authored_children := imported_root.get_children()
+    for child in authored_children:
+        child.owner = null
+        imported_root.remove_child(child)
+        _visual_root.add_child(child)
+    if imported_root != authored_scene_instance:
+        imported_root.free()
+    authored_scene_instance.free()
+    var authored_marker := Node3D.new()
+    authored_marker.name = "TramGraveyardAuthoredModel"
+    _visual_root.add_child(authored_marker)
+
+
 func _capture_region_motion_nodes() -> void:
     _motion_nodes.clear()
     _motion_base_transforms.clear()
@@ -502,6 +514,11 @@ func _animate_region_details() -> void:
             node.scale = _motion_base_transforms[node].basis.get_scale() * feed_pulse
         elif node_name.begins_with("ObservatoryMastLight"):
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.7) * 0.08)
+        elif node_name.begins_with("TramSignalLamp"):
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.8) * 0.08)
+        elif node_name.begins_with("TramOrganicSeep"):
+            node.rotation.y += sin(local_phase * 0.9) * 0.06
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.25) * 0.06)
         elif node_name.begins_with("RiverworksGrowth") or node_name.begins_with("RiverbankGrowth"):
             node.rotation.y += sin(local_phase * 1.15) * 0.12
             node.scale *= Vector3(1.0, 1.0 + sin(local_phase * 1.8) * 0.08, 1.0)
@@ -521,6 +538,8 @@ func _is_region_motion_name(node_name: String) -> bool:
         "ObservatoryDish",
         "ObservatoryFeedSignal",
         "ObservatoryMastLight",
+        "TramSignalLamp",
+        "TramOrganicSeep",
     ]:
         if node_name.begins_with(prefix):
             return true
