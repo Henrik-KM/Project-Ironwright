@@ -41,6 +41,23 @@ func _run_all() -> void:
             labor_robot.state_name = &"salvaging"
             presentation_feedback.call("_refresh_autonomous_labor_signatures", 0.016)
             _expect(int(presentation_feedback.call("active_labor_signature_count")) == 1, "Autonomous salvage must expose one bounded machine-to-wreck labor signature.")
+        var outpost_director := world.get_node_or_null("OutpostDirector") as OutpostDirector3D
+        var construction_site := outpost_director.get_site(&"site.north_transit_yard") if outpost_director != null else null
+        if outpost_director != null and construction_site != null and labor_robot != null:
+            var original_robot_position := labor_robot.global_position
+            labor_robot.global_position = construction_site.global_position + Vector3(2.0, 0.0, 0.5)
+            outpost_director.operation = {
+                "kind": &"build",
+                "state": &"working",
+                "site": construction_site,
+                "members": [labor_robot],
+            }
+            presentation_feedback.call("_refresh_autonomous_construction_signature", 0.016)
+            _expect(int(presentation_feedback.call("active_construction_signature_count")) == 1, "Autonomous construction must expose one bounded machine-to-site labor signature.")
+            outpost_director.operation.clear()
+            labor_robot.global_position = original_robot_position
+            presentation_feedback.call("_refresh_autonomous_construction_signature", 0.016)
+            _expect(int(presentation_feedback.call("active_construction_signature_count")) == 0, "Construction feedback must clear when the remote operation leaves its working state.")
     var encounter_dressing := world.get_node_or_null("RegionEncounterDressingDirector") as RegionEncounterDressingDirector3D
     var region_director := world.get_node_or_null("WorldRegionDirector") as WorldRegionDirector3D
     _expect(encounter_dressing != null, "The complete world must provide discovery-driven authored region dressing.")

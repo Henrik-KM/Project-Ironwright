@@ -22,6 +22,7 @@ var channel_field: Node3D
 var channel_field_material: StandardMaterial3D
 var channel_field_color: Color = Color.WHITE
 var labor_signatures: Dictionary = {}
+var construction_signature: Node3D
 
 
 func configure(next_world: Node3D, next_player: Node3D, next_heartforge: Node3D, next_camera: Camera3D, next_noise_system: Node) -> void:
@@ -34,6 +35,10 @@ func configure(next_world: Node3D, next_player: Node3D, next_heartforge: Node3D,
 
 func active_labor_signature_count() -> int:
     return labor_signatures.size()
+
+
+func active_construction_signature_count() -> int:
+    return 1 if construction_signature != null and is_instance_valid(construction_signature) else 0
 
 
 func _ready() -> void:
@@ -53,6 +58,7 @@ func _process(delta: float) -> void:
     _animate_camera()
     _animate_channel_sparks(delta)
     _refresh_autonomous_labor_signatures(delta)
+    _refresh_autonomous_construction_signature(delta)
 
 
 func _attach_existing_actors() -> void:
@@ -375,6 +381,127 @@ func _update_labor_signature(signature: Node3D, robot: RobotUnit3D, target: Node
     link.scale = Vector3(1.0, maxf(0.15, distance), 1.0)
     if distance > 0.01:
         link.quaternion = Quaternion(Vector3.UP, direction.normalized())
+
+
+func _refresh_autonomous_construction_signature(delta: float) -> void:
+    if world == null:
+        _clear_construction_signature()
+        return
+    var outpost_director := world.get_node_or_null("OutpostDirector") as Node
+    if outpost_director == null:
+        _clear_construction_signature()
+        return
+    var operation_variant: Variant = outpost_director.get("operation")
+    if not (operation_variant is Dictionary):
+        _clear_construction_signature()
+        return
+    var operation := operation_variant as Dictionary
+    var kind := StringName(str(operation.get("kind", "")))
+    var state := StringName(str(operation.get("state", "")))
+    if state != &"working" or kind not in [&"build", &"upgrade", &"rebuild"]:
+        _clear_construction_signature()
+        return
+    var site := operation.get("site") as Node3D
+    if site == null or not is_instance_valid(site):
+        _clear_construction_signature()
+        return
+    if construction_signature == null or not is_instance_valid(construction_signature):
+        construction_signature = _create_construction_signature(kind)
+    var members_variant: Variant = operation.get("members", [])
+    var members: Array = members_variant as Array if members_variant is Array else []
+    _update_construction_signature(construction_signature, site, members, kind, delta)
+
+
+func _clear_construction_signature() -> void:
+    if construction_signature != null and is_instance_valid(construction_signature):
+        construction_signature.queue_free()
+    construction_signature = null
+
+
+func _create_construction_signature(kind: StringName) -> Node3D:
+    var signature := Node3D.new()
+    signature.name = "AutonomousConstructionSignature"
+    world.add_child(signature)
+    var color := Color("66d7dd") if kind == &"upgrade" else Color("ffad55")
+    var ring := MeshInstance3D.new()
+    ring.name = "ConstructionTargetRing"
+    var ring_mesh := TorusMesh.new()
+    ring_mesh.inner_radius = 1.14
+    ring_mesh.outer_radius = 1.22
+    ring_mesh.rings = 18
+    ring_mesh.ring_segments = 40
+    ring.mesh = ring_mesh
+    ring.material_override = _vfx_material(color, 0.58, 2.1)
+    ring.position.y = 0.3
+    signature.add_child(ring)
+
+    var core := MeshInstance3D.new()
+    core.name = "ConstructionWorkCore"
+    var core_mesh := CylinderMesh.new()
+    core_mesh.top_radius = 0.07
+    core_mesh.bottom_radius = 0.16
+    core_mesh.height = 0.9
+    core_mesh.radial_segments = 14
+    core.mesh = core_mesh
+    core.material_override = _vfx_material(color.lightened(0.12), 0.72, 2.8)
+    core.position.y = 0.74
+    signature.add_child(core)
+
+    for index in range(4):
+        var angle := TAU * float(index) / 4.0 + 0.25
+        var pylon := MeshInstance3D.new()
+        pylon.name = "ConstructionPylon%d" % index
+        var pylon_mesh := CylinderMesh.new()
+        pylon_mesh.top_radius = 0.045
+        pylon_mesh.bottom_radius = 0.07
+        pylon_mesh.height = 1.45
+        pylon_mesh.radial_segments = 10
+        pylon.mesh = pylon_mesh
+        pylon.material_override = _vfx_material(color, 0.42, 1.6)
+        pylon.position = Vector3(cos(angle) * 0.92, 0.78, sin(angle) * 0.92)
+        signature.add_child(pylon)
+
+    for index in range(3):
+        var link := MeshInstance3D.new()
+        link.name = "ConstructionMachineLink%d" % index
+        var link_mesh := CylinderMesh.new()
+        link_mesh.top_radius = 0.022
+        link_mesh.bottom_radius = 0.045
+        link_mesh.height = 1.0
+        link_mesh.radial_segments = 8
+        link.mesh = link_mesh
+        link.material_override = _vfx_material(color, 0.42, 1.5)
+        signature.add_child(link)
+    return signature
+
+
+func _update_construction_signature(signature: Node3D, site: Node3D, members: Array, kind: StringName, delta: float) -> void:
+    var site_position := site.global_position
+    signature.global_position = site_position
+    var ring := signature.get_node_or_null("ConstructionTargetRing") as MeshInstance3D
+    if ring != null:
+        ring.rotation.y += delta * (1.6 if kind == &"upgrade" else 2.2)
+        var pulse := 1.0 + sin(elapsed * 4.2) * 0.07
+        ring.scale = Vector3.ONE * pulse
+    var core := signature.get_node_or_null("ConstructionWorkCore") as MeshInstance3D
+    if core != null:
+        core.rotation.y -= delta * 2.0
+        core.position.y = 0.52 + sin(elapsed * 3.6) * 0.1
+    for index in range(3):
+        var link := signature.get_node_or_null("ConstructionMachineLink%d" % index) as MeshInstance3D
+        if link == null:
+            continue
+        if index >= members.size() or not is_instance_valid(members[index]) or not (members[index] is Node3D):
+            link.visible = false
+            continue
+        link.visible = true
+        var member := members[index] as Node3D
+        var direction := member.global_position + Vector3.UP * 0.9 - (site_position + Vector3.UP * 0.3)
+        var distance := direction.length()
+        link.position = direction * 0.5 + Vector3.UP * 0.3
+        link.scale = Vector3.ONE * Vector3(1.0, maxf(0.15, distance), 1.0)
+        if distance > 0.01:
+            link.quaternion = Quaternion(Vector3.UP, direction.normalized())
 
 
 func _spawn_channel_field(kind: StringName) -> void:

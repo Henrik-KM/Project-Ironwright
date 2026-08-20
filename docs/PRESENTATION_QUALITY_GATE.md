@@ -50,7 +50,7 @@ Before release-candidate status, representative opening, mid-game and late-game 
 - animation that communicates weight, function and threat;
 - restrained desktop HUD with world visibility taking visual priority;
 - clear but non-intrusive objective and interaction communication;
-- high-quality VFX and audio feedback for combat, salvage, fabrication, construction and organic threats; autonomous salvage now also exposes a restrained physical work signature at the active wreck;
+- high-quality VFX and audio feedback for combat, salvage, fabrication, construction and organic threats; autonomous salvage and active outpost construction now expose restrained physical work signatures at their real targets;
 - consistent art direction from grounded early game toward more futuristic late-game machines.
 
 ## Camera rule
