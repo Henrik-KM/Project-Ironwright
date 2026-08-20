@@ -474,6 +474,16 @@ identities. Manual channels remain finish-before-save.
 - the broader opening composition remains pre-alpha and still requires the
   final lighting/material pass plus explicit human acceptance.
 
+## Focused opening threshold-composition milestone
+
+- added a presentation-only foreground refuge threshold with broken service
+  slabs, wet seams, route-edge markers and low practical lights;
+- the threshold gives the tactical camera a grounded lower frame and a clear
+  sense of movement out from the warm Heartforge without changing collision,
+  navigation, objectives or player-managed structure;
+- live opening review confirmed the player can move across the threshold while
+  the forge, companion and objective remain readable.
+
 ## Focused contextual tactical-HUD milestone
 
 - the permanent control legend now clears after the onboarding window instead
