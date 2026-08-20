@@ -1,0 +1,72 @@
+name: Apply one-off enemy tier stat composition fix
+
+on:
+  push:
+    branches:
+      - agent/enemy-tier-ecological-escalation
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/enemy-tier-ecological-escalation
+          fetch-depth: 0
+
+      - name: Separate tier identity from stat application
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          enemy_path = Path('game/scripts/enemies/organic_enemy_tiered_3d.gd')
+          enemy = enemy_path.read_text(encoding='utf-8')
+          anchor = '\n\nfunc configure_ecology(home_position: Vector3, radius: float, directive: StringName = &"") -> void:\n'
+          method = '''\n\nfunc apply_tier_identity(tier: int, config: Dictionary) -> void:\n    enemy_tier = clampi(tier, 1, 5)\n    tier_config_data = config.duplicate(true)\n    tier_profile = StringName(str(config.get("behaviour_profile", tier_profile)))\n    tier_display_name = str(config.get("display_name", "Tier %d" % enemy_tier))\n    tier_intelligence_label = str(config.get("intelligence_label", "unknown"))\n    set_meta(&"enemy_tier", enemy_tier)\n    set_meta(&"tier_profile", String(tier_profile))\n    ecology_directive = _resolve_directive_for_tier(ecology_directive)\n    behaviour_clock = behaviour_duration\n    if is_inside_tree():\n        _refresh_visuals()\n        _choose_next_ecological_behaviour(true)\n'''
+          if 'func apply_tier_identity(' not in enemy:
+              if anchor not in enemy:
+                  raise SystemExit('Could not locate tier identity insertion point')
+              enemy = enemy.replace(anchor, method + anchor, 1)
+          enemy_path.write_text(enemy, encoding='utf-8')
+
+          world_path = Path('game/scripts/main_world_tiered_3d.gd')
+          world = world_path.read_text(encoding='utf-8')
+          replacements = {
+              'tiered.configure_tier(tier, config, true)': 'tiered.apply_tier_identity(tier, config)',
+              'enemy.configure_tier(enemy.enemy_tier, enemy_tier_director.tier_config(enemy.enemy_tier), true)': 'enemy.apply_tier_identity(enemy.enemy_tier, enemy_tier_director.tier_config(enemy.enemy_tier))',
+          }
+          for old, new in replacements.items():
+              if old not in world:
+                  raise SystemExit(f'Expected world expression was not found: {old}')
+              world = world.replace(old, new, 1)
+          world_path.write_text(world, encoding='utf-8')
+
+          director_path = Path('game/scripts/systems/enemy_tier_director_3d.gd')
+          director = director_path.read_text(encoding='utf-8')
+          first_old = '''    if enemy.has_method("configure_tier"):\n        enemy.call("configure_tier", tier, tier_config(tier))\n    else:\n        enemy.set_meta(&"enemy_tier", tier)\n'''
+          first_new = '''    if enemy.has_method("apply_tier_identity"):\n        enemy.call("apply_tier_identity", tier, tier_config(tier))\n    elif enemy.has_method("configure_tier"):\n        enemy.call("configure_tier", tier, tier_config(tier))\n    else:\n        enemy.set_meta(&"enemy_tier", tier)\n'''
+          second_old = '''        if enemy.has_method("configure_tier"):\n            enemy.call("configure_tier", tier, tier_config(tier))\n        enemy.set_meta(&"enemy_tier", tier)\n'''
+          second_new = '''        if enemy.has_method("apply_tier_identity"):\n            enemy.call("apply_tier_identity", tier, tier_config(tier))\n        elif enemy.has_method("configure_tier"):\n            enemy.call("configure_tier", tier, tier_config(tier))\n        enemy.set_meta(&"enemy_tier", tier)\n'''
+          if first_old not in director or second_old not in director:
+              raise SystemExit('Expected director tier-application blocks were not found')
+          director = director.replace(first_old, first_new, 1).replace(second_old, second_new, 1)
+          director_path.write_text(director, encoding='utf-8')
+          PY
+
+      - name: Commit corrected stat composition and remove this workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -- .github/workflows/one-off-fix-tier-stat-composition.yml
+          git add -- \
+            game/scripts/enemies/organic_enemy_tiered_3d.gd \
+            game/scripts/main_world_tiered_3d.gd \
+            game/scripts/systems/enemy_tier_director_3d.gd
+          git commit -m "Compose difficulty and enemy tier modifiers correctly"
+          git push origin HEAD:agent/enemy-tier-ecological-escalation
