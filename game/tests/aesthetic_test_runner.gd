@@ -131,6 +131,9 @@ func _run_all() -> void:
     var heartforge := world.get_node_or_null("Heartforge") as Heartforge3D
     _expect(heartforge != null, "The aesthetic test needs the Heartforge progression model.")
     if heartforge != null:
+        _expect(heartforge.find_child("CoreCladdingDetail", true, false) != null, "The Heartforge must expose a layered high-definition core cladding detail.")
+        _expect(heartforge.find_child("CoreServiceLouver", true, false) != null, "The Heartforge must expose a readable powered service louver.")
+        _expect(heartforge.find_child("CoreInspectionPort", true, false) != null, "The Heartforge must expose a readable inspection port.")
         heartforge.set_progression_tier(5)
         _expect(heartforge.find_child("AdaptiveHeartforgeGeometry", true, false) != null, "Heartforge progression must own a dedicated adaptive geometry layer.")
         _expect(heartforge.find_child("Tier2Buttress", true, false) != null, "Tier 2 Heartforge geometry must add structural buttresses.")
