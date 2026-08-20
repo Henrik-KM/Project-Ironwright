@@ -814,6 +814,22 @@ identities. Manual channels remain finish-before-save.
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.
 
+## Focused authored-shell material continuity milestone
+
+- extended the release material director to recognize the stable node-family
+  identifiers of the authored Bulwark, Warden, Scrapper, Pathfinder, Engineer,
+  Veilstalker, Razorhound, Sporecaster, Broodmass, Burrower, Skitterling and
+  Apex glTF shells;
+- applied the existing brushed-metal, chitin and membrane triplanar families
+  to those imported meshes without replacing their authored geometry or
+  altering collision and gameplay state;
+- added release-runtime coverage for the opening Bulwark and a late-spawned
+  Veilstalker shell so future material changes cannot silently leave production
+  models on flat imported defaults.
+
+The current high-definition shell library remains a production-facing pass;
+final retail art, animation and external visual approval are still required.
+
 ## Commercial work still remaining
 
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a

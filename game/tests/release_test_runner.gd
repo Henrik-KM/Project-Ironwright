@@ -154,6 +154,9 @@ func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
 
 func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     var textured_before := world.release_world_art.meshes_textured
+    var opening_robot := get_first_node_in_group(&"friendly_robots") as Node
+    var opening_authored_mesh := _find_first_mesh(opening_robot.get_node_or_null("RobotModel/BulwarkAuthoredModel") if opening_robot != null else null)
+    _expect(opening_authored_mesh != null and opening_authored_mesh.get_meta(&"release_material_family", &"") == &"metal", "Authored Bulwark shell meshes must receive the release metal material pass.")
     var late_robot := world._spawn_robot(&"salvager", world.player.global_position + Vector3(3.0, 0.0, -3.0), 1)
     var late_enemy := world._spawn_enemy(world.player.global_position + Vector3(-4.0, 0.0, -4.0), &"veilstalker")
     await process_frame
@@ -161,12 +164,38 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
 
     var robot_core := late_robot.get_node_or_null("RobotModel/Chassis/ChassisCore") as MeshInstance3D
     var enemy_core := late_enemy.get_node_or_null("OrganicModel/Torso/TorsoCore") as MeshInstance3D
+    var enemy_authored_mesh := _find_first_mesh_with_token(late_enemy.get_node_or_null("OrganicModel"), "veilstalker")
     _expect(robot_core != null and robot_core.get_meta(&"release_material_family", &"") == &"metal", "Late-fabricated robots must receive the release metal material pass.")
     _expect(enemy_core != null and enemy_core.get_meta(&"release_material_family", &"") == &"chitin", "Late-spawned organic families must receive the release chitin material pass.")
+    _expect(enemy_authored_mesh != null and enemy_authored_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Authored Veilstalker shell meshes must receive the release chitin material pass.")
     _expect(world.release_world_art.meshes_textured > textured_before, "Runtime release art must texture meshes added after initial boot.")
 
     late_robot.queue_free()
     late_enemy.queue_free()
+
+
+func _find_first_mesh(node: Node) -> MeshInstance3D:
+    if node == null or not is_instance_valid(node):
+        return null
+    if node is MeshInstance3D:
+        return node as MeshInstance3D
+    for child in node.get_children():
+        var result := _find_first_mesh(child as Node)
+        if result != null:
+            return result
+    return null
+
+
+func _find_first_mesh_with_token(node: Node, token: String) -> MeshInstance3D:
+    if node == null or not is_instance_valid(node):
+        return null
+    if node is MeshInstance3D and token in String(node.name).to_lower():
+        return node as MeshInstance3D
+    for child in node.get_children():
+        var result := _find_first_mesh_with_token(child as Node, token)
+        if result != null:
+            return result
+    return null
 
 
 func _test_spatial_and_performance(world: IronwrightReleaseWorld3D) -> void:
