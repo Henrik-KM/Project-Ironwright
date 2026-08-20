@@ -372,6 +372,18 @@ identities. Manual channels remain finish-before-save.
 - live opening-route review confirmed the silhouette reads beside the player
   and companion without adding a recurring task or new simulation state.
 
+## Focused authored Broodmass milestone
+
+- added an original high-definition glTF shell for the large nest organism,
+  with layered torso plates, paired brood lobes, a forward maw, crown spines,
+  hooked legs and side membrane fins;
+- wired the shell into `OrganicEnemy3D` without changing Broodmass health,
+  movement, attacks, nest pressure, ecology or reduced-detail simulation;
+- retained stable lobe, maw, spine and fin names for import validation and
+  future state-driven motion refinement;
+- live opening-route review confirmed the broad encounter-space silhouette
+  reads without adding a new objective or recurring management task.
+
 ## Focused channel-and-tracer feedback milestone
 
 - weapon fire now leaves a short-lived directional tracer between the firing

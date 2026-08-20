@@ -1,0 +1,10 @@
+{
+  "asset_id": "broodmass.nest.v1",
+  "display_name": "Broodmass nest-organism shell",
+  "source": "game/assets/broodmass/source/build_broodmass_asset.py",
+  "runtime_path": "res://assets/broodmass/broodmass.gltf",
+  "quality": "authored_high_definition",
+  "license": "Original Project Ironwright asset",
+  "required_nodes": ["BroodmassModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BroodmassLobeL", "BroodmassMaw", "CrownSpine0", "BroodmassFanL", "ProductionAssetMarker"],
+  "animation_clips": ["Idle", "Walk", "Attack"]
+}
