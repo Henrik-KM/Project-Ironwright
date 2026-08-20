@@ -1,0 +1,43 @@
+name: Apply one-off tier balance capture fix
+
+on:
+  push:
+    branches:
+      - agent/enemy-tier-ecological-escalation
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/enemy-tier-ecological-escalation
+          fetch-depth: 0
+
+      - name: Preserve release balance as the tier baseline
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('game/scripts/main_world_tiered_3d.gd')
+          text = path.read_text(encoding='utf-8')
+          old = '    tiered.configure_tier(tier, config)\n'
+          new = '    tiered.configure_tier(tier, config, true)\n'
+          if old not in text:
+              raise SystemExit('Expected tier configuration expression was not found')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+
+      - name: Commit the corrected world and remove this one-off workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -- .github/workflows/one-off-fix-tier-balance-capture.yml
+          git add -- game/scripts/main_world_tiered_3d.gd
+          git commit -m "Preserve release balance beneath enemy tier modifiers"
+          git push origin HEAD:agent/enemy-tier-ecological-escalation
