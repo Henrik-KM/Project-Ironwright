@@ -408,6 +408,19 @@ identities. Manual channels remain finish-before-save.
 - live opening-route review confirmed the common silhouette reads at gameplay
   scale without adding a new objective or recurring management task.
 
+## Focused authored Root Cistern milestone
+
+- added an original high-definition glTF landmark shell for the late Root
+  Cistern, with a layered root core, crown ribs, signal pylons and tethered
+  pulse cables;
+- replaced only the endgame landmark's shared procedural centerpiece while
+  preserving region discovery, presentation LOD, pressure, endgame protocols
+  and persistence ownership;
+- retained stable core, layer, rib, pylon, signal, cable and production-marker
+  names for import validation and future late-world animation refinement;
+- complete-world aesthetic coverage confirms the authored shell attaches to the
+  persistent Root Cistern landmark without adding collision or player work.
+
 ## Focused channel-and-tracer feedback milestone
 
 - weapon fire now leaves a short-lived directional tracer between the firing

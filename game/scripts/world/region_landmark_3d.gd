@@ -1,6 +1,8 @@
 class_name RegionLandmark3D
 extends Node3D
 
+const AUTHORED_ROOT_CISTERN_MODEL_SCENE: PackedScene = preload("res://assets/root_cistern/root_cistern.gltf")
+
 signal landmark_changed(landmark: RegionLandmark3D)
 
 var region_id: StringName = &"region.unknown"
@@ -227,12 +229,7 @@ func _build_visuals() -> void:
             ModelKit3D.add_beveled_box(_visual_root, Vector3(6.6, 0.32, 2.0), Vector3(0.0, 0.18, 9.0), edge, Vector3.ZERO, "LabAccess", 0.24)
             ModelKit3D.add_surface_panel(_visual_root, Vector3(2.2, 0.8, 0.1), Vector3(0.0, 0.62, 7.92), edge, membrane, Vector3.ZERO, "LabAccessPanel")
         &"endgame":
-            for index in range(6):
-                var angle := TAU * float(index) / 6.0
-                ModelKit3D.add_tapered_cylinder(_visual_root, 0.98, 1.25, 8.0, Vector3(cos(angle) * 8.5, 4.0, sin(angle) * 8.5), concrete, Vector3.ZERO, "CisternPillar")
-                ModelKit3D.add_beveled_box(_visual_root, Vector3(1.9, 0.28, 1.9), Vector3(cos(angle) * 8.5, 0.18, sin(angle) * 8.5), edge, Vector3.ZERO, "CisternFoot", 0.26)
-            ModelKit3D.add_segmented_carapace(_visual_root, 4.4, Vector3(0.0, 1.4, 0.0), membrane, organic, Vector3(1.35, 0.48, 1.35), 6, "RootOrgan")
-            ModelKit3D.add_membrane_fan(_visual_root, 2.2, Vector3(0.0, 2.8, 0.0), membrane, 7, "RootOrganFan")
+            _build_authored_root_cistern_visuals()
         _:
             _add_ruin_block(Vector3(-5.0, 0.0, 0.0), Vector3(7.0, 6.0, 8.0), brick)
             _add_ruin_block(Vector3(6.0, 0.0, -4.0), Vector3(6.0, 4.0, 7.0), concrete)
@@ -263,6 +260,26 @@ func _build_visuals() -> void:
     _label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     _label.visible = false
     _beacon_root.add_child(_label)
+
+
+func _build_authored_root_cistern_visuals() -> void:
+    # The late landmark receives a production shell while region state, LOD
+    # and endgame ownership remain on this node and its existing services.
+    var authored_scene_instance := AUTHORED_ROOT_CISTERN_MODEL_SCENE.instantiate()
+    var imported_root := authored_scene_instance.get_node_or_null("RootCisternModel") as Node
+    if imported_root == null:
+        imported_root = authored_scene_instance
+    var authored_children := imported_root.get_children()
+    for child in authored_children:
+        child.owner = null
+        imported_root.remove_child(child)
+        _visual_root.add_child(child)
+    if imported_root != authored_scene_instance:
+        imported_root.free()
+    authored_scene_instance.free()
+    var authored_marker := Node3D.new()
+    authored_marker.name = "RootCisternAuthoredModel"
+    _visual_root.add_child(authored_marker)
 
 
 func _add_ruin_block(origin: Vector3, size: Vector3, material: Material) -> void:

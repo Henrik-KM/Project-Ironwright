@@ -1,0 +1,18 @@
+{
+  "asset_id": "root_cistern.landmark.v1",
+  "kind": "world_landmark",
+  "source": "game/assets/root_cistern/source/build_root_cistern_asset.py",
+  "runtime_model": "game/assets/root_cistern/root_cistern.gltf",
+  "required_nodes": [
+    "RootCisternModel",
+    "RootCisternCore",
+    "RootCisternCoreMass",
+    "RootCisternLayer0",
+    "RootCisternRib0",
+    "RootCisternPylon0",
+    "RootCisternSignal0",
+    "RootCisternCable0",
+    "ProductionAssetMarker"
+  ],
+  "presentation_only": true
+}
