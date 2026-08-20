@@ -348,6 +348,18 @@ identities. Manual channels remain finish-before-save.
   unchanged;
 - the procedural motion remains presentation-only and deterministic per actor.
 
+## Focused authored Cistern Apex milestone
+
+- added an original high-definition glTF shell for the late-world Apex, with
+  layered torso segments, crowned sensory head, articulated jaws, flank roots,
+  threat eyes and restrained membrane fins;
+- wired the shell into `OrganicEnemy3D` without changing Apex stats, collision,
+  ecology, operations, persistence or reduced-detail simulation;
+- retained stable anatomy and production-asset markers for import validation,
+  save-safe runtime material treatment and later animation refinement;
+- live opening-route review confirmed the mesh reads at tactical distance and
+  remains compatible with the existing organic impact feedback.
+
 ## Focused channel-and-tracer feedback milestone
 
 - weapon fire now leaves a short-lived directional tracer between the firing

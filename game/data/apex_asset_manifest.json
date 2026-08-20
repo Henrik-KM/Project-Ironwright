@@ -1,0 +1,10 @@
+{
+  "asset_id": "apex.cistern.v1",
+  "display_name": "Cistern Apex threat shell",
+  "source": "game/assets/apex/source/build_apex_asset.py",
+  "runtime_path": "res://assets/apex/apex.gltf",
+  "quality": "authored_high_definition",
+  "license": "Original Project Ironwright asset",
+  "required_nodes": ["ApexModel", "Torso", "TorsoCore", "ApexCrown", "ApexJawL", "ApexMembraneL", "ApexFlankRootL", "ProductionAssetMarker"],
+  "animation_clips": ["Idle", "Walk", "Attack"]
+}
