@@ -45,11 +45,11 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 
 ### Multi-region world
 
-- seven persistent regions with stable IDs, physical centres, routes and landmarks;
-- Heartforge District, North Ruins, West Grid, Flood Market, Cathedral Quarter, Buried Laboratories and Root Cistern;
+- twelve persistent regions with stable IDs, physical centres, routes and landmarks;
+- Heartforge District, North Ruins, West Grid, East Tenements, Municipal Glasshouse, Flood Market, Riverworks, Tram Graveyard, Cathedral Quarter, Observatory Ridge, Buried Laboratories and Root Cistern;
 - discovery, ecological pressure and suppression state;
 - region-specific physical salvage after discovery;
-- authored procedural visual identity for industrial, commercial, nest, laboratory and endgame districts.
+- authored visual identity for every district kind, including the original high-definition Riverworks pump/sluice landmark shell and the authored Root Cistern organ shell.
 
 ### Long-range operations
 
@@ -65,6 +65,7 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - Genome Prism excavation;
 - Root Cistern mapping;
 - optional Apex lure.
+- twelve authored operation records, including the mid-game Riverworks pump restart and Observatory calibration routes.
 
 ### Continuous organic ecology
 
@@ -582,10 +583,14 @@ identities. Manual channels remain finish-before-save.
   a generic ruin block;
 - added a shallow water channel, dock pylons, waterline breaks and restrained
   organic bank growth around the existing pump housings;
+- added the original high-definition `riverworks.landmark.v1` glTF shell with
+  named pump, rotor, valve, sluice-gate, signal and growth details, plus
+  deterministic presentation motion for the powered infrastructure;
 - retained the existing collision, routing, ecology, discovery and persistence
   ownership while extending only the authored remote-region presentation;
-- native aesthetic coverage verifies the sluice, waterline and channel
-  signatures, and the live release review accepted the resulting frame.
+- native aesthetic coverage verifies the authored asset manifest, named sockets,
+  sluice, waterline and channel signatures, and the live release review
+  accepted the resulting frame.
 
 ## Focused remote-ground continuity milestone
 

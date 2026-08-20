@@ -114,6 +114,16 @@ func _run_all() -> void:
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/WaterfrontIdentityDetails/RiverworksSluiceDetails") != null, "Riverworks must expose an authored sluice assembly.")
                 _expect(landmark.find_child("RiverWaterlineBreak", true, false) != null, "Riverworks must expose bounded waterline breaks at the dock edge.")
                 _expect(landmark.find_child("RiverWaterChannel", true, false) != null, "Riverworks must expose a readable shallow water channel.")
+                _expect(landmark.get_node_or_null("PersistentRegionGeometry/RiverworksAuthoredModel") != null, "Riverworks must expose its authored pump landmark shell.")
+                var riverworks_rotor := landmark.find_child("RiverworksRotor", true, false) as Node3D
+                var riverworks_signal := landmark.find_child("RiverworksSluiceSignal", true, false) as Node3D
+                _expect(riverworks_rotor != null and riverworks_signal != null, "Riverworks must expose named animated pump and flow signal sockets.")
+                if riverworks_rotor != null and riverworks_signal != null:
+                    var rotor_before := riverworks_rotor.rotation.y
+                    var signal_before := riverworks_signal.scale
+                    landmark.call("_process", 0.5)
+                    _expect(absf(riverworks_rotor.rotation.y - rotor_before) > 0.1, "Riverworks pump rotor must carry deterministic presentation motion.")
+                    _expect(not riverworks_signal.scale.is_equal_approx(signal_before), "Riverworks flow signal must pulse as a restrained presentation cue.")
             if landmark.region_kind == &"research":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/BuriedLaboratoriesIdentityDetails") != null, "Buried Laboratories must expose its authored containment vignette.")
                 _expect(landmark.find_child("LabContainmentVessel", true, false) != null, "Buried Laboratories must expose readable containment vessels.")

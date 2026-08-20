@@ -2,6 +2,7 @@ class_name RegionLandmark3D
 extends Node3D
 
 const AUTHORED_ROOT_CISTERN_MODEL_SCENE: PackedScene = preload("res://assets/root_cistern/root_cistern.gltf")
+const AUTHORED_RIVERWORKS_MODEL_SCENE: PackedScene = preload("res://assets/riverworks/riverworks.gltf")
 
 signal landmark_changed(landmark: RegionLandmark3D)
 
@@ -22,6 +23,8 @@ var _nest_shell: Node3D
 var _elapsed: float = 0.0
 var _map_emphasis: bool = false
 var presentation_detail_level: int = 0
+var _motion_nodes: Array[Node3D] = []
+var _motion_base_transforms: Dictionary = {}
 
 
 func configure(data: Dictionary) -> void:
@@ -52,6 +55,8 @@ func _process(delta: float) -> void:
     _beacon_root.scale = Vector3.ONE * pulse
     if _label != null:
         _label.position.y = (6.0 if _map_emphasis else 5.65) + sin(_elapsed * 1.35) * 0.06
+    if presentation_detail_level < 2:
+        _animate_region_details()
 
 
 func set_map_emphasis(value: bool) -> void:
@@ -246,9 +251,7 @@ func _build_visuals() -> void:
             for growth_index in range(3):
                 var growth_x := -5.0 + float(growth_index) * 5.0
                 ModelKit3D.add_membrane_fan(sluice, 0.55, Vector3(growth_x, 0.42, 9.1), river_growth, 5, "RiverbankGrowth")
-            for index in range(3):
-                ModelKit3D.add_beveled_box(waterfront, Vector3(2.0, 1.8, 1.7), Vector3(-5.0 + float(index) * 5.0, 0.92, 3.8), metal, Vector3(0.0, 0.12 * float(index), 0.0), "PumpHousing", 0.18)
-                ModelKit3D.add_cylinder(waterfront, 0.16, 2.6, Vector3(-5.0 + float(index) * 5.0, 2.2, 3.8), rust, Vector3.ZERO, "PumpPipe")
+            _build_authored_riverworks_visuals()
         &"rail":
             var rail := Node3D.new()
             rail.name = "RailIdentityDetails"
@@ -314,6 +317,7 @@ func _build_visuals() -> void:
 
     _add_region_surface_finish()
     _add_region_practical_lights()
+    _capture_region_motion_nodes()
 
     _beacon_root = Node3D.new()
     _beacon_root.name = "RegionBeacon"
@@ -390,6 +394,80 @@ func _build_authored_root_cistern_visuals() -> void:
     var authored_marker := Node3D.new()
     authored_marker.name = "RootCisternAuthoredModel"
     _visual_root.add_child(authored_marker)
+
+
+func _build_authored_riverworks_visuals() -> void:
+    # The mid-game waterworks receives a production shell while region state,
+    # collision, LOD and operation ownership remain on this landmark node.
+    var authored_scene_instance := AUTHORED_RIVERWORKS_MODEL_SCENE.instantiate()
+    var imported_root := authored_scene_instance.get_node_or_null("RiverworksModel") as Node
+    if imported_root == null:
+        imported_root = authored_scene_instance
+    var authored_children := imported_root.get_children()
+    for child in authored_children:
+        child.owner = null
+        imported_root.remove_child(child)
+        _visual_root.add_child(child)
+    if imported_root != authored_scene_instance:
+        imported_root.free()
+    authored_scene_instance.free()
+    var authored_marker := Node3D.new()
+    authored_marker.name = "RiverworksAuthoredModel"
+    _visual_root.add_child(authored_marker)
+
+
+func _capture_region_motion_nodes() -> void:
+    _motion_nodes.clear()
+    _motion_base_transforms.clear()
+    if _visual_root == null:
+        return
+    _capture_region_motion_nodes_recursive(_visual_root)
+
+
+func _capture_region_motion_nodes_recursive(node: Node) -> void:
+    for child in node.get_children():
+        if child is Node3D:
+            var node_3d := child as Node3D
+            if _is_region_motion_name(String(node_3d.name)):
+                _motion_nodes.append(node_3d)
+                _motion_base_transforms[node_3d] = node_3d.transform
+            _capture_region_motion_nodes_recursive(node_3d)
+        elif child is Node:
+            _capture_region_motion_nodes_recursive(child)
+
+
+func _animate_region_details() -> void:
+    for index in _motion_nodes.size():
+        var node := _motion_nodes[index]
+        if not is_instance_valid(node) or not _motion_base_transforms.has(node):
+            continue
+        node.transform = _motion_base_transforms[node]
+        var local_phase := _elapsed + float(index) * 0.31
+        var node_name := String(node.name)
+        if node_name.begins_with("RiverworksRotor"):
+            node.rotation.y += _elapsed * 0.82
+        elif node_name.begins_with("RiverworksMaintenanceValve"):
+            node.rotation.z += sin(local_phase * 0.8) * 0.14
+        elif node_name.begins_with("RiverworksSluiceSignal") or node_name.begins_with("RootCisternPulse"):
+            var signal_pulse := 1.0 + sin(local_phase * 2.4) * 0.12
+            node.scale = _motion_base_transforms[node].basis.get_scale() * signal_pulse
+        elif node_name.begins_with("RiverworksGrowth") or node_name.begins_with("RiverbankGrowth"):
+            node.rotation.y += sin(local_phase * 1.15) * 0.12
+            node.scale *= Vector3(1.0, 1.0 + sin(local_phase * 1.8) * 0.08, 1.0)
+
+
+func _is_region_motion_name(node_name: String) -> bool:
+    for prefix in [
+        "RiverworksRotor",
+        "RiverworksMaintenanceValve",
+        "RiverworksSluiceSignal",
+        "RiverworksGrowth",
+        "RiverbankGrowth",
+        "RootCisternPulse",
+    ]:
+        if node_name.begins_with(prefix):
+            return true
+    return false
 
 
 func _add_ruin_block(origin: Vector3, size: Vector3, material: Material, parent: Node3D = null) -> void:

@@ -40,13 +40,18 @@ The game does not end after the North Ruins. That expedition is now the bridge b
 
 ## 2. Multi-region world
 
-Seven physically present regions define the complete alpha world:
+Twelve physically present regions define the complete alpha world:
 
 - Heartforge District;
 - North Ruins;
 - West Grid;
+- East Tenements;
+- Municipal Glasshouse;
 - Flood Market;
+- Riverworks;
+- Tram Graveyard;
 - Cathedral Quarter;
+- Observatory Ridge;
 - Buried Laboratories;
 - Root Cistern.
 
@@ -277,7 +282,7 @@ The complete alpha adds a deterministic native scenario test that accelerates th
 It validates:
 
 - complete-world entrypoint;
-- seven persistent regions;
+- twelve persistent regions;
 - opening operation gates;
 - Heartforge tiers II–V;
 - fixed outpost support requirements;

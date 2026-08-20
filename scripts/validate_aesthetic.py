@@ -45,6 +45,9 @@ REQUIRED = [
     "game/assets/mechromancer/source/build_mechromancer_asset.py",
     "game/data/mechromancer_asset_manifest.json",
     "game/assets/organic_families/source/build_authored_organic_assets.py",
+    "game/assets/riverworks/source/build_riverworks_asset.py",
+    "game/assets/riverworks/riverworks.gltf",
+    "game/data/riverworks_asset_manifest.json",
 ]
 
 AUTHORED_ORGANIC_ASSETS = {
@@ -72,6 +75,23 @@ AUTHORED_ORGANIC_ASSETS = {
         "asset_id": "rootweaver.route_controller.v1",
         "root": "RootweaverModel",
         "required": ["RootweaverModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "RootweaverCrown", "RootweaverSporeFan", "ProductionAssetMarker"],
+    },
+}
+
+AUTHORED_REGION_ASSETS = {
+    "riverworks": {
+        "asset_id": "riverworks.landmark.v1",
+        "root": "RiverworksModel",
+        "required": [
+            "RiverworksModel",
+            "RiverworksPumpCore",
+            "RiverworksPumpHousing",
+            "RiverworksRotor",
+            "RiverworksSluiceGate",
+            "RiverworksSluiceSignal",
+            "RiverworksGrowth0",
+            "ProductionAssetMarker",
+        ],
     },
 }
 
@@ -145,6 +165,29 @@ def validate_authored_organic_assets() -> None:
                 fail(f"{family} glTF is missing required animation clip: {required}")
 
 
+def validate_authored_region_assets() -> None:
+    for family, expected in AUTHORED_REGION_ASSETS.items():
+        manifest_path = ROOT / f"game/data/{family}_asset_manifest.json"
+        gltf_path = ROOT / f"game/assets/{family}/{family}.gltf"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        gltf = json.loads(gltf_path.read_text(encoding="utf-8"))
+        if manifest.get("asset_id") != expected["asset_id"]:
+            fail(f"{family} landmark manifest has an unexpected stable asset ID.")
+        if manifest.get("runtime_model") != f"game/assets/{family}/{family}.gltf":
+            fail(f"{family} landmark manifest points at an unexpected runtime model.")
+        root_node_extras = next(
+            (node.get("extras", {}) for node in gltf.get("nodes", []) if node.get("name") == expected["root"]),
+            {},
+        )
+        gltf_asset_id = gltf.get("extras", {}).get("ironwright_asset_id") or root_node_extras.get("ironwright_asset_id")
+        if gltf_asset_id != expected["asset_id"]:
+            fail(f"{family} landmark glTF and manifest asset IDs must match.")
+        node_names = {str(node.get("name")) for node in gltf.get("nodes", [])}
+        for required in expected["required"]:
+            if required not in node_names:
+                fail(f"{family} landmark glTF is missing required node: {required}")
+
+
 def main() -> int:
     try:
         for relative in REQUIRED:
@@ -154,6 +197,7 @@ def main() -> int:
 
         validate_mechromancer_asset()
         validate_authored_organic_assets()
+        validate_authored_region_assets()
 
         main_scene = (ROOT / "game/scenes/main_3d.tscn").read_text(encoding="utf-8")
         if all(entrypoint not in main_scene for entrypoint in ["main_world_prealpha_3d.gd", "main_world_release_3d.gd", "main_world_tiered_3d.gd"]):
