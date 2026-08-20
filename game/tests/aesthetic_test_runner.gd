@@ -102,6 +102,10 @@ func _run_all() -> void:
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/BuriedLaboratoriesIdentityDetails") != null, "Buried Laboratories must expose its authored containment vignette.")
                 _expect(landmark.find_child("LabContainmentVessel", true, false) != null, "Buried Laboratories must expose readable containment vessels.")
                 _expect(landmark.find_child("LabTransferRail", true, false) != null, "Buried Laboratories must expose an overhead transfer rail.")
+            if landmark.region_kind == &"tenement":
+                _expect(landmark.get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing/TenementVerticalLifeDetails") != null, "East Tenements must expose an authored vertical residential vignette.")
+                _expect(landmark.find_child("TenementFireEscapeLadder", true, false) != null, "East Tenements must expose a readable fire-escape route signature.")
+                _expect(landmark.find_child("TenementRoofWaterTank", true, false) != null, "East Tenements must expose a rooftop service identity.")
     var region_atmosphere := world.get_node_or_null("RegionAtmosphereDirector") as RegionAtmosphereDirector3D
     _expect(region_atmosphere != null, "The complete world must install region-aware atmosphere presentation.")
     if region_atmosphere != null:
