@@ -183,7 +183,7 @@ func ensure_input_map() -> void:
     _add_axis_once(&"iw_operations", JOY_AXIS_TRIGGER_LEFT, 1.0)
     _add_axis_once(&"iw_endgame", JOY_AXIS_TRIGGER_RIGHT, 1.0)
     _add_button_once(&"iw_focus_defend", JOY_BUTTON_DPAD_UP)
-    _add_button_once(&"iw_focus_salVAGE", JOY_BUTTON_DPAD_LEFT)
+    _add_button_once(&"iw_focus_salvage", JOY_BUTTON_DPAD_LEFT)
     _add_button_once(&"iw_focus_expedition", JOY_BUTTON_DPAD_RIGHT)
 
 
@@ -192,7 +192,7 @@ func _ensure_action(action: StringName) -> void:
         InputMap.add_action(action, 0.22)
 
 
-func _add_button_once(action: StringName, button_index: JoyButton) -> void:
+func _add_button_once(action: StringName, button_index: int) -> void:
     for existing in InputMap.action_get_events(action):
         if existing is InputEventJoypadButton and (existing as InputEventJoypadButton).button_index == button_index:
             return
@@ -201,7 +201,7 @@ func _add_button_once(action: StringName, button_index: JoyButton) -> void:
     InputMap.action_add_event(action, event)
 
 
-func _add_axis_once(action: StringName, axis: JoyAxis, value: float) -> void:
+func _add_axis_once(action: StringName, axis: int, value: float) -> void:
     for existing in InputMap.action_get_events(action):
         if existing is InputEventJoypadMotion:
             var motion := existing as InputEventJoypadMotion
