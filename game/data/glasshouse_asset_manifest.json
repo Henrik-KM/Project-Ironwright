@@ -1,0 +1,16 @@
+{
+  "asset_id": "glasshouse.municipal.v1",
+  "kind": "world_landmark",
+  "source": "game/assets/glasshouse/source/build_glasshouse_asset.py",
+  "runtime_model": "game/assets/glasshouse/glasshouse.gltf",
+  "required_nodes": [
+    "GlasshouseModel",
+    "GlasshouseFrameBay0",
+    "GlasshouseClimateLouver",
+    "GlasshouseBrokenSkylight",
+    "GlasshouseGrowthBed0",
+    "GlasshouseServiceDoor",
+    "ProductionAssetMarker"
+  ],
+  "presentation_only": true
+}
