@@ -1,7 +1,7 @@
 class_name IronwrightWorld3D
 extends Node3D
 
-const SAVE_PATH := "user://ironwright_first_light_3d.json"
+const SAVE_SERVICE_SCRIPT := preload("res://scripts/systems/transactional_save_service_3d.gd")
 const MECHROMANCER_SCENE := preload("res://scenes/actors/mechromancer_3d.tscn")
 const ROBOT_SCENE := preload("res://scenes/actors/robot_unit_3d.tscn")
 const ENEMY_SCENE := preload("res://scenes/actors/organic_enemy_3d.tscn")
@@ -31,10 +31,13 @@ var forge_in_range: bool = false
 var active_tracers: Array[Node3D] = []
 var salvage_serial: int = 0
 var enemy_serial: int = 0
+var save_service: TransactionalSaveService3D
 
 
 func _ready() -> void:
     process_mode = Node.PROCESS_MODE_ALWAYS
+    save_service = SAVE_SERVICE_SCRIPT.new() as TransactionalSaveService3D
+    save_service.configure()
     _setup_environment()
     _spawn_world()
     _connect_systems()
@@ -553,18 +556,22 @@ func _save_game() -> void:
     if player.is_channeling() or not autonomy_director.expedition_operation.is_empty() or not autonomy_director.salvage_operation.is_empty():
         hud.push_notification("SAVE DEFERRED · FINISH OR RECALL THE ACTIVE OPERATION")
         return
-    var data := {
-        "schema_version": 1,
-        "run_state": run_state.to_dictionary(),
-        "player": {"position": _vector_to_array(player.global_position), "health": player.current_health},
-        "heartforge": {"health": heartforge.current_health},
-        "robots": [],
-        "salvage": [],
-        "enemies": [],
-        "ecology": ecology_director.to_dictionary(),
+    var snapshot := {
+        "foundation": {
+            "schema_version": 1,
+            "run_state": run_state.to_dictionary(),
+            "player": {"position": _vector_to_array(player.global_position), "health": player.current_health},
+            "heartforge": {"health": heartforge.current_health},
+            "robots": [],
+            "salvage": [],
+            "enemies": [],
+            "ecology": ecology_director.to_dictionary(),
+        },
+        "extensions": _save_extension_data(),
     }
+    var foundation: Dictionary = snapshot["foundation"]
     for robot in autonomy_director.living_robots():
-        data["robots"].append({
+        foundation["robots"].append({
             "archetype": String(robot.archetype),
             "level": robot.level,
             "position": _vector_to_array(robot.global_position),
@@ -572,38 +579,36 @@ func _save_game() -> void:
         })
     for pile in get_tree().get_nodes_in_group("salvage_piles"):
         if is_instance_valid(pile) and pile is SalvagePile3D:
-            data["salvage"].append({
+            foundation["salvage"].append({
                 "position": _vector_to_array(pile.global_position),
                 "remaining": pile.remaining_scrap,
                 "display_name": pile.display_name,
             })
     for enemy in get_tree().get_nodes_in_group("organic_enemies"):
         if is_instance_valid(enemy) and enemy is OrganicEnemy3D and enemy.is_alive():
-            data["enemies"].append({
+            foundation["enemies"].append({
                 "species": String(enemy.species),
                 "position": _vector_to_array(enemy.global_position),
                 "health": enemy.current_health,
             })
-    var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
-    if file == null:
-        hud.push_notification("SAVE FAILED")
+    if save_service == null or not save_service.write_snapshot(snapshot):
+        hud.push_notification("SAVE FAILED · %s" % (save_service.last_error if save_service != null else "SERVICE UNAVAILABLE"))
         return
-    file.store_string(JSON.stringify(data))
-    hud.push_notification("3D WORLD SAVED · ALL ACTOR POSITIONS RETAINED")
+    hud.push_notification("WORLD SAVED TRANSACTIONALLY · BACKUPS ROTATED · ACTOR POSITIONS RETAINED")
 
 
 func _load_game() -> void:
-    if not FileAccess.file_exists(SAVE_PATH):
-        hud.push_notification("NO 3D SAVE FOUND")
+    if save_service == null:
+        hud.push_notification("SAVE INVALID · SERVICE UNAVAILABLE")
         return
-    var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
-    if file == null:
+    var snapshot := save_service.read_snapshot()
+    if snapshot.is_empty():
+        hud.push_notification("NO VALID SAVE FOUND · %s" % save_service.last_error)
         return
-    var parsed: Variant = JSON.parse_string(file.get_as_text())
-    if not (parsed is Dictionary):
-        hud.push_notification("SAVE INVALID")
+    var data: Dictionary = snapshot.get("foundation", {})
+    if data.is_empty():
+        hud.push_notification("SAVE INVALID · FOUNDATION MISSING")
         return
-    var data := parsed as Dictionary
     _clear_runtime_entities()
     run_state.restore_from_dictionary(data.get("run_state", {}))
     var player_data: Dictionary = data.get("player", {})
@@ -620,8 +625,8 @@ func _load_game() -> void:
         robot.current_health = float(robot_data.get("health", robot.maximum_health))
         if archetype == &"companion":
             companion = robot
-            robot.health_changed.connect(_on_companion_health_changed)
-            robot.destroyed.connect(_on_companion_destroyed)
+            if not robot.destroyed.is_connected(_on_companion_destroyed):
+                robot.destroyed.connect(_on_companion_destroyed)
 
     for pile_data in data.get("salvage", []):
         var pile := _spawn_salvage(_array_to_vector(pile_data.get("position", [0, 0, -12])), int(pile_data.get("remaining", 0)), str(pile_data.get("display_name", "Wreckage")))
@@ -634,7 +639,17 @@ func _load_game() -> void:
         enemy.current_health = float(enemy_data.get("health", enemy.maximum_health))
     ecology_director.restore_from_dictionary(data.get("ecology", {}))
     _update_hud_from_state()
-    hud.push_notification("3D WORLD LOADED")
+    _restore_extension_data(snapshot.get("extensions", {}))
+    var migrated_note := " · LEGACY SAVE MIGRATED" if bool(snapshot.get("migrated_from_legacy", false)) else ""
+    hud.push_notification("WORLD LOADED TRANSACTIONALLY%s" % migrated_note)
+
+
+func _save_extension_data() -> Dictionary:
+    return {}
+
+
+func _restore_extension_data(_extensions: Variant) -> void:
+    pass
 
 
 func _clear_runtime_entities() -> void:

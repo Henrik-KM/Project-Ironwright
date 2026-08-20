@@ -59,6 +59,10 @@ production asset milestones.
 - coat, hood, field pack and shoulder light;
 - clearly visible weak pistol;
 - visible face/visor and layered field gear;
+- charcoal cloth, worn leather, oxidized metal and skin hierarchy with authored
+  normal relief for close camera detail;
+- rear-camera readability through the asymmetrical pack, hood drape and split
+  coat tails;
 - authored idle, walk, fire, work and hit clips;
 - socket-based shoulder lighting and pistol muzzle;
 - HUD portrait sourced from the same character design;
@@ -139,7 +143,7 @@ The aesthetic pass is acceptable when:
 The runtime asset contract is defined by
 `game/data/mechromancer_asset_manifest.json`. The original Blender source lives
 under `game/assets/mechromancer/source/`, exports the textured glTF runtime
-asset and baked portrait, and exposes stable sockets for the weapon, shoulder
-lamp, face and field equipment. This is a presentation-only change: the
+asset, normal maps and baked portrait, and exposes stable sockets for the
+weapon, shoulder lamp, face and field equipment. This is a presentation-only change: the
 existing player collision, weak pistol, channels, health and autonomy
 interfaces remain authoritative.

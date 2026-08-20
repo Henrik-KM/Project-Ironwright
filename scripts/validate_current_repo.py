@@ -15,6 +15,7 @@ NEW_REQUIRED_PATHS = [
     "docs/FIRST_SESSION_UX.md",
     "docs/COMPLETE_GAME_ALPHA.md",
     "docs/PRESENTATION_QUALITY_GATE.md",
+    "docs/PERSISTENCE_AND_SAVE_SCHEMA.md",
     "game/data/full_game_manifest.json",
     "game/data/progression_phases.json",
     "game/data/technology_tree.json",
@@ -27,6 +28,7 @@ NEW_REQUIRED_PATHS = [
     "game/scripts/main_world_production_3d.gd",
     "game/scripts/main_world_complete_3d.gd",
     "game/scripts/main_world_prealpha_3d.gd",
+    "game/scripts/systems/transactional_save_service_3d.gd",
     "game/scripts/systems/progression_director_3d.gd",
     "game/scripts/systems/outpost_director_3d.gd",
     "game/scripts/systems/world_region_director_3d.gd",
@@ -46,6 +48,7 @@ NEW_REQUIRED_PATHS = [
     "game/tests/first_session_ux_test_runner.gd",
     "game/tests/complete_game_test_runner.gd",
     "game/tests/presentation_and_salvage_escort_test_runner.gd",
+    "game/tests/persistence_test_runner.gd",
     "game/assets/mechromancer/mechromancer.gltf",
     "game/assets/mechromancer/mechromancer.bin",
     "game/assets/mechromancer/source/mechromancer.blend",
@@ -229,20 +232,21 @@ def validate_native_godot_entrypoint() -> None:
         raise legacy.ValidationError("The native main scene must boot the pre-alpha presentation-reset world")
 
     prealpha = (ROOT / "game/scripts/main_world_prealpha_3d.gd").read_text(encoding="utf-8")
-    for token in ["extends IronwrightCompleteGameWorld3D", "_resolve_camera_occlusion", "set_map_emphasis", "pre-alpha production prototype"]:
+    for token in ["extends IronwrightProductionWorld3D", "_resolve_camera_occlusion", "set_map_emphasis", "pre-alpha production prototype"]:
         if token not in prealpha:
             raise legacy.ValidationError(f"Pre-alpha presentation-reset integration is missing {token!r}")
 
     complete = (ROOT / "game/scripts/main_world_complete_3d.gd").read_text(encoding="utf-8")
     required_complete_tokens = [
-        "extends IronwrightProductionWorld3D",
+        "extends IronwrightFullGameWorld3D",
         "WorldRegionDirector3D",
         "LongRangeOperationDirector3D",
         "MachineSocietyDirector3D",
         "StrategicEcologyDirector3D",
         "EndgameDirector3D",
         "OperationsCommandHUD3D",
-        "COMPLETE_SAVE_PATH",
+        "_save_extension_data",
+        "_restore_extension_data",
         "_update_complete_game_objective",
         "_on_endgame_completed",
     ]

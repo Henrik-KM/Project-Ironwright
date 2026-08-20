@@ -107,15 +107,15 @@ def main() -> int:
         production = (ROOT / "game/scripts/main_world_production_3d.gd").read_text(encoding="utf-8")
         full_game = (ROOT / "game/scripts/main_world_full_game_3d.gd").read_text(encoding="utf-8")
         beautiful = (ROOT / "game/scripts/main_world_beautiful_3d.gd").read_text(encoding="utf-8")
-        if "extends IronwrightCompleteGameWorld3D" not in prealpha:
-            fail("Vertical-slice world must preserve the complete systemic game.")
+        if "extends IronwrightProductionWorld3D" not in prealpha:
+            fail("Vertical-slice world must preserve the production systemic game.")
         for token in ["_resolve_camera_occlusion", "set_map_emphasis", "VerticalSliceDirector3D", "VerticalSliceActorArt3D", "_nearby_threat_camera_bias"]:
             if token not in prealpha:
                 fail(f"Pre-alpha vertical-slice world is missing {token}")
-        if "extends IronwrightProductionWorld3D" not in complete:
-            fail("Complete-game world must preserve production UX and guidance.")
-        if "extends IronwrightFullGameWorld3D" not in production:
-            fail("Production world must preserve the full-game layer.")
+        if "extends IronwrightFullGameWorld3D" not in complete:
+            fail("Complete-game world must preserve the full-game layer.")
+        if "extends IronwrightCompleteGameWorld3D" not in production:
+            fail("Production world must preserve the complete systemic game.")
         if "extends IronwrightBeautifulWorld3D" not in full_game:
             fail("Full-game world must preserve the aesthetic layer.")
         if "AestheticDirector3D" not in beautiful:

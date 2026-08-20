@@ -220,7 +220,8 @@ This protects very long saves from one isolated late-game failure without weaken
 
 ## 10. Save state
 
-The complete alpha adds a third transitional save domain on top of the existing world and progression files.
+The complete alpha now uses one transactional, versioned run envelope rather than
+separate world, progression and complete-game save domains.
 
 It retains:
 
@@ -236,9 +237,13 @@ It retains:
 - first-victory state;
 - which regions have received persistent salvage content.
 
-Active long-range operations still defer saving because their live robot references and formation state are not yet transactionally serialized. Active final protocols are serialized.
+Active long-range operations still defer saving because their live robot references
+and formation state are not yet transactionally serialized. Active final protocols
+are serialized in the unified envelope.
 
-A later roadmap milestone replaces the transitional multi-file save with one transactional versioned save and rotating backups.
+The save service writes to a temporary file, promotes it atomically, and keeps two
+bounded rotating backups. Older foundation and full-game extension files are read
+through a migration path and are never treated as the current write format.
 
 ## 11. UI and controls
 
