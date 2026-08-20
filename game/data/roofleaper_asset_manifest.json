@@ -1,0 +1,10 @@
+{
+  "asset_id": "roofleaper.ambusher.v1",
+  "display_name": "Roofleaper vertical ambusher shell",
+  "source": "game/assets/organic_families/source/build_authored_organic_assets.py",
+  "runtime_path": "res://assets/roofleaper/roofleaper.gltf",
+  "quality": "authored_high_definition",
+  "license": "Original Project Ironwright asset",
+  "required_nodes": ["RoofleaperModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "RoofleaperCrown", "RoofleaperWingL", "RoofleaperTalonsL", "ProductionAssetMarker"],
+  "animation_clips": ["Idle", "Walk", "Attack"]
+}

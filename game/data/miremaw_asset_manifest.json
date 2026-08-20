@@ -1,0 +1,10 @@
+{
+  "asset_id": "miremaw.amphibious.v1",
+  "display_name": "Miremaw amphibious heavy shell",
+  "source": "game/assets/organic_families/source/build_authored_organic_assets.py",
+  "runtime_path": "res://assets/miremaw/miremaw.gltf",
+  "quality": "authored_high_definition",
+  "license": "Original Project Ironwright asset",
+  "required_nodes": ["MiremawModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "MiremawHead", "MiremawGillFan", "MiremawJawHookL", "ProductionAssetMarker"],
+  "animation_clips": ["Idle", "Walk", "Attack"]
+}
