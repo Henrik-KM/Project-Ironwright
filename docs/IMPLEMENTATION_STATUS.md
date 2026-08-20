@@ -350,6 +350,17 @@ identities. Manual channels remain finish-before-save.
 - live West Grid review confirmed the added detail remains readable beside the
   player and companion without adding collision, objectives or management work.
 
+## Focused contextual tactical-HUD milestone
+
+- the permanent control legend now clears after the onboarding window instead
+  of occupying the tactical frame indefinitely;
+- the healthy sanctuary badge now fades after the opening read and returns only
+  for a damaged or critical Heartforge state;
+- direct interaction prompts and the command-map banner remain explicit, while
+  objective, reserve, health and operation information remain available;
+- the release shell was live-reviewed through opening, settled tactical and map
+  states, and aesthetic coverage verifies the hide-and-reappear exception path.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

@@ -75,6 +75,10 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
 - Warden, Scrapper and Pathfinder now carry dedicated heat-exchanger,
   salvage-intake and sensor-pod hardware so the role read survives the
   tactical camera instead of relying on color alone.
+- the tactical HUD now treats control help and healthy sanctuary status as
+  contextual onboarding cues: they fade from settled play while objectives,
+  reserves, health, operation state, direct interaction prompts and map mode
+  remain legible.
 
 Clutter must leave important routes readable from the high-angle camera.
 

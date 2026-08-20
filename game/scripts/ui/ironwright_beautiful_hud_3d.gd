@@ -7,11 +7,16 @@ extends IronwrightHUD3D
 var vignette: ColorRect
 var impact_overlay: ColorRect
 var sanctuary_label: Label
+var sanctuary_badge: PanelContainer
 var notification_flash: float = 0.0
 var prompt_pulse: float = 0.0
 var elapsed: float = 0.0
 var damage_intensity: float = 0.0
 var sanctuary_integrity: float = 1.0
+var tactical_hint_elapsed: float = 0.0
+
+const TACTICAL_HINT_SECONDS: float = 12.0
+const SANCTUARY_BADGE_SECONDS: float = 8.0
 
 
 func _ready() -> void:
@@ -25,6 +30,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
     super._process(delta)
     elapsed += delta
+    tactical_hint_elapsed += delta
     notification_flash = move_toward(notification_flash, 0.0, delta * 1.9)
     prompt_pulse = move_toward(prompt_pulse, 0.0, delta * 2.2)
     damage_intensity = move_toward(damage_intensity, 0.0, delta * 1.25)
@@ -45,6 +51,21 @@ func _process(delta: float) -> void:
             status = "SANCTUARY DAMAGED · HOLD THE HEARTFORGE"
         sanctuary_label.text = status
         sanctuary_label.modulate = Color("ff9270") if sanctuary_integrity < 0.35 else Color("ffd9a2")
+    _refresh_contextual_chrome()
+
+
+func _refresh_contextual_chrome() -> void:
+    if help_label != null and prompt_panel != null and map_banner != null:
+        var onboarding_hint := tactical_hint_elapsed < TACTICAL_HINT_SECONDS
+        var direct_interaction := prompt_panel.visible
+        var map_open := map_banner.visible
+        help_label.visible = onboarding_hint and not direct_interaction and not map_open and not forge_open
+        help_label.modulate.a = 1.0 if help_label.visible else 0.0
+    if sanctuary_badge != null:
+        var critical_status := sanctuary_integrity < 0.7
+        var badge_fade := clampf(1.0 - maxf(0.0, tactical_hint_elapsed - SANCTUARY_BADGE_SECONDS) / 1.8, 0.0, 1.0)
+        sanctuary_badge.visible = critical_status or badge_fade > 0.0
+        sanctuary_badge.modulate.a = 1.0 if critical_status else badge_fade
 
 
 func _apply_visual_theme() -> void:
@@ -205,14 +226,14 @@ void fragment() {
 
 
 func _add_sanctuary_badge() -> void:
-    var panel := PanelContainer.new()
-    panel.name = "SanctuaryBadge"
-    panel.set_anchors_preset(Control.PRESET_CENTER_TOP)
-    panel.position = Vector2(-210, 18)
-    panel.size = Vector2(420, 38)
-    panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    panel.add_theme_stylebox_override("panel", _button_style(Color(0.08, 0.07, 0.055, 0.78), Color(0.95, 0.62, 0.32, 0.45)))
-    root_control.add_child(panel)
+    sanctuary_badge = PanelContainer.new()
+    sanctuary_badge.name = "SanctuaryBadge"
+    sanctuary_badge.set_anchors_preset(Control.PRESET_CENTER_TOP)
+    sanctuary_badge.position = Vector2(-210, 18)
+    sanctuary_badge.size = Vector2(420, 38)
+    sanctuary_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    sanctuary_badge.add_theme_stylebox_override("panel", _button_style(Color(0.08, 0.07, 0.055, 0.78), Color(0.95, 0.62, 0.32, 0.45)))
+    root_control.add_child(sanctuary_badge)
 
     sanctuary_label = Label.new()
     sanctuary_label.text = "COZY LIGHT · MACHINES ACTIVE"
@@ -221,7 +242,7 @@ func _add_sanctuary_badge() -> void:
     sanctuary_label.add_theme_font_size_override("font_size", 13)
     sanctuary_label.add_theme_constant_override("outline_size", 3)
     sanctuary_label.add_theme_color_override("font_color", Color("ffd9a2"))
-    panel.add_child(sanctuary_label)
+    sanctuary_badge.add_child(sanctuary_label)
 
 
 func push_notification(message: String) -> void:
@@ -232,6 +253,12 @@ func push_notification(message: String) -> void:
 func set_prompt(text_value: String) -> void:
     super.set_prompt(text_value)
     prompt_pulse = 1.0
+    _refresh_contextual_chrome()
+
+
+func show_map_banner(visible_value: bool) -> void:
+    super.show_map_banner(visible_value)
+    _refresh_contextual_chrome()
 
 
 func show_channel(kind: StringName, progress: float, description: String) -> void:
@@ -246,3 +273,6 @@ func flash_damage(severity: float = 0.5) -> void:
 
 func set_sanctuary_integrity(value: float) -> void:
     sanctuary_integrity = clampf(value, 0.0, 1.0)
+    if sanctuary_integrity < 0.7:
+        tactical_hint_elapsed = 0.0
+    _refresh_contextual_chrome()
