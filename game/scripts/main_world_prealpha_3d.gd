@@ -17,6 +17,15 @@ func _ready() -> void:
         camera.fov = 46.0
         camera.near = 0.35
     _set_region_map_emphasis(false)
+
+    # The previous alpha boot message implied a level of finish that the actual
+    # frame does not support. Make the build status explicit in-game as well as
+    # in the production quality contract.
+    if hud != null:
+        hud.notifications.clear()
+        hud.notification_ages.clear()
+        hud._refresh_notifications()
+        hud.push_notification("PRE-ALPHA SYSTEMIC BUILD · ART, ANIMATION, CAMERA AND PRESENTATION STILL IN PRODUCTION")
     run_state.log_event("Presentation status: pre-alpha production prototype. Systemic completeness does not imply release-ready art or feel.")
 
 
