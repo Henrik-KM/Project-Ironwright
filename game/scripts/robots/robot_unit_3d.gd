@@ -32,6 +32,8 @@ var salvage_duration: float = 5.4
 var player_reference: Node3D
 var heartforge_reference: Node3D
 var alive: bool = true
+var obstacle_recovery_remaining: float = 0.0
+var obstacle_recovery_direction: Vector3 = Vector3.ZERO
 
 var _model_root: Node3D
 var _sensor_light: OmniLight3D
@@ -93,6 +95,7 @@ func _update_attack() -> void:
 
 
 func _update_motion(delta: float) -> void:
+    obstacle_recovery_remaining = maxf(0.0, obstacle_recovery_remaining - delta)
     if hold_position or not has_goal or current_target != null and archetype != &"scout":
         velocity.x = move_toward(velocity.x, 0.0, 20.0 * delta)
         velocity.z = move_toward(velocity.z, 0.0, 20.0 * delta)
@@ -110,12 +113,44 @@ func _update_motion(delta: float) -> void:
         return
 
     direction = direction.normalized()
+    var steering_direction := direction
+    if obstacle_recovery_remaining > 0.0 and obstacle_recovery_direction.length_squared() > 0.01:
+        steering_direction = (direction + obstacle_recovery_direction * 0.9).normalized()
     var desired_speed := minf(move_speed, speed_cap)
-    velocity.x = move_toward(velocity.x, direction.x * desired_speed, 18.0 * delta)
-    velocity.z = move_toward(velocity.z, direction.z * desired_speed, 18.0 * delta)
+    velocity.x = move_toward(velocity.x, steering_direction.x * desired_speed, 18.0 * delta)
+    velocity.z = move_toward(velocity.z, steering_direction.z * desired_speed, 18.0 * delta)
     velocity.y = -0.8
-    rotation.y = lerp_angle(rotation.y, atan2(direction.x, direction.z), 0.2)
+    rotation.y = lerp_angle(rotation.y, atan2(steering_direction.x, steering_direction.z), 0.2)
+    var position_before := global_position
     move_and_slide()
+    _register_blocked_route(position_before, direction, desired_speed, delta)
+
+
+func _register_blocked_route(position_before: Vector3, desired_direction: Vector3, desired_speed: float, delta: float) -> void:
+    if desired_speed <= 0.05 or get_slide_collision_count() == 0:
+        return
+    var flat_displacement := global_position - position_before
+    flat_displacement.y = 0.0
+    var forward_progress := flat_displacement.dot(desired_direction)
+    if forward_progress >= desired_speed * delta * 0.22:
+        return
+    var wall_normal := Vector3.ZERO
+    for index in get_slide_collision_count():
+        var collision := get_slide_collision(index)
+        if collision.get_normal().y <= 0.72:
+            wall_normal += collision.get_normal()
+    var tangent: Vector3
+    if wall_normal.length_squared() < 0.01:
+        tangent = Vector3(-desired_direction.z, 0.0, desired_direction.x).normalized()
+    else:
+        wall_normal.y = 0.0
+        wall_normal = wall_normal.normalized()
+        tangent = Vector3(-wall_normal.z, 0.0, wall_normal.x).normalized()
+    if tangent.dot(desired_direction) < 0.0:
+        tangent = -tangent
+    obstacle_recovery_direction = tangent
+    obstacle_recovery_remaining = 0.48
+    decision_reason = "Taking a short recovery arc around a blocked route while preserving the assigned formation goal."
 
 
 func _update_robot_salvage(delta: float) -> void:

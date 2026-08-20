@@ -39,6 +39,9 @@ var scouting_outbound: bool = true
 var pack_alert_cooldown: float = 0.0
 var last_known_prey_position: Vector3 = Vector3.ZERO
 var has_last_known_prey: bool = false
+var obstacle_recovery_remaining: float = 0.0
+var obstacle_recovery_direction: Vector3 = Vector3.ZERO
+var movement_reason: String = "Following the current ecological route."
 
 var _target: Node3D
 var _model_root: Node3D
@@ -387,17 +390,50 @@ func _set_state(next_state: StringName) -> void:
 
 
 func _move_toward(target_position: Vector3, speed: float, delta: float) -> void:
+    obstacle_recovery_remaining = maxf(0.0, obstacle_recovery_remaining - delta)
     var direction := target_position - global_position
     direction.y = 0.0
     if direction.length_squared() < 0.04:
         _slow_to_stop(delta)
         return
     direction = direction.normalized()
-    velocity.x = move_toward(velocity.x, direction.x * speed, 14.0 * delta)
-    velocity.z = move_toward(velocity.z, direction.z * speed, 14.0 * delta)
+    var steering_direction := direction
+    if obstacle_recovery_remaining > 0.0 and obstacle_recovery_direction.length_squared() > 0.01:
+        steering_direction = (direction + obstacle_recovery_direction * 0.9).normalized()
+    velocity.x = move_toward(velocity.x, steering_direction.x * speed, 14.0 * delta)
+    velocity.z = move_toward(velocity.z, steering_direction.z * speed, 14.0 * delta)
     velocity.y = -0.9
-    rotation.y = lerp_angle(rotation.y, atan2(direction.x, direction.z), 0.22)
+    rotation.y = lerp_angle(rotation.y, atan2(steering_direction.x, steering_direction.z), 0.22)
+    var position_before := global_position
     move_and_slide()
+    _register_blocked_route(position_before, direction, speed, delta)
+
+
+func _register_blocked_route(position_before: Vector3, desired_direction: Vector3, desired_speed: float, delta: float) -> void:
+    if desired_speed <= 0.05 or get_slide_collision_count() == 0:
+        return
+    var flat_displacement := global_position - position_before
+    flat_displacement.y = 0.0
+    var forward_progress := flat_displacement.dot(desired_direction)
+    if forward_progress >= desired_speed * delta * 0.22:
+        return
+    var wall_normal := Vector3.ZERO
+    for index in get_slide_collision_count():
+        var collision := get_slide_collision(index)
+        if collision.get_normal().y <= 0.72:
+            wall_normal += collision.get_normal()
+    var tangent: Vector3
+    if wall_normal.length_squared() < 0.01:
+        tangent = Vector3(-desired_direction.z, 0.0, desired_direction.x).normalized()
+    else:
+        wall_normal.y = 0.0
+        wall_normal = wall_normal.normalized()
+        tangent = Vector3(-wall_normal.z, 0.0, wall_normal.x).normalized()
+    if tangent.dot(desired_direction) < 0.0:
+        tangent = -tangent
+    obstacle_recovery_direction = tangent
+    obstacle_recovery_remaining = 0.48
+    movement_reason = "Taking a short recovery arc around a blocked route while preserving the ecological objective."
 
 
 func _slow_to_stop(delta: float) -> void:
