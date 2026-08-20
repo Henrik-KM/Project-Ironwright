@@ -1,0 +1,10 @@
+{
+  "asset_id": "burrower.drill.v1",
+  "display_name": "Burrower drill predator shell",
+  "source": "game/assets/burrower/source/build_burrower_asset.py",
+  "runtime_path": "res://assets/burrower/burrower.gltf",
+  "quality": "authored_high_definition",
+  "license": "Original Project Ironwright asset",
+  "required_nodes": ["BurrowerModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BurrowerDrill", "BurrowerTip", "BurrowerDrillRing0", "BurrowerLampL", "ProductionAssetMarker"],
+  "animation_clips": ["Idle", "Walk", "Attack"]
+}
