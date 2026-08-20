@@ -1,0 +1,32 @@
+{
+  "asset_id": "bulwark.companion.v1",
+  "runtime_scene": "res://assets/bulwark/bulwark.gltf",
+  "source_builder": "game/assets/bulwark/source/build_bulwark_asset.py",
+  "source_type": "original_project_ironwright_procedural_mesh_builder",
+  "third_party_assets": [],
+  "presentation_only": true,
+  "stable_nodes": [
+    "BulwarkModel",
+    "Chassis",
+    "ChassisCore",
+    "ChassisCornerCap",
+    "Sensor",
+    "OpticLens",
+    "WeaponMuzzle",
+    "BulwarkShieldEmitterSpine",
+    "BulwarkShieldEmitter",
+    "ProductionAssetMarker"
+  ],
+  "animation_clips": [
+    "Idle",
+    "Walk",
+    "Fire"
+  ],
+  "socket_contract": [
+    "sensor",
+    "optic",
+    "weapon_mount",
+    "weapon_muzzle",
+    "protection_emitter"
+  ]
+}
