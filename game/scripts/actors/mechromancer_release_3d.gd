@@ -22,7 +22,14 @@ func _update_movement(delta: float) -> void:
             float(Input.is_key_pressed(KEY_D)) - float(Input.is_key_pressed(KEY_A)),
             float(Input.is_key_pressed(KEY_S)) - float(Input.is_key_pressed(KEY_W))
         )
-        var controller := Input.get_vector(&"iw_move_left", &"iw_move_right", &"iw_move_up", &"iw_move_down")
+        var controller := Vector2.ZERO
+        if (
+            InputMap.has_action(&"iw_move_left")
+            and InputMap.has_action(&"iw_move_right")
+            and InputMap.has_action(&"iw_move_up")
+            and InputMap.has_action(&"iw_move_down")
+        ):
+            controller = Input.get_vector(&"iw_move_left", &"iw_move_right", &"iw_move_up", &"iw_move_down")
         input_vector = keyboard if keyboard.length_squared() > controller.length_squared() else controller
     input_vector = input_vector.normalized()
 
@@ -50,7 +57,10 @@ func _update_channel(delta: float) -> void:
         _settings_service = get_tree().get_first_node_in_group(&"release_settings_service") as ReleaseSettingsService3D
     if _settings_service != null:
         hold_required = hold_required and bool(_settings_service.get_value(&"hold_interactions", true))
-    if hold_required and not (Input.is_action_pressed(&"iw_interact") or Input.is_key_pressed(KEY_E)):
+    var interact_pressed := Input.is_key_pressed(KEY_E)
+    if InputMap.has_action(&"iw_interact"):
+        interact_pressed = interact_pressed or Input.is_action_pressed(&"iw_interact")
+    if hold_required and not interact_pressed:
         cancel_channel()
         return
     if channel_target != null and not is_instance_valid(channel_target):
