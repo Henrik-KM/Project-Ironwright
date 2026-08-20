@@ -799,6 +799,17 @@ identities. Manual channels remain finish-before-save.
 - aesthetic coverage now verifies the maintenance bay, carriage door and pit
   signatures after discovery.
 
+## Focused Observatory-Ridge encounter-space milestone
+
+- added an authored survey station with control cabin, varied observation
+  windows, access reader, service rail, relay mast and a readable lens barrel;
+- added warm/cool survey lighting and a star-map console so the late region
+  communicates deliberate town-scale observation rather than a single dish;
+- retained the observatory’s discovery, mapping, ecology and operation
+  contracts; all new geometry remains presentation-only;
+- aesthetic coverage now verifies the optics station, survey lens and console
+  signatures after discovery.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

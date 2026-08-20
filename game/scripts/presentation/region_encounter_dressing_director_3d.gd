@@ -303,6 +303,33 @@ func _build_nest_vignette(parent: Node3D) -> void:
 
 
 func _build_observatory_vignette(parent: Node3D) -> void:
+    var optics_station := Node3D.new()
+    optics_station.name = "ObservatoryOpticsStation"
+    parent.add_child(optics_station)
+    var station_metal := ModelKit3D.material(Color("3c4b52"), 0.64, 0.34)
+    var station_edge := ModelKit3D.material(Color("7a5037"), 0.4, 0.62)
+    var station_dark := ModelKit3D.material(Color("17262b"), 0.46, 0.32)
+    var survey_glass := ModelKit3D.material(Color("284e61"), 0.22, 0.24, Color("6ebde0"), 1.2)
+    var survey_signal := ModelKit3D.material(Color("254f61"), 0.34, 0.28, Color("7bd9ed"), 1.7)
+    var survey_warm := ModelKit3D.material(Color("6d4c31"), 0.16, 0.42, Color("e9a15a"), 0.78)
+
+    ModelKit3D.add_beveled_box(optics_station, Vector3(6.2, 2.35, 2.35), Vector3(4.4, 1.35, -6.65), station_metal, Vector3(0.0, 0.0, 0.02), "ObservatoryControlCabin", 0.18)
+    ModelKit3D.add_beveled_box(optics_station, Vector3(6.55, 0.18, 2.62), Vector3(4.4, 2.58, -6.65), station_edge, Vector3.ZERO, "ObservatoryCabinRoof", 0.2)
+    for bay in range(3):
+        var x := 2.1 + float(bay) * 2.3
+        ModelKit3D.add_surface_panel(optics_station, Vector3(1.28, 0.84, 0.1), Vector3(x, 1.65, -7.9), station_metal, survey_glass if bay != 1 else survey_warm, Vector3.ZERO, "ObservatoryWindowBay%d" % bay)
+    ModelKit3D.add_beveled_box(optics_station, Vector3(1.08, 1.72, 0.12), Vector3(4.4, 1.1, -7.95), station_dark, Vector3.ZERO, "ObservatoryAccessDoor", 0.14)
+    ModelKit3D.add_surface_panel(optics_station, Vector3(0.5, 0.48, 0.08), Vector3(4.4, 1.24, -8.06), station_dark, survey_signal, Vector3.ZERO, "ObservatoryAccessReader")
+    ModelKit3D.add_cylinder(optics_station, 0.58, 1.65, Vector3(7.9, 3.15, -6.7), station_dark, Vector3(0.0, 0.0, PI * 0.5), "ObservatoryLensBarrel")
+    ModelKit3D.add_cylinder(optics_station, 0.46, 0.12, Vector3(8.76, 3.15, -6.7), survey_glass, Vector3(0.0, 0.0, PI * 0.5), "ObservatoryLensGlass")
+    _add_beam(optics_station, Vector3(7.1, 2.2, -6.7), Vector3(8.0, 1.7, -6.7), 0.055, station_edge, "ObservatoryLensBrace")
+    _add_beam(optics_station, Vector3(0.9, 2.18, -6.6), Vector3(7.9, 2.18, -6.6), 0.045, survey_signal, "ObservatoryServiceRail")
+    ModelKit3D.add_surface_panel(optics_station, Vector3(1.3, 0.72, 0.08), Vector3(1.45, 0.92, -7.75), station_dark, survey_signal, Vector3.ZERO, "ObservatoryStarMapPanel")
+    ModelKit3D.add_cylinder(optics_station, 0.1, 1.7, Vector3(8.0, 4.1, -6.7), survey_signal, Vector3.ZERO, "ObservatoryRelayMast")
+    _add_beam(optics_station, Vector3(8.0, 4.7, -6.7), Vector3(6.0, 5.35, -6.7), 0.035, survey_signal, "ObservatoryRelayCable")
+    _add_light(optics_station, Vector3(4.4, 1.5, -8.12), Color("6ebde0"), 0.72, 5.8)
+    _add_light(optics_station, Vector3(1.45, 1.05, -7.9), Color("e9a15a"), 0.4, 4.2)
+
     ModelKit3D.add_beveled_box(parent, Vector3(6.8, 0.3, 4.4), Vector3(0.0, 0.25, -5.2), _concrete, Vector3.ZERO, "SurveyDeck", 0.2)
     for side in [-1.0, 1.0]:
         _add_beam(parent, Vector3(side * 2.6, 0.4, -4.0), Vector3(side * 1.7, 3.6, -5.2), 0.08, _steel, "SurveyTripod")
