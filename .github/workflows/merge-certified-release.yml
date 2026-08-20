@@ -1,0 +1,44 @@
+name: Merge certified commercial release candidate
+
+on:
+  push:
+    branches:
+      - agent/commercial-release-candidate
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  merge-certified-pr:
+    if: github.actor == 'github-actions[bot]' && github.event.head_commit.message == 'Certify Project Ironwright 1.0.0-rc.1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out certification commit and tested parent
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Verify exact certificate provenance
+        run: python3 scripts/verify_release_certificate.py
+
+      - name: Confirm pull request remains open and ready
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$(gh pr view 8 --repo "$GITHUB_REPOSITORY" --json state --jq .state)" = "OPEN"
+          if [ "$(gh pr view 8 --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft)" = "true" ]; then
+            gh pr ready 8 --repo "$GITHUB_REPOSITORY"
+          fi
+
+      - name: Squash-merge certified release candidate into main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr merge 8 \
+            --repo "$GITHUB_REPOSITORY" \
+            --squash \
+            --delete-branch \
+            --subject "Release Project Ironwright 1.0.0-rc.1" \
+            --body "Merge the certificate-gated commercial release candidate: original production assets, secondary animation, adaptive audio and music, expanded content, large-world performance architecture, transactional save migration, controller/accessibility/localization, long-run balance profiles, Windows/Linux packaging, complete start-to-victory validation, and an exact machine-readable release certificate."
