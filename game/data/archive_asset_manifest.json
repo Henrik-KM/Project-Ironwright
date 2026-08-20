@@ -1,0 +1,16 @@
+{
+  "asset_id": "archive.north_ruins.v1",
+  "kind": "world_landmark",
+  "source": "game/assets/archive/source/build_archive_asset.py",
+  "runtime_model": "game/assets/archive/archive.gltf",
+  "required_nodes": [
+    "ArchiveModel",
+    "ArchiveCivicFacade",
+    "ArchiveVaultDoor",
+    "ArchiveRoofBeacon",
+    "ArchiveStack0",
+    "ArchiveOrganicCreep0",
+    "ProductionAssetMarker"
+  ],
+  "presentation_only": true
+}

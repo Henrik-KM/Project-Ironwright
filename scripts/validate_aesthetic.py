@@ -63,6 +63,9 @@ REQUIRED = [
     "game/assets/glasshouse/source/build_glasshouse_asset.py",
     "game/assets/glasshouse/glasshouse.gltf",
     "game/data/glasshouse_asset_manifest.json",
+    "game/assets/archive/source/build_archive_asset.py",
+    "game/assets/archive/archive.gltf",
+    "game/data/archive_asset_manifest.json",
 ]
 
 AUTHORED_ORGANIC_ASSETS = {
@@ -171,6 +174,19 @@ AUTHORED_REGION_ASSETS = {
             "GlasshouseBrokenSkylight",
             "GlasshouseGrowthBed0",
             "GlasshouseServiceDoor",
+            "ProductionAssetMarker",
+        ],
+    },
+    "archive": {
+        "asset_id": "archive.north_ruins.v1",
+        "root": "ArchiveModel",
+        "required": [
+            "ArchiveModel",
+            "ArchiveCivicFacade",
+            "ArchiveVaultDoor",
+            "ArchiveRoofBeacon",
+            "ArchiveStack0",
+            "ArchiveOrganicCreep0",
             "ProductionAssetMarker",
         ],
     },

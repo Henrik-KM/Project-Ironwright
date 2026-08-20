@@ -8,6 +8,7 @@ const AUTHORED_OBSERVATORY_MODEL_SCENE: PackedScene = preload("res://assets/obse
 const AUTHORED_TRAM_GRAVEYARD_MODEL_SCENE: PackedScene = preload("res://assets/tram_graveyard/tram_graveyard.gltf")
 const AUTHORED_BURIED_LABS_MODEL_SCENE: PackedScene = preload("res://assets/buried_labs/buried_labs.gltf")
 const AUTHORED_GLASSHOUSE_MODEL_SCENE: PackedScene = preload("res://assets/glasshouse/glasshouse.gltf")
+const AUTHORED_ARCHIVE_MODEL_SCENE: PackedScene = preload("res://assets/archive/archive.gltf")
 
 signal landmark_changed(landmark: RegionLandmark3D)
 
@@ -194,14 +195,7 @@ func _build_visuals() -> void:
                 ModelKit3D.add_surface_panel(market_identity, Vector3(1.05, 0.58, 0.08), Vector3(x, 1.95, 5.08), sign_material, canopy_trim, Vector3.ZERO, "MarketHangingSign")
                 _add_beam(market_identity, Vector3(x - 0.44, 2.36, 5.05), Vector3(x - 0.44, 2.0, 5.05), 0.025, canopy_trim, "MarketSignCable")
         &"archive":
-            var archive := Node3D.new()
-            archive.name = "ArchiveIdentityDetails"
-            _visual_root.add_child(archive)
-            _add_ruin_block(Vector3(-6.0, 0.0, -1.0), Vector3(8.0, 8.5, 6.0), concrete)
-            _add_ruin_block(Vector3(7.0, 0.0, 3.0), Vector3(6.0, 5.5, 5.0), brick)
-            ModelKit3D.add_beveled_box(archive, Vector3(3.8, 0.42, 1.2), Vector3(0.0, 0.24, 7.0), metal, Vector3.ZERO, "ArchiveSteps", 0.22)
-            ModelKit3D.add_surface_panel(archive, Vector3(2.6, 2.0, 0.1), Vector3(0.0, 1.65, 6.32), metal, membrane, Vector3.ZERO, "ArchiveDoor")
-            ModelKit3D.add_cylinder(archive, 0.22, 5.8, Vector3(0.0, 3.2, 7.4), membrane, Vector3.ZERO, "ArchiveSignalMast")
+            _build_authored_archive_visuals()
         &"tenement":
             var tenement := Node3D.new()
             tenement.name = "TenementIdentityDetails"
@@ -498,6 +492,29 @@ func _build_authored_glasshouse_visuals() -> void:
     _visual_root.add_child(authored_marker)
 
 
+func _build_authored_archive_visuals() -> void:
+    # North Ruins keeps its expedition and salvage ownership while the civic
+    # archive shell gives the route a readable sealed destination.
+    var identity_details := Node3D.new()
+    identity_details.name = "ArchiveIdentityDetails"
+    _visual_root.add_child(identity_details)
+    var authored_scene_instance := AUTHORED_ARCHIVE_MODEL_SCENE.instantiate()
+    var imported_root := authored_scene_instance.get_node_or_null("ArchiveModel") as Node
+    if imported_root == null:
+        imported_root = authored_scene_instance
+    var authored_children := imported_root.get_children()
+    for child in authored_children:
+        child.owner = null
+        imported_root.remove_child(child)
+        _visual_root.add_child(child)
+    if imported_root != authored_scene_instance:
+        imported_root.free()
+    authored_scene_instance.free()
+    var authored_marker := Node3D.new()
+    authored_marker.name = "ArchiveAuthoredModel"
+    _visual_root.add_child(authored_marker)
+
+
 func _capture_region_motion_nodes() -> void:
     _motion_nodes.clear()
     _motion_base_transforms.clear()
@@ -562,6 +579,11 @@ func _animate_region_details() -> void:
         elif node_name.begins_with("GlasshouseGrowthPulse"):
             node.rotation.y += sin(local_phase * 0.85) * 0.08
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.25) * 0.07)
+        elif node_name.begins_with("ArchiveRoofBeaconLight"):
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.75) * 0.09)
+        elif node_name.begins_with("ArchiveOrganicCreep"):
+            node.rotation.y += sin(local_phase * 0.82) * 0.06
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.18) * 0.07)
         elif node_name.begins_with("RiverworksGrowth") or node_name.begins_with("RiverbankGrowth"):
             node.rotation.y += sin(local_phase * 1.15) * 0.12
             node.scale *= Vector3(1.0, 1.0 + sin(local_phase * 1.8) * 0.08, 1.0)
@@ -588,6 +610,8 @@ func _is_region_motion_name(node_name: String) -> bool:
         "BuriedLabsOrganicSeep",
         "GlasshouseCanopyPulse",
         "GlasshouseGrowthPulse",
+        "ArchiveRoofBeaconLight",
+        "ArchiveOrganicCreep",
     ]:
         if node_name.begins_with(prefix):
             return true
