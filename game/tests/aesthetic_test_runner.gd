@@ -306,7 +306,7 @@ func _enemy_model_has_details(enemy: OrganicEnemy3D, species: StringName) -> boo
         &"burrower":
             return _find_named(enemy, "BurrowerDrill") != null and _find_named(enemy, "BurrowerTip") != null
         &"sporecaster":
-            return _find_named(enemy, "SporecasterSac") != null and _find_named(enemy, "SporecasterStem") != null and _find_named(enemy, "SporecasterOculus") != null
+            return _find_named(enemy, "SporecasterSac0") != null and _find_named(enemy, "SporecasterStem0") != null and _find_named(enemy, "SporecasterOculusL") != null
         &"broodmass":
             return _find_named(enemy, "BroodmassLobe") != null and _find_named(enemy, "CrownSpine") != null
         &"apex":

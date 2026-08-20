@@ -1,0 +1,10 @@
+{
+  "asset_id": "sporecaster.infestation.v1",
+  "display_name": "Sporecaster infestation shell",
+  "source": "game/assets/sporecaster/source/build_sporecaster_asset.py",
+  "runtime_path": "res://assets/sporecaster/sporecaster.gltf",
+  "quality": "authored_high_definition",
+  "license": "Original Project Ironwright asset",
+  "required_nodes": ["SporecasterModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SporecasterGillFan0", "SporecasterSac0", "SporecasterStem0", "SporecasterOculusL", "ProductionAssetMarker"],
+  "animation_clips": ["Idle", "Walk", "Attack"]
+}

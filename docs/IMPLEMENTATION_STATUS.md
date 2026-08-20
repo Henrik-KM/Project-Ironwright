@@ -360,6 +360,18 @@ identities. Manual channels remain finish-before-save.
 - live opening-route review confirmed the mesh reads at tactical distance and
   remains compatible with the existing organic impact feedback.
 
+## Focused authored Sporecaster milestone
+
+- added an original high-definition glTF shell for the ranged infestation
+  family, with layered torso segments, a seven-blade gill fan, five suspended
+  spore sacs, stalks and paired sensory oculi;
+- wired the shell into `OrganicEnemy3D` without changing Sporecaster targeting,
+  impairment, noise, ecology, operations or attack timing;
+- retained stable sac, stem, gill and oculus names for import validation and
+  future state-driven motion refinement;
+- live opening-route review confirmed the silhouette reads beside the player
+  and companion without adding a recurring task or new simulation state.
+
 ## Focused channel-and-tracer feedback milestone
 
 - weapon fire now leaves a short-lived directional tracer between the firing
