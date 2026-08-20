@@ -60,6 +60,9 @@ REQUIRED = [
     "game/assets/buried_labs/source/build_buried_labs_asset.py",
     "game/assets/buried_labs/buried_labs.gltf",
     "game/data/buried_labs_asset_manifest.json",
+    "game/assets/glasshouse/source/build_glasshouse_asset.py",
+    "game/assets/glasshouse/glasshouse.gltf",
+    "game/data/glasshouse_asset_manifest.json",
 ]
 
 AUTHORED_ORGANIC_ASSETS = {
@@ -155,6 +158,19 @@ AUTHORED_REGION_ASSETS = {
             "BuriedLabsTransferRail",
             "BuriedLabsContainmentDoor",
             "BuriedLabsOrganicSeep0",
+            "ProductionAssetMarker",
+        ],
+    },
+    "glasshouse": {
+        "asset_id": "glasshouse.municipal.v1",
+        "root": "GlasshouseModel",
+        "required": [
+            "GlasshouseModel",
+            "GlasshouseFrameBay0",
+            "GlasshouseClimateLouver",
+            "GlasshouseBrokenSkylight",
+            "GlasshouseGrowthBed0",
+            "GlasshouseServiceDoor",
             "ProductionAssetMarker",
         ],
     },

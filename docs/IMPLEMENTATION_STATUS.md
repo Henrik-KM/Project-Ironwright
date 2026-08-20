@@ -52,6 +52,7 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - authored visual identity for every district kind, including original high-definition Riverworks pump/sluice, Cathedral nave/choir and Observatory survey landmark shells plus the authored Root Cistern organ shell.
 - the Tram Graveyard now has an original high-definition carriage and maintenance landmark shell while retaining the existing rail encounter and operation contracts.
 - Buried Laboratories now has an original high-definition containment-hall shell while retaining the existing research encounter and operation contracts.
+- Municipal Glasshouse now has an original high-definition climate-frame shell while retaining the existing greenhouse encounter and operation contracts.
 
 ### Long-range operations
 
@@ -639,6 +640,17 @@ identities. Manual channels remain finish-before-save.
 - native aesthetic and release coverage verifies the named sockets and
   deterministic containment-light/contamination motion; live district review
   remains required.
+
+## Focused Municipal Glasshouse authored-space milestone
+
+- added the original high-definition `glasshouse.municipal.v1` shell with a
+  climate frame, cold-glass panels, growth beds, luminous canopy, climate
+  louver, service door and broken skylight;
+- retained the existing greenhouse encounter dressing, salvage, route,
+  ecology, discovery and operation ownership; the new geometry is
+  presentation-only;
+- native aesthetic and release coverage verifies the named sockets and
+  deterministic canopy/growth motion; live district review remains required.
 
 ## Focused remote-ground continuity milestone
 

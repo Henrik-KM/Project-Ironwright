@@ -112,6 +112,17 @@ func _run_all() -> void:
                 _expect(landmark.find_child("GreenhouseLightCanopy", true, false) != null, "Municipal Glasshouse must expose an authored light canopy.")
                 _expect(landmark.find_child("GreenhouseClimateLouver", true, false) != null, "Municipal Glasshouse must expose readable climate infrastructure.")
                 _expect(landmark.find_child("GreenhouseBrokenSkylight", true, false) != null, "Municipal Glasshouse must expose a broken skylight silhouette.")
+                _expect(landmark.get_node_or_null("PersistentRegionGeometry/GlasshouseAuthoredModel") != null, "Municipal Glasshouse must expose its authored climate-frame landmark shell.")
+                var glasshouse_canopy := landmark.find_child("GlasshouseCanopyPulse", true, false) as Node3D
+                var glasshouse_growth := landmark.find_child("GlasshouseGrowthPulse0_0", true, false) as Node3D
+                _expect(glasshouse_canopy != null and glasshouse_growth != null, "Municipal Glasshouse must expose named canopy and growth motion sockets.")
+                if glasshouse_canopy != null and glasshouse_growth != null:
+                    landmark.set_presentation_detail_level(0)
+                    var canopy_before := glasshouse_canopy.scale
+                    var growth_before := glasshouse_growth.scale
+                    landmark.call("_process", 0.5)
+                    _expect(not glasshouse_canopy.scale.is_equal_approx(canopy_before), "Municipal Glasshouse canopy signal must pulse as a restrained presentation cue.")
+                    _expect(not glasshouse_growth.scale.is_equal_approx(growth_before), "Municipal Glasshouse growth must carry deterministic presentation motion.")
             if landmark.region_kind == &"rail":
                 _expect(landmark.find_child("TramMaintenanceBay", true, false) != null, "Tram Graveyard must expose an authored maintenance bay.")
                 _expect(landmark.find_child("TramCarriageDoor", true, false) != null, "Tram Graveyard must expose a readable carriage door.")

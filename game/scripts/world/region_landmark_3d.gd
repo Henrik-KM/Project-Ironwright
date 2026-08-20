@@ -7,6 +7,7 @@ const AUTHORED_CATHEDRAL_MODEL_SCENE: PackedScene = preload("res://assets/cathed
 const AUTHORED_OBSERVATORY_MODEL_SCENE: PackedScene = preload("res://assets/observatory/observatory.gltf")
 const AUTHORED_TRAM_GRAVEYARD_MODEL_SCENE: PackedScene = preload("res://assets/tram_graveyard/tram_graveyard.gltf")
 const AUTHORED_BURIED_LABS_MODEL_SCENE: PackedScene = preload("res://assets/buried_labs/buried_labs.gltf")
+const AUTHORED_GLASSHOUSE_MODEL_SCENE: PackedScene = preload("res://assets/glasshouse/glasshouse.gltf")
 
 signal landmark_changed(landmark: RegionLandmark3D)
 
@@ -214,18 +215,7 @@ func _build_visuals() -> void:
             for index in range(4):
                 ModelKit3D.add_box(tenement, Vector3(1.15, 1.0, 0.05), Vector3(-5.2 + float(index) * 3.4, 2.7 + float(index % 2) * 2.2, 4.0), membrane, Vector3.ZERO, "TenementHangingCloth")
         &"greenhouse":
-            var greenhouse := Node3D.new()
-            greenhouse.name = "GreenhouseIdentityDetails"
-            _visual_root.add_child(greenhouse)
-            var glass := ModelKit3D.material(Color("5d7d79"), 0.12, 0.28, Color("76d7c8"), 0.42)
-            for side in [-1.0, 1.0]:
-                _add_beam(greenhouse, Vector3(side * 5.5, 0.0, -5.0), Vector3(side * 5.5, 6.5, 0.0), 0.12, metal, "GreenhouseFrame")
-                _add_beam(greenhouse, Vector3(side * 5.5, 6.5, 0.0), Vector3(side * 3.8, 6.5, 6.0), 0.12, metal, "GreenhouseRoofFrame")
-            for side in [-1.0, 1.0]:
-                ModelKit3D.add_box(greenhouse, Vector3(0.05, 4.6, 5.8), Vector3(side * 5.38, 2.45, 0.2), glass, Vector3.ZERO, "GreenhouseGlassPanel")
-            for index in range(4):
-                ModelKit3D.add_beveled_box(greenhouse, Vector3(2.2, 0.26, 0.9), Vector3(-3.3 + float(index) * 2.2, 0.25, 3.2), rust, Vector3.ZERO, "GreenhousePlanter", 0.22)
-                ModelKit3D.add_membrane_fan(greenhouse, 0.48, Vector3(-3.3 + float(index) * 2.2, 0.78, 3.2), membrane, 5, "GreenhouseGrowthFan")
+            _build_authored_glasshouse_visuals()
         &"waterfront":
             var waterfront := Node3D.new()
             waterfront.name = "WaterfrontIdentityDetails"
@@ -485,6 +475,29 @@ func _build_authored_buried_labs_visuals() -> void:
     _visual_root.add_child(authored_marker)
 
 
+func _build_authored_glasshouse_visuals() -> void:
+    # The greenhouse shell carries the climate and growth identity while the
+    # existing encounter dressing continues to own interaction and ecology.
+    var identity_details := Node3D.new()
+    identity_details.name = "GreenhouseIdentityDetails"
+    _visual_root.add_child(identity_details)
+    var authored_scene_instance := AUTHORED_GLASSHOUSE_MODEL_SCENE.instantiate()
+    var imported_root := authored_scene_instance.get_node_or_null("GlasshouseModel") as Node
+    if imported_root == null:
+        imported_root = authored_scene_instance
+    var authored_children := imported_root.get_children()
+    for child in authored_children:
+        child.owner = null
+        imported_root.remove_child(child)
+        _visual_root.add_child(child)
+    if imported_root != authored_scene_instance:
+        imported_root.free()
+    authored_scene_instance.free()
+    var authored_marker := Node3D.new()
+    authored_marker.name = "GlasshouseAuthoredModel"
+    _visual_root.add_child(authored_marker)
+
+
 func _capture_region_motion_nodes() -> void:
     _motion_nodes.clear()
     _motion_base_transforms.clear()
@@ -544,6 +557,11 @@ func _animate_region_details() -> void:
         elif node_name.begins_with("BuriedLabsOrganicSeep"):
             node.rotation.y += sin(local_phase * 0.8) * 0.06
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.2) * 0.07)
+        elif node_name.begins_with("GlasshouseCanopyPulse"):
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.8) * 0.08)
+        elif node_name.begins_with("GlasshouseGrowthPulse"):
+            node.rotation.y += sin(local_phase * 0.85) * 0.08
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.25) * 0.07)
         elif node_name.begins_with("RiverworksGrowth") or node_name.begins_with("RiverbankGrowth"):
             node.rotation.y += sin(local_phase * 1.15) * 0.12
             node.scale *= Vector3(1.0, 1.0 + sin(local_phase * 1.8) * 0.08, 1.0)
@@ -568,6 +586,8 @@ func _is_region_motion_name(node_name: String) -> bool:
         "BuriedLabsVesselLight",
         "BuriedLabsTransferLight",
         "BuriedLabsOrganicSeep",
+        "GlasshouseCanopyPulse",
+        "GlasshouseGrowthPulse",
     ]:
         if node_name.begins_with(prefix):
             return true
