@@ -166,6 +166,7 @@ func _connect_actor_feedback(actor: Node3D) -> void:
     _connect_once(actor, &"pistol_fired", Callable(self, "_on_weapon_fired"))
     _connect_once(actor, &"weapon_fired", Callable(self, "_on_weapon_fired"))
     _connect_once(actor, &"attack_started", Callable(self, "_on_attack_started"))
+    _connect_once(actor, &"attack_landed", Callable(self, "_on_attack_landed"))
     _connect_once(actor, &"killed", Callable(self, "_on_enemy_killed"))
 
 
@@ -194,6 +195,17 @@ func _on_attack_started(enemy: Node, target: Node) -> void:
     _spawn_attack_telegraph(warning_position, radius)
     _spawn_flash(attacker.global_position + Vector3.UP * 0.7, Color("d14b55"), 0.55, 3.8, 0.12)
     camera_shake = maxf(camera_shake, 0.035)
+
+
+func _on_attack_landed(enemy: Node, target: Node) -> void:
+    if not enemy is Node3D or not target is Node3D:
+        return
+    var attacker := enemy as Node3D
+    var victim := target as Node3D
+    var impact_position := (attacker.global_position + victim.global_position) * 0.5 + Vector3.UP * 0.45
+    _spawn_burst(impact_position, Color("e65a4f"), 16, 2.5, Vector3(0.0, -3.8, 0.0), 0.46, "OrganicAttackImpact")
+    _spawn_flash(impact_position, Color("ed654f"), 0.9, 4.2, 0.1)
+    camera_shake = maxf(camera_shake, 0.11)
 
 
 func _on_enemy_killed(enemy: Node, _killer: Node) -> void:
@@ -303,11 +315,11 @@ func _spawn_attack_telegraph(position: Vector3, radius: float) -> void:
     tween.chain().tween_callback(telegraph.queue_free)
 
 
-func _spawn_burst(position: Vector3, color: Color, amount: int, speed: float, gravity: Vector3, lifetime: float) -> void:
+func _spawn_burst(position: Vector3, color: Color, amount: int, speed: float, gravity: Vector3, lifetime: float, node_name: String = "TransientBurst") -> void:
     if world == null:
         return
     var particles := CPUParticles3D.new()
-    particles.name = "TransientBurst"
+    particles.name = node_name
     particles.position = position
     particles.amount = amount
     particles.lifetime = lifetime
