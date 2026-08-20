@@ -195,6 +195,11 @@ func _test_vertical_slice_presentation() -> void:
     if feedback != null and impact_enemy != null and world.companion != null:
         feedback.call("_on_attack_landed", impact_enemy, world.companion)
         _expect(world.get_node_or_null("OrganicAttackImpact") != null, "A landed organic attack must create a bounded dedicated impact burst.")
+        feedback.call("_on_weapon_fired", world.companion.global_position + Vector3.UP, impact_enemy.global_position, impact_enemy)
+        _expect(world.get_node_or_null("WeaponTracer") != null, "Friendly weapon fire must create a bounded readable tracer.")
+        feedback.call("_on_channel_started", &"manual_salvage", 2.0, "TEST")
+        _expect(world.get_node_or_null("ActiveChannelField") != null, "Manual salvage must create a readable channel field around the player.")
+        feedback.call("_on_channel_finished", &"manual_salvage", null, {})
 
     var slice_root := world.get_node_or_null("HeartforgeVerticalSlice") as Node3D
     _expect(slice_root != null, "The Heartforge vertical slice must build a dedicated environment root.")

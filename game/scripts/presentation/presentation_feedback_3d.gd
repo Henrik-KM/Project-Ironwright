@@ -18,6 +18,9 @@ var warm_material: StandardMaterial3D
 var rust_material: StandardMaterial3D
 var dark_material: StandardMaterial3D
 var organic_material: StandardMaterial3D
+var channel_field: Node3D
+var channel_field_material: StandardMaterial3D
+var channel_field_color: Color = Color.WHITE
 
 
 func configure(next_world: Node3D, next_player: Node3D, next_heartforge: Node3D, next_camera: Camera3D, next_noise_system: Node) -> void:
@@ -178,6 +181,7 @@ func _connect_once(source: Object, signal_name: StringName, callback: Callable) 
 func _on_weapon_fired(origin: Vector3, target: Vector3, target_node: Node) -> void:
     var friendly := target_node != null and target_node.is_in_group(&"organic_enemies")
     var color := Color("7ae8ed") if friendly else Color("ff9a50")
+    _spawn_weapon_tracer(origin, target, color)
     _spawn_flash(origin, color, 2.3, 4.5, 0.08)
     _spawn_burst(target, color, 9, 1.6, Vector3(0.0, -2.2, 0.0), 0.42)
     camera_shake = maxf(camera_shake, 0.12)
@@ -228,11 +232,18 @@ func _on_noise_emitted(position: Vector3, radius: float, intensity: float, sourc
 func _on_channel_started(kind: StringName, _duration: float, _description: String) -> void:
     active_channel_kind = kind
     channel_spark_clock = 0.0
+    _spawn_channel_field(kind)
 
 
 func _on_channel_finished(_kind: StringName, _target: Node, _metadata: Dictionary) -> void:
     active_channel_kind = &""
     channel_spark_clock = 0.0
+    if channel_field != null and is_instance_valid(channel_field):
+        var finishing_field := channel_field
+        channel_field = null
+        var fade := finishing_field.create_tween()
+        fade.tween_property(finishing_field, "scale", Vector3.ONE * 1.28, 0.18)
+        fade.tween_callback(finishing_field.queue_free)
 
 
 func _on_player_health_changed(current: float, maximum: float) -> void:
@@ -254,12 +265,105 @@ func _on_heartforge_health_changed(current: float, maximum: float) -> void:
 func _animate_channel_sparks(delta: float) -> void:
     if active_channel_kind == &"" or player == null:
         return
+    if channel_field != null and is_instance_valid(channel_field):
+        channel_field.global_position = player.global_position + Vector3(0.0, 0.04, 0.0)
+        channel_field.rotation.y += delta * (1.6 if active_channel_kind == &"manual_salvage" else 2.4)
+        channel_field.scale = Vector3.ONE * (1.0 + sin(elapsed * 4.0) * 0.035)
     channel_spark_clock += delta
     if channel_spark_clock < 0.16:
         return
     channel_spark_clock = 0.0
     var color := Color("74e1e7") if active_channel_kind == &"manual_salvage" else Color("ffad54")
     _spawn_burst(player.global_position + Vector3(0.0, 0.85, -0.55), color, 4, 1.4, Vector3(0.0, -2.8, 0.0), 0.32)
+
+
+func _spawn_channel_field(kind: StringName) -> void:
+    if world == null or player == null:
+        return
+    if channel_field != null and is_instance_valid(channel_field):
+        channel_field.queue_free()
+    channel_field = Node3D.new()
+    channel_field.name = "ActiveChannelField"
+    channel_field_color = Color("74e1e7") if kind == &"manual_salvage" else Color("ffad54")
+    channel_field_material = _vfx_material(channel_field_color, 0.52, 4.0)
+    world.add_child(channel_field)
+    channel_field.global_position = player.global_position + Vector3(0.0, 0.12, 0.0)
+
+    var disc := MeshInstance3D.new()
+    disc.name = "ChannelFieldDisc"
+    var disc_mesh := CylinderMesh.new()
+    disc_mesh.top_radius = 1.02
+    disc_mesh.bottom_radius = 1.02
+    disc_mesh.height = 0.018
+    disc_mesh.radial_segments = 48
+    disc.mesh = disc_mesh
+    disc.material_override = channel_field_material
+    disc.transparency = 0.18
+    disc.position.y = -0.07
+    channel_field.add_child(disc)
+
+    for index in range(3):
+        var ring := MeshInstance3D.new()
+        ring.name = "ChannelFieldRing%d" % index
+        var ring_mesh := TorusMesh.new()
+        ring_mesh.inner_radius = 0.78 + float(index) * 0.12
+        ring_mesh.outer_radius = ring_mesh.inner_radius + 0.045
+        ring_mesh.rings = 16
+        ring_mesh.ring_segments = 36
+        ring.mesh = ring_mesh
+        ring.material_override = channel_field_material
+        ring.position.y = 0.05 + float(index) * 0.42
+        ring.rotation.x = 0.06 * float(index)
+        channel_field.add_child(ring)
+
+    var core := MeshInstance3D.new()
+    core.name = "ChannelFieldCore"
+    var core_mesh := CylinderMesh.new()
+    core_mesh.top_radius = 0.035
+    core_mesh.bottom_radius = 0.08
+    core_mesh.height = 1.18
+    core_mesh.radial_segments = 16
+    core.mesh = core_mesh
+    core.material_override = channel_field_material
+    core.position.y = 0.6
+    channel_field.add_child(core)
+
+
+func _spawn_weapon_tracer(origin: Vector3, target: Vector3, color: Color) -> void:
+    if world == null:
+        return
+    var direction := target - origin
+    var distance := direction.length()
+    if distance <= 0.08:
+        return
+    var tracer := MeshInstance3D.new()
+    tracer.name = "WeaponTracer"
+    var mesh := CylinderMesh.new()
+    mesh.top_radius = 0.026
+    mesh.bottom_radius = 0.05
+    mesh.height = distance
+    mesh.radial_segments = 12
+    tracer.mesh = mesh
+    var material := ModelKit3D.material(color, 0.18, 0.3, color, 3.6)
+    tracer.material_override = material
+    world.add_child(tracer)
+    tracer.global_position = (origin + target) * 0.5
+    tracer.quaternion = Quaternion(Vector3.UP, direction.normalized())
+    var tween := tracer.create_tween().set_parallel(true)
+    tween.tween_property(material, "emission_energy_multiplier", 0.0, 0.16)
+    tween.tween_property(tracer, "scale", Vector3(1.0, 1.15, 1.0), 0.16)
+    tween.chain().tween_callback(tracer.queue_free)
+
+
+func _vfx_material(color: Color, alpha: float, emission_energy: float) -> StandardMaterial3D:
+    var material := StandardMaterial3D.new()
+    material.albedo_color = Color(color.r, color.g, color.b, alpha)
+    material.emission_enabled = true
+    material.emission = color
+    material.emission_energy_multiplier = emission_energy
+    material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+    material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+    return material
 
 
 func _animate_camera() -> void:
