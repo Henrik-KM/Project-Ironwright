@@ -1,0 +1,176 @@
+name: Certify commercial release candidate
+
+on:
+  push:
+    branches:
+      - agent/commercial-release-candidate
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  certify:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out release branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/commercial-release-candidate
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Set up Godot 4.7.1 with export templates
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.1
+          use-dotnet: false
+          include-templates: true
+
+      - name: Generate original release assets from reviewable source
+        run: python3 scripts/generate_release_assets.py
+
+      - name: Validate browser reference, release assets and product contracts
+        run: npm run validate
+
+      - name: Import and parse every Godot release resource
+        run: godot --headless --path game --editor --quit
+
+      - name: Run core gameplay regression
+        run: godot --headless --path game --script res://tests/test_runner.gd
+
+      - name: Run aesthetic acceptance regression
+        run: godot --headless --path game --script res://tests/aesthetic_test_runner.gd
+
+      - name: Run progression and autonomous outpost regression
+        run: godot --headless --path game --script res://tests/full_game_test_runner.gd
+
+      - name: Run first-session accessibility and guidance regression
+        run: godot --headless --path game --script res://tests/first_session_ux_test_runner.gd
+
+      - name: Run complete start-to-victory regression
+        run: godot --headless --path game --script res://tests/complete_game_test_runner.gd
+
+      - name: Run commercial release regression
+        run: godot --headless --path game --script res://tests/release_test_runner.gd
+
+      - name: Export Windows and Linux release candidates
+        run: |
+          rm -rf dist
+          mkdir -p dist/windows dist/linux
+          godot --headless --path game --export-release "Windows Desktop" ../dist/windows/ProjectIronwright.exe
+          godot --headless --path game --export-release "Linux/X11" ../dist/linux/ProjectIronwright.x86_64
+          chmod +x dist/linux/ProjectIronwright.x86_64
+
+      - name: Package release candidates and calculate checksums
+        run: |
+          cd dist
+          find windows linux -maxdepth 1 -type f -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS.txt
+          (cd windows && zip -9 -r ../ProjectIronwright-1.0.0-rc.1-Windows.zip .)
+          (cd linux && tar -czf ../ProjectIronwright-1.0.0-rc.1-Linux.tar.gz .)
+          sha256sum ProjectIronwright-1.0.0-rc.1-Windows.zip ProjectIronwright-1.0.0-rc.1-Linux.tar.gz >> SHA256SUMS.txt
+
+      - name: Write machine-readable release certificate
+        env:
+          CERTIFIED_SHA: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          import platform
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          root = Path.cwd()
+          dist = root / "dist"
+          files = {}
+          for name in [
+              "ProjectIronwright-1.0.0-rc.1-Windows.zip",
+              "ProjectIronwright-1.0.0-rc.1-Linux.tar.gz",
+              "SHA256SUMS.txt",
+          ]:
+              path = dist / name
+              files[name] = {
+                  "bytes": path.stat().st_size,
+                  "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+              }
+
+          certificate = {
+              "schema_version": 1,
+              "product": "Project Ironwright",
+              "version": "1.0.0-rc.1",
+              "release_channel": "release_candidate",
+              "certified_source_sha": os.environ["CERTIFIED_SHA"],
+              "certified_at_utc": datetime.now(timezone.utc).isoformat(),
+              "runner": platform.platform(),
+              "godot": "4.7.1",
+              "platform_packages": ["Windows x86-64", "Linux x86-64"],
+              "passed_gates": [
+                  "browser_reference_and_contracts",
+                  "release_assets",
+                  "godot_import",
+                  "core_gameplay",
+                  "aesthetic_acceptance",
+                  "progression_and_outposts",
+                  "first_session_accessibility",
+                  "complete_start_to_victory",
+                  "commercial_release_regression",
+                  "windows_export",
+                  "linux_export",
+              ],
+              "artifacts": files,
+              "external_gates_remaining": [
+                  "representative_hardware_testing",
+                  "multi_day_endurance_playtesting",
+                  "professional_translation_review",
+                  "accessibility_user_review",
+                  "store_signing_and_submission",
+                  "age_rating_and_legal_review",
+              ],
+          }
+          path = root / "docs" / "RELEASE_CERTIFICATION.json"
+          path.write_text(json.dumps(certificate, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+          print(path.read_text(encoding="utf-8"))
+          PY
+
+      - name: Commit generated release assets and successful certificate
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add game/assets/release/textures game/assets/release/audio docs/RELEASE_CERTIFICATION.json
+          if git diff --cached --quiet; then
+            echo "Generated assets and release certificate are already current."
+          else
+            git commit -m "Certify Project Ironwright 1.0.0-rc.1"
+            git push origin HEAD:agent/commercial-release-candidate
+          fi
+
+      - name: Upload Windows package
+        uses: actions/upload-artifact@v4
+        with:
+          name: ProjectIronwright-1.0.0-rc.1-Windows
+          path: dist/ProjectIronwright-1.0.0-rc.1-Windows.zip
+          if-no-files-found: error
+
+      - name: Upload Linux package
+        uses: actions/upload-artifact@v4
+        with:
+          name: ProjectIronwright-1.0.0-rc.1-Linux
+          path: dist/ProjectIronwright-1.0.0-rc.1-Linux.tar.gz
+          if-no-files-found: error
+
+      - name: Upload checksums and certificate
+        uses: actions/upload-artifact@v4
+        with:
+          name: ProjectIronwright-1.0.0-rc.1-Certification
+          path: |
+            dist/SHA256SUMS.txt
+            docs/RELEASE_CERTIFICATION.json
+          if-no-files-found: error
