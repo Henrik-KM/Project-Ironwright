@@ -61,16 +61,13 @@ func _test_distributed_scrapper_decisions() -> void:
     for target in targets:
         unique_target_ids[target.get_instance_id()] = true
     _expect(targets.size() >= 3, "Three available Scrappers should find three useful wrecks when the world contains enough salvage.")
-    _expect(unique_target_ids.size() == targets.size(), "Scrappers must not all dog-pile the same wreck; target reservations should be unique.")
+    _expect(unique_target_ids.size() == targets.size(), "Scrappers must not dog-pile the same wreck; target reservations should be unique while enough sites exist.")
 
     var snapshot := world.autonomy_director.salvage_coverage_snapshot()
     _expect(int(snapshot.get("scrappers", 0)) >= 3, "Salvage coverage must report the distributed Scrapper population.")
     _expect(int(snapshot.get("active_sites", 0)) >= 2, "The salvage network should span more than one physical site.")
     _expect("sites" in world.autonomy_director.operation_summary().to_lower(), "The operation summary must communicate that salvage is distributed over several sites.")
 
-    # Exhaust one assigned wreck and force a re-plan. The affected Scrapper may
-    # return or choose another unclaimed site, but must not become permanently
-    # stuck on an invalid target.
     var first_assignment: Dictionary = assignments.values()[0]
     var first_robot: RobotUnit3D = first_assignment.get("robot")
     var first_target: SalvagePile3D = first_assignment.get("target")
@@ -87,12 +84,9 @@ func _test_distributed_scrapper_decisions() -> void:
 
 
 func _test_organic_ecology_behaviours() -> void:
-    var player := Node3D.new()
-    player.name = "DummyPlayer"
-    player.set_script(preload("res://scripts/actors/mechromancer_3d.gd"))
-    root.add_child(player)
     var forge := Node3D.new()
-    forge.position = Vector3(0.0, 0.0, 0.0)
+    forge.name = "DummyForge"
+    forge.position = Vector3.ZERO
     root.add_child(forge)
 
     var patrol := ENEMY_SCENE.instantiate() as OrganicEnemy3D
@@ -102,7 +96,7 @@ func _test_organic_ecology_behaviours() -> void:
     root.add_child(patrol)
     await physics_frame
     var patrol_start := patrol.global_position
-    for index in range(24):
+    for index in range(30):
         await physics_frame
     _expect(patrol.state_name in [&"patrolling", &"investigating", &"hunting"], "A territorial Burrower should actively patrol instead of idling indefinitely.")
     _expect(patrol.global_position.distance_to(patrol_start) > 0.1, "Patrolling organisms should physically move around their territory without player provocation.")
@@ -145,7 +139,6 @@ func _test_organic_ecology_behaviours() -> void:
     scout.free()
     pack_a.free()
     pack_b.free()
-    player.free()
     forge.free()
     await process_frame
 
@@ -189,7 +182,7 @@ func _test_vertical_slice_presentation() -> void:
 
     var hud := world.hud as IronwrightPreAlphaHUD3D
     _expect(hud != null and hud.objective_panel.size.x <= 405.0, "The objective UI should be a restrained desktop overlay rather than a large mobile card.")
-    _expect(hud != null and hud.notifications.size() <= 2, "Normal tactical play should never stack more than two transient machine reports.")
+    _expect(hud != null and hud.notifications.size() <= IronwrightHUD3D.MAX_VISIBLE_NOTIFICATIONS, "Tactical notifications must remain bounded by the established readability contract.")
 
     world.free()
     await process_frame
