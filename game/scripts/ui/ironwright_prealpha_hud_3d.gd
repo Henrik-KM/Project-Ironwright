@@ -47,6 +47,21 @@ func _apply_desktop_density() -> void:
         notification_panel.modulate = Color(1.0, 1.0, 1.0, 0.84)
 
 
+func _refresh_contextual_chrome() -> void:
+    super._refresh_contextual_chrome()
+    # The release shell has already taught the opening controls through the
+    # objective and direct prompt. Keep its tactical frame stricter than the
+    # generic cinematic skin: the command legend and healthy sanctuary badge
+    # never return unless a relevant exception is active.
+    if help_label != null:
+        help_label.visible = false
+        help_label.modulate.a = 0.0
+    if _command_help_panel != null:
+        _command_help_panel.visible = false
+    if _sanctuary_badge != null:
+        _sanctuary_badge.visible = sanctuary_integrity < 0.78
+
+
 func apply_safe_layout(viewport_size: Vector2) -> void:
     super.apply_safe_layout(viewport_size)
     if is_inside_tree():

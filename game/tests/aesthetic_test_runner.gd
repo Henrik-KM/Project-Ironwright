@@ -177,6 +177,13 @@ func _run_all() -> void:
     if beautiful_hud is IronwrightHUD3D:
         _expect((beautiful_hud as IronwrightHUD3D).player_portrait != null, "The HUD must expose the Mechromancer portrait.")
         _expect((beautiful_hud as IronwrightHUD3D).player_portrait.texture != null, "The Mechromancer portrait must have a texture.")
+    if beautiful_hud is IronwrightBeautifulHUD3D:
+        var cinematic_hud := beautiful_hud as IronwrightBeautifulHUD3D
+        cinematic_hud._process(IronwrightBeautifulHUD3D.TACTICAL_HINT_SECONDS + 2.0)
+        _expect(not cinematic_hud.help_label.visible, "The cinematic HUD must clear the permanent control legend after onboarding.")
+        _expect(cinematic_hud.sanctuary_badge != null and not cinematic_hud.sanctuary_badge.visible, "The healthy sanctuary badge must fade from the tactical frame.")
+        cinematic_hud.set_sanctuary_integrity(0.45)
+        _expect(cinematic_hud.sanctuary_badge.visible, "Critical sanctuary status must reappear as a relevant exception.")
 
     var omni_count := _count_omni_lights(world)
     _expect(omni_count >= 10, "The environment must use deliberate local practical lighting instead of global darkness.")
