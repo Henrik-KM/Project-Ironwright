@@ -90,8 +90,8 @@ Clutter must leave important routes readable from the high-angle camera.
 
 The Mechromancer now uses a regenerated authored glTF character asset with
 denser cloth, face and equipment forms. The friendly machine roster now uses
-authored glTF shells with role-readable silhouettes. Veilstalker is the first
-hostile family to receive the same authored-shell treatment; the other organic
+authored glTF shells with role-readable silhouettes. Veilstalker and the common
+Razorhound now receive the same authored-shell treatment; the other organic
 families remain procedural until their own production asset milestones.
 
 ### Mechromancer
@@ -159,6 +159,9 @@ families remain procedural until their own production asset milestones.
 - a stable authored contract recorded in `game/data/veilstalker_asset_manifest.json`,
   with the imported shell flattened under the existing `OrganicModel` release
   path so late-spawned threats retain material continuity;
+- the common Razorhound now uses an original authored glTF shell with muzzle,
+  cheek armour, fangs, ears, dorsal spines and tail; its stable contract is
+  recorded in `game/data/razorhound_asset_manifest.json`;
 - asymmetrical chitin, flesh, spines and tails;
 - twitching idle movement and multi-leg locomotion;
 - head probing, mandible movement, pack movement and species-specific idle
