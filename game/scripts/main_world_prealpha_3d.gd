@@ -1,32 +1,46 @@
 class_name IronwrightPreAlphaWorld3D
 extends IronwrightCompleteGameWorld3D
 
-## Presentation reset informed by the first full-game screenshot review. This
-## layer does not pretend the current procedural art is production-ready; it
-## fixes obvious prototype presentation failures while keeping the systemic
-## game intact for further art production.
+## Presentation reset informed by direct screenshot review. This layer owns the
+## representative Heartforge vertical slice and camera composition while the
+## systemic game remains underneath it. This is still a pre-alpha production
+## prototype until representative gameplay receives explicit human approval.
+
+const VERTICAL_SLICE_DIRECTOR := preload("res://scripts/presentation/vertical_slice_readable_director_3d.gd")
+const VERTICAL_SLICE_ACTOR_ART := preload("res://scripts/presentation/vertical_slice_actor_art_3d.gd")
 
 var _last_map_label_mode: bool = false
+var vertical_slice: VerticalSliceDirector3D
+var vertical_slice_actor_art: VerticalSliceActorArt3D
+var camera_target_velocity: Vector3 = Vector3.ZERO
 
 
 func _ready() -> void:
     super._ready()
-    camera_height = 20.5
-    camera_distance = 12.5
+    camera_height = 19.2
+    camera_distance = 11.2
     if camera != null:
-        camera.fov = 46.0
+        camera.fov = 44.0
         camera.near = 0.35
     _set_region_map_emphasis(false)
 
-    # The previous alpha boot message implied a level of finish that the actual
-    # frame does not support. Make the build status explicit in-game as well as
-    # in the production quality contract.
+    vertical_slice = VERTICAL_SLICE_DIRECTOR.new() as VerticalSliceDirector3D
+    vertical_slice.name = "VerticalSliceDirector"
+    vertical_slice.configure(self, heartforge, player, camera, ecology_director)
+    add_child(vertical_slice)
+
+    vertical_slice_actor_art = VERTICAL_SLICE_ACTOR_ART.new() as VerticalSliceActorArt3D
+    vertical_slice_actor_art.name = "VerticalSliceActorArt"
+    vertical_slice_actor_art.configure(self)
+    add_child(vertical_slice_actor_art)
+
     if hud != null:
         hud.notifications.clear()
         hud.notification_ages.clear()
         hud._refresh_notifications()
-        hud.push_notification("PRE-ALPHA SYSTEMIC BUILD · ART, ANIMATION, CAMERA AND PRESENTATION STILL IN PRODUCTION")
-    run_state.log_event("Presentation status: pre-alpha production prototype. Systemic completeness does not imply release-ready art or feel.")
+        hud.push_notification("PRE-ALPHA VERTICAL SLICE · HEARTFORGE DISTRICT PRESENTATION IN ACTIVE PRODUCTION")
+    run_state.log_event("Presentation status: pre-alpha production prototype. The Heartforge district is the current representative vertical slice.")
+    run_state.log_event("The Heartforge district now uses the representative vertical presentation slice. The remainder of the world inherits this quality only after the slice passes human review.")
 
 
 func _process(delta: float) -> void:
@@ -57,10 +71,37 @@ func _update_camera(delta: float) -> void:
         else:
             follow_operation = false
 
-    var desired := target + Vector3(0.0, camera_height, camera_distance)
+    var subject_velocity := player.velocity if not follow_operation else Vector3.ZERO
+    subject_velocity.y = 0.0
+    camera_target_velocity = camera_target_velocity.lerp(subject_velocity, 1.0 - exp(-delta * 3.2))
+    var lead := camera_target_velocity * 0.38
+    if lead.length() > 2.5:
+        lead = lead.normalized() * 2.5
+    target += lead
+
+    var threat_bias := _nearby_threat_camera_bias(target)
+    var dynamic_height := camera_height + threat_bias.y
+    var dynamic_distance := camera_distance + threat_bias.z
+    var desired := target + Vector3(0.0, dynamic_height, dynamic_distance)
     var resolved := _resolve_camera_occlusion(target, desired)
     camera.global_position = camera.global_position.lerp(resolved, 1.0 - exp(-delta * 7.2))
-    camera.look_at(target + Vector3.UP * 0.72, Vector3.UP)
+    camera.look_at(target + Vector3.UP * 0.68, Vector3.UP)
+
+
+func _nearby_threat_camera_bias(target: Vector3) -> Vector3:
+    var threat_count := 0
+    var nearest := INF
+    for enemy in get_tree().get_nodes_in_group(&"organic_enemies"):
+        if not is_instance_valid(enemy) or not (enemy is Node3D):
+            continue
+        var distance := target.distance_to((enemy as Node3D).global_position)
+        if distance <= 15.0:
+            threat_count += 1
+            nearest = minf(nearest, distance)
+    if threat_count <= 0:
+        return Vector3.ZERO
+    var intensity := clampf(float(threat_count) * 0.18 + (1.0 - clampf(nearest / 15.0, 0.0, 1.0)) * 0.45, 0.0, 1.0)
+    return Vector3(0.0, intensity * 2.6, intensity * 1.2)
 
 
 func _active_follow_target() -> Node3D:

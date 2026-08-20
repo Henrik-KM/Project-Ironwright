@@ -29,7 +29,7 @@ jobs:
 
   validate-native-godot:
     runs-on: ubuntu-latest
-    timeout-minutes: 28
+    timeout-minutes: 32
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -64,3 +64,6 @@ jobs:
 
       - name: Run presentation reset and salvage escort tests
         run: godot --headless --path game --script res://tests/presentation_and_salvage_escort_test_runner.gd
+
+      - name: Run distributed autonomy, ecology and vertical-slice tests
+        run: godot --headless --path game --script res://tests/intelligence_and_vertical_slice_test_runner.gd

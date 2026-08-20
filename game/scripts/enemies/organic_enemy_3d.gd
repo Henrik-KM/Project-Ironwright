@@ -3,6 +3,7 @@ extends CharacterBody3D
 
 signal killed(enemy: OrganicEnemy3D, killer: Node)
 signal attack_landed(enemy: OrganicEnemy3D, target: Node)
+signal behaviour_changed(enemy: OrganicEnemy3D, behaviour: StringName)
 
 var species: StringName = &"skitterling"
 var maximum_health: float = 30.0
@@ -20,16 +21,35 @@ var aggression: float = 0.2
 var player_reference: Node3D
 var heartforge_reference: Node3D
 var alive: bool = true
+
+# Organic creatures exist in an ecology rather than as stationary combat
+# turrets. Every creature has a home territory and a current ecological role.
+var territory_origin: Vector3 = Vector3.ZERO
+var territory_radius: float = 18.0
+var ecology_directive: StringName = &"roam"
+var behaviour_clock: float = 0.0
+var behaviour_duration: float = 4.0
+var behaviour_target: Vector3 = Vector3.ZERO
+var behaviour_has_target: bool = false
+var behaviour_serial: int = 0
+var scouting_outbound: bool = true
+var pack_alert_cooldown: float = 0.0
+var last_known_prey_position: Vector3 = Vector3.ZERO
+var has_last_known_prey: bool = false
+
 var _target: Node3D
 var _model_root: Node3D
 
 
 func _ready() -> void:
-    add_to_group("organic_enemies")
+    add_to_group(&"organic_enemies")
     collision_layer = 4
     collision_mask = 1 | 2 | 4
     _apply_species_stats()
+    if territory_origin == Vector3.ZERO:
+        territory_origin = global_position
     _build_visuals()
+    _choose_next_ecological_behaviour(true)
 
 
 func configure(next_species: StringName, player: Node3D, heartforge: Node3D) -> void:
@@ -39,6 +59,16 @@ func configure(next_species: StringName, player: Node3D, heartforge: Node3D) -> 
     _apply_species_stats()
     if is_inside_tree():
         _refresh_visuals()
+        _choose_next_ecological_behaviour(true)
+
+
+func configure_ecology(home_position: Vector3, radius: float, directive: StringName = &"") -> void:
+    territory_origin = home_position
+    territory_radius = clampf(radius, 7.0, 42.0)
+    ecology_directive = directive if directive != &"" else _default_ecology_directive()
+    behaviour_clock = 0.0
+    behaviour_has_target = false
+    _choose_next_ecological_behaviour(true)
 
 
 func hear_noise(position: Vector3, radius: float, intensity: float, source_kind: StringName) -> void:
@@ -48,9 +78,26 @@ func hear_noise(position: Vector3, radius: float, intensity: float, source_kind:
     if distance_to_noise > radius:
         return
     investigate_position = position
-    investigate_seconds = maxf(investigate_seconds, 5.0 + intensity * 3.0)
+    investigate_seconds = maxf(investigate_seconds, 4.5 + intensity * 4.5)
     aggression = clampf(aggression + intensity * 0.22, 0.0, 1.0)
-    state_name = &"investigating"
+    last_known_prey_position = position
+    has_last_known_prey = true
+    _set_state(&"investigating")
+    if species in [&"razorhound", &"veilstalker"] and intensity >= 0.55:
+        _alert_nearby_pack(position, intensity)
+
+
+func receive_pack_alert(position: Vector3, intensity: float) -> void:
+    if not alive:
+        return
+    if global_position.distance_to(position) > 26.0:
+        return
+    last_known_prey_position = position
+    has_last_known_prey = true
+    investigate_position = position
+    investigate_seconds = maxf(investigate_seconds, 3.5 + intensity * 3.0)
+    aggression = clampf(aggression + intensity * 0.12, 0.0, 1.0)
+    _set_state(&"pack_hunt")
 
 
 func _physics_process(delta: float) -> void:
@@ -58,50 +105,275 @@ func _physics_process(delta: float) -> void:
         return
     attack_cooldown = maxf(0.0, attack_cooldown - delta)
     investigate_seconds = maxf(0.0, investigate_seconds - delta)
-    _target = _choose_target()
+    pack_alert_cooldown = maxf(0.0, pack_alert_cooldown - delta)
+    behaviour_clock += delta
 
+    _target = _choose_target()
     if _target != null:
+        last_known_prey_position = _target.global_position
+        has_last_known_prey = true
         var target_distance := global_position.distance_to(_target.global_position)
         if target_distance <= attack_range:
             _attack_target(_target)
             _slow_to_stop(delta)
         else:
-            state_name = &"hunting"
-            _move_toward(_target.global_position, move_speed, delta)
-    elif investigate_seconds > 0.0:
-        state_name = &"investigating"
-        _move_toward(investigate_position, move_speed * 0.78, delta)
-    else:
-        state_name = &"lurking"
-        _slow_to_stop(delta)
+            _set_state(&"hunting")
+            _move_toward(_target.global_position, _hunt_speed(), delta)
+            if species == &"razorhound" and pack_alert_cooldown <= 0.0:
+                _alert_nearby_pack(_target.global_position, 0.8)
+        return
+
+    if investigate_seconds > 0.0:
+        _set_state(&"investigating")
+        if global_position.distance_to(investigate_position) <= 1.3:
+            _circle_point(investigate_position, 3.5, delta)
+        else:
+            _move_toward(investigate_position, move_speed * 0.82, delta)
+        return
+
+    _update_ecological_behaviour(delta)
 
 
 func _choose_target() -> Node3D:
+    var awareness := detection_range + aggression * 11.0
+    match ecology_directive:
+        &"hunt":
+            awareness *= 1.42
+        &"scout":
+            awareness *= 1.18
+        &"protect_nest":
+            awareness *= 1.12
+
     var best: Node3D
-    var best_distance := detection_range + aggression * 11.0
+    var best_score := INF
+    if player_reference != null and is_instance_valid(player_reference) and player_reference.has_method(&"is_alive") and bool(player_reference.call(&"is_alive")):
+        var distance := global_position.distance_to(player_reference.global_position)
+        if distance <= awareness and _target_allowed_by_territory(player_reference.global_position):
+            var score := distance * _prey_priority_multiplier(player_reference)
+            if score < best_score:
+                best = player_reference
+                best_score = score
 
-    if player_reference != null and is_instance_valid(player_reference) and player_reference.has_method("is_alive") and bool(player_reference.call("is_alive")):
-        var player_distance := global_position.distance_to(player_reference.global_position)
-        if player_distance < best_distance:
-            best = player_reference
-            best_distance = player_distance
-
-    for robot in get_tree().get_nodes_in_group("friendly_robots"):
+    for robot in get_tree().get_nodes_in_group(&"friendly_robots"):
         if not is_instance_valid(robot) or not (robot is Node3D):
             continue
-        if robot.has_method("is_alive") and not bool(robot.call("is_alive")):
+        if robot.has_method(&"is_alive") and not bool(robot.call(&"is_alive")):
             continue
-        var robot_distance := global_position.distance_to(robot.global_position)
-        if robot_distance < best_distance:
+        var distance := global_position.distance_to(robot.global_position)
+        if distance > awareness or not _target_allowed_by_territory(robot.global_position):
+            continue
+        var score := distance * _prey_priority_multiplier(robot)
+        if score < best_score:
             best = robot
-            best_distance = robot_distance
+            best_score = score
 
-    if heartforge_reference != null and is_instance_valid(heartforge_reference) and aggression > 0.65:
+    if heartforge_reference != null and is_instance_valid(heartforge_reference) and aggression > 0.72:
         var forge_distance := global_position.distance_to(heartforge_reference.global_position)
-        if forge_distance < best_distance:
+        if forge_distance <= awareness * 1.15 and forge_distance < best_score:
             best = heartforge_reference
 
     return best
+
+
+func _target_allowed_by_territory(position: Vector3) -> bool:
+    if ecology_directive != &"protect_nest":
+        return true
+    return territory_origin.distance_to(position) <= territory_radius + detection_range * 0.75
+
+
+func _prey_priority_multiplier(target: Node3D) -> float:
+    if species == &"razorhound":
+        if target is Mechromancer3D:
+            return 0.78
+        if target is RobotUnit3D and (target as RobotUnit3D).archetype in [&"salvager", &"scout"]:
+            return 0.72
+    elif species == &"veilstalker":
+        if target is Mechromancer3D:
+            return 0.7
+    elif species == &"broodmass":
+        if target is RobotUnit3D and (target as RobotUnit3D).archetype == &"guardian":
+            return 0.82
+    return 1.0
+
+
+func _hunt_speed() -> float:
+    if species == &"razorhound":
+        return move_speed * 1.05
+    if species == &"veilstalker":
+        return move_speed * 0.96
+    return move_speed
+
+
+func _update_ecological_behaviour(delta: float) -> void:
+    if behaviour_clock >= behaviour_duration or not behaviour_has_target or global_position.distance_to(behaviour_target) <= 1.15:
+        _choose_next_ecological_behaviour(false)
+
+    match state_name:
+        &"nest_guard":
+            if territory_origin.distance_to(global_position) > territory_radius * 0.95:
+                _move_toward(territory_origin, move_speed * 0.78, delta)
+            else:
+                _move_toward(behaviour_target, move_speed * 0.55, delta)
+        &"patrolling":
+            _move_toward(behaviour_target, move_speed * 0.62, delta)
+        &"roaming":
+            _move_toward(behaviour_target, move_speed * 0.58, delta)
+        &"scouting":
+            _move_toward(behaviour_target, move_speed * 0.74, delta)
+        &"tracking":
+            _move_toward(behaviour_target, move_speed * 0.82, delta)
+        &"feeding":
+            _move_toward(behaviour_target, move_speed * 0.46, delta)
+        _:
+            _slow_to_stop(delta)
+
+
+func _choose_next_ecological_behaviour(force: bool) -> void:
+    if not force and behaviour_clock < 0.35:
+        return
+    behaviour_serial += 1
+    behaviour_clock = 0.0
+    behaviour_duration = 4.0 + _deterministic_unit(behaviour_serial, 3) * 5.0
+    behaviour_has_target = true
+
+    var directive := ecology_directive
+    if directive == &"":
+        directive = _default_ecology_directive()
+        ecology_directive = directive
+
+    match directive:
+        &"protect_nest":
+            if behaviour_serial % 4 == 0:
+                _set_state(&"patrolling")
+                behaviour_target = _territory_orbit_point(0.72, behaviour_serial)
+            else:
+                _set_state(&"nest_guard")
+                behaviour_target = _territory_orbit_point(0.38 + _deterministic_unit(behaviour_serial, 7) * 0.24, behaviour_serial)
+        &"patrol":
+            _set_state(&"patrolling")
+            behaviour_target = _territory_orbit_point(0.55 + _deterministic_unit(behaviour_serial, 5) * 0.38, behaviour_serial)
+        &"scout":
+            _set_state(&"scouting")
+            behaviour_target = _scouting_waypoint()
+        &"hunt":
+            _set_state(&"tracking")
+            behaviour_target = _hunting_waypoint()
+        &"feed":
+            var salvage := _nearby_salvage_interest()
+            if salvage != null:
+                _set_state(&"feeding")
+                behaviour_target = salvage.global_position
+            else:
+                _set_state(&"roaming")
+                behaviour_target = _territory_orbit_point(0.65 + _deterministic_unit(behaviour_serial, 2) * 0.48, behaviour_serial)
+        _:
+            _set_state(&"roaming")
+            behaviour_target = _territory_orbit_point(0.45 + _deterministic_unit(behaviour_serial, 9) * 0.65, behaviour_serial)
+
+
+func _default_ecology_directive() -> StringName:
+    match species:
+        &"skitterling":
+            return &"feed"
+        &"razorhound":
+            return &"hunt"
+        &"veilstalker":
+            return &"scout"
+        &"burrower":
+            return &"patrol"
+        &"sporecaster":
+            return &"protect_nest"
+        &"broodmass":
+            return &"protect_nest"
+        &"apex":
+            return &"patrol"
+        _:
+            return &"roam"
+
+
+func _territory_orbit_point(radius_fraction: float, serial: int) -> Vector3:
+    var angle := _deterministic_unit(serial, 13) * TAU + float(serial % 3) * 0.83
+    var radius := territory_radius * clampf(radius_fraction, 0.18, 1.2)
+    return territory_origin + Vector3(cos(angle) * radius, 0.0, sin(angle) * radius)
+
+
+func _scouting_waypoint() -> Vector3:
+    if heartforge_reference == null or not is_instance_valid(heartforge_reference):
+        return _territory_orbit_point(1.0, behaviour_serial)
+    if scouting_outbound:
+        scouting_outbound = false
+        var toward_forge := heartforge_reference.global_position - territory_origin
+        toward_forge.y = 0.0
+        if toward_forge.length_squared() < 1.0:
+            return _territory_orbit_point(0.9, behaviour_serial)
+        var max_advance := minf(toward_forge.length() * 0.58, territory_radius * 1.75)
+        var side := Vector3(toward_forge.z, 0.0, -toward_forge.x).normalized()
+        return territory_origin + toward_forge.normalized() * max_advance + side * (_deterministic_unit(behaviour_serial, 17) - 0.5) * 12.0
+    scouting_outbound = true
+    return _territory_orbit_point(0.42, behaviour_serial)
+
+
+func _hunting_waypoint() -> Vector3:
+    if has_last_known_prey:
+        has_last_known_prey = false
+        var offset_angle := _deterministic_unit(behaviour_serial, 23) * TAU
+        return last_known_prey_position + Vector3(cos(offset_angle) * 4.0, 0.0, sin(offset_angle) * 4.0)
+    if heartforge_reference != null and is_instance_valid(heartforge_reference):
+        var toward := heartforge_reference.global_position - territory_origin
+        toward.y = 0.0
+        if toward.length_squared() > 1.0:
+            var distance := minf(toward.length() * (0.32 + _deterministic_unit(behaviour_serial, 29) * 0.3), territory_radius * 1.55)
+            var side := Vector3(toward.z, 0.0, -toward.x).normalized()
+            return territory_origin + toward.normalized() * distance + side * (_deterministic_unit(behaviour_serial, 31) - 0.5) * 14.0
+    return _territory_orbit_point(1.05, behaviour_serial)
+
+
+func _nearby_salvage_interest() -> SalvagePile3D:
+    var best: SalvagePile3D
+    var best_distance := 24.0
+    for candidate in get_tree().get_nodes_in_group(&"salvage_piles"):
+        if not is_instance_valid(candidate) or not (candidate is SalvagePile3D) or not candidate.has_scrap():
+            continue
+        var distance := global_position.distance_to(candidate.global_position)
+        if distance < best_distance:
+            best = candidate
+            best_distance = distance
+    return best
+
+
+func _deterministic_unit(serial: int, salt: int) -> float:
+    var value := sin(float(get_instance_id() % 8191) * 0.173 + float(serial) * 12.9898 + float(salt) * 4.1414) * 43758.5453
+    return value - floor(value)
+
+
+func _circle_point(center: Vector3, radius: float, delta: float) -> void:
+    var to_center := center - global_position
+    to_center.y = 0.0
+    if to_center.length_squared() < 0.05:
+        to_center = Vector3.FORWARD
+    var tangent := Vector3(to_center.z, 0.0, -to_center.x).normalized()
+    var radial := to_center.normalized()
+    var desired := global_position + tangent * radius * 0.5 + radial * maxf(0.0, to_center.length() - radius)
+    _move_toward(desired, move_speed * 0.62, delta)
+
+
+func _alert_nearby_pack(position: Vector3, intensity: float) -> void:
+    pack_alert_cooldown = 3.2
+    for enemy in get_tree().get_nodes_in_group(&"organic_enemies"):
+        if enemy == self or not is_instance_valid(enemy) or not (enemy is OrganicEnemy3D):
+            continue
+        var other := enemy as OrganicEnemy3D
+        if not other.is_alive() or other.species != species:
+            continue
+        if global_position.distance_to(other.global_position) <= 24.0:
+            other.receive_pack_alert(position, intensity)
+
+
+func _set_state(next_state: StringName) -> void:
+    if state_name == next_state:
+        return
+    state_name = next_state
+    behaviour_changed.emit(self, state_name)
 
 
 func _move_toward(target_position: Vector3, speed: float, delta: float) -> void:
@@ -126,12 +398,12 @@ func _slow_to_stop(delta: float) -> void:
 
 
 func _attack_target(target: Node) -> void:
-    state_name = &"attacking"
+    _set_state(&"attacking")
     if attack_cooldown > 0.0:
         return
     attack_cooldown = attack_interval
-    if target.has_method("apply_damage"):
-        target.call("apply_damage", attack_damage, self)
+    if target.has_method(&"apply_damage"):
+        target.call(&"apply_damage", attack_damage, self)
     attack_landed.emit(self, target)
 
 
@@ -142,11 +414,15 @@ func apply_damage(amount: float, source: Node = null) -> void:
     aggression = 1.0
     if source is Node3D:
         investigate_position = source.global_position
+        last_known_prey_position = source.global_position
+        has_last_known_prey = true
         investigate_seconds = 10.0
+        if species in [&"razorhound", &"veilstalker"]:
+            _alert_nearby_pack(source.global_position, 1.0)
     if current_health > 0.0:
         return
     alive = false
-    state_name = &"dead"
+    _set_state(&"dead")
     killed.emit(self, source)
     queue_free()
 
@@ -204,6 +480,7 @@ func _apply_species_stats() -> void:
             detection_range = 13.0
             attack_interval = 1.2
     current_health = maximum_health
+    ecology_directive = _default_ecology_directive()
 
 
 func _build_visuals() -> void:
@@ -227,11 +504,11 @@ func _refresh_visuals() -> void:
         return
     for child in _model_root.get_children():
         child.queue_free()
-    var flesh := ModelKit3D.material(Color("21191a"), 0.0, 0.94)
-    var chitin := ModelKit3D.material(Color("35272a"), 0.08, 0.75)
-    var bone := ModelKit3D.material(Color("766d5c"), 0.0, 0.85)
-    var membrane := ModelKit3D.material(Color("421727"), 0.0, 0.83, Color("9f2947"), 0.9)
-    var eye := ModelKit3D.material(Color("5a120e"), 0.0, 0.48, Color("f33a20"), 3.6)
+    var flesh := ModelKit3D.material(Color("201719"), 0.0, 0.91)
+    var chitin := ModelKit3D.material(Color("332529"), 0.12, 0.66)
+    var bone := ModelKit3D.material(Color("786f60"), 0.0, 0.82)
+    var membrane := ModelKit3D.material(Color("421727"), 0.0, 0.78, Color("9f2947"), 0.75)
+    var eye := ModelKit3D.material(Color("4b0b0a"), 0.0, 0.42, Color("f04426"), 3.2)
 
     var body_scale := Vector3(1.35, 0.7, 1.7)
     var body_radius := 0.62
@@ -282,10 +559,14 @@ func _refresh_visuals() -> void:
             var x := -1.2 + float(index) * (2.4 / maxf(1.0, float(spine_count - 1)))
             ModelKit3D.add_capsule(_model_root, 0.12, 1.1 + float(index % 3) * 0.3, Vector3(x, body_radius * 1.8, 0.1), bone, Vector3(0.0, 0.0, -0.3 + float(index) * 0.08), "CrownSpine")
 
+    # Small asymmetric silhouette details help creatures read as animals rather
+    # than mirrored game pieces from the tactical camera.
+    ModelKit3D.add_capsule(_model_root, 0.05 * body_radius / 0.62, 0.9 * body_radius / 0.62, Vector3(-body_scale.x * 0.33, body_radius * 1.4, 0.42), bone, Vector3(0.38, 0.0, -0.34), "AsymmetricSpine")
+
     var eye_y := body_radius + 0.24
     var eye_z := head_offset - body_radius * 0.48
     ModelKit3D.add_sphere(_model_root, 0.09 * body_radius / 0.62, Vector3(-0.16, eye_y, eye_z), eye, Vector3.ONE, "EyeLeft")
     ModelKit3D.add_sphere(_model_root, 0.09 * body_radius / 0.62, Vector3(0.16, eye_y, eye_z), eye, Vector3.ONE, "EyeRight")
     ModelKit3D.add_capsule(_model_root, 0.06 * body_radius / 0.62, 0.72 * body_radius / 0.62, Vector3(-0.2, body_radius * 0.86, eye_z - 0.18), bone, Vector3(0.85, 0.0, -0.3), "MandibleLeft")
     ModelKit3D.add_capsule(_model_root, 0.06 * body_radius / 0.62, 0.72 * body_radius / 0.62, Vector3(0.2, body_radius * 0.86, eye_z - 0.18), bone, Vector3(0.85, 0.0, 0.3), "MandibleRight")
-    ModelKit3D.add_glow_light(_model_root, Vector3(0.0, eye_y, eye_z + 0.05), Color("e43725"), 0.55 + body_radius * 0.35, 2.8 + body_radius * 2.2)
+    ModelKit3D.add_glow_light(_model_root, Vector3(0.0, eye_y, eye_z + 0.05), Color("e43725"), 0.42 + body_radius * 0.28, 2.2 + body_radius * 1.7)
