@@ -101,6 +101,12 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - transactional persistence tests including backup recovery and legacy migration;
 - accelerated native start-to-victory complete-alpha test.
 
+The complete-game save path now checkpoints active long-range operations with
+their stable operation id, route, physical anchor, work clocks and robot names;
+loading resumes the group through the same world-space operation director.
+Outpost convoys and local salvage remain finish-before-save until their actor
+references receive the same restoration contract.
+
 ## Presentation implemented
 
 - readable blue-hour environment and controlled fog;

@@ -59,7 +59,17 @@ func _run_all() -> void:
     world.outpost_director._spawn_outpost(first_site, &"resource", 1)
 
     var cores_before_west := world.run_state.rare_cores
-    _expect(_complete_operation(world, &"operation.west_grid_survey"), "The West Grid survey must complete as an outbound, work, and return journey.")
+    world.save_service.configure(TEST_SAVE_PATH)
+    _expect(world.long_operation_director.authorize(&"operation.west_grid_survey"), "A long-range operation must be authorizable before checkpoint testing.")
+    var checkpoint_id := StringName(world.long_operation_director.active_operation.get("id", &""))
+    world._save_game()
+    _expect(FileAccess.file_exists(TEST_SAVE_PATH), "The complete-world save hook must write while a long-range group is in flight.")
+    world._load_game()
+    _expect(StringName(world.long_operation_director.active_operation.get("id", &"")) == checkpoint_id, "Loading must restore the active long-range operation identity.")
+    _expect(_finish_active_operation(world), "A checkpointed long-range operation must resume and complete physically.")
+    _expect(world.run_state.rare_cores == cores_before_west + 1, "Checkpointed operation rewards must be delivered only after physical return.")
+    _cleanup_save_files()
+
     _expect(world.long_operation_director.has_completed(&"operation.west_grid_survey"), "The West Grid survey must remain completed after return.")
     _expect(world.region_director.is_discovered(&"region.west_grid"), "The West Grid must be physically discovered by the returned operation.")
     _expect(world.run_state.rare_cores == cores_before_west + 1, "Operation rewards must be delivered only after physical return.")
@@ -155,6 +165,18 @@ func _complete_operation(world: IronwrightCompleteGameWorld3D, operation_id: Str
     var director := world.long_operation_director
     if not director.authorize(operation_id):
         return false
+    return _finish_active_operation(world, operation_id)
+
+
+func _finish_active_operation(world: IronwrightCompleteGameWorld3D, expected_id: StringName = &"") -> bool:
+    var director := world.long_operation_director
+    if director.active_operation.is_empty():
+        return false
+    var completed_id := expected_id
+    if completed_id == &"":
+        completed_id = StringName(director.active_operation.get("id", &""))
+    if expected_id != &"" and StringName(director.active_operation.get("id", &"")) != expected_id:
+        return false
     var route: PackedVector3Array = director.active_operation.get("route", PackedVector3Array())
     director.active_operation["route_index"] = route.size()
     director._update_active_operation(0.1)
@@ -167,7 +189,7 @@ func _complete_operation(world: IronwrightCompleteGameWorld3D, operation_id: Str
     var reverse_route: PackedVector3Array = director.active_operation.get("route", PackedVector3Array())
     director.active_operation["route_index"] = reverse_route.size()
     director._update_active_operation(0.1)
-    return director.active_operation.is_empty() and director.has_completed(operation_id)
+    return director.active_operation.is_empty() and director.has_completed(completed_id)
 
 
 func _functioning_outposts(world: IronwrightCompleteGameWorld3D) -> int:

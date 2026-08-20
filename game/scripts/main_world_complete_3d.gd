@@ -393,9 +393,6 @@ func _functioning_outpost_count() -> int:
 
 
 func _save_game() -> void:
-    if long_operation_director != null and not long_operation_director.active_operation.is_empty():
-        hud.push_notification("SAVE DEFERRED · FINISH OR LOSE THE ACTIVE LONG-RANGE OPERATION")
-        return
     super._save_game()
 
 
@@ -417,9 +414,6 @@ func _save_extension_data() -> Dictionary:
 
 
 func _load_game() -> void:
-    if long_operation_director != null and not long_operation_director.active_operation.is_empty():
-        hud.push_notification("LOAD DEFERRED · FINISH THE ACTIVE LONG-RANGE OPERATION")
-        return
     _close_operations_hud()
     super._load_game()
 

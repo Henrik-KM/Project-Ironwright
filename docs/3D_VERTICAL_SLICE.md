@@ -31,7 +31,7 @@ The player then manually forges a Warden and Pathfinder. With all three roles av
 | `F` | Follow the active physical machine group |
 | `M` | Toggle high command-map camera |
 | mouse wheel | Camera distance |
-| `F5` / `F9` | Save / load when no remote operation is active |
+| `F5` / `F9` | Save / load; complete-game long-range groups resume from checkpoints |
 | `Esc` | Close forge or pause |
 
 Inside the forge menu, `1–3` build Scrapper, Warden, or Pathfinder. `4–6` upgrade those entire robot classes. Level 2 requires Scrap. Level 3 requires additional Scrap and one rare Cognition Core.
@@ -69,4 +69,4 @@ without changing the gameplay architecture.
 
 ## Known limits
 
-The district is authored and compact. Navigation uses street-aware waypoints and steering rather than a baked citywide navigation mesh. The current slice now has compact spatial sound feedback for core survival events, but final authored sound design, music and species vocal signatures remain production work. Active remote operations are intentionally required to finish before saving in this slice; actor positions and ecology are otherwise persisted. The next production pass should add authored sound assets, richer melee reactions, better obstacle avoidance, and persistent serialization of in-flight operations.
+The district is authored and compact. Navigation uses street-aware waypoints and steering rather than a baked citywide navigation mesh. The current slice now has compact spatial sound feedback for core survival events, but final authored sound design, music and species vocal signatures remain production work. Complete-game long-range groups checkpoint their route, physical anchor, work clocks and member identities; outpost convoys and local salvage operations still finish before saving until their actor restoration contracts are expanded. The next production pass should add authored sound assets, richer melee reactions, better obstacle avoidance, and persistent serialization for those remaining in-flight operations.

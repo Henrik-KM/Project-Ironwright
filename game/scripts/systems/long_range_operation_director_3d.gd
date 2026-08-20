@@ -483,16 +483,18 @@ func to_dictionary() -> Dictionary:
     for component_id in recovered_components:
         components.append(String(component_id))
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "completed_operations": completed,
         "recovered_components": components,
         "endgame_pressure_reduction": endgame_pressure_reduction,
+        "active_operation": _serialize_active_operation(),
     }
 
 
 func restore_from_dictionary(data: Dictionary) -> void:
     completed_operations.clear()
     recovered_components.clear()
+    active_operation.clear()
     for raw_operation in data.get("completed_operations", []):
         var operation_id := StringName(str(raw_operation))
         if operation_id in operations and operation_id not in completed_operations:
@@ -502,3 +504,90 @@ func restore_from_dictionary(data: Dictionary) -> void:
         if component_id != &"" and component_id not in recovered_components:
             recovered_components.append(component_id)
     endgame_pressure_reduction = clampf(float(data.get("endgame_pressure_reduction", 0.0)), 0.0, 0.55)
+    _restore_active_operation(data.get("active_operation", {}))
+
+
+func _serialize_active_operation() -> Dictionary:
+    if active_operation.is_empty():
+        return {}
+    var route_values: Array = []
+    var route: PackedVector3Array = active_operation.get("route", PackedVector3Array())
+    for point in route:
+        route_values.append(_vector_to_array(point))
+    var member_names: Array[String] = []
+    for member in active_operation.get("members", []):
+        if is_instance_valid(member) and member is RobotUnit3D:
+            member_names.append(String((member as RobotUnit3D).name))
+    return {
+        "id": String(active_operation.get("id", &"")),
+        "state": String(active_operation.get("state", &"outbound")),
+        "member_names": member_names,
+        "region_id": String(active_operation.get("region_id", &"region.heartforge_district")),
+        "route": route_values,
+        "route_index": int(active_operation.get("route_index", 1)),
+        "anchor": _vector_to_array(active_operation.get("anchor", heartforge.global_position)),
+        "last_forward": _vector_to_array(active_operation.get("last_forward", Vector3.FORWARD)),
+        "work_clock": float(active_operation.get("work_clock", 0.0)),
+        "noise_clock": float(active_operation.get("noise_clock", 0.0)),
+        "threat_clock": float(active_operation.get("threat_clock", 0.0)),
+        "pending_rewards": (active_operation.get("pending_rewards", {}) as Dictionary).duplicate(true),
+    }
+
+
+func _restore_active_operation(raw_data: Variant) -> void:
+    if not (raw_data is Dictionary):
+        return
+    var saved := raw_data as Dictionary
+    var operation_id := StringName(str(saved.get("id", "")))
+    var entry := operation(operation_id)
+    if operation_id == &"" or entry.is_empty():
+        return
+    var members: Array[RobotUnit3D] = []
+    for raw_name in saved.get("member_names", []):
+        var member := _find_robot_by_name(str(raw_name))
+        if member != null and member.is_alive() and member not in members:
+            members.append(member)
+    if members.is_empty():
+        return
+    var route := PackedVector3Array()
+    for raw_point in saved.get("route", []):
+        route.append(_array_to_vector(raw_point))
+    active_operation = {
+        "id": operation_id,
+        "data": entry,
+        "state": StringName(str(saved.get("state", "outbound"))),
+        "members": members,
+        "region_id": StringName(str(saved.get("region_id", "region.heartforge_district"))),
+        "route": route,
+        "route_index": maxi(1, int(saved.get("route_index", 1))),
+        "anchor": _array_to_vector(saved.get("anchor", [heartforge.global_position.x, heartforge.global_position.y, heartforge.global_position.z])),
+        "last_forward": _array_to_vector(saved.get("last_forward", [0.0, 0.0, -1.0])),
+        "work_clock": maxf(0.0, float(saved.get("work_clock", 0.0))),
+        "noise_clock": maxf(0.0, float(saved.get("noise_clock", 0.0))),
+        "threat_clock": maxf(0.0, float(saved.get("threat_clock", 0.0))),
+        "pending_rewards": (saved.get("pending_rewards", {}) as Dictionary).duplicate(true),
+    }
+    for index in range(members.size()):
+        members[index].set_group(&"long_range_operation", index)
+    autonomy_director.set_process(false)
+    if outpost_director != null:
+        outpost_director.set_process(false)
+    _hold_nonmembers_at_home(members)
+    operation_changed.emit(operation_id, StringName(active_operation.get("state", &"outbound")), "The saved long-range group resumed its physical route.")
+
+
+func _find_robot_by_name(robot_name: String) -> RobotUnit3D:
+    for node in get_tree().get_nodes_in_group(&"friendly_robots"):
+        if node is RobotUnit3D and String((node as RobotUnit3D).name) == robot_name:
+            return node as RobotUnit3D
+    return null
+
+
+func _vector_to_array(value: Vector3) -> Array[float]:
+    return [value.x, value.y, value.z]
+
+
+func _array_to_vector(value: Variant) -> Vector3:
+    if value is Array and value.size() >= 3:
+        return Vector3(float(value[0]), float(value[1]), float(value[2]))
+    return Vector3.ZERO

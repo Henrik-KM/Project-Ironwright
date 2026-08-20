@@ -578,6 +578,7 @@ func _save_game() -> void:
     var foundation: Dictionary = snapshot["foundation"]
     for robot in autonomy_director.living_robots():
         foundation["robots"].append({
+            "name": String(robot.name),
             "archetype": String(robot.archetype),
             "level": robot.level,
             "position": _vector_to_array(robot.global_position),
@@ -628,6 +629,9 @@ func _load_game() -> void:
     for robot_data in data.get("robots", []):
         var archetype := StringName(str(robot_data.get("archetype", "salvager")))
         var robot := _spawn_robot(archetype, _array_to_vector(robot_data.get("position", [0, 0, 4])), int(robot_data.get("level", 1)))
+        var saved_name := str(robot_data.get("name", ""))
+        if not saved_name.is_empty():
+            robot.name = saved_name
         robot.current_health = float(robot_data.get("health", robot.maximum_health))
         if archetype == &"companion":
             companion = robot
