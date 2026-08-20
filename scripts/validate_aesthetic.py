@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the native aesthetic and pre-alpha presentation integration."""
+"""Validate the native aesthetic, vertical slice and pre-alpha presentation integration."""
 from pathlib import Path
 import sys
 
@@ -17,12 +17,16 @@ REQUIRED = [
     "game/scripts/presentation/presentation_feedback_3d.gd",
     "game/scripts/presentation/procedural_animator_3d.gd",
     "game/scripts/presentation/objective_guidance_3d.gd",
+    "game/scripts/presentation/vertical_slice_director_3d.gd",
+    "game/scripts/presentation/vertical_slice_actor_art_3d.gd",
     "game/scripts/ui/ironwright_beautiful_hud_3d.gd",
     "game/scripts/ui/ironwright_prealpha_hud_3d.gd",
     "game/scripts/ui/operations_command_hud_3d.gd",
     "game/tests/aesthetic_test_runner.gd",
     "game/tests/presentation_and_salvage_escort_test_runner.gd",
+    "game/tests/intelligence_and_vertical_slice_test_runner.gd",
     "docs/PRESENTATION_QUALITY_GATE.md",
+    "docs/VERTICAL_SLICE_INTELLIGENCE.md",
 ]
 
 
@@ -39,7 +43,7 @@ def main() -> int:
 
         main_scene = (ROOT / "game/scenes/main_3d.tscn").read_text(encoding="utf-8")
         if "main_world_prealpha_3d.gd" not in main_scene:
-            fail("The native entrypoint must boot the pre-alpha presentation-reset world.")
+            fail("The native entrypoint must boot the pre-alpha vertical-slice world.")
 
         prealpha = (ROOT / "game/scripts/main_world_prealpha_3d.gd").read_text(encoding="utf-8")
         complete = (ROOT / "game/scripts/main_world_complete_3d.gd").read_text(encoding="utf-8")
@@ -47,9 +51,10 @@ def main() -> int:
         full_game = (ROOT / "game/scripts/main_world_full_game_3d.gd").read_text(encoding="utf-8")
         beautiful = (ROOT / "game/scripts/main_world_beautiful_3d.gd").read_text(encoding="utf-8")
         if "extends IronwrightCompleteGameWorld3D" not in prealpha:
-            fail("Presentation-reset world must preserve the complete systemic game.")
-        if "_resolve_camera_occlusion" not in prealpha or "set_map_emphasis" not in prealpha:
-            fail("Presentation-reset world must handle camera occlusion and tactical/map label separation.")
+            fail("Vertical-slice world must preserve the complete systemic game.")
+        for token in ["_resolve_camera_occlusion", "set_map_emphasis", "VerticalSliceDirector3D", "VerticalSliceActorArt3D", "_nearby_threat_camera_bias"]:
+            if token not in prealpha:
+                fail(f"Pre-alpha vertical-slice world is missing {token}")
         if "extends IronwrightProductionWorld3D" not in complete:
             fail("Complete-game world must preserve production UX and guidance.")
         if "extends IronwrightFullGameWorld3D" not in production:
@@ -86,6 +91,34 @@ def main() -> int:
             if token not in presentation_sources:
                 fail(f"Presentation layer is missing required behaviour: {token}")
 
+        vertical = (ROOT / "game/scripts/presentation/vertical_slice_director_3d.gd").read_text(encoding="utf-8")
+        for token in [
+            "HeartforgeVerticalSlice",
+            "VerticalSliceFacade",
+            "HeartforgePlazaDetail",
+            "ImprovisedSanctuaryPerimeter",
+            "ForgeMaintenanceGantry",
+            "VisibleOrganicNests",
+            "LocalRain",
+            "StreetSteam",
+        ]:
+            if token not in vertical:
+                fail(f"Heartforge vertical slice is missing {token}")
+
+        actor_art = (ROOT / "game/scripts/presentation/vertical_slice_actor_art_3d.gd").read_text(encoding="utf-8")
+        for token in [
+            "VerticalSliceCharacterArt",
+            "VerticalSliceMachineArt",
+            "VerticalSliceForgeArt",
+            "DeepHood",
+            "BulwarkFrontPlate",
+            "WardenAutocannon",
+            "DeepScrapHopper",
+            "PathfinderDish",
+        ]:
+            if token not in actor_art:
+                fail(f"Vertical-slice actor art is missing {token}")
+
         animator = (ROOT / "game/scripts/presentation/procedural_animator_3d.gd").read_text(encoding="utf-8")
         for token in ["_animate_mechromancer", "_animate_robot", "_animate_organic", "recoil", "hit_impulse"]:
             if token not in animator:
@@ -101,9 +134,9 @@ def main() -> int:
                 fail(f"Region label reset is missing {token}")
 
         prealpha_hud = (ROOT / "game/scripts/ui/ironwright_prealpha_hud_3d.gd").read_text(encoding="utf-8")
-        for token in ["CommandHelpPanel", "help_label.visible = false", "sanctuary_integrity < 0.78"]:
+        for token in ["CommandHelpPanel", "help_label.visible = false", "sanctuary_integrity < 0.78", "_apply_compact_layout"]:
             if token not in prealpha_hud:
-                fail(f"Desktop HUD reset is missing {token}")
+                fail(f"Desktop HUD vertical-slice presentation is missing {token}")
 
         operations_hud = (ROOT / "game/scripts/ui/operations_command_hud_3d.gd").read_text(encoding="utf-8")
         for token in ["LONG-RANGE OPERATIONS", "FINAL PROTOCOLS", "persistent world", "apply_safe_layout"]:
@@ -111,11 +144,23 @@ def main() -> int:
                 fail(f"Complete-game command presentation is missing {token}")
 
         quality_gate = (ROOT / "docs/PRESENTATION_QUALITY_GATE.md").read_text(encoding="utf-8").lower()
-        for phrase in ["pre-alpha production prototype", "release-readiness rule", "world-label rule", "hud rule"]:
+        for phrase in [
+            "pre-alpha production prototype",
+            "release-readiness rule",
+            "world-label rule",
+            "hud rule",
+            "organic-behaviour rule",
+            "heartforge vertical-slice rule",
+        ]:
             if phrase not in quality_gate:
                 fail(f"Presentation quality gate is missing {phrase!r}")
 
-        print("Project Ironwright aesthetic integration validation passed.")
+        intelligence_contract = (ROOT / "docs/VERTICAL_SLICE_INTELLIGENCE.md").read_text(encoding="utf-8").lower()
+        for phrase in ["distributed salvage focus", "protect nest", "scout", "regional ecology", "heartforge vertical presentation slice"]:
+            if phrase not in intelligence_contract:
+                fail(f"Vertical-slice intelligence contract is missing {phrase!r}")
+
+        print("Project Ironwright aesthetic and vertical-slice integration validation passed.")
         return 0
     except Exception as exc:
         print(f"AESTHETIC VALIDATION FAILED: {exc}", file=sys.stderr)
