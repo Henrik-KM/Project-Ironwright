@@ -524,6 +524,19 @@ identities. Manual channels remain finish-before-save.
 - live opening review confirmed the paver variation remains subordinate to the
   forge, Mechromancer and Bulwark silhouettes.
 
+## Focused regional practical-lighting milestone
+
+- every non-sanctuary landmark now receives two bounded local practicals using
+  the authored region palette, so district geometry remains readable outside
+  the Heartforge lighting envelope;
+- practical energy follows the existing landmark presentation LOD and reduces
+  at distance without changing discovery, routing, ecology or save state;
+- live East Tenements review confirmed the residential walkways, hanging cloth,
+  facade details and actor silhouettes remain readable in the remote blue-hour
+  frame;
+- native aesthetic coverage verifies both practical sockets on every
+  non-sanctuary region.
+
 ## Focused contextual tactical-HUD milestone
 
 - the permanent control legend now clears after the onboarding window instead

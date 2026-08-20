@@ -17,6 +17,7 @@ var _visual_root: Node3D
 var _beacon_root: Node3D
 var _label: Label3D
 var _light: OmniLight3D
+var _practical_lights: Array[OmniLight3D] = []
 var _elapsed: float = 0.0
 var _map_emphasis: bool = false
 var presentation_detail_level: int = 0
@@ -67,6 +68,9 @@ func set_presentation_detail_level(level: int) -> void:
     presentation_detail_level = clampi(level, 0, 2)
     if _visual_root != null:
         _visual_root.visible = presentation_detail_level < 2
+    for practical_light in _practical_lights:
+        if is_instance_valid(practical_light):
+            practical_light.light_energy = 0.72 if presentation_detail_level == 0 else 0.38
     if _light != null:
         var base_energy := 1.0 if _map_emphasis else 0.28
         _light.light_energy = base_energy if presentation_detail_level == 0 else base_energy * 0.58
@@ -235,6 +239,7 @@ func _build_visuals() -> void:
             _add_ruin_block(Vector3(6.0, 0.0, -4.0), Vector3(6.0, 4.0, 7.0), concrete)
 
     _add_region_surface_finish()
+    _add_region_practical_lights()
 
     _beacon_root = Node3D.new()
     _beacon_root.name = "RegionBeacon"
@@ -260,6 +265,37 @@ func _build_visuals() -> void:
     _label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     _label.visible = false
     _beacon_root.add_child(_label)
+
+
+func _add_region_practical_lights() -> void:
+    if region_kind == &"sanctuary":
+        return
+    var primary_color := _region_color().lightened(0.08)
+    var secondary_color := Color("e89a5a")
+    match region_kind:
+        &"greenhouse":
+            secondary_color = Color("72d2b2")
+        &"waterfront":
+            secondary_color = Color("65cbd7")
+        &"nest", &"endgame":
+            secondary_color = Color("d85a78")
+        &"research", &"observatory":
+            secondary_color = Color("a98fe3")
+
+    var light_data := [
+        [Vector3(-8.0, 3.8, -5.0), primary_color],
+        [Vector3(8.0, 3.2, 5.5), secondary_color],
+    ]
+    for index in light_data.size():
+        var practical_light := OmniLight3D.new()
+        practical_light.name = "RegionPracticalLight%d" % index
+        practical_light.position = light_data[index][0]
+        practical_light.light_color = light_data[index][1]
+        practical_light.light_energy = 0.72
+        practical_light.omni_range = 16.0
+        practical_light.shadow_enabled = false
+        _visual_root.add_child(practical_light)
+        _practical_lights.append(practical_light)
 
 
 func _build_authored_root_cistern_visuals() -> void:
