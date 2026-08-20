@@ -12,6 +12,7 @@ func _initialize() -> void:
 
 
 func _run_all() -> void:
+    await _test_remote_ground_continuity()
     await _test_salvage_escort_split()
     await _test_world_labels_are_not_screen_fixed()
     await _test_prealpha_hud_is_quiet()
@@ -24,6 +25,22 @@ func _run_all() -> void:
         push_error(failure)
     print("Project Ironwright presentation reset and salvage escort tests failed: %d" % failures.size())
     quit(1)
+
+
+func _test_remote_ground_continuity() -> void:
+    var world := MAIN_SCENE.instantiate() as IronwrightReleaseWorld3D
+    root.add_child(world)
+    await process_frame
+    await physics_frame
+    world.player.global_position = Vector3(-92.0, 0.8, 18.0)
+    for _step in range(90):
+        await physics_frame
+    _expect(world.player.is_on_floor(), "The Mechromancer must remain grounded when entering a remote region beyond the city collision floor.")
+    _expect(world.player.global_position.y > -0.1, "Remote-region ground continuity must prevent the Mechromancer from falling through the persistent world.")
+    var remote_landmark := world.region_director.get_landmark(&"region.west_grid")
+    _expect(remote_landmark != null and remote_landmark.get_node_or_null("PersistentRegionCollision/PersistentRegionGround") != null, "Remote regions must own a persistent ground collision shape outside the authored city floor.")
+    world.free()
+    await process_frame
 
 
 func _test_salvage_escort_split() -> void:

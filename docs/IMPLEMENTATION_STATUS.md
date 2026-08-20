@@ -573,6 +573,17 @@ identities. Manual channels remain finish-before-save.
 - native aesthetic coverage verifies the sluice, waterline and channel
   signatures, and the live release review accepted the resulting frame.
 
+## Focused remote-ground continuity milestone
+
+- added persistent non-visual ground collision sized from every remote
+  region’s authored radius, extending physical traversal beyond the original
+  city-floor extent without turning presentation meshes into hidden gameplay
+  blockers;
+- live Riverworks traversal now keeps the Mechromancer grounded, visible and
+  camera-followed after a lateral input at the remote landmark;
+- native presentation coverage verifies remote floor ownership and prevents a
+  regression to falling through the long-world surface.
+
 ## Focused contextual tactical-HUD milestone
 
 - the permanent control legend now clears after the onboarding window instead

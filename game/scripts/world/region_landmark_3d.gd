@@ -131,6 +131,18 @@ func restore_from_dictionary(data: Dictionary) -> void:
 
 
 func _build_visuals() -> void:
+    if region_kind != &"sanctuary":
+        var collision_root := StaticBody3D.new()
+        collision_root.name = "PersistentRegionCollision"
+        collision_root.collision_layer = 1
+        add_child(collision_root)
+        var ground_shape := ModelKit3D.add_collision_box(
+            collision_root,
+            Vector3(radius * 2.0, 0.35, radius * 2.0),
+            Vector3(0.0, -0.2, 0.0)
+        )
+        ground_shape.name = "PersistentRegionGround"
+
     _visual_root = Node3D.new()
     _visual_root.name = "PersistentRegionGeometry"
     add_child(_visual_root)
