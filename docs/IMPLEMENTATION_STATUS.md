@@ -297,6 +297,17 @@ identities. Manual channels remain finish-before-save.
   save state, routing and collision remain unchanged;
 - aesthetic and complete-game coverage verify attachment on discovery.
 
+## Focused runtime material-continuity and machine-finish milestone
+
+- kept the release material pass live for meshes created after boot, including
+  fabricated robots, spawned organic families, outpost upgrades and discovered
+  region dressing;
+- added a shared final manufacturing pass to friendly robot frames with inset
+  service panels, fasteners, protected cable runs, joint collars and status
+  lighting while retaining role-specific cargo, weapon, sensor and tool reads;
+- release coverage verifies that late-created robot and organic meshes receive
+  their intended high-definition material families.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

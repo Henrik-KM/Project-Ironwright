@@ -15,6 +15,10 @@ var leather: StandardMaterial3D
 var cyan: StandardMaterial3D
 var warm: StandardMaterial3D
 var ceramic: StandardMaterial3D
+var finish_panel: StandardMaterial3D
+var finish_cable: StandardMaterial3D
+var finish_warning: StandardMaterial3D
+var finish_status: StandardMaterial3D
 
 
 func configure(next_world: Node) -> void:
@@ -30,6 +34,10 @@ func _ready() -> void:
     cyan = ModelKit3D.material(Color("23454b"), 0.34, 0.26, Color("6adbe1"), 1.7)
     warm = ModelKit3D.material(Color("72421f"), 0.24, 0.32, Color("f29a48"), 1.65)
     ceramic = ModelKit3D.material(Color("707777"), 0.08, 0.72)
+    finish_panel = ModelKit3D.material(Color("273338"), 0.68, 0.34)
+    finish_cable = ModelKit3D.material(Color("10181c"), 0.35, 0.52)
+    finish_warning = ModelKit3D.material(Color("6e3d27"), 0.34, 0.58, Color("d58a48"), 0.42)
+    finish_status = ModelKit3D.material(Color("1b555b"), 0.26, 0.24, Color("75e6e8"), 2.2)
     _polish_existing()
     get_tree().node_added.connect(_on_node_added)
 
@@ -125,6 +133,74 @@ func _polish_robot(robot: RobotUnit3D) -> void:
             _build_engineer_detail(detail)
         _:
             _build_scrapper_detail(detail)
+    _build_machine_finish(detail, robot)
+
+
+func _build_machine_finish(parent: Node3D, robot: RobotUnit3D) -> void:
+    # A final shared manufacturing pass gives every frame the same authored
+    # language: inset service panel, fasteners, protected cable runs and a
+    # small status light. Role-specific silhouettes remain the dominant read.
+    var finish := Node3D.new()
+    finish.name = "MachineSurfaceFinish"
+    parent.add_child(finish)
+
+    var body_width := 1.25
+    var body_depth := 1.55
+    if robot.archetype in [&"guardian", &"companion"]:
+        body_width = 1.5
+        body_depth = 1.7
+    elif robot.archetype == &"engineer":
+        body_width = 1.35
+        body_depth = 1.58
+
+    ModelKit3D.add_surface_panel(
+        finish,
+        Vector3(body_width * 0.62, 0.15, body_depth * 0.34),
+        Vector3(0.0, 1.43, -body_depth * 0.43),
+        finish_panel,
+        finish_warning,
+        Vector3(-0.03, 0.0, 0.0),
+        "MachineServicePanel"
+    )
+    ModelKit3D.add_box(
+        finish,
+        Vector3(body_width * 0.42, 0.045, 0.045),
+        Vector3(0.0, 1.51, -body_depth * 0.625),
+        finish_status,
+        Vector3.ZERO,
+        "MachineStatusBar"
+    )
+
+    for side in [-1.0, 1.0]:
+        var side_sign := float(side)
+        ModelKit3D.add_cylinder(
+            finish,
+            0.105,
+            0.07,
+            Vector3(side_sign * body_width * 0.49, 0.59, -body_depth * 0.25),
+            finish_warning,
+            Vector3.ZERO,
+            "MachineJointCollar"
+        )
+        ModelKit3D.add_tapered_cylinder(
+            finish,
+            0.035,
+            0.05,
+            body_depth * 0.48,
+            Vector3(side_sign * body_width * 0.54, 0.9, -0.02),
+            finish_cable,
+            Vector3(0.0, 0.0, side_sign * 0.18),
+            "MachineCableRun"
+        )
+        ModelKit3D.add_beveled_box(
+            finish,
+            Vector3(0.12, 0.28, body_depth * 0.34),
+            Vector3(side_sign * body_width * 0.56, 0.99, 0.1),
+            finish_panel,
+            Vector3(0.0, 0.0, side_sign * 0.08),
+            "MachineSideGuard",
+            0.22
+        )
 
 
 func _build_bulwark_detail(parent: Node3D) -> void:
