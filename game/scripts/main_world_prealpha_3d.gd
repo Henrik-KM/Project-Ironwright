@@ -3,7 +3,8 @@ extends IronwrightCompleteGameWorld3D
 
 ## Presentation reset informed by direct screenshot review. This layer owns the
 ## representative Heartforge vertical slice and camera composition while the
-## systemic game remains underneath it.
+## systemic game remains underneath it. This is still a pre-alpha production
+## prototype until representative gameplay receives explicit human approval.
 
 const VERTICAL_SLICE_DIRECTOR := preload("res://scripts/presentation/vertical_slice_director_3d.gd")
 const VERTICAL_SLICE_ACTOR_ART := preload("res://scripts/presentation/vertical_slice_actor_art_3d.gd")
@@ -69,9 +70,6 @@ func _update_camera(delta: float) -> void:
         else:
             follow_operation = false
 
-    # Lead movement just enough to reveal the direction of travel. This keeps
-    # the Mechromancer out of the exact center without creating action-game
-    # camera motion or hiding threats behind UI.
     var subject_velocity := player.velocity if not follow_operation else Vector3.ZERO
     subject_velocity.y = 0.0
     camera_target_velocity = camera_target_velocity.lerp(subject_velocity, 1.0 - exp(-delta * 3.2))
@@ -102,8 +100,6 @@ func _nearby_threat_camera_bias(target: Vector3) -> Vector3:
     if threat_count <= 0:
         return Vector3.ZERO
     var intensity := clampf(float(threat_count) * 0.18 + (1.0 - clampf(nearest / 15.0, 0.0, 1.0)) * 0.45, 0.0, 1.0)
-    # Pull slightly higher under pressure so the player can read the protective
-    # robot envelope instead of losing situational awareness to spectacle.
     return Vector3(0.0, intensity * 2.6, intensity * 1.2)
 
 
