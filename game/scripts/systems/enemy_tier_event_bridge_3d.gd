@@ -70,8 +70,10 @@ func reconcile_existing_state() -> void:
         for technology_id in progression_director.unlocked_technologies:
             _apply_event_once(&"technology", technology_id, "technologies")
     if endgame_director != null:
-        if endgame_director.active_protocol != &"":
-            _apply_event_once(&"endgame", endgame_director.active_protocol, "endgame")
+        if not endgame_director.active_protocol.is_empty():
+            var active_id := StringName(str(endgame_director.active_protocol.get("id", "")))
+            if active_id != &"":
+                _apply_event_once(&"endgame", active_id, "endgame")
         elif endgame_director.completed_protocol != &"":
             _apply_event_once(&"endgame", endgame_director.completed_protocol, "endgame")
 
