@@ -222,7 +222,7 @@ func _run_all() -> void:
     evolved_robot.queue_free()
 
     var enemy_samples: Array[OrganicEnemy3D] = []
-    var species_names := [&"skitterling", &"razorhound", &"veilstalker", &"burrower", &"sporecaster", &"broodmass", &"apex"]
+    var species_names := [&"skitterling", &"razorhound", &"roofleaper", &"glassmoth", &"veilstalker", &"burrower", &"sporecaster", &"broodmass", &"miremaw", &"carrionbell", &"rootweaver", &"apex"]
     var sample_player := get_first_node_in_group("player_character") as Node3D
     var sample_forge := world.get_node_or_null("Heartforge") as Node3D
     for index in species_names.size():
@@ -373,4 +373,14 @@ func _enemy_model_has_details(enemy: OrganicEnemy3D, species: StringName) -> boo
             return _find_named(enemy, "BroodmassLobeL") != null and _find_named(enemy, "CrownSpine0") != null and _find_named(enemy, "BroodmassMaw") != null
         &"apex":
             return _find_named(enemy, "ApexCrown") != null and _find_named(enemy, "ApexJawL") != null and _find_named(enemy, "ApexMembraneL") != null
+        &"roofleaper":
+            return _find_named(enemy, "RoofleaperCrown") != null and _find_named(enemy, "RoofleaperWingStrut0") != null and _find_named(enemy, "RoofleaperCrownOculus") != null
+        &"glassmoth":
+            return _find_named(enemy, "GlassmothThorax") != null and _find_named(enemy, "GlassmothWingRib0") != null and _find_named(enemy, "GlassmothAntenna") != null
+        &"miremaw":
+            return _find_named(enemy, "MiremawDorsalShell") != null and _find_named(enemy, "MiremawTusk") != null and _find_named(enemy, "MiremawGillFan") != null
+        &"carrionbell":
+            return _find_named(enemy, "CarrionbellMantle") != null and _find_named(enemy, "CarrionbellCrownPlate") != null and _find_named(enemy, "CarrionbellResonator") != null
+        &"rootweaver":
+            return _find_named(enemy, "RootweaverCrown") != null and _find_named(enemy, "RootweaverTendril0") != null and _find_named(enemy, "RootweaverSporeFan") != null
     return false

@@ -711,6 +711,19 @@ identities. Manual channels remain finish-before-save.
 - live tiered opening review reached the title screen and opening tactical frame;
   broader balance and long-run ecological review remain part of pre-alpha work.
 
+## Focused remaining-organic-family presentation milestone
+
+- added a high-definition procedural presentation pass for Roofleaper,
+  Glassmoth, Miremaw, Carrion Bell and Rootweaver, including layered shells,
+  membranes, wing structures, signal anatomy, crowns and radial tendrils;
+- kept the new anatomy inside the existing stable OrganicModel contract so
+  release material continuity, animation attachment and tier intelligence do
+  not need separate runtime paths;
+- expanded the aesthetic scenario coverage from the original seven sampled
+  families to all twelve mapped organic species;
+- live presentation-gallery review confirmed the five previously thin families
+  now have distinct, readable silhouettes at gameplay scale.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.
