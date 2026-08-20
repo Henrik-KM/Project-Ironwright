@@ -776,6 +776,18 @@ identities. Manual channels remain finish-before-save.
 - aesthetic coverage now verifies the archive facade, vault entrance and roof
   beacon signatures after discovery.
 
+## Focused Municipal-Glasshouse encounter-space milestone
+
+- added a high-definition light canopy with broken skylight, varied luminous
+  panes, roof tank, climate louver and suspended irrigation lines;
+- added restrained warm/cyan lighting and facade growth so the district reads
+  as a failed botanical facility where infrastructure and membrane life compete
+  for light;
+- retained the greenhouse’s discovery, traversal, ecology and operation
+  contracts; all new geometry remains presentation-only;
+- aesthetic coverage now verifies the canopy, climate hardware and broken
+  skylight signatures after discovery.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

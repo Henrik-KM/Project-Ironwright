@@ -98,6 +98,10 @@ func _run_all() -> void:
                 _expect(landmark.find_child("ArchiveCivicFacade", true, false) != null, "North Ruins must expose an authored civic archive facade.")
                 _expect(landmark.find_child("ArchiveVaultDoor", true, false) != null, "North Ruins must expose a readable archive vault entrance.")
                 _expect(landmark.find_child("ArchiveRoofBeacon", true, false) != null, "North Ruins must expose a surviving archive beacon silhouette.")
+            if landmark.region_kind == &"greenhouse":
+                _expect(landmark.find_child("GreenhouseLightCanopy", true, false) != null, "Municipal Glasshouse must expose an authored light canopy.")
+                _expect(landmark.find_child("GreenhouseClimateLouver", true, false) != null, "Municipal Glasshouse must expose readable climate infrastructure.")
+                _expect(landmark.find_child("GreenhouseBrokenSkylight", true, false) != null, "Municipal Glasshouse must expose a broken skylight silhouette.")
             if landmark.region_kind == &"waterfront":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/WaterfrontIdentityDetails/RiverworksSluiceDetails") != null, "Riverworks must expose an authored sluice assembly.")
                 _expect(landmark.find_child("RiverWaterlineBreak", true, false) != null, "Riverworks must expose bounded waterline breaks at the dock edge.")
