@@ -384,6 +384,18 @@ identities. Manual channels remain finish-before-save.
 - live opening-route review confirmed the broad encounter-space silhouette
   reads without adding a new objective or recurring management task.
 
+## Focused authored Burrower milestone
+
+- added an original high-definition glTF shell for the territorial drill
+  family, with layered torso plates, concentric drill rings, a bore tip,
+  red bore lamps, jaw hooks and side fins;
+- wired the shell into `OrganicEnemy3D` without changing Burrower patrol,
+  collision, attack timing, terrain contact or ecology;
+- retained stable drill, tip, ring and lamp names for import validation and
+  future state-driven motion refinement;
+- live opening-route review confirmed the drilling silhouette remains readable
+  without adding a new objective or recurring management task.
+
 ## Focused channel-and-tracer feedback milestone
 
 - weapon fire now leaves a short-lived directional tracer between the firing
