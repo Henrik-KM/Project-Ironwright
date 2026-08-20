@@ -1,0 +1,17 @@
+{
+  "asset_id": "buried.labs.v1",
+  "kind": "world_landmark",
+  "source": "game/assets/buried_labs/source/build_buried_labs_asset.py",
+  "runtime_model": "game/assets/buried_labs/buried_labs.gltf",
+  "required_nodes": [
+    "BuriedLabsModel",
+    "BuriedLabsContainmentHall",
+    "BuriedLabsVessel0",
+    "BuriedLabsVesselCore0",
+    "BuriedLabsTransferRail",
+    "BuriedLabsContainmentDoor",
+    "BuriedLabsOrganicSeep0",
+    "ProductionAssetMarker"
+  ],
+  "presentation_only": true
+}

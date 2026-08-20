@@ -57,6 +57,9 @@ REQUIRED = [
     "game/assets/tram_graveyard/source/build_tram_graveyard_asset.py",
     "game/assets/tram_graveyard/tram_graveyard.gltf",
     "game/data/tram_graveyard_asset_manifest.json",
+    "game/assets/buried_labs/source/build_buried_labs_asset.py",
+    "game/assets/buried_labs/buried_labs.gltf",
+    "game/data/buried_labs_asset_manifest.json",
 ]
 
 AUTHORED_ORGANIC_ASSETS = {
@@ -138,6 +141,20 @@ AUTHORED_REGION_ASSETS = {
             "TramSignalMast",
             "TramSignalLamp",
             "TramOrganicSeep0",
+            "ProductionAssetMarker",
+        ],
+    },
+    "buried_labs": {
+        "asset_id": "buried.labs.v1",
+        "root": "BuriedLabsModel",
+        "required": [
+            "BuriedLabsModel",
+            "BuriedLabsContainmentHall",
+            "BuriedLabsVessel0",
+            "BuriedLabsVesselCore0",
+            "BuriedLabsTransferRail",
+            "BuriedLabsContainmentDoor",
+            "BuriedLabsOrganicSeep0",
             "ProductionAssetMarker",
         ],
     },

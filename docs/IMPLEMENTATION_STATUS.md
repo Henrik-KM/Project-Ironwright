@@ -51,6 +51,7 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - region-specific physical salvage after discovery;
 - authored visual identity for every district kind, including original high-definition Riverworks pump/sluice, Cathedral nave/choir and Observatory survey landmark shells plus the authored Root Cistern organ shell.
 - the Tram Graveyard now has an original high-definition carriage and maintenance landmark shell while retaining the existing rail encounter and operation contracts.
+- Buried Laboratories now has an original high-definition containment-hall shell while retaining the existing research encounter and operation contracts.
 
 ### Long-range operations
 
@@ -626,6 +627,18 @@ identities. Manual channels remain finish-before-save.
   discovery and operation ownership; the new geometry is presentation-only;
 - native aesthetic and release coverage verifies the named sockets and
   deterministic signal/seepage motion; live district review remains required.
+
+## Focused Buried Laboratories authored-space milestone
+
+- added the original high-definition `buried.labs.v1` shell with a
+  containment hall, three specimen vessels, luminous cores, transfer rail,
+  sealed door, warning panel, service cables and restrained organic
+  contamination;
+- retained the existing research encounter dressing, salvage, route, ecology,
+  discovery and operation ownership; the new geometry is presentation-only;
+- native aesthetic and release coverage verifies the named sockets and
+  deterministic containment-light/contamination motion; live district review
+  remains required.
 
 ## Focused remote-ground continuity milestone
 
