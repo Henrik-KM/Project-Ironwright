@@ -4,6 +4,7 @@ extends Node3D
 const AUTHORED_ROOT_CISTERN_MODEL_SCENE: PackedScene = preload("res://assets/root_cistern/root_cistern.gltf")
 const AUTHORED_RIVERWORKS_MODEL_SCENE: PackedScene = preload("res://assets/riverworks/riverworks.gltf")
 const AUTHORED_CATHEDRAL_MODEL_SCENE: PackedScene = preload("res://assets/cathedral/cathedral.gltf")
+const AUTHORED_OBSERVATORY_MODEL_SCENE: PackedScene = preload("res://assets/observatory/observatory.gltf")
 
 signal landmark_changed(landmark: RegionLandmark3D)
 
@@ -269,14 +270,7 @@ func _build_visuals() -> void:
             for side in [-1.0, 1.0]:
                 _add_beam(rail, Vector3(side * 6.4, 0.0, -8.0), Vector3(side * 6.4, 6.0, -8.0), 0.1, metal, "RailOverheadPost")
         &"observatory":
-            var observatory := Node3D.new()
-            observatory.name = "ObservatoryIdentityDetails"
-            _visual_root.add_child(observatory)
-            ModelKit3D.add_beveled_box(observatory, Vector3(12.0, 0.55, 10.0), Vector3(0.0, 0.28, 0.0), concrete, Vector3.ZERO, "ObservatoryPlinth", 0.2)
-            ModelKit3D.add_sphere(observatory, 4.5, Vector3(0.0, 3.1, 0.0), metal, Vector3(1.0, 0.52, 1.0), "ObservatoryDome")
-            ModelKit3D.add_cylinder(observatory, 0.32, 7.0, Vector3(0.0, 4.6, 0.0), rust, Vector3.ZERO, "ObservatoryMast")
-            for side in [-1.0, 1.0]:
-                ModelKit3D.add_beveled_box(observatory, Vector3(2.4, 0.24, 0.7), Vector3(side * 3.8, 0.85, 0.0), edge, Vector3(0.0, side * 0.18, 0.0), "ObservatoryOpticRail", 0.22)
+            _build_authored_observatory_visuals()
         &"nest":
             _nest_shell = Node3D.new()
             _nest_shell.name = "NestOccluderShell"
@@ -436,6 +430,29 @@ func _build_authored_cathedral_visuals() -> void:
     _visual_root.add_child(authored_marker)
 
 
+func _build_authored_observatory_visuals() -> void:
+    # Observatory Ridge receives an open survey apparatus instead of a solid
+    # dome so the player, dish and route remain readable at tactical distance.
+    var identity_details := Node3D.new()
+    identity_details.name = "ObservatoryIdentityDetails"
+    _visual_root.add_child(identity_details)
+    var authored_scene_instance := AUTHORED_OBSERVATORY_MODEL_SCENE.instantiate()
+    var imported_root := authored_scene_instance.get_node_or_null("ObservatoryModel") as Node
+    if imported_root == null:
+        imported_root = authored_scene_instance
+    var authored_children := imported_root.get_children()
+    for child in authored_children:
+        child.owner = null
+        imported_root.remove_child(child)
+        _visual_root.add_child(child)
+    if imported_root != authored_scene_instance:
+        imported_root.free()
+    authored_scene_instance.free()
+    var authored_marker := Node3D.new()
+    authored_marker.name = "ObservatoryAuthoredModel"
+    _visual_root.add_child(authored_marker)
+
+
 func _capture_region_motion_nodes() -> void:
     _motion_nodes.clear()
     _motion_base_transforms.clear()
@@ -478,6 +495,13 @@ func _animate_region_details() -> void:
             node.rotation.z += sin(local_phase * 0.55) * 0.035
         elif node_name.begins_with("CathedralOrganicVein"):
             node.rotation.x += sin(local_phase * 0.8) * 0.045
+        elif node_name.begins_with("ObservatoryDish"):
+            node.rotation.y += _elapsed * 0.08
+        elif node_name.begins_with("ObservatoryFeedSignal"):
+            var feed_pulse := 1.0 + sin(local_phase * 2.2) * 0.10
+            node.scale = _motion_base_transforms[node].basis.get_scale() * feed_pulse
+        elif node_name.begins_with("ObservatoryMastLight"):
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.7) * 0.08)
         elif node_name.begins_with("RiverworksGrowth") or node_name.begins_with("RiverbankGrowth"):
             node.rotation.y += sin(local_phase * 1.15) * 0.12
             node.scale *= Vector3(1.0, 1.0 + sin(local_phase * 1.8) * 0.08, 1.0)
@@ -494,6 +518,9 @@ func _is_region_motion_name(node_name: String) -> bool:
         "CathedralChoirSignal",
         "CathedralBell",
         "CathedralOrganicVein",
+        "ObservatoryDish",
+        "ObservatoryFeedSignal",
+        "ObservatoryMastLight",
     ]:
         if node_name.begins_with(prefix):
             return true

@@ -120,6 +120,16 @@ func _run_all() -> void:
                 _expect(landmark.find_child("ObservatoryOpticsStation", true, false) != null, "Observatory Ridge must expose an authored optics station.")
                 _expect(landmark.find_child("ObservatoryLensBarrel", true, false) != null, "Observatory Ridge must expose a readable survey lens.")
                 _expect(landmark.find_child("ObservatoryStarMapPanel", true, false) != null, "Observatory Ridge must expose a readable survey console.")
+                _expect(landmark.get_node_or_null("PersistentRegionGeometry/ObservatoryAuthoredModel") != null, "Observatory Ridge must expose its authored radio-observatory landmark shell.")
+                var observatory_dish := landmark.find_child("ObservatoryDish", true, false) as Node3D
+                var observatory_feed := landmark.find_child("ObservatoryFeedSignal", true, false) as Node3D
+                _expect(observatory_dish != null and observatory_feed != null, "Observatory Ridge must expose named dish and feed-signal sockets.")
+                if observatory_dish != null and observatory_feed != null:
+                    var dish_before := observatory_dish.rotation.y
+                    var feed_before := observatory_feed.scale
+                    landmark.call("_process", 0.5)
+                    _expect(absf(observatory_dish.rotation.y - dish_before) > 0.01, "Observatory dish must carry deterministic presentation motion.")
+                    _expect(not observatory_feed.scale.is_equal_approx(feed_before), "Observatory feed signal must pulse as a restrained presentation cue.")
             if landmark.region_kind == &"waterfront":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/WaterfrontIdentityDetails/RiverworksSluiceDetails") != null, "Riverworks must expose an authored sluice assembly.")
                 _expect(landmark.find_child("RiverWaterlineBreak", true, false) != null, "Riverworks must expose bounded waterline breaks at the dock edge.")
