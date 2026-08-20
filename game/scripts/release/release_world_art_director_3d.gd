@@ -15,6 +15,29 @@ const TEXTURE_PATHS: Dictionary = {
     &"moss": TEXTURE_ROOT + "/moss_growth.png",
     &"rust": TEXTURE_ROOT + "/rust_panel.png",
 }
+const AUTHORED_MACHINE_TOKENS: Array[String] = [
+    "bulwark",
+    "warden",
+    "scrapper",
+    "pathfinder",
+    "engineer",
+]
+const AUTHORED_ORGANIC_TOKENS: Array[String] = [
+    "veilstalker",
+    "razorhound",
+    "sporecaster",
+    "broodmass",
+    "burrower",
+    "skitterling",
+    "apex",
+]
+const ORGANIC_MEMBRANE_TOKENS: Array[String] = [
+    "membrane",
+    "veil",
+    "wing",
+    "sac",
+    "fan",
+]
 
 var world: Node3D
 var region_director: WorldRegionDirector3D
@@ -131,6 +154,15 @@ func _texture_category(mesh_instance: MeshInstance3D) -> StringName:
     var path_text := str(mesh_instance.get_path()).to_lower()
     var name_text := String(mesh_instance.name).to_lower()
     var combined := "%s %s" % [path_text, name_text]
+    # Imported production shells retain their authored family in the node
+    # path, while their individual meshes intentionally use neutral names
+    # such as TorsoSegment or Fastener. Recognise the family before the
+    # procedural naming heuristics so the high-definition assets receive the
+    # same triplanar material language as the rest of the release world.
+    if _contains_any(combined, AUTHORED_ORGANIC_TOKENS):
+        return &"membrane" if _contains_organic_membrane_name(name_text) else &"chitin"
+    if _contains_any(combined, AUTHORED_MACHINE_TOKENS):
+        return &"metal"
     if "organic" in combined or "torso" in name_text or "carapace" in name_text or "head" in name_text and "mechromancer" not in combined:
         return &"membrane" if ("sac" in name_text or "membrane" in name_text or "wing" in name_text or "bell" in name_text) else &"chitin"
     if "road" in combined or "lanemark" in name_text:
@@ -146,6 +178,20 @@ func _texture_category(mesh_instance: MeshInstance3D) -> StringName:
     if "vehicle" in combined or "rust" in name_text or "roofplate" in name_text:
         return &"rust"
     return &""
+
+
+func _contains_any(text: String, tokens: Array[String]) -> bool:
+    for token in tokens:
+        if token in text:
+            return true
+    return false
+
+
+func _contains_organic_membrane_name(name_text: String) -> bool:
+    var detail_name := name_text
+    for family_token in AUTHORED_ORGANIC_TOKENS:
+        detail_name = detail_name.replace(family_token, "")
+    return _contains_any(detail_name, ORGANIC_MEMBRANE_TOKENS)
 
 
 func _uv_scale(category: StringName) -> Vector3:
