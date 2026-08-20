@@ -68,6 +68,8 @@ It includes:
   research districts distinct audio signatures;
 - distance-based landmark presentation LOD that retains nearby authored
   structures while reducing distant regions to persistent beacons;
+- discovery-driven authored encounter dressing across the persistent regions,
+  with each district receiving a specific human-scale functional vignette;
 - wrecked machinery and live salvage cables;
 - ruined buildings, roads, street lamps, vehicle wrecks, rubble, and North Ruins.
 

@@ -71,6 +71,13 @@ func set_presentation_detail_level(level: int) -> void:
         _light.omni_range = 9.0 if _map_emphasis else (4.5 if presentation_detail_level == 0 else 3.0)
 
 
+func add_presentation_detail(node: Node3D) -> bool:
+    if node == null or _visual_root == null:
+        return false
+    _visual_root.add_child(node)
+    return true
+
+
 func set_discovered(value: bool) -> void:
     if discovered == value:
         return

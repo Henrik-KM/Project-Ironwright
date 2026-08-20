@@ -57,6 +57,10 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
 - persistent archive, tenement, greenhouse, waterfront, rail and observatory
   regions now carry their own structural landmark signatures instead of
   falling back to generic urban ruin geometry.
+- each non-sanctuary region now receives a discovery-driven encounter vignette:
+  archive records, substation tanks, tenement laundry, greenhouse beds,
+  market awnings, dock service decks, rail signals, brood ribs, survey optics,
+  lab cases and cistern protocol pylons.
 
 Clutter must leave important routes readable from the high-angle camera.
 

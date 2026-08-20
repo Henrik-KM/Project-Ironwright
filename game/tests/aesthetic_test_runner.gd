@@ -28,6 +28,18 @@ func _run_all() -> void:
     _expect(world.get_node_or_null("CozyHeartforgeCamp") != null, "The Heartforge must receive an inhabited cozy camp layer.")
     _expect(world.get_node_or_null("UrbanAestheticPass") != null, "The ruined city must receive the urban storytelling pass.")
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgeMaintenanceDetail") != null, "The Heartforge must expose a dedicated presentation-only maintenance detail layer.")
+    var encounter_dressing := world.get_node_or_null("RegionEncounterDressingDirector") as RegionEncounterDressingDirector3D
+    var region_director := world.get_node_or_null("WorldRegionDirector") as WorldRegionDirector3D
+    _expect(encounter_dressing != null, "The complete world must provide discovery-driven authored region dressing.")
+    if encounter_dressing != null and region_director != null:
+        for raw_region_id in region_director.region_data.keys():
+            region_director.discover_region(StringName(raw_region_id))
+        await process_frame
+        for raw_region_id in region_director.region_data.keys():
+            var landmark := region_director.get_landmark(StringName(raw_region_id))
+            if landmark == null or landmark.region_kind == &"sanctuary":
+                continue
+            _expect(landmark.get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing") != null, "Each non-sanctuary region must receive stable authored encounter dressing on discovery.")
     var region_atmosphere := world.get_node_or_null("RegionAtmosphereDirector") as RegionAtmosphereDirector3D
     _expect(region_atmosphere != null, "The complete world must install region-aware atmosphere presentation.")
     if region_atmosphere != null:
