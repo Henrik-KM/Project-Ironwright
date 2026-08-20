@@ -17,6 +17,7 @@ var _label: Label3D
 var _light: OmniLight3D
 var _elapsed: float = 0.0
 var _map_emphasis: bool = false
+var presentation_detail_level: int = 0
 
 
 func configure(data: Dictionary) -> void:
@@ -54,8 +55,20 @@ func set_map_emphasis(value: bool) -> void:
     if _label != null:
         _label.visible = discovered and value
     if _light != null:
-        _light.light_energy = 1.0 if value else 0.28
-        _light.omni_range = 9.0 if value else 4.5
+        var base_energy := 1.0 if value else 0.28
+        var detail_factor := 1.0 if presentation_detail_level == 0 else 0.58
+        _light.light_energy = base_energy * detail_factor
+        _light.omni_range = 9.0 if value else (4.5 if presentation_detail_level == 0 else 3.0)
+
+
+func set_presentation_detail_level(level: int) -> void:
+    presentation_detail_level = clampi(level, 0, 2)
+    if _visual_root != null:
+        _visual_root.visible = presentation_detail_level < 2
+    if _light != null:
+        var base_energy := 1.0 if _map_emphasis else 0.28
+        _light.light_energy = base_energy if presentation_detail_level == 0 else base_energy * 0.58
+        _light.omni_range = 9.0 if _map_emphasis else (4.5 if presentation_detail_level == 0 else 3.0)
 
 
 func set_discovered(value: bool) -> void:

@@ -252,6 +252,15 @@ identities. Manual channels remain finish-before-save.
 - native coverage verifies the West Grid cue without introducing ambient
   chatter, a new resource, or a player-managed audio setting.
 
+## Focused region landmark presentation LOD milestone
+
+- nearby region landmarks retain their full authored geometry while distant
+  landmarks reduce to persistent beacon presentation;
+- the LOD director changes only rendering detail and never removes region
+  identity, discovery, pressure, position or save state;
+- native coverage verifies full detail for the current West Grid region and
+  beacon detail for a distant endgame region.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.
