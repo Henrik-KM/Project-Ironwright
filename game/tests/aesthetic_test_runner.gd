@@ -87,6 +87,8 @@ func _run_all() -> void:
             _expect(landmark.find_child("*Facade*", true, false) != null, "Each non-sanctuary region must expose a readable district-specific surface signature.")
             if landmark.region_kind == &"endgame":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/RootCisternAuthoredModel") != null, "The Root Cistern must expose its authored landmark shell.")
+            if landmark.region_kind == &"nest":
+                _expect(landmark.get_node_or_null("PersistentRegionGeometry/NestOccluderShell") != null, "The nest must isolate its close-range opaque shell for camera-safe presentation.")
     var region_atmosphere := world.get_node_or_null("RegionAtmosphereDirector") as RegionAtmosphereDirector3D
     _expect(region_atmosphere != null, "The complete world must install region-aware atmosphere presentation.")
     if region_atmosphere != null:

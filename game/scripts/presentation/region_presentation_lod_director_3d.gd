@@ -40,6 +40,7 @@ func refresh_now() -> void:
         if landmark == null:
             continue
         var distance := player.global_position.distance_to(landmark.global_position)
+        landmark.set_player_proximity(distance)
         var next_level := 0 if distance <= FULL_RADIUS else (1 if distance <= REDUCED_RADIUS else 2)
         var previous := int(detail_modes.get(landmark.region_id, -1))
         if previous == next_level:
