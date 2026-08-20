@@ -19,6 +19,7 @@ var finish_panel: StandardMaterial3D
 var finish_cable: StandardMaterial3D
 var finish_warning: StandardMaterial3D
 var finish_status: StandardMaterial3D
+var scan_queued: bool = false
 
 
 func configure(next_world: Node) -> void:
@@ -54,8 +55,15 @@ func _polish_existing() -> void:
 func _on_node_added(node: Node) -> void:
     if not (node is Node3D):
         return
-    if node.is_in_group(&"player_character") or node.is_in_group(&"friendly_robots") or node.is_in_group(&"heartforge"):
-        call_deferred("_polish", node)
+    if scan_queued:
+        return
+    scan_queued = true
+    call_deferred("_scan_unpolished")
+
+
+func _scan_unpolished() -> void:
+    scan_queued = false
+    _polish_existing()
 
 
 func _polish(node: Node) -> void:
@@ -219,6 +227,10 @@ func _build_warden_detail(parent: Node3D) -> void:
     ModelKit3D.add_cylinder(parent, 0.12, 1.45, Vector3(0.0, 1.42, -0.78), dark_steel, Vector3(1.5708, 0.0, 0.0), "WardenAutocannon")
     ModelKit3D.add_beveled_box(parent, Vector3(0.54, 0.38, 0.56), Vector3(0.0, 1.42, -0.55), rust, Vector3.ZERO, "WardenBreech", 0.18)
     ModelKit3D.add_box(parent, Vector3(1.6, 0.15, 0.46), Vector3(0.0, 0.46, 0.84), dark_steel, Vector3(0.0, 0.0, -0.08), "WardenCounterweight")
+    ModelKit3D.add_louvered_panel(parent, Vector3(0.72, 0.32, 0.18), Vector3(-0.52, 1.34, -0.87), dark_steel, rust, Vector3(-0.04, 0.0, 0.0), "WardenHeatExchanger", 5)
+    ModelKit3D.add_louvered_panel(parent, Vector3(0.54, 0.26, 0.16), Vector3(0.52, 1.3, -0.84), dark_steel, steel, Vector3(-0.06, 0.0, 0.0), "WardenAmmunitionPanel", 4)
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_cylinder(parent, 0.14, 0.1, Vector3(side * 0.52, 1.56, -0.93), warm, Vector3(1.5708, 0.0, 0.0), "WardenRecoilRing")
     _add_machine_lamp(parent, Vector3(-0.36, 1.36, -0.9), Color("e9a65b"), 0.34)
     _add_machine_lamp(parent, Vector3(0.36, 1.36, -0.9), Color("e9a65b"), 0.34)
 
@@ -229,14 +241,20 @@ func _build_scrapper_detail(parent: Node3D) -> void:
         ModelKit3D.add_cylinder(parent, 0.095, 1.25, Vector3(side * 0.72, 0.92, -0.18), rust, Vector3(0.0, 0.0, side * 1.0), "ScrapManipulator")
         ModelKit3D.add_box(parent, Vector3(0.32, 0.18, 0.52), Vector3(side * 1.15, 0.6, -0.2), steel, Vector3(0.0, 0.0, side * 0.16), "ScrapClaw")
     ModelKit3D.add_cylinder(parent, 0.18, 0.34, Vector3(0.0, 1.12, -0.92), dark_steel, Vector3(1.5708, 0.0, 0.0), "CuttingHead")
+    ModelKit3D.add_louvered_panel(parent, Vector3(0.78, 0.34, 0.18), Vector3(0.0, 1.48, -0.38), dark_steel, rust, Vector3(-0.08, 0.0, 0.0), "ScrapperIntake", 4)
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_cylinder(parent, 0.12, 0.1, Vector3(side * 1.15, 0.62, -0.44), cyan, Vector3(1.5708, 0.0, 0.0), "ScrapMagnet")
     _add_machine_lamp(parent, Vector3(0.0, 1.22, -0.98), Color("6bd7de"), 0.3)
 
 
 func _build_pathfinder_detail(parent: Node3D) -> void:
     ModelKit3D.add_cylinder(parent, 0.06, 1.9, Vector3(0.0, 2.0, 0.14), dark_steel, Vector3.ZERO, "PathfinderMast")
     ModelKit3D.add_sphere(parent, 0.28, Vector3(0.0, 2.72, 0.14), steel, Vector3(1.4, 0.35, 1.4), "PathfinderDish")
+    ModelKit3D.add_cylinder(parent, 0.11, 0.16, Vector3(0.0, 2.72, -0.05), cyan, Vector3(1.5708, 0.0, 0.0), "PathfinderDishHub")
+    ModelKit3D.add_louvered_panel(parent, Vector3(0.62, 0.24, 0.16), Vector3(0.0, 1.34, -0.48), dark_steel, cyan, Vector3(-0.05, 0.0, 0.0), "PathfinderSensorPod", 3)
     for side in [-1.0, 1.0]:
         ModelKit3D.add_box(parent, Vector3(0.72, 0.08, 0.42), Vector3(side * 0.72, 1.42, 0.08), dark_steel, Vector3(0.0, 0.0, side * 0.12), "PathfinderSensorWing")
+        ModelKit3D.add_sphere(parent, 0.075, Vector3(side * 0.3, 1.38, -0.56), cyan, Vector3(1.0, 0.72, 0.6), "PathfinderRangeLens")
         _add_machine_lamp(parent, Vector3(side * 0.65, 1.42, -0.3), Color("82d68a"), 0.24)
 
 

@@ -67,6 +67,9 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
 - friendly frames share a final inset-panel, fastener, cable-run and joint
   collar finish while cargo, weapon, sensor and construction silhouettes
   remain role-specific.
+- Warden, Scrapper and Pathfinder now carry dedicated heat-exchanger,
+  salvage-intake and sensor-pod hardware so the role read survives the
+  tactical camera instead of relying on color alone.
 
 Clutter must leave important routes readable from the high-angle camera.
 

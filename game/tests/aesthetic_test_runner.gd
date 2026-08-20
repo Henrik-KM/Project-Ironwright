@@ -224,11 +224,11 @@ func _role_model_has_details(robot: RobotUnit3D, role: StringName) -> bool:
         return false
     match role:
         &"salvager":
-            return _find_named(robot, "CargoLip") != null and _find_named(robot, "DismantlerTool") != null and _find_named(robot, "SalvageDrum") != null
+            return _find_named(robot, "CargoLip") != null and _find_named(robot, "DismantlerTool") != null and _find_named(robot, "SalvageDrum") != null and _find_named(robot, "ScrapperIntake") != null
         &"guardian":
-            return _find_named(robot, "WeaponBarrel") != null and _find_named(robot, "WeaponMuzzle") != null and _find_named(robot, "ShieldRib") != null
+            return _find_named(robot, "WeaponBarrel") != null and _find_named(robot, "WeaponMuzzle") != null and _find_named(robot, "ShieldRib") != null and _find_named(robot, "WardenHeatExchanger") != null
         &"scout":
-            return _find_named(robot, "ScoutFin") != null and _find_named(robot, "BeaconRing") != null and _find_named(robot, "ScoutOptic") != null
+            return _find_named(robot, "ScoutFin") != null and _find_named(robot, "BeaconRing") != null and _find_named(robot, "ScoutOptic") != null and _find_named(robot, "PathfinderSensorPod") != null
         &"engineer":
             return _find_named(robot, "PistonJoint") != null and _find_named(robot, "ToolHead") != null and _find_named(robot, "ForgeCoil") != null
     return false
