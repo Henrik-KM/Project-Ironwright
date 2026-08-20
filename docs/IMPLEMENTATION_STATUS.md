@@ -361,6 +361,18 @@ identities. Manual channels remain finish-before-save.
 - the release shell was live-reviewed through opening, settled tactical and map
   states, and aesthetic coverage verifies the hide-and-reappear exception path.
 
+## Focused progression-aware machine-finish milestone
+
+- level 2 frames now gain raised shoulder rails, signal strips and a dorsal
+  service panel, making learned machine capability visible in the silhouette;
+- level 3 frames add a material-matched crown ring, mast and status beacons for
+  a grounded-to-futuristic progression read;
+- the assemblies are rebuilt from the existing stable frame level and remain
+  presentation-only, with no new per-unit controls, jobs or maintenance work;
+- a live Heartforge review confirmed evolved Guardian, Scrapper and Pathfinder
+  frames remain readable around the tactical camera while the full aesthetic
+  and native matrix passes stay green.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.

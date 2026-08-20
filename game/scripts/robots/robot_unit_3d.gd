@@ -323,6 +323,68 @@ func _refresh_visual_identity() -> void:
         ModelKit3D.add_box(_model_root, Vector3(0.09, 0.18, body_size.z * 0.5), Vector3(shoulder_x + float(side) * 0.13, 0.9, 0.0), dark_steel, Vector3(0.0, 0.0, float(side) * 0.14), "SidePanel")
         ModelKit3D.add_cylinder(_model_root, 0.035, body_size.z * 0.45, Vector3(shoulder_x - float(side) * 0.05, 0.86, -0.02), rust, Vector3(1.5708, 0.0, 0.0), "ExposedCable")
 
+    # Frame progression is visible in the machine silhouette as well as in
+    # simulation stats. These bounded assemblies are rebuilt whenever a frame
+    # level changes and remain presentation-only: no new sockets, jobs or
+    # per-unit maintenance are introduced.
+    if level >= 2:
+        var evolution_steel := ModelKit3D.material(Color("53656a"), 0.78, 0.3)
+        var evolution_accent := ModelKit3D.material(glow_color.darkened(0.42), 0.32, 0.28, glow_color, 2.4)
+        for side in [-1.0, 1.0]:
+            var side_sign := float(side)
+            ModelKit3D.add_beveled_box(
+                _model_root,
+                Vector3(0.18, 0.34, body_size.z * 0.66),
+                Vector3(side_sign * body_size.x * 0.64, 1.1, 0.0),
+                evolution_steel,
+                Vector3(0.0, 0.0, side_sign * 0.08),
+                "Tier2ShoulderRail",
+                0.22
+            )
+            ModelKit3D.add_box(
+                _model_root,
+                Vector3(0.055, 0.08, body_size.z * 0.48),
+                Vector3(side_sign * body_size.x * 0.75, 1.1, -0.03),
+                evolution_accent,
+                Vector3(0.0, 0.0, side_sign * 0.08),
+                "Tier2SignalStrip"
+            )
+        ModelKit3D.add_louvered_panel(
+            _model_root,
+            Vector3(body_size.x * 0.46, 0.28, 0.16),
+            Vector3(0.0, 1.48, body_size.z * 0.34),
+            dark_steel,
+            evolution_steel,
+            Vector3.ZERO,
+            "Tier2DorsalServicePanel",
+            3
+        )
+
+    if level >= 3:
+        var crown_material := ModelKit3D.material(glow_color.darkened(0.34), 0.42, 0.24, glow_color, 3.1)
+        var crown_ring := MeshInstance3D.new()
+        crown_ring.name = "Tier3CrownRing"
+        var crown_mesh := TorusMesh.new()
+        crown_mesh.inner_radius = body_size.x * 0.34
+        crown_mesh.outer_radius = crown_mesh.inner_radius + 0.055
+        crown_mesh.rings = 16
+        crown_mesh.ring_segments = 32
+        crown_ring.mesh = crown_mesh
+        crown_ring.material_override = crown_material
+        crown_ring.position = Vector3(0.0, 1.92, 0.08)
+        _model_root.add_child(crown_ring)
+        ModelKit3D.add_cylinder(_model_root, 0.045, 0.58, Vector3(0.0, 2.17, 0.08), crown_material, Vector3.ZERO, "Tier3CrownMast")
+        for index in range(3):
+            var crown_angle := TAU * float(index) / 3.0
+            ModelKit3D.add_sphere(
+                _model_root,
+                0.075,
+                Vector3(cos(crown_angle) * body_size.x * 0.4, 1.94, 0.08 + sin(crown_angle) * body_size.x * 0.4),
+                crown_material,
+                Vector3.ONE,
+                "Tier3CrownBeacon"
+            )
+
     for side in [-1.0, 1.0]:
         for front in [-1.0, 1.0]:
             var leg_x: float = float(side) * body_size.x * 0.48

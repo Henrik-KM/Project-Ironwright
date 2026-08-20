@@ -30,7 +30,7 @@ func set_visual_lod(level_value: int) -> void:
     for child in _model_root.get_children():
         if child is GeometryInstance3D:
             (child as GeometryInstance3D).cast_shadow = cast_mode
-        if visual_lod_level >= 2 and child.name in [&"ArmorPlate", &"CargoBin", &"Antenna", &"MaterialCradle", &"WelderGlow"]:
+        if visual_lod_level >= 2 and (child.name in [&"ArmorPlate", &"CargoBin", &"Antenna", &"MaterialCradle", &"WelderGlow"] or child.name.begins_with("Tier2") or child.name.begins_with("Tier3")):
             child.visible = false
         elif child is Node3D:
             child.visible = true

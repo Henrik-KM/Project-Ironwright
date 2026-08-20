@@ -129,6 +129,16 @@ func _run_all() -> void:
         _expect(_role_model_has_details(role_samples[index], role_names[index]), "The %s robot must expose a role-readable high-detail silhouette." % role_names[index])
         role_samples[index].queue_free()
 
+    var evolved_robot := ROBOT_SCENE.instantiate() as RobotUnit3D
+    evolved_robot.configure(&"guardian", 3)
+    evolved_robot.position = Vector3(20.0, 0.0, 28.0)
+    root.add_child(evolved_robot)
+    await process_frame
+    _expect(_find_named(evolved_robot, "Tier2ShoulderRail") != null, "Level 3 frames must expose the evolved shoulder rail finish.")
+    _expect(_find_named(evolved_robot, "Tier2DorsalServicePanel") != null, "Level 3 frames must expose the evolved dorsal service panel.")
+    _expect(_find_named(evolved_robot, "Tier3CrownRing") != null and _find_named(evolved_robot, "Tier3CrownBeacon") != null, "Level 3 frames must culminate in a readable crown and status beacons.")
+    evolved_robot.queue_free()
+
     var enemy_samples: Array[OrganicEnemy3D] = []
     var species_names := [&"skitterling", &"razorhound", &"veilstalker", &"burrower", &"sporecaster", &"broodmass", &"apex"]
     var sample_player := get_first_node_in_group("player_character") as Node3D
