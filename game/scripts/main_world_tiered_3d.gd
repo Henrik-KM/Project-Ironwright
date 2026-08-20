@@ -26,6 +26,9 @@ func _process(delta: float) -> void:
 
 
 func _disable_legacy_population_materialization() -> void:
+    # The former directors still own noise propagation, regional pressure and
+    # ecological memory. Only their free-standing spawn callbacks are removed;
+    # every new organism now passes through population caps and physical nests.
     if ecology_director != null:
         ecology_director.spawn_enemy_callable = Callable()
     if strategic_ecology_director != null:
@@ -100,7 +103,7 @@ func _spawn_enemy(position: Vector3, species: StringName) -> OrganicEnemy3D:
         restored = _pending_restore_enemy_data.pop_front()
     var tier := int(restored.get("enemy_tier", 0))
     if tier <= 0 and enemy_tier_director != null:
-        tier = enemy_tier_director.tier_for_species(species)
+        tier = int(enemy_tier_director.species_to_tier.get(species, 1))
     tier = clampi(tier if tier > 0 else 1, 1, 5)
     var config := enemy_tier_director.tier_config(tier) if enemy_tier_director != null else {}
     tiered.configure_tier(tier, config)
@@ -117,15 +120,39 @@ func _spawn_enemy(position: Vector3, species: StringName) -> OrganicEnemy3D:
 func _spawn_capped_operation_threat(position: Vector3, species: StringName) -> Node:
     if enemy_tier_director == null:
         return _spawn_enemy(position, species)
-    var tier := enemy_tier_director.tier_for_species(species)
-    if not enemy_tier_director.can_materialize_tier(tier):
-        var candidates := enemy_tier_director.living_enemies_of_tier(tier)
-        if candidates.is_empty():
+    var tier := clampi(int(enemy_tier_director.species_to_tier.get(species, 1)), 1, 5)
+    var state := enemy_tier_director.tier_state(tier)
+    var living := _living_enemies_of_tier(tier)
+    if living.size() >= int(state.get("cap", 1)):
+        # Operation and final-protocol disturbances may redirect an organism
+        # that already exists, but never create a population above the tier cap.
+        if living.is_empty():
             return null
-        var existing := candidates[0]
+        var existing := _nearest_enemy_to_position(living, position)
         existing.hear_noise(position, 1000.0, 1.0, &"operation_disturbance")
         return existing
     return _spawn_enemy(position, species)
+
+
+func _living_enemies_of_tier(tier: int) -> Array[OrganicEnemyTiered3D]:
+    var result: Array[OrganicEnemyTiered3D] = []
+    for node in get_tree().get_nodes_in_group(&"organic_enemies"):
+        if node is OrganicEnemyTiered3D and is_instance_valid(node):
+            var enemy := node as OrganicEnemyTiered3D
+            if enemy.is_alive() and enemy.enemy_tier == tier:
+                result.append(enemy)
+    return result
+
+
+func _nearest_enemy_to_position(candidates: Array[OrganicEnemyTiered3D], position: Vector3) -> OrganicEnemyTiered3D:
+    var best := candidates[0]
+    var best_distance := best.global_position.distance_to(position)
+    for enemy in candidates:
+        var distance := enemy.global_position.distance_to(position)
+        if distance < best_distance:
+            best = enemy
+            best_distance = distance
+    return best
 
 
 func _apply_balance_to_existing_world() -> void:
