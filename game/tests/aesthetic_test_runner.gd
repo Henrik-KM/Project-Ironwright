@@ -151,11 +151,24 @@ func _run_all() -> void:
             break
     _expect(veilstalker != null, "The opening presentation needs a visible Veilstalker family member.")
     if veilstalker != null:
-        _expect(veilstalker.get_node_or_null("ProceduralAnimator3D") is ProceduralAnimator3D, "The authored organic family must receive readable motion presentation.")
+        var veilstalker_animator := veilstalker.get_node_or_null("ProceduralAnimator3D") as ProceduralAnimator3D
+        _expect(veilstalker_animator != null, "The authored organic family must receive readable motion presentation.")
         _expect(veilstalker.find_child("VeilstalkerCowl", true, false) != null, "The Veilstalker must expose a distinct sensory crown silhouette.")
         _expect(veilstalker.find_child("VeilstalkerVeil", true, false) != null, "The Veilstalker must expose layered membrane anatomy.")
         _expect(veilstalker.find_child("VeilstalkerTendril", true, false) != null, "The Veilstalker must expose readable sensory tendrils.")
         _expect(veilstalker.find_child("VeilstalkerThoraxDorsalRib", true, false) != null, "The Veilstalker must expose a ribbed high-detail thorax construction.")
+        if veilstalker_animator != null:
+            var veil := veilstalker.find_child("VeilstalkerVeil", true, false) as Node3D
+            var veil_before := veil.transform if veil != null else Transform3D.IDENTITY
+            var previous_state: StringName = StringName(veilstalker.get(&"state_name"))
+            var previous_windup := float(veilstalker.get(&"attack_windup_remaining"))
+            veilstalker.set(&"state_name", &"attacking")
+            veilstalker.set(&"attack_windup_remaining", 0.34)
+            veilstalker_animator._restore_base_transforms()
+            veilstalker_animator._animate_organic(0.0)
+            _expect(veil != null and veil.transform != veil_before, "Veilstalker attack wind-up must visibly load its veil silhouette.")
+            veilstalker.set(&"state_name", previous_state)
+            veilstalker.set(&"attack_windup_remaining", previous_windup)
 
     var beautiful_hud := get_first_node_in_group("beautiful_hud")
     _expect(beautiful_hud is IronwrightBeautifulHUD3D, "The native HUD must use the quieter cinematic skin.")
