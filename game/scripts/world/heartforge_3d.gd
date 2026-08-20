@@ -76,7 +76,9 @@ func _build_visuals() -> void:
     var dark := ModelKit3D.material(Color("161b1c"), 0.72, 0.55)
     var rust := ModelKit3D.material(Color("6d432b"), 0.48, 0.72)
     var heat := ModelKit3D.material(Color("9e4f18"), 0.25, 0.38, Color("ff6d21"), 4.8)
-    var cyan := ModelKit3D.material(Color("29585c"), 0.42, 0.36, Color("62e1e7"), 2.2)
+    # Cyan service surfaces should read as powered hardware without blooming
+    # into a flat white card in the tactical frame.
+    var cyan := ModelKit3D.material(Color("214b50"), 0.42, 0.36, Color("42b8c0"), 0.34)
 
     ModelKit3D.add_cylinder(_model_root, 2.55, 0.7, Vector3(0.0, 0.35, 0.0), dark, Vector3.ZERO, "Foundation")
     ModelKit3D.add_cylinder(_model_root, 1.75, 3.4, Vector3(0.0, 2.0, 0.0), iron, Vector3.ZERO, "CoreHousing")
@@ -86,7 +88,10 @@ func _build_visuals() -> void:
     ModelKit3D.add_cylinder(_model_root, 0.36, 2.6, Vector3(-1.85, 1.7, 0.0), iron, Vector3.ZERO, "WestStack")
     ModelKit3D.add_cylinder(_model_root, 0.36, 2.6, Vector3(1.85, 1.7, 0.0), iron, Vector3.ZERO, "EastStack")
     ModelKit3D.add_box(_model_root, Vector3(3.0, 0.35, 1.8), Vector3(0.0, 0.48, 3.25), iron, Vector3.ZERO, "ForgeBench")
-    ModelKit3D.add_box(_model_root, Vector3(2.2, 0.18, 1.1), Vector3(0.0, 0.72, 3.25), cyan, Vector3.ZERO, "AssemblyPlate")
+    ModelKit3D.add_beveled_box(_model_root, Vector3(2.18, 0.18, 1.06), Vector3(0.0, 0.72, 3.25), dark, Vector3.ZERO, "AssemblyPlate", 0.18)
+    ModelKit3D.add_beveled_box(_model_root, Vector3(1.68, 0.06, 0.72), Vector3(0.0, 0.84, 3.25), cyan, Vector3.ZERO, "AssemblyPlateGlow", 0.18)
+    for slot in range(3):
+        ModelKit3D.add_box(_model_root, Vector3(0.1, 0.025, 0.42), Vector3(-0.48 + float(slot) * 0.48, 0.88, 3.25), dark, Vector3.ZERO, "AssemblyPlateSlot")
 
     for angle_index in range(8):
         var angle := TAU * float(angle_index) / 8.0
