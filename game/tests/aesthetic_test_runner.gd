@@ -279,6 +279,9 @@ func _run_all() -> void:
         _expect(_find_named(enemy_samples[index], "TorsoCore") != null and _find_named(enemy_samples[index], "TorsoSegment0") != null, "The %s organic family must expose segmented high-definition torso anatomy." % species_names[index])
         if species_names[index] == &"razorhound":
             _expect(_find_named(enemy_samples[index], "RazorhoundAuthoredModel") != null and _find_named(enemy_samples[index], "ProductionAssetMarker") != null, "The Razorhound must expose its authored production asset contract.")
+        if species_names[index] in [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver"]:
+            var authored_marker_name := "%sAuthoredModel" % String(species_names[index]).capitalize()
+            _expect(_find_named(enemy_samples[index], authored_marker_name) != null and _find_named(enemy_samples[index], "ProductionAssetMarker") != null, "The %s must expose its authored production asset contract." % species_names[index])
         enemy_samples[index].queue_free()
 
     var veilstalker: Node3D
@@ -430,13 +433,13 @@ func _enemy_model_has_details(enemy: OrganicEnemy3D, species: StringName) -> boo
         &"apex":
             return _find_named(enemy, "ApexCrown") != null and _find_named(enemy, "ApexJawL") != null and _find_named(enemy, "ApexMembraneL") != null
         &"roofleaper":
-            return _find_named(enemy, "RoofleaperCrown") != null and _find_named(enemy, "RoofleaperWingStrut0") != null and _find_named(enemy, "RoofleaperCrownOculus") != null
+            return _find_named(enemy, "RoofleaperCrown") != null and _find_named(enemy, "RoofleaperWingL") != null and _find_named(enemy, "RoofleaperTalonsL") != null
         &"glassmoth":
-            return _find_named(enemy, "GlassmothThorax") != null and _find_named(enemy, "GlassmothWingRib0") != null and _find_named(enemy, "GlassmothAntenna") != null
+            return _find_named(enemy, "GlassmothThorax") != null and _find_named(enemy, "GlassmothWingL0") != null and _find_named(enemy, "GlassmothAntennaL") != null
         &"miremaw":
-            return _find_named(enemy, "MiremawDorsalShell") != null and _find_named(enemy, "MiremawTusk") != null and _find_named(enemy, "MiremawGillFan") != null
+            return _find_named(enemy, "MiremawHead") != null and _find_named(enemy, "MiremawJawHookL") != null and _find_named(enemy, "MiremawGillFan") != null
         &"carrionbell":
             return _find_named(enemy, "CarrionbellMantle") != null and _find_named(enemy, "CarrionbellCrownPlate") != null and _find_named(enemy, "CarrionbellResonator") != null
         &"rootweaver":
-            return _find_named(enemy, "RootweaverCrown") != null and _find_named(enemy, "RootweaverTendril0") != null and _find_named(enemy, "RootweaverSporeFan") != null
+            return _find_named(enemy, "RootweaverCrown") != null and _find_named(enemy, "RootweaverArmL") != null and _find_named(enemy, "RootweaverSporeFan") != null
     return false

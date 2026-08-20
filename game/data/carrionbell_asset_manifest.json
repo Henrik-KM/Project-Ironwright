@@ -1,0 +1,10 @@
+{
+  "asset_id": "carrionbell.signal.v1",
+  "display_name": "Carrion Bell ecological signal shell",
+  "source": "game/assets/organic_families/source/build_authored_organic_assets.py",
+  "runtime_path": "res://assets/carrionbell/carrionbell.gltf",
+  "quality": "authored_high_definition",
+  "license": "Original Project Ironwright asset",
+  "required_nodes": ["CarrionbellModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "CarrionbellMantle", "CarrionbellResonator", "CarrionbellSignalTendril0", "ProductionAssetMarker"],
+  "animation_clips": ["Idle", "Walk", "Attack"]
+}

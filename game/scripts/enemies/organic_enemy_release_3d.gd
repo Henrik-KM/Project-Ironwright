@@ -148,6 +148,8 @@ func _refresh_visuals() -> void:
     super._refresh_visuals()
     if _model_root == null:
         return
+    if species in [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver"]:
+        return
     var chitin := ModelKit3D.material(Color("33252b"), 0.08, 0.72)
     var bone := ModelKit3D.material(Color("817762"), 0.0, 0.84)
     var membrane := ModelKit3D.material(Color("53172f"), 0.0, 0.78, Color("b52e59"), 1.3)

@@ -8,6 +8,11 @@ const AUTHORED_SPORECASTER_MODEL_SCENE: PackedScene = preload("res://assets/spor
 const AUTHORED_BROODMASS_MODEL_SCENE: PackedScene = preload("res://assets/broodmass/broodmass.gltf")
 const AUTHORED_BURROWER_MODEL_SCENE: PackedScene = preload("res://assets/burrower/burrower.gltf")
 const AUTHORED_SKITTERLING_MODEL_SCENE: PackedScene = preload("res://assets/skitterling/skitterling.gltf")
+const AUTHORED_ROOFLEAPER_MODEL_SCENE: PackedScene = preload("res://assets/roofleaper/roofleaper.gltf")
+const AUTHORED_GLASSMOTH_MODEL_SCENE: PackedScene = preload("res://assets/glassmoth/glassmoth.gltf")
+const AUTHORED_MIREMAW_MODEL_SCENE: PackedScene = preload("res://assets/miremaw/miremaw.gltf")
+const AUTHORED_CARRIONBELL_MODEL_SCENE: PackedScene = preload("res://assets/carrionbell/carrionbell.gltf")
+const AUTHORED_ROOTWEAVER_MODEL_SCENE: PackedScene = preload("res://assets/rootweaver/rootweaver.gltf")
 
 signal killed(enemy: OrganicEnemy3D, killer: Node)
 signal attack_started(enemy: OrganicEnemy3D, target: Node)
@@ -607,6 +612,21 @@ func _refresh_visuals() -> void:
     if species == &"skitterling":
         _build_authored_skitterling_visuals()
         return
+    if species == &"roofleaper":
+        _build_authored_organic_family_visuals(AUTHORED_ROOFLEAPER_MODEL_SCENE, &"RoofleaperModel", &"RoofleaperAuthoredModel")
+        return
+    if species == &"glassmoth":
+        _build_authored_organic_family_visuals(AUTHORED_GLASSMOTH_MODEL_SCENE, &"GlassmothModel", &"GlassmothAuthoredModel")
+        return
+    if species == &"miremaw":
+        _build_authored_organic_family_visuals(AUTHORED_MIREMAW_MODEL_SCENE, &"MiremawModel", &"MiremawAuthoredModel")
+        return
+    if species == &"carrionbell":
+        _build_authored_organic_family_visuals(AUTHORED_CARRIONBELL_MODEL_SCENE, &"CarrionbellModel", &"CarrionbellAuthoredModel")
+        return
+    if species == &"rootweaver":
+        _build_authored_organic_family_visuals(AUTHORED_ROOTWEAVER_MODEL_SCENE, &"RootweaverModel", &"RootweaverAuthoredModel")
+        return
     var flesh := ModelKit3D.material(Color("201719"), 0.0, 0.91)
     var chitin := ModelKit3D.material(Color("332529"), 0.12, 0.66)
     var bone := ModelKit3D.material(Color("786f60"), 0.0, 0.82)
@@ -902,4 +922,26 @@ func _build_authored_skitterling_visuals() -> void:
     authored_scene_instance.free()
     var authored_marker := Node3D.new()
     authored_marker.name = "SkitterlingAuthoredModel"
+    _model_root.add_child(authored_marker)
+
+
+func _build_authored_organic_family_visuals(model_scene: PackedScene, imported_root_name: StringName, marker_name: StringName) -> void:
+    # Tier-2 and tier-4 families use the same stable shell handoff as the
+    # opening production creatures. The imported geometry is flattened under
+    # OrganicModel so material continuity, LOD and tier signals remain owned
+    # by the runtime actor without introducing a second gameplay hierarchy.
+    var authored_scene_instance := model_scene.instantiate()
+    var imported_root := authored_scene_instance.get_node_or_null(NodePath(String(imported_root_name))) as Node
+    if imported_root == null:
+        imported_root = authored_scene_instance
+    var authored_children := imported_root.get_children()
+    for child in authored_children:
+        child.owner = null
+        imported_root.remove_child(child)
+        _model_root.add_child(child)
+    if imported_root != authored_scene_instance:
+        imported_root.free()
+    authored_scene_instance.free()
+    var authored_marker := Node3D.new()
+    authored_marker.name = String(marker_name)
     _model_root.add_child(authored_marker)

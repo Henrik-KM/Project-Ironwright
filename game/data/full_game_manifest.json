@@ -46,7 +46,7 @@
   ],
   "content_families": {
     "robot_families_implemented": 5,
-    "organic_species_implemented": 7,
+    "organic_species_implemented": 12,
     "heartforge_tiers_implemented": 5,
     "outpost_roles_implemented": 4,
     "outpost_tiers_implemented": 3,

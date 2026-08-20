@@ -148,7 +148,7 @@ families remain procedural until their own production asset milestones.
 ### Organic enemies
 
 - species-specific carapace, muzzle, feeler, drill, sac, lobe and crown
-  silhouettes across all seven current organic families;
+  silhouettes across all twelve current organic families;
 - shared segmented torso shells with wet cores, overlapping edge plates and
   lateral seams across the full organic roster;
 - species-specific sensory fans, gill membranes, cheek plates, drill rings and

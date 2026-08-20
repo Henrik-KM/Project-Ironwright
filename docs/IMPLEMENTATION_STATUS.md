@@ -194,7 +194,21 @@ identities. Manual channels remain finish-before-save.
   spore sacs, mass lobes and apex crown/jaw forms;
 - added restrained species-specific motion for pack tails, antennae, sacs,
   jaws, spines and broodmass lobes;
-- added executable aesthetic coverage for all seven current organic families.
+- added executable aesthetic coverage for all twelve current organic families.
+
+## Focused complete-organic-roster shell milestone
+
+- added original high-definition Roofleaper, Glassmoth, Miremaw, Carrion Bell
+  and Rootweaver glTF shells with stable anatomy sockets and Idle, Walk and
+  Attack clips;
+- wired the five remaining tiered families through the same imported-shell
+  handoff used by the opening and late authored creatures;
+- removed the duplicate release-time procedural geometry for those families so
+  the authored shells are the production presentation source while tier
+  signals, collision, ecology, reduced-detail simulation and combat remain
+  runtime-owned;
+- expanded manifest validation and native aesthetic coverage to keep all twelve
+  implemented organic families on an authored high-definition contract.
 
 ## Focused combat-feel milestone
 
