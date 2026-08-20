@@ -5,6 +5,7 @@ const AUTHORED_BULWARK_MODEL_SCENE: PackedScene = preload("res://assets/bulwark/
 const AUTHORED_WARDEN_MODEL_SCENE: PackedScene = preload("res://assets/warden/warden.gltf")
 const AUTHORED_SCRAPPER_MODEL_SCENE: PackedScene = preload("res://assets/scrapper/scrapper.gltf")
 const AUTHORED_PATHFINDER_MODEL_SCENE: PackedScene = preload("res://assets/pathfinder/pathfinder.gltf")
+const AUTHORED_ENGINEER_MODEL_SCENE: PackedScene = preload("res://assets/engineer/engineer.gltf")
 
 signal destroyed(robot: RobotUnit3D)
 signal health_changed(robot: RobotUnit3D, current: float, maximum: float)
@@ -306,6 +307,9 @@ func _refresh_visual_identity() -> void:
         return
     if archetype == &"scout":
         _build_authored_pathfinder_visuals()
+        return
+    if archetype == &"engineer":
+        _build_authored_engineer_visuals()
         return
 
     var steel := ModelKit3D.material(Color("3f4648"), 0.78, 0.4)
@@ -750,3 +754,76 @@ func _build_authored_pathfinder_visuals() -> void:
         ModelKit3D.add_sphere(_model_root, 0.065, Vector3(0.0, 3.52, 0.12), glow, Vector3.ONE, "Tier3CrownBeacon")
 
     _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.06, -0.9), glow_color, 0.72, 3.8)
+
+
+func _build_authored_engineer_visuals() -> void:
+    # Engineer is the construction specialist: the visual language emphasizes
+    # assembly tooling and a contained forge rather than another combat loadout.
+    var authored_scene_instance := AUTHORED_ENGINEER_MODEL_SCENE.instantiate()
+    var imported_root := authored_scene_instance.get_node_or_null("EngineerModel") as Node
+    if imported_root == null:
+        imported_root = authored_scene_instance
+    var authored_children := imported_root.get_children()
+    for child in authored_children:
+        child.owner = null
+        imported_root.remove_child(child)
+        _model_root.add_child(child)
+    if imported_root != authored_scene_instance:
+        imported_root.free()
+    authored_scene_instance.free()
+    var authored_marker := Node3D.new()
+    authored_marker.name = "EngineerAuthoredModel"
+    _model_root.add_child(authored_marker)
+
+    var steel := ModelKit3D.material(Color("53656a"), 0.78, 0.3)
+    var dark_steel := ModelKit3D.material(Color("182326"), 0.86, 0.34)
+    var glow_color := Color("efb06a")
+    var glow := ModelKit3D.material(glow_color.darkened(0.5), 0.34, 0.28, glow_color, 2.8)
+
+    if level >= 2:
+        for side in [-1.0, 1.0]:
+            var side_sign := float(side)
+            ModelKit3D.add_beveled_box(
+                _model_root,
+                Vector3(0.18, 0.32, 1.08),
+                Vector3(side_sign * 0.9, 1.1, 0.0),
+                steel,
+                Vector3(0.0, 0.0, side_sign * 0.08),
+                "Tier2ShoulderRail",
+                0.2
+            )
+            ModelKit3D.add_box(
+                _model_root,
+                Vector3(0.05, 0.07, 0.76),
+                Vector3(side_sign * 0.98, 1.1, -0.02),
+                glow,
+                Vector3(0.0, 0.0, side_sign * 0.08),
+                "Tier2SignalStrip"
+            )
+        ModelKit3D.add_louvered_panel(
+            _model_root,
+            Vector3(0.7, 0.28, 0.15),
+            Vector3(0.0, 1.82, 0.28),
+            dark_steel,
+            steel,
+            Vector3.ZERO,
+            "Tier2DorsalServicePanel",
+            3
+        )
+
+    if level >= 3:
+        var crown_ring := MeshInstance3D.new()
+        crown_ring.name = "Tier3CrownRing"
+        var crown_mesh := TorusMesh.new()
+        crown_mesh.inner_radius = 0.44
+        crown_mesh.outer_radius = 0.5
+        crown_mesh.rings = 16
+        crown_mesh.ring_segments = 32
+        crown_ring.mesh = crown_mesh
+        crown_ring.material_override = glow
+        crown_ring.position = Vector3(0.0, 2.08, 0.2)
+        _model_root.add_child(crown_ring)
+        ModelKit3D.add_cylinder(_model_root, 0.04, 0.5, Vector3(0.0, 2.32, 0.2), glow, Vector3.ZERO, "Tier3CrownMast")
+        ModelKit3D.add_sphere(_model_root, 0.07, Vector3(0.0, 2.62, 0.2), glow, Vector3.ONE, "Tier3CrownBeacon")
+
+    _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.1, -0.98), glow_color, 0.78, 3.8)
