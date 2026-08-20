@@ -237,6 +237,8 @@ func _build_visuals() -> void:
             _add_ruin_block(Vector3(-5.0, 0.0, 0.0), Vector3(7.0, 6.0, 8.0), brick)
             _add_ruin_block(Vector3(6.0, 0.0, -4.0), Vector3(6.0, 4.0, 7.0), concrete)
 
+    _add_region_surface_finish()
+
     _beacon_root = Node3D.new()
     _beacon_root.name = "RegionBeacon"
     add_child(_beacon_root)
@@ -292,6 +294,105 @@ func _add_ruin_block(origin: Vector3, size: Vector3, material: Material) -> void
             var x := origin.x - size.x * 0.3 + float(window_index) * size.x * 0.3
             var y := origin.y + 1.2 + float(floor_index) * 2.0
             ModelKit3D.add_surface_panel(_visual_root, Vector3(0.7, 0.75, 0.08), Vector3(x, y, origin.z - size.z * 0.51), dark, edge, Vector3.ZERO, "DarkWindow")
+
+    # A small service spine breaks up the broad ruin masses with believable
+    # authored hardware. It is presentation-only and remains under the
+    # persistent landmark geometry so the region LOD can reduce it at range.
+    var service_material := ModelKit3D.material(Color("303b3e"), 0.64, 0.42)
+    var service_accent := ModelKit3D.material(Color("b7633a"), 0.34, 0.62, Color("e8894a"), 0.82)
+    var panel_width := clampf(size.x * 0.22, 0.95, 1.8)
+    var panel_height := clampf(size.y * 0.2, 0.9, 1.35)
+    var panel_x := origin.x + size.x * 0.18
+    var panel_y := origin.y + minf(size.y * 0.52, 2.9)
+    var panel_z := origin.z - size.z * 0.51 - 0.08
+    ModelKit3D.add_louvered_panel(
+        _visual_root,
+        Vector3(panel_width, panel_height, 0.16),
+        Vector3(panel_x, panel_y, panel_z),
+        service_material,
+        service_accent,
+        Vector3.ZERO,
+        "RuinFacadeServicePanel",
+        4
+    )
+    ModelKit3D.add_surface_panel(
+        _visual_root,
+        Vector3(panel_width * 0.82, panel_height * 0.76, 0.1),
+        Vector3(panel_x, panel_y, panel_z - 0.105),
+        service_material,
+        service_accent,
+        Vector3.ZERO,
+        "RuinFacadeServicePlate"
+    )
+    _add_beam(
+        _visual_root,
+        Vector3(panel_x + panel_width * 0.34, panel_y + panel_height * 0.46, panel_z - 0.03),
+        Vector3(panel_x + size.x * 0.28, origin.y + size.y - 0.24, panel_z - 0.04),
+        0.028,
+        service_accent,
+        "RuinFacadeServiceCable"
+    )
+    ModelKit3D.add_beveled_box(
+        _visual_root,
+        Vector3(size.x * 0.34, 0.12, 0.12),
+        Vector3(origin.x - size.x * 0.22, origin.y + minf(size.y * 0.76, size.y - 0.35), panel_z - 0.02),
+        edge,
+        Vector3(0.0, 0.0, -0.04),
+        "RuinFacadeScarRail",
+        0.22
+    )
+
+
+func _add_region_surface_finish() -> void:
+    if region_kind == &"sanctuary":
+        return
+    var finish := Node3D.new()
+    finish.name = "AuthoredDistrictSurfaceFinish"
+    _visual_root.add_child(finish)
+    var finish_metal := ModelKit3D.material(Color("3d4b4f"), 0.58, 0.46)
+    var finish_dark := ModelKit3D.material(Color("20282b"), 0.76, 0.38)
+    var finish_rust := ModelKit3D.material(Color("864a32"), 0.32, 0.7)
+    var finish_glow := ModelKit3D.material(_region_color().darkened(0.5), 0.3, 0.42, _region_color(), 1.25)
+
+    match region_kind:
+        &"archive":
+            ModelKit3D.add_surface_panel(finish, Vector3(2.0, 1.2, 0.12), Vector3(3.1, 2.0, 6.25), finish_dark, finish_glow, Vector3.ZERO, "ArchiveFacadeIndex")
+            _add_beam(finish, Vector3(4.0, 2.55, 6.18), Vector3(4.8, 4.9, 6.0), 0.035, finish_rust, "ArchiveFacadeCable")
+        &"industrial":
+            ModelKit3D.add_louvered_panel(finish, Vector3(2.0, 1.45, 0.18), Vector3(-8.2, 2.65, -7.65), finish_dark, finish_glow, Vector3.ZERO, "IndustrialFacadeExchanger", 5)
+            _add_beam(finish, Vector3(-7.35, 2.1, -7.78), Vector3(-4.8, 1.3, -6.0), 0.05, finish_rust, "IndustrialFacadePipe")
+        &"tenement":
+            for index in range(3):
+                var x := 3.7 + float(index) * 1.35
+                ModelKit3D.add_surface_panel(finish, Vector3(0.86, 1.08, 0.1), Vector3(x, 2.1 + float(index % 2) * 1.55, -3.0), finish_dark, finish_rust, Vector3.ZERO, "TenementFacadeWindow")
+            _add_beam(finish, Vector3(3.5, 1.0, -3.12), Vector3(7.0, 4.9, -3.1), 0.035, finish_metal, "TenementFacadeCable")
+        &"greenhouse":
+            ModelKit3D.add_louvered_panel(finish, Vector3(1.7, 1.2, 0.16), Vector3(-4.15, 2.05, -5.18), finish_dark, finish_glow, Vector3.ZERO, "GreenhouseFacadeClimatePanel", 4)
+            ModelKit3D.add_organic_plate(finish, 0.48, Vector3(3.9, 1.18, -4.9), finish_glow, finish_rust, Vector3(1.0, 0.55, 0.8), "GreenhouseFacadeGrowthScar")
+        &"commercial":
+            ModelKit3D.add_surface_panel(finish, Vector3(2.4, 1.05, 0.12), Vector3(4.4, 2.0, -6.22), finish_dark, finish_glow, Vector3.ZERO, "MarketFacadeRegister")
+            _add_beam(finish, Vector3(3.25, 2.55, -6.28), Vector3(5.7, 3.2, -6.35), 0.04, finish_rust, "MarketFacadeCable")
+        &"waterfront":
+            ModelKit3D.add_louvered_panel(finish, Vector3(1.9, 1.3, 0.16), Vector3(-5.9, 1.75, 5.1), finish_dark, finish_glow, Vector3.ZERO, "DockFacadePumpPanel", 4)
+            for index in range(3):
+                ModelKit3D.add_cylinder(finish, 0.1, 0.75, Vector3(-2.0 + float(index) * 2.0, 0.48, 5.35), finish_rust, Vector3.ZERO, "DockFacadeBollard")
+        &"rail":
+            ModelKit3D.add_surface_panel(finish, Vector3(1.4, 1.4, 0.1), Vector3(7.2, 2.6, -5.2), finish_dark, finish_glow, Vector3.ZERO, "RailFacadeSignalBox")
+            _add_beam(finish, Vector3(7.2, 3.25, -5.28), Vector3(7.2, 5.5, -7.4), 0.045, finish_metal, "RailFacadeSignalCable")
+        &"nest":
+            for index in range(4):
+                var angle := -0.9 + float(index) * 0.6
+                ModelKit3D.add_organic_plate(finish, 0.7, Vector3(cos(angle) * 6.2, 1.2 + float(index % 2) * 0.6, -3.7 + sin(angle) * 1.2), finish_glow, finish_rust, Vector3(1.1, 0.72, 0.86), "NestFacadeGrowthPlate")
+        &"observatory":
+            ModelKit3D.add_surface_panel(finish, Vector3(1.8, 1.0, 0.1), Vector3(4.0, 1.4, -3.8), finish_dark, finish_glow, Vector3.ZERO, "ObservatoryFacadeConsole")
+            _add_beam(finish, Vector3(4.8, 1.9, -3.86), Vector3(5.7, 4.1, -2.3), 0.035, finish_metal, "ObservatoryFacadeCable")
+        &"research":
+            ModelKit3D.add_louvered_panel(finish, Vector3(2.2, 1.4, 0.18), Vector3(4.3, 1.65, -8.7), finish_dark, finish_glow, Vector3.ZERO, "LabFacadeVent", 5)
+            ModelKit3D.add_surface_panel(finish, Vector3(1.5, 0.9, 0.1), Vector3(6.2, 1.35, -8.65), finish_dark, finish_rust, Vector3.ZERO, "LabFacadeSamplePort")
+        &"endgame":
+            for index in range(3):
+                var angle := -0.7 + float(index) * 0.7
+                ModelKit3D.add_organic_plate(finish, 0.82, Vector3(cos(angle) * 4.2, 1.5 + float(index) * 0.35, sin(angle) * 4.2), finish_glow, finish_rust, Vector3(1.15, 0.7, 0.9), "CisternFacadeRootPlate")
 
 
 func _add_beam(parent: Node3D, start: Vector3, finish: Vector3, radius: float, material: Material, node_name: String) -> void:
