@@ -10,6 +10,8 @@ signal expedition_returned
 const GROUP_SALVAGE: StringName = &"salvage_group"
 const GROUP_EXPEDITION: StringName = &"north_expedition"
 const NORTH_RUINS := Vector3(0.0, 0.0, -66.0)
+const SALVAGE_PLAYER_SPLIT_DISTANCE: float = 9.0
+const SALVAGE_WIDE_SPLIT_DISTANCE: float = 22.0
 
 var run_state: RunState3D
 var noise_system: NoiseSystem3D
@@ -85,6 +87,8 @@ func _refresh_macro_assignments() -> void:
         RunState3D.FOCUS_SALVAGE:
             if salvage_operation.is_empty():
                 _try_start_salvage_operation()
+            if not salvage_operation.is_empty():
+                _refresh_salvage_escort_assignments()
             _keep_unassigned_defending()
         RunState3D.FOCUS_EXPEDITION:
             _keep_unassigned_defending()
@@ -120,6 +124,8 @@ func _keep_unassigned_defending() -> void:
     var reserved: Array[RobotUnit3D] = []
     reserved.append_array(_members_from_operation(salvage_operation))
     reserved.append_array(_members_from_operation(expedition_operation))
+    reserved.append_array(_salvage_guardians(&"salvage_guardians"))
+    reserved.append_array(_salvage_guardians(&"player_guardians"))
     var slot := 0
     for robot in living_robots():
         if robot.archetype == &"companion" or robot in reserved:
@@ -141,9 +147,6 @@ func _try_start_salvage_operation() -> bool:
 
     var members: Array[RobotUnit3D] = []
     members.append_array(salvagers.slice(0, mini(2, salvagers.size())))
-    var guardians := living_robots(&"guardian")
-    if not guardians.is_empty():
-        members.append(guardians[0])
     var scouts := living_robots(&"scout")
     if not scouts.is_empty():
         members.push_front(scouts[0])
@@ -151,8 +154,86 @@ func _try_start_salvage_operation() -> bool:
     if not target.reserve(GROUP_SALVAGE):
         return false
     salvage_operation = _new_operation(GROUP_SALVAGE, &"salvage", members, target.global_position, target)
-    operation_changed.emit(&"salvage", &"outbound", "A coordinated group is physically leaving for %s." % target.display_name)
+    salvage_operation["salvage_guardians"] = []
+    salvage_operation["player_guardians"] = []
+    _refresh_salvage_escort_assignments()
+    operation_changed.emit(&"salvage", &"outbound", "A coordinated salvage group is leaving. Wardens are splitting automatically between broad salvage coverage and Mechromancer protection.")
     return true
+
+
+func _refresh_salvage_escort_assignments() -> void:
+    if salvage_operation.is_empty() or player_reference == null:
+        return
+    var guardians := living_robots(&"guardian")
+    if guardians.is_empty():
+        salvage_operation["salvage_guardians"] = []
+        salvage_operation["player_guardians"] = []
+        return
+
+    var anchor: Vector3 = salvage_operation.get("anchor", heartforge_reference.global_position)
+    var player_distance := player_reference.global_position.distance_to(anchor)
+    var player_guard_count := 0
+
+    # The Bulwark already gives the Mechromancer one reliable personal guard.
+    # Wardens therefore prioritize the vulnerable Scrappers until enough exist
+    # to cover both areas. As the player separates from the salvage group, the
+    # system automatically peels off Wardens rather than leaving one side bare.
+    if guardians.size() >= 2 and player_distance >= SALVAGE_PLAYER_SPLIT_DISTANCE:
+        player_guard_count = 1
+    if guardians.size() >= 4 and player_distance >= SALVAGE_WIDE_SPLIT_DISTANCE:
+        player_guard_count = mini(guardians.size() - 1, int(ceil(float(guardians.size()) * 0.45)))
+    elif guardians.size() >= 5 and player_reference.is_channeling():
+        player_guard_count = maxi(player_guard_count, 2)
+
+    var salvage_guard_count := guardians.size() - player_guard_count
+    if salvage_guard_count <= 0:
+        salvage_guard_count = 1
+        player_guard_count = guardians.size() - 1
+
+    var salvage_guardians: Array[RobotUnit3D] = []
+    var player_guardians: Array[RobotUnit3D] = []
+    for index in range(guardians.size()):
+        if index < salvage_guard_count:
+            salvage_guardians.append(guardians[index])
+        else:
+            player_guardians.append(guardians[index])
+
+    salvage_operation["salvage_guardians"] = salvage_guardians
+    salvage_operation["player_guardians"] = player_guardians
+    _position_salvage_escort_guardians(salvage_guardians)
+    _position_player_guardians(player_guardians)
+
+
+func _position_salvage_escort_guardians(guardians: Array[RobotUnit3D]) -> void:
+    if salvage_operation.is_empty():
+        return
+    var anchor: Vector3 = salvage_operation.get("anchor", heartforge_reference.global_position)
+    var forward: Vector3 = salvage_operation.get("last_forward", Vector3.FORWARD)
+    var group_pace := _operation_base_pace(_members_from_operation(salvage_operation), &"salvage")
+    for index in range(guardians.size()):
+        var guardian := guardians[index]
+        var offset := FormationRules3D.salvage_escort_offset(index, guardians.size())
+        var desired := anchor + FormationRules3D.rotated_offset(offset, forward)
+        guardian.set_group(&"salvage_escort", index)
+        guardian.set_goal(
+            desired,
+            "Providing broad Warden coverage around the vulnerable salvage core; flanks and approaches are deliberately spread instead of clustering on one Scrapper.",
+            maxf(2.0, group_pace + 1.2)
+        )
+
+
+func _position_player_guardians(guardians: Array[RobotUnit3D]) -> void:
+    if player_reference == null:
+        return
+    for index in range(guardians.size()):
+        var guardian := guardians[index]
+        var desired := player_reference.global_position + FormationRules3D.player_escort_offset(index, guardians.size())
+        guardian.set_group(&"mechromancer_escort", index)
+        guardian.set_goal(
+            desired,
+            "Covering the Mechromancer outside the Bulwark's immediate interception zone while the rest of the Wardens protect the active salvage group.",
+            guardian.move_speed * 0.9
+        )
 
 
 func can_authorize_expedition() -> bool:
@@ -325,7 +406,7 @@ func _complete_return(operation: Dictionary) -> void:
         if target != null and is_instance_valid(target) and target.has_method("release_reservation"):
             target.call("release_reservation", GROUP_SALVAGE)
         salvage_operation.clear()
-        operation_changed.emit(&"salvage", &"complete", "The group returned and deposited its cargo without player routing or unit orders.")
+        operation_changed.emit(&"salvage", &"complete", "The salvage core and its distributed escorts returned and deposited cargo without player routing or unit orders.")
     else:
         if bool(operation.get("core_secured", false)):
             run_state.add_rare_core(1)
@@ -339,7 +420,13 @@ func _abort_operation(operation: Dictionary, reason: String) -> void:
     var target: Node = operation.get("target_node")
     if target != null and is_instance_valid(target) and target.has_method("release_reservation"):
         target.call("release_reservation", operation.get("id", &""))
-    for robot in _members_from_operation(operation):
+    var released: Array[RobotUnit3D] = _members_from_operation(operation)
+    if operation.get("kind", &"") == &"salvage":
+        released.append_array(_salvage_guardians(&"salvage_guardians"))
+        released.append_array(_salvage_guardians(&"player_guardians"))
+    for robot in released:
+        if not is_instance_valid(robot):
+            continue
         robot.set_group(&"reserve", 0)
         robot.set_goal(heartforge_reference.global_position, reason, robot.move_speed * 0.7)
     operation_changed.emit(operation.get("kind", &"operation"), &"aborted", reason)
@@ -370,6 +457,18 @@ func _members_from_operation(operation: Dictionary) -> Array[RobotUnit3D]:
         if is_instance_valid(member) and member is RobotUnit3D and member.is_alive():
             result.append(member)
     operation["members"] = result
+    return result
+
+
+func _salvage_guardians(key: StringName) -> Array[RobotUnit3D]:
+    var result: Array[RobotUnit3D] = []
+    if salvage_operation.is_empty():
+        return result
+    var raw_guardians: Array = salvage_operation.get(String(key), salvage_operation.get(key, []))
+    for guardian in raw_guardians:
+        if is_instance_valid(guardian) and guardian is RobotUnit3D and guardian.is_alive():
+            result.append(guardian)
+    salvage_operation[String(key)] = result
     return result
 
 
@@ -436,9 +535,32 @@ func get_follow_target() -> Node3D:
     return null
 
 
+func salvage_coverage_snapshot() -> Dictionary:
+    if salvage_operation.is_empty():
+        return {
+            "active": false,
+            "salvage_guardians": 0,
+            "player_guardians": 0,
+            "bulwark_personal_guard": count_robots(&"companion") > 0,
+        }
+    return {
+        "active": true,
+        "salvage_guardians": _salvage_guardians(&"salvage_guardians").size(),
+        "player_guardians": _salvage_guardians(&"player_guardians").size(),
+        "bulwark_personal_guard": count_robots(&"companion") > 0,
+        "player_to_salvage_distance": player_reference.global_position.distance_to(salvage_operation.get("anchor", heartforge_reference.global_position)),
+    }
+
+
 func operation_summary() -> String:
     if not expedition_operation.is_empty():
         return "North expedition: %s" % String(expedition_operation.get("state", &"unknown")).capitalize()
     if not salvage_operation.is_empty():
-        return "Salvage group: %s · cargo %d" % [String(salvage_operation.get("state", &"unknown")).capitalize(), int(salvage_operation.get("cargo", 0))]
+        var coverage := salvage_coverage_snapshot()
+        return "Salvage: %s · cargo %d · escort %d salvage / %d mech + Bulwark" % [
+            String(salvage_operation.get("state", &"unknown")).capitalize(),
+            int(salvage_operation.get("cargo", 0)),
+            int(coverage.get("salvage_guardians", 0)),
+            int(coverage.get("player_guardians", 0)),
+        ]
     return "No remote operation"
