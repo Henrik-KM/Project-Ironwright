@@ -6,9 +6,11 @@ extends IronwrightCompleteGameWorld3D
 ## systemic game remains underneath it.
 
 const VERTICAL_SLICE_DIRECTOR := preload("res://scripts/presentation/vertical_slice_director_3d.gd")
+const VERTICAL_SLICE_ACTOR_ART := preload("res://scripts/presentation/vertical_slice_actor_art_3d.gd")
 
 var _last_map_label_mode: bool = false
 var vertical_slice: VerticalSliceDirector3D
+var vertical_slice_actor_art: VerticalSliceActorArt3D
 var camera_target_velocity: Vector3 = Vector3.ZERO
 
 
@@ -25,6 +27,11 @@ func _ready() -> void:
     vertical_slice.name = "VerticalSliceDirector"
     vertical_slice.configure(self, heartforge, player, camera, ecology_director)
     add_child(vertical_slice)
+
+    vertical_slice_actor_art = VERTICAL_SLICE_ACTOR_ART.new() as VerticalSliceActorArt3D
+    vertical_slice_actor_art.name = "VerticalSliceActorArt"
+    vertical_slice_actor_art.configure(self)
+    add_child(vertical_slice_actor_art)
 
     if hud != null:
         hud.notifications.clear()
