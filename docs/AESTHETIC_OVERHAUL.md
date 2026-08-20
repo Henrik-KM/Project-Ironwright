@@ -119,6 +119,10 @@ organic enemies remain procedural until their own production asset milestones.
 
 - shared layered chassis language with shoulder plates, armour bands, optics,
   joints and exposed service cabling;
+- the opening Bulwark now uses an original authored glTF shell with layered
+  chassis plates, service fasteners, protected optics, twin weapon housings,
+  rear shield hardware and a raised protection emitter; its stable node and
+  animation contract is recorded in `game/data/bulwark_asset_manifest.json`;
 - role-specific salvager cargo and dismantler tooling, guardian weapon and
   shield forms, scout fins and sensor mast, and engineer cradle, pistons and
   forge tooling;

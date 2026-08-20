@@ -1,6 +1,8 @@
 class_name RobotUnit3D
 extends CharacterBody3D
 
+const AUTHORED_BULWARK_MODEL_SCENE: PackedScene = preload("res://assets/bulwark/bulwark.gltf")
+
 signal destroyed(robot: RobotUnit3D)
 signal health_changed(robot: RobotUnit3D, current: float, maximum: float)
 signal weapon_fired(origin: Vector3, target: Vector3, target_node: Node)
@@ -290,6 +292,10 @@ func _refresh_visual_identity() -> void:
     for child in _model_root.get_children():
         child.queue_free()
 
+    if archetype == &"companion":
+        _build_authored_companion_visuals()
+        return
+
     var steel := ModelKit3D.material(Color("3f4648"), 0.78, 0.4)
     var dark_steel := ModelKit3D.material(Color("202628"), 0.85, 0.38)
     var rust := ModelKit3D.material(Color("70452c"), 0.52, 0.72)
@@ -432,3 +438,74 @@ func _refresh_visual_identity() -> void:
             ModelKit3D.add_sphere(_model_root, 0.08, Vector3(-1.18, 0.74, -0.1), glow, Vector3.ONE, "WelderGlow")
 
     _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.12, -body_size.z * 0.62), glow_color, 0.85, 4.0)
+
+
+func _build_authored_companion_visuals() -> void:
+    # The opening companion is the one machine the player must trust. Give it
+    # a real authored shell while preserving this node's collision, sockets,
+    # deterministic animation lookup, and role feedback systems.
+    var authored_model := AUTHORED_BULWARK_MODEL_SCENE.instantiate()
+    authored_model.name = "BulwarkAuthoredModel"
+    _model_root.add_child(authored_model)
+
+    var steel := ModelKit3D.material(Color("53656a"), 0.78, 0.3)
+    var dark_steel := ModelKit3D.material(Color("182326"), 0.86, 0.34)
+    var glow_color := Color("e5a75c")
+    var glow := ModelKit3D.material(glow_color.darkened(0.5), 0.34, 0.28, glow_color, 2.8)
+
+    if level >= 2:
+        for side in [-1.0, 1.0]:
+            var side_sign := float(side)
+            ModelKit3D.add_beveled_box(
+                _model_root,
+                Vector3(0.18, 0.34, 1.14),
+                Vector3(side_sign * 1.02, 1.1, 0.0),
+                steel,
+                Vector3(0.0, 0.0, side_sign * 0.08),
+                "Tier2ShoulderRail",
+                0.22
+            )
+            ModelKit3D.add_box(
+                _model_root,
+                Vector3(0.055, 0.08, 0.8),
+                Vector3(side_sign * 1.1, 1.1, -0.03),
+                glow,
+                Vector3(0.0, 0.0, side_sign * 0.08),
+                "Tier2SignalStrip"
+            )
+        ModelKit3D.add_louvered_panel(
+            _model_root,
+            Vector3(0.72, 0.28, 0.16),
+            Vector3(0.0, 1.6, 0.56),
+            dark_steel,
+            steel,
+            Vector3.ZERO,
+            "Tier2DorsalServicePanel",
+            3
+        )
+
+    if level >= 3:
+        var crown_ring := MeshInstance3D.new()
+        crown_ring.name = "Tier3CrownRing"
+        var crown_mesh := TorusMesh.new()
+        crown_mesh.inner_radius = 0.5
+        crown_mesh.outer_radius = 0.56
+        crown_mesh.rings = 16
+        crown_mesh.ring_segments = 32
+        crown_ring.mesh = crown_mesh
+        crown_ring.material_override = glow
+        crown_ring.position = Vector3(0.0, 2.02, 0.18)
+        _model_root.add_child(crown_ring)
+        ModelKit3D.add_cylinder(_model_root, 0.045, 0.58, Vector3(0.0, 2.28, 0.18), glow, Vector3.ZERO, "Tier3CrownMast")
+        for index in range(3):
+            var crown_angle := TAU * float(index) / 3.0
+            ModelKit3D.add_sphere(
+                _model_root,
+                0.075,
+                Vector3(cos(crown_angle) * 0.56, 2.04, 0.18 + sin(crown_angle) * 0.56),
+                glow,
+                Vector3.ONE,
+                "Tier3CrownBeacon"
+            )
+
+    _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.15, -1.04), glow_color, 0.9, 4.2)

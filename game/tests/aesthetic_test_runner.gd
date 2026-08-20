@@ -118,6 +118,8 @@ func _run_all() -> void:
         _expect(_find_named(robot, "CompanionCrown") != null, "The companion must expose a distinct crown silhouette.")
         _expect(_find_named(robot, "BulwarkShieldArc") != null, "The Bulwark must expose a readable protection field signature.")
         _expect(_find_named(robot, "BulwarkShieldEmitter") != null, "The Bulwark must expose a dedicated shield emitter.")
+        _expect(_find_named(robot, "BulwarkAuthoredModel") != null, "The opening companion must use the authored Bulwark model shell.")
+        _expect(_find_named(robot, "ProductionAssetMarker") != null, "The authored Bulwark model must expose its production asset marker.")
 
     var role_samples: Array[RobotUnit3D] = []
     var role_names := [&"salvager", &"guardian", &"scout", &"engineer"]

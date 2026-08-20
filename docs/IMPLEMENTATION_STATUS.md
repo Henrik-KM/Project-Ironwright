@@ -377,11 +377,20 @@ identities. Manual channels remain finish-before-save.
 
 ## Focused Bulwark protection-finish milestone
 
+- replaced the opening companion's procedural base silhouette with the original
+  high-definition `bulwark.companion.v1` glTF shell, preserving stable sensor,
+  weapon-muzzle and protection-emitter presentation sockets;
+- recorded the runtime/source/animation contract in
+  `game/data/bulwark_asset_manifest.json` and
+  `game/assets/bulwark/source/README.md`;
 - added a restrained cyan shield arc, protected emitter spine and side guard
   panels to the opening Bulwark silhouette;
 - kept the finish presentation-only: existing personal-interception behavior,
   collision, save state and autonomy workload are unchanged;
-- added native aesthetic coverage for the Bulwark protection signature.
+- added native aesthetic coverage for the authored shell and Bulwark protection
+  signature;
+- a live release-opening review confirmed the companion remains readable beside
+  the Mechromancer inside the warm Heartforge composition.
 
 ## Browser reference retained
 
