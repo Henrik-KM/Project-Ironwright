@@ -16,6 +16,7 @@ var _beacon_root: Node3D
 var _label: Label3D
 var _light: OmniLight3D
 var _elapsed: float = 0.0
+var _map_emphasis: bool = false
 
 
 func configure(data: Dictionary) -> void:
@@ -41,11 +42,20 @@ func _process(delta: float) -> void:
     _elapsed += delta
     if _beacon_root == null or not discovered:
         return
-    _beacon_root.rotation.y = _elapsed * 0.18
-    var pulse := 0.88 + sin(_elapsed * 1.7) * 0.08
+    _beacon_root.rotation.y = _elapsed * (0.1 if _map_emphasis else 0.045)
+    var pulse := 0.96 + sin(_elapsed * 1.7) * (0.035 if _map_emphasis else 0.018)
     _beacon_root.scale = Vector3.ONE * pulse
     if _label != null:
-        _label.position.y = 6.2 + sin(_elapsed * 1.35) * 0.12
+        _label.position.y = (6.0 if _map_emphasis else 5.65) + sin(_elapsed * 1.35) * 0.06
+
+
+func set_map_emphasis(value: bool) -> void:
+    _map_emphasis = value
+    if _label != null:
+        _label.visible = discovered and value
+    if _light != null:
+        _light.light_energy = 1.0 if value else 0.28
+        _light.omni_range = 9.0 if value else 4.5
 
 
 func set_discovered(value: bool) -> void:
@@ -135,21 +145,25 @@ func _build_visuals() -> void:
     _beacon_root.name = "RegionBeacon"
     add_child(_beacon_root)
     var beacon_color := _region_color()
-    var glow := ModelKit3D.material(beacon_color.darkened(0.62), 0.2, 0.4, beacon_color, 3.2)
-    ModelKit3D.add_cylinder(_beacon_root, 0.08, 4.8, Vector3(0.0, 2.4, 0.0), glow, Vector3.ZERO, "BeaconMast")
-    ModelKit3D.add_sphere(_beacon_root, 0.28, Vector3(0.0, 4.9, 0.0), glow, Vector3.ONE, "BeaconCrown")
-    _light = ModelKit3D.add_glow_light(_beacon_root, Vector3(0.0, 4.9, 0.0), beacon_color, 0.75, 7.0)
+    var glow := ModelKit3D.material(beacon_color.darkened(0.62), 0.2, 0.4, beacon_color, 2.0)
+    ModelKit3D.add_cylinder(_beacon_root, 0.045, 3.2, Vector3(0.0, 1.6, 0.0), glow, Vector3.ZERO, "BeaconMast")
+    ModelKit3D.add_sphere(_beacon_root, 0.16, Vector3(0.0, 3.3, 0.0), glow, Vector3.ONE, "BeaconCrown")
+    _light = ModelKit3D.add_glow_light(_beacon_root, Vector3(0.0, 3.3, 0.0), beacon_color, 0.28, 4.5)
 
     _label = Label3D.new()
     _label.name = "RegionLabel"
     _label.text = display_name.to_upper()
-    _label.position = Vector3(0.0, 6.2, 0.0)
+    _label.position = Vector3(0.0, 5.65, 0.0)
     _label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-    _label.fixed_size = true
-    _label.font_size = 38
-    _label.outline_size = 9
-    _label.modulate = beacon_color.lightened(0.24)
-    _label.outline_modulate = Color(0.015, 0.022, 0.026, 0.97)
+    # District names are a command-map annotation, not a giant tactical HUD.
+    _label.fixed_size = false
+    _label.font_size = 24
+    _label.pixel_size = 0.022
+    _label.outline_size = 5
+    _label.modulate = beacon_color.lightened(0.18)
+    _label.outline_modulate = Color(0.015, 0.022, 0.026, 0.94)
+    _label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    _label.visible = false
     _beacon_root.add_child(_label)
 
 
@@ -166,6 +180,8 @@ func _add_ruin_block(origin: Vector3, size: Vector3, material: Material) -> void
 func _refresh_discovery() -> void:
     if _beacon_root != null:
         _beacon_root.visible = discovered
+    if _label != null:
+        _label.visible = discovered and _map_emphasis
 
 
 func _region_color() -> Color:

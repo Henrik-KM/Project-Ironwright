@@ -14,6 +14,7 @@ NEW_REQUIRED_PATHS = [
     "docs/FULL_GAME_ROADMAP.md",
     "docs/FIRST_SESSION_UX.md",
     "docs/COMPLETE_GAME_ALPHA.md",
+    "docs/PRESENTATION_QUALITY_GATE.md",
     "game/data/full_game_manifest.json",
     "game/data/progression_phases.json",
     "game/data/technology_tree.json",
@@ -25,6 +26,7 @@ NEW_REQUIRED_PATHS = [
     "game/scripts/main_world_full_game_3d.gd",
     "game/scripts/main_world_production_3d.gd",
     "game/scripts/main_world_complete_3d.gd",
+    "game/scripts/main_world_prealpha_3d.gd",
     "game/scripts/systems/progression_director_3d.gd",
     "game/scripts/systems/outpost_director_3d.gd",
     "game/scripts/systems/world_region_director_3d.gd",
@@ -37,11 +39,13 @@ NEW_REQUIRED_PATHS = [
     "game/scripts/world/region_landmark_3d.gd",
     "game/scripts/ui/strategic_command_hud_3d.gd",
     "game/scripts/ui/operations_command_hud_3d.gd",
+    "game/scripts/ui/ironwright_prealpha_hud_3d.gd",
     "game/scripts/presentation/objective_guidance_3d.gd",
     "game/scripts/enemies/organic_enemy_full_game_3d.gd",
     "game/tests/full_game_test_runner.gd",
     "game/tests/first_session_ux_test_runner.gd",
     "game/tests/complete_game_test_runner.gd",
+    "game/tests/presentation_and_salvage_escort_test_runner.gd",
 ]
 for relative in NEW_REQUIRED_PATHS:
     if relative not in legacy.REQUIRED_PATHS:
@@ -205,8 +209,13 @@ def validate_native_godot_entrypoint() -> None:
         raise legacy.ValidationError("Godot project must boot scenes/main_3d.tscn")
 
     scene_text = (ROOT / "game/scenes/main_3d.tscn").read_text(encoding="utf-8")
-    if "res://scripts/main_world_complete_3d.gd" not in scene_text:
-        raise legacy.ValidationError("The native main scene must boot the complete-game world")
+    if "res://scripts/main_world_prealpha_3d.gd" not in scene_text:
+        raise legacy.ValidationError("The native main scene must boot the pre-alpha presentation-reset world")
+
+    prealpha = (ROOT / "game/scripts/main_world_prealpha_3d.gd").read_text(encoding="utf-8")
+    for token in ["extends IronwrightCompleteGameWorld3D", "_resolve_camera_occlusion", "set_map_emphasis", "pre-alpha production prototype"]:
+        if token not in prealpha:
+            raise legacy.ValidationError(f"Pre-alpha presentation-reset integration is missing {token!r}")
 
     complete = (ROOT / "game/scripts/main_world_complete_3d.gd").read_text(encoding="utf-8")
     required_complete_tokens = [
@@ -235,14 +244,19 @@ def validate_native_godot_entrypoint() -> None:
         if token not in long_operation_source:
             raise legacy.ValidationError(f"Physical long-range operations are missing {token!r}")
 
+    autonomy_source = (ROOT / "game/scripts/systems/autonomy_director_3d.gd").read_text(encoding="utf-8")
+    for token in ["_refresh_salvage_escort_assignments", "salvage_guardians", "player_guardians", "salvage_escort", "mechromancer_escort"]:
+        if token not in autonomy_source:
+            raise legacy.ValidationError(f"Salvage protection doctrine is missing {token!r}")
+
     endgame_source = (ROOT / "game/scripts/systems/endgame_director_3d.gd").read_text(encoding="utf-8")
     for token in ["initiate", "endgame_escalation", "endgame_completed", "player-triggered"]:
         if token not in endgame_source:
             raise legacy.ValidationError(f"Complete victory path is missing {token!r}")
 
     hud_scene = (ROOT / "game/scenes/ui/ironwright_hud_3d.tscn").read_text(encoding="utf-8")
-    if "ironwright_beautiful_hud_3d.gd" not in hud_scene:
-        raise legacy.ValidationError("Native HUD must retain the cinematic skin")
+    if "ironwright_prealpha_hud_3d.gd" not in hud_scene:
+        raise legacy.ValidationError("Native HUD must use the quieter desktop pre-alpha layer")
 
     for obsolete in OBSOLETE_PATCH_PATHS:
         if (ROOT / obsolete).exists():
@@ -282,6 +296,17 @@ def validate_current_design_documents() -> None:
     ]:
         if phrase not in complete_alpha:
             raise legacy.ValidationError(f"COMPLETE_GAME_ALPHA.md is missing {phrase!r}")
+
+    quality_gate = (ROOT / "docs/PRESENTATION_QUALITY_GATE.md").read_text(encoding="utf-8").lower()
+    for phrase in [
+        "pre-alpha production prototype",
+        "release-readiness rule",
+        "world-label rule",
+        "hud rule",
+        "autonomy presentation rule",
+    ]:
+        if phrase not in quality_gate:
+            raise legacy.ValidationError(f"PRESENTATION_QUALITY_GATE.md is missing {phrase!r}")
 
     gdd = (ROOT / "docs/GAME_DESIGN_DOCUMENT.md").read_text(encoding="utf-8")
     if len(gdd.split()) < 5000:
