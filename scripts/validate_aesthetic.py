@@ -48,6 +48,9 @@ REQUIRED = [
     "game/assets/riverworks/source/build_riverworks_asset.py",
     "game/assets/riverworks/riverworks.gltf",
     "game/data/riverworks_asset_manifest.json",
+    "game/assets/cathedral/source/build_cathedral_asset.py",
+    "game/assets/cathedral/cathedral.gltf",
+    "game/data/cathedral_asset_manifest.json",
 ]
 
 AUTHORED_ORGANIC_ASSETS = {
@@ -90,6 +93,19 @@ AUTHORED_REGION_ASSETS = {
             "RiverworksSluiceGate",
             "RiverworksSluiceSignal",
             "RiverworksGrowth0",
+            "ProductionAssetMarker",
+        ],
+    },
+    "cathedral": {
+        "asset_id": "cathedral.quarter.v1",
+        "root": "CathedralModel",
+        "required": [
+            "CathedralModel",
+            "CathedralNave",
+            "CathedralRoseWindow",
+            "CathedralChoirCore",
+            "CathedralChoirSignal",
+            "CathedralBell",
             "ProductionAssetMarker",
         ],
     },

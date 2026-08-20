@@ -49,7 +49,7 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - Heartforge District, North Ruins, West Grid, East Tenements, Municipal Glasshouse, Flood Market, Riverworks, Tram Graveyard, Cathedral Quarter, Observatory Ridge, Buried Laboratories and Root Cistern;
 - discovery, ecological pressure and suppression state;
 - region-specific physical salvage after discovery;
-- authored visual identity for every district kind, including the original high-definition Riverworks pump/sluice landmark shell and the authored Root Cistern organ shell.
+- authored visual identity for every district kind, including original high-definition Riverworks pump/sluice and Cathedral nave/choir landmark shells plus the authored Root Cistern organ shell.
 
 ### Long-range operations
 
@@ -591,6 +591,17 @@ identities. Manual channels remain finish-before-save.
 - native aesthetic coverage verifies the authored asset manifest, named sockets,
   sluice, waterline and channel signatures, and the live release review
   accepted the resulting frame.
+
+## Focused Cathedral Quarter authored-space milestone
+
+- added the original high-definition `cathedral.quarter.v1` shell with a
+  weathered nave, tower bell, rose window, choir core, signal and organic vein
+  sockets so the nest reads as a damaged civic place overtaken by biology;
+- retained the existing nest occlusion, ecology, pressure, discovery and
+  operation ownership while keeping the new geometry presentation-only;
+- native aesthetic and release coverage verifies the named cathedral sockets
+  and deterministic choir/bell motion; live release review accepted the
+  readable approach frame, with broader angles still part of pre-alpha review.
 
 ## Focused remote-ground continuity milestone
 

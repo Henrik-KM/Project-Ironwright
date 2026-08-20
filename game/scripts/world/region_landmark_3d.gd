@@ -3,6 +3,7 @@ extends Node3D
 
 const AUTHORED_ROOT_CISTERN_MODEL_SCENE: PackedScene = preload("res://assets/root_cistern/root_cistern.gltf")
 const AUTHORED_RIVERWORKS_MODEL_SCENE: PackedScene = preload("res://assets/riverworks/riverworks.gltf")
+const AUTHORED_CATHEDRAL_MODEL_SCENE: PackedScene = preload("res://assets/cathedral/cathedral.gltf")
 
 signal landmark_changed(landmark: RegionLandmark3D)
 
@@ -281,11 +282,10 @@ func _build_visuals() -> void:
             _nest_shell.name = "NestOccluderShell"
             _visual_root.add_child(_nest_shell)
             _add_ruin_block(Vector3(-8.0, 0.0, 3.0), Vector3(5.5, 6.0, 5.5), brick, _nest_shell)
-            for index in range(9):
-                var angle := TAU * float(index) / 9.0
-                ModelKit3D.add_capsule(_visual_root, 0.55, 5.2 + float(index % 3), Vector3(cos(angle) * 8.0, 2.4, sin(angle) * 8.0), organic, Vector3(0.2, angle, 0.25), "BroodSpire")
-            ModelKit3D.add_segmented_carapace(_visual_root, 3.6, Vector3(0.0, 2.2, -2.0), membrane, organic, Vector3(1.4, 0.9, 1.6), 5, "BroodMass")
-            ModelKit3D.add_membrane_fan(_visual_root, 1.9, Vector3(0.0, 4.1, -2.0), membrane, 7, "BroodMembraneFan")
+            # The authored Cathedral shell replaces the old ring of generic
+            # brood spikes and oversized mass so the civic ruin remains the
+            # readable subject while its biological takeover stays legible.
+            _build_authored_cathedral_visuals()
         &"research":
             var research := Node3D.new()
             research.name = "BuriedLaboratoriesIdentityDetails"
@@ -416,6 +416,26 @@ func _build_authored_riverworks_visuals() -> void:
     _visual_root.add_child(authored_marker)
 
 
+func _build_authored_cathedral_visuals() -> void:
+    # Cathedral Quarter receives a production shell while the nest director,
+    # proximity occlusion and ecology remain owned by this landmark node.
+    var authored_scene_instance := AUTHORED_CATHEDRAL_MODEL_SCENE.instantiate()
+    var imported_root := authored_scene_instance.get_node_or_null("CathedralModel") as Node
+    if imported_root == null:
+        imported_root = authored_scene_instance
+    var authored_children := imported_root.get_children()
+    for child in authored_children:
+        child.owner = null
+        imported_root.remove_child(child)
+        _visual_root.add_child(child)
+    if imported_root != authored_scene_instance:
+        imported_root.free()
+    authored_scene_instance.free()
+    var authored_marker := Node3D.new()
+    authored_marker.name = "CathedralAuthoredModel"
+    _visual_root.add_child(authored_marker)
+
+
 func _capture_region_motion_nodes() -> void:
     _motion_nodes.clear()
     _motion_base_transforms.clear()
@@ -451,6 +471,13 @@ func _animate_region_details() -> void:
         elif node_name.begins_with("RiverworksSluiceSignal") or node_name.begins_with("RootCisternPulse"):
             var signal_pulse := 1.0 + sin(local_phase * 2.4) * 0.12
             node.scale = _motion_base_transforms[node].basis.get_scale() * signal_pulse
+        elif node_name.begins_with("CathedralChoirSignal"):
+            var choir_pulse := 1.0 + sin(local_phase * 2.0) * 0.10
+            node.scale = _motion_base_transforms[node].basis.get_scale() * choir_pulse
+        elif node_name.begins_with("CathedralBell"):
+            node.rotation.z += sin(local_phase * 0.55) * 0.035
+        elif node_name.begins_with("CathedralOrganicVein"):
+            node.rotation.x += sin(local_phase * 0.8) * 0.045
         elif node_name.begins_with("RiverworksGrowth") or node_name.begins_with("RiverbankGrowth"):
             node.rotation.y += sin(local_phase * 1.15) * 0.12
             node.scale *= Vector3(1.0, 1.0 + sin(local_phase * 1.8) * 0.08, 1.0)
@@ -464,6 +491,9 @@ func _is_region_motion_name(node_name: String) -> bool:
         "RiverworksGrowth",
         "RiverbankGrowth",
         "RootCisternPulse",
+        "CathedralChoirSignal",
+        "CathedralBell",
+        "CathedralOrganicVein",
     ]:
         if node_name.begins_with(prefix):
             return true
