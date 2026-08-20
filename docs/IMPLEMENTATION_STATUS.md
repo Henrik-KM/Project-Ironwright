@@ -407,6 +407,21 @@ identities. Manual channels remain finish-before-save.
 - added native aesthetic coverage for the authored shell and guardian role
   silhouette.
 
+## Focused Scrapper authored-shell milestone
+
+- replaced the salvager's procedural base silhouette with the original
+  high-definition `scrapper.salvager.v1` glTF shell, preserving stable sensor,
+  salvage-tool, cargo and drum presentation sockets;
+- added deep cargo, paired dismantler arms, magnetic claws, intake hardware,
+  salvage drum and protected service surfaces;
+- recorded the runtime/source/animation contract in
+  `game/data/scrapper_asset_manifest.json` and
+  `game/assets/scrapper/source/README.md`;
+- kept the finish presentation-only: Scrap extraction, target selection,
+  movement, formation behavior, autonomy workload and save state are unchanged;
+- added native aesthetic coverage for the authored shell and salvage role
+  silhouette.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.
