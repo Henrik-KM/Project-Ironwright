@@ -9,6 +9,7 @@ var endgame_director: EndgameDirector3D
 var operations_hud: OperationsCommandHUD3D
 var continuity_used: bool = false
 var first_victory_achieved: bool = false
+var sanctuary_continuation: bool = false
 var spawned_region_salvage: Dictionary = {}
 
 
@@ -58,6 +59,13 @@ func _unhandled_input(event: InputEvent) -> void:
                         _authorize_long_operation(operations_hud.selected_operation_id())
             return
 
+        if game_ended and first_victory_achieved and key in [KEY_ENTER, KEY_SPACE]:
+            sanctuary_continuation = true
+            game_ended = false
+            hud.dismiss_ending()
+            hud.push_notification("SANCTUARY CONTINUES · THE FIRST ARCHIVE IS NOW AVAILABLE THROUGH P")
+            return
+
         if not paused and not game_ended and not hud.forge_open and not strategic_hud.is_open():
             if key == KEY_P:
                 _open_operations_hud()
@@ -88,7 +96,8 @@ func _setup_complete_game_services() -> void:
         outpost_director,
         heartforge,
         Callable(self, "_spawn_enemy"),
-        operation_detail_director
+        operation_detail_director,
+        Callable(self, "_progression_context")
     )
     add_child(long_operation_director)
 
@@ -176,6 +185,7 @@ func _progression_context() -> Dictionary:
                     outpost_roles.append(role)
     context["functioning_outposts"] = functioning_outposts
     context["outpost_roles"] = outpost_roles
+    context["sanctuary_continuation"] = sanctuary_continuation
     return context
 
 
@@ -377,8 +387,9 @@ func _on_endgame_progress(protocol_id: StringName, progress: float, detail: Stri
 
 func _on_endgame_completed(protocol_id: StringName, display_name: String, ending: String) -> void:
     first_victory_achieved = true
+    sanctuary_continuation = false
     game_ended = true
-    hud.show_ending(true, "FIRST VICTORY · %s\n\n%s\n\nThe run reached a complete systemic conclusion without a recurring timed-wave loop." % [display_name, ending])
+    hud.show_ending(true, "FIRST VICTORY · %s\n\n%s\n\nThe run reached a complete systemic conclusion without a recurring timed-wave loop." % [display_name, ending], true)
 
 
 func _on_endgame_failed(protocol_id: StringName, reason: String) -> void:
@@ -408,6 +419,7 @@ func _save_extension_data() -> Dictionary:
         "endgame": endgame_director.to_dictionary(),
         "continuity_used": continuity_used,
         "first_victory_achieved": first_victory_achieved,
+        "sanctuary_continuation": sanctuary_continuation,
         "spawned_region_salvage": _serialize_stringname_dictionary(spawned_region_salvage),
     }, true)
     extensions["full_game"] = full_game_data
@@ -436,6 +448,7 @@ func _restore_extension_data(extensions: Variant) -> void:
     endgame_director.restore_from_dictionary(data.get("endgame", {}))
     continuity_used = bool(data.get("continuity_used", false))
     first_victory_achieved = bool(data.get("first_victory_achieved", false))
+    sanctuary_continuation = bool(data.get("sanctuary_continuation", first_victory_achieved))
     spawned_region_salvage.clear()
     var saved_salvage: Dictionary = data.get("spawned_region_salvage", {})
     for raw_key in saved_salvage:

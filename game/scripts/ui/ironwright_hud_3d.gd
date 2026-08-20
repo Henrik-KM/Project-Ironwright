@@ -33,6 +33,7 @@ var forge_content_box: VBoxContainer
 var notification_label: Label
 var map_banner: Label
 var help_label: Label
+var ending_panel: PanelContainer
 var forge_open: bool = false
 var notifications: Array[String] = []
 var notification_ages: Array[float] = []
@@ -450,14 +451,23 @@ func _refresh_notifications() -> void:
     notification_label.text = "\n\n".join(formatted)
 
 
-func show_ending(victory: bool, detail: String) -> void:
-    var panel := _panel(Vector2(-330, -155), Vector2(660, 310), true, true)
-    panel.set_anchors_preset(Control.PRESET_CENTER)
-    panel.position = Vector2(-330, -155)
-    panel.mouse_filter = Control.MOUSE_FILTER_STOP
-    var label := _label(panel, ("FIRST LIGHT SECURED" if victory else "THE HEARTFORGE FELL") + "\n\n" + detail + "\n\nPress ENTER to restart.", 24, Color("79d8dc") if victory else Color("e06b5f"))
+func show_ending(victory: bool, detail: String, allow_continuation: bool = false) -> void:
+    dismiss_ending()
+    ending_panel = _panel(Vector2(-330, -155), Vector2(660, 310), true, true)
+    ending_panel.name = "EndingPanel"
+    ending_panel.set_anchors_preset(Control.PRESET_CENTER)
+    ending_panel.position = Vector2(-330, -155)
+    ending_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+    var prompt := "Press ENTER to continue exploring." if allow_continuation else "Press ENTER to restart."
+    var label := _label(ending_panel, ("FIRST LIGHT SECURED" if victory else "THE HEARTFORGE FELL") + "\n\n" + detail + "\n\n" + prompt, 24, Color("79d8dc") if victory else Color("e06b5f"))
     label.position = Vector2(28, 28)
     label.size = Vector2(604, 254)
     label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
     label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+
+func dismiss_ending() -> void:
+    if is_instance_valid(ending_panel):
+        ending_panel.queue_free()
+    ending_panel = null

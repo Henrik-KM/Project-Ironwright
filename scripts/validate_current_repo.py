@@ -228,8 +228,13 @@ def validate_native_godot_entrypoint() -> None:
         raise legacy.ValidationError("Godot project must boot scenes/main_3d.tscn")
 
     scene_text = (ROOT / "game/scenes/main_3d.tscn").read_text(encoding="utf-8")
-    if "res://scripts/main_world_prealpha_3d.gd" not in scene_text:
-        raise legacy.ValidationError("The native main scene must boot the pre-alpha presentation-reset world")
+    if "res://scripts/main_world_release_3d.gd" not in scene_text:
+        raise legacy.ValidationError("The native main scene must boot the commercial release world")
+
+    release = (ROOT / "game/scripts/main_world_release_3d.gd").read_text(encoding="utf-8")
+    for token in ["extends IronwrightProductionWorld3D", "ReleaseTransactionalSaveService3D", "ReleaseWorldArtDirector3D", "_collect_release_snapshot", "_restore_release_snapshot"]:
+        if token not in release:
+            raise legacy.ValidationError(f"Release entrypoint integration is missing {token!r}")
 
     prealpha = (ROOT / "game/scripts/main_world_prealpha_3d.gd").read_text(encoding="utf-8")
     for token in ["extends IronwrightProductionWorld3D", "_resolve_camera_occlusion", "set_map_emphasis", "pre-alpha production prototype"]:

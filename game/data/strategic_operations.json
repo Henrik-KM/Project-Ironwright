@@ -161,7 +161,7 @@
       "category": "post_victory",
       "region_id": "region.north_ruins",
       "description": "After first victory, a small autonomous group recovers civil records and machine names from the archive for the continuing sanctuary.",
-      "requirements": {"heartforge_tier": 5, "completed_operation": "operation.root_cistern_mapping", "technology": "tech.endgame.severance"},
+      "requirements": {"heartforge_tier": 5, "completed_operation": "operation.root_cistern_mapping", "endgame_completed": true, "sanctuary_continuation": true},
       "team_roles": ["scout", "guardian", "salvager"],
       "scrap_cost": 95,
       "work_seconds": 18.0,

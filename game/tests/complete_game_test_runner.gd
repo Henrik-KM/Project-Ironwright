@@ -120,6 +120,16 @@ func _run_all() -> void:
     _expect(world.endgame_director.completed_protocol == &"protocol.severance", "The final protocol must complete after its sustained defence interval.")
     _expect(world.first_victory_achieved, "Completing a final protocol must produce the first victory.")
     _expect(world.game_ended, "The complete systemic run must have a real end state.")
+    _expect(not world.long_operation_director.available_operations().any(func(entry: Dictionary) -> bool: return StringName(str(entry.get("id", ""))) == &"operation.post_victory_archive"), "The post-victory archive must remain unavailable behind the victory boundary until continuation is chosen.")
+
+    var continue_event := InputEventKey.new()
+    continue_event.keycode = KEY_ENTER
+    continue_event.pressed = true
+    world._unhandled_input(continue_event)
+    _expect(not world.game_ended and world.sanctuary_continuation, "The victory boundary must support an explicit continuation into the living sanctuary.")
+    _expect(world.long_operation_director.available_operations().any(func(entry: Dictionary) -> bool: return StringName(str(entry.get("id", ""))) == &"operation.post_victory_archive"), "The post-victory archive must become available after the player continues.")
+    _expect(_complete_operation(world, &"operation.post_victory_archive"), "The post-victory archive must remain a physical autonomous operation.")
+    _expect(world.long_operation_director.has_component(&"component.town_archive"), "The post-victory archive must deliver its persistent town record component.")
 
     var region_save := world.region_director.to_dictionary()
     var operation_save := world.long_operation_director.to_dictionary()
@@ -145,6 +155,7 @@ func _run_all() -> void:
     world.region_director.region_data[&"region.root_cistern"]["discovered"] = false
     world._load_game()
     _expect(world.first_victory_achieved, "The unified save/load path must restore complete-world victory state.")
+    _expect(world.sanctuary_continuation, "The unified save/load path must restore the continuing sanctuary state.")
     _expect(world.region_director.is_discovered(&"region.root_cistern"), "The unified save/load path must restore complete-world discovery state.")
     _cleanup_save_files()
 

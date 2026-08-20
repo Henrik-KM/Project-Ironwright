@@ -205,6 +205,11 @@ The final crisis is:
 
 The optional Apex lure can reduce the final response, giving long-range preparation strategic value.
 
+Completing either protocol is the first victory, not a forced restart. Press
+Enter or Space on the victory panel to continue the surviving sanctuary. The
+post-victory archive then becomes available through `P`; its autonomous group
+travels to the North Ruins and returns with civil records and machine names.
+
 ## 9. Continuity
 
 Distributed Continuity is an optional late technology.
@@ -235,6 +240,8 @@ It retains:
 - active or completed final protocol;
 - continuity consumption;
 - first-victory state;
+- whether the player continued beyond first victory;
+- the recovered post-victory town archive component;
 - which regions have received persistent salvage content.
 
 Active long-range operations still defer saving because their live robot references

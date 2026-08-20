@@ -17,6 +17,7 @@ var outpost_director: OutpostDirector3D
 var heartforge: Heartforge3D
 var operation_detail_director: Variant
 var spawn_enemy_callback: Callable
+var context_provider: Callable
 var operations: Dictionary = {}
 var completed_operations: Array[StringName] = []
 var recovered_components: Array[StringName] = []
@@ -35,7 +36,8 @@ func configure(
         next_outpost_director: OutpostDirector3D,
         next_heartforge: Heartforge3D,
         next_spawn_enemy_callback: Callable,
-        next_operation_detail_director: Variant = null
+        next_operation_detail_director: Variant = null,
+        next_context_provider: Callable = Callable()
     ) -> void:
     run_state = next_run_state
     progression = next_progression
@@ -46,6 +48,7 @@ func configure(
     heartforge = next_heartforge
     spawn_enemy_callback = next_spawn_enemy_callback
     operation_detail_director = next_operation_detail_director
+    context_provider = next_context_provider
 
 
 func _ready() -> void:
@@ -124,12 +127,27 @@ func requirements_met(entry: Dictionary) -> bool:
     if requirements.has("completed_operation"):
         if not has_completed(StringName(str(requirements["completed_operation"]))):
             return false
+    if requirements.has("endgame_completed") and bool(requirements["endgame_completed"]):
+        if not _context_flag(&"endgame_completed"):
+            return false
+    if requirements.has("sanctuary_continuation") and bool(requirements["sanctuary_continuation"]):
+        if not _context_flag(&"sanctuary_continuation"):
+            return false
     if requirements.has("components_min") and component_count() < int(requirements["components_min"]):
         return false
     if requirements.has("functioning_outposts_min"):
         if _functioning_outpost_count() < int(requirements["functioning_outposts_min"]):
             return false
     return true
+
+
+func _context_flag(flag: StringName) -> bool:
+    if not context_provider.is_valid():
+        return false
+    var raw_context: Variant = context_provider.call()
+    if not (raw_context is Dictionary):
+        return false
+    return bool((raw_context as Dictionary).get(flag, false))
 
 
 func can_authorize(operation_id: StringName) -> bool:

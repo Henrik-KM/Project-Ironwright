@@ -13,7 +13,8 @@ Schema version 2 contains:
   salvage piles, living organic enemies, and ecology state;
 - `extensions.full_game`: progression, outposts, discovered regions, long-range
   operations, machine society, strategic ecology, endgame, continuity, victory,
-  and persistent region-salvage flags.
+  sanctuary continuation, the post-victory archive, and persistent
+  region-salvage flags.
 
 The schema is written by `TransactionalSaveService3D`. It first writes
 `ironwright_run.json.tmp`, flushes and closes it, rotates the existing primary
