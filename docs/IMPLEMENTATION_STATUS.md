@@ -15,6 +15,8 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - timed manual salvage that disables attack and emits ecological noise;
 - timed manual early robot fabrication;
 - Scrapper, Warden, Pathfinder, Engineer and Bulwark frames;
+- finished Mechromancer field-kit silhouette with asymmetrical protection,
+  visible communications hardware, boot cuffs and a wrist tool loop;
 - three class-wide levels with rare-core gates;
 - macro Defend, Salvage and Expedition focus;
 - coordinated physical local salvage and North Ruins expedition.

@@ -98,6 +98,10 @@ organic enemies remain procedural until their own production asset milestones.
 - coat, hood, field pack and shoulder light;
 - clearly visible weak pistol;
 - visible face/visor and layered field gear;
+- asymmetrical shoulder guard, cyan field-comms panel and antenna beacon;
+- worn boot cuffs and wrist tool loop that reinforce the technician fantasy;
+- the finish remains presentation-only and preserves the authored model sockets,
+  gameplay capsule and weak-pistol contract.
 - charcoal cloth, worn leather, oxidized metal and skin hierarchy with authored
   normal relief for close camera detail;
 - smoother cloth panels, curved hood/scarf transitions, cheek and mouth forms,
