@@ -738,6 +738,20 @@ identities. Manual channels remain finish-before-save.
 - live presentation review remains required for the next authored encounter
   space/content pass; this milestone does not claim final retail art.
 
+## Focused East-Tenements encounter-space milestone
+
+- added a bounded vertical residential vignette with a recessed facade shell,
+  readable window bays, service louvers, fire-escape landings and a climbable-
+  looking but presentation-only ladder silhouette;
+- added rooftop water-service hardware, cyan utility routing, one warm occupied
+  window and an organic breach marker so the district communicates habitation,
+  infrastructure and ecological intrusion in one frame;
+- retained the existing collision, navigation, route, operation and region
+  pressure contracts; the new detail is owned by the discovery-driven encounter
+  dressing layer and adds no player-managed task;
+- aesthetic coverage now verifies the tenement vertical-life, fire-escape and
+  rooftop-service signatures after region discovery.
+
 ## Browser reference retained
 
 The dependency-free browser implementation remains under `web/` for deterministic simulation regression. Godot is the production runtime.
