@@ -109,7 +109,10 @@ The organic roster expands to twelve families. Five release families join the ex
 
 These are organic additions, not a hostile machine faction. Regional ecology chooses species according to district identity and continues to respond to noise, pressure, suppression and migration.
 
-The bounded outpost-site pool expands to eight fixed foundations. Optional exploration therefore creates meaningful strategic choices without introducing free placement, territory painting or a logistics spreadsheet.
+The bounded outpost-site pool now contains twenty fixed foundations distributed
+across the discovered regions. Optional exploration therefore creates a broad
+set of meaningful strategic choices without introducing free placement,
+territory painting or a logistics spreadsheet.
 
 ## Performance architecture
 

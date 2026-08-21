@@ -52,6 +52,7 @@
     "outpost_tiers_implemented": 3,
     "major_regions_implemented": 12,
     "long_range_operations_implemented": 12,
+    "fixed_world_sites_implemented": 20,
     "endgame_protocols_implemented": 2,
     "consequential_technologies_implemented": 20,
     "commercial_robot_families_target": [6, 8],
