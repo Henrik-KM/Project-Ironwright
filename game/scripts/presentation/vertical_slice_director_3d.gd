@@ -552,17 +552,26 @@ func _build_street_story_props() -> void:
     var props := Node3D.new()
     props.name = "OpeningEnvironmentalStory"
     root.add_child(props)
+    var story_detail := Node3D.new()
+    story_detail.name = "HighDefinitionStoryProps"
+    props.add_child(story_detail)
 
     # Abandoned evacuation point.
-    ModelKit3D.add_box(props, Vector3(4.4, 0.1, 2.2), Vector3(9.2, 0.12, -5.5), fabric, Vector3(0.03, -0.18, 0.0), "CollapsedTentRoof")
+    ModelKit3D.add_beveled_box(story_detail, Vector3(4.4, 0.1, 2.2), Vector3(9.2, 0.12, -5.5), fabric, Vector3(0.03, -0.18, 0.0), "CollapsedTentRoof", 0.28)
+    _add_beam(story_detail, Vector3(7.2, 0.19, -6.16), Vector3(11.25, 0.19, -4.85), 0.035, rust_metal, "TentRoofSeam")
+    _add_beam(story_detail, Vector3(8.0, 0.16, -5.0), Vector3(10.55, 0.16, -6.0), 0.028, black_metal, "TentRoofTensionLine")
     for position in [Vector3(7.4, 0.85, -6.4), Vector3(10.8, 0.85, -4.7)]:
         ModelKit3D.add_cylinder(props, 0.05, 1.7, position, black_metal, Vector3.ZERO, "TentPole")
     for index in range(4):
-        ModelKit3D.add_box(props, Vector3(0.72, 0.48, 0.52), Vector3(7.8 + float(index % 2) * 0.85, 0.24, -4.1 + float(index / 2) * 0.7), rust_metal, Vector3(0.04 * index, 0.2 * index, 0.0), "EvacuationCase")
+        var case_position := Vector3(7.8 + float(index % 2) * 0.85, 0.24, -4.1 + float(index / 2) * 0.7)
+        var case_root := ModelKit3D.add_beveled_box(story_detail, Vector3(0.72, 0.48, 0.52), case_position, rust_metal, Vector3(0.04 * index, 0.2 * index, 0.0), "EvacuationCase%02d" % index, 0.18)
+        ModelKit3D.add_surface_panel(case_root, Vector3(0.42, 0.11, 0.28), Vector3(0.0, 0.27, 0.0), black_metal, warning_paint, Vector3.ZERO, "CaseLatchPanel%02d" % index)
 
     # A dead municipal drone, implying the Mechromancer is rebuilding from a
     # world that already failed rather than spawning generic fantasy robots.
-    ModelKit3D.add_box(props, Vector3(1.5, 0.25, 1.05), Vector3(-8.1, 0.26, -4.0), painted_metal, Vector3(0.16, 0.55, 0.24), "DeadMunicipalDrone")
+    var drone_root := ModelKit3D.add_beveled_box(story_detail, Vector3(1.5, 0.25, 1.05), Vector3(-8.1, 0.26, -4.0), painted_metal, Vector3(0.16, 0.55, 0.24), "DeadMunicipalDrone", 0.22)
+    ModelKit3D.add_surface_panel(drone_root, Vector3(0.58, 0.12, 0.34), Vector3(0.0, 0.16, -0.18), black_metal, rust_metal, Vector3.ZERO, "DroneServicePanel")
+    ModelKit3D.add_sphere(drone_root, 0.07, Vector3(0.0, 0.18, 0.36), cold_glass, Vector3(1.0, 0.7, 0.55), "DroneStatusLens")
     for side in [-1.0, 1.0]:
         ModelKit3D.add_cylinder(props, 0.22, 0.16, Vector3(-8.1 + side * 0.78, 0.22, -4.0), black_metal, Vector3(1.5708, 0.0, 0.0), "DroneWheel")
 

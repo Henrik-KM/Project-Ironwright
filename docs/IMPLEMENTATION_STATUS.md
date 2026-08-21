@@ -1370,6 +1370,14 @@ presentation restore, with release regression coverage for that migration path.
   contract for all street debris;
 - added aesthetic coverage for the stable debris layer and detail sockets.
 
+## Focused opening story-prop refinement milestone
+
+- replaced the remaining flat evacuation cases, tent roof and dead municipal
+  drone silhouettes with bounded layered geometry, including tension seams,
+  latch faces, a service panel and a status lens;
+- preserved the presentation-only contract for the opening story dressing;
+- added native vertical-slice coverage for the stable story-prop detail sockets.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.
