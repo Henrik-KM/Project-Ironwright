@@ -7,11 +7,18 @@
     "TenementModel",
     "TenementBlockL",
     "TenementFrontWindowL0_0",
+    "TenementFrontWindowLintelL0_0",
+    "TenementFrontWindowSillL0_0",
     "TenementBlockLEdgeL",
     "TenementBalcony0",
+    "TenementBalconyBrace0_L",
     "TenementFireEscapeLadder",
     "TenementRoofWaterTank",
+    "TenementTankValve",
+    "TenementLaundryLine0",
+    "TenementLightHousingL",
     "TenementOrganicCreep0",
+    "TenementOrganicTendril0_0",
     "ProductionAssetMarker"
   ],
   "presentation_only": true

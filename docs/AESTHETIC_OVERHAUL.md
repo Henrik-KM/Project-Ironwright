@@ -78,6 +78,10 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
 - Its new growth tendrils now move with restrained deterministic sway and the
   climate actuator makes a slow functional adjustment, so the greenhouse reads
   as inhabited infrastructure rather than a static shell.
+- East Tenements now carry approach-facing window lintels and sills, balcony
+  braces, laundry lines, roof-tank service hardware, light housings and organic
+  tendrils. The detail pass strengthens the lived-in vertical residential read
+  without changing the roofline operation or route contract.
 - the release material pass remains live for late-created robots, organic
   families, outpost upgrades and discovered-region dressing, so the visual
   language does not regress after the opening scene.
