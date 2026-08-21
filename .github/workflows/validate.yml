@@ -75,7 +75,15 @@ jobs:
         run: godot --headless --path game --script res://tests/enemy_tier_progression_test_runner.gd
 
       - name: Run commercial release tests
-        run: godot --headless --path game --script res://tests/release_test_runner.gd
+        shell: bash
+        run: |
+          set -o pipefail
+          output="$(godot --headless --path game --verbose --script res://tests/release_test_runner.gd 2>&1)"
+          printf '%s\n' "$output"
+          if printf '%s\n' "$output" | grep -Eq 'Leaked instance:|ObjectDB instances were leaked|Resource still in use:|resources still in use at exit|Cannot get path of node'; then
+            echo "Release validation emitted a teardown leak or orphan-node diagnostic."
+            exit 1
+          fi
 
       - name: Run large-population performance tests
         run: godot --headless --path game --script res://tests/performance_stress_test_runner.gd
