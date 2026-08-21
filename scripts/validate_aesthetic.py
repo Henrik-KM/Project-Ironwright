@@ -66,6 +66,9 @@ REQUIRED = [
     "game/assets/archive/source/build_archive_asset.py",
     "game/assets/archive/archive.gltf",
     "game/data/archive_asset_manifest.json",
+    "game/assets/tenement/source/build_tenement_asset.py",
+    "game/assets/tenement/tenement.gltf",
+    "game/data/tenement_asset_manifest.json",
 ]
 
 AUTHORED_ORGANIC_ASSETS = {
@@ -187,6 +190,19 @@ AUTHORED_REGION_ASSETS = {
             "ArchiveRoofBeacon",
             "ArchiveStack0",
             "ArchiveOrganicCreep0",
+            "ProductionAssetMarker",
+        ],
+    },
+    "tenement": {
+        "asset_id": "tenement.east_blocks.v1",
+        "root": "TenementModel",
+        "required": [
+            "TenementModel",
+            "TenementBlockL",
+            "TenementBalcony0",
+            "TenementFireEscapeLadder",
+            "TenementRoofWaterTank",
+            "TenementOrganicCreep0",
             "ProductionAssetMarker",
         ],
     },
