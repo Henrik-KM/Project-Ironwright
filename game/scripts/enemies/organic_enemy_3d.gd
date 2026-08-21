@@ -61,6 +61,8 @@ var movement_reason: String = "Following the current ecological route."
 
 var _target: Node3D
 var _model_root: Node3D
+var defer_authored_visuals: bool = false
+var _deferred_proxy_root: Node3D
 
 
 func _ready() -> void:
@@ -70,7 +72,11 @@ func _ready() -> void:
     _apply_species_stats()
     if territory_origin == Vector3.ZERO:
         territory_origin = global_position
-    _build_visuals()
+    if defer_authored_visuals:
+        _build_collision()
+        _ensure_deferred_proxy_root()
+    else:
+        _build_visuals()
     _choose_next_ecological_behaviour(true)
 
 
@@ -577,7 +583,7 @@ func _apply_species_stats() -> void:
     ecology_directive = _default_ecology_directive()
 
 
-func _build_visuals() -> void:
+func _build_collision() -> void:
     var collision_radius := 0.5
     var collision_height := 0.9
     if species == &"broodmass":
@@ -586,11 +592,34 @@ func _build_visuals() -> void:
     elif species == &"apex":
         collision_radius = 1.15
         collision_height = 2.0
-    ModelKit3D.add_collision_capsule(self, collision_radius, collision_height, Vector3(0.0, collision_height * 0.5, 0.0))
+    if get_node_or_null("CollisionShape3D") == null:
+        ModelKit3D.add_collision_capsule(self, collision_radius, collision_height, Vector3(0.0, collision_height * 0.5, 0.0))
+
+
+func _build_visuals() -> void:
+    _build_collision()
     _model_root = Node3D.new()
     _model_root.name = "OrganicModel"
     add_child(_model_root)
     _refresh_visuals()
+
+
+func ensure_authored_visuals() -> void:
+    if _model_root != null and is_instance_valid(_model_root):
+        return
+    if _deferred_proxy_root != null and is_instance_valid(_deferred_proxy_root):
+        _deferred_proxy_root.free()
+    _deferred_proxy_root = null
+    _build_visuals()
+
+
+func _ensure_deferred_proxy_root() -> Node3D:
+    if _deferred_proxy_root != null and is_instance_valid(_deferred_proxy_root):
+        return _deferred_proxy_root
+    _deferred_proxy_root = Node3D.new()
+    _deferred_proxy_root.name = "DeferredVisualProxy"
+    add_child(_deferred_proxy_root)
+    return _deferred_proxy_root
 
 
 func _refresh_visuals() -> void:

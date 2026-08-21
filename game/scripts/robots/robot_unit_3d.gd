@@ -43,6 +43,8 @@ var obstacle_recovery_direction: Vector3 = Vector3.ZERO
 
 var _model_root: Node3D
 var _sensor_light: OmniLight3D
+var defer_authored_visuals: bool = false
+var _deferred_proxy_root: Node3D
 
 
 func _ready() -> void:
@@ -50,7 +52,11 @@ func _ready() -> void:
     collision_layer = 2
     collision_mask = 1 | 2 | 4
     _apply_level_stats()
-    _build_visuals()
+    if defer_authored_visuals:
+        _build_collision()
+        _ensure_deferred_proxy_root()
+    else:
+        _build_visuals()
 
 
 func configure(next_archetype: StringName, next_level: int) -> void:
@@ -291,12 +297,35 @@ func _apply_level_stats() -> void:
     current_health = maximum_health
 
 
+func _build_collision() -> void:
+    if get_node_or_null("CollisionShape3D") == null:
+        ModelKit3D.add_collision_capsule(self, 0.48, 1.0, Vector3(0.0, 0.52, 0.0))
+
+
 func _build_visuals() -> void:
-    ModelKit3D.add_collision_capsule(self, 0.48, 1.0, Vector3(0.0, 0.52, 0.0))
+    _build_collision()
     _model_root = Node3D.new()
     _model_root.name = "RobotModel"
     add_child(_model_root)
     _refresh_visual_identity()
+
+
+func ensure_authored_visuals() -> void:
+    if _model_root != null and is_instance_valid(_model_root):
+        return
+    if _deferred_proxy_root != null and is_instance_valid(_deferred_proxy_root):
+        _deferred_proxy_root.free()
+    _deferred_proxy_root = null
+    _build_visuals()
+
+
+func _ensure_deferred_proxy_root() -> Node3D:
+    if _deferred_proxy_root != null and is_instance_valid(_deferred_proxy_root):
+        return _deferred_proxy_root
+    _deferred_proxy_root = Node3D.new()
+    _deferred_proxy_root.name = "DeferredVisualProxy"
+    add_child(_deferred_proxy_root)
+    return _deferred_proxy_root
 
 
 func _refresh_visual_identity() -> void:

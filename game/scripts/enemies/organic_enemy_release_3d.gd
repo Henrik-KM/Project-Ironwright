@@ -115,6 +115,13 @@ func _coarse_detail_tick(delta: float) -> void:
 func set_visual_lod(level_value: int) -> void:
     visual_lod_level = clampi(level_value, 0, 2)
     if _model_root == null:
+        if visual_lod_level == 0:
+            ensure_authored_visuals()
+        else:
+            _ensure_reduced_proxy()
+            _reduced_proxy.visible = true
+            return
+    if _model_root == null:
         return
     _ensure_reduced_proxy()
     for child in _model_root.get_children():
@@ -146,7 +153,8 @@ func _ensure_reduced_proxy() -> void:
     _reduced_proxy.material_override = proxy_material
     _reduced_proxy.position = Vector3(0.0, 0.78, 0.0)
     _reduced_proxy.visible = false
-    _model_root.add_child(_reduced_proxy)
+    var proxy_parent := _model_root if _model_root != null else _ensure_deferred_proxy_root()
+    proxy_parent.add_child(_reduced_proxy)
 
 
 func _apply_species_stats() -> void:
