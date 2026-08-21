@@ -24,6 +24,7 @@ var spawn_serial: int = 0
 
 var _model_root: Node3D
 var _status_light: OmniLight3D
+var _visual_clock: float = 0.0
 
 
 func configure(data: Dictionary) -> void:
@@ -54,6 +55,11 @@ func _ready() -> void:
     collision_mask = 1 | 2
     _build_visuals()
     _refresh_visuals()
+
+
+func _process(delta: float) -> void:
+    _visual_clock += delta
+    _animate_visuals()
 
 
 func is_alive() -> bool:
@@ -144,6 +150,7 @@ func _refresh_visuals() -> void:
         return
     for child in _model_root.get_children():
         child.queue_free()
+    _status_light = null
 
     var chitin := ModelKit3D.material(Color("2b1d24"), 0.08, 0.68)
     var flesh := ModelKit3D.material(Color("4e192e"), 0.0, 0.72)
@@ -178,6 +185,72 @@ func _refresh_visuals() -> void:
         var angle := TAU * float(index) / 5.0 + 0.35
         ModelKit3D.add_sphere(_model_root, 0.12, Vector3(cos(angle) * 0.85, 1.42 + maturity * 0.4, sin(angle) * 0.85), signal_material, Vector3.ONE, "NestSignal_%02d" % index)
     _status_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.6, 0.0), signal_color, 0.65 + maturity * 0.75, 5.5 + maturity * 4.0)
+
+    # The ordinary nest is an early encounter landmark, so its close-range
+    # silhouette needs authored biological construction rather than a smooth
+    # core with decorative spikes. This layer is presentation-only and bounded.
+    var shell_edge := ModelKit3D.material(Color("9a806e"), 0.0, 0.72)
+    var vein := ModelKit3D.material(Color("311022"), 0.0, 0.58, Color("ed5d85"), 2.0)
+    var root_dark := ModelKit3D.material(Color("1b151c"), 0.0, 0.88)
+    var detail_root := Node3D.new()
+    detail_root.name = "NestHighDefinitionDetail"
+    _model_root.add_child(detail_root)
+    var anatomy_scale := scale_factor
+    ModelKit3D.add_segmented_carapace(
+        detail_root,
+        0.86,
+        Vector3(0.0, 0.98, 0.0),
+        chitin,
+        shell_edge,
+        Vector3(1.34, 0.48, 1.16) * anatomy_scale,
+        4,
+        "NestDorsalCarapace"
+    )
+    ModelKit3D.add_tapered_cylinder(detail_root, 1.04, 1.28, 0.07, Vector3(0.0, 0.39, 0.0), root_dark, Vector3.ZERO, "NestRootCollar")
+    for index in range(5):
+        var plate_angle := TAU * float(index) / 5.0 + 0.35
+        var plate_position := Vector3(cos(plate_angle) * 0.98, 0.82 + float(index % 2) * 0.12, sin(plate_angle) * 0.98) * anatomy_scale
+        ModelKit3D.add_organic_plate(
+            detail_root,
+            0.22 + float(index % 2) * 0.035,
+            plate_position,
+            flesh,
+            shell_edge,
+            Vector3(0.86, 0.44, 0.68) * anatomy_scale,
+            "NestMembranePlate%02d" % index
+        )
+        ModelKit3D.add_tapered_cylinder(
+            detail_root,
+            0.026,
+            0.05,
+            0.84 * anatomy_scale,
+            Vector3(cos(plate_angle) * 0.45, 1.3 * anatomy_scale, sin(plate_angle) * 0.45),
+            vein,
+            Vector3(0.0, -plate_angle, 0.52),
+            "NestVeinChannel%02d" % index
+        )
+    for index in range(7):
+        var spine_angle := TAU * float(index) / 7.0 + 0.18
+        ModelKit3D.add_capsule(
+            detail_root,
+            0.04 + float(index % 2) * 0.014,
+            0.98 + float(index % 3) * 0.14,
+            Vector3(cos(spine_angle) * 1.32, 0.62 + float(index % 2) * 0.1, sin(spine_angle) * 1.32) * anatomy_scale,
+            shell_edge,
+            Vector3(0.0, -spine_angle, 0.92),
+            "NestFineSpine%02d" % index
+        )
+
+
+func _animate_visuals() -> void:
+    if _model_root == null or not active:
+        return
+    var pulse := 1.0 + sin(_visual_clock * (1.8 + maturity * 1.2)) * 0.045 * maturity
+    var pulse_node := _model_root.get_node_or_null("NestSignal_00") as Node3D
+    if pulse_node != null:
+        pulse_node.scale = Vector3.ONE * pulse
+    if _status_light != null:
+        _status_light.light_energy = (0.65 + maturity * 0.75) * (0.9 + sin(_visual_clock * 2.4) * 0.1)
 
 
 func _deterministic_unit(serial: int, salt: int) -> float:
