@@ -314,7 +314,13 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
 
 func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.region_director.region_data.size() >= 12, "Commercial release must contain at least twelve persistent regions.")
-    _expect(world.long_operation_director.operations.size() >= 12, "Commercial release must contain at least twelve physical long-range operations.")
+    _expect(world.long_operation_director.operations.size() >= 16, "Commercial release must contain at least sixteen physical long-range operations.")
+    for operation_id in [
+            &"operation.north_archive_sublevel",
+            &"operation.east_residential_rescue",
+            &"operation.west_transformer_repair",
+            &"operation.root_signal_purge"]:
+        _expect(world.long_operation_director.operations.has(operation_id), "The expanded operation breadth must retain %s." % String(operation_id))
     _expect(world.outpost_sites.size() >= 8, "Commercial release must contain at least eight bounded outpost sites.")
     var heartforge_detail := world.release_world_art.dressing_root.find_child("HighDefinitionHeartforgeDressing", true, false) if world.release_world_art.dressing_root != null else null
     _expect(heartforge_detail != null and heartforge_detail.find_child("HeartforgeBarrier00", true, false) != null and heartforge_detail.find_child("HeartforgeBarrierService00", true, false) != null, "The opening Heartforge perimeter must retain its authored barrier and service-detail dressing.")

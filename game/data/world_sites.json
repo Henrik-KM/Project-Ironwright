@@ -160,6 +160,38 @@
       "discovered_by": "operation.buried_lab_excavation",
       "recommended_outpost_role": "scout",
       "description": "A newly exposed airlock beside the buried laboratories, warning of movement through the root seams."
+    },
+    {
+      "id": "site.north_archive_sublevel",
+      "display_name": "North Archive Sublevel",
+      "position": [-8.0, 0.0, -58.0],
+      "discovered_by": "operation.north_archive_sublevel",
+      "recommended_outpost_role": "repair",
+      "description": "A sheltered records sublevel beneath the first expedition route, with intact service rails and a defensible loading mouth."
+    },
+    {
+      "id": "site.east_roof_reservoir",
+      "display_name": "East Roof Reservoir",
+      "position": [132.0, 0.0, 2.0],
+      "discovered_by": "operation.east_residential_rescue",
+      "recommended_outpost_role": "scout",
+      "description": "A roof-mounted reservoir platform above the residential arc, preserving an elevated warning line across the eastern approaches."
+    },
+    {
+      "id": "site.west_cooling_station",
+      "display_name": "West Cooling Station",
+      "position": [-90.0, 0.0, 40.0],
+      "discovered_by": "operation.west_transformer_repair",
+      "recommended_outpost_role": "defence",
+      "description": "A transformer cooling station beside the canal service road, valuable for holding the industrial route after the grid is restarted."
+    },
+    {
+      "id": "site.root_signal_ledge",
+      "display_name": "Root Signal Ledge",
+      "position": [146.0, 0.0, -98.0],
+      "discovered_by": "operation.root_signal_purge",
+      "recommended_outpost_role": "scout",
+      "description": "A narrow ledge above the final basin where a severed signal branch still pulses through the exposed rootwork."
     }
   ]
 }
