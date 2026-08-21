@@ -27,9 +27,9 @@ func _run_all() -> void:
         return
 
     var actors: Array[Node] = []
-    for index in range(24):
-        var band := index % 3
-        var distance := 18.0 if band == 0 else (86.0 if band == 1 else 260.0)
+    for index in range(96):
+        var band := index % 4
+        var distance := 18.0 if band == 0 else (86.0 if band == 1 else (140.0 if band == 2 else 260.0))
         var angle := float(index) * 0.67
         var anchor := world.player.global_position + Vector3(cos(angle) * distance, 0.0, sin(angle) * distance)
         var enemy := world._spawn_enemy(anchor, ORGANIC_SPECIES[index % ORGANIC_SPECIES.size()]) as OrganicEnemyRelease3D
@@ -44,7 +44,9 @@ func _run_all() -> void:
     var snapshot := world.performance_director.snapshot()
     _expect(int(snapshot.get("active_entities", 0)) <= world.performance_director.active_entity_budget, "Large populations must respect the active actor budget.")
     _expect(int(snapshot.get("medium_entities", 0)) <= world.performance_director.medium_entity_budget, "Large populations must respect the medium actor budget.")
-    _expect(int(snapshot.get("reduced_entities", 0)) >= 16, "Large populations must place distant actors into reduced-detail simulation.")
+    _expect(int(snapshot.get("reduced_entities", 0)) >= 64, "Large populations must place distant actors into reduced-detail simulation.")
+    _expect(int(snapshot.get("candidate_count", 0)) >= 192, "The stress population must register every spawned actor with the detail director.")
+    _expect(int(snapshot.get("sorted_candidate_count", 0)) < int(snapshot.get("candidate_count", 0)), "Large populations must sort only the medium-detail neighborhood instead of every distant actor.")
 
     var far_enemy := actors[46] as OrganicEnemyRelease3D
     var far_robot := actors[47] as RobotUnitRelease3D

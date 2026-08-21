@@ -1475,6 +1475,9 @@ Remaining production work includes:
 - every discovered remote region now also receives two bounded district-breadth
   layers with service-edge hardware, restrained overgrowth and region-specific
   identity motifs beyond its focal landmark vignette;
+- large-population detail evaluation now assigns actors beyond the medium radius
+  directly to reduced simulation and sorts only the nearby neighborhood, with a
+  192-actor regression scenario covering budget limits and causal movement;
 - performance profiling and optimization on agreed target hardware;
 - broader environmental narrative and sparse story arcs beyond the current
   Town Archive records, plus broader run variation beyond the authored weather

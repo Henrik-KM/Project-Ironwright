@@ -121,7 +121,7 @@ A performance director divides the physical world into three presentation and si
 - **medium:** active behaviour with reduced visual cost;
 - **reduced detail:** coarse deterministic movement and combat updates at a slower interval.
 
-Reduced detail is not an abstract mission timer. Distant organisms retain positions, targets, health, aggression and physical movement. Returning to the area restores full simulation around the same state.
+Reduced detail is not an abstract mission timer. Distant organisms retain positions, targets, health, aggression and physical movement. Returning to the area restores full simulation around the same state. Detail evaluation registers every actor but sorts only the active/medium neighborhood; actors beyond the medium radius are assigned the reduced state immediately, keeping distant population growth from expanding the per-evaluation sort workload.
 
 The director also enforces bounded active and medium actor budgets, assigning the nearest actors first. Medium actors retain their targets and state but advance on a coarse cadence; reduced actors use deterministic coarse movement and combat ticks. Release actors outside the active visual tier use a lightweight silhouette proxy so high-definition shells do not multiply routine rendering cost.
 

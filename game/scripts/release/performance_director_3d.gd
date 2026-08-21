@@ -26,6 +26,8 @@ var reduced_robots: Array[RobotUnitRelease3D] = []
 var medium_enemies: Array[OrganicEnemyRelease3D] = []
 var medium_robots: Array[RobotUnitRelease3D] = []
 var last_snapshot: Dictionary = {}
+var last_candidate_count: int = 0
+var last_sorted_candidate_count: int = 0
 
 
 func configure(next_focus_provider: Callable, next_target_fps: int = 60) -> void:
@@ -95,8 +97,19 @@ func _evaluate_entities() -> void:
         if raw_robot is RobotUnitRelease3D:
             candidates.append({"node": raw_robot, "distance": focus.distance_to((raw_robot as Node3D).global_position)})
 
-    candidates.sort_custom(Callable(self, "_sort_candidates_by_distance"))
+    last_candidate_count = candidates.size()
+    var nearby_candidates: Array[Dictionary] = []
     for candidate in candidates:
+        var distant_actor := candidate["node"] as Node
+        if float(candidate["distance"]) > medium_radius:
+            _apply_actor_detail(distant_actor, 2)
+            reduced_entities += 1
+        else:
+            nearby_candidates.append(candidate)
+
+    nearby_candidates.sort_custom(Callable(self, "_sort_candidates_by_distance"))
+    last_sorted_candidate_count = nearby_candidates.size()
+    for candidate in nearby_candidates:
         var actor := candidate["node"] as Node
         var distance := float(candidate["distance"])
         var lod_level := 2
@@ -109,20 +122,15 @@ func _evaluate_entities() -> void:
         else:
             reduced_entities += 1
 
+        _apply_actor_detail(actor, lod_level)
         if actor is OrganicEnemyRelease3D:
             var enemy := actor as OrganicEnemyRelease3D
-            enemy.set_reduced_detail(lod_level == 2)
-            enemy.set_coarse_simulation(lod_level == 1)
-            enemy.set_visual_lod(lod_level)
             if lod_level == 2:
                 reduced_enemies.append(enemy)
             elif lod_level == 1:
                 medium_enemies.append(enemy)
         elif actor is RobotUnitRelease3D:
             var robot := actor as RobotUnitRelease3D
-            robot.set_reduced_detail(lod_level == 2)
-            robot.set_coarse_simulation(lod_level == 1)
-            robot.set_visual_lod(lod_level)
             if lod_level == 2:
                 reduced_robots.append(robot)
             elif lod_level == 1:
@@ -138,6 +146,8 @@ func _evaluate_entities() -> void:
         "active_entities": active_entities,
         "medium_entities": medium_entities,
         "reduced_entities": reduced_entities,
+        "candidate_count": last_candidate_count,
+        "sorted_candidate_count": last_sorted_candidate_count,
     }
     performance_snapshot.emit(last_snapshot.duplicate(true))
 
@@ -162,6 +172,19 @@ func _tick_medium_entities(delta: float) -> void:
 
 func _sort_candidates_by_distance(left: Dictionary, right: Dictionary) -> bool:
     return float(left.get("distance", INF)) < float(right.get("distance", INF))
+
+
+func _apply_actor_detail(actor: Node, lod_level: int) -> void:
+    if actor is OrganicEnemyRelease3D:
+        var enemy := actor as OrganicEnemyRelease3D
+        enemy.set_reduced_detail(lod_level == 2)
+        enemy.set_coarse_simulation(lod_level == 1)
+        enemy.set_visual_lod(lod_level)
+    elif actor is RobotUnitRelease3D:
+        var robot := actor as RobotUnitRelease3D
+        robot.set_reduced_detail(lod_level == 2)
+        robot.set_coarse_simulation(lod_level == 1)
+        robot.set_visual_lod(lod_level)
 
 
 func _adapt_budgets() -> void:
