@@ -328,6 +328,12 @@ func _run_all() -> void:
         _expect(_find_named(robot, "CompanionCrown") != null, "The companion must expose a distinct crown silhouette.")
         _expect(_find_named(robot, "BulwarkShieldArc") != null, "The Bulwark must expose a readable protection field signature.")
         _expect(_find_named(robot, "BulwarkShieldEmitter") != null, "The Bulwark must expose a dedicated shield emitter.")
+        var shield_arc := _find_named(robot, "BulwarkShieldArc") as MeshInstance3D
+        if shield_arc != null:
+            var shield_mesh := shield_arc.mesh as TorusMesh
+            var shield_material := shield_arc.material_override as StandardMaterial3D
+            _expect(shield_mesh != null and shield_mesh.outer_radius <= 0.8, "The Bulwark protection arc must stay compact at tactical distance.")
+            _expect(shield_material != null and shield_material.emission_energy_multiplier <= 1.0, "The Bulwark protection arc must preserve the Heartforge focal hierarchy.")
         _expect(_find_named(robot, "BulwarkAuthoredModel") != null, "The opening companion must use the authored Bulwark model shell.")
         _expect(_find_named(robot, "ProductionAssetMarker") != null, "The authored Bulwark model must expose its production asset marker.")
 

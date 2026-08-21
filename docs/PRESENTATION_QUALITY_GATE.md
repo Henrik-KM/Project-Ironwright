@@ -126,6 +126,11 @@ damaged masonry from flattening into bright pools in the tactical frame. The
 pass remains presentation-only and does not alter collision, progression or
 autonomy workload.
 
+The opening cast now also keeps the Bulwark protection field as a compact dark
+cyan arc with a bounded emitter glow, while the Heartforge plaza pavers use a
+rougher, darker wet-concrete family. The companion role stays readable without
+letting its protection effect or the forge service surface dominate the frame.
+
 Automated presence tests only prove the slice exists technically. Actual screenshot/gameplay review decides whether it clears the visual bar.
 
 ## Art production sequence
@@ -134,7 +139,7 @@ The presentation milestones proceed in this order:
 
 1. camera, world-label and HUD cleanup — implemented, still subject to review;
 2. authored Heartforge district composition — vertical slice implemented, with live review now confirming the forge service surface no longer blooms into a dominant white card; full opening composition acceptance is still outstanding;
-3. production Mechromancer and Bulwark silhouettes — authored Mechromancer plus an authored Bulwark glTF shell with layered chassis, protection hardware, stable sockets and deterministic runtime animation; the Mechromancer now has a finished asymmetric field-kit pass with communications hardware, and the Bulwark retains its explicit shield-emitter/guard signature, with further authored refinement expected;
+3. production Mechromancer and Bulwark silhouettes — authored Mechromancer plus an authored Bulwark glTF shell with layered chassis, protection hardware, stable sockets and deterministic runtime animation; the Mechromancer now has a finished asymmetric field-kit pass with communications hardware, and the Bulwark retains its explicit shield-emitter/guard signature with a compact field arc and bounded glow, with further authored refinement expected;
 4. one production-quality Warden/Scrapper/Pathfinder family pass — the Warden now has an authored high-definition guardian shell with protected autocannon and heat-exchanger language, the Scrapper now has an authored cargo/tool shell with salvage hardware, Pathfinder now has an authored survey shell with mast/dish/optic language, and Engineer now has an authored construction/tool shell; further refinement remains expected;
 5. complete organic enemy families with authored movement and attack language — the full twelve-family roster now has authored glTF shells or the existing production shell contract, stable anatomy sockets and state-driven stalking/attack presentation; live acceptance completed for representative opening frames, with broader hostile-family review still required;
 6. cohesive urban modular kit with damaged facades, interiors, street furniture and vegetation — opening route set-piece pass implemented, every remote landmark now has a bounded presentation-only district apron, and West Grid, Riverworks, Cathedral Quarter, Observatory Ridge, Tram Graveyard, Buried Laboratories, Municipal Glasshouse, North Ruins, East Tenements, Flood Market and Root Cistern now have authored landmark shells; broader district breadth still required;

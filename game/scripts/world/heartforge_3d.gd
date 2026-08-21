@@ -47,7 +47,7 @@ func is_alive() -> bool:
 func set_operation(kind: StringName) -> void:
     active_operation = kind
     if _core_light != null:
-        _core_light.light_energy = 7.0 if kind != &"" else 4.4
+        _core_light.light_energy = 5.6 if kind != &"" else 3.6
 
 
 func set_progression_tier(next_tier: int) -> void:
@@ -155,7 +155,9 @@ func _build_visuals() -> void:
         var position := Vector3(cos(angle) * 2.35, 1.75, sin(angle) * 2.35)
         ModelKit3D.add_box(_model_root, Vector3(0.24, 2.1, 0.42), position, rust, Vector3(0.0, -angle, 0.0), "Rib")
 
-    _core_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 2.1, 0.0), Color("ff7d32"), 4.4, 19.0)
+    # The core remains the warm focal source, but its ground influence is
+    # bounded so the Heartforge does not flatten the surrounding paving.
+    _core_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 2.1, 0.0), Color("ff7d32"), 3.6, 16.0)
     ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.2, 3.15), Color("62e1e7"), 1.4, 7.0)
 
 

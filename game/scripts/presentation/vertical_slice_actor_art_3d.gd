@@ -246,17 +246,18 @@ func _build_bulwark_detail(parent: Node3D) -> void:
     ModelKit3D.add_cylinder(parent, 0.11, 1.3, Vector3(-0.4, 1.4, -0.72), dark_steel, Vector3(1.5708, 0.0, 0.0), "BulwarkGunLeft")
     ModelKit3D.add_cylinder(parent, 0.11, 1.3, Vector3(0.4, 1.4, -0.72), dark_steel, Vector3(1.5708, 0.0, 0.0), "BulwarkGunRight")
     ModelKit3D.add_beveled_box(parent, Vector3(1.3, 0.16, 0.62), Vector3(0.0, 1.64, 0.42), black_metal(), Vector3.ZERO, "BulwarkRadiator", 0.2)
-    # The companion's defining promise is protection. A low, restrained field
-    # ring and protected emitter spine make that role legible before combat
-    # starts without adding a second gameplay resource or a management task.
-    var shield_material := ModelKit3D.material(Color("18383f"), 0.34, 0.24, Color("67dce2"), 2.3)
+    # The companion's defining promise is protection. A compact, restrained
+    # field arc and protected emitter spine make that role legible before
+    # combat starts without turning the machine into a bright screen-space
+    # halo or adding a second gameplay resource.
+    var shield_material := ModelKit3D.material(Color("14383d"), 0.46, 0.32, Color("50c6ce"), 0.82)
     var shield_ring := MeshInstance3D.new()
     shield_ring.name = "BulwarkShieldArc"
     var shield_mesh := TorusMesh.new()
-    shield_mesh.inner_radius = 0.86
-    shield_mesh.outer_radius = 0.93
-    shield_mesh.rings = 18
-    shield_mesh.ring_segments = 36
+    shield_mesh.inner_radius = 0.72
+    shield_mesh.outer_radius = 0.79
+    shield_mesh.rings = 16
+    shield_mesh.ring_segments = 32
     shield_ring.mesh = shield_mesh
     shield_ring.material_override = shield_material
     shield_ring.position = Vector3(0.0, 0.34, 0.08)
