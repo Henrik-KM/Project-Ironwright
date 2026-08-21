@@ -1373,3 +1373,18 @@ Remaining production work includes:
 - external alpha, beta, packaging, store assets, signing and release QA.
 
 The roadmap now refines and expands an actual complete game loop rather than extrapolating from a disconnected prototype.
+
+## Focused keyboard-remapping accessibility milestone
+
+- added migration-safe persisted keyboard bindings for movement and exposed
+  interactions, with the existing controller actions retained alongside them;
+- added a localized settings surface that captures a new key in place, swaps
+  conflicts deterministically, updates the live `InputMap`, and restores the
+  previous binding without opening a per-unit or routine management task;
+- added a bounded 0.75x/1.0x/1.25x game-speed choice that applies to the live
+  release clock without changing ecology rules or adding a time-management
+  chore;
+- kept the release actor safe in non-release test scenes by retaining its
+  canonical keyboard fallback when the release settings service is absent;
+- added release regression coverage for live action-map updates, persisted
+  binding state and all five remapping controls, plus a live UI remap check.

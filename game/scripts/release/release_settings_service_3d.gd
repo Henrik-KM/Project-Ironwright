@@ -9,6 +9,14 @@ const DEFAULTS_PATH := "res://data/accessibility_defaults.json"
 const SETTINGS_PATH := "user://ironwright_release_settings.json"
 const SETTINGS_TEMP_PATH := "user://ironwright_release_settings.tmp"
 const SETTINGS_BACKUP_PATH := "user://ironwright_release_settings.backup.json"
+const REMAPPABLE_ACTIONS: Array[StringName] = [&"iw_move_up", &"iw_move_down", &"iw_move_left", &"iw_move_right", &"iw_interact"]
+const DEFAULT_INPUT_BINDINGS: Dictionary = {
+    "iw_move_up": KEY_W,
+    "iw_move_down": KEY_S,
+    "iw_move_left": KEY_A,
+    "iw_move_right": KEY_D,
+    "iw_interact": KEY_E,
+}
 
 var settings: Dictionary = {}
 var defaults: Dictionary = {}
@@ -21,6 +29,7 @@ func _ready() -> void:
     _load_defaults()
     _load_settings()
     ensure_input_map()
+    apply_input_bindings()
     Input.joy_connection_changed.connect(_on_joy_connection_changed)
     apply_runtime_settings()
 
@@ -112,11 +121,52 @@ func set_value(key: StringName, value: Variant, persist: bool = true) -> void:
 
 func apply_runtime_settings() -> void:
     Engine.max_fps = clampi(int(get_value(&"target_fps", 60)), 30, 240)
+    Engine.time_scale = clampf(float(get_value(&"game_speed", 1.0)), 0.75, 1.25)
     _ensure_audio_buses()
     _set_bus_linear("Master", float(get_value(&"master_volume", 0.88)))
     _set_bus_linear("Music", float(get_value(&"music_volume", 0.68)))
     _set_bus_linear("Ambience", float(get_value(&"ambience_volume", 0.78)))
     _set_bus_linear("Effects", float(get_value(&"effects_volume", 0.86)))
+
+
+func apply_input_bindings() -> void:
+    for action in REMAPPABLE_ACTIONS:
+        if not InputMap.has_action(action):
+            continue
+        for existing in InputMap.action_get_events(action):
+            if existing is InputEventKey:
+                InputMap.action_erase_event(action, existing)
+        var event := InputEventKey.new()
+        event.keycode = get_key_binding(action)
+        event.physical_keycode = event.keycode
+        InputMap.action_add_event(action, event)
+
+
+func get_key_binding(action: StringName) -> Key:
+    var bindings: Variant = settings.get("input_bindings", {})
+    if bindings is Dictionary and bindings.has(String(action)):
+        return int(bindings[String(action)]) as Key
+    return int(DEFAULT_INPUT_BINDINGS.get(String(action), KEY_NONE)) as Key
+
+
+func set_key_binding(action: StringName, keycode: Key, persist: bool = true) -> bool:
+    if action not in REMAPPABLE_ACTIONS or keycode == KEY_NONE:
+        return false
+    var bindings: Dictionary = settings.get("input_bindings", {}).duplicate(true)
+    for other_action in REMAPPABLE_ACTIONS:
+        if other_action != action and int(bindings.get(String(other_action), DEFAULT_INPUT_BINDINGS.get(String(other_action), KEY_NONE))) == int(keycode):
+            bindings[String(other_action)] = int(get_key_binding(action))
+    bindings[String(action)] = int(keycode)
+    settings["input_bindings"] = bindings
+    apply_input_bindings()
+    if persist:
+        save_settings()
+    settings_changed.emit(settings.duplicate(true))
+    return true
+
+
+func key_binding_display_name(action: StringName) -> String:
+    return OS.get_keycode_string(int(get_key_binding(action)))
 
 
 func apply_accessibility_to_tree(root: Node) -> void:
@@ -243,9 +293,15 @@ func _sanitize() -> void:
     settings["text_scale"] = clampf(float(settings.get("text_scale", 1.0)), 0.85, 1.4)
     settings["camera_shake"] = clampf(float(settings.get("camera_shake", 0.65)), 0.0, 1.0)
     settings["target_fps"] = clampi(int(settings.get("target_fps", 60)), 30, 120)
+    settings["game_speed"] = clampf(float(settings.get("game_speed", defaults.get("game_speed", 1.0))), 0.75, 1.25)
     for key in ["high_contrast_ui", "reduced_motion", "reduced_flashes", "hold_interactions", "controller_vibration", "subtitles", "show_world_guidance"]:
         settings[key] = bool(settings.get(key, defaults.get(key, false)))
     settings["colorblind_mode"] = str(settings.get("colorblind_mode", "off"))
+    var input_bindings: Dictionary = settings.get("input_bindings", {}).duplicate(true)
+    for action in REMAPPABLE_ACTIONS:
+        var keycode := int(input_bindings.get(String(action), DEFAULT_INPUT_BINDINGS.get(String(action), KEY_NONE)))
+        input_bindings[String(action)] = keycode if keycode > 0 else int(DEFAULT_INPUT_BINDINGS.get(String(action), KEY_NONE))
+    settings["input_bindings"] = input_bindings
 
 
 func _fallback_defaults() -> Dictionary:
@@ -267,6 +323,14 @@ func _fallback_defaults() -> Dictionary:
         "subtitles": true,
         "show_world_guidance": true,
         "target_fps": 60,
+        "game_speed": 1.0,
+        "input_bindings": {
+            "iw_move_up": KEY_W,
+            "iw_move_down": KEY_S,
+            "iw_move_left": KEY_A,
+            "iw_move_right": KEY_D,
+            "iw_interact": KEY_E,
+        },
     }
 
 
