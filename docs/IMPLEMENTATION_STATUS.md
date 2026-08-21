@@ -6,6 +6,11 @@
 - Added four fixed discovered sites and stable operation-driven rewards so optional expeditions create durable outpost choices, ecological suppression or endgame-pressure trade-offs.
 - Integrated ecological event modifiers, release breadth validation and regression coverage without adding per-unit orders, queues or recurring player maintenance.
 
+## Focused operation-archive storytelling milestone
+
+- Added four sparse Town Archive records tied to the new operation completion events, extending the civic, machine-witness and ecological-convergence arcs into the added expedition breadth.
+- Kept records discoverable only after the corresponding physical group returns, with save-safe archive identifiers and no new recurring interface task.
+
 ## Focused organic-roster breadth and authored-shell milestone
 
 - Expanded the authored organic roster from 12 to 14 families with Thornback territorial guardians and Ashmantle route predators.

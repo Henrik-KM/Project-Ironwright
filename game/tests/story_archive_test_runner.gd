@@ -34,6 +34,15 @@ func _run_all() -> void:
     world.outpost_director.operation_changed.emit(&"outpost_rebuild", &"complete", "")
     _expect(archive.has_record(&"story.outpost.returned_signal"), "An automatic rebuild must unlock the returned-signal record.")
 
+    world.long_operation_director.operation_changed.emit(&"operation.north_archive_sublevel", &"complete", "")
+    world.long_operation_director.operation_changed.emit(&"operation.east_residential_rescue", &"complete", "")
+    world.long_operation_director.operation_changed.emit(&"operation.west_transformer_repair", &"complete", "")
+    world.long_operation_director.operation_changed.emit(&"operation.root_signal_purge", &"complete", "")
+    _expect(archive.has_record(&"story.north_archive.sublevel"), "The archive sublevel operation must leave a durable civic record.")
+    _expect(archive.has_record(&"story.east_tenements.beacon"), "The residential beacon operation must leave a durable machine-witness record.")
+    _expect(archive.has_record(&"story.west_grid.transformer"), "The transformer repair must leave a durable industrial record.")
+    _expect(archive.has_record(&"story.root_cistern.ledge"), "The root signal purge must leave a durable endgame record.")
+
     world.endgame_director.endgame_completed.emit(&"protocol.containment", "Containment", "")
     _expect(archive.has_record(&"story.endgame.containment"), "The chosen final protocol must unlock its matching archive record.")
     _expect(not archive.has_record(&"story.endgame.severance"), "An unchosen final protocol must remain locked.")

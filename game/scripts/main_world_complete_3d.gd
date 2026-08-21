@@ -146,6 +146,7 @@ func _setup_complete_game_services() -> void:
     )
     add_child(long_operation_director)
     story_archive_director.connect_component_source(long_operation_director)
+    story_archive_director.connect_event_source(long_operation_director)
 
     machine_society_director = MachineSocietyDirector3D.new()
     machine_society_director.name = "MachineSocietyDirector"
