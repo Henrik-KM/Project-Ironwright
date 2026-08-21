@@ -5,8 +5,11 @@
   "runtime_model": "game/assets/root_cistern/root_cistern.gltf",
   "required_nodes": [
     "RootCisternModel",
+    "RootCisternBasin",
+    "RootCisternBasinWater",
     "RootCisternCore",
     "RootCisternCoreMass",
+    "RootCisternCoreHalo",
     "RootCisternLayer0",
     "RootCisternRib0",
     "RootCisternPylon0",

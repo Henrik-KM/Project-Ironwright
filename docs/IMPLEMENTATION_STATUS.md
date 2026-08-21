@@ -442,6 +442,18 @@ identities. Manual channels remain finish-before-save.
 - complete-world aesthetic coverage confirms the authored shell attaches to the
   persistent Root Cistern landmark without adding collision or player work.
 
+## Focused Root Cistern basin refinement milestone
+
+- strengthened the late landmark with an authored basin floor, dark water
+  surface, segmented bone rim, enlarged layered core, luminous core halo and
+  central signal spine;
+- corrected the imported pylon signal and pulse transforms so every tethered
+  light remains attached to its physical pylon at runtime;
+- retained the existing endgame pressure, mapping, protocol, persistence and
+  presentation-LOD contracts; the refinement remains presentation-only;
+- live tactical-distance review now shows a coherent basin-and-organ focal
+  space rather than isolated signal pylons.
+
 ## Focused autonomous-labor staging milestone
 
 - added a bounded presentation signature for an autonomous Scrapper actively

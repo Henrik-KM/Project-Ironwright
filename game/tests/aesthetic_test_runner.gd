@@ -105,6 +105,10 @@ func _run_all() -> void:
                     _expect(not grid_growth.scale.is_equal_approx(grid_growth_before), "West Grid organic growth must carry deterministic presentation motion.")
             if landmark.region_kind == &"endgame":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/RootCisternAuthoredModel") != null, "The Root Cistern must expose its authored landmark shell.")
+                _expect(landmark.find_child("RootCisternBasin", true, false) != null, "The Root Cistern must expose an authored basin floor to anchor the capstone encounter.")
+                _expect(landmark.find_child("RootCisternCoreHalo", true, false) != null, "The Root Cistern must expose an authored luminous core halo.")
+                var cistern_pulse := landmark.find_child("RootCisternPulse0", true, false) as Node3D
+                _expect(cistern_pulse != null, "The Root Cistern must expose a signal pulse socket on the authored pylon hierarchy.")
             if landmark.region_kind == &"nest":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/NestOccluderShell") != null, "The nest must isolate its close-range opaque shell for camera-safe presentation.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/CathedralAuthoredModel") != null, "Cathedral Quarter must expose its authored nave and choir landmark shell.")
