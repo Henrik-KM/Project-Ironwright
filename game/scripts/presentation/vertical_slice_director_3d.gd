@@ -94,8 +94,10 @@ func _create_materials() -> void:
     soot_masonry = ModelKit3D.material(Color("2d3031"), 0.02, 0.9)
     interior_dark = ModelKit3D.material(Color("0d1214"), 0.0, 0.98)
     wet_asphalt = ModelKit3D.material(Color("1b2529"), 0.22, 0.3)
-    wet_concrete = ModelKit3D.material(Color("536164"), 0.08, 0.52)
-    wet_concrete_dark = ModelKit3D.material(Color("3c4a4d"), 0.14, 0.6)
+    # Municipal pavers should retain wet surface variation without reading as
+    # a single pale landing pad around the Heartforge.
+    wet_concrete = ModelKit3D.material(Color("465458"), 0.16, 0.62)
+    wet_concrete_dark = ModelKit3D.material(Color("333f42"), 0.22, 0.68)
     painted_metal = ModelKit3D.material(Color("465458"), 0.72, 0.36)
     rust_metal = ModelKit3D.material(Color("6c3f29"), 0.48, 0.64)
     black_metal = ModelKit3D.material(Color("1c282c"), 0.78, 0.34)
@@ -254,8 +256,10 @@ func _build_heartforge_plaza() -> void:
             "ForgeServiceMarker",
             0.18
         )
-    var ring_light := _add_light(service_ring, Vector3(0.0, 0.38, 0.0), Color("80cdd4"), 0.18, 6.0, false)
-    ring_light.set_meta(&"vertical_base_energy", 0.18)
+    # The service ring should read as an inset hardware accent, not a broad
+    # circular flood across the municipal paving.
+    var ring_light := _add_light(service_ring, Vector3(0.0, 0.38, 0.0), Color("80cdd4"), 0.08, 4.5, false)
+    ring_light.set_meta(&"vertical_base_energy", 0.08)
     practical_lights.append(ring_light)
 
     # Broken municipal pavers create human scale around the forge instead of a
