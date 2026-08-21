@@ -132,6 +132,12 @@ func _run_all() -> void:
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/RegionalPressureRead") != null, "Each discovered non-sanctuary region must expose a bounded pressure-growth presentation layer.")
             _expect(landmark.find_child("RegionalPressurePlate00", true, false) != null and landmark.find_child("RegionalPressureSignal00", true, false) != null, "Regional pressure growth must expose stable plate and signal anatomy sockets.")
             _expect(landmark.get_node_or_null("ReducedRegionProxy") != null, "Each non-sanctuary region must expose a bounded coarse proxy for distant presentation LOD.")
+            var district_breadth := landmark.get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing/DistrictBreadthLayer") as Node3D
+            _expect(district_breadth != null, "Each discovered non-sanctuary region must expose a bounded district-breadth presentation layer.")
+            if district_breadth != null:
+                _expect(district_breadth.find_child("DistrictBreadthServicePad", true, false) != null, "District breadth must carry a readable service-edge anchor.")
+                _expect(district_breadth.find_child("DistrictBreadthGrowth0", true, false) != null, "District breadth must carry restrained overgrowth detail.")
+                _expect(district_breadth.find_child("DistrictBreadthIdentity_%s" % String(landmark.region_kind), true, false) != null, "District breadth must preserve a region-specific identity motif.")
             var pressure_read := landmark.get_node_or_null("PersistentRegionGeometry/RegionalPressureRead") as Node3D
             var pressure_signal := landmark.find_child("RegionalPressureSignal00", true, false) as Node3D
             if pressure_read != null and pressure_signal != null:
