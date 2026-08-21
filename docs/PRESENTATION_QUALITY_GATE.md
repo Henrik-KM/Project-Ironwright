@@ -95,6 +95,8 @@ Ordinary early-game nests now carry the same bounded close-range anatomy bar at 
 
 The first-session salvage target now carries a bounded high-definition wreck layer: beveled chassis construction, a damaged service panel, exposed axles and suspension, bundled live cables, broken-glass shards and a small status lens. These details remain presentation-only and preserve the existing Scrap, channel, noise, collision and autonomous reservation contracts.
 
+The central town's repeated street debris now carries a bounded high-definition treatment as well: alternating beveled concrete chunks, fractured slab variation and short exposed reinforcement bars replace the previous flat-box pile silhouette. This layer remains presentation-only and collision-free; it does not alter navigation, salvage, resource state or autonomous work.
+
 ## Release-readiness rule
 
 No agent may describe Project Ironwright as commercially finished, release-ready, or a release candidate based solely on:

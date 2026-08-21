@@ -1361,6 +1361,15 @@ presentation restore, with release regression coverage for that migration path.
   sockets so the opening machine reads as a maintained reactor rather than a
   broad cylindrical placeholder.
 
+## Focused street-debris refinement milestone
+
+- replaced the repeated flat-box debris piles with a bounded presentation-only
+  layer of beveled concrete chunks, broken slab variation and exposed
+  reinforcement bars;
+- preserved the existing no-collision, no-navigation and no-resource-state
+  contract for all street debris;
+- added aesthetic coverage for the stable debris layer and detail sockets.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.
