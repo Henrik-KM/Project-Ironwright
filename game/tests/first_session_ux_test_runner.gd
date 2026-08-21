@@ -38,6 +38,14 @@ func _run_all() -> void:
         _finish()
         return
 
+    for report in hud.notifications:
+        var report_text := str(report).to_upper()
+        _expect("PRE-ALPHA" not in report_text, "Opening reports must not expose internal pre-alpha status language.")
+        _expect("ALPHA ONLINE" not in report_text, "Opening reports must not expose internal alpha status language.")
+        _expect("OVERHAUL ONLINE" not in report_text, "Opening reports must not expose internal presentation status language.")
+        _expect("FOUNDATION ONLINE" not in report_text, "Opening reports must not expose internal foundation status language.")
+        _expect("RELEASE CANDIDATE" not in report_text, "Opening reports must not expose internal release status language.")
+
     hud.show_forge_menu()
     await process_frame
     var forge_rect := hud.forge_panel.get_global_rect()

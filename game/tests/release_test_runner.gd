@@ -512,6 +512,7 @@ func _test_front_end(world: IronwrightReleaseWorld3D) -> void:
     var front_end := world.release_front_end
     front_end.show_title(false)
     _expect(front_end.active_screen == &"title" and front_end.visible, "Localized release title screen must open.")
+    _expect("RELEASE CANDIDATE" not in front_end.version_label.text.to_upper(), "The title screen must present diegetic version language instead of internal release-status text.")
     _expect(front_end.continue_button.disabled, "Continue must be disabled without a valid save.")
     world._show_title_screen()
     _expect(not world.hud.visible and not world.strategic_hud.visible and not world.operations_hud.visible, "The title screen must hide tactical HUD layers instead of leaving gameplay guidance behind the modal.")
