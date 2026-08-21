@@ -419,6 +419,17 @@ func _run_all() -> void:
         if species_names[index] in [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver"]:
             var authored_marker_name := "%sAuthoredModel" % String(species_names[index]).capitalize()
             _expect(_find_named(enemy_samples[index], authored_marker_name) != null and _find_named(enemy_samples[index], "ProductionAssetMarker") != null, "The %s must expose its authored production asset contract." % species_names[index])
+        match species_names[index]:
+            &"roofleaper":
+                _expect(_find_named(enemy_samples[index], "RoofleaperFineVeinL") != null and _find_named(enemy_samples[index], "RoofleaperFineVeinR") != null, "The Roofleaper must expose fine vascular wing detail on both membranes.")
+            &"glassmoth":
+                _expect(_find_named(enemy_samples[index], "GlassmothFineVeinL0") != null and _find_named(enemy_samples[index], "GlassmothFineVeinR0") != null, "The Glassmoth must expose fine luminous wing-vein detail on both wing pairs.")
+            &"miremaw":
+                _expect(_find_named(enemy_samples[index], "MiremawGillRidgeL") != null and _find_named(enemy_samples[index], "MiremawGillRidgeR") != null, "The Miremaw must expose layered gill-ridge surface detail.")
+            &"carrionbell":
+                _expect(_find_named(enemy_samples[index], "CarrionbellResonatorRing") != null, "The Carrion Bell must expose a raised resonator lip for its signal anatomy.")
+            &"rootweaver":
+                _expect(_find_named(enemy_samples[index], "RootweaverKnuckleL") != null and _find_named(enemy_samples[index], "RootweaverKnuckleR") != null, "The Rootweaver must expose joint detail where its route arms meet the body.")
         if species_names[index] == &"apex":
             var apex_crown := _find_named(enemy_samples[index], "ApexCrown") as Node3D
             var apex_plate := _find_named(enemy_samples[index], "ApexCrownPlate") as Node3D
