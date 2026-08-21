@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "records": [
+    {
+      "id": "story.heartforge.last_light",
+      "arc": "civic_afterimage",
+      "trigger": "opening",
+      "trigger_id": "",
+      "sequence": 10,
+      "display_name": "The Last Light",
+      "source_name": "Heartforge District",
+      "description": "The town's final service ledger names the Heartforge as a shelter, not a weapon. Someone kept its warm circuit alive long after the evacuation routes went dark."
+    },
+    {
+      "id": "story.north_ruins.ledger",
+      "arc": "civic_afterimage",
+      "trigger": "region_discovered",
+      "trigger_id": "region.north_ruins",
+      "sequence": 20,
+      "display_name": "The Evacuation Ledger",
+      "source_name": "North Ruins",
+      "description": "The archive lists three failed evacuation windows and one repeated instruction: leave the machines where they can still hear the forge. The final page was torn out from the inside."
+    },
+    {
+      "id": "story.west_grid.reroute",
+      "arc": "machine_witness",
+      "trigger": "region_discovered",
+      "trigger_id": "region.west_grid",
+      "sequence": 30,
+      "display_name": "The Reroute",
+      "source_name": "West Grid",
+      "description": "A substation log shows maintenance frames diverting power toward the Heartforge without a human command. The first machine society was already choosing what to protect."
+    },
+    {
+      "id": "story.east_tenements.bridge",
+      "arc": "machine_witness",
+      "trigger": "region_discovered",
+      "trigger_id": "region.east_tenements",
+      "sequence": 40,
+      "display_name": "The Cable Bridges",
+      "source_name": "East Tenements",
+      "description": "Residents linked the upper walkways with salvaged signal cable so repair frames could cross without touching the streets. The routes are still visible beneath the nests."
+    },
+    {
+      "id": "story.glasshouse.cultivation",
+      "arc": "ecological_convergence",
+      "trigger": "region_discovered",
+      "trigger_id": "region.glasshouse",
+      "sequence": 50,
+      "display_name": "The Cultivation Protocol",
+      "source_name": "Municipal Glasshouse",
+      "description": "The glasshouse did not merely contain the first membrane growth. Its climate system selected for it, misting the most resilient strains until cultivation and infestation became the same process."
+    },
+    {
+      "id": "story.observatory.migration",
+      "arc": "ecological_convergence",
+      "trigger": "region_discovered",
+      "trigger_id": "region.observatory_ridge",
+      "sequence": 60,
+      "display_name": "The Migration Map",
+      "source_name": "Observatory Ridge",
+      "description": "The surviving optics reveal that the organisms are not wandering at random. Their paths converge on one buried signal source beneath the town."
+    },
+    {
+      "id": "story.root_cistern.signal",
+      "arc": "ecological_convergence",
+      "trigger": "region_discovered",
+      "trigger_id": "region.root_cistern",
+      "sequence": 70,
+      "display_name": "The Buried Signal",
+      "source_name": "Root Cistern",
+      "description": "The Root Cistern is a living relay wrapped around old municipal pumping works. The town's hostility is coordinated, but its coordination is also a wound that can be severed or contained."
+    },
+    {
+      "id": "story.town_archive.continuation",
+      "arc": "civic_afterimage",
+      "trigger": "component_recovered",
+      "trigger_id": "component.town_archive",
+      "sequence": 80,
+      "display_name": "The Town Archive",
+      "source_name": "Post-victory archive recovery",
+      "description": "The surviving record refuses a clean ending. It names the people, machines and organisms that adapted together, leaving the next decision to whoever keeps the forge warm."
+    }
+  ]
+}

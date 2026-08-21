@@ -1057,6 +1057,18 @@ final retail art, animation and external visual approval are still required.
 - added release coverage for profile loading, deterministic identity and
   run-state round-trip preservation.
 
+## Focused Town Archive narrative milestone
+
+- added `game/data/story_archive.json` with sparse civic, machine-witness and
+  ecological records tied to the opening, real region discovery and the
+  post-victory archive component;
+- added `StoryArchiveDirector3D` with stable IDs, one-time unlocks, bounded
+  event-log explanations and a versioned save payload;
+- added an on-demand `L` archive panel to the complete-game command surface so
+  story remains optional and does not become a recurring management task;
+- added complete-run coverage for opening, discovery, panel readability and
+  in-memory record restoration.
+
 ## Commercial work still remaining
 
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
@@ -1074,8 +1086,9 @@ Remaining production work includes:
   disruption;
 - broader content variants, technologies, operations and site dressing;
 - performance profiling and optimization on agreed target hardware;
-- environmental narrative, sparse story arcs and broader run variation beyond
-  the current authored weather profiles;
+- broader environmental narrative and sparse story arcs beyond the current
+  Town Archive records, plus broader run variation beyond the authored weather
+  profiles;
 - 30–100-hour balance and repeated full internal runs;
 - professional localization review of all remaining gameplay prose;
 - external alpha, beta, packaging, store assets, signing and release QA.

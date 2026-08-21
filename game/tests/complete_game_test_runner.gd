@@ -22,6 +22,13 @@ func _run_all() -> void:
     if world == null:
         _finish()
         return
+    var complete_world := world as IronwrightCompleteGameWorld3D
+    _expect(complete_world != null and complete_world.story_archive_director != null, "The complete run must install the persisted Town Archive director.")
+    if complete_world != null and complete_world.story_archive_director != null:
+        _expect(complete_world.story_archive_director.has_record(&"story.heartforge.last_light"), "The opening must preserve the first Town Archive record.")
+        complete_world._open_story_archive()
+        _expect(complete_world.operations_hud.is_open() and complete_world.operations_hud.mode == &"archive", "The Town Archive must be readable through an on-demand archive panel.")
+        complete_world._close_operations_hud()
 
     world.ecology_director.set_process(false)
     world.strategic_ecology_director.set_process(false)
@@ -83,6 +90,7 @@ func _run_all() -> void:
     _expect(world.outpost_director.get_site(&"site.west_substation").discovered, "The West Grid survey must reveal its fixed support site.")
     await process_frame
     _expect(world.region_director.get_landmark(&"region.west_grid").get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing") != null, "Discovering a remote region must attach its authored encounter dressing without changing the operation contract.")
+    _expect(complete_world.story_archive_director.has_record(&"story.north_ruins.ledger") and complete_world.story_archive_director.has_record(&"story.west_grid.reroute"), "Physical regional discoveries must unlock their stable Town Archive records.")
 
     _expect(world.progression.purchase(&"tech.heartforge.tier_3"), "West Grid data and one outpost must permit Heartforge tier 3.")
     _expect(world.progression.heartforge_tier == 3, "The run must reach Heartforge tier 3.")
@@ -154,8 +162,10 @@ func _run_all() -> void:
     _expect(world.long_operation_director.available_operations().any(func(entry: Dictionary) -> bool: return StringName(str(entry.get("id", ""))) == &"operation.post_victory_archive"), "The post-victory archive must become available after the player continues.")
     _expect(_complete_operation(world, &"operation.post_victory_archive"), "The post-victory archive must remain a physical autonomous operation.")
     _expect(world.long_operation_director.has_component(&"component.town_archive"), "The post-victory archive must deliver its persistent town record component.")
+    _expect(complete_world.story_archive_director.has_record(&"story.town_archive.continuation"), "The recovered post-victory archive must unlock its persistent Town Archive record.")
 
     var region_save := world.region_director.to_dictionary()
+    var story_archive_save := complete_world.story_archive_director.to_dictionary()
     var operation_save := world.long_operation_director.to_dictionary()
     var society_save := world.machine_society_director.to_dictionary()
     var ecology_save := world.strategic_ecology_director.to_dictionary()
@@ -164,12 +174,14 @@ func _run_all() -> void:
     var endgame_save := world.endgame_director.to_dictionary()
 
     world.region_director.restore_from_dictionary(region_save)
+    complete_world.story_archive_director.restore_from_dictionary(story_archive_save)
     world.long_operation_director.restore_from_dictionary(operation_save)
     world.machine_society_director.restore_from_dictionary(society_save)
     world.strategic_ecology_director.restore_from_dictionary(ecology_save)
     _expect(is_equal_approx(float(world.strategic_ecology_director.population_state(&"region.heartforge_district").get("population", 0.0)), saved_population), "Ecology population state must survive in-memory restoration.")
     world.endgame_director.restore_from_dictionary(endgame_save)
     _expect(world.long_operation_director.component_count() >= 4, "Save restoration must preserve all recovered components.")
+    _expect(complete_world.story_archive_director.has_record(&"story.town_archive.continuation"), "Town Archive records must survive in-memory restoration.")
     _expect(world.endgame_director.completed_protocol == &"protocol.severance", "Save restoration must preserve the chosen completed ending.")
     _expect(world.region_director.is_discovered(&"region.root_cistern"), "Save restoration must preserve late-region discovery.")
 

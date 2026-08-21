@@ -214,6 +214,8 @@ Completing either protocol is the first victory, not a forced restart. Press
 Enter or Space on the victory panel to continue the surviving sanctuary. The
 post-victory archive then becomes available through `P`; its autonomous group
 travels to the North Ruins and returns with civil records and machine names.
+The optional Town Archive is readable through `L`; its records also unlock from
+real regional discoveries and remain persisted with the run.
 
 ## 9. Continuity
 
@@ -265,6 +267,7 @@ through a migration path and are never treated as the current write format.
 New controls:
 
 - `P`: long-range operations;
+- `L`: recovered Town Archive records;
 - `V`: final protocols;
 - left/right: select available operation or protocol;
 - Enter/Space: authorize;
