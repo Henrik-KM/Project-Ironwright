@@ -380,18 +380,40 @@ func _build_wrecks_and_debris() -> void:
         Vector3(33.0, 0.0, -22.0), Vector3(-12.0, 0.0, -31.0), Vector3(15.0, 0.0, 31.0),
         Vector3(-50.0, 0.0, 2.0), Vector3(51.0, 0.0, -3.0),
     ]
+    var broken_concrete := ModelKit3D.material(Color("5a5148"), 0.0, 0.9)
+    var exposed_steel := ModelKit3D.material(Color("714736"), 0.62, 0.62)
+    var debris_detail := Node3D.new()
+    debris_detail.name = "HighDefinitionDebrisDetail"
+    add_child(debris_detail)
     for index in range(debris_positions.size()):
         var debris_root := Node3D.new()
+        debris_root.name = "StreetDebris%02d" % index
         debris_root.position = debris_positions[index]
-        add_child(debris_root)
+        debris_detail.add_child(debris_root)
         for piece in range(4):
-            ModelKit3D.add_box(
+            var chunk_size := Vector3(0.6 + piece * 0.18, 0.25 + piece * 0.08, 0.5)
+            var chunk_position := Vector3(float(piece) * 0.35 - 0.5, 0.18 + piece * 0.05, float(piece % 2) * 0.5)
+            ModelKit3D.add_beveled_box(
                 debris_root,
-                Vector3(0.6 + piece * 0.18, 0.25 + piece * 0.08, 0.5),
-                Vector3(float(piece) * 0.35 - 0.5, 0.18 + piece * 0.05, float(piece % 2) * 0.5),
-                rubble_material,
+                chunk_size,
+                chunk_position,
+                broken_concrete if piece % 2 == 0 else rubble_material,
                 Vector3(0.1 * piece, 0.35 * piece, 0.2),
-                "Rubble"
+                "RubbleChunk%02d" % piece,
+                0.2
+            )
+        # Short, angled reinforcement bars break the repeated slab silhouette
+        # and give close-range street debris a legible construction history.
+        for bar in range(2):
+            var bar_position := Vector3(-0.28 + float(bar) * 0.72, 0.56 + float(bar) * 0.06, 0.2 - float(bar) * 0.32)
+            ModelKit3D.add_cylinder(
+                debris_root,
+                0.045,
+                0.82,
+                bar_position,
+                exposed_steel,
+                Vector3(0.72, 0.0, 0.38 + float(bar) * 0.22),
+                "RubbleRebar%02d" % bar
             )
 
 
