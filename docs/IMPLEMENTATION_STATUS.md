@@ -6,6 +6,12 @@
 - The overlays are cleared by repair and hidden automatically outside close-detail presentation, keeping remote simulation lightweight while preserving readable local consequences.
 - Release regression coverage verifies creation, damage, LOD suppression, restoration, and repair clearing.
 
+## Focused transactional sidecar isolation milestone
+
+- Enemy-tier progression sidecars now follow the configured transactional save root and slot instead of writing to one shared global path.
+- Save and load callbacks retarget the sidecar from the authoritative snapshot path, preventing parallel scenario runs and isolated saves from corrupting one another.
+- Release regression coverage verifies isolated writes and cross-root retargeting.
+
 ## Native Godot 3D — complete end-to-end systemic alpha
 
 The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGameWorld3D`, which preserves the aesthetic, opening UX, progression, and outpost layers while adding the full start-to-victory systemic run.
