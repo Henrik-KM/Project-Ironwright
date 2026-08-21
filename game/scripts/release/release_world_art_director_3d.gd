@@ -482,9 +482,32 @@ func _dress_nest(root: Node3D) -> void:
 
 func _dress_observatory(root: Node3D) -> void:
     var metal := _textured_material(&"metal", Color("3b474b"), 0.68, 0.42)
-    ModelKit3D.add_cylinder(root, 3.2, 2.0, Vector3(0.0, 1.0, 0.0), metal, Vector3.ZERO, "ObservatoryBase")
-    ModelKit3D.add_sphere(root, 3.6, Vector3(0.0, 4.3, 0.0), metal, Vector3(1.0, 0.26, 1.0), "ObservatoryDish")
-    ModelKit3D.add_cylinder(root, 0.18, 5.0, Vector3(0.0, 6.0, 0.0), metal, Vector3(0.4, 0.0, 0.0), "DishFeed")
+    var observatory_detail := Node3D.new()
+    observatory_detail.name = "HighDefinitionObservatoryDressing"
+    root.add_child(observatory_detail)
+    var dark_metal := _textured_material(&"metal", Color("202d31"), 0.78, 0.34)
+    var rust := _textured_material(&"rust", Color("754a32"), 0.38, 0.7)
+    var signal_material := ModelKit3D.material(Color("1e5964"), 0.26, 0.26, Color("73d9e8"), 1.3)
+    ModelKit3D.add_cylinder(observatory_detail, 3.2, 2.0, Vector3(0.0, 1.0, 0.0), metal, Vector3.ZERO, "ObservatoryBase")
+    ModelKit3D.add_beveled_box(observatory_detail, Vector3(5.8, 0.22, 4.8), Vector3(0.0, 0.16, 0.0), dark_metal, Vector3.ZERO, "ObservatoryServiceDeck", 0.18)
+    ModelKit3D.add_surface_panel(observatory_detail, Vector3(1.25, 0.68, 0.1), Vector3(0.0, 0.9, -3.1), dark_metal, signal_material, Vector3.ZERO, "ObservatoryAccessPanel")
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_cylinder(observatory_detail, 0.1, 3.8, Vector3(side * 2.45, 1.75, 0.0), rust, Vector3(0.0, 0.0, side * 0.42), "ObservatoryTripodBrace")
+    ModelKit3D.add_sphere(observatory_detail, 3.6, Vector3(0.0, 4.3, 0.0), metal, Vector3(1.0, 0.26, 1.0), "ObservatoryDish")
+    for rib_index in range(8):
+        var rib_angle := TAU * float(rib_index) / 8.0
+        ModelKit3D.add_capsule(
+            observatory_detail,
+            0.08,
+            5.8,
+            Vector3(cos(rib_angle) * 2.75, 4.3 + sin(rib_angle) * 0.48, sin(rib_angle) * 2.75),
+            rust,
+            Vector3(0.0, -rib_angle, 0.18 * cos(rib_angle)),
+            "ObservatoryDishRib%02d" % rib_index
+        )
+    ModelKit3D.add_cylinder(observatory_detail, 0.18, 5.0, Vector3(0.0, 6.0, 0.0), metal, Vector3(0.4, 0.0, 0.0), "DishFeed")
+    ModelKit3D.add_cylinder(observatory_detail, 0.28, 0.34, Vector3(0.0, 8.32, 0.0), signal_material, Vector3.ZERO, "DishReceiverLens")
+    ModelKit3D.add_beveled_box(observatory_detail, Vector3(0.82, 0.14, 0.82), Vector3(0.0, 3.62, 0.0), rust, Vector3.ZERO, "ObservatoryDishHub", 0.18)
 
 
 func _dress_research(root: Node3D) -> void:

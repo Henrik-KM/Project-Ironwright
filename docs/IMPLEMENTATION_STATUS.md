@@ -1417,6 +1417,16 @@ presentation restore, with release regression coverage for that migration path.
 - added release coverage for the stable console, display, cooling, sample and
   containment detail sockets.
 
+## Focused remote observatory-dressing refinement milestone
+
+- replaced the release-dressed observatory cylinder/sphere silhouette with a
+  bounded beveled service deck, access panel, tripod braces, ribbed dish,
+  central hub, feed and receiver lens;
+- preserved the presentation-only observatory-dressing contract and existing
+  Observatory Ridge survey, route, ecology and operation state;
+- added release coverage for the stable deck, dish, rib, hub and receiver
+  detail sockets.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.

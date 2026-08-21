@@ -239,6 +239,12 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         _expect(research_dressing.find_child("LabConsole00", true, false) != null and research_dressing.find_child("LabDisplay00", true, false) != null, "Release research dressing must expose layered console and display detail.")
         _expect(research_dressing.find_child("LabCoolingLouver00", true, false) != null and research_dressing.find_child("LabSamplePort00", true, false) != null, "Release research dressing must expose cooling and sample hardware.")
         _expect(research_dressing.find_child("LabContainmentVessel00", true, false) != null and research_dressing.find_child("LabContainmentCore00", true, false) != null and research_dressing.find_child("LabContainmentCap00", true, false) != null, "Release research dressing must expose layered containment vessels.")
+    var observatory_dressing := world.release_world_art.dressing_root.find_child("HighDefinitionObservatoryDressing", true, false) if world.release_world_art.dressing_root != null else null
+    _expect(observatory_dressing != null, "Release observatory dressing must expose a bounded high-definition optics layer.")
+    if observatory_dressing != null:
+        _expect(observatory_dressing.find_child("ObservatoryBase", true, false) != null and observatory_dressing.find_child("ObservatoryServiceDeck", true, false) != null, "Release observatory dressing must expose layered base and service deck detail.")
+        _expect(observatory_dressing.find_child("ObservatoryDish", true, false) != null and observatory_dressing.find_child("ObservatoryDishRib00", true, false) != null and observatory_dressing.find_child("ObservatoryDishHub", true, false) != null, "Release observatory dressing must expose ribbed dish geometry.")
+        _expect(observatory_dressing.find_child("DishFeed", true, false) != null and observatory_dressing.find_child("DishReceiverLens", true, false) != null, "Release observatory dressing must expose receiver hardware.")
 
 
 func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
