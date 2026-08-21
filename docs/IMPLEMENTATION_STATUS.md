@@ -1145,6 +1145,9 @@ final retail art, animation and external visual approval are still required.
   families and their membrane, gill, fin, resonator, mantle, spore and vein
   detail so imported high-definition shells receive their intended surface
   language in the shipping runtime.
+- bounded late runtime material work to mesh-added events instead of repeated
+  recursive subtree scans, preserving material continuity while reducing the
+  presentation overhead of larger active populations.
 
 ## Focused tiered-nest anatomy presentation milestone
 
