@@ -299,6 +299,8 @@ func apply_safe_layout(viewport_size: Vector2) -> void:
         notification_panel.size.x = 424.0
         notification_panel.position.x = -446.0
         notification_label.size.x = 388.0
+    if ending_panel != null and is_instance_valid(ending_panel):
+        _layout_ending_panel(viewport_size)
 
 
 func _on_viewport_resized() -> void:
@@ -458,18 +460,52 @@ func _refresh_notifications() -> void:
 
 func show_ending(victory: bool, detail: String, allow_continuation: bool = false) -> void:
     dismiss_ending()
-    ending_panel = _panel(Vector2(-330, -155), Vector2(660, 310), true, true)
+    ending_panel = _panel(Vector2.ZERO, Vector2.ZERO, false, false)
     ending_panel.name = "EndingPanel"
     ending_panel.set_anchors_preset(Control.PRESET_CENTER)
-    ending_panel.position = Vector2(-330, -155)
     ending_panel.mouse_filter = Control.MOUSE_FILTER_STOP
     var prompt := "Press ENTER to continue exploring." if allow_continuation else "Press ENTER to restart."
-    var label := _label(ending_panel, ("FIRST LIGHT SECURED" if victory else "THE HEARTFORGE FELL") + "\n\n" + detail + "\n\n" + prompt, 24, Color("79d8dc") if victory else Color("e06b5f"))
-    label.position = Vector2(28, 28)
-    label.size = Vector2(604, 254)
+    var readable_detail := _wrap_ending_detail(detail, 76)
+    var label := _label(ending_panel, ("FIRST LIGHT SECURED" if victory else "THE HEARTFORGE FELL") + "\n\n" + readable_detail + "\n\n" + prompt, 19, Color("79d8dc") if victory else Color("e06b5f"))
     label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
     label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    _layout_ending_panel(Vector2(get_viewport().get_visible_rect().size))
+
+
+func _layout_ending_panel(viewport_size: Vector2) -> void:
+    if ending_panel == null or not is_instance_valid(ending_panel):
+        return
+    var panel_width := minf(820.0, maxf(420.0, viewport_size.x - 40.0))
+    var panel_height := minf(360.0, maxf(260.0, viewport_size.y - 40.0))
+    ending_panel.set_anchors_preset(Control.PRESET_CENTER)
+    ending_panel.offset_left = -panel_width * 0.5
+    ending_panel.offset_right = panel_width * 0.5
+    ending_panel.offset_top = -panel_height * 0.5
+    ending_panel.offset_bottom = panel_height * 0.5
+    var content := ending_panel.get_node_or_null("PanelContent") as Control
+    if content == null or content.get_child_count() == 0:
+        return
+    var label := content.get_child(0) as Label
+    if label != null:
+        label.position = Vector2(24.0, 20.0)
+        label.size = Vector2(panel_width - 48.0, panel_height - 40.0)
+
+
+func _wrap_ending_detail(detail: String, max_chars: int) -> String:
+    var lines: Array[String] = []
+    var current := ""
+    for word in detail.split(" ", false):
+        if current.is_empty():
+            current = word
+        elif current.length() + word.length() + 1 <= max_chars:
+            current += " " + word
+        else:
+            lines.append(current)
+            current = word
+    if not current.is_empty():
+        lines.append(current)
+    return "\n".join(lines)
 
 
 func dismiss_ending() -> void:

@@ -137,6 +137,12 @@ func _run_all() -> void:
     _expect(world.first_victory_achieved, "Completing a final protocol must produce the first victory.")
     _expect(world.game_ended, "The complete systemic run must have a real end state.")
     _expect(not world.long_operation_director.available_operations().any(func(entry: Dictionary) -> bool: return StringName(str(entry.get("id", ""))) == &"operation.post_victory_archive"), "The post-victory archive must remain unavailable behind the victory boundary until continuation is chosen.")
+    world.hud.show_ending(true, "The signal collapses. Organisms remain in the streets, but the intelligence coordinating them is gone. The machines inherit a wounded, survivable town.", true)
+    var ending_panel := world.hud.ending_panel
+    var ending_label := ending_panel.get_node("PanelContent").get_child(0) as Label
+    _expect(ending_label != null and ending_label.text.count("\n") >= 4, "The victory overlay must wrap its long ending copy into readable lines.")
+    _expect(ending_panel.offset_left < 0.0 and ending_panel.offset_right > 0.0 and ending_panel.offset_top < 0.0 and ending_panel.offset_bottom > 0.0, "The victory overlay must stay centered inside the viewport-safe offsets.")
+    world.hud.dismiss_ending()
 
     var continue_event := InputEventKey.new()
     continue_event.keycode = KEY_ENTER

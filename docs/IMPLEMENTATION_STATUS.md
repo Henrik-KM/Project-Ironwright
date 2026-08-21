@@ -136,6 +136,13 @@ identities. Manual channels remain finish-before-save.
 - added native coverage that fails if the final-protocol light budget regresses into an unreadable bloom;
 - live-reviewed both the active crisis and completed sanctuary frames in the running Godot scene.
 
+## Focused victory overlay readability milestone
+
+- centered the first-victory overlay with explicit viewport-safe offsets;
+- wrapped the long conclusion copy into readable lines and reduced its body scale;
+- added native coverage for copy wrapping and centered overlay bounds;
+- live-reviewed the completed victory frame with the full conclusion text visible.
+
 ## Focused tactical framing milestone
 
 - tightened the release opening camera to a 16.8 height and 10.0 distance
