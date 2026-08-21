@@ -45,6 +45,18 @@ REQUIRED = [
     "game/assets/mechromancer/source/build_mechromancer_asset.py",
     "game/data/mechromancer_asset_manifest.json",
     "game/assets/organic_families/source/build_authored_organic_assets.py",
+    "game/assets/skitterling/source/build_skitterling_asset.py",
+    "game/assets/skitterling/skitterling.gltf",
+    "game/data/skitterling_asset_manifest.json",
+    "game/assets/burrower/source/build_burrower_asset.py",
+    "game/assets/burrower/burrower.gltf",
+    "game/data/burrower_asset_manifest.json",
+    "game/assets/sporecaster/source/build_sporecaster_asset.py",
+    "game/assets/sporecaster/sporecaster.gltf",
+    "game/data/sporecaster_asset_manifest.json",
+    "game/assets/broodmass/source/build_broodmass_asset.py",
+    "game/assets/broodmass/broodmass.gltf",
+    "game/data/broodmass_asset_manifest.json",
     "game/assets/riverworks/source/build_riverworks_asset.py",
     "game/assets/riverworks/riverworks.gltf",
     "game/data/riverworks_asset_manifest.json",
@@ -81,6 +93,26 @@ REQUIRED = [
 ]
 
 AUTHORED_ORGANIC_ASSETS = {
+    "skitterling": {
+        "asset_id": "skitterling.scavenger.v1",
+        "root": "SkitterlingModel",
+        "required": ["SkitterlingModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SkitterlingCarapace0", "SkitterlingCarapaceCap0", "SkitterlingAntennaL", "SkitterlingAntennaJointL", "SkitterlingMandibleL", "SkitterlingMandiblePlateL", "SkitterlingSensoryFan0", "ProductionAssetMarker"],
+    },
+    "burrower": {
+        "asset_id": "burrower.drill.v1",
+        "root": "BurrowerModel",
+        "required": ["BurrowerModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BurrowerDrill", "BurrowerTip", "BurrowerDrillRing0", "BurrowerDrillFlute0", "BurrowerLampL", "BurrowerLampGuardL", "ProductionAssetMarker"],
+    },
+    "sporecaster": {
+        "asset_id": "sporecaster.infestation.v1",
+        "root": "SporecasterModel",
+        "required": ["SporecasterModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SporecasterGillFan0", "SporecasterGillRib0", "SporecasterSac0", "SporecasterSacCap0", "SporecasterStem0", "SporecasterOculusL", "ProductionAssetMarker"],
+    },
+    "broodmass": {
+        "asset_id": "broodmass.nest.v1",
+        "root": "BroodmassModel",
+        "required": ["BroodmassModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BroodmassLobeL", "BroodmassLobeRidgeL", "BroodmassMaw", "BroodmassMawRidge", "CrownSpine0", "CrownFastener0", "BroodmassFanL", "ProductionAssetMarker"],
+    },
     "roofleaper": {
         "asset_id": "roofleaper.ambusher.v1",
         "root": "RoofleaperModel",

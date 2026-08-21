@@ -331,3 +331,12 @@ stable anatomy sockets, are included in the asset manifests and remain
 presentation-only. Family-specific animation keeps the added spars, plates,
 ribs and spines moving with the existing attack language rather than adding
 new player work or simulation state.
+
+## Focused common-organic anatomy refinement milestone
+
+The common Skitterling, Burrower, Sporecaster and Broodmass shells now carry a
+close-camera secondary layer as well: carapace caps and mandible plates, drill
+flutes and lamp guards, gill ribs and spore-sac caps, and lobe, maw and crown
+hardware. The added anatomy is part of each stable authored asset contract and
+is animated through existing family signatures, preserving the same
+presentation-only boundary and avoiding any new recurring player task.

@@ -36,18 +36,20 @@ def main() -> None:
 
     wet, shell, flesh, bone, eye, tendon = range(6)
     mesh_ids = {
-        "Core": mesh("Core", add_uv_sphere(builder, 0.62, wet, 16, 26)),
-        "Segment": mesh("Segment", add_uv_sphere(builder, 0.48, shell, 14, 24)),
-        "Drill": mesh("Drill", add_cylinder(builder, 0.25, 0.7, bone, 16)),
-        "Ring": mesh("Ring", add_cylinder(builder, 0.3, 0.14, shell, 16)),
-        "Tip": mesh("Tip", add_uv_sphere(builder, 0.2, wet, 12, 18)),
-        "Jaw": mesh("Jaw", add_cylinder(builder, 0.065, 0.62, bone, 12)),
+        "Core": mesh("Core", add_uv_sphere(builder, 0.62, wet, 20, 32)),
+        "Segment": mesh("Segment", add_uv_sphere(builder, 0.48, shell, 18, 28)),
+        "Drill": mesh("Drill", add_cylinder(builder, 0.25, 0.7, bone, 20)),
+        "Ring": mesh("Ring", add_cylinder(builder, 0.3, 0.14, shell, 20)),
+        "Tip": mesh("Tip", add_uv_sphere(builder, 0.2, wet, 16, 24)),
+        "Jaw": mesh("Jaw", add_cylinder(builder, 0.065, 0.62, bone, 16)),
         "Fin": mesh("Fin", add_box(builder, (0.12, 0.7, 0.58), shell)),
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.08, eye, 10, 16)),
-        "Leg": mesh("Leg", add_cylinder(builder, 0.08, 1.15, tendon, 12)),
-        "Talon": mesh("Talon", add_cylinder(builder, 0.05, 0.58, bone, 12)),
-        "Spine": mesh("Spine", add_cylinder(builder, 0.09, 0.92, bone, 12)),
-        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 8, 12)),
+        "Leg": mesh("Leg", add_cylinder(builder, 0.08, 1.15, tendon, 18)),
+        "Talon": mesh("Talon", add_cylinder(builder, 0.05, 0.58, bone, 16)),
+        "Spine": mesh("Spine", add_cylinder(builder, 0.09, 0.92, bone, 18)),
+        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 10, 16)),
+        "DrillFlute": mesh("DrillFlute", add_cylinder(builder, 0.035, 0.56, bone, 18)),
+        "LampGuard": mesh("LampGuard", add_box(builder, (0.18, 0.08, 0.12), shell)),
     }
 
     nodes: list[dict] = [{
@@ -95,11 +97,13 @@ def main() -> None:
     drill_parent = add_node("BurrowerDrillAssembly", translation=(0.0, 0.82, -1.4), extras={"socket_type": "drill_assembly"})
     for index in range(3):
         add_node("BurrowerDrillRing%d" % index, mesh_ids["Ring"], (0.0, 0.0, -index * 0.2), scale=(1.0 - index * 0.12, 1.0, 1.0 - index * 0.12), parent=drill_parent)
+        add_node("BurrowerDrillFlute%d" % index, mesh_ids["DrillFlute"], (0.0, 0.0, -0.1 - index * 0.2), rotation=(0.0, 0.0, index * 1.0472), scale=(0.8 - index * 0.08, 1.0, 0.8 - index * 0.08), parent=drill_parent, extras={"surface": "drill_flute"})
     add_node("BurrowerDrill", mesh_ids["Drill"], (0.0, 0.0, -0.45), rotation=(1.5708, 0.0, 0.0), scale=(1.0, 1.0, 1.25), parent=drill_parent, extras={"socket_type": "drill"})
     add_node("BurrowerTip", mesh_ids["Tip"], (0.0, 0.0, -0.84), scale=(1.0, 0.7, 1.3), parent=drill_parent, extras={"socket_type": "bore_tip"})
     for side in (-1.0, 1.0):
         suffix = "L" if side < 0 else "R"
         add_node("BurrowerLamp%s" % suffix, mesh_ids["Eye"], (side * 0.22, 0.17, -0.78), parent=drill_parent, extras={"socket_type": "bore_lamp"})
+        add_node("BurrowerLampGuard%s" % suffix, mesh_ids["LampGuard"], (side * 0.22, 0.17, -0.78), rotation=(0.0, side * 0.2, 0.0), parent=drill_parent, extras={"surface": "lamp_guard"})
         add_node("BurrowerJaw%s" % suffix, mesh_ids["Jaw"], (side * 0.25, 0.18, -1.02), rotation=(0.76, 0.0, side * 0.16), extras={"socket_type": "jaw"})
 
     for index in range(5):
@@ -148,7 +152,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "burrower.drill.v1",
-            "required_nodes": ["BurrowerModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BurrowerDrill", "BurrowerTip", "BurrowerDrillRing0", "BurrowerLampL", "ProductionAssetMarker"],
+            "required_nodes": ["BurrowerModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BurrowerDrill", "BurrowerTip", "BurrowerDrillRing0", "BurrowerDrillFlute0", "BurrowerLampL", "BurrowerLampGuardL", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack"],
         },
     }
