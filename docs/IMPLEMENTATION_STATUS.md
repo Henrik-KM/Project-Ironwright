@@ -1619,3 +1619,15 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   building kit;
 - added aesthetic coverage for multi-face building detail and inspected the
   production-material result at close tactical scale in a live renderer.
+
+## Focused run-chronicle archive milestone
+
+- extended the persistent Town Archive with data-driven records for the first
+  constructed outpost, an outpost loss, an automatic rebuild and the chosen
+  final protocol;
+- connected the archive to real outpost operation and endgame completion
+  signals, so records describe consequences that actually occurred rather
+  than presenting a detached quest log;
+- preserved the optional, on-demand archive UI and bounded save payload while
+  adding native trigger and save/load coverage for the new machine-witness and
+  ecological-convergence records.

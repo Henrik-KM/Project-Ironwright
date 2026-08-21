@@ -108,6 +108,7 @@ func _setup_complete_game_services() -> void:
     story_archive_director.configure(run_state, region_director)
     story_archive_director.record_unlocked.connect(_on_story_record_unlocked)
     add_child(story_archive_director)
+    story_archive_director.connect_event_source(outpost_director)
 
     region_atmosphere_director = REGION_ATMOSPHERE_SCRIPT.new() as RegionAtmosphereDirector3D
     region_atmosphere_director.name = "RegionAtmosphereDirector"
@@ -179,6 +180,7 @@ func _setup_complete_game_services() -> void:
         Callable(self, "_spawn_enemy")
     )
     add_child(endgame_director)
+    story_archive_director.connect_event_source(endgame_director)
 
     adaptive_defense_director = ADAPTIVE_DEFENSE_SCRIPT.new() as AdaptiveDefenseDirector3D
     adaptive_defense_director.name = "AdaptiveDefenseDirector"

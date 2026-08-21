@@ -130,6 +130,56 @@
       "display_name": "The Town Archive",
       "source_name": "Post-victory archive recovery",
       "description": "The surviving record refuses a clean ending. It names the people, machines and organisms that adapted together, leaving the next decision to whoever keeps the forge warm."
+    },
+    {
+      "id": "story.outpost.first_relay",
+      "arc": "machine_witness",
+      "trigger": "operation_state",
+      "trigger_id": "outpost_build:constructed",
+      "sequence": 84,
+      "display_name": "The First Relay",
+      "source_name": "First autonomous outpost",
+      "description": "The first remote relay was not a second home. It was a promise that the machines could carry a burden outward and return without being told each step."
+    },
+    {
+      "id": "story.outpost.distance_cost",
+      "arc": "machine_witness",
+      "trigger": "operation_state",
+      "trigger_id": "outpost:destroyed",
+      "sequence": 86,
+      "display_name": "The Cost of Distance",
+      "source_name": "Destroyed autonomous outpost",
+      "description": "A remote loss entered the machine record as coordinates, missing voices and a rebuild estimate. Distance was no longer an abstract strategic number; it had become a wound the society chose to repair."
+    },
+    {
+      "id": "story.outpost.returned_signal",
+      "arc": "machine_witness",
+      "trigger": "operation_state",
+      "trigger_id": "outpost_rebuild:complete",
+      "sequence": 88,
+      "display_name": "The Returned Signal",
+      "source_name": "Rebuilt autonomous outpost",
+      "description": "When the relay came back online, its first transmission was not a request for orders. It was a route report: the machines had remembered how to continue."
+    },
+    {
+      "id": "story.endgame.severance",
+      "arc": "ecological_convergence",
+      "trigger": "endgame_completed",
+      "trigger_id": "protocol.severance",
+      "sequence": 92,
+      "display_name": "The Severed Root",
+      "source_name": "Final protocol: Severance",
+      "description": "The root signal went quiet by force. The town remained wounded and dangerous, but the machine sanctuary no longer had to answer a buried intelligence calling through every nest."
+    },
+    {
+      "id": "story.endgame.containment",
+      "arc": "ecological_convergence",
+      "trigger": "endgame_completed",
+      "trigger_id": "protocol.containment",
+      "sequence": 94,
+      "display_name": "The Caged Root",
+      "source_name": "Final protocol: Containment",
+      "description": "The root signal was enclosed instead of erased. The ecology remained alive and local, a dangerous neighbour whose limits the machines had finally learned to hold."
     }
   ]
 }
