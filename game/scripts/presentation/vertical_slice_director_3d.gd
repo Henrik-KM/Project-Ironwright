@@ -17,6 +17,9 @@ var elapsed: float = 0.0
 var steam_emitters: Array[CPUParticles3D] = []
 var practical_lights: Array[OmniLight3D] = []
 var flicker_phase: Dictionary = {}
+var weather_emitter: CPUParticles3D
+var weather_material: StandardMaterial3D
+var weather_profile: Dictionary = {}
 
 var masonry: StandardMaterial3D
 var soot_masonry: StandardMaterial3D
@@ -622,7 +625,23 @@ func _build_weather() -> void:
     material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
     streak.material = material
     rain.mesh = streak
+    weather_emitter = rain
+    weather_material = material
     root.add_child(rain)
+    apply_weather_profile(weather_profile)
+
+
+func apply_weather_profile(profile: Dictionary) -> void:
+    weather_profile = profile.duplicate(true)
+    if weather_emitter == null:
+        return
+    weather_emitter.amount = maxi(80, int(profile.get("rain_amount", 520)))
+    weather_emitter.initial_velocity_min = maxf(1.0, float(profile.get("rain_velocity_min", 9.0)))
+    weather_emitter.initial_velocity_max = maxf(weather_emitter.initial_velocity_min, float(profile.get("rain_velocity_max", 14.0)))
+    if weather_material != null:
+        var color_variant: Variant = profile.get("rain_color", Color(0.7, 0.82, 0.88, 0.28))
+        if color_variant is Color:
+            weather_material.albedo_color = color_variant as Color
 
 
 func _build_atmospheric_steam() -> void:

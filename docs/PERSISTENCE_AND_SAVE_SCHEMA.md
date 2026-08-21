@@ -16,6 +16,13 @@ Schema version 2 contains:
   sanctuary continuation, the post-victory archive, and persistent
   region-salvage flags.
 
+The release-candidate slot service uses its own versioned envelope at schema
+version 4 under `user://saves`. Its `payload.base.run_state` now includes the
+persisted `world_seed` and stable `world_variant_id` selected for the run. The
+variant changes presentation-only weather and atmosphere profiles; it does not
+create a second simulation or add recurring player work. Older slot payloads
+default missing variation fields and select an authored profile on load.
+
 The schema is written by `TransactionalSaveService3D`. It first writes
 `ironwright_run.json.tmp`, flushes and closes it, rotates the existing primary
 through `.bak1` and `.bak2`, and then promotes the temporary file. The backup

@@ -186,7 +186,8 @@ Systems:
 - reduced-detail remote simulation preserving positions, health, objectives, cargo, encounters, and causality;
 - deterministic transitions between active and reduced detail;
 - route graph and travel-time validation;
-- world seed and authored variation system;
+- world seed and authored variation system, with persisted weather-condition
+  profiles that alter the town's atmosphere without adding player chores;
 - region discovery and sensor uncertainty;
 - remote-operation follow camera and command map.
 

@@ -24,6 +24,7 @@ func _run_all() -> void:
         return
 
     _test_release_services(world)
+    _test_run_variation(world)
     _test_localization(world)
     _test_controller_and_accessibility(world)
     _test_release_assets_and_art(world)
@@ -50,7 +51,23 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.release_world_art is ReleaseWorldArtDirector3D, "Release runtime must install production environment dressing.")
     _expect(world.release_animation is ReleaseAnimationDirector3D, "Release runtime must install secondary animation.")
     _expect(world.release_front_end is ReleaseFrontEnd3D, "Release runtime must install title, pause and settings screens.")
+    _expect(world.run_variation_director is RunVariationDirector3D, "Release runtime must install deterministic authored run variation.")
     _expect(world.release_started, "Headless release tests must enter the playable world automatically.")
+
+
+func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
+    var variation := world.run_variation_director
+    _expect(variation.profile_ids().size() == 3, "Release must load the three authored world-condition profiles.")
+    _expect(world.run_state.world_seed != 0, "A new run must record a non-zero world seed.")
+    _expect(world.run_state.world_variant_id != &"", "A new run must record a stable world-condition ID.")
+    _expect(not variation.current_display_name().is_empty(), "The active world condition must expose a player-readable name.")
+    _expect(world.vertical_slice.weather_emitter != null and world.vertical_slice.weather_emitter.amount >= 80, "The active world condition must configure the opening weather emitter.")
+
+    var saved_state := world.run_state.to_dictionary()
+    var restored_state := RunState3D.new()
+    restored_state.restore_from_dictionary(saved_state)
+    _expect(restored_state.world_seed == world.run_state.world_seed, "World variation seed must survive run-state serialization.")
+    _expect(restored_state.world_variant_id == world.run_state.world_variant_id, "World variation ID must survive run-state serialization.")
 
 
 func _test_localization(world: IronwrightReleaseWorld3D) -> void:

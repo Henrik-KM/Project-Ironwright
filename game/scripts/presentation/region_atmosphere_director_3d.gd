@@ -23,6 +23,7 @@ var _target_contrast: float = 1.08
 var _target_brightness: float = 1.04
 var _target_glow_intensity: float = 0.72
 var _refresh_clock: float = 0.0
+var _run_variation_profile: Dictionary = {}
 
 
 func configure(next_world: Node3D, next_region_director: WorldRegionDirector3D, next_player: Node3D) -> void:
@@ -54,6 +55,11 @@ func refresh_now() -> void:
         environment = _find_environment(world)
     _refresh_region(true)
     _apply_visuals(1.0)
+
+
+func apply_run_variation(profile: Dictionary) -> void:
+    _run_variation_profile = profile.duplicate(true)
+    refresh_now()
 
 
 func palette_for_kind(kind: StringName) -> Dictionary:
@@ -108,6 +114,11 @@ func _refresh_region(force: bool) -> void:
     _target_contrast = float(palette["contrast"])
     _target_brightness = float(palette["brightness"])
     _target_glow_intensity = float(palette["glow"])
+    _target_ambient_energy += float(_run_variation_profile.get("ambient_energy_bias", 0.0))
+    _target_fog_energy += float(_run_variation_profile.get("fog_energy_bias", 0.0))
+    _target_fog_density = maxf(0.001, _target_fog_density + float(_run_variation_profile.get("fog_density_bias", 0.0)))
+    _target_brightness += float(_run_variation_profile.get("brightness_bias", 0.0))
+    _target_glow_intensity = maxf(0.0, _target_glow_intensity + float(_run_variation_profile.get("glow_bias", 0.0)))
     atmosphere_changed.emit(current_region_id, current_kind)
 
 

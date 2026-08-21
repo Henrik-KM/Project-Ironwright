@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "variants": [
+    {
+      "id": "weather.storm_front",
+      "display_name": "Storm Front",
+      "description": "A hard coastal front keeps the town slick, loud and close.",
+      "rain_amount": 680,
+      "rain_velocity_min": 10.0,
+      "rain_velocity_max": 16.0,
+      "rain_color": "#7895a3",
+      "fog_density_bias": 0.0014,
+      "ambient_energy_bias": -0.025,
+      "fog_energy_bias": 0.04,
+      "brightness_bias": -0.018,
+      "glow_bias": 0.035
+    },
+    {
+      "id": "weather.mist_lull",
+      "display_name": "Mist Lull",
+      "description": "The rain thins, but wet fog turns every distant light into a warning.",
+      "rain_amount": 260,
+      "rain_velocity_min": 7.0,
+      "rain_velocity_max": 11.0,
+      "rain_color": "#9aaeb2",
+      "fog_density_bias": 0.0027,
+      "ambient_energy_bias": -0.01,
+      "fog_energy_bias": 0.08,
+      "brightness_bias": -0.008,
+      "glow_bias": 0.08
+    },
+    {
+      "id": "weather.cold_break",
+      "display_name": "Cold Break",
+      "description": "A brief clear break reveals more of the ruined town before the weather closes again.",
+      "rain_amount": 120,
+      "rain_velocity_min": 6.0,
+      "rain_velocity_max": 9.0,
+      "rain_color": "#9fc7cf",
+      "fog_density_bias": -0.0018,
+      "ambient_energy_bias": 0.035,
+      "fog_energy_bias": -0.03,
+      "brightness_bias": 0.018,
+      "glow_bias": -0.015
+    }
+  ]
+}

@@ -1046,6 +1046,17 @@ The dependency-free browser implementation remains under `web/` for deterministi
 The current high-definition shell library remains a production-facing pass;
 final retail art, animation and external visual approval are still required.
 
+## Focused authored run-variation milestone
+
+- added three authored weather-condition profiles loaded from
+  `game/data/run_variants.json`;
+- selected a profile from a recorded run seed, persisted the stable condition
+  ID through `RunState3D`, and reapplied it after save/load;
+- varied opening rain density, rain velocity and regional atmosphere while
+  keeping the simulation, ecology, routing and player workload unchanged;
+- added release coverage for profile loading, deterministic identity and
+  run-state round-trip preservation.
+
 ## Commercial work still remaining
 
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
@@ -1063,7 +1074,8 @@ Remaining production work includes:
   disruption;
 - broader content variants, technologies, operations and site dressing;
 - performance profiling and optimization on agreed target hardware;
-- environmental narrative and run variation;
+- environmental narrative, sparse story arcs and broader run variation beyond
+  the current authored weather profiles;
 - 30–100-hour balance and repeated full internal runs;
 - professional localization review of all remaining gameplay prose;
 - external alpha, beta, packaging, store assets, signing and release QA.

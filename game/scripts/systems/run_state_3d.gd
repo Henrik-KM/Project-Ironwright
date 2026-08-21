@@ -6,6 +6,7 @@ signal rare_cores_changed(total: int)
 signal focus_changed(focus: StringName)
 signal robot_level_changed(archetype: StringName, level: int)
 signal event_logged(message: String)
+signal world_variant_changed(variant_id: StringName)
 
 const FOCUS_DEFEND: StringName = &"defend"
 const FOCUS_SALVAGE: StringName = &"salvage"
@@ -34,6 +35,8 @@ var autonomous_scrap_recovered: int = 0
 var robots_built: int = 1
 var expedition_core_recovered: bool = false
 var event_log: Array[String] = []
+var world_seed: int = 0
+var world_variant_id: StringName = &""
 
 
 func _process(delta: float) -> void:
@@ -92,6 +95,30 @@ func set_focus(next_focus: StringName) -> void:
     focus = next_focus
     focus_changed.emit(focus)
     log_event("Machine focus: %s" % String(focus).capitalize())
+
+
+func ensure_world_variant(variant_ids: Array[StringName], seed_override: int = 0) -> void:
+    if variant_ids.is_empty():
+        return
+    if world_seed == 0:
+        world_seed = seed_override if seed_override != 0 else _new_world_seed()
+    if world_variant_id == &"" or world_variant_id not in variant_ids:
+        world_variant_id = variant_ids[posmod(world_seed, variant_ids.size())]
+        world_variant_changed.emit(world_variant_id)
+
+
+func set_world_variant(variant_id: StringName, seed: int) -> void:
+    if variant_id == &"" or seed == 0:
+        return
+    world_seed = seed
+    if world_variant_id == variant_id:
+        return
+    world_variant_id = variant_id
+    world_variant_changed.emit(world_variant_id)
+
+
+func _new_world_seed() -> int:
+    return int(Time.get_unix_time_from_system()) ^ int(Time.get_ticks_usec())
 
 
 func build_cost(archetype: StringName) -> int:
@@ -175,7 +202,7 @@ func to_dictionary() -> Dictionary:
     for archetype in ROBOT_ARCHETYPES:
         serialized_levels[String(archetype)] = int(robot_levels.get(archetype, 1))
     return {
-        "schema_version": 2,
+        "schema_version": 3,
         "scrap": scrap,
         "rare_cores": rare_cores,
         "focus": String(focus),
@@ -185,6 +212,8 @@ func to_dictionary() -> Dictionary:
         "autonomous_scrap_recovered": autonomous_scrap_recovered,
         "robots_built": robots_built,
         "expedition_core_recovered": expedition_core_recovered,
+        "world_seed": world_seed,
+        "world_variant_id": String(world_variant_id),
         "event_log": event_log.duplicate(),
     }
 
@@ -201,6 +230,8 @@ func restore_from_dictionary(data: Dictionary) -> void:
     autonomous_scrap_recovered = int(data.get("autonomous_scrap_recovered", 0))
     robots_built = int(data.get("robots_built", 1))
     expedition_core_recovered = bool(data.get("expedition_core_recovered", false))
+    world_seed = int(data.get("world_seed", 0))
+    world_variant_id = StringName(str(data.get("world_variant_id", "")))
     event_log.clear()
     for item in data.get("event_log", []):
         event_log.append(str(item))
