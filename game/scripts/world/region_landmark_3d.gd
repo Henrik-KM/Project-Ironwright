@@ -603,6 +603,12 @@ func _animate_region_details() -> void:
             node.rotation.z += sin(local_phase * 0.72) * 0.12
         elif node_name.begins_with("RiverworksSluiceSignalHousing"):
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.75) * 0.05)
+        elif node_name.begins_with("RootCisternPylonCollar"):
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.45) * 0.05)
+        elif node_name.begins_with("RootCisternCoreVein"):
+            node.rotation.y += sin(local_phase * 0.76) * 0.08
+        elif node_name.begins_with("RootCisternBasinRootTendril"):
+            node.rotation.z += sin(local_phase * 0.95) * 0.12
         elif node_name.begins_with("RiverworksSluiceSignal") or node_name.begins_with("RootCisternPulse"):
             var signal_pulse := 1.0 + sin(local_phase * 2.4) * 0.12
             node.scale = _motion_base_transforms[node].basis.get_scale() * signal_pulse
@@ -706,6 +712,9 @@ func _is_region_motion_name(node_name: String) -> bool:
         "RiverworksGrowthTendril",
         "RiverbankGrowth",
         "RootCisternPulse",
+        "RootCisternPylonCollar",
+        "RootCisternCoreVein",
+        "RootCisternBasinRootTendril",
         "CathedralChoirSignal",
         "CathedralBell",
         "CathedralOrganicVein",

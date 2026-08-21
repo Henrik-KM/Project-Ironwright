@@ -37,18 +37,27 @@ def main() -> None:
 
     root, bark, bone, alloy, signal, pulse = range(6)
     mesh_ids = {
-        "Core": mesh("Core", add_uv_sphere(builder, 0.8, root, 20, 28)),
-        "Layer": mesh("Layer", add_uv_sphere(builder, 0.55, bark, 16, 24)),
+        "Core": mesh("Core", add_uv_sphere(builder, 0.8, root, 24, 36)),
+        "Layer": mesh("Layer", add_uv_sphere(builder, 0.55, bark, 20, 28)),
         "Rib": mesh("Rib", add_box(builder, (0.48, 0.24, 2.2), bone)),
-        "Pylon": mesh("Pylon", add_cylinder(builder, 0.28, 4.8, alloy, 16)),
-        "Signal": mesh("Signal", add_cylinder(builder, 0.11, 2.7, signal, 12)),
-        "Pulse": mesh("Pulse", add_uv_sphere(builder, 0.18, pulse, 12, 18)),
-        "Cable": mesh("Cable", add_cylinder(builder, 0.055, 4.0, pulse, 10)),
-        "Basin": mesh("Basin", add_cylinder(builder, 5.8, 0.22, alloy, 32)),
-        "BasinWater": mesh("BasinWater", add_cylinder(builder, 4.9, 0.06, root, 32)),
+        "Pylon": mesh("Pylon", add_cylinder(builder, 0.28, 4.8, alloy, 20)),
+        "PylonCollar": mesh("PylonCollar", add_cylinder(builder, 0.38, 0.18, alloy, 20)),
+        "PylonBrace": mesh("PylonBrace", add_box(builder, (0.12, 1.85, 0.12), alloy)),
+        "Signal": mesh("Signal", add_cylinder(builder, 0.11, 2.7, signal, 18)),
+        "Pulse": mesh("Pulse", add_uv_sphere(builder, 0.18, pulse, 18, 28)),
+        "PulseCap": mesh("PulseCap", add_cylinder(builder, 0.18, 0.16, pulse, 18)),
+        "Cable": mesh("Cable", add_cylinder(builder, 0.055, 4.0, pulse, 14)),
+        "CableClamp": mesh("CableClamp", add_cylinder(builder, 0.10, 0.14, alloy, 16)),
+        "Basin": mesh("Basin", add_cylinder(builder, 5.8, 0.22, alloy, 40)),
+        "BasinWater": mesh("BasinWater", add_cylinder(builder, 4.9, 0.06, root, 40)),
         "BasinRim": mesh("BasinRim", add_box(builder, (2.45, 0.18, 0.24), bone)),
-        "CoreHalo": mesh("CoreHalo", add_uv_sphere(builder, 0.34, pulse, 14, 22)),
-        "CoreSpine": mesh("CoreSpine", add_cylinder(builder, 0.14, 4.2, signal, 16)),
+        "BasinSpine": mesh("BasinSpine", add_box(builder, (0.12, 0.16, 2.4), bone)),
+        "BasinRootTendril": mesh("BasinRootTendril", add_cylinder(builder, 0.055, 0.90, root, 14)),
+        "CorePlate": mesh("CorePlate", add_box(builder, (1.55, 0.16, 0.16), bark)),
+        "CoreClaw": mesh("CoreClaw", add_cylinder(builder, 0.11, 1.5, bone, 16)),
+        "CoreVein": mesh("CoreVein", add_cylinder(builder, 0.06, 1.8, pulse, 14)),
+        "CoreHalo": mesh("CoreHalo", add_uv_sphere(builder, 0.34, pulse, 18, 28)),
+        "CoreSpine": mesh("CoreSpine", add_cylinder(builder, 0.14, 4.2, signal, 20)),
     }
     nodes: list[dict] = [{
         "name": "RootCisternModel",
@@ -74,11 +83,19 @@ def main() -> None:
     add_node("RootCisternBasinWater", mesh_ids["BasinWater"], (0.0, 0.27, 0.0), extras={"socket_type": "basin_water"})
     for index in range(8):
         angle = 6.283185307179586 * index / 8.0
-        add_node("RootCisternBasinRim%d" % index, mesh_ids["BasinRim"], (math.cos(angle) * 5.2, 0.38, math.sin(angle) * 5.2), rotation=(0.0, angle, 0.0), extras={"socket_type": "basin_rim"})
+        rim = add_node("RootCisternBasinRim%d" % index, mesh_ids["BasinRim"], (math.cos(angle) * 5.2, 0.38, math.sin(angle) * 5.2), rotation=(0.0, angle, 0.0), extras={"socket_type": "basin_rim"})
+        add_node("RootCisternBasinSpine%d" % index, mesh_ids["BasinSpine"], (0.0, 0.10, 1.25), rotation=(0.0, 0.0, 0.16), parent=rim)
+        add_node("RootCisternBasinRootTendril%d" % index, mesh_ids["BasinRootTendril"], (0.72, 0.16, -0.22), rotation=(0.0, 0.0, -0.28), parent=rim)
     core = add_node("RootCisternCore", extras={"surface": "layered_root_organ"})
     add_node("RootCisternCoreMass", mesh_ids["Core"], (0.0, 1.45, 0.0), scale=(3.25, 1.55, 3.25), parent=core, extras={"release_material_family": "organic"})
     add_node("RootCisternCoreHalo", mesh_ids["CoreHalo"], (0.0, 3.0, 0.0), scale=(2.7, 0.86, 2.7), parent=core, extras={"socket_type": "core_halo"})
     add_node("RootCisternCoreSpine", mesh_ids["CoreSpine"], (0.0, 2.7, 0.0), parent=core, extras={"socket_type": "core_spine"})
+    for index in range(6):
+        angle = 6.283185307179586 * index / 6.0
+        x, z = math.cos(angle) * 2.65, math.sin(angle) * 2.65
+        add_node("RootCisternCorePlate%d" % index, mesh_ids["CorePlate"], (x, 1.88, z), rotation=(0.0, -angle, 0.0), parent=core, extras={"socket_type": "core_surface_plate"})
+        add_node("RootCisternCoreClaw%d" % index, mesh_ids["CoreClaw"], (x * 0.88, 2.62, z * 0.88), rotation=(0.0, -angle, 0.48), parent=core, extras={"socket_type": "core_claw"})
+        add_node("RootCisternCoreVein%d" % index, mesh_ids["CoreVein"], (x * 0.72, 2.22, z * 0.72), rotation=(0.0, -angle, 0.22), parent=core, extras={"socket_type": "core_vein"})
     for index in range(6):
         angle = 6.283185307179586 * index / 6.0
         x, z = math.cos(angle) * 2.0, math.sin(angle) * 2.0
@@ -88,9 +105,13 @@ def main() -> None:
         angle = 6.283185307179586 * index / 6.0 + 0.22
         x, z = math.cos(angle) * 8.2, math.sin(angle) * 8.2
         pylon = add_node("RootCisternPylon%d" % index, mesh_ids["Pylon"], (x, 2.4, z), rotation=(0.0, -angle, 0.0), parent=0, extras={"socket_type": "signal_pylon"})
+        add_node("RootCisternPylonCollar%d" % index, mesh_ids["PylonCollar"], (0.0, 1.1, 0.0), parent=pylon, extras={"socket_type": "pylon_collar"})
+        add_node("RootCisternPylonBrace%d" % index, mesh_ids["PylonBrace"], (0.0, 1.75, -0.20), rotation=(0.0, 0.0, 0.16), parent=pylon, extras={"socket_type": "pylon_brace"})
         add_node("RootCisternSignal%d" % index, mesh_ids["Signal"], (0.0, 3.15, 0.0), rotation=(0.0, -angle, 0.0), parent=pylon)
         add_node("RootCisternPulse%d" % index, mesh_ids["Pulse"], (0.0, 4.55, 0.0), parent=pylon)
+        add_node("RootCisternPulseCap%d" % index, mesh_ids["PulseCap"], (0.0, 4.78, 0.0), parent=pylon)
         add_node("RootCisternCable%d" % index, mesh_ids["Cable"], (x * 0.52, 2.4, z * 0.52), rotation=(0.0, -angle, 0.38), scale=(1.0, 1.0, 1.0), parent=0)
+        add_node("RootCisternCableClamp%d" % index, mesh_ids["CableClamp"], (x * 0.38, 2.4, z * 0.38), rotation=(0.0, -angle, 0.0), parent=0, extras={"socket_type": "cable_clamp"})
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "root_cistern.landmark.v1", "source": "original_shared_mesh_builder"})
     document = {
         "asset": {"version": "2.0", "generator": "Project Ironwright original Root Cistern asset builder"},
@@ -102,7 +123,7 @@ def main() -> None:
         "accessors": builder.accessors,
         "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
-        "extras": {"ironwright_asset_id": "root_cistern.landmark.v1", "required_nodes": ["RootCisternModel", "RootCisternBasin", "RootCisternBasinWater", "RootCisternCore", "RootCisternCoreMass", "RootCisternCoreHalo", "RootCisternLayer0", "RootCisternRib0", "RootCisternPylon0", "RootCisternSignal0", "RootCisternCable0", "ProductionAssetMarker"]},
+        "extras": {"ironwright_asset_id": "root_cistern.landmark.v1", "required_nodes": ["RootCisternModel", "RootCisternBasin", "RootCisternBasinWater", "RootCisternBasinSpine0", "RootCisternBasinRootTendril0", "RootCisternCore", "RootCisternCoreMass", "RootCisternCoreHalo", "RootCisternCorePlate0", "RootCisternCoreClaw0", "RootCisternCoreVein0", "RootCisternLayer0", "RootCisternRib0", "RootCisternPylon0", "RootCisternPylonCollar0", "RootCisternPylonBrace0", "RootCisternSignal0", "RootCisternPulseCap0", "RootCisternCable0", "RootCisternCableClamp0", "ProductionAssetMarker"]},
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")

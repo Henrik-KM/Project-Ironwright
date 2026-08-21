@@ -122,8 +122,25 @@ func _run_all() -> void:
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/RootCisternAuthoredModel") != null, "The Root Cistern must expose its authored landmark shell.")
                 _expect(landmark.find_child("RootCisternBasin", true, false) != null, "The Root Cistern must expose an authored basin floor to anchor the capstone encounter.")
                 _expect(landmark.find_child("RootCisternCoreHalo", true, false) != null, "The Root Cistern must expose an authored luminous core halo.")
+                _expect(landmark.find_child("RootCisternCorePlate0", true, false) != null and landmark.find_child("RootCisternCoreClaw0", true, false) != null and landmark.find_child("RootCisternCoreVein0", true, false) != null, "The Root Cistern must expose layered core surface and vein hardware.")
+                _expect(landmark.find_child("RootCisternPylonCollar0", true, false) != null and landmark.find_child("RootCisternPulseCap0", true, false) != null and landmark.find_child("RootCisternCableClamp0", true, false) != null, "The Root Cistern must expose detailed pylon and cable service hardware.")
+                _expect(landmark.find_child("RootCisternBasinSpine0", true, false) != null and landmark.find_child("RootCisternBasinRootTendril0", true, false) != null, "The Root Cistern must expose basin rim and organic-root detail.")
                 var cistern_pulse := landmark.find_child("RootCisternPulse0", true, false) as Node3D
-                _expect(cistern_pulse != null, "The Root Cistern must expose a signal pulse socket on the authored pylon hierarchy.")
+                var cistern_collar := landmark.find_child("RootCisternPylonCollar0", true, false) as Node3D
+                var cistern_vein := landmark.find_child("RootCisternCoreVein0", true, false) as Node3D
+                var cistern_tendril := landmark.find_child("RootCisternBasinRootTendril0", true, false) as Node3D
+                _expect(cistern_pulse != null and cistern_collar != null and cistern_vein != null and cistern_tendril != null, "The Root Cistern must expose signal, pylon, vein and basin motion sockets.")
+                if cistern_pulse != null and cistern_collar != null and cistern_vein != null and cistern_tendril != null:
+                    landmark.set_presentation_detail_level(0)
+                    var pulse_before := cistern_pulse.scale
+                    var collar_before := cistern_collar.scale
+                    var vein_before := cistern_vein.rotation.y
+                    var tendril_before := cistern_tendril.rotation.z
+                    landmark.call("_process", 0.5)
+                    _expect(not cistern_pulse.scale.is_equal_approx(pulse_before), "The Root Cistern pulse must carry a restrained presentation cue.")
+                    _expect(not cistern_collar.scale.is_equal_approx(collar_before), "The Root Cistern pylon collar must carry a restrained signal cue.")
+                    _expect(not is_equal_approx(cistern_vein.rotation.y, vein_before), "The Root Cistern core veins must carry deterministic organic motion.")
+                    _expect(not is_equal_approx(cistern_tendril.rotation.z, tendril_before), "The Root Cistern basin tendrils must carry deterministic organic motion.")
             if landmark.region_kind == &"nest":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/NestOccluderShell") != null, "The nest must isolate its close-range opaque shell for camera-safe presentation.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/CathedralAuthoredModel") != null, "Cathedral Quarter must expose its authored nave and choir landmark shell.")
