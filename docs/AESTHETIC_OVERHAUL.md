@@ -90,6 +90,10 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
   ladders, transformer caps and braces, service-pipe flanges, warning housings,
   and organic tendrils. The detail pass strengthens the industrial identity
   without changing the outpost or operation contract.
+- Buried Laboratories now carry vessel service ports and clamps, a transfer
+  carriage and rail stops, layered sealed-door and warning-panel framing,
+  service-cable clamps, and organic tendrils. The detail pass strengthens the
+  containment identity without changing the research operation contract.
 - the release material pass remains live for late-created robots, organic
   families, outpost upgrades and discovered-region dressing, so the visual
   language does not regress after the opening scene.

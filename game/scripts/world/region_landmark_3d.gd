@@ -623,9 +623,15 @@ func _animate_region_details() -> void:
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.25) * 0.06)
         elif node_name.begins_with("BuriedLabsVesselLight") or node_name.begins_with("BuriedLabsTransferLight"):
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 2.0) * 0.10)
+        elif node_name.begins_with("BuriedLabsVesselPort"):
+            node.rotation.y += sin(local_phase * 0.72) * 0.10
+        elif node_name.begins_with("BuriedLabsTransferCarriage"):
+            node.position.x = _motion_base_transforms[node].origin.x + sin(local_phase * 0.55) * 0.08
         elif node_name.begins_with("BuriedLabsOrganicSeep"):
             node.rotation.y += sin(local_phase * 0.8) * 0.06
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.2) * 0.07)
+        elif node_name.begins_with("BuriedLabsOrganicTendril"):
+            node.rotation.z += sin(local_phase * 1.02) * 0.12
         elif node_name.begins_with("GlasshouseCanopyPulse"):
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.8) * 0.08)
         elif node_name.begins_with("GlasshouseGrowthPulse"):
@@ -687,7 +693,10 @@ func _is_region_motion_name(node_name: String) -> bool:
         "TramOrganicSeep",
         "BuriedLabsVesselLight",
         "BuriedLabsTransferLight",
+        "BuriedLabsVesselPort",
+        "BuriedLabsTransferCarriage",
         "BuriedLabsOrganicSeep",
+        "BuriedLabsOrganicTendril",
         "GlasshouseCanopyPulse",
         "GlasshouseGrowthPulse",
         "GlasshouseGrowthTendril",
