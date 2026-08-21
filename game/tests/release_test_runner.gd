@@ -67,7 +67,11 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
 
 func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
     var variation := world.run_variation_director
-    _expect(variation.profile_ids().size() == 3, "Release must load the three authored world-condition profiles.")
+    _expect(variation.profile_ids().size() == 4, "Release must load the four authored world-condition profiles.")
+    _expect(variation.profiles.has(&"weather.signal_bloom"), "Release must retain the authored Signal Bloom world-condition profile.")
+    if variation.profiles.has(&"weather.signal_bloom"):
+        var signal_bloom: Dictionary = variation.profiles[&"weather.signal_bloom"]
+        _expect(float(signal_bloom.get("glow_bias", 0.0)) > 0.1 and str(signal_bloom.get("rain_color", "")) == "#76bfc8", "Signal Bloom must carry its distinct cyan organic atmospheric signature.")
     _expect(world.run_state.world_seed != 0, "A new run must record a non-zero world seed.")
     _expect(world.run_state.world_variant_id != &"", "A new run must record a stable world-condition ID.")
     _expect(not variation.current_display_name().is_empty(), "The active world condition must expose a player-readable name.")
