@@ -66,6 +66,11 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
   scar rails, while the bespoke regions use distinct facade, utility, signal or
   organic-growth signatures. These details remain presentation-only and under
   the landmark LOD boundary.
+- Flood Market now carries a denser commercial shell with canopy ribs, stall
+  service frames, water-foam bands, crane wheel hardware, glow housings and
+  organic tendrils. The detail pass strengthens the market, flood-channel and
+  ecological-breach read without changing the landmark's collision, operation
+  or salvage contract.
 - the release material pass remains live for late-created robots, organic
   families, outpost upgrades and discovered-region dressing, so the visual
   language does not regress after the opening scene.

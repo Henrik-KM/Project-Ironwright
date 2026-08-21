@@ -46,11 +46,17 @@ def main() -> None:
         "Water": mesh("MarketWater", add_box(builder, (3.6, 0.04, 1.5), water)),
         "Waterline": mesh("MarketWaterline", add_box(builder, (3.0, 0.035, 0.06), waterline)),
         "Sign": mesh("MarketSign", add_box(builder, (1.6, 0.72, 0.08), sign)),
-        "Crane": mesh("MarketCrane", add_cylinder(builder, 0.08, 4.8, frame, 12)),
-        "Growth": mesh("MarketGrowth", add_uv_sphere(builder, 0.52, organic, 14, 20)),
-        "Glow": mesh("MarketGlow", add_uv_sphere(builder, 0.14, waterline, 12, 18)),
+        "Crane": mesh("MarketCrane", add_cylinder(builder, 0.08, 4.8, frame, 18)),
+        "Growth": mesh("MarketGrowth", add_uv_sphere(builder, 0.52, organic, 18, 28)),
+        "Glow": mesh("MarketGlow", add_uv_sphere(builder, 0.14, waterline, 16, 24)),
         "Cable": mesh("MarketCable", add_cylinder(builder, 0.04, 4.2, rust, 10)),
         "Marker": mesh("MarketMarker", add_box(builder, (0.7, 0.08, 0.7), rust)),
+        "CanopyRib": mesh("MarketCanopyRib", add_box(builder, (0.10, 0.12, 2.82), rust)),
+        "StallFrame": mesh("MarketStallFrame", add_box(builder, (3.9, 0.10, 1.55), frame)),
+        "WaterFoam": mesh("MarketWaterFoam", add_box(builder, (2.65, 0.025, 0.10), waterline)),
+        "CraneWheel": mesh("MarketCraneWheel", add_cylinder(builder, 0.26, 0.12, rust, 20)),
+        "GrowthTendril": mesh("MarketGrowthTendril", add_cylinder(builder, 0.045, 0.78, organic, 14)),
+        "GlowHousing": mesh("MarketGlowHousing", add_cylinder(builder, 0.11, 0.14, frame, 16)),
     }
 
     nodes: list[dict] = [{
@@ -89,19 +95,28 @@ def main() -> None:
     for index, x in enumerate((-6.0, 0.0, 6.0)):
         canopy_root = add_node("FloodMarketCanopy%d" % index, extras={"socket_type": "market_canopy"})
         add_node("FloodMarketCanopyRoof%d" % index, mesh_ids["Canopy"], (x, 4.0, 1.5), extras={"socket_type": "market_canopy_roof"}, parent=canopy_root)
+        for rib_index, rib_offset in enumerate((-2.0, 0.0, 2.0)):
+            add_node("FloodMarketCanopyRib%d_%d" % (index, rib_index), mesh_ids["CanopyRib"], (x + rib_offset, 4.08, 1.5), extras={"surface": "canopy_structural_rib"}, parent=canopy_root)
         for side in (-1.0, 1.0):
             add_node("FloodMarketCanopyPost%d_%s" % (index, "L" if side < 0 else "R"), mesh_ids["Post"], (x + side * 2.7, 1.8, 1.5), parent=canopy_root)
     for index, x in enumerate((-6.0, 0.0, 6.0)):
         add_node("FloodMarketStall%d" % index, mesh_ids["Stall"], (x, 0.36, 1.2), extras={"socket_type": "market_stall"})
+        add_node("FloodMarketStallFrame%d" % index, mesh_ids["StallFrame"], (x, 0.58, 1.2), extras={"surface": "stall_service_frame"})
         add_node("FloodMarketWaterChannel%d" % index, mesh_ids["Water"], (x, 0.23, 8.8), extras={"socket_type": "flood_channel"})
         add_node("FloodMarketWaterline%d" % index, mesh_ids["Waterline"], (x, 0.31, 8.0), extras={"socket_type": "waterline_signal"})
+        for foam_index, foam_z in enumerate((5.6, -1.2)):
+            add_node("FloodMarketWaterFoam%d_%d" % (index, foam_index), mesh_ids["WaterFoam"], (x, 0.34, foam_z), extras={"surface": "water_foam_band"})
+        add_node("FloodMarketGlowHousing%d" % index, mesh_ids["GlowHousing"], (x, 3.55, 1.5), extras={"surface": "stall_light_housing"})
         add_node("FloodMarketGrowthLight%d" % index, mesh_ids["Glow"], (x, 3.55, 1.5), extras={"socket_type": "stall_light"})
     add_node("FloodMarketMarketSign", mesh_ids["Sign"], (0.0, 3.2, 1.08), rotation=(0.0, 0.0, 0.03), extras={"socket_type": "market_sign"})
     add_node("FloodMarketServiceCrane", mesh_ids["Crane"], (-7.6, 2.5, 5.6), extras={"socket_type": "service_crane"})
     add_node("FloodMarketCraneArm", mesh_ids["Beam"], (-4.4, 4.8, 5.6), rotation=(0.0, math.pi * 0.5, 0.0), extras={"socket_type": "crane_arm"})
+    add_node("FloodMarketCraneWheel", mesh_ids["CraneWheel"], (-6.0, 2.6, 5.6), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "crane_service_wheel"})
     add_node("FloodMarketServiceCable", mesh_ids["Cable"], (-5.8, 3.7, 5.6), rotation=(0.0, 0.0, math.pi * 0.5), extras={"socket_type": "service_cable"})
     for index, (x, z, scale) in enumerate(((-7.2, 5.1, (1.0, 0.8, 1.15)), (6.8, -3.6, (0.85, 0.66, 1.2)))):
         add_node("FloodMarketOrganicGrowth%d" % index, mesh_ids["Growth"], (x, 0.52, z), scale=scale, extras={"socket_type": "organic_growth"})
+        for tendril_index, tendril_x in enumerate((-0.22, 0.16)):
+            add_node("FloodMarketOrganicTendril%d_%d" % (index, tendril_index), mesh_ids["GrowthTendril"], (x + tendril_x, 0.82, z), rotation=(0.0, 0.0, -0.26 + float(tendril_index) * 0.42), extras={"surface": "organic_tendril"})
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "flood.market.v1", "source": "original_procedural_mesh_builder"})
 
     document = {
@@ -116,7 +131,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "flood.market.v1",
-            "required_nodes": ["FloodMarketModel", "FloodMarketCanopy0", "FloodMarketStall0", "FloodMarketWaterChannel0", "FloodMarketWaterline0", "FloodMarketServiceCrane", "FloodMarketOrganicGrowth0", "ProductionAssetMarker"],
+            "required_nodes": ["FloodMarketModel", "FloodMarketCanopy0", "FloodMarketCanopyRib0_0", "FloodMarketStall0", "FloodMarketStallFrame0", "FloodMarketWaterChannel0", "FloodMarketWaterline0", "FloodMarketWaterFoam0_0", "FloodMarketServiceCrane", "FloodMarketCraneWheel", "FloodMarketOrganicGrowth0", "FloodMarketOrganicTendril0_0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

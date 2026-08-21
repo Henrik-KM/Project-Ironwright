@@ -6,11 +6,16 @@
   "required_nodes": [
     "FloodMarketModel",
     "FloodMarketCanopy0",
+    "FloodMarketCanopyRib0_0",
     "FloodMarketStall0",
+    "FloodMarketStallFrame0",
     "FloodMarketWaterChannel0",
     "FloodMarketWaterline0",
+    "FloodMarketWaterFoam0_0",
     "FloodMarketServiceCrane",
+    "FloodMarketCraneWheel",
     "FloodMarketOrganicGrowth0",
+    "FloodMarketOrganicTendril0_0",
     "ProductionAssetMarker"
   ],
   "presentation_only": true
