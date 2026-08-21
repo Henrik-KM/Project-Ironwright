@@ -1479,6 +1479,16 @@ presentation restore, with release regression coverage for that migration path.
 - added native coverage that rejects per-actor duplicate proxy mesh resources
   while preserving the existing detail-band and promotion contracts.
 
+## Focused Root Cistern authored-depth milestone
+
+- replaced the late landmark's remaining broad basin surfaces with a second
+  authored layer of repeated signal inlays and organic pulse sockets;
+- added a crown hardware ring above the central root mass so the capstone reads
+  as a designed signal organ rather than a single luminous blob;
+- preserved the existing region, endgame, LOD, motion and persistence contracts;
+- extended aesthetic coverage for the basin inlay and core crown socket
+  contracts, with live renderer review required at tactical distance.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.
