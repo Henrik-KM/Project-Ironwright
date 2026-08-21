@@ -1,5 +1,11 @@
 # Implementation status
 
+## Focused authored-machine damage presentation milestone
+
+- Friendly authored machine actors now expose bounded persistent scar and leak overlays when their health is reduced.
+- The overlays are cleared by repair and hidden automatically outside close-detail presentation, keeping remote simulation lightweight while preserving readable local consequences.
+- Release regression coverage verifies creation, damage, LOD suppression, restoration, and repair clearing.
+
 ## Native Godot 3D — complete end-to-end systemic alpha
 
 The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGameWorld3D`, which preserves the aesthetic, opening UX, progression, and outpost layers while adding the full start-to-victory systemic run.
@@ -1650,3 +1656,8 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   workflow language to the player;
 - added first-session and release regression coverage for the user-visible
   report and title surfaces.
+## Focused authored-machine damage presentation milestone
+
+- Friendly authored machine actors now expose bounded persistent scar and leak overlays when their health is reduced.
+- The overlays are cleared by repair and hidden automatically outside close-detail presentation, keeping remote simulation lightweight while preserving readable local consequences.
+- Release regression coverage verifies creation, damage, LOD suppression, restoration, and repair clearing.

@@ -358,6 +358,17 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     _expect(opening_authored_mesh != null and opening_authored_mesh.get_meta(&"release_material_family", &"") == &"metal", "Authored Bulwark shell meshes must receive the release metal material pass.")
     var opening_material := opening_authored_mesh.material_override as StandardMaterial3D if opening_authored_mesh != null else null
     _expect(opening_material != null and opening_material.normal_enabled and opening_material.normal_texture != null, "Authored Bulwark shell materials must carry the generated normal-relief companion.")
+    var opening_damage_root := opening_robot.get_node_or_null("RobotDamagePresentation") as Node3D if opening_robot != null else null
+    _expect(opening_damage_root != null, "Authored machine actors must carry a bounded persistent damage presentation root.")
+    if opening_robot != null and opening_damage_root != null:
+        opening_robot.call("apply_damage", float(opening_robot.get("maximum_health")) * 0.34)
+        _expect(opening_damage_root.visible, "Nearby damaged machines must expose persistent scar and leak presentation.")
+        opening_robot.call("set_damage_presentation_enabled", false)
+        _expect(not opening_damage_root.visible, "Reduced-detail machine presentation must hide persistent damage overlays.")
+        opening_robot.call("set_damage_presentation_enabled", true)
+        _expect(opening_damage_root.visible, "Restored close machine presentation must show persistent damage overlays again.")
+        opening_robot.call("repair", float(opening_robot.get("maximum_health")))
+        _expect(not opening_damage_root.visible, "Fully repaired machines must clear persistent damage presentation.")
     var late_robot := world._spawn_robot(&"salvager", world.player.global_position + Vector3(3.0, 0.0, -3.0), 1)
     var late_enemy := world._spawn_enemy(world.player.global_position + Vector3(-4.0, 0.0, -4.0), &"veilstalker")
     var late_authored_family := world._spawn_enemy(world.player.global_position + Vector3(-6.0, 0.0, -2.0), &"rootweaver")
