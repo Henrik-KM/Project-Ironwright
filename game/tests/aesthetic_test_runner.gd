@@ -685,6 +685,14 @@ func _run_all() -> void:
         elif role_names[index] == &"engineer":
             _expect(_find_named(role_samples[index], "EngineerAuthoredModel") != null, "The engineer must use the authored Engineer model shell.")
             _expect(_find_named(role_samples[index], "ProductionAssetMarker") != null, "The authored Engineer model must expose its production asset marker.")
+        if role_names[index] == &"guardian":
+            _expect(_find_named(role_samples[index], "WardenTargetingFace") != null and _find_named(role_samples[index], "WardenRecoilCollarLeft") != null, "The Warden must expose its maintained targeting and recoil hardware.")
+        elif role_names[index] == &"salvager":
+            _expect(_find_named(role_samples[index], "ScrapperHopperLatch") != null and _find_named(role_samples[index], "ScrapperCargoFastenerLeft") != null, "The Scrapper must expose its maintained hopper hardware.")
+        elif role_names[index] == &"scout":
+            _expect(_find_named(role_samples[index], "PathfinderMastBraceLeft") != null and _find_named(role_samples[index], "PathfinderSurveyBeacon") != null, "The Pathfinder must expose its braced mast and survey beacon hardware.")
+        elif role_names[index] == &"engineer":
+            _expect(_find_named(role_samples[index], "EngineerToolControl") != null and _find_named(role_samples[index], "EngineerForgeGuard") != null, "The Engineer must expose its tool-control and forge-guard hardware.")
         role_samples[index].queue_free()
 
     var authored_warden := ROBOT_SCENE.instantiate() as RobotUnit3D

@@ -206,7 +206,63 @@ func _polish_robot(robot: RobotUnit3D) -> void:
             _build_engineer_detail(detail)
         _:
             _build_scrapper_detail(detail)
+    _build_machine_roster_micro_detail(detail, robot)
     _build_machine_finish(detail, robot)
+
+
+func _build_machine_roster_micro_detail(parent: Node3D, robot: RobotUnit3D) -> void:
+    # The focal pair has a dedicated hero pass; this bounded companion pass
+    # gives the remaining machine roles one maintained close-range signature
+    # each, so the roster does not collapse into the same generic chassis.
+    match robot.archetype:
+        &"guardian":
+            ModelKit3D.add_surface_panel(
+                parent,
+                Vector3(0.34, 0.16, 0.07),
+                Vector3(0.0, 1.52, -0.96),
+                finish_panel,
+                finish_warning,
+                Vector3(-0.05, 0.0, 0.0),
+                "WardenTargetingFace"
+            )
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_cylinder(parent, 0.13, 0.055, Vector3(float(side) * 0.52, 1.56, -0.995), finish_warning, Vector3(1.5708, 0.0, 0.0), "WardenRecoilCollar%s" % ("Left" if side < 0.0 else "Right"))
+        &"salvager":
+            ModelKit3D.add_surface_panel(
+                parent,
+                Vector3(0.42, 0.18, 0.07),
+                Vector3(0.0, 1.63, -0.25),
+                finish_panel,
+                finish_warning,
+                Vector3(-0.04, 0.0, 0.0),
+                "ScrapperHopperLatch"
+            )
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_cylinder(parent, 0.055, 0.06, Vector3(float(side) * 0.36, 1.6, -0.34), finish_warning, Vector3(1.5708, 0.0, 0.0), "ScrapperCargoFastener%s" % ("Left" if side < 0.0 else "Right"))
+        &"scout":
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_beveled_box(parent, Vector3(0.08, 0.28, 0.18), Vector3(float(side) * 0.2, 1.98, 0.14), finish_panel, Vector3(0.0, 0.0, float(side) * 0.16), "PathfinderMastBrace%s" % ("Left" if side < 0.0 else "Right"), 0.18)
+            ModelKit3D.add_sphere(parent, 0.07, Vector3(0.0, 2.72, -0.08), finish_status, Vector3(1.2, 0.72, 0.72), "PathfinderSurveyBeacon")
+        &"engineer":
+            ModelKit3D.add_surface_panel(
+                parent,
+                Vector3(0.36, 0.18, 0.07),
+                Vector3(0.0, 1.64, -0.18),
+                finish_panel,
+                finish_warning,
+                Vector3(-0.04, 0.0, 0.0),
+                "EngineerToolControl"
+            )
+            ModelKit3D.add_louvered_panel(
+                parent,
+                Vector3(0.36, 0.22, 0.12),
+                Vector3(0.0, 1.16, -0.98),
+                dark_steel,
+                finish_warning,
+                Vector3.ZERO,
+                "EngineerForgeGuard",
+                3
+            )
 
 
 func _build_machine_finish(parent: Node3D, robot: RobotUnit3D) -> void:

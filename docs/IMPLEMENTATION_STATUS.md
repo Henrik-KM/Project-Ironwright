@@ -317,6 +317,15 @@ identities. Manual channels remain finish-before-save.
 - kept the pass presentation-only, bounded and light-free apart from the
   existing focal lamps, with native aesthetic coverage for every new socket.
 
+## Focused machine roster surface-finish milestone
+
+- added one role-specific maintained surface signature to Warden, Scrapper,
+  Pathfinder and Engineer: targeting/recoil hardware, hopper fasteners, mast
+  braces/survey beacon, and tool-control/forge-guard surfaces;
+- kept the remaining machine roster visually distinct from the focal pair
+  without adding lights, sockets, collision, AI work or player-managed chores;
+- added native role-sample coverage for each new presentation contract.
+
 ## Focused Veilstalker presentation milestone
 
 - added the original `veilstalker.predator.v1` high-definition glTF shell and
