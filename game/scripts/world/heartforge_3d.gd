@@ -170,6 +170,68 @@ func _build_visuals() -> void:
             Vector3.ZERO,
             "CoreSignalRail"
         )
+
+    # A compact reactor/control layer gives the Heartforge a readable
+    # manufactured focal face at tactical distance. It is presentation-only:
+    # the existing collision box, interaction radius and progression state
+    # remain the sole gameplay contract for this machine.
+    var focal_detail := Node3D.new()
+    focal_detail.name = "HeartforgeFocalDetail"
+    _model_root.add_child(focal_detail)
+    var collar_mesh := TorusMesh.new()
+    collar_mesh.inner_radius = 1.28
+    collar_mesh.outer_radius = 1.48
+    collar_mesh.rings = 18
+    collar_mesh.ring_segments = 48
+    var collar := MeshInstance3D.new()
+    collar.name = "HeartforgeUpperCollar"
+    collar.mesh = collar_mesh
+    collar.material_override = cladding_edge
+    collar.position = Vector3(0.0, 3.78, 0.0)
+    focal_detail.add_child(collar)
+    for index in range(8):
+        var angle := TAU * float(index) / 8.0 + PI * 0.125
+        var fin_position := Vector3(cos(angle) * 1.45, 3.78, sin(angle) * 1.45)
+        ModelKit3D.add_beveled_box(
+            focal_detail,
+            Vector3(0.16, 0.58, 0.34),
+            fin_position,
+            iron,
+            Vector3(0.0, -angle, 0.0),
+            "HeartforgeFocalRadialFin%02d" % index,
+            0.16
+        )
+    ModelKit3D.add_louvered_panel(
+        focal_detail,
+        Vector3(1.22, 0.68, 0.12),
+        Vector3(0.0, 2.7, 1.92),
+        dark,
+        core_signal,
+        Vector3.ZERO,
+        "HeartforgeFocalControlFace",
+        5
+    )
+    for index in range(3):
+        var lens_material := heat if index == 1 else cyan
+        ModelKit3D.add_sphere(
+            focal_detail,
+            0.075,
+            Vector3(-0.34 + float(index) * 0.34, 2.73, 2.01),
+            lens_material,
+            Vector3(1.0, 0.68, 0.42),
+            "HeartforgeFocalSignalLens%02d" % index
+        )
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_cylinder(
+            focal_detail,
+            0.055,
+            1.1,
+            Vector3(side * 1.26, 2.66, 1.88),
+            rust,
+            Vector3(0.0, 0.0, PI * 0.5),
+            "HeartforgeFocalCableBranch"
+        )
+
     ModelKit3D.add_cylinder(_model_root, 0.36, 2.6, Vector3(-1.85, 1.7, 0.0), iron, Vector3.ZERO, "WestStack")
     ModelKit3D.add_cylinder(_model_root, 0.36, 2.6, Vector3(1.85, 1.7, 0.0), iron, Vector3.ZERO, "EastStack")
     ModelKit3D.add_box(_model_root, Vector3(3.0, 0.35, 1.8), Vector3(0.0, 0.48, 3.25), iron, Vector3.ZERO, "ForgeBench")
