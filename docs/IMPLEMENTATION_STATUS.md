@@ -1069,6 +1069,18 @@ final retail art, animation and external visual approval are still required.
 - added complete-run coverage for opening, discovery, panel readability and
   in-memory record restoration.
 
+## Focused central street-detail presentation milestone
+
+- added a bounded presentation-only `HighDefinitionStreetDetails` layer to the
+  central procedural urban district;
+- added civic benches, service cabinets, planters, route signs and small weed
+  clusters with beveled and layered model-kit geometry;
+- added aesthetic coverage for the street-detail layer and its representative
+  furniture, maintenance, vegetation and route-identity sockets;
+- live review confirmed the fresh opening still boots into the readable
+  Heartforge tactical composition after the layer is attached; broader district
+  review remains part of the commercial work below.
+
 ## Commercial work still remaining
 
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a

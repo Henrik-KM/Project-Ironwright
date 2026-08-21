@@ -22,6 +22,8 @@ The initial presentation-reset pass fixed the most disruptive screen-space label
 
 The opening route now also has a bounded authored street-dressing pass: a collapsed transit shelter, flooded utility relay and organic breach marker establish civic history, infrastructure failure and ecological escalation beyond the plaza. A raised amber threshold arch and repeated low route chevrons now keep the first salvage objective legible beyond the Heartforge from the starting tactical frame. These are presentation landmarks only; they do not add collision, wave scheduling or a new recurring management task.
 
+The central urban district now also carries a bounded high-definition street-detail layer: civic benches, service cabinets, planters, route signs and small weed clusters break up the procedural paving with readable human-scale maintenance evidence. The layer is presentation-only, uses the existing original model kit, and remains bounded so environmental richness does not become a new simulation or maintenance burden.
+
 ## Release-readiness rule
 
 No agent may describe Project Ironwright as commercially finished, release-ready, or a release candidate based solely on:

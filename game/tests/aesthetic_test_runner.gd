@@ -34,6 +34,11 @@ func _run_all() -> void:
             audio_director.stop_all()
     _expect(world.get_node_or_null("CozyHeartforgeCamp") != null, "The Heartforge must receive an inhabited cozy camp layer.")
     _expect(world.get_node_or_null("UrbanAestheticPass") != null, "The ruined city must receive the urban storytelling pass.")
+    var city := world.get_node_or_null("ProceduralUrbanDistrict") as ProceduralCity3D
+    _expect(city != null and city.get_node_or_null("HighDefinitionStreetDetails") != null, "The central town must carry a bounded high-definition street-detail layer.")
+    if city != null:
+        _expect(city.find_child("CivicBenchSeat", true, false) != null and city.find_child("CivicServiceCabinet", true, false) != null, "The street-detail layer must expose readable civic furniture and maintenance hardware.")
+        _expect(city.find_child("CivicPlanterGrowth", true, false) != null and city.find_child("CivicRouteSign", true, false) != null, "The street-detail layer must expose vegetation and civic route identity.")
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgeMaintenanceDetail") != null, "The Heartforge must expose a dedicated presentation-only maintenance detail layer.")
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgePlazaDetail/HeartforgeServiceRing/ForgeRecessedServiceRing") != null, "The Heartforge plaza must expose a readable recessed service ring around its focal machine.")
     _expect(_find_named(world, "RouteThresholdAmberBand") != null, "The opening service lane must expose a far amber threshold landmark for the first objective.")

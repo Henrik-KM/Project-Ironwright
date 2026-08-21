@@ -329,6 +329,17 @@ clapper, and organic vein joints. Stable manifest requirements and region
 motion tests cover the added sockets; the landmark remains presentation-only
 and does not change nest ecology or traversal rules.
 
+## Focused central street-detail milestone
+
+The central procedural urban district now carries a bounded high-definition civic
+street layer: three bench assemblies, three service cabinets, three planters,
+two route signs and fourteen small weed clusters. Beveled seats, cabinet
+louvers, planter growth, route-color plates and maintenance hardware add
+human-scale material and civic history to the wet paving without adding
+collision, simulation state or a recurring player task. The layer uses the
+existing original procedural model kit and is covered by the aesthetic presence
+runner.
+
 ## Focused late-organic anatomy refinement milestone
 
 The five later organic family shells now receive a second authored detail
