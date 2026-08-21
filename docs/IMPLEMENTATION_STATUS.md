@@ -1,5 +1,11 @@
 # Implementation status
 
+## Focused operation-breadth milestone
+
+- Expanded the authored physical operation library from 12 to 16 templates across early, mid and late regions, including North Archive recovery, East residential rescue, West transformer repair and Root Signal purge.
+- Added four fixed discovered sites and stable operation-driven rewards so optional expeditions create durable outpost choices, ecological suppression or endgame-pressure trade-offs.
+- Integrated ecological event modifiers, release breadth validation and regression coverage without adding per-unit orders, queues or recurring player maintenance.
+
 ## Focused organic-roster breadth and authored-shell milestone
 
 - Expanded the authored organic roster from 12 to 14 families with Thornback territorial guardians and Ashmantle route predators.

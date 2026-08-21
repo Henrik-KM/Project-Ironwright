@@ -47,7 +47,7 @@
     "organic_enemy_families_target": 12,
     "enemy_intelligence_tiers": 5,
     "world_regions_target": 12,
-    "long_range_operations_target": 12,
+    "long_range_operations_target": 16,
     "outpost_roles": 4,
     "heartforge_tiers": 5,
     "recurring_wave_loop": false,

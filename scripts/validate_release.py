@@ -218,8 +218,8 @@ def validate_release_content_breadth() -> None:
     profiles = _load_json("game/data/balance_profiles.json").get("profiles", {})
     if len(regions) < 12:
         raise legacy.ValidationError("Commercial release needs at least twelve persistent regions")
-    if len(operations) < 12:
-        raise legacy.ValidationError("Commercial release needs at least twelve physical operations")
+    if len(operations) < 16:
+        raise legacy.ValidationError("Commercial release needs at least sixteen physical operations")
     if len(enemies) < 12:
         raise legacy.ValidationError("Commercial release needs at least twelve organic enemy families")
     if len(sites) < 8:

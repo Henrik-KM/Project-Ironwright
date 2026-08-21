@@ -59,6 +59,24 @@
     "operation.post_victory_archive": {
       "replenishment_delta_per_minute": {"1": 0.25},
       "reason": "Archive recovery caused limited local disturbance after first victory."
+    },
+    "operation.north_archive_sublevel": {
+      "replenishment_delta_per_minute": {"1": 0.45},
+      "reason": "Opening the North Archive sublevel disturbed dormant organisms beneath the first route."
+    },
+    "operation.east_residential_rescue": {
+      "replenishment_delta_per_minute": {"1": 1.0, "2": 0.08},
+      "tier_1_growth_delta": 0.015,
+      "reason": "The residential beacon broadcast a fresh machine route across the eastern roofs."
+    },
+    "operation.west_transformer_repair": {
+      "replenishment_delta_per_minute": {"1": -0.65, "2": -0.04},
+      "tier_1_growth_delta": -0.015,
+      "reason": "The repaired transformer reduced the industrial heat signal that fed the West Grid ecology."
+    },
+    "operation.root_signal_purge": {
+      "replenishment_delta_per_minute": {"3": -0.035, "4": -0.012, "5": -0.004},
+      "reason": "The root signal purge cut one advanced coordination branch before the endgame response."
     }
   },
   "technologies": {
