@@ -991,6 +991,74 @@ func _add_region_surface_finish() -> void:
     ModelKit3D.add_beveled_box(finish, Vector3(0.18, 0.12, 30.0), Vector3(-17.9, 0.25, 0.0), finish_glow, Vector3.ZERO, "RegionalLeftMarker", 0.08)
     ModelKit3D.add_beveled_box(finish, Vector3(0.18, 0.12, 30.0), Vector3(17.9, 0.25, 0.0), finish_glow, Vector3.ZERO, "RegionalRightMarker", 0.08)
 
+    # Break the broad apron into readable, authored ground-scale pieces. This
+    # is presentation-only: it adds no collision, route ownership, resources
+    # or player-managed maintenance.
+    var surface_seam := ModelKit3D.material(Color("3b4a4c"), 0.42, 0.62)
+    var surface_debris := ModelKit3D.material(Color("5e4d43"), 0.16, 0.84)
+    var surface_vegetation := ModelKit3D.material(Color("294b42"), 0.0, 0.86, Color("5ca882"), 0.28)
+    for seam_index in range(4):
+        var seam_z := -11.4 + float(seam_index) * 7.6
+        ModelKit3D.add_beveled_box(
+            finish,
+            Vector3(27.5, 0.045, 0.16),
+            Vector3(0.0, 0.3, seam_z),
+            surface_seam,
+            Vector3(0.0, 0.0, 0.012 * float(seam_index % 2)),
+            "DistrictSurfaceSeam%02d" % seam_index,
+            0.08
+        )
+    var debris_positions := [
+        Vector3(-13.2, 0.42, -12.4),
+        Vector3(11.8, 0.4, -8.6),
+        Vector3(-12.6, 0.4, 9.8),
+        Vector3(13.4, 0.42, 11.6),
+    ]
+    for debris_index in debris_positions.size():
+        var debris_position: Vector3 = debris_positions[debris_index]
+        ModelKit3D.add_beveled_box(
+            finish,
+            Vector3(0.9 + float(debris_index % 2) * 0.28, 0.22, 0.46 + float(debris_index % 3) * 0.12),
+            debris_position,
+            surface_debris,
+            Vector3(0.0, 0.22 * float(debris_index), -0.08 * float(debris_index % 2)),
+            "DistrictSurfaceDebris%02d" % debris_index,
+            0.2
+        )
+        ModelKit3D.add_cylinder(
+            finish,
+            0.045,
+            0.68,
+            debris_position + Vector3(0.24, 0.16, -0.08),
+            finish_rust,
+            Vector3(0.0, 0.0, 0.72),
+            "DistrictSurfaceRebar%02d" % debris_index
+        )
+    for drain_index in range(3):
+        var drain_x := -8.0 + float(drain_index) * 8.0
+        ModelKit3D.add_louvered_panel(
+            finish,
+            Vector3(1.35, 0.32, 0.16),
+            Vector3(drain_x, 0.42, 13.1),
+            finish_dark,
+            finish_metal,
+            Vector3.ZERO,
+            "DistrictSurfaceDrain%02d" % drain_index,
+            3
+        )
+    _add_beam(finish, Vector3(-14.5, 0.34, -13.8), Vector3(-16.6, 1.12, -15.0), 0.055, finish_rust, "DistrictSurfaceEdgeBraceL")
+    _add_beam(finish, Vector3(14.5, 0.34, -13.8), Vector3(16.6, 1.12, -15.0), 0.055, finish_rust, "DistrictSurfaceEdgeBraceR")
+    for growth_index in range(3):
+        var growth_x := -8.5 + float(growth_index) * 8.5
+        ModelKit3D.add_membrane_fan(
+            finish,
+            0.26 + float(growth_index % 2) * 0.07,
+            Vector3(growth_x, 0.42, 12.2),
+            surface_vegetation,
+            4,
+            "DistrictSurfaceGrowth%02d" % growth_index
+        )
+
     match region_kind:
         &"archive":
             ModelKit3D.add_surface_panel(finish, Vector3(2.0, 1.2, 0.12), Vector3(3.1, 2.0, 6.25), finish_dark, finish_glow, Vector3.ZERO, "ArchiveFacadeIndex")

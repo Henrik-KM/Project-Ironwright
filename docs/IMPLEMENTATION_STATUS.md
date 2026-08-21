@@ -57,6 +57,7 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - the West Grid secondary industrial layer now has bounded high-definition substation hardware with serviced tank housings, louvered panels, top and foot plates, bands, warning beacons, pipe flanges and the existing flooded-corridor identity.
 - the Municipal Glasshouse secondary layer now has bounded high-definition frame posts, roof and bed beams, climate vents, layered overgrowth plates and repeated mycelium lights, while retaining the existing cultivation encounter contract.
 - the Riverworks secondary layer now has bounded high-definition wet channels, foam breaks, retaining walls, a pipe manifold and a sluice control assembly, while retaining the existing waterworks encounter contract.
+- every non-sanctuary region surface now has a bounded shared high-definition apron pass with segmented seams, damaged slabs, exposed rebar, drains, edge braces and restrained overgrowth, while retaining the existing collision and route contracts.
 - release save loading now normalizes older versioned envelopes into schema 4, persists the migrated payload atomically, records a durable from/to migration report, and exposes the migration in the player-facing save notification path.
 - Buried Laboratories now has an original high-definition containment-hall shell while retaining the existing research encounter and operation contracts.
 - Municipal Glasshouse now has an original high-definition climate-frame shell while retaining the existing greenhouse encounter and operation contracts.
