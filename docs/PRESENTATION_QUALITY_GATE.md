@@ -105,6 +105,8 @@ Remote North Ruins release dressing now carries the same model grammar as well: 
 
 Remote Flood Market release dressing now carries the same model grammar as well: nine stall shells use beveled counters, membrane canopies, canopy posts, display crates and layered organic awnings instead of isolated concrete boxes and spheres. The detail is presentation-only and preserves the existing market landmark, salvage, route, ecology and operation contracts.
 
+Remote Buried Laboratories release dressing now carries the same model grammar as well: eight research consoles use beveled housings, instrument displays, cooling louvers, sample ports and layered containment vessels instead of isolated console boxes, flat displays and cylinders. The detail is presentation-only and preserves the existing laboratory landmark, operation, ecology and progression contracts.
+
 ## Release-readiness rule
 
 No agent may describe Project Ironwright as commercially finished, release-ready, or a release candidate based solely on:
