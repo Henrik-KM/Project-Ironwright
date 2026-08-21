@@ -629,10 +629,18 @@ func _run_all() -> void:
             _expect(_animation_player_track_count(robot_animation.animation_player, &"Fire") >= 2, "Robot Fire clips must carry weapon and reaction authored motion channels.")
             _expect(_animation_player_has_clip(robot_animation.animation_player, &"Hit"), "Robot authored models must expose a Hit clip.")
             _expect(_animation_player_track_count(robot_animation.animation_player, &"Hit") >= 2, "Robot Hit clips must carry body and sensor reaction authored motion channels.")
+            _expect(_animation_player_has_clip(robot_animation.animation_player, &"Retreat"), "Robot authored models must expose a Retreat clip.")
+            _expect(_animation_player_track_count(robot_animation.animation_player, &"Retreat") >= 2, "Robot Retreat clips must carry body and sensor withdrawal channels.")
+            _expect(_animation_player_has_clip(robot_animation.animation_player, &"Death"), "Robot authored models must expose a Death clip.")
+            _expect(_animation_player_track_count(robot_animation.animation_player, &"Death") >= 2, "Robot Death clips must carry body collapse channels.")
             robot_animation._on_weapon_fired(Vector3.ZERO, Vector3.FORWARD, null)
             _expect(_animation_clip_matches(robot_animation.active_clip, &"Fire"), "Robot weapon events must select the authored Fire clip.")
             robot_animation._on_health_changed(robot, 40.0, 90.0)
             _expect(_animation_clip_matches(robot_animation.active_clip, &"Hit"), "Robot damage events must select the authored Hit clip.")
+            robot.state_name = &"retreating"
+            robot_animation.one_shot_remaining = 0.0
+            robot_animation._select_loop_clip()
+            _expect(_animation_clip_matches(robot_animation.active_clip, &"Retreat"), "Robot retreat state must select the authored Retreat clip.")
         _expect(_model_has_details(robot), "Robots must receive additional role-readable detail.")
         _expect(_find_named(robot, "ShoulderPlate") != null, "Robots must expose layered shoulder armour.")
         _expect(_find_named(robot, "ChassisDetailPanel") != null, "Robots must expose a layered high-detail chassis panel.")

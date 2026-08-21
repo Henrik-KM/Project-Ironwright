@@ -150,6 +150,14 @@ def main() -> None:
             ("EngineerModel", "translation", [0.0, 0.10, 0.24], [0.0, 0.0, 0.0, 0.0, 0.0, 0.12, 0.0, 0.0, 0.0]),
             ("Sensor", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.0)) + quat((-0.15, 0.08, 0.0)) + quat((0.0, 0.0, 0.0))),
         ]),
+        animation("Retreat", [
+            ("EngineerModel", "rotation", [0.0, 0.28, 0.56], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, 0.12)) + quat((0.0, 0.0, 0.0))),
+            ("Sensor", "rotation", [0.0, 0.28, 0.56], quat((0.0, 0.0, 0.0)) + quat((0.0, -0.12, 0.0)) + quat((0.0, 0.0, 0.0))),
+        ]),
+        animation("Death", [
+            ("EngineerModel", "translation", [0.0, 0.18, 0.42], [0.0, 0.0, 0.0, 0.0, -0.08, 0.0, 0.0, -0.22, 0.0]),
+            ("EngineerModel", "rotation", [0.0, 0.18, 0.42], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.16, 0.22)) + quat((0.0, 0.22, 0.32))),
+        ]),
     ]
 
     document = {
@@ -166,7 +174,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "engineer.constructor.v1",
             "required_nodes": ["EngineerModel", "Sensor", "OpticLens", "MaterialCradle", "PistonJoint", "WelderArm", "ToolHead", "ForgeCoil", "ProductionAssetMarker"],
-            "animation_clips": ["Idle", "Walk", "Work", "Hit"],
+            "animation_clips": ["Idle", "Walk", "Work", "Hit", "Retreat", "Death"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

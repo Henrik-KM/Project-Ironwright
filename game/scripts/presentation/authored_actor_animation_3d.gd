@@ -106,6 +106,8 @@ func _select_loop_clip() -> void:
     if subject.is_in_group(&"friendly_robots"):
         if state in [&"salvaging", &"repairing", &"building"]:
             selected = &"Work"
+        elif state == &"retreating":
+            selected = &"Retreat"
         elif _is_moving(state):
             selected = &"Walk"
     elif subject.is_in_group(&"organic_enemies"):
