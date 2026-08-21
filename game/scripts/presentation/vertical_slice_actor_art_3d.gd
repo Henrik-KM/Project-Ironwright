@@ -207,6 +207,7 @@ func _polish_robot(robot: RobotUnit3D) -> void:
         _:
             _build_scrapper_detail(detail)
     _build_machine_roster_micro_detail(detail, robot)
+    _build_machine_role_signature(detail, robot)
     _build_machine_finish(detail, robot)
 
 
@@ -262,6 +263,127 @@ func _build_machine_roster_micro_detail(parent: Node3D, robot: RobotUnit3D) -> v
                 Vector3.ZERO,
                 "EngineerForgeGuard",
                 3
+            )
+
+
+func _build_machine_role_signature(parent: Node3D, robot: RobotUnit3D) -> void:
+    # Third-pass role hardware gives the four ordinary frames a distinctive
+    # close-camera silhouette instead of relying on color or a single prop.
+    # These assemblies remain presentation-only and are deliberately bounded
+    # so larger autonomous populations do not acquire a new simulation cost.
+    match robot.archetype:
+        &"guardian":
+            for side in [-1.0, 1.0]:
+                var side_sign := float(side)
+                ModelKit3D.add_beveled_box(
+                    parent,
+                    Vector3(0.16, 0.28, 0.52),
+                    Vector3(side_sign * 0.78, 1.66, -0.76),
+                    finish_panel,
+                    Vector3(-0.08, 0.0, side_sign * 0.12),
+                    "WardenThermalFin%s" % ("Left" if side_sign < 0.0 else "Right"),
+                    0.2
+                )
+            ModelKit3D.add_surface_panel(
+                parent,
+                Vector3(0.34, 0.18, 0.08),
+                Vector3(0.0, 1.72, -1.02),
+                dark_steel,
+                finish_status,
+                Vector3(-0.06, 0.0, 0.0),
+                "WardenOpticShroud"
+            )
+            ModelKit3D.add_cylinder(parent, 0.07, 0.28, Vector3(0.0, 1.72, -0.7), finish_warning, Vector3(1.5708, 0.0, 0.0), "WardenBreechClamp")
+        &"salvager":
+            ModelKit3D.add_beveled_box(
+                parent,
+                Vector3(1.24, 0.12, 0.14),
+                Vector3(0.0, 1.92, 0.34),
+                finish_panel,
+                Vector3(0.04, 0.0, 0.0),
+                "ScrapperHopperLip",
+                0.2
+            )
+            for side in [-1.0, 1.0]:
+                var side_sign := float(side)
+                ModelKit3D.add_cylinder(
+                    parent,
+                    0.15,
+                    0.08,
+                    Vector3(side_sign * 0.56, 1.2, 0.42),
+                    finish_warning,
+                    Vector3(1.5708, 0.0, 0.0),
+                    "ScrapperDrum%s" % ("Left" if side_sign < 0.0 else "Right")
+                )
+            ModelKit3D.add_louvered_panel(
+                parent,
+                Vector3(0.46, 0.2, 0.12),
+                Vector3(0.0, 1.22, -0.99),
+                dark_steel,
+                finish_status,
+                Vector3(-0.08, 0.0, 0.0),
+                "ScrapperCuttingGuard",
+                3
+            )
+        &"scout":
+            var mast_collar := MeshInstance3D.new()
+            mast_collar.name = "PathfinderMastCollar"
+            var collar_mesh := TorusMesh.new()
+            collar_mesh.inner_radius = 0.09
+            collar_mesh.outer_radius = 0.14
+            collar_mesh.rings = 12
+            collar_mesh.ring_segments = 24
+            mast_collar.mesh = collar_mesh
+            mast_collar.material_override = finish_warning
+            mast_collar.position = Vector3(0.0, 1.28, 0.14)
+            parent.add_child(mast_collar)
+            for side in [-1.0, 1.0]:
+                var side_sign := float(side)
+                ModelKit3D.add_beveled_box(
+                    parent,
+                    Vector3(0.08, 0.1, 0.64),
+                    Vector3(side_sign * 0.18, 2.72, 0.14),
+                    finish_panel,
+                    Vector3(0.0, 0.0, side_sign * 0.18),
+                    "PathfinderDishRib%s" % ("Left" if side_sign < 0.0 else "Right"),
+                    0.18
+                )
+            ModelKit3D.add_surface_panel(
+                parent,
+                Vector3(0.26, 0.18, 0.08),
+                Vector3(0.42, 1.02, 0.3),
+                dark_steel,
+                finish_status,
+                Vector3(0.0, 0.0, -0.12),
+                "PathfinderSignalCanister"
+            )
+        &"engineer":
+            ModelKit3D.add_cylinder(
+                parent,
+                0.16,
+                0.26,
+                Vector3(-0.52, 0.98, 0.22),
+                finish_warning,
+                Vector3(1.5708, 0.0, 0.0),
+                "EngineerCableSpool"
+            )
+            ModelKit3D.add_surface_panel(
+                parent,
+                Vector3(0.34, 0.24, 0.08),
+                Vector3(-0.76, 1.42, -0.46),
+                dark_steel,
+                finish_status,
+                Vector3(-0.1, 0.0, 0.12),
+                "EngineerWeldingShield"
+            )
+            ModelKit3D.add_beveled_box(
+                parent,
+                Vector3(0.42, 0.16, 0.3),
+                Vector3(1.34, 0.76, -0.3),
+                finish_panel,
+                Vector3(0.0, 0.0, -0.16),
+                "EngineerClampJaw",
+                0.2
             )
 
 
