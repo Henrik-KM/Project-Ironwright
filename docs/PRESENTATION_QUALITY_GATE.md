@@ -12,6 +12,12 @@ The current Heartforge focal-model refinement adds a bounded upper reactor colla
 
 The current actor rebuild also raises the shared source-builder tessellation floor: curved authored parts use at least 24 radial segments and spherical parts at least 16 rings before export. The Mechromancer, five friendly robot frames and every current organic family have been regenerated from those builders, and `scripts/validate_aesthetic.py` checks their exported POSITION density. This protects close tactical silhouettes from silent coarse-geometry regressions while preserving stable names, sockets, animation clips and presentation-only scope.
 
+The optional Town Archive now also records the run's machine-witness moments:
+the first outpost construction, a remote loss, an automatic rebuild and the
+chosen final protocol. These entries are driven by real persistent signals and
+remain an on-demand history surface rather than a permanent quest log or
+recurring management task.
+
 The imported robot and organic clips now have a shared runtime bridge: actor
 movement, work states, weapon fire and organic attack wind-ups select the
 corresponding authored clip while the existing procedural detail layer remains

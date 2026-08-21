@@ -36,6 +36,19 @@ func connect_component_source(source: Node) -> void:
         source.connect(&"component_recovered", callback)
 
 
+func connect_event_source(source: Node) -> void:
+    if source == null:
+        return
+    if source.has_signal(&"operation_changed"):
+        var operation_callback := Callable(self, "_on_operation_changed")
+        if not source.is_connected(&"operation_changed", operation_callback):
+            source.connect(&"operation_changed", operation_callback)
+    if source.has_signal(&"endgame_completed"):
+        var endgame_callback := Callable(self, "_on_endgame_completed")
+        if not source.is_connected(&"endgame_completed", endgame_callback):
+            source.connect(&"endgame_completed", endgame_callback)
+
+
 func unlock_opening_record() -> void:
     _unlock_trigger(&"opening", &"")
 
@@ -92,6 +105,15 @@ func _on_region_discovered(region_id: StringName, _display_name: String) -> void
 
 func _on_component_recovered(component_id: StringName) -> void:
     _unlock_trigger(&"component_recovered", component_id)
+
+
+func _on_operation_changed(kind: StringName, state: StringName, _detail: String) -> void:
+    var trigger_id := StringName("%s:%s" % [String(kind), String(state)])
+    _unlock_trigger(&"operation_state", trigger_id)
+
+
+func _on_endgame_completed(protocol_id: StringName, _display_name: String, _ending: String) -> void:
+    _unlock_trigger(&"endgame_completed", protocol_id)
 
 
 func _unlock_trigger(trigger: StringName, trigger_id: StringName) -> void:
