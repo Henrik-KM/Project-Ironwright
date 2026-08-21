@@ -222,7 +222,7 @@ func _test_vertical_slice_presentation() -> void:
         var central := city.get_node_or_null("RuinedBuilding00")
         _expect(central != null and central.get_node_or_null("VerticalSliceFacade") != null, "The closest building blocks should use broken readable facades rather than giant opaque cubes.")
         if central != null:
-            var shell := central.get_node_or_null("Shell") as MeshInstance3D
+            var shell := central.get_node_or_null("Shell") as Node3D
             _expect(shell != null and not shell.visible, "The old solid central-building shell must be hidden in the representative slice.")
         var distant := city.get_node_or_null("RuinedBuilding04")
         _expect(distant != null and distant.get_node_or_null("BuildingFacadeCrown") != null, "Distant city buildings must inherit the high-definition facade kit rather than remain unbroken boxes.")
