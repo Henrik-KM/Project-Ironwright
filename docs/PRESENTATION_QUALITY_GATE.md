@@ -107,6 +107,8 @@ Remote Flood Market release dressing now carries the same model grammar as well:
 
 Remote Buried Laboratories release dressing now carries the same model grammar as well: eight research consoles use beveled housings, instrument displays, cooling louvers, sample ports and layered containment vessels instead of isolated console boxes, flat displays and cylinders. The detail is presentation-only and preserves the existing laboratory landmark, operation, ecology and progression contracts.
 
+Remote Observatory Ridge release dressing now carries the same model grammar as well: the optics support uses a beveled service deck, access panel, tripod braces, a ribbed dish, central hub, feed and receiver lens instead of an isolated cylinder base and flattened sphere. The detail is presentation-only and preserves the existing survey landmark, route, ecology and operation contracts.
+
 ## Release-readiness rule
 
 No agent may describe Project Ironwright as commercially finished, release-ready, or a release candidate based solely on:
