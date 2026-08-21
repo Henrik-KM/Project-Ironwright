@@ -461,6 +461,32 @@ func _run_all() -> void:
     var omni_count := _count_omni_lights(world)
     _expect(omni_count >= 10, "The environment must use deliberate local practical lighting instead of global darkness.")
 
+    var opening_slice := world.get_node_or_null("HeartforgeVerticalSlice") as Node3D
+    _expect(opening_slice != null, "The opening lighting pass must remain attached to the Heartforge vertical slice.")
+    if opening_slice != null:
+        var opening_roles: Dictionary = {}
+        var strongest_opening_light := 0.0
+        for child in opening_slice.get_children():
+            if not child is OmniLight3D:
+                continue
+            var opening_light := child as OmniLight3D
+            var role: Variant = opening_light.get_meta(&"opening_light_role", &"")
+            if role != &"":
+                opening_roles[role] = true
+                strongest_opening_light = maxf(strongest_opening_light, float(opening_light.get_meta(&"vertical_base_energy", opening_light.light_energy)))
+        _expect(opening_roles.has(&"heartforge_key"), "The opening lighting hierarchy must retain a warm Heartforge key light.")
+        _expect(opening_roles.has(&"cool_route"), "The opening lighting hierarchy must retain a cool route separation light.")
+        _expect(strongest_opening_light <= 2.3, "The opening key light must avoid washing the wet district surface into a white pool.")
+
+    var opening_environment := _find_world_environment(world)
+    if opening_environment != null and opening_environment.environment != null:
+        _expect(opening_environment.environment.glow_bloom <= 0.08, "The opening bloom budget must keep puddles and concrete readable.")
+
+    var atmosphere := world.get_node_or_null("RegionAtmosphereDirector") as RegionAtmosphereDirector3D
+    if atmosphere != null:
+        var sanctuary_palette: Dictionary = atmosphere.palette_for_kind(&"sanctuary")
+        _expect(float(sanctuary_palette.get("glow", 1.0)) <= 0.46, "The opening sanctuary palette must preserve material separation around the Heartforge.")
+
     if failures.is_empty():
         print("Project Ironwright aesthetic overhaul tests passed.")
         quit(0)

@@ -111,18 +111,20 @@ func _polish_environment() -> void:
     if environment_node == null or environment_node.environment == null:
         return
     var environment := environment_node.environment
-    environment.tonemap_exposure = 1.08
+    environment.tonemap_exposure = 1.04
     environment.tonemap_white = 2.15
-    environment.adjustment_brightness = 0.98
+    environment.adjustment_brightness = 0.96
     environment.adjustment_contrast = 1.13
     environment.adjustment_saturation = 0.92
     environment.ambient_light_energy = 0.43
     environment.fog_density = 0.0115
     environment.fog_light_color = Color("607581")
     environment.fog_light_energy = 0.62
-    environment.glow_intensity = 0.52
-    environment.glow_strength = 0.86
-    environment.glow_bloom = 0.11
+    # Keep the Heartforge's warm core and cyan route markers legible without
+    # turning wet concrete and puddles into broad white pools.
+    environment.glow_intensity = 0.43
+    environment.glow_strength = 0.76
+    environment.glow_bloom = 0.075
 
 
 func _replace_central_building_visuals() -> void:
@@ -624,17 +626,18 @@ func _build_atmospheric_steam() -> void:
 
 func _build_lighting_rig() -> void:
     var definitions := [
-        [Vector3(0.0, 5.2, 1.6), Color("ff8d42"), 2.7, 15.0, true],
-        [Vector3(-6.8, 3.2, 2.0), Color("ffb36a"), 1.15, 8.5, true],
-        [Vector3(7.8, 3.0, -2.0), Color("9fcbd8"), 0.85, 10.0, false],
-        [Vector3(0.0, 3.4, -10.0), Color("7ec4d1"), 0.72, 9.5, false],
-        [Vector3(-9.0, 3.8, -7.0), Color("dca46d"), 0.68, 7.0, false],
-        [Vector3(0.0, 7.2, 8.0), Color("86c9d4"), 0.32, 17.0, false],
-        [Vector3(0.0, 4.0, -8.0), Color("d07043"), 0.28, 10.0, false],
+        [Vector3(0.0, 5.2, 1.6), Color("ff8d42"), 2.15, 14.0, true, &"heartforge_key"],
+        [Vector3(-6.8, 3.2, 2.0), Color("ffb36a"), 0.78, 8.0, true, &"warm_threshold"],
+        [Vector3(7.8, 3.0, -2.0), Color("9fcbd8"), 0.58, 9.0, false, &"cool_facade"],
+        [Vector3(0.0, 3.4, -10.0), Color("7ec4d1"), 0.5, 9.0, false, &"cool_route"],
+        [Vector3(-9.0, 3.8, -7.0), Color("dca46d"), 0.48, 6.5, false, &"warm_district"],
+        [Vector3(0.0, 7.2, 8.0), Color("86c9d4"), 0.2, 15.0, false, &"sky_rim"],
+        [Vector3(0.0, 4.0, -8.0), Color("d07043"), 0.2, 9.0, false, &"route_warmth"],
     ]
     for data in definitions:
         var light := _add_light(root, data[0], data[1], float(data[2]), float(data[3]), bool(data[4]))
         light.set_meta(&"vertical_base_energy", float(data[2]))
+        light.set_meta(&"opening_light_role", data[5])
         practical_lights.append(light)
 
 

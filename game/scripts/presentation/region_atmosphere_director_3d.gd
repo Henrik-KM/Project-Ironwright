@@ -59,7 +59,9 @@ func refresh_now() -> void:
 func palette_for_kind(kind: StringName) -> Dictionary:
     match kind:
         &"sanctuary":
-            return _palette(Color("8da6b6"), Color("718491"), 0.56, 0.72, 0.0085, 1.08, 1.08, 1.04, 0.72)
+            # The opening district has its own restrained glow budget so the
+            # Heartforge remains warm and focal without flattening wet ground.
+            return _palette(Color("8da6b6"), Color("718491"), 0.56, 0.72, 0.0085, 1.08, 1.08, 1.04, 0.43)
         &"industrial":
             return _palette(Color("7e9a9e"), Color("536a70"), 0.52, 0.86, 0.0105, 0.94, 1.15, 0.98, 0.84)
         &"commercial":
