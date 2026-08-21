@@ -193,6 +193,127 @@ func _build_district_breadth(parent: Node3D, kind: StringName) -> void:
             ModelKit3D.add_organic_plate(identity, 0.64, Vector3(6.4, 0.95, 8.3), _membrane, _rust, Vector3(1.1, 0.7, 0.86), "DistrictBreadthRootPlate")
         _:
             ModelKit3D.add_surface_panel(identity, Vector3(1.4, 0.8, 0.1), Vector3(5.2, 1.0, 8.4), _dark_steel, _warning, Vector3.ZERO, "DistrictBreadthGenericMarker")
+    _build_secondary_breadth_kit(breadth, kind)
+
+
+func _build_secondary_breadth_kit(parent: Node3D, kind: StringName) -> void:
+    # A second, compact service edge keeps a landmark from reading as one
+    # hero prop floating in an empty district. It is deliberately presentation
+    # only: no collision, storage, routes, jobs or player-facing maintenance.
+    var kit := Node3D.new()
+    kit.name = "DistrictBreadthSecondaryKit"
+    parent.add_child(kit)
+
+    var accent := _warning
+    var growth_material := _vegetation
+    match kind:
+        &"industrial", &"waterfront", &"observatory":
+            accent = _cool
+        &"greenhouse":
+            accent = _vegetation
+            growth_material = _membrane
+        &"nest", &"research", &"endgame":
+            accent = _membrane
+            growth_material = _organic
+        &"archive", &"tenement", &"commercial", &"rail":
+            accent = _warm
+
+    ModelKit3D.add_beveled_box(
+        kit,
+        Vector3(3.2, 0.18, 1.8),
+        Vector3(-10.2, 0.24, 11.2),
+        _dark_steel,
+        Vector3(0.0, 0.0, -0.035),
+        "DistrictBreadthSecondaryPlinth",
+        0.2
+    )
+    ModelKit3D.add_beveled_box(
+        kit,
+        Vector3(2.35, 1.35, 0.92),
+        Vector3(-10.2, 0.98, 10.92),
+        _steel,
+        Vector3(0.0, 0.0, 0.018),
+        "DistrictBreadthSecondaryPod",
+        0.18
+    )
+    ModelKit3D.add_louvered_panel(
+        kit,
+        Vector3(1.18, 0.62, 0.1),
+        Vector3(-10.2, 0.92, 10.42),
+        _dark_steel,
+        accent,
+        Vector3.ZERO,
+        "DistrictBreadthSecondaryVent",
+        4
+    )
+    ModelKit3D.add_surface_panel(
+        kit,
+        Vector3(0.76, 0.46, 0.08),
+        Vector3(-10.2, 1.64, 10.42),
+        _dark_steel,
+        accent,
+        Vector3.ZERO,
+        "DistrictBreadthSecondaryBadge"
+    )
+    for side in [-1.0, 1.0]:
+        _add_beam(
+            kit,
+            Vector3(-10.2 + side * 1.18, 0.42, 10.72),
+            Vector3(-10.2 + side * 1.44, 1.76, 10.72),
+            0.042,
+            _rust,
+            "DistrictBreadthSecondaryBrace"
+        )
+    _add_beam(
+        kit,
+        Vector3(-8.95, 1.7, 10.9),
+        Vector3(-8.35, 2.45, 10.9),
+        0.035,
+        accent,
+        "DistrictBreadthSecondaryCableAnchor"
+    )
+    ModelKit3D.add_cylinder(
+        kit,
+        0.13,
+        0.72,
+        Vector3(-11.78, 0.62, 11.22),
+        _rust,
+        Vector3.ZERO,
+        "DistrictBreadthSecondarySpindle"
+    )
+    ModelKit3D.add_organic_plate(
+        kit,
+        0.34,
+        Vector3(-8.72, 0.63, 11.18),
+        growth_material,
+        accent,
+        Vector3(1.0, 0.58, 0.72),
+        "DistrictBreadthSecondaryGrowth"
+    )
+
+    match kind:
+        &"archive":
+            ModelKit3D.add_beveled_box(kit, Vector3(1.25, 0.9, 0.5), Vector3(-11.35, 0.78, 11.78), _rust, Vector3.ZERO, "DistrictBreadthArchiveShelf", 0.14)
+        &"industrial":
+            ModelKit3D.add_cylinder(kit, 0.34, 0.16, Vector3(-10.2, 1.78, 11.2), _cool, Vector3(PI * 0.5, 0.0, 0.0), "DistrictBreadthTransformerCap")
+        &"tenement":
+            _add_beam(kit, Vector3(-11.5, 1.9, 11.65), Vector3(-8.9, 1.9, 11.65), 0.045, _rust, "DistrictBreadthBalconyFrame")
+        &"greenhouse":
+            _add_beam(kit, Vector3(-11.2, 1.76, 11.0), Vector3(-9.2, 2.62, 11.0), 0.038, _cool, "DistrictBreadthIrrigationValve")
+        &"commercial":
+            ModelKit3D.add_beveled_box(kit, Vector3(1.35, 0.7, 0.72), Vector3(-11.25, 0.68, 11.9), _rust, Vector3(0.0, 0.0, 0.04), "DistrictBreadthMarketCrate", 0.16)
+        &"waterfront":
+            ModelKit3D.add_cylinder(kit, 0.13, 1.1, Vector3(-11.5, 0.78, 11.9), _rust, Vector3.ZERO, "DistrictBreadthMooringPost")
+        &"rail":
+            _add_beam(kit, Vector3(-11.7, 0.44, 11.9), Vector3(-8.8, 0.44, 11.9), 0.06, _steel, "DistrictBreadthRailSwitch")
+        &"nest":
+            _add_beam(kit, Vector3(-11.4, 0.45, 11.75), Vector3(-9.2, 2.5, 11.35), 0.095, _organic, "DistrictBreadthBroodVeil")
+        &"observatory":
+            ModelKit3D.add_cylinder(kit, 0.07, 2.3, Vector3(-11.35, 1.36, 11.55), accent, Vector3.ZERO, "DistrictBreadthSurveyMast")
+        &"research":
+            ModelKit3D.add_surface_panel(kit, Vector3(1.08, 0.72, 0.08), Vector3(-11.3, 1.08, 11.72), _dark_steel, accent, Vector3.ZERO, "DistrictBreadthContainmentLatch")
+        &"endgame":
+            _add_beam(kit, Vector3(-11.45, 0.45, 11.75), Vector3(-9.05, 2.7, 11.2), 0.07, _organic, "DistrictBreadthRootAnchor")
 
 
 func _build_archive_vignette(parent: Node3D) -> void:

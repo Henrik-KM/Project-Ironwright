@@ -148,6 +148,25 @@ func _run_all() -> void:
                 _expect(district_breadth.find_child("DistrictBreadthServicePad", true, false) != null, "District breadth must carry a readable service-edge anchor.")
                 _expect(district_breadth.find_child("DistrictBreadthGrowth0", true, false) != null, "District breadth must carry restrained overgrowth detail.")
                 _expect(district_breadth.find_child("DistrictBreadthIdentity_%s" % String(landmark.region_kind), true, false) != null, "District breadth must preserve a region-specific identity motif.")
+                var secondary_breadth := district_breadth.find_child("DistrictBreadthSecondaryKit", true, false) as Node3D
+                _expect(secondary_breadth != null, "District breadth must carry a second bounded service-edge assembly rather than one isolated landmark prop.")
+                if secondary_breadth != null:
+                    _expect(secondary_breadth.find_child("DistrictBreadthSecondaryPod", true, false) != null and secondary_breadth.find_child("DistrictBreadthSecondaryBadge", true, false) != null, "The secondary district kit must expose a layered service pod and readable identity badge.")
+                    var secondary_identity_names := {
+                        &"archive": "DistrictBreadthArchiveShelf",
+                        &"industrial": "DistrictBreadthTransformerCap",
+                        &"tenement": "DistrictBreadthBalconyFrame",
+                        &"greenhouse": "DistrictBreadthIrrigationValve",
+                        &"commercial": "DistrictBreadthMarketCrate",
+                        &"waterfront": "DistrictBreadthMooringPost",
+                        &"rail": "DistrictBreadthRailSwitch",
+                        &"nest": "DistrictBreadthBroodVeil",
+                        &"observatory": "DistrictBreadthSurveyMast",
+                        &"research": "DistrictBreadthContainmentLatch",
+                        &"endgame": "DistrictBreadthRootAnchor",
+                    }
+                    var secondary_identity_name := str(secondary_identity_names.get(landmark.region_kind, ""))
+                    _expect(secondary_identity_name != "" and secondary_breadth.find_child(secondary_identity_name, true, false) != null, "District breadth must preserve a second region-specific identity motif.")
             var pressure_read := landmark.get_node_or_null("PersistentRegionGeometry/RegionalPressureRead") as Node3D
             var pressure_signal := landmark.find_child("RegionalPressureSignal00", true, false) as Node3D
             if pressure_read != null and pressure_signal != null:

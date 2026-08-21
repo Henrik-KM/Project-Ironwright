@@ -1289,6 +1289,19 @@ presentation restore, with release regression coverage for that migration path.
 - added a release regression that injects joypad motion and an interact hold,
   then verifies actual player displacement and channel input recognition.
 
+## Focused secondary district-breadth milestone
+
+- added a second bounded, presentation-only service-edge kit to every
+  non-sanctuary remote district, including a layered pod, vent, badge, braces,
+  cable anchor, spindle and restrained growth detail;
+- added a second region-specific identity motif for archive, industrial,
+  tenement, greenhouse, commercial, waterfront, rail, nest, observatory,
+  research and endgame districts so each landmark reads beyond its focal
+  vignette;
+- added aesthetic coverage for the secondary kit and its identity mapping,
+  while preserving the rule that district breadth does not create collision,
+  storage, routes, jobs or recurring player maintenance.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.
@@ -1306,9 +1319,9 @@ Remaining production work includes:
 - deeper navigation, baked-region pathing and route recovery under long-run
   disruption;
 - broader content variants, technologies, operations and site dressing;
-- every discovered remote region now also receives a bounded district-breadth
-  kit with service-edge hardware, restrained overgrowth and a kind-specific
-  identity motif beyond its focal landmark vignette;
+- every discovered remote region now also receives two bounded district-breadth
+  layers with service-edge hardware, restrained overgrowth and region-specific
+  identity motifs beyond its focal landmark vignette;
 - performance profiling and optimization on agreed target hardware;
 - broader environmental narrative and sparse story arcs beyond the current
   Town Archive records, plus broader run variation beyond the authored weather
