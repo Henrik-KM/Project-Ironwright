@@ -402,6 +402,29 @@ func _test_transactional_save_service() -> void:
     _expect(int(recovered.get("revision", 0)) == 1, "A corrupted current save must recover the previous verified backup.")
     var inspection := service.inspect_slot(TEST_SLOT)
     _expect(bool(inspection.get("using_backup", false)), "Recovered slot inspection must report backup use.")
+    var migration_events: Array[String] = []
+    service.schema_migrated.connect(func(slot_id: StringName, from_version: int, to_version: int, fields: Array[String]) -> void:
+        migration_events.append("%d>%d:%d" % [from_version, to_version, fields.size()])
+    )
+    _expect(service.save_snapshot(TEST_SLOT, {"schema_version": 3, "base": {"run_state": {"scrap": 77}}}), "A versioned save fixture must be writable before migration.")
+    var versioned_path := "%s/%s.json" % [TEST_SAVE_ROOT, String(TEST_SLOT)]
+    var versioned_file := FileAccess.open(versioned_path, FileAccess.READ)
+    var versioned_envelope := JSON.parse_string(versioned_file.get_as_text()) as Dictionary
+    versioned_file.close()
+    versioned_envelope["schema_version"] = 3
+    versioned_envelope["payload"] = {"schema_version": 3, "base": {"run_state": {"scrap": 77}}}
+    versioned_envelope["checksum_sha256"] = service._sha256(service._canonical_json(versioned_envelope["payload"]))
+    var legacy_schema_file := FileAccess.open(versioned_path, FileAccess.WRITE)
+    legacy_schema_file.store_string(JSON.stringify(versioned_envelope))
+    legacy_schema_file.close()
+    var migrated_schema := service.load_snapshot(TEST_SLOT)
+    _expect(int((migrated_schema.get("base", {}) as Dictionary).get("run_state", {}).get("scrap", 0)) == 77, "Versioned save migration must preserve the legacy base state.")
+    var migrated_inspection := service.inspect_slot(TEST_SLOT)
+    var migration_metadata: Dictionary = migrated_inspection.get("metadata", {})
+    var migration_record: Dictionary = migration_metadata.get("schema_migration", {})
+    _expect(int(migrated_inspection.get("schema_version", 0)) == ReleaseTransactionalSaveService3D.CURRENT_SCHEMA_VERSION, "Versioned save migration must persist the current envelope schema.")
+    _expect(int(migration_record.get("from_version", 0)) == 3 and int(migration_record.get("to_version", 0)) == ReleaseTransactionalSaveService3D.CURRENT_SCHEMA_VERSION, "Versioned save migration must retain an explicit from/to report.")
+    _expect(migration_events.size() == 1, "Versioned save migration must emit one diagnostic event.")
     service.delete_slot(TEST_SLOT)
     service.queue_free()
 

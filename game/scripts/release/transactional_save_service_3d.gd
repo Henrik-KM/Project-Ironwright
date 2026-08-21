@@ -5,6 +5,7 @@ signal save_completed(slot_id: StringName, path: String)
 signal save_failed(slot_id: StringName, reason: String)
 signal load_completed(slot_id: StringName, source_path: String, recovered_backup: bool)
 signal migration_completed(slot_id: StringName, legacy_sources: Array[String])
+signal schema_migrated(slot_id: StringName, from_version: int, to_version: int, fields: Array[String])
 
 const CURRENT_SCHEMA_VERSION: int = 4
 const DEFAULT_BACKUP_COUNT: int = 3
@@ -88,6 +89,23 @@ func load_snapshot(slot_id: StringName) -> Dictionary:
         var envelope := _read_and_validate(path)
         if envelope.is_empty():
             continue
+        var from_version := int(envelope.get("schema_version", CURRENT_SCHEMA_VERSION))
+        var migration := _migrate_versioned_envelope(envelope)
+        if migration.is_empty():
+            last_error = "Save schema migration failed for %s" % path
+            continue
+        if from_version < CURRENT_SCHEMA_VERSION:
+            var migrated_payload := migration.get("payload", {}) as Dictionary
+            var migrated_metadata := migration.get("metadata", {}) as Dictionary
+            if not save_snapshot(slot_id, migrated_payload, migrated_metadata):
+                last_error = "Could not persist migrated save schema for %s" % path
+                continue
+            var fields := migration.get("migration_fields", []) as Array[String]
+            schema_migrated.emit(slot_id, from_version, CURRENT_SCHEMA_VERSION, fields.duplicate())
+            envelope = _read_and_validate(_current_path(slot_id))
+            if envelope.is_empty():
+                last_error = "Migrated save failed post-write validation"
+                continue
         var payload: Variant = envelope.get("payload", {})
         if payload is Dictionary:
             load_completed.emit(slot_id, path, index > 0)
@@ -193,6 +211,48 @@ func _read_and_validate(path: String) -> Dictionary:
     if expected.is_empty() or expected != actual:
         return {}
     return envelope.duplicate(true)
+
+
+func _migrate_versioned_envelope(envelope: Dictionary) -> Dictionary:
+    var from_version := int(envelope.get("schema_version", 0))
+    if from_version <= 0 or from_version > CURRENT_SCHEMA_VERSION:
+        return {}
+    var raw_payload: Variant = envelope.get("payload", null)
+    if not (raw_payload is Dictionary):
+        return {}
+    var payload := (raw_payload as Dictionary).duplicate(true)
+    var fields: Array[String] = []
+    if not payload.has("base"):
+        var legacy_base := _extract_legacy_base(payload)
+        payload["base"] = legacy_base
+        fields.append("base")
+    for domain in ["foundation", "complete", "release"]:
+        if not payload.has(domain) or not (payload.get(domain) is Dictionary):
+            payload[domain] = {}
+            fields.append(domain)
+    if not payload.has("schema_version") or int(payload.get("schema_version", 0)) < CURRENT_SCHEMA_VERSION:
+        payload["schema_version"] = CURRENT_SCHEMA_VERSION
+        fields.append("payload.schema_version")
+    var metadata: Dictionary = envelope.get("metadata", {}).duplicate(true) if envelope.get("metadata", {}) is Dictionary else {}
+    if from_version < CURRENT_SCHEMA_VERSION:
+        metadata["schema_migration"] = {
+            "from_version": from_version,
+            "to_version": CURRENT_SCHEMA_VERSION,
+            "fields": fields.duplicate(),
+        }
+    return {
+        "payload": payload,
+        "metadata": metadata,
+        "migration_fields": fields,
+    }
+
+
+func _extract_legacy_base(payload: Dictionary) -> Dictionary:
+    var base: Dictionary = {}
+    for key in ["run_state", "player", "heartforge", "robots", "salvage", "enemies", "ecology", "autonomy"]:
+        if payload.has(key):
+            base[key] = payload[key]
+    return base
 
 
 func _canonical_json(value: Variant) -> String:
