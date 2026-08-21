@@ -320,6 +320,15 @@ make the Bulwark's personal-interception role readable before an attack starts,
 while remaining presentation-only and leaving the existing protection rules,
 collision and autonomous workload unchanged.
 
+## Focused Cathedral Quarter detail milestone
+
+The Cathedral Quarter landmark now has a richer authored identity beyond its
+primary nave and choir masses: entry framing, tower lancets, rose-window
+latches, buttress caps, roof drains, choir ribs and signal ring, a bell
+clapper, and organic vein joints. Stable manifest requirements and region
+motion tests cover the added sockets; the landmark remains presentation-only
+and does not change nest ecology or traversal rules.
+
 ## Focused late-organic anatomy refinement milestone
 
 The five later organic family shells now receive a second authored detail

@@ -145,14 +145,26 @@ func _run_all() -> void:
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/NestOccluderShell") != null, "The nest must isolate its close-range opaque shell for camera-safe presentation.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/CathedralAuthoredModel") != null, "Cathedral Quarter must expose its authored nave and choir landmark shell.")
                 var cathedral_choir_signal := landmark.find_child("CathedralChoirSignal", true, false) as Node3D
+                var cathedral_choir_ring := landmark.find_child("CathedralChoirSignalRing", true, false) as Node3D
+                var cathedral_door_post := landmark.find_child("CathedralDoorPostL", true, false) as Node3D
+                var cathedral_tower_slit := landmark.find_child("CathedralTowerSlit0", true, false) as Node3D
+                var cathedral_rose_latch := landmark.find_child("CathedralRoseLatch0", true, false) as Node3D
+                var cathedral_choir_rib := landmark.find_child("CathedralChoirRibL", true, false) as Node3D
                 var cathedral_bell := landmark.find_child("CathedralBell", true, false) as Node3D
+                var cathedral_clapper := landmark.find_child("CathedralBellClapper", true, false) as Node3D
+                var cathedral_vein_knuckle := landmark.find_child("CathedralOrganicVeinKnuckle17", true, false) as Node3D
                 _expect(cathedral_choir_signal != null and cathedral_bell != null, "Cathedral Quarter must expose named choir and bell motion sockets.")
-                if cathedral_choir_signal != null and cathedral_bell != null:
+                _expect(cathedral_choir_ring != null and cathedral_door_post != null and cathedral_tower_slit != null and cathedral_rose_latch != null and cathedral_choir_rib != null and cathedral_clapper != null and cathedral_vein_knuckle != null, "Cathedral Quarter must expose secondary entry, tower, window, choir and bell hardware detail.")
+                if cathedral_choir_signal != null and cathedral_bell != null and cathedral_choir_ring != null and cathedral_vein_knuckle != null:
                     var choir_signal_before := cathedral_choir_signal.scale
+                    var choir_ring_before := cathedral_choir_ring.scale
                     var bell_before := cathedral_bell.rotation.z
+                    var vein_knuckle_before := cathedral_vein_knuckle.rotation.x
                     landmark.call("_process", 0.5)
                     _expect(not cathedral_choir_signal.scale.is_equal_approx(choir_signal_before), "Cathedral choir signal must pulse as a restrained presentation cue.")
+                    _expect(not cathedral_choir_ring.scale.is_equal_approx(choir_ring_before), "Cathedral choir signal ring must pulse with the choir cue.")
                     _expect(absf(cathedral_bell.rotation.z - bell_before) > 0.001, "Cathedral bell must carry deterministic presentation motion.")
+                    _expect(not is_equal_approx(cathedral_vein_knuckle.rotation.x, vein_knuckle_before), "Cathedral organic vein joints must carry deterministic presentation motion.")
             if landmark.region_kind == &"commercial":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/FloodMarketIdentityDetails") != null, "Flood Market must expose authored stall canopies and hanging signs.")
                 _expect(landmark.find_child("MarketFloodChannel", true, false) != null, "Flood Market must expose bounded presentation-only water channels.")
