@@ -1,5 +1,11 @@
 # Changelog
 
+## Pre-alpha endgame protocol readability milestone
+
+- Tuned the active Severance lattice and Heartforge core-light budget so the final crisis remains visually charged without obscuring the Heartforge, Mechromancer or Bulwark silhouettes.
+- Tuned the completed sanctuary crown to read as a calm cyan capstone rather than a bloom-heavy flash.
+- Added a native regression guard for the final-protocol light budget and live-reviewed both active and completed endgame frames.
+
 ## Pre-alpha authored hostile attack-motion milestone
 
 - Added presentation-only family attack signatures for all twelve organic shells: loaded mandibles, jaws, drills, sacs, wings, gills, resonators, root arms and apex membranes now visibly communicate threat before impact.

@@ -129,6 +129,13 @@ identities. Manual channels remain finish-before-save.
 - physical region landmarks and discovery beacons;
   - bounded transient notifications and clear objective hierarchy.
 
+## Focused endgame protocol readability milestone
+
+- reduced active protocol lattice emission and Heartforge core-light energy so the final crisis preserves tactical silhouettes and readable machine-company staging;
+- reduced the completed sanctuary crown emission and light budget so the victory capstone remains luminous without flattening the frame;
+- added native coverage that fails if the final-protocol light budget regresses into an unreadable bloom;
+- live-reviewed both the active crisis and completed sanctuary frames in the running Godot scene.
+
 ## Focused tactical framing milestone
 
 - tightened the release opening camera to a 16.8 height and 10.0 distance
