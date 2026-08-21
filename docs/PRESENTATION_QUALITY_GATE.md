@@ -91,6 +91,12 @@ tactical approaches instead of front-facing dressing on broad cubes. The pass
 remains presentation-only and does not add interiors, navigation changes,
 utility simulation or a new player task.
 
+Every non-sanctuary remote district now also carries a shared ground-scale
+apron pass: segmented surface seams, damaged slabs with exposed rebar, drains,
+edge braces and restrained overgrowth break the broad presentation platform
+into readable service-ground fragments. This is presentation-only and does not
+change collision, routes, ecology or player workload.
+
 Tiered organic nests now carry the same close-range production bar: a segmented dorsal carapace, membrane plates, visible vascular channels, a root collar and fine perimeter spines build a readable encounter landmark from layered original geometry. These details remain presentation-only and do not alter nest health, spawning, collision or regrowth.
 
 Ordinary early-game nests now carry the same bounded close-range anatomy bar at a smaller authored scale, so the first hostile landmark does not read as a placeholder beside later nest encounters. Their geometry remains presentation-only and does not alter nest health, spawning, collision or regrowth.
