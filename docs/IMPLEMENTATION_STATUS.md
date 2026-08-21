@@ -1526,6 +1526,18 @@ presentation restore, with release regression coverage for that migration path.
 - extended aesthetic coverage for healthy, damaged, critical and repaired
   outpost presentation states.
 
+## Focused state-aware outpost motion milestone
+
+- exposed a bounded presentation-only activity pulse on each autonomous
+  outpost so harvesting, defence, scouting, repair, rebuilding and destruction
+  have a readable visual state without adding a player-managed work queue;
+- scaled the existing release secondary motion layer from that pulse, keeping
+  idle outposts quiet while role mechanisms and status beacons become visibly
+  active when the autonomous role performs consequential work;
+- preserved the autonomy director, resource economy, save schema, collision
+  and outpost role contracts, with aesthetic coverage for quiet, active and
+  decaying presentation states.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.

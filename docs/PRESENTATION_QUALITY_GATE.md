@@ -36,6 +36,13 @@ through the short presentation window. These details remain presentation-only;
 ecology state, AI decisions, collision, damage and queue-free timing remain
 owned by the existing enemy actor.
 
+Autonomous outposts now use the same readable-state principle: their existing
+role mechanisms and status beacons stay restrained while idle and pulse when
+harvesting, defending, scouting, repairing or rebuilding actually occurs.
+Destruction silences the presentation layer. The activity pulse is bounded and
+presentation-only, so it does not create a worker queue or change outpost
+simulation, save state or resource rules.
+
 Organic non-lethal impacts now also travel through the silhouette: sensory
 heads recoil, mandibles give a short defensive lift, and tails counterbalance
 the hit impulse while the shared authored `Hit` clip and world-space response

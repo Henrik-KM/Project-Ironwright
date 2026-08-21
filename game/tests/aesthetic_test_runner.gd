@@ -720,6 +720,11 @@ func _run_all() -> void:
         _expect(_find_named(sample, "TierFrame1") != null and _find_named(sample, "TierFrame2") != null and _find_named(sample, "TierFrame3") != null, "Tier 3 outposts must expose three stable structural frames.")
         _expect(_outpost_model_has_details(sample, outpost_roles[index]), "The %s outpost must expose a role-readable high-detail silhouette." % outpost_roles[index])
         _expect(not bool(_find_named(sample, "OutpostDamagePresentation").visible), "Healthy outposts must keep damage-memory presentation hidden.")
+        _expect(sample.presentation_status == &"idle" and is_zero_approx(sample.presentation_activity), "Healthy outposts must begin with a quiet presentation state.")
+        sample._set_presentation_activity(StringName(outpost_roles[index]), 1.0, 0.6)
+        _expect(sample.presentation_status == StringName(outpost_roles[index]) and sample.presentation_activity > 0.9, "Outpost presentation activity must expose the autonomous role action without changing simulation state.")
+        sample._process(0.5)
+        _expect(sample.presentation_activity < 1.0 and sample.presentation_activity > 0.0, "Outpost presentation activity must decay after a bounded work pulse.")
         sample.apply_damage(sample.maximum_health * 0.68)
         _expect(bool(_find_named(sample, "OutpostDamagePresentation").visible) and bool(_find_named(sample, "OutpostDamageLeak00").visible), "Damaged outposts must reveal scar and leak presentation at meaningful integrity loss.")
         sample.repair(sample.maximum_health)
@@ -1049,7 +1054,7 @@ func _outpost_model_has_details(outpost: Outpost3D, role: StringName) -> bool:
         return false
     match role:
         &"resource":
-            return _find_named(outpost, "ResourceHopper") != null and _find_named(outpost, "ResourceHopperLouver") != null and _find_named(outpost, "ResourceExtractorArm") != null
+            return _find_named(outpost, "ResourceHopper") != null and _find_named(outpost, "ResourceHopperLouver") != null and _find_named(outpost, "ResourceExtractorArm") != null and _find_named(outpost, "ResourceIntakeBeacon") != null
         &"defence":
             return _find_named(outpost, "DefenceTurretHousing") != null and _find_named(outpost, "DefenceBarrel") != null and _find_named(outpost, "DefenceMuzzleGlow") != null
         &"scout":
