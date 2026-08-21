@@ -263,6 +263,12 @@ layered foundation, anchor hardware, braced mast, service/identity panels and a
 restrained cyan beacon pulse. This keeps the autonomous-site choice legible in
 the world without turning discovery into a management dashboard or changing
 the fixed-site autonomy contract.
+The autonomous outpost shelter now uses a separate original high-definition
+glTF shell with a layered foundation, service body, roof plate, vent louvers,
+status beacon and restrained cable details. Role signatures and tier frames
+remain runtime-authored around that shell, so the outpost still communicates
+purpose, progression and damage without reintroducing manual construction
+geometry or recurring management work.
 
 Automated presence tests only prove the slice exists technically. Actual screenshot/gameplay review decides whether it clears the visual bar.
 

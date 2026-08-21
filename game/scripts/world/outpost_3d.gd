@@ -9,6 +9,7 @@ signal weapon_fired(origin: Vector3, target: Vector3, target_node: Node)
 signal state_changed(outpost: Outpost3D)
 
 const ROLES: Array[StringName] = [&"resource", &"defence", &"scout", &"repair"]
+const AUTHORED_OUTPOST_MODEL_SCENE: PackedScene = preload("res://assets/outpost/outpost.gltf")
 
 var site_id: StringName = &"site.unknown"
 var role: StringName = &"resource"
@@ -315,12 +316,13 @@ func _refresh_visuals() -> void:
         _status_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 0.6, 0.0), Color("8b241b"), 0.3, 3.0)
         return
 
-    ModelKit3D.add_cylinder(_model_root, 2.65, 0.45, Vector3(0.0, 0.23, 0.0), dark, Vector3.ZERO, "Foundation")
-    ModelKit3D.add_beveled_box(_model_root, Vector3(3.7, 2.1, 3.4), Vector3(0.0, 1.35, 0.0), iron, Vector3.ZERO, "CoreShelter", 0.16)
-    ModelKit3D.add_beveled_box(_model_root, Vector3(4.1, 0.24, 3.8), Vector3(0.0, 2.48, 0.0), rust, Vector3.ZERO, "RoofPlate", 0.28)
-    ModelKit3D.add_louvered_panel(_model_root, Vector3(2.35, 0.82, 0.14), Vector3(0.0, 1.35, -1.72), panel, panel_accent, Vector3.ZERO, "CoreVent", 4)
-    ModelKit3D.add_surface_panel(_model_root, Vector3(1.18, 0.72, 0.12), Vector3(-1.95, 1.18, -0.18), panel, panel_accent, Vector3(0.0, PI * 0.5, 0.0), "CoreServicePanel")
-    ModelKit3D.add_sphere(_model_root, 0.24, Vector3(0.0, 2.9, -1.0), glow, Vector3.ONE, "StatusBeacon")
+    # Keep the shared shelter shell source-authored. Tier frames and the
+    # role-signature assemblies below remain bounded runtime detail so the
+    # outpost still communicates evolution and autonomous purpose without
+    # adding another managed structure or queue.
+    var authored_model := AUTHORED_OUTPOST_MODEL_SCENE.instantiate()
+    authored_model.name = "OutpostAuthoredModel"
+    _model_root.add_child(authored_model)
 
     for tier_index in range(tier):
         var y := 2.75 + float(tier_index) * 0.62
