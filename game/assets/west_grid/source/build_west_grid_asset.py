@@ -43,16 +43,25 @@ def main() -> None:
         "Hall": mesh("WestGridTurbineHall", add_box(builder, (11.5, 6.6, 5.0), steel)),
         "Roof": mesh("WestGridRoof", add_box(builder, (12.3, 0.32, 5.5), painted_iron)),
         "Window": mesh("WestGridWindow", add_box(builder, (1.65, 1.25, 0.08), signal)),
-        "Tank": mesh("WestGridPressureTank", add_cylinder(builder, 1.15, 3.8, ceramic, 20)),
-        "TankBand": mesh("WestGridTankBand", add_cylinder(builder, 1.22, 0.12, rust, 20)),
+        "Tank": mesh("WestGridPressureTank", add_cylinder(builder, 1.15, 3.8, ceramic, 28)),
+        "TankBand": mesh("WestGridTankBand", add_cylinder(builder, 1.22, 0.12, rust, 28)),
         "Transformer": mesh("WestGridTransformer", add_box(builder, (2.4, 1.7, 2.0), painted_iron)),
         "Fin": mesh("WestGridTransformerFin", add_box(builder, (0.12, 1.2, 1.7), ceramic)),
         "Pipe": mesh("WestGridPipe", add_cylinder(builder, 0.085, 5.6, rust, 12)),
         "Rail": mesh("WestGridRail", add_cylinder(builder, 0.065, 4.0, painted_iron, 12)),
-        "Signal": mesh("WestGridSignalLight", add_uv_sphere(builder, 0.16, signal, 10, 16)),
-        "Amber": mesh("WestGridWarningLight", add_uv_sphere(builder, 0.18, amber, 10, 16)),
-        "Organic": mesh("WestGridOrganicCreep", add_uv_sphere(builder, 0.58, organic, 14, 20)),
+        "Signal": mesh("WestGridSignalLight", add_uv_sphere(builder, 0.16, signal, 14, 22)),
+        "Amber": mesh("WestGridWarningLight", add_uv_sphere(builder, 0.18, amber, 14, 22)),
+        "Organic": mesh("WestGridOrganicCreep", add_uv_sphere(builder, 0.58, organic, 18, 28)),
         "Marker": mesh("WestGridMarker", add_box(builder, (0.7, 0.08, 0.7), rust)),
+        "WindowFrame": mesh("WestGridWindowFrame", add_box(builder, (1.86, 0.10, 1.46), painted_iron)),
+        "WindowMullion": mesh("WestGridWindowMullion", add_box(builder, (0.10, 1.25, 0.12), painted_iron)),
+        "TankValve": mesh("WestGridTankValve", add_cylinder(builder, 0.14, 0.22, rust, 18)),
+        "TankLadder": mesh("WestGridTankLadder", add_cylinder(builder, 0.055, 2.8, painted_iron, 12)),
+        "TransformerCap": mesh("WestGridTransformerCap", add_box(builder, (2.62, 0.12, 2.2), ceramic)),
+        "TransformerBrace": mesh("WestGridTransformerBrace", add_box(builder, (0.10, 0.12, 2.05), rust)),
+        "PipeFlange": mesh("WestGridPipeFlange", add_cylinder(builder, 0.17, 0.14, rust, 18)),
+        "WarningHousing": mesh("WestGridWarningHousing", add_cylinder(builder, 0.12, 0.16, painted_iron, 16)),
+        "OrganicTendril": mesh("WestGridOrganicTendril", add_cylinder(builder, 0.05, 0.84, organic, 14)),
     }
 
     nodes: list[dict] = [{
@@ -92,23 +101,33 @@ def main() -> None:
     add_node("WestGridRoofCap", mesh_ids["Roof"], (0.0, 3.4, 0.0), parent=hall)
     for index, x in enumerate((-8.2, -5.0, -1.8)):
         add_node("WestGridWindow%d" % index, mesh_ids["Window"], (x, 3.55, -5.34), extras={"socket_type": "hall_window"})
+        add_node("WestGridWindowFrame%d" % index, mesh_ids["WindowFrame"], (x, 3.55, -5.27), extras={"surface": "hall_window_frame"})
+        add_node("WestGridWindowMullion%d" % index, mesh_ids["WindowMullion"], (x, 3.55, -5.19), extras={"surface": "hall_window_mullion"})
     for index, (x, z) in enumerate(((5.3, -5.2), (9.0, -5.0), (7.2, 3.9))):
         add_node("WestGridPressureTank%d" % index, mesh_ids["Tank"], (x, 2.15, z), extras={"socket_type": "pressure_tank"})
         add_node("WestGridPressureTankBand%d" % index, mesh_ids["TankBand"], (x, 2.15, z), parent=0)
         add_node("WestGridTankSignal%d" % index, mesh_ids["Signal"], (x, 4.18, z), extras={"socket_type": "tank_signal"})
+        add_node("WestGridTankValve%d" % index, mesh_ids["TankValve"], (x, 4.28, z), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "pressure_service_valve"})
+        add_node("WestGridTankLadder%d" % index, mesh_ids["TankLadder"], (x - 0.92, 2.15, z), rotation=(0.0, 0.0, math.pi * 0.5), extras={"surface": "pressure_tank_ladder"})
     for index, (x, z) in enumerate(((2.2, -1.5), (6.4, -1.5))):
         transformer = add_node("WestGridTransformer%d" % index, mesh_ids["Transformer"], (x, 0.98, z), extras={"socket_type": "transformer"})
+        add_node("WestGridTransformerCap%d" % index, mesh_ids["TransformerCap"], (x, 1.9, z), parent=transformer, extras={"surface": "transformer_cap"})
         for fin_index in range(4):
             add_node("WestGridTransformerFin%d_%d" % (index, fin_index), mesh_ids["Fin"], (-0.82 + float(fin_index) * 0.55, 0.02, -1.05), parent=transformer)
+        add_node("WestGridTransformerBrace%d" % index, mesh_ids["TransformerBrace"], (0.0, 0.88, -1.08), parent=transformer, extras={"surface": "transformer_brace"})
     add_node("WestGridPipeBridge", mesh_ids["Rail"], (0.0, 4.1, 2.8), rotation=(0.0, 0.0, math.pi * 0.5), extras={"socket_type": "pipe_bridge"})
     for index, x in enumerate((-5.8, -2.0, 1.8, 5.6)):
         add_node("WestGridPipeSupport%d" % index, mesh_ids["Rail"], (x, 2.0, 2.8))
     for index, x in enumerate((-3.8, 0.0, 3.8)):
         add_node("WestGridServicePipe%d" % index, mesh_ids["Pipe"], (x, 3.7, 2.8), rotation=(0.0, 0.0, math.pi * 0.5), extras={"socket_type": "service_pipe"})
+        add_node("WestGridPipeFlange%d" % index, mesh_ids["PipeFlange"], (x, 3.7, 2.8), rotation=(0.0, 0.0, math.pi * 0.5), extras={"surface": "service_pipe_flange"})
     for index, (x, z) in enumerate(((-9.8, -6.2), (0.0, -6.3), (10.2, 1.0))):
+        add_node("WestGridWarningHousing%d" % index, mesh_ids["WarningHousing"], (x, 2.15, z), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "warning_housing"})
         add_node("WestGridWarningLight%d" % index, mesh_ids["Amber"], (x, 2.15, z), extras={"socket_type": "warning_light"})
     for index, (x, y, z, scale) in enumerate(((-9.0, 0.48, 3.7, (1.2, 0.75, 0.9)), (1.0, 0.55, -5.8, (0.85, 0.65, 1.2)), (9.0, 0.52, 4.8, (1.05, 0.72, 0.86)))):
         add_node("WestGridOrganicCreep%d" % index, mesh_ids["Organic"], (x, y, z), scale=scale, extras={"socket_type": "organic_creep"})
+        for tendril_index, tendril_x in enumerate((-0.24, 0.18)):
+            add_node("WestGridOrganicTendril%d_%d" % (index, tendril_index), mesh_ids["OrganicTendril"], (x + tendril_x, y + 0.34, z), rotation=(0.0, 0.0, -0.24 + float(tendril_index) * 0.40), extras={"surface": "organic_tendril"})
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "west.grid.substation.v1", "source": "original_procedural_mesh_builder"})
 
     document = {
@@ -123,7 +142,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "west.grid.substation.v1",
-            "required_nodes": ["WestGridModel", "WestGridTurbineHall", "WestGridPressureTank0", "WestGridTransformer0", "WestGridPipeBridge", "WestGridWarningLight0", "WestGridOrganicCreep0", "ProductionAssetMarker"],
+            "required_nodes": ["WestGridModel", "WestGridTurbineHall", "WestGridWindowFrame0", "WestGridWindowMullion0", "WestGridPressureTank0", "WestGridTankValve0", "WestGridTankLadder0", "WestGridTransformer0", "WestGridTransformerCap0", "WestGridTransformerBrace0", "WestGridPipeBridge", "WestGridPipeFlange0", "WestGridWarningHousing0", "WestGridWarningLight0", "WestGridOrganicCreep0", "WestGridOrganicTendril0_0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

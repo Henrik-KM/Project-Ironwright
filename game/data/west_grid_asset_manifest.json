@@ -6,11 +6,20 @@
   "required_nodes": [
     "WestGridModel",
     "WestGridTurbineHall",
+    "WestGridWindowFrame0",
+    "WestGridWindowMullion0",
     "WestGridPressureTank0",
+    "WestGridTankValve0",
+    "WestGridTankLadder0",
     "WestGridTransformer0",
+    "WestGridTransformerCap0",
+    "WestGridTransformerBrace0",
     "WestGridPipeBridge",
+    "WestGridPipeFlange0",
+    "WestGridWarningHousing0",
     "WestGridWarningLight0",
     "WestGridOrganicCreep0",
+    "WestGridOrganicTendril0_0",
     "ProductionAssetMarker"
   ],
   "presentation_only": true
