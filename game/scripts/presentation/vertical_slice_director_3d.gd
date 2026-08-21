@@ -691,6 +691,12 @@ func _build_lighting_rig() -> void:
         [Vector3(-9.0, 3.8, -7.0), Color("dca46d"), 0.48, 6.5, false, &"warm_district"],
         [Vector3(0.0, 7.2, 8.0), Color("86c9d4"), 0.2, 15.0, false, &"sky_rim"],
         [Vector3(0.0, 4.0, -8.0), Color("d07043"), 0.2, 9.0, false, &"route_warmth"],
+        # The opening cast needs a restrained foreground separation source so
+        # the technician and Bulwark read against the Heartforge key. These
+        # lights are presentation-only and do not alter actors, collision or
+        # the tactical light budget.
+        [Vector3(-2.4, 3.0, 7.5), Color("7ad7e1"), 0.62, 5.5, false, &"cast_cool_key"],
+        [Vector3(3.2, 2.4, 4.0), Color("f2a05b"), 0.36, 5.0, false, &"cast_warm_fill"],
     ]
     for data in definitions:
         var light := _add_light(root, data[0], data[1], float(data[2]), float(data[3]), bool(data[4]))

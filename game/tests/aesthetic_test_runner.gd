@@ -928,6 +928,8 @@ func _run_all() -> void:
                 strongest_opening_light = maxf(strongest_opening_light, float(opening_light.get_meta(&"vertical_base_energy", opening_light.light_energy)))
         _expect(opening_roles.has(&"heartforge_key"), "The opening lighting hierarchy must retain a warm Heartforge key light.")
         _expect(opening_roles.has(&"cool_route"), "The opening lighting hierarchy must retain a cool route separation light.")
+        _expect(opening_roles.has(&"cast_cool_key"), "The opening cast must retain a restrained cool separation light for the technician and Bulwark silhouettes.")
+        _expect(opening_roles.has(&"cast_warm_fill"), "The opening cast must retain a restrained warm fill that keeps maintained hardware readable against the cool foreground.")
         _expect(strongest_opening_light <= 2.3, "The opening key light must avoid washing the wet district surface into a white pool.")
 
     var opening_environment := _find_world_environment(world)
