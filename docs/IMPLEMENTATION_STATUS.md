@@ -1278,6 +1278,17 @@ The live playtest also found and closed a legacy-save edge: snapshots created
 before authored run variation now reconcile their missing weather profile before
 presentation restore, with release regression coverage for that migration path.
 
+## Focused controller movement closure milestone
+
+- routed Mechromancer movement through the release action map while retaining
+  the keyboard fallback, so the registered left-stick and D-pad bindings now
+  drive the same movement path as WASD;
+- routed hold-to-interact cancellation through the same action-aware helper,
+  so controller salvage, fabrication and other interruptible channels obey the
+  same commitment rule as keyboard E;
+- added a release regression that injects joypad motion and an interact hold,
+  then verifies actual player displacement and channel input recognition.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.

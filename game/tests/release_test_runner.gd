@@ -26,7 +26,7 @@ func _run_all() -> void:
     _test_release_services(world)
     _test_run_variation(world)
     _test_localization(world)
-    _test_controller_and_accessibility(world)
+    await _test_controller_and_accessibility(world)
     _test_release_assets_and_art(world)
     _test_content_breadth(world)
     await _test_runtime_material_continuity(world)
@@ -122,6 +122,26 @@ func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void
             if event is InputEventJoypadButton or event is InputEventJoypadMotion:
                 has_controller_event = true
         _expect(has_controller_event, "Controller action %s needs a joypad binding." % String(action))
+
+    var position_before := world.player.global_position
+    var motion := InputEventJoypadMotion.new()
+    motion.device = 0
+    motion.axis = JOY_AXIS_LEFT_X
+    motion.axis_value = 1.0
+    Input.parse_input_event(motion)
+    for _frame in range(12):
+        await physics_frame
+    var release_motion := InputEventJoypadMotion.new()
+    release_motion.device = 0
+    release_motion.axis = JOY_AXIS_LEFT_X
+    release_motion.axis_value = 0.0
+    Input.parse_input_event(release_motion)
+    _expect(world.player.global_position.x > position_before.x + 0.2, "The release Mechromancer must move from a joypad axis, not only from raw keyboard state.")
+
+    Input.action_press(&"iw_interact")
+    await process_frame
+    _expect(bool(world.player.call("_interact_held")), "Hold-to-interact channels must recognize the controller interact action.")
+    Input.action_release(&"iw_interact")
 
     var settings := world.settings_service
     settings.set_value(&"text_scale", 1.35, false)
