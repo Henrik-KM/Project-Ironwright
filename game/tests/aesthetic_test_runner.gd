@@ -666,7 +666,7 @@ func _run_all() -> void:
             _expect(_animation_clip_matches(organic_animation.active_clip, &"Attack"), "Organic attack signals must select the authored Attack clip.")
 
     var role_samples: Array[RobotUnit3D] = []
-    var role_names := [&"salvager", &"guardian", &"scout", &"engineer"]
+    var role_names := [&"salvager", &"guardian", &"scout", &"engineer", &"relay"]
     for index in role_names.size():
         var sample := ROBOT_SCENE.instantiate() as RobotUnit3D
         sample.configure(role_names[index], 1)
@@ -685,6 +685,8 @@ func _run_all() -> void:
         elif role_names[index] == &"engineer":
             _expect(_find_named(role_samples[index], "EngineerAuthoredModel") != null, "The engineer must use the authored Engineer model shell.")
             _expect(_find_named(role_samples[index], "ProductionAssetMarker") != null, "The authored Engineer model must expose its production asset marker.")
+        elif role_names[index] == &"relay":
+            _expect(_find_named(role_samples[index], "RelaySignalBeacon") != null and _find_named(role_samples[index], "RelayDirectionalDish") != null, "The Signal Relay must expose a distinct mast, dish and beacon silhouette.")
         if role_names[index] == &"guardian":
             _expect(_find_named(role_samples[index], "WardenTargetingFace") != null and _find_named(role_samples[index], "WardenRecoilCollarLeft") != null, "The Warden must expose its maintained targeting and recoil hardware.")
             _expect(_find_named(role_samples[index], "WardenThermalFinLeft") != null and _find_named(role_samples[index], "WardenOpticShroud") != null and _find_named(role_samples[index], "WardenBreechClamp") != null, "The Warden must expose its third-pass thermal, optic and breech hardware.")
@@ -697,6 +699,8 @@ func _run_all() -> void:
         elif role_names[index] == &"engineer":
             _expect(_find_named(role_samples[index], "EngineerToolControl") != null and _find_named(role_samples[index], "EngineerForgeGuard") != null, "The Engineer must expose its tool-control and forge-guard hardware.")
             _expect(_find_named(role_samples[index], "EngineerCableSpool") != null and _find_named(role_samples[index], "EngineerWeldingShield") != null and _find_named(role_samples[index], "EngineerClampJaw") != null, "The Engineer must expose its third-pass cable, welding and clamp hardware.")
+        elif role_names[index] == &"relay":
+            _expect(_find_named(role_samples[index], "RelayMastCollar") != null and _find_named(role_samples[index], "RelayDishRibLeft") != null and _find_named(role_samples[index], "RelaySignalFace") != null, "The Signal Relay must expose maintained mast, dish-rib and signal-face hardware.")
         role_samples[index].queue_free()
 
     var authored_warden := ROBOT_SCENE.instantiate() as RobotUnit3D
@@ -1063,6 +1067,8 @@ func _role_model_has_details(robot: RobotUnit3D, role: StringName) -> bool:
             return _find_named(robot, "ScoutFin") != null and _find_named(robot, "BeaconRing") != null and _find_named(robot, "ScoutOptic") != null and _find_named(robot, "PathfinderSensorPod") != null
         &"engineer":
             return _find_named(robot, "PistonJoint") != null and _find_named(robot, "ToolHead") != null and _find_named(robot, "ForgeCoil") != null
+        &"relay":
+            return _find_named(robot, "RelayMast") != null and _find_named(robot, "RelayDirectionalDish") != null and _find_named(robot, "RelayBeacon") != null
     return false
 
 

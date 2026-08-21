@@ -55,7 +55,10 @@ func _evaluate_society() -> void:
         return
 
     var desired := desired_composition()
-    for raw_archetype in [&"guardian", &"salvager", &"engineer", &"scout"]:
+    var replacement_order: Array[StringName] = [&"guardian", &"salvager", &"engineer", &"scout"]
+    if progression.has_effect(&"relay_frame_available"):
+        replacement_order.append(&"relay")
+    for raw_archetype in replacement_order:
         var archetype := raw_archetype as StringName
         var target_count := int(desired.get(archetype, 0))
         var current_count := autonomy_director.count_robots(archetype)
@@ -76,9 +79,15 @@ func _evaluate_society() -> void:
 func desired_composition() -> Dictionary:
     var tier := progression.heartforge_tier
     if tier >= 5:
-        return {&"salvager": 6, &"guardian": 7, &"scout": 3, &"engineer": 3}
+        var late := {&"salvager": 6, &"guardian": 7, &"scout": 3, &"engineer": 3}
+        if progression != null and progression.has_effect(&"relay_frame_available"):
+            late[&"relay"] = 1
+        return late
     if tier >= 4:
-        return {&"salvager": 5, &"guardian": 5, &"scout": 2, &"engineer": 2}
+        var frontier := {&"salvager": 5, &"guardian": 5, &"scout": 2, &"engineer": 2}
+        if progression != null and progression.has_effect(&"relay_frame_available"):
+            frontier[&"relay"] = 1
+        return frontier
     if tier >= 3:
         return {&"salvager": 3, &"guardian": 3, &"scout": 2, &"engineer": 2}
     return {&"salvager": 1, &"guardian": 1, &"scout": 1, &"engineer": 1}

@@ -185,6 +185,16 @@
       "automatic": false
     },
     {
+      "id": "tech.machine.signal_relay",
+      "display_name": "Signal Relay Frame",
+      "branch": "machines",
+      "description": "Authorize a tall relay chassis that the machine society fabricates automatically for deep routes. Its resilient signal grants one additional bounded route recovery and keeps the root-path expedition coherent.",
+      "cost": {"scrap": 240, "rare_cores": 2},
+      "requirements": {"heartforge_tier": 4, "completed_operation": "operation.cathedral_brood_suppression", "components_min": 2},
+      "effects": ["relay_frame_available"],
+      "automatic": false
+    },
+    {
       "id": "tech.heartforge.tier_5",
       "display_name": "Heartforge Tier V",
       "branch": "heartforge",

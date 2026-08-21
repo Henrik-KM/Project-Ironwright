@@ -23,6 +23,7 @@ var attack_interval: float = 1.1
 var attack_cooldown: float = 0.0
 var salvage_rate: float = 1.0
 var construction_rate: float = 1.0
+var signal_strength: float = 1.0
 var state_name: StringName = &"idle"
 var decision_reason: String = "Awaiting a macro-level machine focus."
 var goal_position: Vector3
@@ -266,6 +267,7 @@ func _nearest_enemy(maximum_range: float) -> Node3D:
 func _apply_level_stats() -> void:
     construction_rate = 1.0
     salvage_rate = 1.0
+    signal_strength = 1.0
     match archetype:
         &"companion":
             maximum_health = [180.0, 245.0, 335.0][level - 1]
@@ -292,6 +294,13 @@ func _apply_level_stats() -> void:
             construction_rate = [1.0, 1.35, 1.8][level - 1]
             attack_range = 5.6
             attack_interval = 1.18
+        &"relay":
+            maximum_health = [92.0, 126.0, 172.0][level - 1]
+            attack_damage = [4.0, 6.0, 9.0][level - 1]
+            move_speed = [4.6, 4.9, 5.2][level - 1]
+            signal_strength = [1.0, 1.35, 1.8][level - 1]
+            attack_range = 5.8
+            attack_interval = 1.15
         _:
             maximum_health = [95.0, 125.0, 165.0][level - 1]
             attack_damage = [4.0, 6.0, 9.0][level - 1]
@@ -429,6 +438,9 @@ func _refresh_visual_identity() -> void:
         return
     if archetype == &"engineer":
         _build_authored_engineer_visuals()
+        return
+    if archetype == &"relay":
+        _build_signal_relay_visuals()
         return
 
     var steel := ModelKit3D.material(Color("3f4648"), 0.78, 0.4)
@@ -946,3 +958,69 @@ func _build_authored_engineer_visuals() -> void:
         ModelKit3D.add_sphere(_model_root, 0.07, Vector3(0.0, 2.62, 0.2), glow, Vector3.ONE, "Tier3CrownBeacon")
 
     _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.1, -0.98), glow_color, 0.78, 3.8)
+
+
+func _build_signal_relay_visuals() -> void:
+    # The Relay is a deliberately distinct late-game chassis: a tall, quiet
+    # communications instrument with a protected mast and directional array,
+    # not a reskinned combat or construction frame.
+    var chassis := ModelKit3D.material(Color("29383d"), 0.82, 0.32)
+    var dark_steel := ModelKit3D.material(Color("111b20"), 0.88, 0.28)
+    var ceramic := ModelKit3D.material(Color("6f7a78"), 0.12, 0.62)
+    var cyan_color := Color("79e3e8")
+    var cyan := ModelKit3D.material(Color("164c52"), 0.34, 0.22, cyan_color, 2.6)
+    var amber := ModelKit3D.material(Color("6d3e20"), 0.38, 0.42, Color("e5a45b"), 1.3)
+    ModelKit3D.add_beveled_box(_model_root, Vector3(1.12, 0.64, 1.36), Vector3(0.0, 0.82, 0.0), chassis, Vector3.ZERO, "RelayChassis", 0.18)
+    ModelKit3D.add_surface_panel(_model_root, Vector3(0.72, 0.3, 0.08), Vector3(0.0, 1.12, -0.7), dark_steel, cyan, Vector3.ZERO, "RelayServiceFace")
+    ModelKit3D.add_louvered_panel(_model_root, Vector3(0.72, 0.32, 0.14), Vector3(0.0, 0.86, 0.7), dark_steel, ceramic, Vector3.ZERO, "RelayHeatSink", 4)
+    ModelKit3D.add_box(_model_root, Vector3(0.16, 0.42, 0.92), Vector3(0.0, 0.9, 0.0), amber, Vector3.ZERO, "RelaySpine")
+    for side in [-1.0, 1.0]:
+        var side_sign := float(side)
+        ModelKit3D.add_cylinder(_model_root, 0.1, 0.58, Vector3(side_sign * 0.45, 0.42, 0.0), dark_steel, Vector3.ZERO, "RelayLeg%s" % ("Left" if side_sign < 0.0 else "Right"))
+        ModelKit3D.add_beveled_box(_model_root, Vector3(0.24, 0.12, 0.42), Vector3(side_sign * 0.5, 0.12, -0.02), ceramic, Vector3.ZERO, "RelayFoot%s" % ("Left" if side_sign < 0.0 else "Right"), 0.16)
+        ModelKit3D.add_cylinder(_model_root, 0.045, 0.48, Vector3(side_sign * 0.52, 1.18, 0.18), cyan, Vector3(0.0, 0.0, side_sign * 0.4), "RelayBrace%s" % ("Left" if side_sign < 0.0 else "Right"))
+    ModelKit3D.add_cylinder(_model_root, 0.075, 1.18, Vector3(0.0, 1.62, 0.08), dark_steel, Vector3.ZERO, "RelayMast")
+    ModelKit3D.add_cylinder(_model_root, 0.115, 0.08, Vector3(0.0, 1.58, 0.08), amber, Vector3(0.0, 0.0, 0.0), "RelayMastCollar")
+    var dish := MeshInstance3D.new()
+    dish.name = "RelayDirectionalDish"
+    var dish_mesh := CylinderMesh.new()
+    dish_mesh.top_radius = 0.34
+    dish_mesh.bottom_radius = 0.1
+    dish_mesh.height = 0.12
+    dish_mesh.radial_segments = 24
+    dish_mesh.rings = 4
+    dish.mesh = dish_mesh
+    dish.material_override = ceramic
+    dish.position = Vector3(0.0, 2.12, -0.03)
+    dish.rotation = Vector3(0.55, 0.0, 0.0)
+    _model_root.add_child(dish)
+    var dish_rim := MeshInstance3D.new()
+    dish_rim.name = "RelayDishRim"
+    var dish_rim_mesh := TorusMesh.new()
+    dish_rim_mesh.inner_radius = 0.28
+    dish_rim_mesh.outer_radius = 0.315
+    dish_rim_mesh.rings = 16
+    dish_rim_mesh.ring_segments = 32
+    dish_rim.mesh = dish_rim_mesh
+    dish_rim.material_override = cyan
+    dish_rim.position = Vector3(0.0, 2.22, 0.02)
+    dish_rim.rotation = Vector3(0.55, 0.0, 0.0)
+    _model_root.add_child(dish_rim)
+    ModelKit3D.add_sphere(_model_root, 0.09, Vector3(0.0, 2.28, -0.04), cyan, Vector3(1.0, 0.72, 0.72), "RelayBeacon")
+    if level >= 2:
+        ModelKit3D.add_louvered_panel(_model_root, Vector3(0.24, 0.32, 0.1), Vector3(-0.7, 1.0, 0.0), dark_steel, cyan, Vector3(0.0, 0.0, 0.2), "RelaySignalPanel", 3)
+        ModelKit3D.add_louvered_panel(_model_root, Vector3(0.24, 0.32, 0.1), Vector3(0.7, 1.0, 0.0), dark_steel, cyan, Vector3(0.0, 0.0, -0.2), "RelaySignalPanel", 3)
+    if level >= 3:
+        var crown_ring := MeshInstance3D.new()
+        crown_ring.name = "Tier3CrownRing"
+        var crown_mesh := TorusMesh.new()
+        crown_mesh.inner_radius = 0.4
+        crown_mesh.outer_radius = 0.445
+        crown_mesh.rings = 16
+        crown_mesh.ring_segments = 32
+        crown_ring.mesh = crown_mesh
+        crown_ring.material_override = amber
+        crown_ring.position = Vector3(0.0, 2.38, 0.02)
+        _model_root.add_child(crown_ring)
+        ModelKit3D.add_sphere(_model_root, 0.065, Vector3(0.0, 2.52, 0.02), amber, Vector3.ONE, "Tier3CrownBeacon")
+    _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 2.28, -0.04), cyan_color, 0.72, 4.4)

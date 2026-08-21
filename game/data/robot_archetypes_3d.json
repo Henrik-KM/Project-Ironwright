@@ -56,6 +56,17 @@
         {"level": 2, "health": 150, "damage": 8, "speed": 4.55, "construction_rate": 1.35},
         {"level": 3, "health": 205, "damage": 12, "speed": 4.9, "construction_rate": 1.8}
       ]
+    },
+    "relay": {
+      "display_name": "Signal Relay",
+      "purpose": "Maintain a resilient machine signal through hostile districts, giving deep operations one bounded recovery margin without player routing work.",
+      "build_cost_scrap": 126,
+      "manual_build_seconds": 10.8,
+      "levels": [
+        {"level": 1, "health": 92, "damage": 4, "speed": 4.6, "signal_strength": 1.0},
+        {"level": 2, "health": 126, "damage": 6, "speed": 4.9, "signal_strength": 1.35},
+        {"level": 3, "health": 172, "damage": 9, "speed": 5.2, "signal_strength": 1.8}
+      ]
     }
   }
 }
