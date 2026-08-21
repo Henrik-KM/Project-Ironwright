@@ -21,6 +21,12 @@
 - The overlays are cleared by repair and hidden automatically outside close-detail presentation, keeping remote simulation lightweight while preserving readable local consequences.
 - Release regression coverage verifies creation, damage, LOD suppression, restoration, and repair clearing.
 
+## Focused Signal Relay authored-asset milestone
+
+- Replaced the Signal Relay's procedural primary shell with an original high-definition glTF asset containing a protected chassis, heat sink, mast, directional dish, beacon and stable presentation sockets.
+- Preserved the bounded runtime progression finish while retaining the imported scene root and its `Idle`, `Walk`, `Work`, `Fire` and `Hit` animation clips for the live presentation bridge.
+- Added the source builder, asset manifest, production-marker checks and live aesthetic coverage without changing collision, autonomy, route support or save-state contracts.
+
 ## Focused deep-route signal relay milestone
 
 - added the late-game Signal Relay chassis as a sixth robot family with a

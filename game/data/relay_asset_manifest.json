@@ -1,0 +1,25 @@
+{
+  "asset_id": "relay.signal.v1",
+  "runtime_scene": "res://assets/relay/relay.gltf",
+  "source_builder": "game/assets/relay/source/build_relay_asset.py",
+  "source_type": "original_project_ironwright_shared_mesh_builder",
+  "third_party_assets": [],
+  "presentation_only": true,
+  "stable_nodes": [
+    "RelayModel",
+    "Chassis",
+    "ChassisCore",
+    "RelayServiceFace",
+    "RelayHeatSink",
+    "Sensor",
+    "OpticLens",
+    "RelayMast",
+    "RelayMastCollar",
+    "RelayDirectionalDish",
+    "RelayDishRim",
+    "RelayBeacon",
+    "ProductionAssetMarker"
+  ],
+  "animation_clips": ["Idle", "Walk", "Work", "Fire", "Hit"],
+  "socket_contract": ["sensor", "optic", "signal_mast", "directional_dish", "signal_beacon"]
+}
