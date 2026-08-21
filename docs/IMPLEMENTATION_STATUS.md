@@ -256,6 +256,16 @@ identities. Manual channels remain finish-before-save.
 - added a stricter native framing assertion so future presentation changes do
   not let the opening forge dominate the focal cast again.
 
+## Focused final opening focal-read milestone
+
+- tightened the release opening camera to a 14.8 height, 8.4 distance and
+  43.75 degree field of view after live export comparison;
+- kept the Heartforge readable while giving the Mechromancer and Bulwark
+  enough screen presence for their high-definition silhouettes and lighting
+  separation to read at the release viewport;
+- strengthened the native framing assertion so the opening cannot regress to a
+  forge-dominant composition while losing the amber escape route.
+
 ## Focused Mechromancer asset milestone
 
 - replaced the procedural player mannequin with the original
