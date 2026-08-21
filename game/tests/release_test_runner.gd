@@ -227,6 +227,12 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         _expect(archive_dressing.find_child("ArchiveFragment00", true, false) != null and archive_dressing.find_child("ArchiveWindow00_00", true, false) != null, "Release archive dressing must expose layered archive shell and window detail.")
         _expect(archive_dressing.find_child("ArchiveRecordsShutter00", true, false) != null and archive_dressing.find_child("ArchiveRoofSlab00", true, false) != null, "Release archive dressing must expose records and roof hardware.")
         _expect(archive_dressing.find_child("ArchiveServiceRiser00", true, false) != null and archive_dressing.find_child("ArchiveFilingRail00_00", true, false) != null, "Release archive dressing must expose service and filing hardware.")
+    var market_dressing := world.release_world_art.dressing_root.find_child("HighDefinitionMarketDressing", true, false) if world.release_world_art.dressing_root != null else null
+    _expect(market_dressing != null, "Release market dressing must expose a bounded high-definition stall layer.")
+    if market_dressing != null:
+        _expect(market_dressing.find_child("MarketStall00", true, false) != null and market_dressing.find_child("MarketCanopy00", true, false) != null, "Release market dressing must expose layered stall shells and canopy detail.")
+        _expect(market_dressing.find_child("MarketCounter00", true, false) != null and market_dressing.find_child("MarketDisplayCrate00_00", true, false) != null, "Release market dressing must expose counter and display hardware.")
+        _expect(market_dressing.find_child("MarketMembraneAwning00", true, false) != null and market_dressing.find_child("MarketCanopyPost00_-1_-1", true, false) != null, "Release market dressing must expose organic awning and canopy supports.")
 
 
 func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
