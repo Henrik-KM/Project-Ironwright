@@ -157,6 +157,16 @@ func _run_all() -> void:
     _expect(world.progression.purchase(&"tech.heartforge.tier_4"), "Two components and two outposts must permit Heartforge tier 4.")
     _expect(world.progression.heartforge_tier == 4, "The run must reach Heartforge tier 4.")
     _expect(world.adaptive_defense_director != null, "Heartforge tier 4 must install the adaptive defence director.")
+    _expect(world.progression.purchase(&"tech.machine.signal_relay"), "Tier 4 and two recovered components must permit Signal Relay research.")
+    for _attempt in range(10):
+        if world.autonomy_director.count_robots(&"relay") >= 1:
+            break
+        world.machine_society_director.fabrication_clock = 0.0
+        world.machine_society_director._evaluate_society()
+    _expect(world.autonomy_director.count_robots(&"relay") >= 1, "Signal Relay research must let the machine society fabricate one relay automatically without a production queue.")
+    world._save_game()
+    world._load_game()
+    _expect(world.autonomy_director.count_robots(&"relay") >= 1, "The Signal Relay chassis must survive the unified release save/load path.")
     world.heartforge.current_health = world.heartforge.maximum_health * 0.72
     world.heartforge.health_changed.emit(world.heartforge.current_health, world.heartforge.maximum_health)
     world.adaptive_defense_director.evaluate_now()
@@ -304,6 +314,8 @@ func _complete_operation(world: IronwrightCompleteGameWorld3D, operation_id: Str
     var director := world.long_operation_director
     if not director.authorize(operation_id):
         return false
+    if operation_id == &"operation.root_cistern_mapping":
+        _expect(director._route_recovery_limit() >= 4, "A live Signal Relay must add one bounded route recovery to the Root Cistern formation.")
     return _finish_active_operation(world, operation_id)
 
 

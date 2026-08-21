@@ -38,6 +38,8 @@ func _test_progression_costs() -> void:
     var state := RUN_STATE_SCRIPT.new() as RunState3D
     _expect(state.build_cost(&"salvager") == 42, "The first Scrapper must cost 42 Scrap.")
     _expect(state.build_time(&"guardian") >= 8.0, "Manual Warden fabrication must expose the player for meaningful time.")
+    _expect(state.build_cost(&"relay") == 126, "The late Signal Relay must have a stable strategic build cost.")
+    _expect(state.level_for(&"relay") == 1, "Legacy saves must default the Signal Relay level to one.")
     state.scrap = 500
     _expect(state.purchase_upgrade(&"salvager"), "Level 2 Scrapper upgrade should be purchasable with Scrap.")
     _expect(state.level_for(&"salvager") == 2, "Scrapper class level should become 2.")

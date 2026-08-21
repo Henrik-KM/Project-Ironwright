@@ -5,7 +5,7 @@ const ORGANIC_SPECIES: Array[StringName] = [
     &"veilstalker", &"razorhound", &"apex", &"sporecaster", &"broodmass", &"burrower",
     &"skitterling", &"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver",
 ]
-const ROBOT_ARCHETYPES: Array[StringName] = [&"guardian", &"salvager", &"scout", &"engineer"]
+const ROBOT_ARCHETYPES: Array[StringName] = [&"guardian", &"salvager", &"scout", &"engineer", &"relay"]
 
 var failures: Array[String] = []
 

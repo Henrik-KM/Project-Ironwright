@@ -204,6 +204,8 @@ func _polish_robot(robot: RobotUnit3D) -> void:
             _build_pathfinder_detail(detail)
         &"engineer":
             _build_engineer_detail(detail)
+        &"relay":
+            _build_relay_detail(detail)
         _:
             _build_scrapper_detail(detail)
     _build_machine_roster_micro_detail(detail, robot)
@@ -385,6 +387,23 @@ func _build_machine_role_signature(parent: Node3D, robot: RobotUnit3D) -> void:
                 "EngineerClampJaw",
                 0.2
             )
+        &"relay":
+            var relay_collar := MeshInstance3D.new()
+            relay_collar.name = "RelayMastCollar"
+            var relay_collar_mesh := TorusMesh.new()
+            relay_collar_mesh.inner_radius = 0.09
+            relay_collar_mesh.outer_radius = 0.14
+            relay_collar_mesh.rings = 12
+            relay_collar_mesh.ring_segments = 24
+            relay_collar.mesh = relay_collar_mesh
+            relay_collar.material_override = finish_warning
+            relay_collar.position = Vector3(0.0, 1.58, 0.08)
+            parent.add_child(relay_collar)
+            ModelKit3D.add_louvered_panel(parent, Vector3(0.48, 0.24, 0.12), Vector3(0.0, 1.0, 0.76), dark_steel, finish_status, Vector3.ZERO, "RelayHeatSink", 4)
+            for side in [-1.0, 1.0]:
+                var side_sign := float(side)
+                ModelKit3D.add_beveled_box(parent, Vector3(0.08, 0.1, 0.62), Vector3(side_sign * 0.18, 2.7, 0.08), finish_panel, Vector3(0.0, 0.0, side_sign * 0.16), "RelayDishRib%s" % ("Left" if side_sign < 0.0 else "Right"), 0.18)
+            ModelKit3D.add_surface_panel(parent, Vector3(0.28, 0.18, 0.08), Vector3(0.0, 1.2, -0.74), dark_steel, finish_status, Vector3.ZERO, "RelaySignalFace")
 
 
 func _build_machine_finish(parent: Node3D, robot: RobotUnit3D) -> void:
@@ -403,6 +422,9 @@ func _build_machine_finish(parent: Node3D, robot: RobotUnit3D) -> void:
     elif robot.archetype == &"engineer":
         body_width = 1.35
         body_depth = 1.58
+    elif robot.archetype == &"relay":
+        body_width = 1.18
+        body_depth = 1.4
 
     ModelKit3D.add_surface_panel(
         finish,
@@ -556,6 +578,17 @@ func _build_scrapper_detail(parent: Node3D) -> void:
     for side in [-1.0, 1.0]:
         ModelKit3D.add_cylinder(parent, 0.12, 0.1, Vector3(side * 1.15, 0.62, -0.44), cyan, Vector3(1.5708, 0.0, 0.0), "ScrapMagnet")
     _add_machine_lamp(parent, Vector3(0.0, 1.22, -0.98), Color("6bd7de"), 0.3)
+
+
+func _build_relay_detail(parent: Node3D) -> void:
+    var relay_glow := ModelKit3D.material(Color("174c52"), 0.32, 0.22, Color("79e3e8"), 2.0)
+    ModelKit3D.add_surface_panel(parent, Vector3(0.72, 0.26, 0.08), Vector3(0.0, 1.2, -0.78), dark_steel, relay_glow, Vector3.ZERO, "RelayServiceFace")
+    ModelKit3D.add_louvered_panel(parent, Vector3(0.7, 0.3, 0.14), Vector3(0.0, 0.88, 0.76), dark_steel, steel, Vector3.ZERO, "RelayRearRadiator", 5)
+    ModelKit3D.add_cylinder(parent, 0.07, 1.28, Vector3(0.0, 1.7, 0.08), dark_steel, Vector3.ZERO, "RelayAntennaMast")
+    ModelKit3D.add_sphere(parent, 0.1, Vector3(0.0, 2.34, -0.02), relay_glow, Vector3(1.0, 0.72, 0.72), "RelaySignalBeacon")
+    ModelKit3D.add_beveled_box(parent, Vector3(0.18, 0.3, 0.46), Vector3(-0.7, 1.0, 0.0), finish_panel, Vector3(0.0, 0.0, 0.18), "RelaySideGuardLeft", 0.18)
+    ModelKit3D.add_beveled_box(parent, Vector3(0.18, 0.3, 0.46), Vector3(0.7, 1.0, 0.0), finish_panel, Vector3(0.0, 0.0, -0.18), "RelaySideGuardRight", 0.18)
+    _add_machine_lamp(parent, Vector3(0.0, 1.2, -0.84), Color("79e3e8"), 0.28)
 
 
 func _build_pathfinder_detail(parent: Node3D) -> void:

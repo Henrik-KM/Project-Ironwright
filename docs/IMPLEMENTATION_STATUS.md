@@ -21,6 +21,21 @@
 - The overlays are cleared by repair and hidden automatically outside close-detail presentation, keeping remote simulation lightweight while preserving readable local consequences.
 - Release regression coverage verifies creation, damage, LOD suppression, restoration, and repair clearing.
 
+## Focused deep-route signal relay milestone
+
+- added the late-game Signal Relay chassis as a sixth robot family with a
+  distinct mast, directional dish, heat-sink and beacon silhouette;
+- added the strategic Signal Relay Frame technology. Once researched, the
+  machine society fabricates one relay automatically rather than exposing a
+  production queue or per-unit assignment task;
+- deep Root Cistern routes now require relay coverage and receive one extra
+  bounded recovery attempt, with the reason reported when the formation
+  departs;
+- added save-default, progression, automatic-fabrication, route-support and
+  aesthetic regression coverage. This expands the systemic alpha roster; it
+  does not close the remaining commercial art, balance, hardware and external
+  playtest gates.
+
 ## Focused transactional sidecar isolation milestone
 
 - Enemy-tier progression sidecars now follow the configured transactional save root and slot instead of writing to one shared global path.

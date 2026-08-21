@@ -212,6 +212,8 @@ func authorize(operation_id: StringName) -> bool:
         outpost_director.set_process(false)
     _hold_nonmembers_at_home(team)
     var route_detail := "%s has departed as a cohesive physical group." % str(entry.get("display_name", String(operation_id)))
+    if _active_relay_count() > 0:
+        route_detail += " Signal Relay coverage is holding one bounded recovery margin for the deep route."
     if route_variant > 0:
         route_detail += " Route memory selected the %s after earlier disruption." % region_director.route_variant_label(region_id, route_variant)
     operation_changed.emit(operation_id, &"outbound", route_detail)
@@ -567,9 +569,20 @@ func _group_pace(members: Array[RobotUnit3D]) -> float:
 
 
 func _route_recovery_limit() -> int:
+    var relay_bonus := 1 if _active_relay_count() > 0 else 0
     if progression != null and progression.has_effect(&"doctrine_defiance"):
-        return MAX_ROUTE_RECOVERIES + 2
-    return MAX_ROUTE_RECOVERIES
+        return MAX_ROUTE_RECOVERIES + 2 + relay_bonus
+    return MAX_ROUTE_RECOVERIES + relay_bonus
+
+
+func _active_relay_count() -> int:
+    if active_operation.is_empty():
+        return 0
+    var count := 0
+    for robot in _living_members():
+        if robot.archetype == &"relay":
+            count += 1
+    return count
 
 
 func _should_preserve_members(members: Array[RobotUnit3D]) -> bool:

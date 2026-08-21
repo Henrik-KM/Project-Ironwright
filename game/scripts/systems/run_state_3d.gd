@@ -17,6 +17,7 @@ const ROBOT_ARCHETYPES: Array[StringName] = [
     &"guardian",
     &"scout",
     &"engineer",
+    &"relay",
 ]
 
 var scrap: int = 24
@@ -28,6 +29,7 @@ var robot_levels: Dictionary = {
     &"guardian": 1,
     &"scout": 1,
     &"engineer": 1,
+    &"relay": 1,
 }
 var elapsed_seconds: float = 0.0
 var manual_scrap_recovered: int = 0
@@ -133,6 +135,8 @@ func build_cost(archetype: StringName) -> int:
             return 56
         &"companion":
             return 90
+        &"relay":
+            return 126
         _:
             return 9999
 
@@ -149,6 +153,8 @@ func build_time(archetype: StringName) -> float:
             return 7.6
         &"companion":
             return 9.5
+        &"relay":
+            return 10.8
         _:
             return 10.0
 
