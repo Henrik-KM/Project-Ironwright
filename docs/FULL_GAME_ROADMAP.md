@@ -311,7 +311,8 @@ Content and systems:
 - rare materials tied to specific objectives rather than generic farming;
 - 15–25 expedition templates generated from world state;
 - dynamic rescue, recovery, suppression, survey, hunt, and retrieval objectives;
-- machine doctrine choices;
+- machine doctrine choices, with one rare mutually exclusive commitment shaping
+  cohesion, retreat, obstruction tolerance and remote-operation pace;
 - meaningful trade-offs between Mechromancer, machines, and Heartforge development;
 - long-run pressure tuning and recovery windows;
 - improved failure analysis.

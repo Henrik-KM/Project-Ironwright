@@ -261,14 +261,21 @@ func _update_active_operation(delta: float) -> void:
     direction = direction.normalized()
     active_operation["last_forward"] = direction
 
+    if state != &"retreating" and _should_preserve_members(members):
+        _begin_route_retreat("Preservation doctrine detected a damaged frame before the objective was complete.")
+        return
+
     var separation := _maximum_separation(anchor, members)
     var pace_multiplier := FormationRules3D.pace_multiplier(separation)
     var hostile_blocking := state != &"retreating" and _hostile_near(anchor, 10.0)
+    var block_grace_seconds := ROUTE_BLOCK_GRACE_SECONDS
+    if progression != null and progression.has_effect(&"doctrine_predation"):
+        block_grace_seconds *= 0.62
     if hostile_blocking and not route_recovery_active:
         active_operation["blocked_clock"] = float(active_operation.get("blocked_clock", 0.0)) + delta
-        if float(active_operation.get("blocked_clock", 0.0)) >= ROUTE_BLOCK_GRACE_SECONDS:
-            if int(active_operation.get("route_recovery_count", 0)) >= MAX_ROUTE_RECOVERIES:
-                _begin_route_retreat("The route remained blocked after three bounded recovery attempts; the cohesive group is retreating with its machines intact.")
+        if float(active_operation.get("blocked_clock", 0.0)) >= block_grace_seconds:
+            if int(active_operation.get("route_recovery_count", 0)) >= _route_recovery_limit():
+                _begin_route_retreat("The route remained blocked after %d bounded recovery attempts; the cohesive group is retreating with its machines intact." % _route_recovery_limit())
                 return
             _insert_route_recovery(anchor, waypoint, route_index)
             route_recovery_active = true
@@ -529,9 +536,33 @@ func _group_pace(members: Array[RobotUnit3D]) -> float:
     for robot in members:
         slowest = minf(slowest, robot.move_speed)
     var pace_factor := 0.64
-    if progression != null and progression.has_effect(&"doctrine_rapid_march"):
-        pace_factor = 0.78
+    if progression != null:
+        if progression.has_effect(&"doctrine_preservation"):
+            pace_factor = 0.56
+        elif progression.has_effect(&"doctrine_defiance"):
+            pace_factor = 0.68
+        elif progression.has_effect(&"doctrine_predation"):
+            pace_factor = 0.72
+        elif progression.has_effect(&"doctrine_rapid_march"):
+            pace_factor = 0.78
     return slowest * pace_factor
+
+
+func _route_recovery_limit() -> int:
+    if progression != null and progression.has_effect(&"doctrine_defiance"):
+        return MAX_ROUTE_RECOVERIES + 2
+    return MAX_ROUTE_RECOVERIES
+
+
+func _should_preserve_members(members: Array[RobotUnit3D]) -> bool:
+    if progression == null or not progression.has_effect(&"doctrine_preservation"):
+        return false
+    for robot in members:
+        if robot == null or not robot.is_alive():
+            continue
+        if robot.current_health / maxf(1.0, robot.maximum_health) <= 0.55:
+            return true
+    return false
 
 
 func _hostile_near(position: Vector3, radius: float) -> bool:

@@ -123,7 +123,41 @@
       "cost": {"scrap": 120, "rare_cores": 1},
       "requirements": {"heartforge_tier": 3},
       "effects": ["doctrine_rapid_march"],
-      "automatic": false
+      "automatic": false,
+      "exclusive_group": "machine_doctrine"
+    },
+    {
+      "id": "tech.doctrine.preservation",
+      "display_name": "Preservation Doctrine",
+      "branch": "doctrine",
+      "description": "Machines retreat early, protect experienced frames and accept slower remote progress to preserve the society that built them.",
+      "cost": {"scrap": 120, "rare_cores": 1},
+      "requirements": {"heartforge_tier": 3, "completed_operation": "operation.west_grid_survey"},
+      "effects": ["doctrine_preservation"],
+      "automatic": false,
+      "exclusive_group": "machine_doctrine"
+    },
+    {
+      "id": "tech.doctrine.defiance",
+      "display_name": "Defiance Doctrine",
+      "branch": "doctrine",
+      "description": "Machines accept greater route risk and hold longer against obstruction when abandoning the objective would expose the Heartforge to worse pressure.",
+      "cost": {"scrap": 135, "rare_cores": 1},
+      "requirements": {"heartforge_tier": 3, "completed_operation": "operation.west_grid_survey"},
+      "effects": ["doctrine_defiance"],
+      "automatic": false,
+      "exclusive_group": "machine_doctrine"
+    },
+    {
+      "id": "tech.doctrine.predation",
+      "display_name": "Predation Doctrine",
+      "branch": "doctrine",
+      "description": "Remote groups push through wounded organic pressure sooner, trading cohesion margin for decisive movement and reduced interruption.",
+      "cost": {"scrap": 145, "rare_cores": 1},
+      "requirements": {"heartforge_tier": 3, "completed_operation": "operation.west_grid_survey"},
+      "effects": ["doctrine_predation"],
+      "automatic": false,
+      "exclusive_group": "machine_doctrine"
     },
     {
       "id": "tech.heartforge.tier_4",

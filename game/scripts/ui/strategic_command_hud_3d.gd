@@ -29,6 +29,7 @@ var phase_name: String = "Embers"
 var heartforge_tier: int = 1
 var scrap: int = 0
 var rare_cores: int = 0
+var doctrine_name: String = "Uncommitted"
 var operation_summary: String = ""
 
 
@@ -171,13 +172,15 @@ func update_progression(
         next_phase_name: String,
         next_heartforge_tier: int,
         next_scrap: int,
-        next_rare_cores: int
+        next_rare_cores: int,
+        next_doctrine_name: String = "Uncommitted"
     ) -> void:
     technologies = next_technologies
     phase_name = next_phase_name
     heartforge_tier = next_heartforge_tier
     scrap = next_scrap
     rare_cores = next_rare_cores
+    doctrine_name = next_doctrine_name
     _clamp_selection()
     _refresh()
 
@@ -290,7 +293,7 @@ func _refresh_evolution() -> void:
         primary_button.disabled = true
         return
 
-    summary_label.text = "Choose one consequential technology. Routine execution remains delegated to the machines. Scrap %d · Cognition Cores %d" % [scrap, rare_cores]
+    summary_label.text = "Choose one consequential technology. Routine execution remains delegated to the machines. Scrap %d · Cognition Cores %d · Active doctrine: %s" % [scrap, rare_cores, doctrine_name]
     primary_button.text = "AUTHORIZE EVOLUTION"
     primary_button.disabled = false
     var technology := technologies[selected_index]
