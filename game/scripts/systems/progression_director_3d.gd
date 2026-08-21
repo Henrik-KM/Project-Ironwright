@@ -112,6 +112,8 @@ func available_technologies() -> Array[Dictionary]:
         var entry := technology(identifier)
         if bool(entry.get("automatic", false)):
             continue
+        if _exclusive_group_locked(entry):
+            continue
         if requirements_met(entry):
             result.append(entry)
     result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
@@ -184,6 +186,8 @@ func can_purchase(technology_id: StringName) -> bool:
     var entry := technology(technology_id)
     if entry.is_empty() or bool(entry.get("automatic", false)):
         return false
+    if _exclusive_group_locked(entry):
+        return false
     if not requirements_met(entry):
         return false
     var cost: Dictionary = entry.get("cost", {})
@@ -207,6 +211,36 @@ func purchase(technology_id: StringName) -> bool:
         return false
     _unlock(entry)
     return true
+
+
+func active_doctrine_id() -> StringName:
+    for technology_id in unlocked_technologies:
+        var entry := technology(technology_id)
+        if str(entry.get("exclusive_group", "")) == "machine_doctrine":
+            return technology_id
+    return &""
+
+
+func active_doctrine_display_name() -> String:
+    var identifier := active_doctrine_id()
+    if identifier == &"":
+        return "Uncommitted"
+    return str(technology(identifier).get("display_name", String(identifier)))
+
+
+func has_doctrine(effect_id: StringName) -> bool:
+    return has_effect(effect_id)
+
+
+func _exclusive_group_locked(entry: Dictionary) -> bool:
+    var group := str(entry.get("exclusive_group", ""))
+    if group.is_empty():
+        return false
+    for technology_id in unlocked_technologies:
+        var unlocked_entry := technology(technology_id)
+        if str(unlocked_entry.get("exclusive_group", "")) == group:
+            return true
+    return false
 
 
 func _evaluate_automatic_technologies() -> void:
@@ -291,7 +325,7 @@ func to_dictionary() -> Dictionary:
     for technology_id in unlocked_technologies:
         serialized_technologies.append(String(technology_id))
     return {
-        "schema_version": 2,
+        "schema_version": 3,
         "heartforge_tier": heartforge_tier,
         "current_phase": String(current_phase),
         "unlocked_technologies": serialized_technologies,

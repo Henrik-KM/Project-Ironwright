@@ -1248,6 +1248,18 @@ final retail art, animation and external visual approval are still required.
 - added aesthetic coverage for transient VFX and impact audio without changing
   combat damage, collision, ecology, persistence or player workload.
 
+## Focused machine-doctrine milestone
+
+- added mutually exclusive Preservation, Defiance and Predation doctrine
+  choices alongside the existing Rapid March doctrine;
+- persisted the selected doctrine through the progression save payload, with
+  older payloads defaulting to an uncommitted doctrine;
+- made the choice visible in the strategic evolution surface and connected it
+  to remote operation pace, route-recovery tolerance, obstruction pressure and
+  early preservation retreat without adding per-unit policy controls;
+- added full-game coverage for doctrine availability, exclusivity, UI
+  visibility and save-state persistence.
+
 The live playtest also found and closed a legacy-save edge: snapshots created
 before authored run variation now reconcile their missing weather profile before
 presentation restore, with release regression coverage for that migration path.

@@ -28,7 +28,8 @@ func _process(delta: float) -> void:
         str(phase_data.get("display_name", String(progression.current_phase))),
         progression.heartforge_tier,
         run_state.scrap,
-        run_state.rare_cores
+        run_state.rare_cores,
+        progression.active_doctrine_display_name()
     )
     strategic_hud.update_outposts(outpost_director.site_statuses(), outpost_director.operation_summary())
     if not outpost_director.operation.is_empty():

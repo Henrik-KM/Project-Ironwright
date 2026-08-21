@@ -140,6 +140,23 @@ func _run_all() -> void:
     _expect(restored_site != null and restored_site.has_functioning_outpost(), "Outpost save state must preserve the physical outpost.")
     _expect(restored_site.outpost.role == &"resource", "Outpost save state must preserve strategic role.")
 
+    world.progression.set_heartforge_tier(3)
+    world.long_operation_director.completed_operations.append(&"operation.west_grid_survey")
+    world.run_state.scrap = 2400
+    world.run_state.rare_cores = 4
+    _expect(world.progression.can_purchase(&"tech.doctrine.preservation"), "A tier 3 run with the West Grid survey complete must expose the Preservation Doctrine choice.")
+    _expect(world.progression.can_purchase(&"tech.doctrine.defiance"), "A tier 3 run with the West Grid survey complete must expose the Defiance Doctrine choice.")
+    _expect(world.progression.can_purchase(&"tech.doctrine.predation"), "A tier 3 run with the West Grid survey complete must expose the Predation Doctrine choice.")
+    _expect(world.progression.purchase(&"tech.doctrine.preservation"), "The player must be able to commit one machine doctrine.")
+    _expect(world.progression.active_doctrine_id() == &"tech.doctrine.preservation", "The committed machine doctrine must persist as a stable technology choice.")
+    _expect(not world.progression.can_purchase(&"tech.doctrine.defiance") and not world.progression.can_purchase(&"tech.doctrine.predation"), "Machine doctrine choices must be mutually exclusive rather than becoming a tuning panel.")
+    world.strategic_hud.update_progression(world._strategic_technologies(), "Expansion", 3, world.run_state.scrap, world.run_state.rare_cores, world.progression.active_doctrine_display_name())
+    _expect(world.strategic_hud.summary_label.text.contains("Preservation Doctrine"), "The strategic evolution surface must show the active machine doctrine.")
+    var doctrine_data := world.progression.to_dictionary()
+    _expect(int(doctrine_data.get("schema_version", 0)) == 3, "The progression payload must advance its schema for the persisted doctrine choice.")
+    world.progression.restore_from_dictionary(doctrine_data)
+    _expect(world.progression.active_doctrine_id() == &"tech.doctrine.preservation", "Progression save/load must preserve the committed machine doctrine.")
+
     if failures.is_empty():
         print("Project Ironwright full-game foundation tests passed.")
         _cleanup_save_files()
