@@ -140,6 +140,31 @@ AUTHORED_ORGANIC_ASSETS = {
     },
 }
 
+# These are presentation assets used at tactical-camera and close inspection
+# distances.  The floor is intentionally a total POSITION accessor count, not
+# a triangle-count target, so it catches an accidental return to coarse
+# procedural shells without prescribing a particular mesh decomposition.
+ACTOR_GEOMETRY_FLOORS = {
+    "mechromancer": 600,
+    "bulwark": 1500,
+    "warden": 1200,
+    "scrapper": 1200,
+    "pathfinder": 1400,
+    "engineer": 1400,
+    "veilstalker": 3000,
+    "razorhound": 2800,
+    "apex": 2600,
+    "sporecaster": 3400,
+    "broodmass": 3600,
+    "burrower": 2500,
+    "skitterling": 2100,
+    "roofleaper": 4300,
+    "glassmoth": 4300,
+    "miremaw": 4300,
+    "carrionbell": 4300,
+    "rootweaver": 4300,
+}
+
 AUTHORED_REGION_ASSETS = {
     "riverworks": {
         "asset_id": "riverworks.landmark.v1",
@@ -397,6 +422,30 @@ def fail(message: str) -> None:
     raise RuntimeError(message)
 
 
+def _position_vertex_count(gltf: dict) -> int:
+    """Return the total authored POSITION accessor count in a glTF asset."""
+    accessors = gltf.get("accessors", [])
+    total = 0
+    for mesh in gltf.get("meshes", []):
+        for primitive in mesh.get("primitives", []):
+            position_index = primitive.get("attributes", {}).get("POSITION")
+            if isinstance(position_index, int) and 0 <= position_index < len(accessors):
+                total += int(accessors[position_index].get("count", 0))
+    return total
+
+
+def validate_actor_geometry_density() -> None:
+    for family, floor in ACTOR_GEOMETRY_FLOORS.items():
+        gltf_path = ROOT / f"game/assets/{family}/{family}.gltf"
+        gltf = json.loads(gltf_path.read_text(encoding="utf-8"))
+        vertex_count = _position_vertex_count(gltf)
+        if vertex_count < floor:
+            fail(
+                f"{family} authored actor geometry is below the high-definition density floor: "
+                f"{vertex_count} POSITION vertices < {floor}."
+            )
+
+
 def validate_mechromancer_asset() -> None:
     manifest_path = ROOT / "game/data/mechromancer_asset_manifest.json"
     gltf_path = ROOT / "game/assets/mechromancer/mechromancer.gltf"
@@ -493,6 +542,7 @@ def main() -> int:
                 fail(f"Missing or unexpectedly empty aesthetic file: {relative}")
 
         validate_mechromancer_asset()
+        validate_actor_geometry_density()
         validate_authored_organic_assets()
         validate_authored_region_assets()
 

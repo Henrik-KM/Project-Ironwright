@@ -127,7 +127,15 @@ def add_box(builder: BufferBuilder, size: Sequence[float], material: int) -> tup
     return _geometry(builder, positions, normals, indices, material)
 
 
+HERO_CURVE_SIDES = 24
+HERO_SPHERE_RINGS = 16
+
+
 def add_cylinder(builder: BufferBuilder, radius: float, height: float, material: int, sides: int = 14) -> tuple[int, int, int, int]:
+    # Keep every curved authored surface smooth at tactical and close-camera
+    # distances, including small fasteners and cable housings whose callers
+    # intentionally use compact legacy segment counts.
+    sides = max(sides, HERO_CURVE_SIDES)
     positions: list[float] = []
     normals: list[float] = []
     indices: list[int] = []
@@ -155,6 +163,8 @@ def add_cylinder(builder: BufferBuilder, radius: float, height: float, material:
 
 
 def add_uv_sphere(builder: BufferBuilder, radius: float, material: int, rings: int = 8, sides: int = 16) -> tuple[int, int, int, int]:
+    rings = max(rings, HERO_SPHERE_RINGS)
+    sides = max(sides, HERO_CURVE_SIDES)
     positions: list[float] = []
     normals: list[float] = []
     indices: list[int] = []

@@ -128,7 +128,11 @@ def add_box(builder: BufferBuilder, size: Sequence[float], material: int) -> int
     return position_accessor, normal_accessor, index_accessor, material
 
 
+HERO_CURVE_SIDES = 24
+
+
 def add_cylinder(builder: BufferBuilder, radius: float, height: float, material: int, sides: int = 10) -> tuple[int, int, int, int]:
+    sides = max(sides, HERO_CURVE_SIDES)
     positions: list[float] = []
     normals: list[float] = []
     indices: list[int] = []
