@@ -1161,6 +1161,14 @@ final retail art, animation and external visual approval are still required.
 - kept the action pass presentation-only so ecology, AI, collision, damage and queue-free timing remain unchanged;
 - added native aesthetic coverage proving the feeding, nest-guard and retreat poses are distinct across the organic roster.
 
+## Focused organic impact-recoil presentation milestone
+
+- added anatomy-level recoil to organic non-lethal impacts so sensory heads,
+  mandibles and tails visibly absorb the existing hit impulse;
+- retained the authored `Hit` clip, impact burst and organic-impact audio while
+  keeping this response presentation-only;
+- added roster-wide aesthetic coverage for the sensory-head recoil path.
+
 ## Focused civic-infrastructure approach milestone
 
 - added a bounded `HighDefinitionCivicInfrastructure` layer to the central procedural city;

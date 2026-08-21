@@ -784,6 +784,17 @@ func _run_all() -> void:
                     action_transforms[action_state] = procedural_animator.model_root.transform
                 _expect(action_transforms[&"feeding"] != action_transforms[&"nest_guard"], "%s feeding and nest-guard poses must be visibly distinct." % species_names[index])
                 _expect(action_transforms[&"nest_guard"] != action_transforms[&"retreating"], "%s nest-guard and retreat poses must be visibly distinct." % species_names[index])
+                var heads := procedural_animator._nodes_with_prefix(procedural_animator.model_root, "Head")
+                if not heads.is_empty():
+                    procedural_animator._restore_base_transforms()
+                    procedural_animator.hit_impulse = 0.0
+                    procedural_animator._animate_organic(0.0)
+                    var neutral_head_transform: Transform3D = heads[0].transform
+                    procedural_animator._restore_base_transforms()
+                    procedural_animator.hit_impulse = 1.0
+                    procedural_animator._animate_organic(0.0)
+                    _expect(heads[0].transform != neutral_head_transform, "%s non-lethal hits must recoil the sensory head." % species_names[index])
+                    procedural_animator.hit_impulse = 0.0
             authored_animation._on_health_changed(enemy_samples[index], 20.0, 30.0)
             _expect(_animation_clip_matches(authored_animation.active_clip, &"Hit"), "%s damage events must select Hit." % species_names[index])
             enemy_samples[index].set(&"state_name", previous_state)
