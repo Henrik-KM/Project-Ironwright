@@ -421,11 +421,26 @@ func _dress_market(root: Node3D) -> void:
 func _dress_waterfront(root: Node3D) -> void:
     var concrete := _textured_material(&"concrete", Color("3e4546"), 0.0, 0.68)
     var metal := _textured_material(&"rust", Color("73523b"), 0.42, 0.68)
+    var waterworks_detail := Node3D.new()
+    waterworks_detail.name = "HighDefinitionWaterworksDressing"
+    root.add_child(waterworks_detail)
+    var dark_metal := _textured_material(&"metal", Color("253438"), 0.72, 0.42)
+    var warning := ModelKit3D.material(Color("5b352a"), 0.24, 0.68, Color("d27a44"), 0.42)
+    var signal_material := ModelKit3D.material(Color("174b53"), 0.26, 0.3, Color("60d3d4"), 1.1)
     for index in range(5):
         var x := -14.0 + float(index) * 7.0
-        ModelKit3D.add_box(root, Vector3(4.8, 0.65, 12.0), Vector3(x, 0.33, 0.0), concrete, Vector3.ZERO, "PumpWalkway")
-        ModelKit3D.add_cylinder(root, 0.22, 5.5, Vector3(x, 3.2, -4.0), metal, Vector3.ZERO, "PumpGantry")
-        ModelKit3D.add_box(root, Vector3(2.4, 1.6, 2.4), Vector3(x, 0.8, 5.0), metal, Vector3.ZERO, "PumpHousing")
+        var walkway := ModelKit3D.add_beveled_box(waterworks_detail, Vector3(4.8, 0.65, 12.0), Vector3(x, 0.33, 0.0), concrete, Vector3.ZERO, "PumpWalkway%02d" % index, 0.14)
+        for grate_index in range(3):
+            ModelKit3D.add_beveled_box(walkway, Vector3(4.0, 0.08, 0.34), Vector3(0.0, 0.38, -3.8 + float(grate_index) * 3.8), dark_metal, Vector3.ZERO, "PumpWalkwayGrate%02d_%02d" % [index, grate_index], 0.12)
+        ModelKit3D.add_cylinder(waterworks_detail, 0.22, 5.5, Vector3(x, 3.2, -4.0), metal, Vector3.ZERO, "PumpGantry%02d" % index)
+        ModelKit3D.add_cylinder(waterworks_detail, 0.11, 3.7, Vector3(x, 5.55, -4.0), dark_metal, Vector3(0.0, 0.0, PI * 0.5), "PumpGantryCrossbar%02d" % index)
+        ModelKit3D.add_cylinder(waterworks_detail, 0.07, 3.0, Vector3(x - 1.1, 4.2, -4.0), warning, Vector3(0.0, 0.0, -0.48), "PumpGantryBrace%02d" % index)
+        var housing := ModelKit3D.add_beveled_box(waterworks_detail, Vector3(2.4, 1.6, 2.4), Vector3(x, 0.8, 5.0), metal, Vector3.ZERO, "PumpHousing%02d" % index, 0.16)
+        ModelKit3D.add_louvered_panel(housing, Vector3(1.35, 0.78, 0.1), Vector3(0.0, 0.16, -1.22), dark_metal, warning, Vector3.ZERO, "PumpHousingLouver%02d" % index, 3)
+        ModelKit3D.add_surface_panel(housing, Vector3(0.7, 0.56, 0.1), Vector3(0.78, 0.48, 1.22), dark_metal, signal_material, Vector3.ZERO, "PumpControlPanel%02d" % index)
+        ModelKit3D.add_cylinder(housing, 0.42, 0.86, Vector3(0.0, 1.28, 0.0), dark_metal, Vector3.ZERO, "PumpRotor%02d" % index)
+        ModelKit3D.add_cylinder(housing, 0.18, 0.22, Vector3(0.0, 1.78, 0.0), signal_material, Vector3.ZERO, "PumpRotorCap%02d" % index)
+        ModelKit3D.add_cylinder(waterworks_detail, 0.1, 4.2, Vector3(x - 1.0, 1.25, 2.3), metal, Vector3(PI * 0.5, 0.0, 0.0), "PumpDischargePipe%02d" % index)
 
 
 func _dress_rail(root: Node3D) -> void:

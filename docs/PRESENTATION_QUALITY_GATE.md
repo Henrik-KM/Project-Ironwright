@@ -109,6 +109,8 @@ Remote Buried Laboratories release dressing now carries the same model grammar a
 
 Remote Observatory Ridge release dressing now carries the same model grammar as well: the optics support uses a beveled service deck, access panel, tripod braces, a ribbed dish, central hub, feed and receiver lens instead of an isolated cylinder base and flattened sphere. The detail is presentation-only and preserves the existing survey landmark, route, ecology and operation contracts.
 
+Remote Riverworks release dressing now carries the same model grammar as well: five pump platforms use beveled walkways, grates, gantry crossbars and braces, pump housings, cooling louvers, control panels, rotor caps and discharge pipes instead of isolated walkway and housing boxes. The detail is presentation-only and preserves the existing waterworks landmark, salvage, route, ecology and operation contracts.
+
 ## Release-readiness rule
 
 No agent may describe Project Ironwright as commercially finished, release-ready, or a release candidate based solely on:
