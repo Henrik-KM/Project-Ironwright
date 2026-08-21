@@ -1154,6 +1154,13 @@ final retail art, animation and external visual approval are still required.
 
 ## Commercial work still remaining
 
+## Focused organic action-pose presentation milestone
+
+- layered distinct physical poses onto the existing Feed, Nest, Retreat and Death clips for every organic family;
+- added lower-head feeding motion, territorial bracing and scanning, protected-core retreat posture and a short loss-of-balance death presentation;
+- kept the action pass presentation-only so ecology, AI, collision, damage and queue-free timing remain unchanged;
+- added native aesthetic coverage proving the feeding, nest-guard and retreat poses are distinct across the organic roster.
+
 ## Focused civic-infrastructure approach milestone
 
 - added a bounded `HighDefinitionCivicInfrastructure` layer to the central procedural city;

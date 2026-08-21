@@ -28,6 +28,14 @@ non-lethal damage now selects a shared authored `Hit` clip across all five
 friendly robot families and all twelve organic families, so combat readability
 does not depend only on health bars or transient text.
 
+The organic action pass now layers distinct physical poses onto the imported
+Feed, Nest, Retreat and Death clips: feeding lowers the sensory head and opens
+the mouth rhythmically, nest guards brace and scan, retreating creatures
+protect their core while withdrawing, and dying bodies lose height and balance
+through the short presentation window. These details remain presentation-only;
+ecology state, AI decisions, collision, damage and queue-free timing remain
+owned by the existing enemy actor.
+
 The runtime damage response also carries a bounded world-space impact burst and
 distinct spatial sound language for Mechromancer, machine and organic
 non-lethal hits. This reinforces the authored `Hit` beat without adding combat

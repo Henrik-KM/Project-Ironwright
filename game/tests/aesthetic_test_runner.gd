@@ -772,6 +772,18 @@ func _run_all() -> void:
             authored_animation.one_shot_remaining = 0.0
             authored_animation._select_loop_clip()
             _expect(_animation_clip_matches(authored_animation.active_clip, &"Retreat"), "%s retreat state must select Retreat." % species_names[index])
+            var procedural_animator := enemy_samples[index].get_node_or_null("ProceduralAnimator3D") as ProceduralAnimator3D
+            if procedural_animator != null:
+                var action_transforms: Dictionary = {}
+                for action_state in [&"feeding", &"nest_guard", &"retreating"]:
+                    enemy_samples[index].set(&"state_name", action_state)
+                    procedural_animator.idle_phase = 0.61
+                    procedural_animator.phase = 0.37
+                    procedural_animator._restore_base_transforms()
+                    procedural_animator._animate_organic(0.0)
+                    action_transforms[action_state] = procedural_animator.model_root.transform
+                _expect(action_transforms[&"feeding"] != action_transforms[&"nest_guard"], "%s feeding and nest-guard poses must be visibly distinct." % species_names[index])
+                _expect(action_transforms[&"nest_guard"] != action_transforms[&"retreating"], "%s nest-guard and retreat poses must be visibly distinct." % species_names[index])
             authored_animation._on_health_changed(enemy_samples[index], 20.0, 30.0)
             _expect(_animation_clip_matches(authored_animation.active_clip, &"Hit"), "%s damage events must select Hit." % species_names[index])
             enemy_samples[index].set(&"state_name", previous_state)

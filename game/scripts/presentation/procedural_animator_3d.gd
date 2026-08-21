@@ -249,13 +249,43 @@ func _animate_robot(movement_blend: float, delta: float) -> void:
 func _animate_organic(movement_blend: float) -> void:
     var state := _state_name()
     var hunting := state in [&"hunting", &"attacking", &"investigating"]
+    var feeding := state == &"feeding"
+    var nest_guard := state == &"nest_guard"
+    var retreating := state == &"retreating"
+    var dead := state == &"dead"
     var windup := _attack_windup_remaining()
     var threat_blend := clampf(windup / 0.34, 0.0, 1.0)
+    var death_blend := 1.0 if dead else 0.0
+    if _property_exists(subject, &"death_presentation_remaining"):
+        var death_remaining := maxf(0.0, float(subject.get(&"death_presentation_remaining")))
+        if death_remaining > 0.0:
+            death_blend = clampf(1.0 - death_remaining / 0.72, 0.0, 1.0)
     var pulse := 1.0 + sin(idle_phase * 2.4 + deterministic_offset) * 0.028
     model_root.scale = model_root.scale * Vector3(pulse, 1.0 / pulse, pulse)
     model_root.position.y += absf(sin(phase * 2.0)) * 0.075 * movement_blend
     model_root.rotation.z += sin(phase + deterministic_offset) * 0.045 * movement_blend
     model_root.rotation.x += hit_impulse * 0.12
+
+    # The imported action clips establish the broad movement, while this
+    # presentation-only layer gives the close tactical silhouette a readable
+    # physical intent: feeding creatures lower their head, nest guardians
+    # brace around their territory, retreating creatures protect their core,
+    # and dying creatures lose height and balance before leaving the world.
+    if feeding:
+        model_root.position.z += 0.12
+        model_root.rotation.x += 0.16 + sin(idle_phase * 2.2 + deterministic_offset) * 0.035
+    elif nest_guard:
+        model_root.position.y += 0.035
+        model_root.rotation.z += sin(idle_phase * 1.4 + deterministic_offset) * 0.06
+        model_root.rotation.x -= 0.045
+    elif retreating:
+        model_root.position.z += 0.18
+        model_root.rotation.x += 0.12
+        model_root.rotation.z += sin(idle_phase * 2.0 + deterministic_offset) * 0.045
+    if death_blend > 0.0:
+        model_root.position.y -= 0.22 * death_blend
+        model_root.rotation.z += 0.24 * death_blend
+        model_root.scale *= Vector3(1.0 - 0.18 * death_blend, 1.0 - 0.24 * death_blend, 1.0 - 0.18 * death_blend)
 
     var legs := _nodes_with_prefix(model_root, "Leg")
     var talons := _nodes_with_prefix(model_root, "Talon")
@@ -269,13 +299,24 @@ func _animate_organic(movement_blend: float) -> void:
     for head in _nodes_with_prefix(model_root, "Head"):
         head.rotation.y += sin(idle_phase * 1.9 + deterministic_offset) * (0.12 if hunting else 0.06)
         head.rotation.x += sin(idle_phase * 3.1 + deterministic_offset) * 0.035
+        if feeding:
+            head.rotation.x += 0.22 + sin(idle_phase * 2.8 + deterministic_offset) * 0.07
+        elif nest_guard:
+            head.rotation.y += sin(idle_phase * 1.25 + deterministic_offset) * 0.2
+        elif retreating:
+            head.rotation.x -= 0.1
     for mandible in _nodes_with_prefix(model_root, "Mandible"):
         mandible.rotation.y += sin(idle_phase * (5.0 if hunting else 2.6) + deterministic_offset) * 0.19
+        if feeding:
+            mandible.rotation.y += sin(idle_phase * 4.2 + deterministic_offset) * 0.16
         if windup > 0.0:
             mandible.rotation.y += 0.18 * clampf(windup / 0.34, 0.0, 1.0)
     for tail in _nodes_with_prefix(model_root, "Tail"):
         tail.rotation.y += sin(idle_phase * (3.4 if hunting else 1.6) + deterministic_offset) * 0.24
         tail.rotation.z += cos(idle_phase * 1.8 + deterministic_offset) * 0.08
+        if retreating:
+            tail.rotation.x += 0.18
+            tail.rotation.z -= 0.12
     for tail in _nodes_with_prefix(model_root, "RazorhoundTail"):
         tail.rotation.y += sin(idle_phase * (3.2 if hunting else 1.45) + deterministic_offset) * 0.16
     for antenna in _nodes_with_prefix(model_root, "SkitterlingAntenna"):
