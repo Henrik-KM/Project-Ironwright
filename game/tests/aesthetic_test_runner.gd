@@ -109,6 +109,7 @@ func _run_all() -> void:
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/RegionPracticalLight0") != null and landmark.get_node_or_null("PersistentRegionGeometry/RegionPracticalLight1") != null, "Each non-sanctuary region must receive two bounded palette-aware practical lights.")
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/RegionalPressureRead") != null, "Each discovered non-sanctuary region must expose a bounded pressure-growth presentation layer.")
             _expect(landmark.find_child("RegionalPressurePlate00", true, false) != null and landmark.find_child("RegionalPressureSignal00", true, false) != null, "Regional pressure growth must expose stable plate and signal anatomy sockets.")
+            _expect(landmark.get_node_or_null("ReducedRegionProxy") != null, "Each non-sanctuary region must expose a bounded coarse proxy for distant presentation LOD.")
             var pressure_read := landmark.get_node_or_null("PersistentRegionGeometry/RegionalPressureRead") as Node3D
             var pressure_signal := landmark.find_child("RegionalPressureSignal00", true, false) as Node3D
             if pressure_read != null and pressure_signal != null:
@@ -420,6 +421,18 @@ func _run_all() -> void:
         region_lod.refresh_now()
         _expect(region_lod.detail_mode_for(&"region.west_grid") == 0, "The player’s current region must retain full landmark detail.")
         _expect(region_lod.detail_mode_for(&"region.root_cistern") == 2, "Distant endgame landmarks must reduce to beacon detail without leaving the world state.")
+        var distant_root := region_director.get_landmark(&"region.root_cistern")
+        var distant_proxy := distant_root.get_node_or_null("ReducedRegionProxy") as Node3D if distant_root != null else null
+        var distant_detail := distant_root.get_node_or_null("PersistentRegionGeometry") as Node3D if distant_root != null else null
+        _expect(distant_proxy != null and distant_proxy.visible, "Distant endgame regions must retain a readable coarse authored proxy.")
+        _expect(distant_detail != null and not distant_detail.visible, "Distant region detail must be hidden while the coarse proxy is active.")
+        world.player.global_position = distant_root.global_position if distant_root != null else Vector3(128.0, 0.0, -116.0)
+        region_atmosphere.refresh_now()
+        region_lod.refresh_now()
+        _expect(region_lod.detail_mode_for(&"region.root_cistern") == 0 and distant_proxy != null and not distant_proxy.visible, "Entering a distant region must restore full detail and retire its coarse proxy.")
+        world.player.global_position = Vector3(-92.0, 0.0, 18.0)
+        region_atmosphere.refresh_now()
+        region_lod.refresh_now()
     var heartforge := world.get_node_or_null("Heartforge") as Heartforge3D
     _expect(heartforge != null, "The aesthetic test needs the Heartforge progression model.")
     if heartforge != null:
