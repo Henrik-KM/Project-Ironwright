@@ -404,12 +404,18 @@ func _animate_authored_family_signature(species: StringName, threat_blend: float
                 fan.scale *= Vector3(1.0 + threat_blend * 0.14, 1.0 + sin(idle_phase * 2.4) * 0.05, 1.0 + threat_blend * 0.14)
             for fin in _nodes_with_prefix(model_root, "MiremawWaterFin"):
                 fin.rotation.z += attack_sway * 0.08
+            for spine in _nodes_with_prefix(model_root, "MiremawGillSpine"):
+                spine.rotation.z += attack_sway * (0.05 + threat_blend * 0.10)
+            for plate in _nodes_with_prefix(model_root, "MiremawJawPlate"):
+                plate.rotation.x += attack_sway * (0.04 + threat_blend * 0.12)
         &"carrionbell":
             for resonator in _nodes_with_prefix(model_root, "CarrionbellResonator"):
                 resonator.scale *= Vector3(1.0 + threat_blend * 0.16, 1.0 + threat_blend * 0.24, 1.0 + threat_blend * 0.16)
                 resonator.rotation.y += attack_sway * (0.06 + threat_blend * 0.12)
             for tendril in _nodes_with_prefix(model_root, "CarrionbellSignalTendril"):
                 tendril.rotation.z += attack_sway * 0.10
+            for rib in _nodes_with_prefix(model_root, "CarrionbellBellRib"):
+                rib.rotation.y += attack_sway * (0.04 + threat_blend * 0.11)
         &"rootweaver":
             var arm_index := 0
             for arm in _nodes_with_prefix(model_root, "RootweaverArm"):
@@ -420,6 +426,8 @@ func _animate_authored_family_signature(species: StringName, threat_blend: float
                 fan.scale *= Vector3(1.0 + threat_blend * 0.12, 1.0 + sin(idle_phase * 2.1) * 0.05, 1.0 + threat_blend * 0.12)
             for spine in _nodes_with_prefix(model_root, "RootweaverRouteSpine"):
                 spine.rotation.z += attack_sway * (0.04 + movement_blend * 0.06)
+            for root_spine in _nodes_with_prefix(model_root, "RootweaverRootSpine"):
+                root_spine.rotation.z += attack_sway * (0.05 + threat_blend * 0.10)
 
 
 func _attack_windup_remaining() -> float:

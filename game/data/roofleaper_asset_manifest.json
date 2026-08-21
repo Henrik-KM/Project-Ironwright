@@ -5,6 +5,6 @@
   "runtime_path": "res://assets/roofleaper/roofleaper.gltf",
   "quality": "authored_high_definition",
   "license": "Original Project Ironwright asset",
-  "required_nodes": ["RoofleaperModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "RoofleaperCrown", "RoofleaperWingL", "RoofleaperTalonsL", "RoofleaperFineVeinL", "RoofleaperFineVeinR", "ProductionAssetMarker"],
+  "required_nodes": ["RoofleaperModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "RoofleaperCrown", "RoofleaperWingL", "RoofleaperTalonsL", "RoofleaperFineVeinL", "RoofleaperFineVeinR", "RoofleaperWingFrameL", "RoofleaperWingFastenerR", "ProductionAssetMarker"],
   "animation_clips": ["Idle", "Walk", "Attack"]
 }

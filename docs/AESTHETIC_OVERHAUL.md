@@ -319,3 +319,15 @@ protection arc, raised emitter spine and side guard panels. These additions
 make the Bulwark's personal-interception role readable before an attack starts,
 while remaining presentation-only and leaving the existing protection rules,
 collision and autonomous workload unchanged.
+
+## Focused late-organic anatomy refinement milestone
+
+The five later organic family shells now receive a second authored detail
+layer: higher-resolution wet cores and segmented shells, structural wing spars
+and socket fasteners for Roofleaper and Glassmoth, jaw plates and gill spines
+for Miremaw, a layered resonator core and bell ribs for Carrion Bell, and crown
+plates, joint caps and route spines for Rootweaver. These details are named
+stable anatomy sockets, are included in the asset manifests and remain
+presentation-only. Family-specific animation keeps the added spars, plates,
+ribs and spines moving with the existing attack language rather than adding
+new player work or simulation state.
