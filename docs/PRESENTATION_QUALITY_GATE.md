@@ -130,6 +130,8 @@ The opening cast now also keeps the Bulwark protection field as a compact dark
 cyan arc with a bounded emitter glow, while the Heartforge plaza pavers use a
 rougher, darker wet-concrete family. The companion role stays readable without
 letting its protection effect or the forge service surface dominate the frame.
+The foreground route markers now use the same amber language promised by the
+opening objective, keeping them distinct from cyan Heartforge service hardware.
 
 Automated presence tests only prove the slice exists technically. Actual screenshot/gameplay review decides whether it clears the visual bar.
 

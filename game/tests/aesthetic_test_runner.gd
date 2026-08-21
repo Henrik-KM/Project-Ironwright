@@ -36,6 +36,10 @@ func _run_all() -> void:
     _expect(world.get_node_or_null("UrbanAestheticPass") != null, "The ruined city must receive the urban storytelling pass.")
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgeMaintenanceDetail") != null, "The Heartforge must expose a dedicated presentation-only maintenance detail layer.")
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgePlazaDetail/HeartforgeServiceRing/ForgeRecessedServiceRing") != null, "The Heartforge plaza must expose a readable recessed service ring around its focal machine.")
+    var route_marker := _find_named(world, "ThresholdRouteMarkerCore") as MeshInstance3D
+    if route_marker != null:
+        var route_material := route_marker.material_override as StandardMaterial3D
+        _expect(route_material != null and route_material.emission.r > route_material.emission.b, "The opening route marker must use the promised amber visual language.")
     var presentation_feedback := world.get_node_or_null("AestheticDirector/PresentationFeedback") as Node
     _expect(presentation_feedback != null, "The aesthetic director must own transient presentation feedback.")
     if presentation_feedback != null:
