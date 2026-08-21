@@ -87,6 +87,15 @@ func _run_all() -> void:
     _expect("No strategic decision" in strategic.summary_label.text, "Empty evolution state must explain that no decision is currently required.")
     strategic.close()
 
+    strategic.update_outposts([], "No outpost operation is active.")
+    strategic.open_outposts()
+    await process_frame
+    _expect(strategic.is_open(), "The opening must expose the outpost command surface even before its progression gate is met.")
+    _expect(strategic.selection_label.text == "PROTOCOLS LOCKED", "The locked outpost surface must identify the progression gate instead of disappearing behind a toast.")
+    _expect("Heartforge Tier 2" in strategic.detail_label.text, "The locked outpost surface must explain the next concrete progression step.")
+    _expect(strategic.primary_button.disabled and strategic.secondary_button.disabled, "A locked outpost surface must remain informative but non-actionable.")
+    strategic.close()
+
     world._process(0.1)
     await process_frame
     _expect(world.objective_guidance != null and world.objective_guidance.is_guiding(), "The opening must immediately guide the player to a physical objective.")

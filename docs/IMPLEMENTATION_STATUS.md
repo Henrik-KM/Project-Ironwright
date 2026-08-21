@@ -1240,6 +1240,15 @@ environmentally distinct without changing ecology, routing or player workload.
 - added release regression coverage for the banner's resolved safe rectangle
   and minimum readable width.
 
+## Focused outpost-gate readability milestone
+
+- kept the outpost command surface available from the opening so the player
+  can inspect the strategic path before the Heartforge gate is met;
+- replaced the easy-to-miss locked toast with an explicit non-actionable
+  state naming the Cognition Core and Heartforge Tier 2 prerequisite;
+- added first-session UX coverage proving the locked surface is readable,
+  bounded and cannot authorize construction or upgrades prematurely.
+
 ## Focused organic action-pose presentation milestone
 
 - layered distinct physical poses onto the existing Feed, Nest, Retreat and Death clips for every organic family;
