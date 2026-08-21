@@ -55,6 +55,7 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - Municipal Glasshouse now has an original high-definition climate-frame shell while retaining the existing greenhouse encounter and operation contracts.
 - North Ruins now has an original high-definition civic archive shell while retaining the existing salvage and expedition contracts.
 - East Tenements now has an original high-definition residential block shell while retaining the existing vertical-life encounter contract.
+- Flood Market now has an original high-definition canopy-and-water service shell while retaining the existing commercial encounter contract.
 
 ### Long-range operations
 
@@ -673,6 +674,18 @@ identities. Manual channels remain finish-before-save.
   discovery and operation ownership; the new geometry is presentation-only;
 - native aesthetic and release coverage verifies the named sockets and
   deterministic organic-creep motion; live district review remains required.
+
+## Focused Flood Market authored-space milestone
+
+- added the original high-definition `flood.market.v1` shell with continuous
+  market canopies, stalls, flood channels, illuminated waterline signals,
+  service crane, hanging hardware and restrained organic growth;
+- retained the existing Flood Market encounter dressing, salvage, route,
+  ecology, discovery and operation ownership; the new geometry is
+  presentation-only;
+- native aesthetic and release coverage verifies the named sockets and
+  deterministic waterline/growth motion; live district review remains
+  required.
 
 ## Focused remote-ground continuity milestone
 
