@@ -111,6 +111,8 @@ Remote Observatory Ridge release dressing now carries the same model grammar as 
 
 Remote Riverworks release dressing now carries the same model grammar as well: five pump platforms use beveled walkways, grates, gantry crossbars and braces, pump housings, cooling louvers, control panels, rotor caps and discharge pipes instead of isolated walkway and housing boxes. The detail is presentation-only and preserves the existing waterworks landmark, salvage, route, ecology and operation contracts.
 
+Remote East Tenements release dressing now carries the same model grammar as well: eight balcony assemblies use beveled floors, rails, support posts, service faces, clotheslines and varied hanging cloth panels instead of isolated balcony and clothing boxes. The detail is presentation-only and preserves the existing residential landmark, route, ecology and operation contracts.
+
 ## Release-readiness rule
 
 No agent may describe Project Ironwright as commercially finished, release-ready, or a release candidate based solely on:
