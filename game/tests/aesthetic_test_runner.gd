@@ -160,8 +160,11 @@ func _run_all() -> void:
             if landmark.region_kind == &"greenhouse":
                 _expect(landmark.find_child("GreenhouseLightCanopy", true, false) != null, "Municipal Glasshouse must expose an authored light canopy.")
                 _expect(landmark.find_child("GreenhouseClimateLouver", true, false) != null, "Municipal Glasshouse must expose readable climate infrastructure.")
+                _expect(landmark.find_child("GlasshouseRoofRib0", true, false) != null and landmark.find_child("GlasshousePaneLatch0", true, false) != null, "Municipal Glasshouse must expose secondary roof and glazing hardware.")
+                _expect(landmark.find_child("GlasshouseClimateActuator", true, false) != null, "Municipal Glasshouse must expose climate actuator hardware.")
                 _expect(landmark.find_child("GreenhouseBrokenSkylight", true, false) != null, "Municipal Glasshouse must expose a broken skylight silhouette.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/GlasshouseAuthoredModel") != null, "Municipal Glasshouse must expose its authored climate-frame landmark shell.")
+                _expect(landmark.find_child("GlasshouseBedEdge0", true, false) != null and landmark.find_child("GlasshouseGrowthTendril0_0", true, false) != null and landmark.find_child("GlasshouseLightHousing0", true, false) != null, "Municipal Glasshouse growth beds must expose secondary service and organic detail.")
                 var glasshouse_canopy := landmark.find_child("GlasshouseCanopyPulse", true, false) as Node3D
                 var glasshouse_growth := landmark.find_child("GlasshouseGrowthPulse0_0", true, false) as Node3D
                 _expect(glasshouse_canopy != null and glasshouse_growth != null, "Municipal Glasshouse must expose named canopy and growth motion sockets.")
