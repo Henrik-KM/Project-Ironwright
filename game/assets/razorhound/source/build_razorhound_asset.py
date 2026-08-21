@@ -122,6 +122,10 @@ def main() -> None:
             ("RazorhoundSnout", "translation", [0.0, 0.24, 0.48], [0.0, 0.78, -1.18, 0.0, 0.75, -1.3, 0.0, 0.78, -1.18]),
             ("Torso", "rotation", [0.0, 0.24, 0.48], quat((0.05, 0.0, 0.0)) + quat((-0.12, 0.0, 0.0)) + quat((0.05, 0.0, 0.0))),
         ]),
+        animation("Hit", [
+            ("RazorhoundModel", "translation", [0.0, 0.10, 0.24], [0.0, 0.0, 0.0, 0.0, 0.0, 0.12, 0.0, 0.0, 0.0]),
+            ("Torso", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.0)) + quat((-0.16, 0.08, 0.0)) + quat((0.0, 0.0, 0.0))),
+        ]),
         animation("Feed", [
             ("RazorhoundModel", "translation", [0.0, 0.3, 0.6], [0.0, 0.0, 0.0, 0.0, -0.12, -0.08, 0.0, 0.0, 0.0]),
             ("Torso", "rotation", [0.0, 0.3, 0.6], quat((0.02, 0.0, 0.0)) + quat((0.16, 0.0, 0.0)) + quat((0.02, 0.0, 0.0))),
@@ -145,7 +149,7 @@ def main() -> None:
         "accessors": builder.accessors, "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "animations": animations,
-        "extras": {"ironwright_asset_id": "razorhound.predator.v1", "required_nodes": ["RazorhoundModel", "Torso", "TorsoCore", "RazorhoundSnout", "RazorhoundCheekPlate", "RazorhoundFang", "RazorhoundSpine", "RazorhoundTail", "ProductionAssetMarker"], "animation_clips": ["Idle", "Walk", "Attack", "Feed", "Nest", "Retreat", "Death"]},
+        "extras": {"ironwright_asset_id": "razorhound.predator.v1", "required_nodes": ["RazorhoundModel", "Torso", "TorsoCore", "RazorhoundSnout", "RazorhoundCheekPlate", "RazorhoundFang", "RazorhoundSpine", "RazorhoundTail", "ProductionAssetMarker"], "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]},
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")

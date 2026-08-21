@@ -6,5 +6,5 @@
   "quality": "authored_high_definition",
   "license": "Original Project Ironwright asset",
   "required_nodes": ["RootweaverModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "RootweaverCrown", "RootweaverSporeFan", "RootweaverArmL", "RootweaverKnuckleL", "RootweaverKnuckleR", "RootweaverCrownPlate0", "RootweaverRootSpineR", "ProductionAssetMarker"],
-  "animation_clips": ["Idle", "Walk", "Attack", "Feed", "Nest", "Retreat", "Death"]
+  "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]
 }

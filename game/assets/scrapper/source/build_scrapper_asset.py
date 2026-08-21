@@ -152,6 +152,10 @@ def main() -> None:
             ("ScrapperIntake", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, -0.12)) + quat((0.0, 0.0, 0.0))),
             ("CargoStrap", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, 0.08)) + quat((0.0, 0.0, 0.0))),
         ]),
+        animation("Hit", [
+            ("ScrapperModel", "translation", [0.0, 0.10, 0.24], [0.0, 0.0, 0.0, 0.0, 0.0, 0.12, 0.0, 0.0, 0.0]),
+            ("Sensor", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.0)) + quat((-0.15, 0.08, 0.0)) + quat((0.0, 0.0, 0.0))),
+        ]),
     ]
 
     document = {
@@ -168,7 +172,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "scrapper.salvager.v1",
             "required_nodes": ["ScrapperModel", "Sensor", "OpticLens", "CargoBin", "DismantlerTool", "SalvageDrum", "ScrapperIntake", "ProductionAssetMarker"],
-            "animation_clips": ["Idle", "Walk", "Work"],
+            "animation_clips": ["Idle", "Walk", "Work", "Hit"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

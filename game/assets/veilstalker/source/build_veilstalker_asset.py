@@ -146,6 +146,10 @@ def main() -> None:
             ("VeilstalkerVeil", "rotation", [0.0, 0.34, 0.68], quat((0.0, 0.0, -0.16)) + quat((0.0, 0.0, 0.12)) + quat((0.0, 0.0, -0.16))),
             ("Torso", "rotation", [0.0, 0.34, 0.68], quat((0.04, 0.0, 0.0)) + quat((-0.1, 0.0, 0.0)) + quat((0.04, 0.0, 0.0))),
         ]),
+        animation("Hit", [
+            ("VeilstalkerModel", "translation", [0.0, 0.10, 0.24], [0.0, 0.0, 0.0, 0.0, 0.0, 0.12, 0.0, 0.0, 0.0]),
+            ("Torso", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.0)) + quat((-0.16, 0.08, 0.0)) + quat((0.0, 0.0, 0.0))),
+        ]),
         animation("Feed", [
             ("VeilstalkerModel", "translation", [0.0, 0.3, 0.6], [0.0, 0.0, 0.0, 0.0, -0.12, -0.08, 0.0, 0.0, 0.0]),
             ("Torso", "rotation", [0.0, 0.3, 0.6], quat((0.02, 0.0, 0.0)) + quat((0.16, 0.0, 0.0)) + quat((0.02, 0.0, 0.0))),
@@ -178,7 +182,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "veilstalker.predator.v1",
             "required_nodes": ["VeilstalkerModel", "Torso", "TorsoCore", "VeilstalkerCowl", "VeilstalkerVeil", "VeilstalkerTendril", "VeilstalkerThoraxDorsalRib", "ProductionAssetMarker"],
-            "animation_clips": ["Idle", "Walk", "Attack", "Feed", "Nest", "Retreat", "Death"],
+            "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

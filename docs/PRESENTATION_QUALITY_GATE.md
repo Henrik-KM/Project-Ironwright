@@ -20,9 +20,11 @@ current sparse prototype clips are the final production rig library.
 The current source-authored actor clip pass now carries multiple channels per
 robot and organic clip: body weight, role or signature motion, and the primary
 tool or attack beat. This improves live readability while remaining a
-prototype clip library; final production rigs, shared hit libraries and broader
-feeding, nesting, retreat and death animation still remain on the commercial
-gate.
+prototype clip library; final production rigs and broader feeding, nesting,
+retreat and death animation still remain on the commercial gate. Incoming
+non-lethal damage now selects a shared authored `Hit` clip across all five
+friendly robot families and all twelve organic families, so combat readability
+does not depend only on health bars or transient text.
 
 The Mechromancer now uses the same export-breadth contract. Its authored Idle,
 Walk, Fire, Work and Hit clips retain multiple body, equipment, recoil or

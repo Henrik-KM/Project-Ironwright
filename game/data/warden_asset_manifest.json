@@ -20,7 +20,8 @@
   "animation_clips": [
     "Idle",
     "Walk",
-    "Fire"
+    "Fire",
+    "Hit"
   ],
   "socket_contract": [
     "sensor",

@@ -529,8 +529,12 @@ func _run_all() -> void:
             _expect(_animation_player_track_count(robot_animation.animation_player, &"Idle") >= 2, "Robot Idle clips must carry primary and secondary authored motion channels.")
             _expect(_animation_player_track_count(robot_animation.animation_player, &"Walk") >= 2, "Robot Walk clips must carry body and locomotion authored motion channels.")
             _expect(_animation_player_track_count(robot_animation.animation_player, &"Fire") >= 2, "Robot Fire clips must carry weapon and reaction authored motion channels.")
+            _expect(_animation_player_has_clip(robot_animation.animation_player, &"Hit"), "Robot authored models must expose a Hit clip.")
+            _expect(_animation_player_track_count(robot_animation.animation_player, &"Hit") >= 2, "Robot Hit clips must carry body and sensor reaction authored motion channels.")
             robot_animation._on_weapon_fired(Vector3.ZERO, Vector3.FORWARD, null)
             _expect(_animation_clip_matches(robot_animation.active_clip, &"Fire"), "Robot weapon events must select the authored Fire clip.")
+            robot_animation._on_health_changed(robot, 40.0, 90.0)
+            _expect(_animation_clip_matches(robot_animation.active_clip, &"Hit"), "Robot damage events must select the authored Hit clip.")
         _expect(_model_has_details(robot), "Robots must receive additional role-readable detail.")
         _expect(_find_named(robot, "ShoulderPlate") != null, "Robots must expose layered shoulder armour.")
         _expect(_find_named(robot, "ChassisDetailPanel") != null, "Robots must expose a layered high-detail chassis panel.")
@@ -700,22 +704,27 @@ func _run_all() -> void:
         var authored_animation := enemy_samples[index].get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
         _expect(authored_animation != null and authored_animation.animation_player != null, "%s must expose its imported authored animation bridge." % species_names[index])
         if authored_animation != null and authored_animation.animation_player != null:
-            for clip_name in [&"Idle", &"Walk", &"Attack", &"Feed", &"Nest", &"Retreat", &"Death"]:
+            for clip_name in [&"Idle", &"Walk", &"Attack", &"Hit", &"Feed", &"Nest", &"Retreat", &"Death"]:
                 _expect(_animation_player_has_clip(authored_animation.animation_player, clip_name), "%s must import the authored %s clip." % [species_names[index], clip_name])
                 _expect(_animation_player_track_count(authored_animation.animation_player, clip_name) >= 2, "%s authored %s clip must carry multiple readable channels." % [species_names[index], clip_name])
             var previous_state: StringName = StringName(enemy_samples[index].get(&"state_name"))
             enemy_samples[index].set(&"state_name", &"feeding")
             enemy_samples[index].set_meta(&"enemy_behaviour", "feed")
+            authored_animation.one_shot_remaining = 0.0
             authored_animation._select_loop_clip()
             _expect(_animation_clip_matches(authored_animation.active_clip, &"Feed"), "%s feeding state must select Feed." % species_names[index])
             enemy_samples[index].set(&"state_name", &"nest_guard")
             enemy_samples[index].set_meta(&"enemy_behaviour", "guard_nest")
+            authored_animation.one_shot_remaining = 0.0
             authored_animation._select_loop_clip()
             _expect(_animation_clip_matches(authored_animation.active_clip, &"Nest"), "%s nest guard state must select Nest." % species_names[index])
             enemy_samples[index].set(&"state_name", &"retreating")
             enemy_samples[index].set_meta(&"enemy_behaviour", "retreat")
+            authored_animation.one_shot_remaining = 0.0
             authored_animation._select_loop_clip()
             _expect(_animation_clip_matches(authored_animation.active_clip, &"Retreat"), "%s retreat state must select Retreat." % species_names[index])
+            authored_animation._on_health_changed(enemy_samples[index], 20.0, 30.0)
+            _expect(_animation_clip_matches(authored_animation.active_clip, &"Hit"), "%s damage events must select Hit." % species_names[index])
             enemy_samples[index].set(&"state_name", previous_state)
             enemy_samples[index].remove_meta(&"enemy_behaviour")
         _expect_family_attack_motion(enemy_samples[index], _family_attack_signature_node(species_names[index]))

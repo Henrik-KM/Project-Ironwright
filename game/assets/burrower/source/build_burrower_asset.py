@@ -147,6 +147,10 @@ def main() -> None:
             ("BurrowerDrillAssembly", "translation", [0.0, 0.22, 0.44], [0.0, 0.82, -1.4, 0.0, 0.82, -1.68, 0.0, 0.82, -1.4]),
             ("Torso", "rotation", [0.0, 0.22, 0.44], quat((0.04, 0.0, 0.0)) + quat((-0.11, 0.0, 0.0)) + quat((0.04, 0.0, 0.0))),
         ]),
+        animation("Hit", [
+            ("BurrowerModel", "translation", [0.0, 0.10, 0.24], [0.0, 0.0, 0.0, 0.0, 0.0, 0.12, 0.0, 0.0, 0.0]),
+            ("Torso", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.0)) + quat((-0.16, 0.08, 0.0)) + quat((0.0, 0.0, 0.0))),
+        ]),
         animation("Feed", [
             ("BurrowerModel", "translation", [0.0, 0.3, 0.6], [0.0, 0.0, 0.0, 0.0, -0.12, -0.08, 0.0, 0.0, 0.0]),
             ("Torso", "rotation", [0.0, 0.3, 0.6], quat((0.02, 0.0, 0.0)) + quat((0.16, 0.0, 0.0)) + quat((0.02, 0.0, 0.0))),
@@ -178,7 +182,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "burrower.drill.v1",
             "required_nodes": ["BurrowerModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BurrowerDrill", "BurrowerTip", "BurrowerDrillRing0", "BurrowerDrillFlute0", "BurrowerLampL", "BurrowerLampGuardL", "ProductionAssetMarker"],
-            "animation_clips": ["Idle", "Walk", "Attack", "Feed", "Nest", "Retreat", "Death"],
+            "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

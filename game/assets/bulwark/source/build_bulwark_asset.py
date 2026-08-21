@@ -336,6 +336,10 @@ def main() -> None:
             ("Sensor", "rotation", [0.0, 0.08, 0.18], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.12, 0.0)) + quat((0.0, 0.0, 0.0))),
             ("ShieldRib", "rotation", [0.0, 0.08, 0.18], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, -0.04)) + quat((0.0, 0.0, 0.0))),
         ]),
+        animation("Hit", [
+            ("BulwarkModel", "translation", [0.0, 0.10, 0.24], [0.0, 0.0, 0.0, 0.0, 0.0, 0.12, 0.0, 0.0, 0.0]),
+            ("Sensor", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.0)) + quat((-0.15, 0.08, 0.0)) + quat((0.0, 0.0, 0.0))),
+        ]),
     ]
 
     document = {
@@ -352,7 +356,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "bulwark.companion.v1",
             "required_nodes": ["BulwarkModel", "Sensor", "OpticLens", "WeaponMuzzle", "BulwarkShieldEmitter", "ProductionAssetMarker"],
-            "animation_clips": ["Idle", "Walk", "Fire"],
+            "animation_clips": ["Idle", "Walk", "Fire", "Hit"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

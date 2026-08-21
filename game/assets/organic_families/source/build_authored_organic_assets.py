@@ -257,6 +257,10 @@ def build_family(name: str, spec: dict) -> None:
             (attack_node, "translation", [0.0, 0.24, 0.48], [0.0, 0.0, 0.0, 0.0, 0.0, -0.16, 0.0, 0.0, 0.0]),
             ("Torso", "rotation", [0.0, 0.24, 0.48], quat((0.05, 0.0, 0.0)) + quat((-0.09, 0.0, 0.0)) + quat((0.05, 0.0, 0.0))),
         ]),
+        animation("Hit", [
+            (root_name, "translation", [0.0, 0.10, 0.24], [0.0, 0.0, 0.0, 0.0, 0.0, 0.12, 0.0, 0.0, 0.0]),
+            ("Torso", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.0)) + quat((-0.16, 0.08, 0.0)) + quat((0.0, 0.0, 0.0))),
+        ]),
         animation("Feed", [
             (root_name, "translation", [0.0, 0.3, 0.6], [0.0, 0.0, 0.0, 0.0, -0.12, -0.08, 0.0, 0.0, 0.0]),
             ("Torso", "rotation", [0.0, 0.3, 0.6], quat((0.02, 0.0, 0.0)) + quat((0.16, 0.0, 0.0)) + quat((0.02, 0.0, 0.0))),
@@ -288,7 +292,7 @@ def build_family(name: str, spec: dict) -> None:
         "extras": {
             "ironwright_asset_id": spec["asset_id"],
             "required_nodes": [root_name, "Torso", "TorsoCore", "OrganicDorsalPlate", *spec["signature_nodes"], "ProductionAssetMarker"],
-            "animation_clips": ["Idle", "Walk", "Attack", "Feed", "Nest", "Retreat", "Death"],
+            "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
         },
     }
     output_path = ASSET_ROOT / name / f"{name}.gltf"
