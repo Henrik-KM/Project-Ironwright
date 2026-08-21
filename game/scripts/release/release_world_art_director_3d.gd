@@ -530,6 +530,61 @@ func _dress_waterfront(root: Node3D) -> void:
     var dark_metal := _textured_material(&"metal", Color("253438"), 0.72, 0.42)
     var warning := ModelKit3D.material(Color("5b352a"), 0.24, 0.68, Color("d27a44"), 0.42)
     var signal_material := ModelKit3D.material(Color("174b53"), 0.26, 0.3, Color("60d3d4"), 1.1)
+    var channel_water := ModelKit3D.material(Color("0b5463"), 0.34, 0.24, Color("2b929a"), 0.28)
+    var channel_foam := ModelKit3D.material(Color("6fa7a1"), 0.08, 0.28, Color("9edbd0"), 0.22)
+    var channel_edge := _textured_material(&"concrete", Color("273537"), 0.0, 0.8)
+    var waterline := Node3D.new()
+    waterline.name = "WaterChannelAssembly"
+    waterworks_detail.add_child(waterline)
+    for channel_index in range(4):
+        var channel_x := -10.5 + float(channel_index) * 7.0
+        ModelKit3D.add_beveled_box(
+            waterline,
+            Vector3(1.55, 0.14, 14.8),
+            Vector3(channel_x, 0.32, 0.55),
+            channel_water,
+            Vector3.ZERO,
+            "RiverWaterChannel%02d" % channel_index,
+            0.12
+        )
+        for foam_index in range(3):
+            var foam_z := -4.0 + float(foam_index) * 4.15 + float(channel_index % 2) * 0.42
+            ModelKit3D.add_beveled_box(
+                waterline,
+                Vector3(0.78, 0.035, 0.18),
+                Vector3(channel_x - 0.08 + float(foam_index % 2) * 0.16, 0.42, foam_z),
+                channel_foam,
+                Vector3(0.0, 0.0, 0.08 * float(foam_index % 2)),
+                "RiverWaterFoam%02d_%02d" % [channel_index, foam_index],
+                0.12
+            )
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(
+            waterline,
+            Vector3(0.34, 1.15, 15.3),
+            Vector3(side * 17.2, 0.82, 0.5),
+            channel_edge,
+            Vector3.ZERO,
+            "RiverWaterRetainingWall%s" % ("L" if side < 0.0 else "R"),
+            0.16
+        )
+    var manifold := Node3D.new()
+    manifold.name = "WaterworksPipeManifold"
+    waterworks_detail.add_child(manifold)
+    for pipe_index in range(3):
+        var pipe_x := -5.0 + float(pipe_index) * 5.0
+        ModelKit3D.add_cylinder(manifold, 0.24, 5.6, Vector3(pipe_x, 2.75, -6.15), metal, Vector3(0.0, 0.0, PI * 0.5), "WaterHeaderPipe%02d" % pipe_index)
+        ModelKit3D.add_cylinder(manifold, 0.34, 0.18, Vector3(pipe_x, 2.75, -8.95), dark_metal, Vector3(PI * 0.5, 0.0, 0.0), "WaterHeaderFlange%02d" % pipe_index)
+        ModelKit3D.add_surface_panel(manifold, Vector3(0.9, 0.58, 0.12), Vector3(pipe_x, 3.78, -6.15), dark_metal, signal_material, Vector3.ZERO, "WaterHeaderReadout%02d" % pipe_index)
+    var sluice := Node3D.new()
+    sluice.name = "WaterworksSluiceAssembly"
+    waterworks_detail.add_child(sluice)
+    ModelKit3D.add_beveled_box(sluice, Vector3(9.8, 2.4, 0.42), Vector3(0.0, 1.22, 7.25), channel_edge, Vector3.ZERO, "WaterSluiceGate", 0.16)
+    for rib_index in range(6):
+        var rib_x := -4.0 + float(rib_index) * 1.6
+        ModelKit3D.add_cylinder(sluice, 0.09, 2.25, Vector3(rib_x, 1.35, 7.03), metal, Vector3.ZERO, "WaterSluiceRib%02d" % rib_index)
+    ModelKit3D.add_surface_panel(sluice, Vector3(1.18, 0.72, 0.12), Vector3(5.0, 1.25, 7.0), dark_metal, warning, Vector3.ZERO, "WaterSluiceControlPanel")
+    ModelKit3D.add_sphere(sluice, 0.18, Vector3(5.0, 1.78, 6.96), signal_material, Vector3.ONE, "WaterSluiceSignal")
     for index in range(5):
         var x := -14.0 + float(index) * 7.0
         var walkway := ModelKit3D.add_beveled_box(waterworks_detail, Vector3(4.8, 0.65, 12.0), Vector3(x, 0.33, 0.0), concrete, Vector3.ZERO, "PumpWalkway%02d" % index, 0.14)
@@ -544,6 +599,7 @@ func _dress_waterfront(root: Node3D) -> void:
         ModelKit3D.add_cylinder(housing, 0.42, 0.86, Vector3(0.0, 1.28, 0.0), dark_metal, Vector3.ZERO, "PumpRotor%02d" % index)
         ModelKit3D.add_cylinder(housing, 0.18, 0.22, Vector3(0.0, 1.78, 0.0), signal_material, Vector3.ZERO, "PumpRotorCap%02d" % index)
         ModelKit3D.add_cylinder(waterworks_detail, 0.1, 4.2, Vector3(x - 1.0, 1.25, 2.3), metal, Vector3(PI * 0.5, 0.0, 0.0), "PumpDischargePipe%02d" % index)
+        ModelKit3D.add_glow_light(waterworks_detail, Vector3(x, 2.25, 5.0), Color("54d9df"), 0.72, 5.0)
 
 
 func _dress_rail(root: Node3D) -> void:
