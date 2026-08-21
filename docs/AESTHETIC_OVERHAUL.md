@@ -66,6 +66,10 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
   scar rails, while the bespoke regions use distinct facade, utility, signal or
   organic-growth signatures. These details remain presentation-only and under
   the landmark LOD boundary.
+- distant discovered regions retain a compact authored coarse proxy while
+  their close geometry is reduced, so the town reads as a connected place
+  rather than disappearing into beacon-only markers. The proxy remains
+  presentation-only and never replaces physical region identity or collision.
 - discovered non-sanctuary regions now carry a restrained pressure-growth read:
   paired plates and signal nodes pulse and intensify with effective ecological
   pressure, then quiet after suppression. This is a direct visual consequence

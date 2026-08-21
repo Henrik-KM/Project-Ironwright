@@ -44,6 +44,9 @@ func refresh_now() -> void:
         var next_level := 0 if distance <= FULL_RADIUS else (1 if distance <= REDUCED_RADIUS else 2)
         var previous := int(detail_modes.get(landmark.region_id, -1))
         if previous == next_level:
+            # Re-apply the presentation state because discovery and authored
+            # detail layers may attach after the mode was first calculated.
+            landmark.set_presentation_detail_level(next_level)
             continue
         detail_modes[landmark.region_id] = next_level
         landmark.set_presentation_detail_level(next_level)

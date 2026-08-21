@@ -36,6 +36,7 @@ var _motion_nodes: Array[Node3D] = []
 var _motion_base_transforms: Dictionary = {}
 var _pressure_read_root: Node3D
 var _pressure_signal_material: StandardMaterial3D
+var _reduced_proxy_root: Node3D
 
 
 func configure(data: Dictionary) -> void:
@@ -85,6 +86,8 @@ func set_presentation_detail_level(level: int) -> void:
     presentation_detail_level = clampi(level, 0, 2)
     if _visual_root != null:
         _visual_root.visible = presentation_detail_level < 2
+    if _reduced_proxy_root != null:
+        _reduced_proxy_root.visible = discovered and presentation_detail_level >= 2
     for practical_light in _practical_lights:
         if is_instance_valid(practical_light):
             practical_light.light_energy = 0.72 if presentation_detail_level == 0 else 0.38
@@ -277,6 +280,7 @@ func _build_visuals() -> void:
     _add_region_surface_finish()
     _add_region_practical_lights()
     _build_pressure_read()
+    _build_reduced_region_proxy()
     _capture_region_motion_nodes()
 
     _beacon_root = Node3D.new()
@@ -641,6 +645,43 @@ func _refresh_pressure_read() -> void:
     if _pressure_signal_material != null:
         _pressure_signal_material.emission_energy_multiplier = lerpf(0.3, 2.8, intensity)
         _pressure_signal_material.albedo_color = _region_color().darkened(lerpf(0.78, 0.42, intensity))
+
+
+func _build_reduced_region_proxy() -> void:
+    if region_kind == &"sanctuary":
+        return
+    _reduced_proxy_root = Node3D.new()
+    _reduced_proxy_root.name = "ReducedRegionProxy"
+    add_child(_reduced_proxy_root)
+    var body := ModelKit3D.material(_region_color().darkened(0.58), 0.32, 0.62)
+    var edge := ModelKit3D.material(_region_color().darkened(0.22), 0.42, 0.48, _region_color(), 0.9)
+    var organic := ModelKit3D.material(Color("3b1d2a"), 0.0, 0.74, Color("d24e68"), 0.7)
+    match region_kind:
+        &"industrial":
+            for index in range(3):
+                ModelKit3D.add_tapered_cylinder(_reduced_proxy_root, 0.55, 0.8, 2.4 + float(index) * 0.45, Vector3(-2.8 + float(index) * 2.8, 1.25, 0.0), body, Vector3.ZERO, "ReducedIndustrialTank%02d" % index)
+            ModelKit3D.add_cylinder(_reduced_proxy_root, 0.1, 5.4, Vector3(0.0, 2.7, 0.0), edge, Vector3.ZERO, "ReducedIndustrialMast")
+        &"nest", &"endgame":
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_capsule(_reduced_proxy_root, 0.2, 5.2, Vector3(side * 2.1, 2.3, 0.0), organic, Vector3(0.0, side * 0.55, 0.42), "ReducedOrganicRib")
+            ModelKit3D.add_sphere(_reduced_proxy_root, 0.7, Vector3(0.0, 1.0, 0.0), organic, Vector3(1.5, 0.8, 1.5), "ReducedOrganicCore")
+        &"greenhouse", &"research":
+            ModelKit3D.add_beveled_box(_reduced_proxy_root, Vector3(5.8, 2.2, 2.0), Vector3(0.0, 1.1, 0.0), body, Vector3.ZERO, "ReducedEnclosure", 0.18)
+            ModelKit3D.add_cylinder(_reduced_proxy_root, 0.11, 4.0, Vector3(0.0, 3.1, 0.0), edge, Vector3.ZERO, "ReducedEnclosureMast")
+        &"waterfront", &"rail":
+            ModelKit3D.add_beveled_box(_reduced_proxy_root, Vector3(6.4, 0.55, 2.5), Vector3(0.0, 0.28, 0.0), body, Vector3.ZERO, "ReducedServiceDeck", 0.18)
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_cylinder(_reduced_proxy_root, 0.12, 3.7, Vector3(side * 2.5, 1.85, 0.0), edge, Vector3.ZERO, "ReducedServicePost")
+        &"commercial":
+            ModelKit3D.add_beveled_box(_reduced_proxy_root, Vector3(6.8, 0.28, 2.6), Vector3(0.0, 0.14, 0.0), body, Vector3.ZERO, "ReducedMarketDeck", 0.18)
+            ModelKit3D.add_beveled_box(_reduced_proxy_root, Vector3(6.0, 0.16, 1.8), Vector3(0.0, 2.7, 0.0), edge, Vector3.ZERO, "ReducedMarketCanopy", 0.16)
+        &"observatory":
+            ModelKit3D.add_cylinder(_reduced_proxy_root, 2.1, 0.9, Vector3(0.0, 0.45, 0.0), body, Vector3.ZERO, "ReducedObservatoryBase")
+            ModelKit3D.add_sphere(_reduced_proxy_root, 2.3, Vector3(0.0, 3.1, 0.0), edge, Vector3(1.0, 0.3, 1.0), "ReducedObservatoryDish")
+        _:
+            ModelKit3D.add_beveled_box(_reduced_proxy_root, Vector3(5.6, 3.4, 4.2), Vector3(-1.8, 1.7, 0.0), body, Vector3.ZERO, "ReducedRuinMass", 0.16)
+            ModelKit3D.add_beveled_box(_reduced_proxy_root, Vector3(3.8, 2.4, 3.2), Vector3(2.2, 1.2, 1.4), edge, Vector3(0.0, 0.1, 0.0), "ReducedRuinWing", 0.16)
+    _reduced_proxy_root.visible = discovered and presentation_detail_level >= 2
 
 
 func _animate_region_details() -> void:
@@ -1020,6 +1061,8 @@ func _refresh_discovery() -> void:
     if _label != null:
         _label.visible = discovered and _map_emphasis
     _refresh_pressure_read()
+    if _reduced_proxy_root != null:
+        _reduced_proxy_root.visible = discovered and presentation_detail_level >= 2
 
 
 func _region_color() -> Color:

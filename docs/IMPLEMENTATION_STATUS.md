@@ -1122,6 +1122,14 @@ final retail art, animation and external visual approval are still required.
 - preserved the existing health, collision, destruction and save contracts and
   added native aesthetic coverage for the damage-memory sockets.
 
+## Focused coarse-region streaming presentation milestone
+
+- added bounded authored coarse proxies for every non-sanctuary region;
+- made the existing region LOD transition hide close geometry and show the
+  proxy at distance, then restore full detail on approach;
+- preserved persistent region identity, collision, pressure, discovery and
+  save state while adding aesthetic coverage for both sides of the transition.
+
 ## Focused tiered-nest anatomy presentation milestone
 
 - added a bounded `NestHighDefinitionDetail` layer to the production tiered
