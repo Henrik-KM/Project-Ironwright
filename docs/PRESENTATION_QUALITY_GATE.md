@@ -119,6 +119,13 @@ The current slice must include:
 - a restrained warm/cold lighting hierarchy;
 - quieter desktop HUD composition.
 
+The opening lighting/material pass now uses a lower-energy warm Heartforge key,
+restrained cool route and facade fills, and a smaller glow/bloom budget. This
+preserves the warm/cold hierarchy while keeping wet concrete, puddles and
+damaged masonry from flattening into bright pools in the tactical frame. The
+pass remains presentation-only and does not alter collision, progression or
+autonomy workload.
+
 Automated presence tests only prove the slice exists technically. Actual screenshot/gameplay review decides whether it clears the visual bar.
 
 ## Art production sequence
@@ -131,7 +138,7 @@ The presentation milestones proceed in this order:
 4. one production-quality Warden/Scrapper/Pathfinder family pass — the Warden now has an authored high-definition guardian shell with protected autocannon and heat-exchanger language, the Scrapper now has an authored cargo/tool shell with salvage hardware, Pathfinder now has an authored survey shell with mast/dish/optic language, and Engineer now has an authored construction/tool shell; further refinement remains expected;
 5. complete organic enemy families with authored movement and attack language — the full twelve-family roster now has authored glTF shells or the existing production shell contract, stable anatomy sockets and state-driven stalking/attack presentation; live acceptance completed for representative opening frames, with broader hostile-family review still required;
 6. cohesive urban modular kit with damaged facades, interiors, street furniture and vegetation — opening route set-piece pass implemented, every remote landmark now has a bounded presentation-only district apron, and West Grid, Riverworks, Cathedral Quarter, Observatory Ridge, Tram Graveyard, Buried Laboratories, Municipal Glasshouse, North Ruins, East Tenements, Flood Market and Root Cistern now have authored landmark shells; broader district breadth still required;
-7. final lighting/material pass for the opening district;
+7. final lighting/material pass for the opening district — bounded first pass implemented and live-reviewed; final human acceptance remains outstanding;
 8. human visual acceptance of representative opening gameplay;
 9. repeat the accepted bar across mid- and late-game regions — representative Riverworks, Cathedral Quarter and Root Cistern live review now passes for the reviewed approach frames; live approach-frame inspection has now been exercised for West Grid, Observatory Ridge, Tram Graveyard, Buried Laboratories, Municipal Glasshouse, North Ruins, East Tenements and Flood Market, with the authored identities reading in the current tactical camera; formal human acceptance and broader remaining region-family review are still required;
 10. only then expand asset breadth further.
