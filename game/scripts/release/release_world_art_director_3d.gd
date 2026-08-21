@@ -356,9 +356,34 @@ func _region_root(node_name: String, position: Vector3) -> Node3D:
 func _dress_industrial(root: Node3D) -> void:
     var metal := _textured_material(&"metal", Color("394245"), 0.72, 0.46)
     var rust := _textured_material(&"rust", Color("754a31"), 0.38, 0.72)
+    var warning := _emissive_material(Color("f0a24c"), 2.8)
+    var industrial_detail := Node3D.new()
+    industrial_detail.name = "HighDefinitionIndustrialDressing"
+    root.add_child(industrial_detail)
     for index in range(5):
-        ModelKit3D.add_cylinder(root, 0.75 + float(index % 2) * 0.25, 4.0 + float(index) * 0.8, Vector3(-10.0 + float(index) * 5.0, 2.0 + float(index) * 0.4, -4.0 + float(index % 2) * 8.0), metal, Vector3.ZERO, "SubstationTank")
-        ModelKit3D.add_cylinder(root, 0.12, 8.0, Vector3(-10.0 + float(index) * 5.0, 4.2, 0.0), rust, Vector3(0.0, 0.0, 1.5708), "GridPipe")
+        var radius := 0.75 + float(index % 2) * 0.25
+        var height := 4.0 + float(index) * 0.8
+        var tank := Node3D.new()
+        tank.name = "SubstationTank%02d" % index
+        tank.position = Vector3(-10.0 + float(index) * 5.0, 2.0 + float(index) * 0.4, -4.0 + float(index % 2) * 8.0)
+        industrial_detail.add_child(tank)
+        ModelKit3D.add_cylinder(tank, radius, height, Vector3.ZERO, metal, Vector3.ZERO, "TankCore")
+        ModelKit3D.add_beveled_box(tank, Vector3(radius * 1.55, 0.18, radius * 1.55), Vector3(0.0, height * 0.5 + 0.08, 0.0), rust, Vector3.ZERO, "TankTopPlate", 0.22)
+        ModelKit3D.add_beveled_box(tank, Vector3(radius * 1.4, 0.16, radius * 1.4), Vector3(0.0, -height * 0.5 - 0.06, 0.0), rust, Vector3.ZERO, "TankFootPlate", 0.22)
+        ModelKit3D.add_louvered_panel(
+            tank,
+            Vector3(radius * 1.15, 0.82, 0.12),
+            Vector3(0.0, 0.1, radius + 0.03),
+            metal,
+            rust,
+            Vector3.ZERO,
+            "TankServiceLouver",
+            4
+        )
+        ModelKit3D.add_cylinder(tank, radius * 0.72, 0.09, Vector3(0.0, height * 0.26, 0.0), rust, Vector3.ZERO, "TankBand")
+        ModelKit3D.add_sphere(tank, 0.09, Vector3(radius * 0.72, height * 0.5 + 0.25, 0.0), warning, Vector3.ONE, "TankWarningBeacon")
+        ModelKit3D.add_cylinder(industrial_detail, 0.12, 8.0, Vector3(-10.0 + float(index) * 5.0, 4.2, 0.0), rust, Vector3(0.0, 0.0, 1.5708), "GridPipe%02d" % index)
+        ModelKit3D.add_cylinder(industrial_detail, 0.19, 0.12, Vector3(-10.0 + float(index) * 5.0, 4.2, -4.0), metal, Vector3(0.0, 0.0, 1.5708), "GridPipeFlange%02d" % index)
 
 
 func _dress_tenement(root: Node3D) -> void:
