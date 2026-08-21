@@ -421,12 +421,31 @@ func _dress_tenement(root: Node3D) -> void:
 func _dress_greenhouse(root: Node3D) -> void:
     var frame := _textured_material(&"metal", Color("405052"), 0.68, 0.4)
     var moss := _textured_material(&"moss", Color("476a49"), 0.0, 0.86)
+    var moss_edge := _textured_material(&"moss", Color("6a8b5b"), 0.0, 0.78)
     var glow := _emissive_material(Color("7ce6b2"), 2.8)
+    var greenhouse_detail := Node3D.new()
+    greenhouse_detail.name = "HighDefinitionGreenhouseDressing"
+    root.add_child(greenhouse_detail)
     for index in range(7):
         var x := -12.0 + float(index) * 4.0
-        ModelKit3D.add_cylinder(root, 0.08, 7.0, Vector3(x, 3.5, 0.0), frame, Vector3.ZERO, "GlasshouseFrame")
-        ModelKit3D.add_sphere(root, 0.8, Vector3(x, 0.7, -4.0 + float(index % 3) * 4.0), moss, Vector3(1.3, 0.8, 1.3), "Overgrowth")
-        ModelKit3D.add_sphere(root, 0.16, Vector3(x + 0.8, 1.2, -3.0 + float(index % 4) * 2.2), glow, Vector3.ONE, "MyceliumGlow")
+        var frame_post := Node3D.new()
+        frame_post.name = "GlasshouseFrame%02d" % index
+        frame_post.position = Vector3(x, 3.5, 0.0)
+        greenhouse_detail.add_child(frame_post)
+        ModelKit3D.add_cylinder(frame_post, 0.08, 7.0, Vector3.ZERO, frame, Vector3.ZERO, "FramePost")
+        ModelKit3D.add_cylinder(frame_post, 0.055, 8.0, Vector3(0.0, 3.15, 0.0), frame, Vector3(PI * 0.5, 0.0, 0.0), "RoofBeam")
+        ModelKit3D.add_cylinder(frame_post, 0.045, 8.0, Vector3(0.0, -3.0, 0.0), frame, Vector3(PI * 0.5, 0.0, 0.0), "BedBeam")
+        ModelKit3D.add_beveled_box(frame_post, Vector3(1.15, 0.16, 0.72), Vector3(0.0, 2.45, 0.0), frame, Vector3.ZERO, "ClimateVent", 0.18)
+        ModelKit3D.add_organic_plate(
+            greenhouse_detail,
+            0.8,
+            Vector3(x, 0.7, -4.0 + float(index % 3) * 4.0),
+            moss,
+            moss_edge,
+            Vector3(1.3, 0.8, 1.3),
+            "GlasshouseOvergrowth%02d" % index
+        )
+        ModelKit3D.add_sphere(greenhouse_detail, 0.16, Vector3(x + 0.8, 1.2, -3.0 + float(index % 4) * 2.2), glow, Vector3.ONE, "MyceliumGlow%02d" % index)
 
 
 func _dress_market(root: Node3D) -> void:

@@ -270,6 +270,8 @@ func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
     _expect(industrial_detail != null and industrial_detail.find_child("SubstationTank00", true, false) != null, "The West Grid secondary industrial layer must retain its authored substation tanks.")
     _expect(industrial_detail != null and industrial_detail.find_child("TankServiceLouver", true, false) != null, "The West Grid substation tanks must retain their authored service louvers.")
     _expect(industrial_detail != null and industrial_detail.find_child("GridPipeFlange00", true, false) != null, "The West Grid pipe run must retain authored flange hardware.")
+    var greenhouse_detail := world.release_world_art.dressing_root.find_child("HighDefinitionGreenhouseDressing", true, false) if world.release_world_art.dressing_root != null else null
+    _expect(greenhouse_detail != null and greenhouse_detail.find_child("GlasshouseFrame00", true, false) != null and greenhouse_detail.find_child("ClimateVent", true, false) != null and greenhouse_detail.find_child("GlasshouseOvergrowth00", true, false) != null, "The Municipal Glasshouse secondary layer must retain authored frame, climate and overgrowth detail.")
     var riverworks := world.region_director.get_landmark(&"region.riverworks")
     _expect(riverworks != null and riverworks.find_child("RiverworksRotor", true, false) != null, "Commercial release must retain the authored Riverworks pump landmark.")
     var cathedral := world.region_director.get_landmark(&"region.cathedral_quarter")

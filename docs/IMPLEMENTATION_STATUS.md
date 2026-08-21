@@ -55,6 +55,7 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - the Tram Graveyard now has an original high-definition carriage and maintenance landmark shell while retaining the existing rail encounter and operation contracts.
 - the opening Heartforge perimeter now has a bounded high-definition barricade kit with beveled improvised shells, service plates, fasteners, braces, beacon lights and capped cable posts, while retaining the existing sanctuary boundary and opening objective flow.
 - the West Grid secondary industrial layer now has bounded high-definition substation hardware with serviced tank housings, louvered panels, top and foot plates, bands, warning beacons, pipe flanges and the existing flooded-corridor identity.
+- the Municipal Glasshouse secondary layer now has bounded high-definition frame posts, roof and bed beams, climate vents, layered overgrowth plates and repeated mycelium lights, while retaining the existing cultivation encounter contract.
 - Buried Laboratories now has an original high-definition containment-hall shell while retaining the existing research encounter and operation contracts.
 - Municipal Glasshouse now has an original high-definition climate-frame shell while retaining the existing greenhouse encounter and operation contracts.
 - North Ruins now has an original high-definition civic archive shell while retaining the existing salvage and expedition contracts.
