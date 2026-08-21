@@ -1,0 +1,16 @@
+[gd_resource type="CapsuleMesh" format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_organic_proxy"]
+albedo_color = Color(0.403922, 0.215686, 0.278431, 1)
+metallic = 0.08
+roughness = 0.7
+emission_enabled = true
+emission = Color(0.560784, 0.219608, 0.321569, 1)
+emission_energy_multiplier = 0.65
+
+[resource]
+material = SubResource("StandardMaterial3D_organic_proxy")
+radius = 0.34
+height = 1.45
+radial_segments = 8
+rings = 3

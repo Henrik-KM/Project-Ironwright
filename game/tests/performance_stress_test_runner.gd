@@ -60,6 +60,12 @@ func _run_all() -> void:
     _expect(medium_robot != null and medium_robot.get_node_or_null("RobotModel") == null and medium_robot.get_node_or_null("DeferredVisualProxy") != null, "A medium-distance machine actor must remain on a lightweight proxy until active promotion.")
     _expect(far_enemy != null and far_enemy.get_node_or_null("OrganicModel") == null and far_enemy.get_node_or_null("DeferredVisualProxy") != null, "A distant organic actor must begin with only a lightweight deferred proxy.")
     _expect(far_robot != null and far_robot.get_node_or_null("RobotModel") == null and far_robot.get_node_or_null("DeferredVisualProxy") != null, "A distant machine actor must begin with only a lightweight deferred proxy.")
+    var medium_enemy_proxy := medium_enemy.get_node_or_null("DeferredVisualProxy/ReducedDetailProxy") as MeshInstance3D if medium_enemy != null else null
+    var far_enemy_proxy := far_enemy.get_node_or_null("DeferredVisualProxy/ReducedDetailProxy") as MeshInstance3D if far_enemy != null else null
+    var medium_robot_proxy := medium_robot.get_node_or_null("DeferredVisualProxy/ReducedDetailProxy") as MeshInstance3D if medium_robot != null else null
+    var far_robot_proxy := far_robot.get_node_or_null("DeferredVisualProxy/ReducedDetailProxy") as MeshInstance3D if far_robot != null else null
+    _expect(medium_enemy_proxy != null and far_enemy_proxy != null and medium_enemy_proxy.mesh == far_enemy_proxy.mesh, "Organic reduced-detail actors must share one proxy mesh resource.")
+    _expect(medium_robot_proxy != null and far_robot_proxy != null and medium_robot_proxy.mesh == far_robot_proxy.mesh, "Machine reduced-detail actors must share one proxy mesh resource.")
     _expect(far_enemy != null and far_enemy.reduced_detail and far_enemy.visual_lod_level == 2, "A distant organic actor must retain reduced-detail state at scale.")
     _expect(far_robot != null and far_robot.reduced_detail and far_robot.visual_lod_level == 2, "A distant machine actor must retain reduced-detail state at scale.")
     if far_enemy != null and far_robot != null:

@@ -1,6 +1,8 @@
 class_name OrganicEnemyRelease3D
 extends OrganicEnemyFullGame3D
 
+const REDUCED_PROXY_MESH: CapsuleMesh = preload("res://assets/release/proxies/organic_proxy_mesh.tres")
+
 var _spatial_index: SpatialIndex3D
 var reduced_detail: bool = false
 var coarse_simulation: bool = false
@@ -139,18 +141,7 @@ func _ensure_reduced_proxy() -> void:
         return
     _reduced_proxy = MeshInstance3D.new()
     _reduced_proxy.name = "ReducedDetailProxy"
-    var proxy_mesh := CapsuleMesh.new()
-    proxy_mesh.radius = 0.34
-    proxy_mesh.height = 1.45
-    proxy_mesh.radial_segments = 8
-    proxy_mesh.rings = 3
-    _reduced_proxy.mesh = proxy_mesh
-    var proxy_material := StandardMaterial3D.new()
-    proxy_material.albedo_color = Color("673747")
-    proxy_material.emission_enabled = true
-    proxy_material.emission = Color("8f3852")
-    proxy_material.emission_energy_multiplier = 0.65
-    _reduced_proxy.material_override = proxy_material
+    _reduced_proxy.mesh = REDUCED_PROXY_MESH
     _reduced_proxy.position = Vector3(0.0, 0.78, 0.0)
     _reduced_proxy.visible = false
     var proxy_parent := _model_root if _model_root != null else _ensure_deferred_proxy_root()
