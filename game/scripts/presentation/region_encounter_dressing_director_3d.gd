@@ -16,6 +16,7 @@ var _membrane: StandardMaterial3D
 var _warm: StandardMaterial3D
 var _cool: StandardMaterial3D
 var _warning: StandardMaterial3D
+var _vegetation: StandardMaterial3D
 
 
 func configure(next_region_director: WorldRegionDirector3D) -> void:
@@ -84,6 +85,7 @@ func _build_region(region_id: StringName) -> void:
             _build_endgame_vignette(dressing)
         _:
             _build_archive_vignette(dressing)
+    _build_district_breadth(dressing, kind)
 
 
 func _create_materials() -> void:
@@ -96,6 +98,101 @@ func _create_materials() -> void:
     _warm = ModelKit3D.material(Color("744520"), 0.18, 0.3, Color("f29a4a"), 2.3)
     _cool = ModelKit3D.material(Color("22505a"), 0.28, 0.28, Color("6fe5ea"), 2.5)
     _warning = ModelKit3D.material(Color("a2622d"), 0.14, 0.58, Color("e58c3c"), 0.8)
+    _vegetation = ModelKit3D.material(Color("294239"), 0.0, 0.88, Color("4e9a72"), 0.38)
+
+
+func _build_district_breadth(parent: Node3D, kind: StringName) -> void:
+    # The authored vignette gives each landmark a focal story. This bounded
+    # edge kit makes the surrounding district feel inhabited and weathered as
+    # well, without adding collision, resources, routes or player-managed work.
+    var breadth := Node3D.new()
+    breadth.name = "DistrictBreadthLayer"
+    parent.add_child(breadth)
+    ModelKit3D.add_beveled_box(
+        breadth,
+        Vector3(11.6, 0.12, 1.55),
+        Vector3(-8.4, 0.19, 9.2),
+        _dark_steel,
+        Vector3(0.0, 0.0, -0.05),
+        "DistrictBreadthServicePad",
+        0.2
+    )
+    for index in range(3):
+        var x := -12.0 + float(index) * 3.7
+        ModelKit3D.add_tapered_cylinder(
+            breadth,
+            0.09,
+            0.14,
+            0.78,
+            Vector3(x, 0.57, 9.08),
+            _rust,
+            Vector3.ZERO,
+            "DistrictBreadthRoutePost%d" % index
+        )
+        ModelKit3D.add_surface_panel(
+            breadth,
+            Vector3(0.52, 0.38, 0.08),
+            Vector3(x, 0.86, 9.0),
+            _dark_steel,
+            _warning,
+            Vector3.ZERO,
+            "DistrictBreadthRouteMarker%d" % index
+        )
+    _add_beam(breadth, Vector3(-13.2, 0.46, 9.12), Vector3(-7.2, 1.45, 9.12), 0.045, _steel, "DistrictBreadthServiceRail")
+    _add_beam(breadth, Vector3(-7.2, 1.45, 9.12), Vector3(-3.6, 0.46, 9.12), 0.045, _rust, "DistrictBreadthBrokenRail")
+
+    for index in range(3):
+        var growth_x := -4.8 + float(index) * 3.1
+        ModelKit3D.add_membrane_fan(
+            breadth,
+            0.34 + float(index % 2) * 0.08,
+            Vector3(growth_x, 0.64, 8.05),
+            _vegetation,
+            4,
+            "DistrictBreadthGrowth%d" % index
+        )
+
+    var identity := Node3D.new()
+    identity.name = "DistrictBreadthIdentity_%s" % String(kind)
+    breadth.add_child(identity)
+    match kind:
+        &"archive":
+            ModelKit3D.add_surface_panel(identity, Vector3(1.45, 0.82, 0.1), Vector3(5.4, 1.05, 8.55), _dark_steel, _cool, Vector3.ZERO, "DistrictBreadthRecordsIndex")
+            _add_beam(identity, Vector3(5.35, 1.52, 8.48), Vector3(7.5, 2.4, 8.1), 0.035, _rust, "DistrictBreadthRecordsCable")
+        &"industrial":
+            ModelKit3D.add_louvered_panel(identity, Vector3(1.8, 1.2, 0.16), Vector3(5.2, 1.35, 8.45), _dark_steel, _cool, Vector3.ZERO, "DistrictBreadthPowerLouver", 4)
+            _add_beam(identity, Vector3(4.25, 1.18, 8.35), Vector3(6.6, 2.8, 8.35), 0.045, _rust, "DistrictBreadthPowerCable")
+        &"tenement":
+            ModelKit3D.add_beveled_box(identity, Vector3(2.1, 0.22, 1.2), Vector3(5.3, 0.38, 8.4), _rust, Vector3.ZERO, "DistrictBreadthPlanter", 0.18)
+            ModelKit3D.add_membrane_fan(identity, 0.4, Vector3(5.0, 0.82, 8.35), _vegetation, 5, "DistrictBreadthPlanterGrowth")
+        &"greenhouse":
+            ModelKit3D.add_beveled_box(identity, Vector3(2.6, 0.14, 1.1), Vector3(5.2, 0.38, 8.35), _rust, Vector3.ZERO, "DistrictBreadthGrowBed", 0.18)
+            _add_beam(identity, Vector3(4.2, 0.54, 8.35), Vector3(6.4, 2.2, 8.35), 0.035, _cool, "DistrictBreadthIrrigationLine")
+        &"commercial":
+            ModelKit3D.add_beveled_box(identity, Vector3(2.4, 0.12, 1.6), Vector3(5.1, 2.6, 8.3), _rust, Vector3(0.0, 0.0, -0.08), "DistrictBreadthMarketCanopy", 0.18)
+            _add_beam(identity, Vector3(4.05, 0.45, 8.35), Vector3(4.05, 2.55, 8.35), 0.045, _dark_steel, "DistrictBreadthMarketPost")
+        &"waterfront":
+            for index in range(2):
+                ModelKit3D.add_cylinder(identity, 0.12, 0.72, Vector3(4.4 + float(index) * 1.7, 0.58, 8.4), _rust, Vector3.ZERO, "DistrictBreadthMooringCleat%d" % index)
+                _add_beam(identity, Vector3(4.4 + float(index) * 1.7, 0.94, 8.4), Vector3(5.8 + float(index) * 1.7, 0.45, 9.2), 0.035, _warning, "DistrictBreadthMooringLine%d" % index)
+        &"rail":
+            for index in range(3):
+                ModelKit3D.add_beveled_box(identity, Vector3(2.0, 0.1, 0.24), Vector3(4.0 + float(index) * 2.0, 0.3, 8.35), _rust, Vector3.ZERO, "DistrictBreadthRailSleeper%d" % index, 0.16)
+            _add_beam(identity, Vector3(3.0, 0.35, 8.35), Vector3(8.3, 0.35, 8.35), 0.06, _steel, "DistrictBreadthRailLine")
+        &"nest":
+            _add_beam(identity, Vector3(4.0, 0.35, 8.6), Vector3(6.8, 3.25, 8.2), 0.12, _organic, "DistrictBreadthNestRib")
+            ModelKit3D.add_membrane_fan(identity, 0.72, Vector3(6.3, 1.1, 8.2), _membrane, 6, "DistrictBreadthNestVeil")
+        &"observatory":
+            ModelKit3D.add_cylinder(identity, 0.12, 2.2, Vector3(5.1, 1.3, 8.35), _steel, Vector3.ZERO, "DistrictBreadthSurveyStake")
+            ModelKit3D.add_surface_panel(identity, Vector3(1.1, 0.62, 0.08), Vector3(5.1, 1.45, 8.2), _dark_steel, _cool, Vector3.ZERO, "DistrictBreadthSurveyPanel")
+        &"research":
+            ModelKit3D.add_louvered_panel(identity, Vector3(1.65, 1.12, 0.16), Vector3(5.2, 1.2, 8.4), _dark_steel, _membrane, Vector3.ZERO, "DistrictBreadthContainmentVent", 4)
+            _add_beam(identity, Vector3(4.15, 0.38, 8.42), Vector3(6.5, 2.1, 8.42), 0.04, _warning, "DistrictBreadthHazardCable")
+        &"endgame":
+            _add_beam(identity, Vector3(4.0, 0.34, 8.35), Vector3(6.1, 2.65, 8.35), 0.08, _organic, "DistrictBreadthRootBrace")
+            ModelKit3D.add_organic_plate(identity, 0.64, Vector3(6.4, 0.95, 8.3), _membrane, _rust, Vector3(1.1, 0.7, 0.86), "DistrictBreadthRootPlate")
+        _:
+            ModelKit3D.add_surface_panel(identity, Vector3(1.4, 0.8, 0.1), Vector3(5.2, 1.0, 8.4), _dark_steel, _warning, Vector3.ZERO, "DistrictBreadthGenericMarker")
 
 
 func _build_archive_vignette(parent: Node3D) -> void:

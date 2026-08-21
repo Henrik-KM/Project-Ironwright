@@ -1187,6 +1187,9 @@ Remaining production work includes:
 - deeper navigation, baked-region pathing and route recovery under long-run
   disruption;
 - broader content variants, technologies, operations and site dressing;
+- every discovered remote region now also receives a bounded district-breadth
+  kit with service-edge hardware, restrained overgrowth and a kind-specific
+  identity motif beyond its focal landmark vignette;
 - performance profiling and optimization on agreed target hardware;
 - broader environmental narrative and sparse story arcs beyond the current
   Town Archive records, plus broader run variation beyond the authored weather
