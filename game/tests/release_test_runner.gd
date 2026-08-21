@@ -169,6 +169,19 @@ func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void
     _expect(settings.set_key_binding(&"iw_move_up", original_up, false), "Release settings must restore a remapped keyboard action.")
     _expect(settings.get_key_binding(&"iw_move_up") == original_up and settings.get_key_binding(&"iw_move_down") == original_down, "Restoring a keyboard action must leave the other movement bindings intact.")
 
+    var original_controller_up := settings.get_controller_binding(&"iw_move_up")
+    var original_controller_down := settings.get_controller_binding(&"iw_move_down")
+    _expect(original_controller_up >= 0 and original_controller_down >= 0, "Release settings must expose valid controller bindings.")
+    _expect(settings.set_controller_binding(&"iw_move_up", JOY_BUTTON_LEFT_SHOULDER, false), "Release settings must accept a remapped controller action.")
+    _expect(settings.get_controller_binding(&"iw_move_up") == JOY_BUTTON_LEFT_SHOULDER, "Remapped controller action must persist in the live settings state.")
+    var controller_event_found := false
+    for event in InputMap.action_get_events(&"iw_move_up"):
+        if event is InputEventJoypadButton and (event as InputEventJoypadButton).button_index == JOY_BUTTON_LEFT_SHOULDER:
+            controller_event_found = true
+    _expect(controller_event_found, "Remapped controller action must update the live InputMap event.")
+    _expect(settings.set_controller_binding(&"iw_move_up", original_controller_up, false), "Release settings must restore a remapped controller action.")
+    _expect(settings.get_controller_binding(&"iw_move_up") == original_controller_up and settings.get_controller_binding(&"iw_move_down") == original_controller_down, "Restoring a controller action must leave the other movement bindings intact.")
+
 
 func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
     var texture_paths := [
@@ -474,6 +487,7 @@ func _test_front_end(world: IronwrightReleaseWorld3D) -> void:
     _expect(front_end.settings_controls.size() >= 18, "Settings screen must expose release accessibility, audio, language, pacing and controller options.")
     for action in ReleaseSettingsService3D.REMAPPABLE_ACTIONS:
         _expect(front_end.remap_buttons.has(action), "Settings screen must expose a remapping control for %s." % String(action))
+        _expect(front_end.controller_remap_buttons.has(action), "Settings screen must expose a controller remapping control for %s." % String(action))
     var raw_localization_labels := 0
     for node in front_end.settings_panel.find_children("*", "Label", true, false):
         if node is Label and String((node as Label).text).begins_with("settings."):

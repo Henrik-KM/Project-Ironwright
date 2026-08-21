@@ -25,6 +25,13 @@
       "iw_move_left": 65,
       "iw_move_right": 68,
       "iw_interact": 69
+    },
+    "controller_bindings": {
+      "iw_move_up": 11,
+      "iw_move_down": 12,
+      "iw_move_left": 13,
+      "iw_move_right": 14,
+      "iw_interact": 0
     }
   },
   "ranges": {

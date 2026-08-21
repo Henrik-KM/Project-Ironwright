@@ -17,6 +17,13 @@ const DEFAULT_INPUT_BINDINGS: Dictionary = {
     "iw_move_right": KEY_D,
     "iw_interact": KEY_E,
 }
+const DEFAULT_CONTROLLER_BINDINGS: Dictionary = {
+    "iw_move_up": JOY_BUTTON_DPAD_UP,
+    "iw_move_down": JOY_BUTTON_DPAD_DOWN,
+    "iw_move_left": JOY_BUTTON_DPAD_LEFT,
+    "iw_move_right": JOY_BUTTON_DPAD_RIGHT,
+    "iw_interact": JOY_BUTTON_A,
+}
 
 var settings: Dictionary = {}
 var defaults: Dictionary = {}
@@ -140,6 +147,10 @@ func apply_input_bindings() -> void:
         event.keycode = get_key_binding(action)
         event.physical_keycode = event.keycode
         InputMap.action_add_event(action, event)
+        for existing in InputMap.action_get_events(action):
+            if existing is InputEventJoypadButton:
+                InputMap.action_erase_event(action, existing)
+        _add_button_once(action, get_controller_binding(action))
 
 
 func get_key_binding(action: StringName) -> Key:
@@ -165,8 +176,49 @@ func set_key_binding(action: StringName, keycode: Key, persist: bool = true) -> 
     return true
 
 
+func get_controller_binding(action: StringName) -> int:
+    var bindings: Variant = settings.get("controller_bindings", {})
+    if bindings is Dictionary and bindings.has(String(action)):
+        return int(bindings[String(action)])
+    return int(DEFAULT_CONTROLLER_BINDINGS.get(String(action), JOY_BUTTON_A))
+
+
+func set_controller_binding(action: StringName, button_index: int, persist: bool = true) -> bool:
+    if action not in REMAPPABLE_ACTIONS or button_index < 0:
+        return false
+    var bindings: Dictionary = settings.get("controller_bindings", {}).duplicate(true)
+    for other_action in REMAPPABLE_ACTIONS:
+        if other_action != action and int(bindings.get(String(other_action), DEFAULT_CONTROLLER_BINDINGS.get(String(other_action), JOY_BUTTON_A))) == button_index:
+            bindings[String(other_action)] = get_controller_binding(action)
+    bindings[String(action)] = button_index
+    settings["controller_bindings"] = bindings
+    apply_input_bindings()
+    if persist:
+        save_settings()
+    settings_changed.emit(settings.duplicate(true))
+    return true
+
+
 func key_binding_display_name(action: StringName) -> String:
     return OS.get_keycode_string(int(get_key_binding(action)))
+
+
+func controller_binding_display_name(action: StringName) -> String:
+    var names := {
+        JOY_BUTTON_A: "A",
+        JOY_BUTTON_B: "B",
+        JOY_BUTTON_X: "X",
+        JOY_BUTTON_Y: "Y",
+        JOY_BUTTON_BACK: "BACK",
+        JOY_BUTTON_START: "START",
+        JOY_BUTTON_LEFT_SHOULDER: "LB",
+        JOY_BUTTON_RIGHT_SHOULDER: "RB",
+        JOY_BUTTON_DPAD_UP: "D-PAD UP",
+        JOY_BUTTON_DPAD_DOWN: "D-PAD DOWN",
+        JOY_BUTTON_DPAD_LEFT: "D-PAD LEFT",
+        JOY_BUTTON_DPAD_RIGHT: "D-PAD RIGHT",
+    }
+    return str(names.get(get_controller_binding(action), "BUTTON %d" % get_controller_binding(action)))
 
 
 func apply_accessibility_to_tree(root: Node) -> void:
@@ -302,6 +354,11 @@ func _sanitize() -> void:
         var keycode := int(input_bindings.get(String(action), DEFAULT_INPUT_BINDINGS.get(String(action), KEY_NONE)))
         input_bindings[String(action)] = keycode if keycode > 0 else int(DEFAULT_INPUT_BINDINGS.get(String(action), KEY_NONE))
     settings["input_bindings"] = input_bindings
+    var controller_bindings: Dictionary = settings.get("controller_bindings", {}).duplicate(true)
+    for action in REMAPPABLE_ACTIONS:
+        var button_index := int(controller_bindings.get(String(action), DEFAULT_CONTROLLER_BINDINGS.get(String(action), JOY_BUTTON_A)))
+        controller_bindings[String(action)] = button_index if button_index >= 0 else int(DEFAULT_CONTROLLER_BINDINGS.get(String(action), JOY_BUTTON_A))
+    settings["controller_bindings"] = controller_bindings
 
 
 func _fallback_defaults() -> Dictionary:
@@ -331,6 +388,7 @@ func _fallback_defaults() -> Dictionary:
             "iw_move_right": KEY_D,
             "iw_interact": KEY_E,
         },
+        "controller_bindings": DEFAULT_CONTROLLER_BINDINGS.duplicate(true),
     }
 
 

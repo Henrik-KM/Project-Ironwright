@@ -24,6 +24,7 @@ var no_save_label: Label
 var settings_title: Label
 var settings_controls: Dictionary = {}
 var remap_buttons: Dictionary = {}
+var controller_remap_buttons: Dictionary = {}
 var active_screen: StringName = &"hidden"
 var last_focus: Control
 var remap_capture_action: StringName = &""
@@ -58,6 +59,12 @@ func _unhandled_input(event: InputEvent) -> void:
             elif settings_service != null:
                 settings_service.set_key_binding(remap_capture_action, key_event.keycode)
                 remap_capture_action = &""
+            _populate_settings_controls()
+            get_viewport().set_input_as_handled()
+        elif event is InputEventJoypadButton and (event as InputEventJoypadButton).pressed:
+            if settings_service != null:
+                settings_service.set_controller_binding(remap_capture_action, (event as InputEventJoypadButton).button_index)
+            remap_capture_action = &""
             _populate_settings_controls()
             get_viewport().set_input_as_handled()
         return
@@ -153,6 +160,8 @@ void fragment() {
 
 func _build_settings_rows(parent: VBoxContainer) -> void:
     settings_controls.clear()
+    remap_buttons.clear()
+    controller_remap_buttons.clear()
     var language := OptionButton.new()
     language.name = "LanguageOption"
     if localization != null:
@@ -238,6 +247,12 @@ func _build_settings_rows(parent: VBoxContainer) -> void:
         button.pressed.connect(_begin_remap.bind(action))
         remap_buttons[action] = button
         parent.add_child(_settings_row("settings.%s" % _remap_label_suffix(action), button))
+        var controller_button := Button.new()
+        controller_button.name = "ControllerRemap_%s" % String(action)
+        controller_button.custom_minimum_size = Vector2(270, 36)
+        controller_button.pressed.connect(_begin_controller_remap.bind(action))
+        controller_remap_buttons[action] = controller_button
+        parent.add_child(_settings_row("settings.controller_%s" % _remap_label_suffix(action), controller_button))
 
 
 func _settings_row(label_key: String, control: Control) -> HBoxContainer:
@@ -341,6 +356,9 @@ func _populate_settings_controls() -> void:
         var button := remap_buttons.get(action) as Button
         if button != null:
             button.text = settings_service.key_binding_display_name(action)
+        var controller_button := controller_remap_buttons.get(action) as Button
+        if controller_button != null:
+            controller_button.text = settings_service.controller_binding_display_name(action)
 
 
 func _apply_settings() -> void:
@@ -377,6 +395,16 @@ func _begin_remap(action: StringName) -> void:
     if button != null:
         button.text = localization.text("settings.press_key") if localization != null else "PRESS A KEY"
     if button != null:
+        button.grab_focus()
+
+
+func _begin_controller_remap(action: StringName) -> void:
+    if not ReleaseSettingsService3D.REMAPPABLE_ACTIONS.has(action):
+        return
+    remap_capture_action = action
+    var button := controller_remap_buttons.get(action) as Button
+    if button != null:
+        button.text = localization.text("settings.press_button") if localization != null else "PRESS A BUTTON"
         button.grab_focus()
 
 
