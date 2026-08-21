@@ -94,19 +94,30 @@ func _run_all() -> void:
             _expect(landmark.find_child("*Facade*", true, false) != null, "Each non-sanctuary region must expose a readable district-specific surface signature.")
             if landmark.region_kind == &"industrial":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/WestGridAuthoredModel") != null, "West Grid must expose its authored turbine-hall and transformer-yard landmark shell.")
+                _expect(landmark.find_child("WestGridWindowFrame0", true, false) != null and landmark.find_child("WestGridWindowMullion0", true, false) != null, "West Grid must expose turbine-hall window framing and mullions.")
+                _expect(landmark.find_child("WestGridTankValve0", true, false) != null and landmark.find_child("WestGridTankLadder0", true, false) != null, "West Grid must expose pressure-tank service hardware.")
+                _expect(landmark.find_child("WestGridTransformerCap0", true, false) != null and landmark.find_child("WestGridTransformerBrace0", true, false) != null, "West Grid must expose layered transformer-yard hardware.")
+                _expect(landmark.find_child("WestGridPipeFlange0", true, false) != null and landmark.find_child("WestGridWarningHousing0", true, false) != null, "West Grid must expose service-pipe and warning hardware.")
+                _expect(landmark.find_child("WestGridOrganicTendril0_0", true, false) != null, "West Grid organic growth must expose secondary tendril anatomy.")
                 var grid_signal := landmark.find_child("WestGridTankSignal0", true, false) as Node3D
                 var grid_warning := landmark.find_child("WestGridWarningLight0", true, false) as Node3D
                 var grid_growth := landmark.find_child("WestGridOrganicCreep0", true, false) as Node3D
-                _expect(grid_signal != null and grid_warning != null and grid_growth != null, "West Grid must expose named signal, warning and organic-growth motion sockets.")
-                if grid_signal != null and grid_warning != null and grid_growth != null:
+                var grid_valve := landmark.find_child("WestGridTankValve0", true, false) as Node3D
+                var grid_tendril := landmark.find_child("WestGridOrganicTendril0_0", true, false) as Node3D
+                _expect(grid_signal != null and grid_warning != null and grid_growth != null and grid_valve != null and grid_tendril != null, "West Grid must expose named signal, warning, valve, organic-growth and tendril motion sockets.")
+                if grid_signal != null and grid_warning != null and grid_growth != null and grid_valve != null and grid_tendril != null:
                     landmark.set_presentation_detail_level(0)
                     var grid_signal_before := grid_signal.scale
                     var grid_warning_before := grid_warning.scale
                     var grid_growth_before := grid_growth.scale
+                    var grid_valve_before := grid_valve.rotation
+                    var grid_tendril_before := grid_tendril.rotation
                     landmark.call("_process", 0.5)
                     _expect(not grid_signal.scale.is_equal_approx(grid_signal_before), "West Grid tank signal must pulse as a restrained presentation cue.")
                     _expect(not grid_warning.scale.is_equal_approx(grid_warning_before), "West Grid warning light must carry deterministic presentation motion.")
                     _expect(not grid_growth.scale.is_equal_approx(grid_growth_before), "West Grid organic growth must carry deterministic presentation motion.")
+                    _expect(not grid_valve.rotation.is_equal_approx(grid_valve_before), "West Grid tank valve must carry restrained service motion.")
+                    _expect(not grid_tendril.rotation.is_equal_approx(grid_tendril_before), "West Grid organic tendril must carry deterministic presentation motion.")
             if landmark.region_kind == &"endgame":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/RootCisternAuthoredModel") != null, "The Root Cistern must expose its authored landmark shell.")
                 _expect(landmark.find_child("RootCisternBasin", true, false) != null, "The Root Cistern must expose an authored basin floor to anchor the capstone encounter.")

@@ -655,9 +655,15 @@ func _animate_region_details() -> void:
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.12) * 0.07)
         elif node_name.begins_with("WestGridTankSignal") or node_name.begins_with("WestGridWarningLight"):
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.75) * 0.08)
+        elif node_name.begins_with("WestGridTankValve"):
+            node.rotation.z += sin(local_phase * 0.72) * 0.12
+        elif node_name.begins_with("WestGridWarningHousing"):
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.75) * 0.04)
         elif node_name.begins_with("WestGridOrganicCreep"):
             node.rotation.y += sin(local_phase * 0.84) * 0.06
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.08) * 0.07)
+        elif node_name.begins_with("WestGridOrganicTendril"):
+            node.rotation.z += sin(local_phase * 1.04) * 0.12
         elif node_name.begins_with("RiverworksGrowth") or node_name.begins_with("RiverbankGrowth"):
             node.rotation.y += sin(local_phase * 1.15) * 0.12
             node.scale *= Vector3(1.0, 1.0 + sin(local_phase * 1.8) * 0.08, 1.0)
@@ -696,7 +702,10 @@ func _is_region_motion_name(node_name: String) -> bool:
         "FloodMarketOrganicGrowth",
         "WestGridTankSignal",
         "WestGridWarningLight",
+        "WestGridTankValve",
+        "WestGridWarningHousing",
         "WestGridOrganicCreep",
+        "WestGridOrganicTendril",
     ]:
         if node_name.begins_with(prefix):
             return true
