@@ -104,6 +104,17 @@ func _run_all() -> void:
             if landmark.region_kind == &"commercial":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/FloodMarketIdentityDetails") != null, "Flood Market must expose authored stall canopies and hanging signs.")
                 _expect(landmark.find_child("MarketFloodChannel", true, false) != null, "Flood Market must expose bounded presentation-only water channels.")
+                _expect(landmark.get_node_or_null("PersistentRegionGeometry/FloodMarketAuthoredModel") != null, "Flood Market must expose its authored canopy and service landmark shell.")
+                var market_light := landmark.find_child("FloodMarketWaterline0", true, false) as Node3D
+                var market_growth := landmark.find_child("FloodMarketOrganicGrowth0", true, false) as Node3D
+                _expect(market_light != null and market_growth != null, "Flood Market must expose named waterline and organic-growth motion sockets.")
+                if market_light != null and market_growth != null:
+                    landmark.set_presentation_detail_level(0)
+                    var market_light_before := market_light.scale
+                    var market_growth_before := market_growth.scale
+                    landmark.call("_process", 0.5)
+                    _expect(not market_light.scale.is_equal_approx(market_light_before), "Flood Market waterline must pulse as a restrained presentation cue.")
+                    _expect(not market_growth.scale.is_equal_approx(market_growth_before), "Flood Market organic growth must carry deterministic presentation motion.")
             if landmark.region_kind == &"archive":
                 _expect(landmark.find_child("ArchiveCivicFacade", true, false) != null, "North Ruins must expose an authored civic archive facade.")
                 _expect(landmark.find_child("ArchiveVaultDoor", true, false) != null, "North Ruins must expose a readable archive vault entrance.")

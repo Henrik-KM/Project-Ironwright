@@ -10,6 +10,7 @@ const AUTHORED_BURIED_LABS_MODEL_SCENE: PackedScene = preload("res://assets/buri
 const AUTHORED_GLASSHOUSE_MODEL_SCENE: PackedScene = preload("res://assets/glasshouse/glasshouse.gltf")
 const AUTHORED_ARCHIVE_MODEL_SCENE: PackedScene = preload("res://assets/archive/archive.gltf")
 const AUTHORED_TENEMENT_MODEL_SCENE: PackedScene = preload("res://assets/tenement/tenement.gltf")
+const AUTHORED_FLOOD_MARKET_MODEL_SCENE: PackedScene = preload("res://assets/flood_market/flood_market.gltf")
 
 signal landmark_changed(landmark: RegionLandmark3D)
 
@@ -177,8 +178,6 @@ func _build_visuals() -> void:
             ModelKit3D.add_beveled_box(_visual_root, Vector3(3.4, 0.28, 2.5), Vector3(11.0, 0.18, -7.0), edge, Vector3.ZERO, "SubstationTankPlinth", 0.22)
             ModelKit3D.add_surface_panel(_visual_root, Vector3(1.5, 1.0, 0.1), Vector3(11.0, 3.1, -8.38), edge, rust, Vector3.ZERO, "SubstationAccessPanel")
         &"commercial":
-            _add_ruin_block(Vector3(-8.0, 0.0, 0.0), Vector3(7.0, 5.0, 12.0), brick)
-            _add_ruin_block(Vector3(8.0, 0.0, -2.0), Vector3(7.0, 6.5, 10.0), concrete)
             for index in range(7):
                 ModelKit3D.add_beveled_box(_visual_root, Vector3(2.2, 0.18, 1.5), Vector3(-6.0 + float(index) * 2.0, 0.12, 7.0), metal, Vector3.ZERO, "MarketTable", 0.24)
                 ModelKit3D.add_box(_visual_root, Vector3(1.7, 0.035, 0.1), Vector3(-6.0 + float(index) * 2.0, 0.24, 6.22), rust, Vector3.ZERO, "MarketTableTrim")
@@ -195,6 +194,7 @@ func _build_visuals() -> void:
                 ModelKit3D.add_beveled_box(market_identity, Vector3(3.4, 0.14, 1.7), Vector3(x, 2.78, 5.4), canopy, Vector3(0.0, 0.0, 0.04 * float(stall_index - 1)), "MarketCanopy", 0.18)
                 ModelKit3D.add_surface_panel(market_identity, Vector3(1.05, 0.58, 0.08), Vector3(x, 1.95, 5.08), sign_material, canopy_trim, Vector3.ZERO, "MarketHangingSign")
                 _add_beam(market_identity, Vector3(x - 0.44, 2.36, 5.05), Vector3(x - 0.44, 2.0, 5.05), 0.025, canopy_trim, "MarketSignCable")
+            _build_authored_flood_market_visuals()
         &"archive":
             _build_authored_archive_visuals()
         &"tenement":
@@ -529,6 +529,26 @@ func _build_authored_tenement_visuals() -> void:
     _visual_root.add_child(authored_marker)
 
 
+func _build_authored_flood_market_visuals() -> void:
+    # Flood Market keeps its tables, channels and ecology ownership while the
+    # authored shell supplies the continuous canopy and service silhouette.
+    var authored_scene_instance := AUTHORED_FLOOD_MARKET_MODEL_SCENE.instantiate()
+    var imported_root := authored_scene_instance.get_node_or_null("FloodMarketModel") as Node
+    if imported_root == null:
+        imported_root = authored_scene_instance
+    var authored_children := imported_root.get_children()
+    for child in authored_children:
+        child.owner = null
+        imported_root.remove_child(child)
+        _visual_root.add_child(child)
+    if imported_root != authored_scene_instance:
+        imported_root.free()
+    authored_scene_instance.free()
+    var authored_marker := Node3D.new()
+    authored_marker.name = "FloodMarketAuthoredModel"
+    _visual_root.add_child(authored_marker)
+
+
 func _capture_region_motion_nodes() -> void:
     _motion_nodes.clear()
     _motion_base_transforms.clear()
@@ -601,6 +621,11 @@ func _animate_region_details() -> void:
         elif node_name.begins_with("TenementOrganicCreep"):
             node.rotation.y += sin(local_phase * 0.8) * 0.06
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.15) * 0.07)
+        elif node_name.begins_with("FloodMarketGrowthLight") or node_name.begins_with("FloodMarketWaterline"):
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.85) * 0.08)
+        elif node_name.begins_with("FloodMarketOrganicGrowth"):
+            node.rotation.y += sin(local_phase * 0.82) * 0.06
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.12) * 0.07)
         elif node_name.begins_with("RiverworksGrowth") or node_name.begins_with("RiverbankGrowth"):
             node.rotation.y += sin(local_phase * 1.15) * 0.12
             node.scale *= Vector3(1.0, 1.0 + sin(local_phase * 1.8) * 0.08, 1.0)
@@ -630,6 +655,9 @@ func _is_region_motion_name(node_name: String) -> bool:
         "ArchiveRoofBeaconLight",
         "ArchiveOrganicCreep",
         "TenementOrganicCreep",
+        "FloodMarketGrowthLight",
+        "FloodMarketWaterline",
+        "FloodMarketOrganicGrowth",
     ]:
         if node_name.begins_with(prefix):
             return true

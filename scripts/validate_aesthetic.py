@@ -69,6 +69,9 @@ REQUIRED = [
     "game/assets/tenement/source/build_tenement_asset.py",
     "game/assets/tenement/tenement.gltf",
     "game/data/tenement_asset_manifest.json",
+    "game/assets/flood_market/source/build_flood_market_asset.py",
+    "game/assets/flood_market/flood_market.gltf",
+    "game/data/flood_market_asset_manifest.json",
 ]
 
 AUTHORED_ORGANIC_ASSETS = {
@@ -203,6 +206,20 @@ AUTHORED_REGION_ASSETS = {
             "TenementFireEscapeLadder",
             "TenementRoofWaterTank",
             "TenementOrganicCreep0",
+            "ProductionAssetMarker",
+        ],
+    },
+    "flood_market": {
+        "asset_id": "flood.market.v1",
+        "root": "FloodMarketModel",
+        "required": [
+            "FloodMarketModel",
+            "FloodMarketCanopy0",
+            "FloodMarketStall0",
+            "FloodMarketWaterChannel0",
+            "FloodMarketWaterline0",
+            "FloodMarketServiceCrane",
+            "FloodMarketOrganicGrowth0",
             "ProductionAssetMarker",
         ],
     },
