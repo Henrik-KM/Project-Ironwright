@@ -26,6 +26,11 @@ non-lethal damage now selects a shared authored `Hit` clip across all five
 friendly robot families and all twelve organic families, so combat readability
 does not depend only on health bars or transient text.
 
+The runtime damage response also carries a bounded world-space impact burst and
+distinct spatial sound language for Mechromancer, machine and organic
+non-lethal hits. This reinforces the authored `Hit` beat without adding combat
+HUD clutter or changing health, damage, ecology or actor workload contracts.
+
 The Mechromancer now uses the same export-breadth contract. Its authored Idle,
 Walk, Fire, Work and Hit clips retain multiple body, equipment, recoil or
 interaction channels in the canonical Blender-to-glTF path. This improves the

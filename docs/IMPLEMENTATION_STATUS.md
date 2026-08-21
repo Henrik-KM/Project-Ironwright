@@ -1239,6 +1239,15 @@ final retail art, animation and external visual approval are still required.
   live damage-to-animation selection without changing health, combat damage,
   collision, ecology or player workload.
 
+## Focused non-lethal impact-feedback milestone
+
+- added bounded world-space impact bursts and local flashes for Mechromancer,
+  friendly-machine and organic non-lethal damage;
+- added generated spatial `machine_impact`, `player_impact` and
+  `organic_impact` cues with health-change routing and actor-specific profiles;
+- added aesthetic coverage for transient VFX and impact audio without changing
+  combat damage, collision, ecology, persistence or player workload.
+
 The live playtest also found and closed a legacy-save edge: snapshots created
 before authored run variation now reconcile their missing weather profile before
 presentation restore, with release regression coverage for that migration path.
