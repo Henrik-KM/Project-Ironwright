@@ -1,0 +1,20 @@
+{
+  "asset_id": "outpost.shelter.v1",
+  "runtime_scene": "res://assets/outpost/outpost.gltf",
+  "source_builder": "game/assets/outpost/source/build_outpost_asset.py",
+  "source_type": "original_project_ironwright_shared_mesh_builder",
+  "third_party_assets": [],
+  "presentation_only": true,
+  "stable_nodes": [
+    "OutpostModel",
+    "Foundation",
+    "CoreShelter",
+    "CoreShelterCore",
+    "RoofPlate",
+    "CoreVent",
+    "CoreServicePanel",
+    "StatusBeacon",
+    "ProductionAssetMarker"
+  ],
+  "socket_contract": ["fixed_site_anchor", "shared_shelter_shell", "service_vent", "status_beacon"]
+}

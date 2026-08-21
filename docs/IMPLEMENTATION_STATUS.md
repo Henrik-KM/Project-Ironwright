@@ -21,6 +21,12 @@
 - The overlays are cleared by repair and hidden automatically outside close-detail presentation, keeping remote simulation lightweight while preserving readable local consequences.
 - Release regression coverage verifies creation, damage, LOD suppression, restoration, and repair clearing.
 
+## Focused authored outpost shelter milestone
+
+- Replaced the shared autonomous outpost's procedural primary shelter shell with an original high-definition glTF asset containing a layered foundation, service body, roof plate, vent louvers, status beacon and cable/service details.
+- Preserved the outpost's role signatures, tier frames, damage-memory overlays, repair, hauling and autonomous operation as runtime behavior around the authored shell.
+- Added a source builder, production asset manifest, marker coverage and exact-export live review for the Tier 3 resource outpost.
+
 ## Focused Signal Relay authored-asset milestone
 
 - Replaced the Signal Relay's procedural primary shell with an original high-definition glTF asset containing a protected chassis, heat sink, mast, directional dish, beacon and stable presentation sockets.
