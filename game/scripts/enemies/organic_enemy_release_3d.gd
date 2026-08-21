@@ -3,7 +3,9 @@ extends OrganicEnemyFullGame3D
 
 var _spatial_index: SpatialIndex3D
 var reduced_detail: bool = false
+var coarse_simulation: bool = false
 var visual_lod_level: int = 0
+var _reduced_proxy: MeshInstance3D
 
 
 func _ready() -> void:
@@ -58,14 +60,34 @@ func set_reduced_detail(value: bool) -> void:
     if reduced_detail == value:
         return
     reduced_detail = value
+    coarse_simulation = false
     set_physics_process(not reduced_detail)
     if reduced_detail:
         velocity = Vector3.ZERO
         state_name = &"remote_simulation"
 
 
+func set_coarse_simulation(value: bool) -> void:
+    if reduced_detail or coarse_simulation == value:
+        return
+    coarse_simulation = value
+    set_physics_process(not coarse_simulation)
+
+
 func reduced_detail_tick(delta: float) -> void:
-    if not reduced_detail or not alive:
+    if not reduced_detail:
+        return
+    _coarse_detail_tick(delta)
+
+
+func coarse_detail_tick(delta: float) -> void:
+    if not coarse_simulation:
+        return
+    _coarse_detail_tick(delta)
+
+
+func _coarse_detail_tick(delta: float) -> void:
+    if not alive:
         return
     attack_cooldown = maxf(0.0, attack_cooldown - delta)
     investigate_seconds = maxf(0.0, investigate_seconds - delta)
@@ -94,13 +116,37 @@ func set_visual_lod(level_value: int) -> void:
     visual_lod_level = clampi(level_value, 0, 2)
     if _model_root == null:
         return
+    _ensure_reduced_proxy()
     for child in _model_root.get_children():
+        if child == _reduced_proxy:
+            _reduced_proxy.visible = visual_lod_level >= 1
+            continue
+        if child is Node3D:
+            child.visible = visual_lod_level < 1
         if child is GeometryInstance3D:
             (child as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if visual_lod_level == 0 else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-        if visual_lod_level >= 2 and child.name.contains("Spine") or child.name.contains("WingVein"):
-            child.visible = false
-        elif child is Node3D:
-            child.visible = true
+
+
+func _ensure_reduced_proxy() -> void:
+    if _reduced_proxy != null and is_instance_valid(_reduced_proxy):
+        return
+    _reduced_proxy = MeshInstance3D.new()
+    _reduced_proxy.name = "ReducedDetailProxy"
+    var proxy_mesh := CapsuleMesh.new()
+    proxy_mesh.radius = 0.34
+    proxy_mesh.height = 1.45
+    proxy_mesh.radial_segments = 8
+    proxy_mesh.rings = 3
+    _reduced_proxy.mesh = proxy_mesh
+    var proxy_material := StandardMaterial3D.new()
+    proxy_material.albedo_color = Color("673747")
+    proxy_material.emission_enabled = true
+    proxy_material.emission = Color("8f3852")
+    proxy_material.emission_energy_multiplier = 0.65
+    _reduced_proxy.material_override = proxy_material
+    _reduced_proxy.position = Vector3(0.0, 0.78, 0.0)
+    _reduced_proxy.visible = false
+    _model_root.add_child(_reduced_proxy)
 
 
 func _apply_species_stats() -> void:

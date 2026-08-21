@@ -7,6 +7,7 @@ var phase: float = 0.0
 var deterministic_offset: float = 0.0
 var animated_nodes: Array[Node3D] = []
 var base_transforms: Dictionary = {}
+var has_visual_lod_level: bool = false
 
 
 func configure(next_subject: Node3D, next_settings: ReleaseSettingsService3D) -> void:
@@ -21,6 +22,10 @@ func _ready() -> void:
         set_process(false)
         return
     deterministic_offset = float(subject.get_instance_id() % 997) * 0.019
+    for property in subject.get_property_list():
+        if StringName(property.get("name", "")) == &"visual_lod_level":
+            has_visual_lod_level = true
+            break
     call_deferred("_capture_nodes")
 
 
@@ -44,6 +49,8 @@ func _capture_recursive(node: Node) -> void:
 
 func _process(delta: float) -> void:
     if subject == null or not is_instance_valid(subject):
+        return
+    if has_visual_lod_level and int(subject.get(&"visual_lod_level")) >= 1:
         return
     phase = fmod(phase + delta, TAU * 16.0)
     var motion_scale := 1.0
