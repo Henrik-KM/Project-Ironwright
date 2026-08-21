@@ -57,7 +57,7 @@ Before release-candidate status, representative opening, mid-game and late-game 
 
 The tactical camera must never accept a nominal isometric position when a solid building blocks the target. It must probe alternate higher/closer positions and preserve line of sight to the current focus.
 
-The representative Heartforge slice may lead the subject slightly in the direction of movement and pull higher under nearby threat so the player can read the autonomous defensive envelope. Camera spectacle must never hide tactical information.
+The representative Heartforge slice may lead the subject slightly in the direction of movement and pull higher under nearby threat so the player can read the autonomous defensive envelope. The threat response preserves or slightly improves subject proximity so organic silhouettes do not shrink when they become tactically important. Camera spectacle must never hide tactical information.
 
 ## World-label rule
 
