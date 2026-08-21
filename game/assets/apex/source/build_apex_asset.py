@@ -95,7 +95,9 @@ def main() -> None:
         add_node("ApexFastenerR%d" % index, mesh_ids["Fastener"], (0.68, 1.32, z), parent=torso)
 
     crown = add_node("ApexCrown", mesh_ids["Crown"], (0.0, 2.0, -1.02), scale=(1.34, 0.92, 1.22), extras={"socket_type": "crown"})
-    add_node("ApexCrownPlate", mesh_ids["Rib"], (0.0, 2.3, -0.86), scale=(1.2, 1.0, 0.8), parent=crown)
+    # The plate is authored under the crown; keep its offset local so the
+    # layered threat silhouette stays attached to the moving head assembly.
+    add_node("ApexCrownPlate", mesh_ids["Rib"], (0.0, 0.3, 0.16), scale=(1.2, 1.0, 0.8), parent=crown)
     add_node("OrganicDorsalPlate", mesh_ids["Rib"], (0.0, 1.74, 0.18), scale=(1.25, 0.9, 1.1), extras={"surface": "layered_shell_break"})
     for side in (-1.0, 1.0):
         add_node("ApexEye%s" % ("L" if side < 0 else "R"), mesh_ids["Eye"], (side * 0.34, 2.16, -1.62), extras={"socket_type": "threat_eye"})

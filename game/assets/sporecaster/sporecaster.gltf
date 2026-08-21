@@ -295,8 +295,8 @@
       "name": "SporecasterOculusL",
       "translation": [
         -0.23,
-        1.34,
-        -1.31
+        0.16,
+        -0.39
       ],
       "mesh": 6,
       "extras": {
@@ -307,8 +307,8 @@
       "name": "SporecasterCowlPlateL",
       "translation": [
         -0.32,
-        1.26,
-        -1.01
+        0.08,
+        -0.09
       ],
       "mesh": 3,
       "rotation": [
@@ -322,8 +322,8 @@
       "name": "SporecasterOculusR",
       "translation": [
         0.23,
-        1.34,
-        -1.31
+        0.16,
+        -0.39
       ],
       "mesh": 6,
       "extras": {
@@ -334,8 +334,8 @@
       "name": "SporecasterCowlPlateR",
       "translation": [
         0.32,
-        1.26,
-        -1.01
+        0.08,
+        -0.09
       ],
       "mesh": 3,
       "rotation": [

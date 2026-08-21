@@ -95,8 +95,10 @@ def main() -> None:
 
     cowl = add_node("SporecasterCowl", mesh_ids["Cowl"], (0.0, 1.18, -0.92), scale=(1.18, 0.9, 1.3), extras={"socket_type": "sensory_cowl"})
     for side in (-1.0, 1.0):
-        add_node("SporecasterOculus%s" % ("L" if side < 0 else "R"), mesh_ids["Eye"], (side * 0.23, 1.34, -1.31), parent=cowl, extras={"socket_type": "spore_eye"})
-        add_node("SporecasterCowlPlate%s" % ("L" if side < 0 else "R"), mesh_ids["Rib"], (side * 0.32, 1.26, -1.01), rotation=(0.0, 0.0, side * 0.2), parent=cowl)
+        # Both sensory details follow the cowl shell and therefore use cowl-
+        # local offsets rather than repeating the shell's world position.
+        add_node("SporecasterOculus%s" % ("L" if side < 0 else "R"), mesh_ids["Eye"], (side * 0.23, 0.16, -0.39), parent=cowl, extras={"socket_type": "spore_eye"})
+        add_node("SporecasterCowlPlate%s" % ("L" if side < 0 else "R"), mesh_ids["Rib"], (side * 0.32, 0.08, -0.09), rotation=(0.0, 0.0, side * 0.2), parent=cowl)
 
     for index in range(7):
         angle = math.pi * (-0.82 + index * 0.273)
