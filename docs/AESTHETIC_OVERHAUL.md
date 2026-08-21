@@ -94,6 +94,10 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
   carriage and rail stops, layered sealed-door and warning-panel framing,
   service-cable clamps, and organic tendrils. The detail pass strengthens the
   containment identity without changing the research operation contract.
+- Observatory Ridge now carries dish ribs and actuator hardware, a feed collar,
+  mast collar, cabin window and console framing, service-deck posts, cable
+  anchors, and survey-light housings. The detail pass strengthens the survey
+  identity without changing the calibration operation contract.
 - the release material pass remains live for late-created robots, organic
   families, outpost upgrades and discovered-region dressing, so the visual
   language does not regress after the opening scene.

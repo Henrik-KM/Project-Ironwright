@@ -6,13 +6,23 @@
   "required_nodes": [
     "ObservatoryModel",
     "ObservatoryDish",
+    "ObservatoryDishRib0",
+    "ObservatoryDishActuator",
     "ObservatoryFeedSignal",
+    "ObservatoryFeedCollar",
     "ObservatoryMast",
+    "ObservatoryMastCollar",
     "ObservatoryConsole",
     "ObservatoryFrontConsole",
+    "ObservatoryFrontConsoleFrame",
     "ObservatoryServiceDeck",
+    "ObservatoryDeckPost0",
     "ObservatoryControlWindow0",
+    "ObservatoryControlWindowFrame0",
+    "ObservatoryControlWindowMullion0",
     "ObservatorySurveyRail0",
+    "ObservatoryCableAnchor0",
+    "ObservatorySurveyLightHousing0",
     "ProductionAssetMarker"
   ],
   "presentation_only": true

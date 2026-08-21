@@ -611,11 +611,17 @@ func _animate_region_details() -> void:
             node.rotation.x += sin(local_phase * 0.8) * 0.045
         elif node_name.begins_with("ObservatoryDish"):
             node.rotation.y += _elapsed * 0.08
+        elif node_name.begins_with("ObservatoryDishActuator"):
+            node.rotation.y += sin(local_phase * 0.72) * 0.12
+        elif node_name.begins_with("ObservatoryFeedCollar") or node_name.begins_with("ObservatorySurveyLightHousing"):
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.8) * 0.06)
         elif node_name.begins_with("ObservatoryFeedSignal"):
             var feed_pulse := 1.0 + sin(local_phase * 2.2) * 0.10
             node.scale = _motion_base_transforms[node].basis.get_scale() * feed_pulse
         elif node_name.begins_with("ObservatoryMastLight"):
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.7) * 0.08)
+        elif node_name.begins_with("ObservatoryMastCollar"):
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.45) * 0.05)
         elif node_name.begins_with("TramSignalLamp"):
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.8) * 0.08)
         elif node_name.begins_with("TramOrganicSeep"):
@@ -687,8 +693,12 @@ func _is_region_motion_name(node_name: String) -> bool:
         "CathedralBell",
         "CathedralOrganicVein",
         "ObservatoryDish",
+        "ObservatoryDishActuator",
         "ObservatoryFeedSignal",
+        "ObservatoryFeedCollar",
         "ObservatoryMastLight",
+        "ObservatoryMastCollar",
+        "ObservatorySurveyLightHousing",
         "TramSignalLamp",
         "TramOrganicSeep",
         "BuriedLabsVesselLight",
