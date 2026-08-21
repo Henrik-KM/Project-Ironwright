@@ -525,14 +525,19 @@ func _run_all() -> void:
         match species_names[index]:
             &"roofleaper":
                 _expect(_find_named(enemy_samples[index], "RoofleaperFineVeinL") != null and _find_named(enemy_samples[index], "RoofleaperFineVeinR") != null, "The Roofleaper must expose fine vascular wing detail on both membranes.")
+                _expect(_find_named(enemy_samples[index], "RoofleaperWingFrameL") != null and _find_named(enemy_samples[index], "RoofleaperWingFastenerR") != null, "The Roofleaper must expose structural wing spars and socket fasteners.")
             &"glassmoth":
                 _expect(_find_named(enemy_samples[index], "GlassmothFineVeinL0") != null and _find_named(enemy_samples[index], "GlassmothFineVeinR0") != null, "The Glassmoth must expose fine luminous wing-vein detail on both wing pairs.")
+                _expect(_find_named(enemy_samples[index], "GlassmothWingFrameL0") != null and _find_named(enemy_samples[index], "GlassmothWingFastenerR1") != null, "The Glassmoth must expose structural spars and socket fasteners on its luminous wings.")
             &"miremaw":
                 _expect(_find_named(enemy_samples[index], "MiremawGillRidgeL") != null and _find_named(enemy_samples[index], "MiremawGillRidgeR") != null, "The Miremaw must expose layered gill-ridge surface detail.")
+                _expect(_find_named(enemy_samples[index], "MiremawJawPlateL") != null and _find_named(enemy_samples[index], "MiremawGillSpineR") != null, "The Miremaw must expose jaw plating and gill spines for readable amphibious anatomy.")
             &"carrionbell":
                 _expect(_find_named(enemy_samples[index], "CarrionbellResonatorRing") != null, "The Carrion Bell must expose a raised resonator lip for its signal anatomy.")
+                _expect(_find_named(enemy_samples[index], "CarrionbellResonatorCore") != null and _find_named(enemy_samples[index], "CarrionbellBellRib0") != null, "The Carrion Bell must expose a layered resonator core and bell ribs.")
             &"rootweaver":
                 _expect(_find_named(enemy_samples[index], "RootweaverKnuckleL") != null and _find_named(enemy_samples[index], "RootweaverKnuckleR") != null, "The Rootweaver must expose joint detail where its route arms meet the body.")
+                _expect(_find_named(enemy_samples[index], "RootweaverCrownPlate0") != null and _find_named(enemy_samples[index], "RootweaverRootSpineR") != null, "The Rootweaver must expose crown plating and layered route spines.")
         if species_names[index] == &"apex":
             var apex_crown := _find_named(enemy_samples[index], "ApexCrown") as Node3D
             var apex_plate := _find_named(enemy_samples[index], "ApexCrownPlate") as Node3D

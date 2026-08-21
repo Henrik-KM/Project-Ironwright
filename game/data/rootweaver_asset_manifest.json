@@ -5,6 +5,6 @@
   "runtime_path": "res://assets/rootweaver/rootweaver.gltf",
   "quality": "authored_high_definition",
   "license": "Original Project Ironwright asset",
-  "required_nodes": ["RootweaverModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "RootweaverCrown", "RootweaverSporeFan", "RootweaverArmL", "RootweaverKnuckleL", "RootweaverKnuckleR", "ProductionAssetMarker"],
+  "required_nodes": ["RootweaverModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "RootweaverCrown", "RootweaverSporeFan", "RootweaverArmL", "RootweaverKnuckleL", "RootweaverKnuckleR", "RootweaverCrownPlate0", "RootweaverRootSpineR", "ProductionAssetMarker"],
   "animation_clips": ["Idle", "Walk", "Attack"]
 }
