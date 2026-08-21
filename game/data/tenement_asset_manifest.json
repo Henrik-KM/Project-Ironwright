@@ -6,6 +6,8 @@
   "required_nodes": [
     "TenementModel",
     "TenementBlockL",
+    "TenementFrontWindowL0_0",
+    "TenementBlockLEdgeL",
     "TenementBalcony0",
     "TenementFireEscapeLadder",
     "TenementRoofWaterTank",

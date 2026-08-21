@@ -675,6 +675,14 @@ identities. Manual channels remain finish-before-save.
   deterministic containment-light/contamination motion; live district review
   remains required.
 
+## Authored region approach-frame refinement
+
+- refined East Tenements with approach-facing service glazing and facade edge breaks;
+- refined Tram Graveyard with approach-facing carriage glazing, door hardware,
+  service lamps and stronger transit material separation;
+- both changes remain presentation-only; live review now clears the tactical
+  approach-frame readability bar without adding player-managed work.
+
 ## Hostile authored-shell socket continuity refinement
 
 - corrected the local transforms for the Cistern Apex crown plate, Broodmass

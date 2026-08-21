@@ -7,6 +7,8 @@
     "TramGraveyardModel",
     "TramCarriageA",
     "TramCarriageADoor",
+    "TramCarriageAFrontWindow0",
+    "TramCarriageAFrontDoor",
     "TramMaintenancePit",
     "TramSignalMast",
     "TramSignalLamp",

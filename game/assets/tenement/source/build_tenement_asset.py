@@ -21,11 +21,11 @@ OUTPUT_PATH = SOURCE_DIR / "tenement.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Tenement brick", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.075, 0.065, 1.0], "metallicFactor": 0.03, "roughnessFactor": 0.92}},
+        {"name": "Tenement brick", "pbrMetallicRoughness": {"baseColorFactor": [0.24, 0.095, 0.075, 1.0], "metallicFactor": 0.03, "roughnessFactor": 0.92}},
         {"name": "Tenement concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.19, 0.21, 0.21, 1.0], "metallicFactor": 0.05, "roughnessFactor": 0.88}},
         {"name": "Tenement iron", "pbrMetallicRoughness": {"baseColorFactor": [0.06, 0.09, 0.11, 1.0], "metallicFactor": 0.72, "roughnessFactor": 0.44}},
         {"name": "Tenement rust", "pbrMetallicRoughness": {"baseColorFactor": [0.52, 0.20, 0.07, 1.0], "metallicFactor": 0.38, "roughnessFactor": 0.68}, "emissiveFactor": [0.12, 0.02, 0.005]},
-        {"name": "Tenement window", "alphaMode": "BLEND", "doubleSided": True, "pbrMetallicRoughness": {"baseColorFactor": [0.12, 0.25, 0.30, 0.44], "metallicFactor": 0.10, "roughnessFactor": 0.26}, "emissiveFactor": [0.02, 0.10, 0.12]},
+        {"name": "Tenement window", "pbrMetallicRoughness": {"baseColorFactor": [0.06, 0.24, 0.30, 1.0], "metallicFactor": 0.10, "roughnessFactor": 0.26}, "emissiveFactor": [0.03, 0.18, 0.24]},
         {"name": "Tenement cloth", "pbrMetallicRoughness": {"baseColorFactor": [0.33, 0.10, 0.18, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.92}},
         {"name": "Tenement organic", "pbrMetallicRoughness": {"baseColorFactor": [0.20, 0.035, 0.13, 1.0], "metallicFactor": 0.01, "roughnessFactor": 0.86}, "emissiveFactor": [0.28, 0.01, 0.08]},
         {"name": "Tenement tank", "pbrMetallicRoughness": {"baseColorFactor": [0.17, 0.22, 0.22, 1.0], "metallicFactor": 0.64, "roughnessFactor": 0.52}},
@@ -90,9 +90,22 @@ def main() -> None:
     add_node("TenementFloor", mesh_ids["Floor"], (0.0, 0.08, 0.0), extras={"socket_type": "residential_floor"})
     add_node("TenementBlockL", mesh_ids["Block"], (-5.0, 4.5, 0.0), extras={"socket_type": "residential_block"})
     add_node("TenementBlockR", mesh_ids["Block"], (5.0, 4.5, 2.4), rotation=(0.0, -0.03, 0.0), extras={"socket_type": "residential_block"})
+    # The tactical camera approaches from positive Z. Keep the original rear
+    # windows for route continuity and add a restrained front-facing set so
+    # the residential identity reads from the shipped approach frame.
     for index, x in enumerate((-7.0, -3.0, 3.0, 7.0)):
         for level in range(3):
             add_node("TenementWindow%d_%d" % (index, level), mesh_ids["Window"], (x, 1.65 + float(level) * 2.25, -2.42), extras={"socket_type": "residential_window"})
+    for index, x in enumerate((-6.8, -3.2)):
+        for level in range(3):
+            add_node("TenementFrontWindowL%d_%d" % (index, level), mesh_ids["Window"], (x, 1.65 + float(level) * 2.25, 2.50), extras={"socket_type": "approach_window"})
+    for index, x in enumerate((3.2, 6.8)):
+        for level in range(3):
+            add_node("TenementFrontWindowR%d_%d" % (index, level), mesh_ids["Window"], (x, 1.65 + float(level) * 2.25, 4.90), extras={"socket_type": "approach_window"})
+    add_node("TenementBlockLEdgeL", mesh_ids["BlockEdge"], (-8.15, 4.5, 0.0), extras={"socket_type": "facade_edge"})
+    add_node("TenementBlockLEdgeR", mesh_ids["BlockEdge"], (-1.85, 4.5, 0.0), extras={"socket_type": "facade_edge"})
+    add_node("TenementBlockREdgeL", mesh_ids["BlockEdge"], (1.85, 4.5, 2.4), extras={"socket_type": "facade_edge"})
+    add_node("TenementBlockREdgeR", mesh_ids["BlockEdge"], (8.15, 4.5, 2.4), extras={"socket_type": "facade_edge"})
     for index, z in enumerate((-1.0, 2.0, 5.0)):
         balcony = add_node("TenementBalcony%d" % index, mesh_ids["Balcony"], (-0.1, 1.25 + float(index) * 2.25, z), extras={"socket_type": "balcony"})
         for side in (-1.0, 1.0):
@@ -107,6 +120,8 @@ def main() -> None:
         add_node("TenementHangingCloth%d" % index, mesh_ids["Cloth"], (x, y, z), rotation=(0.0, 0.04 * float(index - 1), 0.06 * float(index - 1)), extras={"socket_type": "hanging_cloth"})
     add_node("TenementServiceCable", mesh_ids["Cable"], (7.4, 7.0, 2.8), rotation=(0.0, 0.0, math.pi * 0.5), extras={"socket_type": "service_cable"})
     add_node("TenementWindowLight", mesh_ids["Light"], (-3.0, 5.25, -2.50), extras={"socket_type": "window_light"})
+    add_node("TenementFrontWindowLightL", mesh_ids["Light"], (-3.0, 5.25, 2.50), extras={"socket_type": "approach_window_light"})
+    add_node("TenementFrontWindowLightR", mesh_ids["Light"], (6.8, 5.25, 4.90), extras={"socket_type": "approach_window_light"})
     for index, (x, z, scale) in enumerate(((-7.2, 5.2, (1.1, 0.8, 1.0)), (6.8, -3.9, (0.82, 0.65, 1.25)))):
         add_node("TenementOrganicCreep%d" % index, mesh_ids["Creep"], (x, 0.50, z), scale=scale, extras={"socket_type": "organic_creep"})
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "tenement.east_blocks.v1", "source": "original_procedural_mesh_builder"})
@@ -123,7 +138,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "tenement.east_blocks.v1",
-            "required_nodes": ["TenementModel", "TenementBlockL", "TenementBalcony0", "TenementFireEscapeLadder", "TenementRoofWaterTank", "TenementOrganicCreep0", "ProductionAssetMarker"],
+            "required_nodes": ["TenementModel", "TenementBlockL", "TenementFrontWindowL0_0", "TenementBlockLEdgeL", "TenementBalcony0", "TenementFireEscapeLadder", "TenementRoofWaterTank", "TenementOrganicCreep0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
