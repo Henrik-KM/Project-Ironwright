@@ -142,6 +142,22 @@ def main() -> None:
             ("SkitterlingMandibleL", "translation", [0.0, 0.2, 0.4], [0.0, 0.42, -1.02, 0.0, 0.42, -1.16, 0.0, 0.42, -1.02]),
             ("Torso", "rotation", [0.0, 0.2, 0.4], quat((0.04, 0.0, 0.0)) + quat((-0.1, 0.0, 0.0)) + quat((0.04, 0.0, 0.0))),
         ]),
+        animation("Feed", [
+            ("SkitterlingModel", "translation", [0.0, 0.3, 0.6], [0.0, 0.0, 0.0, 0.0, -0.12, -0.08, 0.0, 0.0, 0.0]),
+            ("Torso", "rotation", [0.0, 0.3, 0.6], quat((0.02, 0.0, 0.0)) + quat((0.16, 0.0, 0.0)) + quat((0.02, 0.0, 0.0))),
+        ]),
+        animation("Nest", [
+            ("SkitterlingModel", "translation", [0.0, 0.5, 1.0], [0.0, 0.0, 0.0, 0.0, 0.08, 0.0, 0.0, 0.0, 0.0]),
+            ("Torso", "rotation", [0.0, 0.5, 1.0], quat((0.025, 0.0, 0.0)) + quat((-0.025, 0.0, 0.0)) + quat((0.025, 0.0, 0.0))),
+        ]),
+        animation("Retreat", [
+            ("SkitterlingLegL0", "rotation", [0.0, 0.18, 0.36], quat((0.28, 0.0, 0.0)) + quat((-0.16, 0.0, 0.0)) + quat((0.28, 0.0, 0.0))),
+            ("Torso", "rotation", [0.0, 0.18, 0.36], quat((0.12, 0.0, 0.0)) + quat((0.22, 0.0, 0.0)) + quat((0.12, 0.0, 0.0))),
+        ]),
+        animation("Death", [
+            ("SkitterlingModel", "rotation", [0.0, 0.28, 0.64], quat((0.0, 0.0, 0.0)) + quat((0.34, 0.08, 0.2)) + quat((0.78, 0.16, 0.42))),
+            ("Torso", "rotation", [0.0, 0.28, 0.64], quat((0.0, 0.0, 0.0)) + quat((0.18, 0.0, 0.0)) + quat((0.46, 0.0, 0.0))),
+        ]),
     ]
     document = {
         "asset": {"version": "2.0", "generator": "Project Ironwright original Skitterling asset builder"},
@@ -157,7 +173,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "skitterling.scavenger.v1",
             "required_nodes": ["SkitterlingModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SkitterlingCarapace0", "SkitterlingCarapaceCap0", "SkitterlingAntennaL", "SkitterlingAntennaJointL", "SkitterlingMandibleL", "SkitterlingMandiblePlateL", "SkitterlingSensoryFan0", "ProductionAssetMarker"],
-            "animation_clips": ["Idle", "Walk", "Attack"],
+            "animation_clips": ["Idle", "Walk", "Attack", "Feed", "Nest", "Retreat", "Death"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

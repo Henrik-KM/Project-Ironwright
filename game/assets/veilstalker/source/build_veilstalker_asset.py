@@ -146,6 +146,22 @@ def main() -> None:
             ("VeilstalkerVeil", "rotation", [0.0, 0.34, 0.68], quat((0.0, 0.0, -0.16)) + quat((0.0, 0.0, 0.12)) + quat((0.0, 0.0, -0.16))),
             ("Torso", "rotation", [0.0, 0.34, 0.68], quat((0.04, 0.0, 0.0)) + quat((-0.1, 0.0, 0.0)) + quat((0.04, 0.0, 0.0))),
         ]),
+        animation("Feed", [
+            ("VeilstalkerModel", "translation", [0.0, 0.3, 0.6], [0.0, 0.0, 0.0, 0.0, -0.12, -0.08, 0.0, 0.0, 0.0]),
+            ("Torso", "rotation", [0.0, 0.3, 0.6], quat((0.02, 0.0, 0.0)) + quat((0.16, 0.0, 0.0)) + quat((0.02, 0.0, 0.0))),
+        ]),
+        animation("Nest", [
+            ("VeilstalkerModel", "translation", [0.0, 0.5, 1.0], [0.0, 0.0, 0.0, 0.0, 0.08, 0.0, 0.0, 0.0, 0.0]),
+            ("Torso", "rotation", [0.0, 0.5, 1.0], quat((0.025, 0.0, 0.0)) + quat((-0.025, 0.0, 0.0)) + quat((0.025, 0.0, 0.0))),
+        ]),
+        animation("Retreat", [
+            ("TorsoSegment0", "rotation", [0.0, 0.22, 0.44], quat((0.28, 0.0, 0.0)) + quat((-0.16, 0.0, 0.0)) + quat((0.28, 0.0, 0.0))),
+            ("Torso", "rotation", [0.0, 0.22, 0.44], quat((0.12, 0.0, 0.0)) + quat((0.22, 0.0, 0.0)) + quat((0.12, 0.0, 0.0))),
+        ]),
+        animation("Death", [
+            ("VeilstalkerModel", "rotation", [0.0, 0.28, 0.64], quat((0.0, 0.0, 0.0)) + quat((0.34, 0.08, 0.2)) + quat((0.78, 0.16, 0.42))),
+            ("Torso", "rotation", [0.0, 0.28, 0.64], quat((0.0, 0.0, 0.0)) + quat((0.18, 0.0, 0.0)) + quat((0.46, 0.0, 0.0))),
+        ]),
     ]
 
     document = {
@@ -162,7 +178,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "veilstalker.predator.v1",
             "required_nodes": ["VeilstalkerModel", "Torso", "TorsoCore", "VeilstalkerCowl", "VeilstalkerVeil", "VeilstalkerTendril", "VeilstalkerThoraxDorsalRib", "ProductionAssetMarker"],
-            "animation_clips": ["Idle", "Walk", "Attack"],
+            "animation_clips": ["Idle", "Walk", "Attack", "Feed", "Nest", "Retreat", "Death"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

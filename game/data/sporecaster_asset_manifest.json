@@ -6,5 +6,5 @@
   "quality": "authored_high_definition",
   "license": "Original Project Ironwright asset",
   "required_nodes": ["SporecasterModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SporecasterGillFan0", "SporecasterGillRib0", "SporecasterSac0", "SporecasterSacCap0", "SporecasterStem0", "SporecasterOculusL", "ProductionAssetMarker"],
-  "animation_clips": ["Idle", "Walk", "Attack"]
+  "animation_clips": ["Idle", "Walk", "Attack", "Feed", "Nest", "Retreat", "Death"]
 }

@@ -187,6 +187,8 @@ ACTOR_ANIMATION_CHANNEL_FLOORS = {
     "rootweaver": 2,
 }
 
+ORGANIC_ANIMATION_CLIPS = ["Idle", "Walk", "Attack", "Feed", "Nest", "Retreat", "Death"]
+
 AUTHORED_REGION_ASSETS = {
     "riverworks": {
         "asset_id": "riverworks.landmark.v1",
@@ -546,7 +548,7 @@ def validate_authored_organic_assets() -> None:
             if required not in node_names:
                 fail(f"{family} glTF is missing required node: {required}")
         animation_names = {str(animation.get("name")) for animation in gltf.get("animations", [])}
-        for required in manifest.get("animation_clips", []):
+        for required in ORGANIC_ANIMATION_CLIPS:
             if required not in animation_names:
                 fail(f"{family} glTF is missing required animation clip: {required}")
 

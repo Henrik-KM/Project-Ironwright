@@ -231,6 +231,17 @@ identities. Manual channels remain finish-before-save.
 - added executable coverage for the imported animation player and all five
   required presentation clips.
 
+## Focused organic life animation milestone
+
+- extended all twelve organic family source builders with authored Feed, Nest,
+  Retreat and Death clips alongside Idle, Walk and Attack;
+- mapped feeding, nest guarding, tiered retreat decisions and kill signals
+  through the shared runtime bridge without adding a new player-facing task;
+- kept gameplay death immediate while retaining a bounded corpse presentation
+  window so the authored death beat can be seen before cleanup;
+- added manifest, channel-breadth and native runtime coverage for every
+  ecological presentation state, while preserving procedural secondary motion.
+
 ## Focused robot family presentation milestone
 
 - added layered chassis, armour, optic, joint and service-cable details shared
