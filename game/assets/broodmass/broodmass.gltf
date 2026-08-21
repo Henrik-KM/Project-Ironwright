@@ -475,8 +475,8 @@
       "name": "BroodmassMawPlate",
       "translation": [
         0.0,
-        1.4,
-        -1.54
+        0.24,
+        -0.02
       ],
       "mesh": 3,
       "scale": [
@@ -489,8 +489,8 @@
       "name": "BroodmassMawHookL",
       "translation": [
         -0.34,
-        0.74,
-        -1.76
+        -0.42,
+        -0.24
       ],
       "mesh": 8,
       "rotation": [
@@ -504,8 +504,8 @@
       "name": "BroodmassMawHookR",
       "translation": [
         0.34,
-        0.74,
-        -1.76
+        -0.42,
+        -0.24
       ],
       "mesh": 8,
       "rotation": [

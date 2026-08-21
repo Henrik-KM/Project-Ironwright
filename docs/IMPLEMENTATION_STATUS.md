@@ -675,6 +675,15 @@ identities. Manual channels remain finish-before-save.
   deterministic containment-light/contamination motion; live district review
   remains required.
 
+## Hostile authored-shell socket continuity refinement
+
+- corrected the local transforms for the Cistern Apex crown plate, Broodmass
+  maw hardware and Sporecaster sensory-cowl details so layered hostile shells
+  remain attached under their parent assemblies;
+- added native aesthetic regression coverage for those three hostile-family
+  parent-child relationships without changing enemy behavior, collision or
+  progression.
+
 ## Focused Municipal Glasshouse authored-space milestone
 
 - added the original high-definition `glasshouse.municipal.v1` shell with a

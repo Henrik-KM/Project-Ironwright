@@ -99,9 +99,11 @@ def main() -> None:
         add_node("BroodmassTendon%s" % suffix, mesh_ids["Tendon"], (side * 0.45, 1.0, -1.15), rotation=(0.7, 0.0, side * 0.12))
 
     maw = add_node("BroodmassMaw", mesh_ids["Maw"], (0.0, 1.16, -1.52), scale=(1.28, 0.75, 1.4), extras={"socket_type": "brood_maw"})
-    add_node("BroodmassMawPlate", mesh_ids["Rib"], (0.0, 1.4, -1.54), scale=(0.86, 0.82, 1.1), parent=maw)
+    # Maw hardware is parented to the maw shell; use local offsets so it does
+    # not double-apply the shell's world-space position.
+    add_node("BroodmassMawPlate", mesh_ids["Rib"], (0.0, 0.24, -0.02), scale=(0.86, 0.82, 1.1), parent=maw)
     for side in (-1.0, 1.0):
-        add_node("BroodmassMawHook%s" % ("L" if side < 0 else "R"), mesh_ids["Hook"], (side * 0.34, 0.74, -1.76), rotation=(0.78, 0.0, side * 0.15), parent=maw)
+        add_node("BroodmassMawHook%s" % ("L" if side < 0 else "R"), mesh_ids["Hook"], (side * 0.34, -0.42, -0.24), rotation=(0.78, 0.0, side * 0.15), parent=maw)
 
     for index in range(7):
         x = -1.1 + index * 0.367

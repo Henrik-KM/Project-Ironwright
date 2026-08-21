@@ -8,6 +8,15 @@
   parent structures.
 - Added native aesthetic regression checks for those spatial relationships.
 
+## Pre-alpha hostile shell socket continuity
+
+- Corrected local authored offsets for the Cistern Apex crown plate,
+  Broodmass maw hardware and Sporecaster sensory-cowl details so those
+  high-definition hostile silhouettes remain coherent under their parent
+  shells.
+- Added organic-family regression checks for the three parent-child socket
+  contracts.
+
 ## Pre-alpha ecology progression
 
 ### Population-driven enemy escalation
