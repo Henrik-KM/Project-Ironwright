@@ -46,13 +46,20 @@ def main() -> None:
         "Balcony": mesh("TenementBalcony", add_box(builder, (3.0, 0.20, 1.35), iron)),
         "Rail": mesh("TenementRail", add_cylinder(builder, 0.07, 3.0, rust, 12)),
         "Ladder": mesh("TenementLadder", add_cylinder(builder, 0.08, 8.8, iron, 12)),
-        "Tank": mesh("TenementWaterTank", add_cylinder(builder, 1.15, 2.2, tank, 20)),
-        "TankCap": mesh("TenementTankCap", add_cylinder(builder, 1.28, 0.16, rust, 20)),
+        "Tank": mesh("TenementWaterTank", add_cylinder(builder, 1.15, 2.2, tank, 24)),
+        "TankCap": mesh("TenementTankCap", add_cylinder(builder, 1.28, 0.16, rust, 24)),
         "Cloth": mesh("TenementCloth", add_box(builder, (1.35, 1.15, 0.06), cloth)),
-        "Creep": mesh("TenementOrganicCreep", add_uv_sphere(builder, 0.52, organic, 14, 20)),
-        "Light": mesh("TenementWindowLight", add_uv_sphere(builder, 0.13, rust, 12, 18)),
+        "Creep": mesh("TenementOrganicCreep", add_uv_sphere(builder, 0.52, organic, 18, 28)),
+        "Light": mesh("TenementWindowLight", add_uv_sphere(builder, 0.13, rust, 16, 24)),
         "Cable": mesh("TenementCable", add_cylinder(builder, 0.045, 5.2, rust, 10)),
         "Marker": mesh("TenementMarker", add_box(builder, (0.7, 0.08, 0.7), rust)),
+        "WindowLintel": mesh("TenementWindowLintel", add_box(builder, (1.22, 0.10, 0.14), iron)),
+        "WindowSill": mesh("TenementWindowSill", add_box(builder, (1.28, 0.10, 0.18), rust)),
+        "BalconyBrace": mesh("TenementBalconyBrace", add_box(builder, (0.14, 1.05, 0.14), rust)),
+        "LaundryLine": mesh("TenementLaundryLine", add_cylinder(builder, 0.03, 2.4, iron, 10)),
+        "TankValve": mesh("TenementTankValve", add_cylinder(builder, 0.12, 0.18, rust, 16)),
+        "CreepTendril": mesh("TenementCreepTendril", add_cylinder(builder, 0.045, 0.78, organic, 14)),
+        "LightHousing": mesh("TenementLightHousing", add_cylinder(builder, 0.10, 0.14, iron, 16)),
     }
 
     nodes: list[dict] = [{
@@ -102,6 +109,16 @@ def main() -> None:
     for index, x in enumerate((3.2, 6.8)):
         for level in range(3):
             add_node("TenementFrontWindowR%d_%d" % (index, level), mesh_ids["Window"], (x, 1.65 + float(level) * 2.25, 4.90), extras={"socket_type": "approach_window"})
+    for index, x in enumerate((-6.8, -3.2)):
+        for level in range(3):
+            window_y = 1.65 + float(level) * 2.25
+            add_node("TenementFrontWindowLintelL%d_%d" % (index, level), mesh_ids["WindowLintel"], (x, window_y + 0.68, 2.58), extras={"surface": "window_lintel"})
+            add_node("TenementFrontWindowSillL%d_%d" % (index, level), mesh_ids["WindowSill"], (x, window_y - 0.68, 2.58), extras={"surface": "window_sill"})
+    for index, x in enumerate((3.2, 6.8)):
+        for level in range(3):
+            window_y = 1.65 + float(level) * 2.25
+            add_node("TenementFrontWindowLintelR%d_%d" % (index, level), mesh_ids["WindowLintel"], (x, window_y + 0.68, 4.98), extras={"surface": "window_lintel"})
+            add_node("TenementFrontWindowSillR%d_%d" % (index, level), mesh_ids["WindowSill"], (x, window_y - 0.68, 4.98), extras={"surface": "window_sill"})
     add_node("TenementBlockLEdgeL", mesh_ids["BlockEdge"], (-8.15, 4.5, 0.0), extras={"socket_type": "facade_edge"})
     add_node("TenementBlockLEdgeR", mesh_ids["BlockEdge"], (-1.85, 4.5, 0.0), extras={"socket_type": "facade_edge"})
     add_node("TenementBlockREdgeL", mesh_ids["BlockEdge"], (1.85, 4.5, 2.4), extras={"socket_type": "facade_edge"})
@@ -110,20 +127,27 @@ def main() -> None:
         balcony = add_node("TenementBalcony%d" % index, mesh_ids["Balcony"], (-0.1, 1.25 + float(index) * 2.25, z), extras={"socket_type": "balcony"})
         for side in (-1.0, 1.0):
             add_node("TenementBalconyRail%d_%s" % (index, "L" if side < 0 else "R"), mesh_ids["Rail"], (side * 1.35, 0.85, 0.0), rotation=(math.pi * 0.5, 0.0, 0.0), parent=balcony)
+            add_node("TenementBalconyBrace%d_%s" % (index, "L" if side < 0 else "R"), mesh_ids["BalconyBrace"], (side * 0.92, -0.32, 0.42), rotation=(0.0, 0.0, side * 0.24), extras={"surface": "balcony_brace"}, parent=balcony)
     escape = add_node("TenementFireEscapeLadder", mesh_ids["Ladder"], (-8.3, 4.4, 3.2), rotation=(0.0, 0.0, 0.0), extras={"socket_type": "fire_escape"})
     # The rail is a child of the ladder; use the ladder-local height and depth
     # so the route signature stays coherent under landmark transforms.
     add_node("TenementFireEscapeRail", mesh_ids["Rail"], (0.0, 0.0, 1.5), rotation=(math.pi * 0.5, 0.0, 0.0), parent=escape)
     add_node("TenementRoofWaterTank", mesh_ids["Tank"], (5.8, 10.4, 2.6), extras={"socket_type": "roof_water_tank"})
     add_node("TenementRoofWaterTankCap", mesh_ids["TankCap"], (5.8, 11.55, 2.6), parent=0)
+    add_node("TenementTankValve", mesh_ids["TankValve"], (5.8, 10.4, 1.35), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "tank_service_valve"})
     for index, (x, y, z) in enumerate(((-4.2, 2.35, 3.9), (0.8, 4.55, 6.0), (5.1, 1.4, -2.9))):
         add_node("TenementHangingCloth%d" % index, mesh_ids["Cloth"], (x, y, z), rotation=(0.0, 0.04 * float(index - 1), 0.06 * float(index - 1)), extras={"socket_type": "hanging_cloth"})
+        add_node("TenementLaundryLine%d" % index, mesh_ids["LaundryLine"], (x, y + 0.68, z), rotation=(0.0, 0.0, math.pi * 0.5), extras={"surface": "laundry_line"})
     add_node("TenementServiceCable", mesh_ids["Cable"], (7.4, 7.0, 2.8), rotation=(0.0, 0.0, math.pi * 0.5), extras={"socket_type": "service_cable"})
     add_node("TenementWindowLight", mesh_ids["Light"], (-3.0, 5.25, -2.50), extras={"socket_type": "window_light"})
     add_node("TenementFrontWindowLightL", mesh_ids["Light"], (-3.0, 5.25, 2.50), extras={"socket_type": "approach_window_light"})
     add_node("TenementFrontWindowLightR", mesh_ids["Light"], (6.8, 5.25, 4.90), extras={"socket_type": "approach_window_light"})
+    add_node("TenementLightHousingL", mesh_ids["LightHousing"], (-3.0, 5.25, 2.58), extras={"surface": "window_light_housing"})
+    add_node("TenementLightHousingR", mesh_ids["LightHousing"], (6.8, 5.25, 4.98), extras={"surface": "window_light_housing"})
     for index, (x, z, scale) in enumerate(((-7.2, 5.2, (1.1, 0.8, 1.0)), (6.8, -3.9, (0.82, 0.65, 1.25)))):
         add_node("TenementOrganicCreep%d" % index, mesh_ids["Creep"], (x, 0.50, z), scale=scale, extras={"socket_type": "organic_creep"})
+        for tendril_index, tendril_x in enumerate((-0.22, 0.16)):
+            add_node("TenementOrganicTendril%d_%d" % (index, tendril_index), mesh_ids["CreepTendril"], (x + tendril_x, 0.82, z), rotation=(0.0, 0.0, -0.24 + float(tendril_index) * 0.48), extras={"surface": "organic_tendril"})
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "tenement.east_blocks.v1", "source": "original_procedural_mesh_builder"})
 
     document = {
@@ -138,7 +162,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "tenement.east_blocks.v1",
-            "required_nodes": ["TenementModel", "TenementBlockL", "TenementFrontWindowL0_0", "TenementBlockLEdgeL", "TenementBalcony0", "TenementFireEscapeLadder", "TenementRoofWaterTank", "TenementOrganicCreep0", "ProductionAssetMarker"],
+            "required_nodes": ["TenementModel", "TenementBlockL", "TenementFrontWindowL0_0", "TenementFrontWindowLintelL0_0", "TenementFrontWindowSillL0_0", "TenementBlockLEdgeL", "TenementBalcony0", "TenementBalconyBrace0_L", "TenementFireEscapeLadder", "TenementRoofWaterTank", "TenementTankValve", "TenementLaundryLine0", "TenementLightHousingL", "TenementOrganicCreep0", "TenementOrganicTendril0_0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
