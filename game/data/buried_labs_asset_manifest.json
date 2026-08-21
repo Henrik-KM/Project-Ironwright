@@ -8,9 +8,18 @@
     "BuriedLabsContainmentHall",
     "BuriedLabsVessel0",
     "BuriedLabsVesselCore0",
+    "BuriedLabsVesselPort0",
+    "BuriedLabsVesselClampL0",
     "BuriedLabsTransferRail",
+    "BuriedLabsTransferCarriage",
+    "BuriedLabsTransferRailStopL",
     "BuriedLabsContainmentDoor",
+    "BuriedLabsContainmentDoorJambL",
+    "BuriedLabsContainmentDoorLintel",
+    "BuriedLabsWarningPanelFrame",
+    "BuriedLabsCableClamp0",
     "BuriedLabsOrganicSeep0",
+    "BuriedLabsOrganicTendril0_0",
     "ProductionAssetMarker"
   ],
   "presentation_only": true

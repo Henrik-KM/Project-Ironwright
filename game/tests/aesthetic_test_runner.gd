@@ -261,16 +261,29 @@ func _run_all() -> void:
                 _expect(landmark.find_child("LabContainmentVessel", true, false) != null, "Buried Laboratories must expose readable containment vessels.")
                 _expect(landmark.find_child("LabTransferRail", true, false) != null, "Buried Laboratories must expose an overhead transfer rail.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/BuriedLabsAuthoredModel") != null, "Buried Laboratories must expose its authored containment-hall landmark shell.")
+                _expect(landmark.find_child("BuriedLabsVesselPort0", true, false) != null and landmark.find_child("BuriedLabsVesselClampL0", true, false) != null, "Buried Laboratories must expose vessel service ports and clamps.")
+                _expect(landmark.find_child("BuriedLabsTransferCarriage", true, false) != null and landmark.find_child("BuriedLabsTransferRailStopL", true, false) != null, "Buried Laboratories must expose transfer-carriage and rail-stop detail.")
+                _expect(landmark.find_child("BuriedLabsContainmentDoorJambL", true, false) != null and landmark.find_child("BuriedLabsContainmentDoorLintel", true, false) != null and landmark.find_child("BuriedLabsWarningPanelFrame", true, false) != null, "Buried Laboratories must expose layered sealed-door and warning-panel framing.")
+                _expect(landmark.find_child("BuriedLabsCableClamp0", true, false) != null and landmark.find_child("BuriedLabsOrganicTendril0_0", true, false) != null, "Buried Laboratories must expose service-cable and organic detail.")
                 var labs_light := landmark.find_child("BuriedLabsVesselLight0", true, false) as Node3D
                 var labs_seep := landmark.find_child("BuriedLabsOrganicSeep0", true, false) as Node3D
-                _expect(labs_light != null and labs_seep != null, "Buried Laboratories must expose named containment-light and organic-contamination motion sockets.")
-                if labs_light != null and labs_seep != null:
+                var labs_port := landmark.find_child("BuriedLabsVesselPort0", true, false) as Node3D
+                var labs_carriage := landmark.find_child("BuriedLabsTransferCarriage", true, false) as Node3D
+                var labs_tendril := landmark.find_child("BuriedLabsOrganicTendril0_0", true, false) as Node3D
+                _expect(labs_light != null and labs_seep != null and labs_port != null and labs_carriage != null and labs_tendril != null, "Buried Laboratories must expose named light, port, carriage, seep and tendril motion sockets.")
+                if labs_light != null and labs_seep != null and labs_port != null and labs_carriage != null and labs_tendril != null:
                     landmark.set_presentation_detail_level(0)
                     var labs_light_before := labs_light.scale
                     var labs_seep_before := labs_seep.scale
+                    var labs_port_before := labs_port.rotation
+                    var labs_carriage_before := labs_carriage.position
+                    var labs_tendril_before := labs_tendril.rotation
                     landmark.call("_process", 0.5)
                     _expect(not labs_light.scale.is_equal_approx(labs_light_before), "Buried Laboratories containment light must pulse as a restrained presentation cue.")
                     _expect(not labs_seep.scale.is_equal_approx(labs_seep_before), "Buried Laboratories organic contamination must carry deterministic presentation motion.")
+                    _expect(not labs_port.rotation.is_equal_approx(labs_port_before), "Buried Laboratories vessel port must carry restrained service motion.")
+                    _expect(not labs_carriage.position.is_equal_approx(labs_carriage_before), "Buried Laboratories transfer carriage must carry restrained mechanical motion.")
+                    _expect(not labs_tendril.rotation.is_equal_approx(labs_tendril_before), "Buried Laboratories organic tendril must carry deterministic presentation motion.")
             if landmark.region_kind == &"tenement":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing/TenementVerticalLifeDetails") != null, "East Tenements must expose an authored vertical residential vignette.")
                 _expect(landmark.find_child("TenementFireEscapeLadder", true, false) != null, "East Tenements must expose a readable fire-escape route signature.")
