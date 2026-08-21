@@ -1230,6 +1230,18 @@ environmentally distinct without changing ecology, routing or player workload.
 
 ## Commercial work still remaining
 
+## Focused machine-role signature presentation milestone
+
+- added a third bounded high-definition detail pass to the Warden, Scrapper,
+  Pathfinder and Engineer shells;
+- gave each role a distinct maintained hardware signature: thermal fins and
+  optic/breech protection, hopper lip and recovery drums, mast/dish bracing and
+  signal hardware, or construction cable/welding/clamp tooling;
+- kept the layer presentation-only with no new collision, AI, resource or
+  per-machine maintenance state;
+- added aesthetic coverage for every new role-signature assembly and retained
+  the requirement for live tactical-camera review.
+
 ## Focused command-map chrome milestone
 
 - made the live command-map banner use explicit viewport-safe horizontal
