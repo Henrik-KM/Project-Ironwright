@@ -1154,6 +1154,13 @@ final retail art, animation and external visual approval are still required.
 
 ## Commercial work still remaining
 
+## Focused civic-infrastructure approach milestone
+
+- added a bounded `HighDefinitionCivicInfrastructure` layer to the central procedural city;
+- added storm-drain junctions, layered utility risers, municipal signal masts and restrained sagging overhead service cables;
+- kept the layer presentation-only so it does not add collision, route ownership, utility simulation or recurring player maintenance;
+- added native aesthetic coverage for infrastructure roots, representative hardware and cable continuity.
+
 ## Focused tier-signal anatomy presentation milestone
 
 - added a shared high-definition anatomy layer to every tiered organic actor;
