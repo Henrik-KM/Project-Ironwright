@@ -306,19 +306,33 @@ def main() -> None:
         return {"name": name, "samplers": samplers, "channels": channel_entries}
 
     animations = [
-        animation("Idle", [("MechromancerModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.012, 0.0, 0.0, 0.0, 0.0], "LINEAR")]),
+        animation("Idle", [
+            ("MechromancerModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.012, 0.0, 0.0, 0.0, 0.0], "LINEAR"),
+            ("Hood", "translation", [0.0, 0.8, 1.6], [0.0, 1.88, 0.03, 0.0, 1.892, 0.03, 0.0, 1.88, 0.03], "LINEAR"),
+            ("FieldPack", "translation", [0.0, 0.8, 1.6], [0.0, 1.20, 0.24, 0.0, 1.21, 0.24, 0.0, 1.20, 0.24], "LINEAR"),
+        ]),
         animation("Walk", [
             ("LeftLeg", "rotation", [0.0, 0.22, 0.44], quat((0.24, 0.0, 0.0)) + quat((-0.24, 0.0, 0.0)) + quat((0.24, 0.0, 0.0)), "LINEAR"),
             ("RightLeg", "rotation", [0.0, 0.22, 0.44], quat((-0.24, 0.0, 0.0)) + quat((0.24, 0.0, 0.0)) + quat((-0.24, 0.0, 0.0)), "LINEAR"),
             ("CoatTailLeft", "rotation", [0.0, 0.22, 0.44], quat((0.08, 0.0, -0.045)) + quat((0.22, 0.0, -0.045)) + quat((0.08, 0.0, -0.045)), "LINEAR"),
             ("CoatTailRight", "rotation", [0.0, 0.22, 0.44], quat((0.08, 0.0, 0.045)) + quat((0.22, 0.0, 0.045)) + quat((0.08, 0.0, 0.045)), "LINEAR"),
+            ("FieldPack", "translation", [0.0, 0.22, 0.44], [0.0, 1.20, 0.24, 0.0, 1.25, 0.24, 0.0, 1.20, 0.24], "LINEAR"),
         ]),
-        animation("Fire", [("WeakPistol", "translation", [0.0, 0.08, 0.18], [0.48, 1.12, -0.27, 0.48, 1.12, -0.35, 0.48, 1.12, -0.27], "LINEAR")]),
+        animation("Fire", [
+            ("WeakPistol", "translation", [0.0, 0.08, 0.18], [0.48, 1.12, -0.27, 0.48, 1.12, -0.35, 0.48, 1.12, -0.27], "LINEAR"),
+            ("RightArm", "rotation", [0.0, 0.08, 0.18], quat((0.0, 0.0, 0.10)) + quat((0.0, 0.0, 0.04)) + quat((0.0, 0.0, 0.10)), "LINEAR"),
+            ("ShoulderLamp", "rotation", [0.0, 0.08, 0.18], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.08, 0.0)) + quat((0.0, 0.0, 0.0)), "LINEAR"),
+        ]),
         animation("Work", [
             ("LeftArm", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, -0.10)) + quat((-0.65, 0.0, -0.25)) + quat((0.0, 0.0, -0.10)), "LINEAR"),
             ("RightArm", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 0.10)) + quat((-0.72, 0.0, 0.25)) + quat((0.0, 0.0, 0.10)), "LINEAR"),
+            ("FieldTool", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, -0.16)) + quat((0.0, 0.0, -0.34)) + quat((0.0, 0.0, -0.16)), "LINEAR"),
         ]),
-        animation("Hit", [("MechromancerModel", "rotation", [0.0, 0.08, 0.24], quat((0.0, 0.0, 0.0)) + quat((0.10, 0.0, 0.05)) + quat((0.0, 0.0, 0.0)), "LINEAR")]),
+        animation("Hit", [
+            ("MechromancerModel", "rotation", [0.0, 0.08, 0.24], quat((0.0, 0.0, 0.0)) + quat((0.10, 0.0, 0.05)) + quat((0.0, 0.0, 0.0)), "LINEAR"),
+            ("FieldPack", "rotation", [0.0, 0.08, 0.24], quat((0.0, 0.0, 0.0)) + quat((0.0, -0.08, 0.0)) + quat((0.0, 0.0, 0.0)), "LINEAR"),
+            ("CoatTailLeft", "rotation", [0.0, 0.08, 0.24], quat((0.0, 0.0, -0.045)) + quat((0.10, 0.0, -0.045)) + quat((0.0, 0.0, -0.045)), "LINEAR"),
+        ]),
     ]
 
     document = {

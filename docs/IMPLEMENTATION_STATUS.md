@@ -167,6 +167,17 @@ identities. Manual channels remain finish-before-save.
 - added an executable channel-breadth gate so a future export cannot silently
   collapse a production actor clip back to a single sparse track.
 
+## Focused Mechromancer authored animation export milestone
+
+- corrected the editable Blender source to export shared-node actions through
+  per-action NLA strips, preserving every authored channel instead of silently
+  retaining only the last action assigned to a shared object;
+- regenerated the canonical Mechromancer blend, glTF, buffer and portrait;
+- expanded the player clips with body/hood/pack breathing, movement carry,
+  pistol recoil, shoulder reaction, field-tool work and hit response channels;
+- extended the native and export validators so the player’s production asset
+  cannot regress to sparse single-channel clips.
+
 ## Focused endgame protocol readability milestone
 
 - reduced active protocol lattice emission and Heartforge core-light energy so the final crisis preserves tactical silhouettes and readable machine-company staging;

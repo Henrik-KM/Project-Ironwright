@@ -527,18 +527,22 @@ def multi_action(
 ) -> bpy.types.Action:
     result = bpy.data.actions.new(name)
     layer = result.layers.new("Layer")
-    strip = layer.strips.new(type="KEYFRAME")
+    action_strip = layer.strips.new(type="KEYFRAME")
     for obj, curves in bindings:
         slot = result.slots.new("OBJECT", obj.name)
-        channelbag = strip.channelbag(slot, ensure=True)
+        channelbag = action_strip.channelbag(slot, ensure=True)
         for data_path, index, keys in curves:
             fcurve = channelbag.fcurves.new(data_path=data_path, index=index)
             for frame, value in keys:
                 point = fcurve.keyframe_points.insert(frame, value)
                 point.interpolation = "LINEAR"
         obj.animation_data_create()
-        obj.animation_data.action = result
-        obj.animation_data.action_slot = slot
+        track = obj.animation_data.nla_tracks.new()
+        track.name = f"Authored_{name}_{obj.name}"
+        nla_strip = track.strips.new(name, int(result.frame_start), result)
+        nla_strip.action_slot = slot
+        nla_strip.action_frame_start = result.frame_start
+        nla_strip.action_frame_end = result.frame_end
     return result
 
 

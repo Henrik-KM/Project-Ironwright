@@ -24,6 +24,12 @@ prototype clip library; final production rigs, shared hit libraries and broader
 feeding, nesting, retreat and death animation still remain on the commercial
 gate.
 
+The Mechromancer now uses the same export-breadth contract. Its authored Idle,
+Walk, Fire, Work and Hit clips retain multiple body, equipment, recoil or
+interaction channels in the canonical Blender-to-glTF path. This improves the
+primary player silhouette without claiming that final authored hit libraries,
+upgrade cinematics or full progression-state rigs are complete.
+
 ## Immediate failures identified from the first full-game screenshot review
 
 - Giant screen-fixed world labels can obscure most of the playfield.

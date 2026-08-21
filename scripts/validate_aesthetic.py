@@ -167,6 +167,7 @@ ACTOR_GEOMETRY_FLOORS = {
 }
 
 ACTOR_ANIMATION_CHANNEL_FLOORS = {
+    "mechromancer": 2,
     "bulwark": 2,
     "warden": 2,
     "scrapper": 2,
