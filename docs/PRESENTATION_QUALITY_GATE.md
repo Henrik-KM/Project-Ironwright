@@ -201,6 +201,11 @@ front sensor visor. These details remain presentation-only and preserve the
 small-light hierarchy.
 The foreground route markers now use the same amber language promised by the
 opening objective, keeping them distinct from cyan Heartforge service hardware.
+Discovered outpost sites now use a compact high-definition survey marker with a
+layered foundation, anchor hardware, braced mast, service/identity panels and a
+restrained cyan beacon pulse. This keeps the autonomous-site choice legible in
+the world without turning discovery into a management dashboard or changing
+the fixed-site autonomy contract.
 
 Automated presence tests only prove the slice exists technically. Actual screenshot/gameplay review decides whether it clears the visual bar.
 

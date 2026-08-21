@@ -75,6 +75,25 @@ func _run_all() -> void:
     _expect(salvage_sample.find_child("WreckServicePanel", true, false) != null and salvage_sample.find_child("SalvageAxle00", true, false) != null, "The salvage wreck must expose authored service and axle anatomy.")
     _expect(salvage_sample.find_child("SalvageCableBundle00", true, false) != null and salvage_sample.find_child("BrokenGlassShard00", true, false) != null and salvage_sample.find_child("SalvageStatusLens", true, false) != null, "The salvage wreck must expose cable, damage and readable status detail.")
     salvage_sample.queue_free()
+    var site_sample := OutpostSite3D.new()
+    site_sample.configure({"id": "aesthetic.site_marker", "display_name": "Marker", "recommended_outpost_role": "scout", "position": [64.0, 0.0, 64.0]})
+    root.add_child(site_sample)
+    await process_frame
+    var site_marker := site_sample.get_node_or_null("HighDefinitionSiteMarker") as Node3D
+    _expect(site_marker != null and not site_marker.visible, "Undiscovered outpost sites must keep their authored marker hidden.")
+    _expect(site_sample.discover(), "A fresh outpost site must transition into its discovered state once.")
+    await process_frame
+    _expect(site_marker != null and site_marker.visible, "Discovered outpost sites must reveal their authored survey marker.")
+    _expect(site_sample.find_child("SurveyFoundation", true, false) != null and site_sample.find_child("SurveyFoundationInset", true, false) != null, "Outpost sites must expose layered foundation hardware rather than a flat placeholder disc.")
+    _expect(site_sample.find_child("SurveyMastCollar", true, false) != null and site_sample.find_child("SurveyMastBraceL", true, false) != null and site_sample.find_child("SurveyMastBraceR", true, false) != null, "Outpost sites must expose a braced survey-mast silhouette.")
+    _expect(site_sample.find_child("SurveyServicePanel", true, false) != null and site_sample.find_child("SurveyIdentityPanel", true, false) != null, "Outpost sites must expose readable service and identity hardware.")
+    var site_lens := site_sample.find_child("SurveyBeaconLens", true, false) as Node3D
+    _expect(site_lens != null and site_sample.find_child("SurveyBeaconHousing", true, false) != null and site_sample.find_child("SurveyBeaconRing", true, false) != null, "Outpost sites must expose a layered beacon housing and lens.")
+    if site_lens != null:
+        var site_lens_before := site_lens.scale
+        site_sample._process(0.7)
+        _expect(site_lens.scale != site_lens_before, "Discovered outpost beacons must carry a restrained readable pulse.")
+    site_sample.queue_free()
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgeMaintenanceDetail") != null, "The Heartforge must expose a dedicated presentation-only maintenance detail layer.")
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgePlazaDetail/HeartforgeServiceRing/ForgeRecessedServiceRing") != null, "The Heartforge plaza must expose a readable recessed service ring around its focal machine.")
     _expect(_find_named(world, "RouteThresholdAmberBand") != null, "The opening service lane must expose a far amber threshold landmark for the first objective.")

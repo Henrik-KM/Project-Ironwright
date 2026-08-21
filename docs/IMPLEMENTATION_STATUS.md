@@ -1415,3 +1415,14 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   without being assigned combat tiers or receiving invalid combat-stat casts;
 - added a regression covering ordinary-nest registration and verified the
   release boot no longer emits the tier-director conversion diagnostic.
+
+## Focused discovered-site presentation milestone
+
+- replaced the discovered outpost-site placeholder cross and sphere with a
+  bounded survey installation: layered foundation, anchor hardware, braced
+  mast, beacon housing/lens and readable service/identity panels;
+- preserved the hidden-before-discovery state, fixed-site outpost contract and
+  exception-based presentation language while adding only a restrained beacon
+  pulse;
+- added aesthetic coverage for visibility, named authored detail sockets and
+  the discovered-state pulse, then inspected the result in a live renderer.
