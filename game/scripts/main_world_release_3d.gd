@@ -334,6 +334,11 @@ func _connect_release_services() -> void:
     transactional_save_service.load_completed.connect(func(slot_id: StringName, source_path: String, recovered_backup: bool) -> void:
         hud.push_notification(localization_service.text("save.invalid") if recovered_backup else localization_service.text("save.loaded"))
     )
+    transactional_save_service.load_failed.connect(func(slot_id: StringName, report: Dictionary) -> void:
+        var attempts: Array = report.get("attempts", [])
+        run_state.log_event("Save recovery failed: %s" % JSON.stringify(report))
+        hud.push_notification("%s · %d ATTEMPTS" % [localization_service.text("save.recovery_failed"), attempts.size()])
+    )
     transactional_save_service.migration_completed.connect(func(slot_id: StringName, legacy_sources: Array[String]) -> void:
         hud.push_notification(localization_service.text("save.migrated"))
     )
@@ -653,7 +658,9 @@ func _load_release_game() -> bool:
     if snapshot.is_empty() and _migrate_legacy_saves():
         snapshot = transactional_save_service.load_snapshot(RELEASE_SLOT)
     if snapshot.is_empty():
-        hud.push_notification(localization_service.text("menu.no_save"))
+        var recovery_report := transactional_save_service.get_last_load_report()
+        if str(recovery_report.get("error", "")).is_empty():
+            hud.push_notification(localization_service.text("menu.no_save"))
         return false
     _restore_release_snapshot(snapshot)
     _start_release_world()

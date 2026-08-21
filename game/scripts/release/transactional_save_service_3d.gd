@@ -4,6 +4,7 @@ extends Node
 signal save_completed(slot_id: StringName, path: String)
 signal save_failed(slot_id: StringName, reason: String)
 signal load_completed(slot_id: StringName, source_path: String, recovered_backup: bool)
+signal load_failed(slot_id: StringName, report: Dictionary)
 signal migration_completed(slot_id: StringName, legacy_sources: Array[String])
 signal schema_migrated(slot_id: StringName, from_version: int, to_version: int, fields: Array[String])
 
@@ -15,6 +16,7 @@ var save_root: String = DEFAULT_SAVE_ROOT
 var backup_count: int = DEFAULT_BACKUP_COUNT
 var build_id: String = "ironwright_1_0_rc1"
 var last_error: String = ""
+var last_load_report: Dictionary = {}
 
 
 func _ready() -> void:
@@ -79,38 +81,74 @@ func save_snapshot(slot_id: StringName, payload: Dictionary, metadata: Dictionar
 
 func load_snapshot(slot_id: StringName) -> Dictionary:
     last_error = ""
+    var report := {
+        "slot_id": String(slot_id),
+        "outcome": "failed",
+        "selected_path": "",
+        "selected_source": "",
+        "recovered_backup": false,
+        "schema_migrated": false,
+        "attempts": [],
+        "error": "",
+    }
     var candidates: Array[String] = [_current_path(slot_id)]
     for index in range(1, backup_count + 1):
         candidates.append(_backup_path(slot_id, index))
     for index in range(candidates.size()):
         var path := candidates[index]
+        var attempt := {
+            "path": path,
+            "source": "current" if index == 0 else "backup_%d" % index,
+            "status": "missing",
+        }
         if not FileAccess.file_exists(path):
+            _append_load_attempt(report, attempt)
             continue
         var envelope := _read_and_validate(path)
         if envelope.is_empty():
+            attempt["status"] = "invalid"
+            _append_load_attempt(report, attempt)
             continue
         var from_version := int(envelope.get("schema_version", CURRENT_SCHEMA_VERSION))
         var migration := _migrate_versioned_envelope(envelope)
         if migration.is_empty():
+            attempt["status"] = "migration_failed"
+            _append_load_attempt(report, attempt)
             last_error = "Save schema migration failed for %s" % path
             continue
         if from_version < CURRENT_SCHEMA_VERSION:
             var migrated_payload := migration.get("payload", {}) as Dictionary
             var migrated_metadata := migration.get("metadata", {}) as Dictionary
             if not save_snapshot(slot_id, migrated_payload, migrated_metadata):
+                attempt["status"] = "migration_persist_failed"
+                _append_load_attempt(report, attempt)
                 last_error = "Could not persist migrated save schema for %s" % path
                 continue
             var fields := migration.get("migration_fields", []) as Array[String]
             schema_migrated.emit(slot_id, from_version, CURRENT_SCHEMA_VERSION, fields.duplicate())
+            report["schema_migrated"] = true
             envelope = _read_and_validate(_current_path(slot_id))
             if envelope.is_empty():
+                attempt["status"] = "migration_verify_failed"
+                _append_load_attempt(report, attempt)
                 last_error = "Migrated save failed post-write validation"
                 continue
         var payload: Variant = envelope.get("payload", {})
         if payload is Dictionary:
+            attempt["status"] = "loaded"
+            _append_load_attempt(report, attempt)
+            report["outcome"] = "recovered_backup" if index > 0 else ("migrated" if bool(report.get("schema_migrated", false)) else "loaded")
+            report["selected_path"] = path
+            report["selected_source"] = attempt["source"]
+            report["recovered_backup"] = index > 0
+            report["error"] = ""
+            last_load_report = report.duplicate(true)
             load_completed.emit(slot_id, path, index > 0)
             return (payload as Dictionary).duplicate(true)
     last_error = "No valid current save or rotating backup was found"
+    report["error"] = last_error
+    last_load_report = report.duplicate(true)
+    load_failed.emit(slot_id, last_load_report.duplicate(true))
     return {}
 
 
@@ -164,6 +202,10 @@ func inspect_slot(slot_id: StringName) -> Dictionary:
     return envelope
 
 
+func get_last_load_report() -> Dictionary:
+    return last_load_report.duplicate(true)
+
+
 func corrupt_current_for_test(slot_id: StringName) -> bool:
     var file := FileAccess.open(_current_path(slot_id), FileAccess.WRITE)
     if file == null:
@@ -211,6 +253,12 @@ func _read_and_validate(path: String) -> Dictionary:
     if expected.is_empty() or expected != actual:
         return {}
     return envelope.duplicate(true)
+
+
+func _append_load_attempt(report: Dictionary, attempt: Dictionary) -> void:
+    var attempts: Array = report.get("attempts", [])
+    attempts.append(attempt.duplicate(true))
+    report["attempts"] = attempts
 
 
 func _migrate_versioned_envelope(envelope: Dictionary) -> Dictionary:

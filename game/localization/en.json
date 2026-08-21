@@ -59,6 +59,7 @@
     "save.loaded": "WORLD RESTORED",
     "save.failed": "SAVE FAILED — PREVIOUS BACKUP PRESERVED",
     "save.invalid": "CURRENT SAVE INVALID — RECOVERING A BACKUP",
+    "save.recovery_failed": "SAVE RECOVERY FAILED — NO VALID SNAPSHOT FOUND",
     "save.migrated": "LEGACY SAVE MIGRATED TO THE RELEASE FORMAT",
     "save.deferred": "SAVE DEFERRED — FINISH THE ACTIVE PHYSICAL OPERATION",
     "controller.connected": "CONTROLLER CONNECTED",

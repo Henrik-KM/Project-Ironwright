@@ -37,6 +37,14 @@ upgraded in memory to the current schema. Legacy `ironwright_first_light_3d.json
 and `ironwright_full_game_extension.json` files are wrapped into the same current
 envelope and reported to the player as migrated state.
 
+The release slot service also retains a bounded human-readable load report:
+each current or rotating-backup candidate is recorded as missing, invalid,
+migration-failed or loaded; the report names the selected source, whether a
+backup or schema migration was used, and the final failure reason when no
+candidate is valid. A failed recovery emits a localized player notification
+and preserves the full report for diagnostics without creating another save or
+another player-managed task.
+
 Active salvage, expedition, outpost-construction, and long-range operations defer
 saving while their live formation references are not serializable. This keeps the
 save boundary explicit instead of pretending an incomplete operation is durable.

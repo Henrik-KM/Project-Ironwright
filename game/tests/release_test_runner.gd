@@ -405,6 +405,13 @@ func _test_transactional_save_service() -> void:
     _expect(int(recovered.get("revision", 0)) == 1, "A corrupted current save must recover the previous verified backup.")
     var inspection := service.inspect_slot(TEST_SLOT)
     _expect(bool(inspection.get("using_backup", false)), "Recovered slot inspection must report backup use.")
+    var recovery_failures: Array[Dictionary] = []
+    service.load_failed.connect(func(slot_id: StringName, report: Dictionary) -> void:
+        recovery_failures.append(report.duplicate(true))
+    )
+    var recovery_report := service.get_last_load_report()
+    _expect(str(recovery_report.get("outcome", "")) == "recovered_backup", "Backup recovery must expose a recovered-backup report outcome.")
+    _expect(int((recovery_report.get("attempts", []) as Array).size()) >= 2 and str(recovery_report.get("selected_source", "")) == "backup_1", "Backup recovery reports must retain the attempted current path and selected backup source.")
     var migration_events: Array[String] = []
     service.schema_migrated.connect(func(slot_id: StringName, from_version: int, to_version: int, fields: Array[String]) -> void:
         migration_events.append("%d>%d:%d" % [from_version, to_version, fields.size()])
@@ -428,6 +435,17 @@ func _test_transactional_save_service() -> void:
     _expect(int(migrated_inspection.get("schema_version", 0)) == ReleaseTransactionalSaveService3D.CURRENT_SCHEMA_VERSION, "Versioned save migration must persist the current envelope schema.")
     _expect(int(migration_record.get("from_version", 0)) == 3 and int(migration_record.get("to_version", 0)) == ReleaseTransactionalSaveService3D.CURRENT_SCHEMA_VERSION, "Versioned save migration must retain an explicit from/to report.")
     _expect(migration_events.size() == 1, "Versioned save migration must emit one diagnostic event.")
+    var migration_report := service.get_last_load_report()
+    _expect(str(migration_report.get("outcome", "")) == "migrated" and bool(migration_report.get("schema_migrated", false)), "Versioned migration must expose a durable migrated-load report outcome.")
+    service.delete_slot(TEST_SLOT)
+    var failed_file := FileAccess.open(versioned_path, FileAccess.WRITE)
+    failed_file.store_string("{corrupt")
+    failed_file.close()
+    var failed_load := service.load_snapshot(TEST_SLOT)
+    _expect(failed_load.is_empty(), "A slot with no valid current or backup snapshot must fail closed.")
+    var failed_report := service.get_last_load_report()
+    _expect(str(failed_report.get("outcome", "")) == "failed" and not str(failed_report.get("error", "")).is_empty(), "Failed save recovery must expose a human-readable failure report.")
+    _expect((failed_report.get("attempts", []) as Array).size() == 4 and recovery_failures.size() == 1, "Failed save recovery must report every bounded candidate and emit one failure signal.")
     service.delete_slot(TEST_SLOT)
     service.queue_free()
 
