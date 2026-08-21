@@ -426,6 +426,7 @@ func _run_all() -> void:
         var player_model := player.get_node_or_null("MechromancerModel") as Node3D
         _expect(player_model != null and player_model.scale.x >= 1.2, "The authored Mechromancer must be legible at tactical-camera distance.")
         _expect(_find_named(player, "RespiratorCollarCore") != null and _find_named(player, "FieldPackCornerCap") != null, "The Mechromancer must receive beveled authored equipment surfaces.")
+        _expect(_find_named(player, "FieldShoulderLampLens") != null and _find_named(player, "FieldUtilityCanister") != null and _find_named(player, "FieldToolDeck") != null, "The Mechromancer must receive a second high-definition field-instrument detail layer.")
         if player_presentation != null:
             _expect(player_presentation.animation_player != null, "The authored Mechromancer must expose an imported animation player.")
             if player_presentation.animation_player != null:
@@ -458,6 +459,7 @@ func _run_all() -> void:
             _expect(shield_material != null and shield_material.emission_energy_multiplier <= 1.0, "The Bulwark protection arc must preserve the Heartforge focal hierarchy.")
         _expect(_find_named(robot, "BulwarkAuthoredModel") != null, "The opening companion must use the authored Bulwark model shell.")
         _expect(_find_named(robot, "ProductionAssetMarker") != null, "The authored Bulwark model must expose its production asset marker.")
+        _expect(_find_named(robot, "BulwarkRadiatorLouver") != null and _find_named(robot, "BulwarkFrontSensorVisor") != null and _find_named(robot, "BulwarkEmitterCollar") != null, "The Bulwark must receive a second high-definition protection hardware layer.")
 
     var role_samples: Array[RobotUnit3D] = []
     var role_names := [&"salvager", &"guardian", &"scout", &"engineer"]

@@ -136,6 +136,26 @@ func _polish_player(player: Mechromancer3D) -> void:
     ModelKit3D.add_beveled_box(detail, Vector3(0.18, 0.12, 0.32), Vector3(0.34, 0.28, -0.34), rust, Vector3(0.0, 0.0, -0.08), "FieldBootCuff", 0.2)
     ModelKit3D.add_box(detail, Vector3(0.1, 0.34, 0.14), Vector3(-0.52, 0.86, -0.38), leather, Vector3(0.0, 0.0, 0.12), "WristToolLoop")
 
+    # Second-pass focal details make the technician read as a maintained field
+    # instrument at tactical distance: protected shoulder hardware, a service
+    # canister and restrained tool-deck parts add manufactured depth without
+    # changing the authored skeleton, collision capsule or pistol contract.
+    ModelKit3D.add_louvered_panel(
+        detail,
+        Vector3(0.42, 0.22, 0.16),
+        Vector3(-0.44, 1.5, -0.18),
+        dark_steel,
+        steel,
+        Vector3(-0.08, 0.0, 0.12),
+        "FieldShoulderLampHousing",
+        3
+    )
+    ModelKit3D.add_sphere(detail, 0.065, Vector3(-0.44, 1.48, -0.29), cyan, Vector3(1.0, 0.72, 0.72), "FieldShoulderLampLens")
+    ModelKit3D.add_cylinder(detail, 0.13, 0.3, Vector3(-0.62, 0.78, 0.04), rust, Vector3(1.5708, 0.0, 0.0), "FieldUtilityCanister")
+    ModelKit3D.add_cylinder(detail, 0.042, 0.34, Vector3(-0.62, 0.78, -0.13), dark_steel, Vector3(1.5708, 0.0, 0.0), "FieldUtilityCanisterClamp")
+    ModelKit3D.add_beveled_box(detail, Vector3(0.38, 0.12, 0.22), Vector3(0.62, 0.72, 0.22), steel, Vector3(0.0, 0.0, -0.08), "FieldToolDeck", 0.18)
+    ModelKit3D.add_box(detail, Vector3(0.06, 0.2, 0.26), Vector3(0.53, 0.86, 0.22), warm, Vector3(0.0, 0.0, -0.08), "FieldToolClamp")
+
     # One practical lamp rather than glowing eyes all over the model.
     ModelKit3D.add_sphere(detail, 0.085, Vector3(-0.38, 1.48, -0.22), cyan, Vector3(1.0, 0.75, 0.55), "WorkLamp")
     var lamp := OmniLight3D.new()
@@ -256,8 +276,8 @@ func _build_bulwark_detail(parent: Node3D) -> void:
     var shield_mesh := TorusMesh.new()
     shield_mesh.inner_radius = 0.72
     shield_mesh.outer_radius = 0.79
-    shield_mesh.rings = 16
-    shield_mesh.ring_segments = 32
+    shield_mesh.rings = 24
+    shield_mesh.ring_segments = 48
     shield_ring.mesh = shield_mesh
     shield_ring.material_override = shield_material
     shield_ring.position = Vector3(0.0, 0.34, 0.08)
@@ -266,6 +286,37 @@ func _build_bulwark_detail(parent: Node3D) -> void:
     ModelKit3D.add_sphere(parent, 0.13, Vector3(0.0, 2.28, 0.46), shield_material, Vector3(1.2, 0.7, 1.2), "BulwarkShieldEmitter")
     for side in [-1.0, 1.0]:
         ModelKit3D.add_beveled_box(parent, Vector3(0.16, 0.62, 0.46), Vector3(float(side) * 0.92, 1.08, 0.72), shield_material, Vector3(0.0, 0.0, float(side) * 0.08), "BulwarkShieldGuard", 0.14)
+    ModelKit3D.add_louvered_panel(
+        parent,
+        Vector3(1.12, 0.28, 0.16),
+        Vector3(0.0, 1.67, 0.43),
+        dark_steel,
+        steel,
+        Vector3.ZERO,
+        "BulwarkRadiatorLouver",
+        4
+    )
+    ModelKit3D.add_surface_panel(
+        parent,
+        Vector3(0.82, 0.24, 0.08),
+        Vector3(0.0, 1.48, -0.98),
+        dark_steel,
+        shield_material,
+        Vector3.ZERO,
+        "BulwarkFrontSensorVisor"
+    )
+    var emitter_collar := MeshInstance3D.new()
+    emitter_collar.name = "BulwarkEmitterCollar"
+    var emitter_mesh := TorusMesh.new()
+    emitter_mesh.inner_radius = 0.16
+    emitter_mesh.outer_radius = 0.21
+    emitter_mesh.rings = 16
+    emitter_mesh.ring_segments = 32
+    emitter_collar.mesh = emitter_mesh
+    emitter_collar.material_override = shield_material
+    emitter_collar.position = Vector3(0.0, 2.28, 0.46)
+    emitter_collar.rotation.x = PI * 0.5
+    parent.add_child(emitter_collar)
     _add_machine_lamp(parent, Vector3(0.0, 1.42, -1.0), Color("f0a65a"), 0.42)
 
 

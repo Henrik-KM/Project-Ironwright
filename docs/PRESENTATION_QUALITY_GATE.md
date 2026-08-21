@@ -130,6 +130,10 @@ The opening cast now also keeps the Bulwark protection field as a compact dark
 cyan arc with a bounded emitter glow, while the Heartforge plaza pavers use a
 rougher, darker wet-concrete family. The companion role stays readable without
 letting its protection effect or the forge service surface dominate the frame.
+The Mechromancer and Bulwark now carry a second authored focal-detail layer:
+protected field instrumentation, utility/tool hardware, radiator louvers and a
+front sensor visor. These details remain presentation-only and preserve the
+small-light hierarchy.
 The foreground route markers now use the same amber language promised by the
 opening objective, keeping them distinct from cyan Heartforge service hardware.
 
