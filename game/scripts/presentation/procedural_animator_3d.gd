@@ -287,6 +287,7 @@ func _animate_organic(movement_blend: float) -> void:
             veil.rotation.z += veil_sway * (0.12 if stalking else 0.07)
             var side := -1.0 if veil_index % 2 == 0 else 1.0
             veil.rotation.y += side * (0.05 + threat_blend * 0.24)
+            veil.position.x += side * threat_blend * 0.06
             veil.scale *= Vector3(1.0 + threat_blend * 0.18, 1.0 - threat_blend * 0.11, 1.0 + threat_blend * 0.08)
             veil_index += 1
         for limb in _nodes_with_prefix(model_root, "VeilstalkerForelimb"):
@@ -308,11 +309,117 @@ func _animate_organic(movement_blend: float) -> void:
             model_root.position.z -= 0.08 + absf(sin(phase * 1.7)) * 0.06
             model_root.rotation.x -= 0.08 + absf(sin(phase * 1.7)) * 0.04
 
+    _animate_authored_family_signature(_organic_species(), threat_blend, movement_blend)
+
 
 func _organic_species() -> StringName:
     if subject == null or not _property_exists(subject, &"species"):
         return &""
     return StringName(subject.get(&"species"))
+
+
+func _animate_authored_family_signature(species: StringName, threat_blend: float, movement_blend: float) -> void:
+    # These small family signatures make the imported high-definition shells
+    # communicate intent before damage lands. They are presentation-only and
+    # deliberately use stable authored node prefixes rather than gameplay data.
+    var attack_sway := sin(idle_phase * 2.2 + deterministic_offset)
+    match species:
+        &"skitterling":
+            var mandible_index := 0
+            for mandible in _nodes_with_prefix(model_root, "SkitterlingMandible"):
+                var side := -1.0 if mandible_index % 2 == 0 else 1.0
+                mandible.rotation.y += side * (0.08 + threat_blend * 0.24)
+                mandible_index += 1
+            for antenna in _nodes_with_prefix(model_root, "SkitterlingAntenna"):
+                antenna.rotation.z += attack_sway * (0.08 + threat_blend * 0.12)
+            if threat_blend > 0.0:
+                model_root.position.z -= 0.035 * threat_blend
+        &"razorhound":
+            for snout in _nodes_with_prefix(model_root, "RazorhoundSnout"):
+                snout.rotation.x -= 0.12 * threat_blend
+            for ear in _nodes_with_prefix(model_root, "RazorhoundEar"):
+                ear.rotation.z += attack_sway * 0.055
+            for spine in _nodes_with_prefix(model_root, "RazorhoundSpine"):
+                spine.rotation.x += attack_sway * (0.025 + threat_blend * 0.06)
+            if threat_blend > 0.0:
+                model_root.position.z -= 0.075 * threat_blend
+                model_root.rotation.x -= 0.055 * threat_blend
+        &"burrower":
+            for drill in _nodes_with_prefix(model_root, "BurrowerDrill"):
+                drill.rotation.z += idle_phase * (1.4 + threat_blend * 2.6)
+            for lamp in _nodes_with_prefix(model_root, "BurrowerLamp"):
+                lamp.scale = lamp.scale * (1.0 + sin(idle_phase * 3.0) * (0.025 + threat_blend * 0.08))
+            if threat_blend > 0.0:
+                model_root.position.z -= 0.09 * threat_blend
+                model_root.rotation.x += 0.08 * threat_blend
+        &"sporecaster":
+            for sac in _nodes_with_prefix(model_root, "SporecasterSac"):
+                var sac_pulse := 1.0 + sin(idle_phase * 2.0 + deterministic_offset) * (0.035 + threat_blend * 0.12)
+                sac.scale *= Vector3(sac_pulse, 1.0 + threat_blend * 0.16, sac_pulse)
+            for stem in _nodes_with_prefix(model_root, "SporecasterStem"):
+                stem.rotation.z += attack_sway * (0.025 + threat_blend * 0.11)
+            for oculus in _nodes_with_prefix(model_root, "SporecasterOculus"):
+                oculus.rotation.y += sin(idle_phase * 1.7 + deterministic_offset) * 0.13
+        &"broodmass":
+            for maw in _nodes_with_prefix(model_root, "BroodmassMaw"):
+                maw.rotation.y += 0.16 * threat_blend
+            for hook in _nodes_with_prefix(model_root, "BroodmassMawHook"):
+                hook.rotation.x -= 0.12 * threat_blend
+            for lobe in _nodes_with_prefix(model_root, "BroodmassLobe"):
+                lobe.scale *= Vector3(1.0 + threat_blend * 0.08, 1.0 + sin(idle_phase * 1.8) * 0.035, 1.0 + threat_blend * 0.08)
+        &"apex":
+            for jaw in _nodes_with_prefix(model_root, "ApexJaw"):
+                jaw.rotation.y += 0.20 * threat_blend
+            for membrane in _nodes_with_prefix(model_root, "ApexMembrane"):
+                membrane.rotation.z += attack_sway * (0.04 + threat_blend * 0.12)
+            if threat_blend > 0.0:
+                model_root.rotation.x -= 0.06 * threat_blend
+        &"roofleaper":
+            var wing_index := 0
+            for wing in _nodes_with_prefix(model_root, "RoofleaperWing"):
+                var side := -1.0 if wing_index % 2 == 0 else 1.0
+                wing.rotation.z += side * (0.05 + threat_blend * 0.28) + attack_sway * 0.045
+                wing.scale *= Vector3(1.0 + threat_blend * 0.08, 1.0, 1.0 + threat_blend * 0.12)
+                wing_index += 1
+            for talon in _nodes_with_prefix(model_root, "RoofleaperTalons"):
+                talon.rotation.x -= 0.16 * threat_blend
+            if threat_blend > 0.0:
+                model_root.position.y += 0.10 * threat_blend
+                model_root.position.z -= 0.08 * threat_blend
+        &"glassmoth":
+            var wing_index := 0
+            for wing in _nodes_with_prefix(model_root, "GlassmothWing"):
+                var side := -1.0 if wing_index % 2 == 0 else 1.0
+                wing.rotation.z += side * (0.08 + threat_blend * 0.34) + attack_sway * 0.06
+                wing_index += 1
+            for antenna in _nodes_with_prefix(model_root, "GlassmothAntenna"):
+                antenna.rotation.z += attack_sway * 0.08
+        &"miremaw":
+            var jaw_index := 0
+            for hook in _nodes_with_prefix(model_root, "MiremawJawHook"):
+                var side := -1.0 if jaw_index % 2 == 0 else 1.0
+                hook.rotation.x += side * (0.05 + threat_blend * 0.24)
+                jaw_index += 1
+            for fan in _nodes_with_prefix(model_root, "MiremawGillFan"):
+                fan.scale *= Vector3(1.0 + threat_blend * 0.14, 1.0 + sin(idle_phase * 2.4) * 0.05, 1.0 + threat_blend * 0.14)
+            for fin in _nodes_with_prefix(model_root, "MiremawWaterFin"):
+                fin.rotation.z += attack_sway * 0.08
+        &"carrionbell":
+            for resonator in _nodes_with_prefix(model_root, "CarrionbellResonator"):
+                resonator.scale *= Vector3(1.0 + threat_blend * 0.16, 1.0 + threat_blend * 0.24, 1.0 + threat_blend * 0.16)
+                resonator.rotation.y += attack_sway * (0.06 + threat_blend * 0.12)
+            for tendril in _nodes_with_prefix(model_root, "CarrionbellSignalTendril"):
+                tendril.rotation.z += attack_sway * 0.10
+        &"rootweaver":
+            var arm_index := 0
+            for arm in _nodes_with_prefix(model_root, "RootweaverArm"):
+                var side := -1.0 if arm_index % 2 == 0 else 1.0
+                arm.rotation.z += side * (0.06 + threat_blend * 0.26)
+                arm_index += 1
+            for fan in _nodes_with_prefix(model_root, "RootweaverSporeFan"):
+                fan.scale *= Vector3(1.0 + threat_blend * 0.12, 1.0 + sin(idle_phase * 2.1) * 0.05, 1.0 + threat_blend * 0.12)
+            for spine in _nodes_with_prefix(model_root, "RootweaverRouteSpine"):
+                spine.rotation.z += attack_sway * (0.04 + movement_blend * 0.06)
 
 
 func _attack_windup_remaining() -> float:

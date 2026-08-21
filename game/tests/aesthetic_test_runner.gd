@@ -423,6 +423,7 @@ func _run_all() -> void:
             var spore_oculus := _find_named(enemy_samples[index], "SporecasterOculusL") as Node3D
             var spore_plate := _find_named(enemy_samples[index], "SporecasterCowlPlateL") as Node3D
             _expect(spore_cowl != null and spore_oculus != null and spore_plate != null and spore_oculus.position.distance_to(Vector3(-0.23, 0.16, -0.39)) < 0.01 and spore_plate.position.distance_to(Vector3(-0.32, 0.08, -0.09)) < 0.01, "Sporecaster sensory-cowl details must remain attached through local authored sockets.")
+        _expect_family_attack_motion(enemy_samples[index], _family_attack_signature_node(species_names[index]))
         enemy_samples[index].queue_free()
 
     var veilstalker: Node3D
@@ -442,18 +443,6 @@ func _run_all() -> void:
         _expect(veilstalker.find_child("VeilstalkerTendril", true, false) != null, "The Veilstalker must expose readable sensory tendrils.")
         _expect(veilstalker.find_child("VeilstalkerThoraxDorsalRib", true, false) != null, "The Veilstalker must expose a ribbed high-detail thorax construction.")
         _expect(veilstalker.find_child("VeilstalkerAuthoredModel", true, false) != null and _find_named(veilstalker, "ProductionAssetMarker") != null, "The Veilstalker must expose its authored production asset contract.")
-        if veilstalker_animator != null:
-            var veil := veilstalker.find_child("VeilstalkerVeil", true, false) as Node3D
-            var veil_before := veil.transform if veil != null else Transform3D.IDENTITY
-            var previous_state: StringName = StringName(veilstalker.get(&"state_name"))
-            var previous_windup := float(veilstalker.get(&"attack_windup_remaining"))
-            veilstalker.set(&"state_name", &"attacking")
-            veilstalker.set(&"attack_windup_remaining", 0.34)
-            veilstalker_animator._restore_base_transforms()
-            veilstalker_animator._animate_organic(0.0)
-            _expect(veil != null and veil.transform != veil_before, "Veilstalker attack wind-up must visibly load its veil silhouette.")
-            veilstalker.set(&"state_name", previous_state)
-            veilstalker.set(&"attack_windup_remaining", previous_windup)
 
     var beautiful_hud := get_first_node_in_group("beautiful_hud")
     _expect(beautiful_hud is IronwrightBeautifulHUD3D, "The native HUD must use the quieter cinematic skin.")
@@ -523,6 +512,43 @@ func _animation_player_has_clip(player: AnimationPlayer, clip_name: StringName) 
         if String(candidate).ends_with("/" + String(clip_name)) or String(candidate).ends_with(String(clip_name)):
             return true
     return false
+
+
+func _family_attack_signature_node(species: StringName) -> StringName:
+    match species:
+        &"skitterling": return &"SkitterlingMandibleL"
+        &"razorhound": return &"RazorhoundSnout"
+        &"roofleaper": return &"RoofleaperWingL"
+        &"glassmoth": return &"GlassmothWingL0"
+        &"veilstalker": return &"VeilstalkerVeil"
+        &"burrower": return &"BurrowerDrill"
+        &"sporecaster": return &"SporecasterSac0"
+        &"broodmass": return &"BroodmassMaw"
+        &"miremaw": return &"MiremawJawHookL"
+        &"carrionbell": return &"CarrionbellResonator"
+        &"rootweaver": return &"RootweaverArmL"
+        &"apex": return &"ApexJawL"
+    return &""
+
+
+func _expect_family_attack_motion(enemy: OrganicEnemy3D, signature_name: StringName) -> void:
+    if enemy == null or signature_name == &"":
+        return
+    var animator := enemy.get_node_or_null("ProceduralAnimator3D") as ProceduralAnimator3D
+    var signature := _find_named(enemy, signature_name) as Node3D
+    _expect(animator != null and signature != null, "%s must expose a runtime attack signature node and animator." % enemy.get("species"))
+    if animator == null or signature == null:
+        return
+    var before := signature.transform
+    var previous_state: StringName = StringName(enemy.get(&"state_name"))
+    var previous_windup := float(enemy.get(&"attack_windup_remaining"))
+    enemy.set(&"state_name", &"attacking")
+    enemy.set(&"attack_windup_remaining", 0.34)
+    animator._restore_base_transforms()
+    animator._animate_organic(0.0)
+    _expect(signature.transform != before, "%s attack wind-up must visibly load its authored family signature." % enemy.get("species"))
+    enemy.set(&"state_name", previous_state)
+    enemy.set(&"attack_windup_remaining", previous_windup)
 
 
 func _role_model_has_details(robot: RobotUnit3D, role: StringName) -> bool:

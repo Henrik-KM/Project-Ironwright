@@ -1,5 +1,10 @@
 # Changelog
 
+## Pre-alpha authored hostile attack-motion milestone
+
+- Added presentation-only family attack signatures for all twelve organic shells: loaded mandibles, jaws, drills, sacs, wings, gills, resonators, root arms and apex membranes now visibly communicate threat before impact.
+- Added native regression coverage for every family signature and live-playtested the Sporecaster wind-up and organic impact feedback in the tactical frame.
+
 ## Pre-alpha authored region approach readability
 
 - Added camera-facing opaque service windows and facade edge breaks to the East Tenements shell so its residential identity survives the tactical approach frame.

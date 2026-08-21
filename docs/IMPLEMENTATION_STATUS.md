@@ -898,6 +898,16 @@ identities. Manual channels remain finish-before-save.
 - live presentation-gallery review confirmed the five previously thin families
   now have distinct, readable silhouettes at gameplay scale.
 
+## Focused authored hostile attack-motion milestone
+
+- extended the presentation animator with family-specific attack signatures for
+  all twelve organic shells, including loaded mandibles, jaws, drills, sacs,
+  wings, gills, resonators, root arms and apex membranes;
+- kept the pass presentation-only: species stats, AI state, collision, damage,
+  ecology and persistence remain unchanged;
+- added native wind-up coverage for every family and live-playtested the
+  Sporecaster silhouette and organic-impact feedback in the tactical frame.
+
 ## Focused autonomous-outpost presentation milestone
 
 - upgraded the existing four autonomous outpost roles with high-definition
