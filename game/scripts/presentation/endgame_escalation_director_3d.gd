@@ -52,7 +52,7 @@ func _process(delta: float) -> void:
         var ring_pulse := 1.0 + sin(_pulse_clock * 3.1) * (0.035 + current_progress * 0.06)
         pulse_ring.scale = Vector3(ring_pulse, 1.0, ring_pulse)
     if core_light != null:
-        core_light.light_energy = lerpf(core_light.light_energy, 3.8 + current_progress * 7.0, clampf(delta * 5.0, 0.0, 1.0))
+        core_light.light_energy = lerpf(core_light.light_energy, 0.45 + current_progress * 0.65, clampf(delta * 5.0, 0.0, 1.0))
 
 
 func sync_from_endgame_state() -> void:
@@ -129,8 +129,8 @@ func _ensure_lattice() -> void:
     lattice_root.name = "ProtocolLattice"
     visual_root.add_child(lattice_root)
 
-    var lattice_mat := ModelKit3D.material(Color("3b202f"), 0.42, 0.34, Color("ff4d6d"), 3.2)
-    var accent_mat := ModelKit3D.material(Color("6a3825"), 0.3, 0.3, Color("ff963f"), 4.0)
+    var lattice_mat := ModelKit3D.material(Color("3b202f"), 0.42, 0.34, Color("d93458"), 0.28)
+    var accent_mat := ModelKit3D.material(Color("6a3825"), 0.3, 0.3, Color("d88239"), 0.42)
     _lattice_materials = [lattice_mat, accent_mat]
 
     ModelKit3D.add_cylinder(lattice_root, 3.28, 0.12, Vector3(0.0, 0.18, 0.0), lattice_mat, Vector3.ZERO, "ProtocolBaseRing")
@@ -172,7 +172,7 @@ func _ensure_lattice() -> void:
     core_light = OmniLight3D.new()
     core_light.name = "ProtocolCoreLight"
     core_light.light_color = Color("ff5d73")
-    core_light.light_energy = 3.8
+    core_light.light_energy = 0.45
     core_light.omni_range = 15.0
     core_light.position = Vector3(0.0, 2.5, 0.0)
     visual_root.add_child(core_light)
@@ -195,9 +195,10 @@ func _apply_lattice_progress(progress: float) -> void:
         crisis = crisis.lerp(Color("d76aff"), (progress - 0.72) / 0.28)
     for material in _lattice_materials:
         material.emission = crisis
-        material.emission_energy_multiplier = 3.2 + progress * 2.6
+        material.emission_energy_multiplier = 0.20 + progress * 0.34
     if core_light != null:
         core_light.light_color = crisis
+        core_light.light_energy = 0.45 + current_progress * 0.65
 
 
 func _show_completion() -> void:
@@ -208,10 +209,10 @@ func _show_completion() -> void:
     completion_root.visible = true
     completion_root.scale = Vector3.ONE * 0.72
     for material in _completion_materials:
-        material.emission_energy_multiplier = 4.8
+        material.emission_energy_multiplier = 0.62
     if core_light != null:
         core_light.light_color = Color("69f0d2")
-        core_light.light_energy = 8.5
+        core_light.light_energy = 1.1
     var tween := create_tween()
     tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
     tween.tween_property(completion_root, "scale", Vector3.ONE, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)

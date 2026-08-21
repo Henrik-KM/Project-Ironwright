@@ -126,6 +126,7 @@ func _run_all() -> void:
     _expect(world.endgame_escalation_director != null, "The final protocol must have a dedicated bounded presentation director.")
     _expect(world.endgame_escalation_director.current_state == &"active", "Starting a final protocol must raise its Heartforge lattice presentation.")
     _expect(world.get_node_or_null("EndgameProtocolVisuals") != null, "The final protocol must attach a visible lattice to the Heartforge without changing collision geometry.")
+    _expect(world.endgame_escalation_director.core_light != null and world.endgame_escalation_director.core_light.light_energy <= 4.0, "The final protocol light budget must preserve readable Heartforge silhouettes instead of blooming over the frame.")
     world.endgame_director._process(0.1)
     _expect(world.endgame_escalation_director.current_progress > 0.0, "Final protocol progress must drive the visual lattice continuously.")
     var severance := world.endgame_director.protocol(&"protocol.severance")
