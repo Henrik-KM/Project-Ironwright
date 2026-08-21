@@ -19,6 +19,7 @@ NEW_REQUIRED_PATHS = [
     "game/data/full_game_manifest.json",
     "game/data/progression_phases.json",
     "game/data/technology_tree.json",
+    "game/data/heartforge_adaptations.json",
     "game/data/world_sites.json",
     "game/data/outpost_archetypes.json",
     "game/data/world_regions.json",
@@ -36,6 +37,7 @@ NEW_REQUIRED_PATHS = [
     "game/scripts/systems/machine_society_director_3d.gd",
     "game/scripts/systems/strategic_ecology_director_3d.gd",
     "game/scripts/systems/endgame_director_3d.gd",
+    "game/scripts/systems/adaptive_defense_director_3d.gd",
     "game/scripts/world/outpost_site_3d.gd",
     "game/scripts/world/outpost_3d.gd",
     "game/scripts/world/region_landmark_3d.gd",
@@ -184,6 +186,20 @@ def validate_current_design_contracts() -> None:
         if identifier not in technology_ids:
             raise legacy.ValidationError(f"Missing complete-game technology {identifier}")
 
+    adaptations = _load("game/data/heartforge_adaptations.json").get("adaptations")
+    if not isinstance(adaptations, list) or len(adaptations) != 3:
+        raise legacy.ValidationError("Adaptive Heartforge content must expose exactly three broad principles")
+    adaptation_ids = {entry.get("id") for entry in adaptations if isinstance(entry, dict)}
+    if adaptation_ids != {
+        "adaptation.anchored_shell",
+        "adaptation.sacrificial_hollow",
+        "adaptation.quiet_core",
+    }:
+        raise legacy.ValidationError("Adaptive Heartforge principles must retain stable authored ids")
+    for entry in adaptations:
+        if not isinstance(entry, dict) or not str(entry.get("tradeoff", "")).strip():
+            raise legacy.ValidationError("Every adaptive Heartforge principle must explain its trade-off")
+
     regions = _load("game/data/world_regions.json").get("regions")
     if not isinstance(regions, list) or len(regions) < 12:
         raise legacy.ValidationError("The complete alpha needs all twelve persistent regions")
@@ -255,6 +271,7 @@ def validate_native_godot_entrypoint() -> None:
         "MachineSocietyDirector3D",
         "StrategicEcologyDirector3D",
         "EndgameDirector3D",
+        "AdaptiveDefenseDirector3D",
         "OperationsCommandHUD3D",
         "_save_extension_data",
         "_restore_extension_data",

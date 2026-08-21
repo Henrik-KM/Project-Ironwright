@@ -2,6 +2,7 @@ class_name StrategicCommandHUD3D
 extends CanvasLayer
 
 signal technology_requested(technology_id: StringName)
+signal adaptation_requested(adaptation_id: StringName)
 signal outpost_build_requested(site_id: StringName, role: StringName)
 signal outpost_upgrade_requested(site_id: StringName)
 signal close_requested
@@ -23,6 +24,7 @@ var secondary_button: Button
 var mode: StringName = &"evolution"
 var technologies: Array[Dictionary] = []
 var sites: Array[Dictionary] = []
+var adaptations: Array[Dictionary] = []
 var selected_index: int = 0
 var selected_role_index: int = 0
 var phase_name: String = "Embers"
@@ -31,6 +33,7 @@ var scrap: int = 0
 var rare_cores: int = 0
 var doctrine_name: String = "Uncommitted"
 var operation_summary: String = ""
+var adaptation_summary: String = ""
 
 
 func _ready() -> void:
@@ -142,6 +145,17 @@ func open_outposts() -> void:
     _refresh()
 
 
+func open_adaptation(next_adaptations: Array[Dictionary], next_summary: String) -> void:
+    mode = &"adaptation"
+    adaptations = next_adaptations
+    adaptation_summary = next_summary
+    selected_index = 0
+    backdrop.visible = true
+    panel.visible = true
+    apply_safe_layout(Vector2(get_viewport().get_visible_rect().size))
+    _refresh()
+
+
 func close() -> void:
     backdrop.visible = false
     panel.visible = false
@@ -192,6 +206,14 @@ func update_outposts(next_sites: Array[Dictionary], next_operation_summary: Stri
     _refresh()
 
 
+func update_adaptation(next_adaptations: Array[Dictionary], next_summary: String) -> void:
+    adaptations = next_adaptations
+    adaptation_summary = next_summary
+    _clamp_selection()
+    if mode == &"adaptation":
+        _refresh()
+
+
 func select_previous() -> void:
     var count := _current_count()
     if count <= 1:
@@ -230,6 +252,12 @@ func selected_site_id() -> StringName:
     return StringName(str(sites[selected_index].get("site_id", "")))
 
 
+func selected_adaptation_id() -> StringName:
+    if adaptations.is_empty():
+        return &""
+    return StringName(str(adaptations[selected_index].get("id", "")))
+
+
 func selected_role() -> StringName:
     return ROLES[selected_role_index]
 
@@ -239,6 +267,10 @@ func _activate_primary() -> void:
         var technology_id := selected_technology_id()
         if technology_id != &"":
             technology_requested.emit(technology_id)
+    elif mode == &"adaptation":
+        var adaptation_id := selected_adaptation_id()
+        if adaptation_id != &"":
+            adaptation_requested.emit(adaptation_id)
     else:
         var site_id := selected_site_id()
         if site_id != &"":
@@ -254,7 +286,11 @@ func _activate_secondary() -> void:
 
 
 func _current_count() -> int:
-    return technologies.size() if mode == &"evolution" else sites.size()
+    if mode == &"evolution":
+        return technologies.size()
+    if mode == &"adaptation":
+        return adaptations.size()
+    return sites.size()
 
 
 func _clamp_selection() -> void:
@@ -276,8 +312,38 @@ func _refresh() -> void:
     _set_navigation_state(_current_count())
     if mode == &"evolution":
         _refresh_evolution()
+    elif mode == &"adaptation":
+        _refresh_adaptation()
     else:
         _refresh_outposts()
+
+
+func _refresh_adaptation() -> void:
+    title_label.text = "ADAPTIVE DEFENCE · HEARTFORGE TIER %d" % heartforge_tier
+    secondary_button.visible = false
+    if adaptations.is_empty():
+        summary_label.text = "No structural proposal is waiting. Machines continue ordinary defence without opening a maintenance task."
+        selection_label.text = "NO PROPOSAL"
+        detail_label.text = adaptation_summary
+        cost_label.text = "Status: the architect will speak only when a real structural decision exists."
+        primary_button.text = "NO PROPOSAL"
+        primary_button.disabled = true
+        return
+    summary_label.text = adaptation_summary
+    primary_button.text = "AUTHORIZE MACHINE RETROFIT"
+    primary_button.disabled = false
+    var adaptation := adaptations[selected_index]
+    selection_label.text = str(adaptation.get("display_name", "Unknown response")).to_upper()
+    detail_label.text = "%s\n\nProblem addressed: %s\n\nTrade-off: %s" % [
+        str(adaptation.get("description", "")),
+        str(adaptation.get("problem", "")),
+        str(adaptation.get("tradeoff", "")),
+    ]
+    var cost: Dictionary = adaptation.get("cost", {})
+    cost_label.text = "Machine construction: %.1f seconds · Cost: %d Scrap · geometry and repair remain delegated" % [
+        float(adaptation.get("build_seconds", 12.0)),
+        int(cost.get("scrap", 0)),
+    ]
 
 
 func _refresh_evolution() -> void:
