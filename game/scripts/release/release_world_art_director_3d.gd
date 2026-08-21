@@ -30,6 +30,11 @@ const AUTHORED_ORGANIC_TOKENS: Array[String] = [
     "burrower",
     "skitterling",
     "apex",
+    "roofleaper",
+    "glassmoth",
+    "miremaw",
+    "carrionbell",
+    "rootweaver",
 ]
 const ORGANIC_MEMBRANE_TOKENS: Array[String] = [
     "membrane",
@@ -37,6 +42,13 @@ const ORGANIC_MEMBRANE_TOKENS: Array[String] = [
     "wing",
     "sac",
     "fan",
+    "gill",
+    "fin",
+    "resonator",
+    "mantle",
+    "bell",
+    "spore",
+    "vein",
 ]
 
 var world: Node3D

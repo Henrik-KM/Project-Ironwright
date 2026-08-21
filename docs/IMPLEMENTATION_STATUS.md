@@ -1141,6 +1141,10 @@ final retail art, animation and external visual approval are still required.
 - mirrored species-specific pitch routing in the release-candidate audio
   director so the shipping entrypoint does not collapse hostile identity back
   to one generic impact response.
+- corrected the release material classifier to include all five later organic
+  families and their membrane, gill, fin, resonator, mantle, spore and vein
+  detail so imported high-definition shells receive their intended surface
+  language in the shipping runtime.
 
 ## Focused tiered-nest anatomy presentation milestone
 
