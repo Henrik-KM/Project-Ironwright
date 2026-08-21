@@ -17,6 +17,7 @@ func _ready() -> void:
     _build_street_grid()
     _build_street_edges()
     _build_buildings()
+    _build_high_definition_facades()
     _build_wrecks_and_debris()
     _build_lived_in_street_details()
     _build_civic_infrastructure()
@@ -98,6 +99,182 @@ func _build_buildings() -> void:
         if position.z < -35.0:
             height += 4.0
         _create_ruined_building(position, Vector3(width, height, depth), index)
+
+
+func _build_high_definition_facades() -> void:
+    var facades := Node3D.new()
+    facades.name = "HighDefinitionFacadeDetails"
+    add_child(facades)
+
+    var window_dark := ModelKit3D.material(Color("0b1518"), 0.18, 0.34, Color("27515a"), 0.22)
+    var window_warm := ModelKit3D.material(Color("4a3027"), 0.12, 0.42, Color("d88954"), 0.72)
+    var frame := ModelKit3D.material(Color("1c2527"), 0.66, 0.48)
+    var concrete := ModelKit3D.material(Color("4b4d4a"), 0.04, 0.84)
+    var weathered := ModelKit3D.material(Color("664536"), 0.46, 0.7)
+    var service := ModelKit3D.material(Color("263e41"), 0.62, 0.5, Color("51c8ca"), 0.42)
+
+    var blocks := [
+        Vector3(-14.0, 0.0, -14.0), Vector3(14.0, 0.0, -14.0),
+        Vector3(-14.0, 0.0, 14.0), Vector3(14.0, 0.0, 14.0),
+        Vector3(-42.0, 0.0, -14.0), Vector3(42.0, 0.0, -14.0),
+        Vector3(-42.0, 0.0, 14.0), Vector3(42.0, 0.0, 14.0),
+        Vector3(-14.0, 0.0, -42.0), Vector3(14.0, 0.0, -42.0),
+        Vector3(-14.0, 0.0, 42.0), Vector3(14.0, 0.0, 42.0),
+        Vector3(-42.0, 0.0, -42.0), Vector3(42.0, 0.0, -42.0),
+        Vector3(-42.0, 0.0, 42.0), Vector3(42.0, 0.0, 42.0),
+    ]
+    for index in range(blocks.size()):
+        var position: Vector3 = blocks[index]
+        var width := 15.0 + float(index % 3) * 1.5
+        var depth := 14.0 + float((index + 1) % 3)
+        var height := 7.5 + float((index * 7) % 8)
+        if position.z < -35.0:
+            height += 4.0
+        _add_high_definition_facade(
+            facades,
+            position,
+            Vector3(width, height, depth),
+            index,
+            window_dark,
+            window_warm,
+            frame,
+            concrete,
+            weathered,
+            service
+        )
+
+
+func _add_high_definition_facade(
+        parent: Node3D,
+        position: Vector3,
+        size: Vector3,
+        index: int,
+        window_dark: StandardMaterial3D,
+        window_warm: StandardMaterial3D,
+        frame: StandardMaterial3D,
+        concrete: StandardMaterial3D,
+        weathered: StandardMaterial3D,
+        service: StandardMaterial3D
+    ) -> void:
+    var facade := Node3D.new()
+    facade.name = "FacadeDetail%02d" % index
+    facade.position = position
+    parent.add_child(facade)
+
+    var front_z := -size.z * 0.515
+    var floor_count := maxi(2, int(size.y / 2.6))
+    var bay_count := maxi(3, int(size.x / 3.3))
+    var bay_width := minf(2.35, (size.x * 0.76) / float(bay_count))
+    var bay_span := size.x * 0.76 / float(bay_count)
+    for floor_index in range(floor_count):
+        var floor_y := 1.48 + float(floor_index) * 2.35
+        if floor_y > size.y - 0.7:
+            continue
+        ModelKit3D.add_beveled_box(
+            facade,
+            Vector3(size.x * 0.84, 0.08, 0.22),
+            Vector3(0.0, floor_y - 0.72, front_z - 0.035),
+            frame,
+            Vector3.ZERO,
+            "FacadeFloorPlate%02d" % floor_index,
+            0.18
+        )
+        for bay_index in range(bay_count):
+            var bay_x := -size.x * 0.38 + bay_span * (float(bay_index) + 0.5)
+            var lit := (index + floor_index + bay_index) % 7 == 0
+            var window_material := window_warm if lit else window_dark
+            ModelKit3D.add_beveled_box(
+                facade,
+                Vector3(bay_width, 1.12, 0.1),
+                Vector3(bay_x, floor_y, front_z - 0.055),
+                window_material,
+                Vector3.ZERO,
+                "FacadeWindowBay%02d_%02d" % [floor_index, bay_index],
+                0.12
+            )
+            ModelKit3D.add_box(
+                facade,
+                Vector3(0.07, 1.0, 0.045),
+                Vector3(bay_x - bay_width * 0.5, floor_y, front_z - 0.12),
+                frame,
+                Vector3.ZERO,
+                "FacadeWindowMullion"
+            )
+
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(
+            facade,
+            Vector3(0.16, size.y * 0.82, 0.2),
+            Vector3(side * size.x * 0.42, size.y * 0.42, front_z - 0.02),
+            frame,
+            Vector3.ZERO,
+            "FacadeVerticalPier",
+            0.18
+        )
+
+    ModelKit3D.add_beveled_box(
+        facade,
+        Vector3(size.x * 0.9, 0.18, 0.5),
+        Vector3(0.0, size.y + 0.16, front_z + 0.04),
+        concrete,
+        Vector3.ZERO,
+        "FacadeRoofParapet",
+        0.2
+    )
+
+    var service_side := -1.0 if index % 2 == 0 else 1.0
+    var service_y := 0.9 + float(index % 3) * 0.18
+    ModelKit3D.add_louvered_panel(
+        facade,
+        Vector3(1.45, 0.72, 0.1),
+        Vector3(service_side * size.x * 0.28, service_y, front_z - 0.1),
+        frame,
+        service,
+        Vector3.ZERO,
+        "FacadeServiceShutter",
+        4
+    )
+    ModelKit3D.add_cylinder(
+        facade,
+        0.045,
+        size.y * 0.72,
+        Vector3(service_side * size.x * 0.46, size.y * 0.37, front_z - 0.12),
+        weathered,
+        Vector3.ZERO,
+        "FacadeRainDownpipe"
+    )
+    ModelKit3D.add_beveled_box(
+        facade,
+        Vector3(1.8, 0.1, 0.16),
+        Vector3(service_side * size.x * 0.22, size.y * 0.66, front_z - 0.11),
+        weathered,
+        Vector3(0.0, 0.0, 0.08 * service_side),
+        "FacadeWeatheredLintel",
+        0.16
+    )
+
+    if index % 3 == 0:
+        var brace_y := minf(size.y * 0.72, size.y - 1.0)
+        _add_facade_brace(
+            facade,
+            Vector3(-size.x * 0.3, brace_y - 1.1, front_z - 0.16),
+            Vector3(size.x * 0.3, brace_y + 0.75, front_z - 0.16),
+            weathered,
+            "FacadeDamageBraceA"
+        )
+        _add_facade_brace(
+            facade,
+            Vector3(size.x * 0.3, brace_y - 1.1, front_z - 0.17),
+            Vector3(-size.x * 0.12, brace_y + 0.44, front_z - 0.17),
+            concrete,
+            "FacadeDamageBraceB"
+        )
+
+
+func _add_facade_brace(parent: Node3D, start: Vector3, end: Vector3, material: StandardMaterial3D, name_hint: String) -> void:
+    var direction := end - start
+    var brace := ModelKit3D.add_cylinder(parent, 0.055, direction.length(), (start + end) * 0.5, material, Vector3.ZERO, name_hint)
+    brace.quaternion = Quaternion(Vector3.UP, direction.normalized())
 
 
 func _create_ruined_building(position: Vector3, size: Vector3, index: int) -> void:
