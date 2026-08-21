@@ -156,6 +156,23 @@ func _polish_player(player: Mechromancer3D) -> void:
     ModelKit3D.add_beveled_box(detail, Vector3(0.38, 0.12, 0.22), Vector3(0.62, 0.72, 0.22), steel, Vector3(0.0, 0.0, -0.08), "FieldToolDeck", 0.18)
     ModelKit3D.add_box(detail, Vector3(0.06, 0.2, 0.26), Vector3(0.53, 0.86, 0.22), warm, Vector3(0.0, 0.0, -0.08), "FieldToolClamp")
 
+    # Hero micro-detail pass: a readable forearm diagnostic and protected knee
+    # hardware sharpen the technician silhouette at close tactical distance.
+    # These parts are deliberately small, asymmetric and presentation-only.
+    ModelKit3D.add_surface_panel(
+        detail,
+        Vector3(0.24, 0.24, 0.07),
+        Vector3(-0.5, 0.98, -0.38),
+        finish_panel,
+        finish_status,
+        Vector3(-0.08, 0.0, 0.12),
+        "FieldForearmDiagnostic"
+    )
+    ModelKit3D.add_sphere(detail, 0.045, Vector3(-0.5, 1.04, -0.425), finish_status, Vector3(1.5, 0.65, 0.42), "FieldForearmDiagnosticLens")
+    ModelKit3D.add_beveled_box(detail, Vector3(0.24, 0.14, 0.3), Vector3(-0.2, 0.58, -0.34), steel, Vector3(-0.06, 0.0, 0.08), "FieldKneeGuardLeft", 0.2)
+    ModelKit3D.add_beveled_box(detail, Vector3(0.24, 0.14, 0.3), Vector3(0.2, 0.58, -0.34), steel, Vector3(-0.06, 0.0, -0.08), "FieldKneeGuardRight", 0.2)
+    ModelKit3D.add_cylinder(detail, 0.045, 0.12, Vector3(-0.48, 1.26, 0.02), finish_warning, Vector3(1.5708, 0.0, 0.0), "FieldCableClamp")
+
     # One practical lamp rather than glowing eyes all over the model.
     ModelKit3D.add_sphere(detail, 0.085, Vector3(-0.38, 1.48, -0.22), cyan, Vector3(1.0, 0.75, 0.55), "WorkLamp")
     var lamp := OmniLight3D.new()
@@ -305,6 +322,23 @@ func _build_bulwark_detail(parent: Node3D) -> void:
         Vector3.ZERO,
         "BulwarkFrontSensorVisor"
     )
+    # The companion's front face now has a shallow service interface and
+    # guarded feet: manufactured depth that supports the protection fantasy
+    # without adding another glow source or gameplay socket.
+    ModelKit3D.add_surface_panel(
+        parent,
+        Vector3(0.58, 0.2, 0.07),
+        Vector3(0.0, 1.1, -1.25),
+        finish_panel,
+        finish_warning,
+        Vector3(-0.04, 0.0, 0.0),
+        "BulwarkServiceFace"
+    )
+    for side in [-1.0, 1.0]:
+        var side_sign := float(side)
+        ModelKit3D.add_cylinder(parent, 0.045, 0.1, Vector3(side_sign * 0.22, 1.1, -1.31), finish_warning, Vector3(1.5708, 0.0, 0.0), "BulwarkServiceLatch%s" % ("Left" if side_sign < 0.0 else "Right"))
+        ModelKit3D.add_beveled_box(parent, Vector3(0.5, 0.1, 0.16), Vector3(side_sign * 0.7, 1.43, -0.34), steel, Vector3(0.0, 0.0, side_sign * 0.08), "BulwarkShoulderRail%s" % ("Left" if side_sign < 0.0 else "Right"), 0.18)
+        ModelKit3D.add_beveled_box(parent, Vector3(0.46, 0.1, 0.38), Vector3(side_sign * 0.68, 0.18, -0.66), dark_steel, Vector3.ZERO, "BulwarkFootPlate%s" % ("Left" if side_sign < 0.0 else "Right"), 0.2)
     var emitter_collar := MeshInstance3D.new()
     emitter_collar.name = "BulwarkEmitterCollar"
     var emitter_mesh := TorusMesh.new()
