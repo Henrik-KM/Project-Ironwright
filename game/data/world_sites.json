@@ -26,6 +26,30 @@
       "description": "A raised municipal observation platform with clear sight lines over southern streets."
     },
     {
+      "id": "site.north_archive_loading",
+      "display_name": "North Archive Loading Court",
+      "position": [-18.0, 0.0, -70.0],
+      "discovered_by": "expedition.north_ruins",
+      "recommended_outpost_role": "repair",
+      "description": "A covered records loading court with intact service rails and enough shelter for field repairs."
+    },
+    {
+      "id": "site.north_civic_roof",
+      "display_name": "North Civic Roof",
+      "position": [16.0, 0.0, -84.0],
+      "discovered_by": "expedition.north_ruins",
+      "recommended_outpost_role": "scout",
+      "description": "A fractured civic roofline overlooking the northern approach and the first migration routes."
+    },
+    {
+      "id": "site.north_canal_gate",
+      "display_name": "North Canal Gate",
+      "position": [-30.0, 0.0, -75.0],
+      "discovered_by": "expedition.north_ruins",
+      "recommended_outpost_role": "defence",
+      "description": "A reinforced canal gate where organic traffic converges between the archive blocks."
+    },
+    {
       "id": "site.west_substation",
       "display_name": "West Substation",
       "position": [-51.0, 0.0, 18.0],
@@ -34,12 +58,60 @@
       "description": "A concrete electrical compound overlooking a route frequently used by hunting packs."
     },
     {
+      "id": "site.west_transformer_lane",
+      "display_name": "West Transformer Lane",
+      "position": [-78.0, 0.0, 3.0],
+      "discovered_by": "operation.west_grid_survey",
+      "recommended_outpost_role": "resource",
+      "description": "A narrow transformer lane with recoverable copper housings and a defensible service approach."
+    },
+    {
+      "id": "site.west_canal_works",
+      "display_name": "West Canal Works",
+      "position": [-105.0, 0.0, 45.0],
+      "discovered_by": "operation.west_grid_survey",
+      "recommended_outpost_role": "repair",
+      "description": "A flooded maintenance cut beneath the grid where damaged machines can be sheltered from open streets."
+    },
+    {
       "id": "site.east_courtyard",
       "display_name": "East Courtyard",
       "position": [92.0, 0.0, 20.0],
       "discovered_by": "operation.east_tenement_roofline",
       "recommended_outpost_role": "scout",
       "description": "A walled residential court beneath the roofline survey, suitable for early warning and route observation."
+    },
+    {
+      "id": "site.east_roof_bridge",
+      "display_name": "East Roof Bridge",
+      "position": [108.0, 0.0, -4.0],
+      "discovered_by": "operation.east_tenement_roofline",
+      "recommended_outpost_role": "defence",
+      "description": "A suspended roof bridge that controls a dangerous crossing between the eastern tenement blocks."
+    },
+    {
+      "id": "site.east_residential_arc",
+      "display_name": "East Residential Arc",
+      "position": [142.0, 0.0, 48.0],
+      "discovered_by": "operation.east_tenement_roofline",
+      "recommended_outpost_role": "resource",
+      "description": "A sheltered residential arc with intact utility cupboards and a recoverable machine cache."
+    },
+    {
+      "id": "site.glasshouse_service_bay",
+      "display_name": "Glasshouse Service Bay",
+      "position": [72.0, 0.0, -62.0],
+      "discovered_by": "operation.glasshouse_spore_harvest",
+      "recommended_outpost_role": "repair",
+      "description": "A sealed cultivation service bay beneath the shattered panes, suited to careful field maintenance."
+    },
+    {
+      "id": "site.flood_market_crane",
+      "display_name": "Flood Market Crane Pier",
+      "position": [108.0, 0.0, 78.0],
+      "discovered_by": "operation.flood_market_recovery",
+      "recommended_outpost_role": "resource",
+      "description": "A crane pier above the drowned stalls where machine groups can recover municipal salvage."
     },
     {
       "id": "site.tram_switchhouse",
@@ -64,6 +136,30 @@
       "discovered_by": "operation.observatory_migration_map",
       "recommended_outpost_role": "scout",
       "description": "A surviving service ring below the observatory optics with exceptional town-wide sight lines."
+    },
+    {
+      "id": "site.cathedral_bell_yard",
+      "display_name": "Cathedral Bell Yard",
+      "position": [20.0, 0.0, -112.0],
+      "discovered_by": "operation.cathedral_brood_suppression",
+      "recommended_outpost_role": "defence",
+      "description": "A bell-yard foundation below the resonant brood chamber, valuable as a defensive listening post."
+    },
+    {
+      "id": "site.observatory_lower_courtyard",
+      "display_name": "Observatory Lower Courtyard",
+      "position": [8.0, 0.0, 130.0],
+      "discovered_by": "operation.observatory_migration_map",
+      "recommended_outpost_role": "repair",
+      "description": "A lower optics courtyard with sheltered instrument bays for machines returning from long southern routes."
+    },
+    {
+      "id": "site.buried_lab_airlock",
+      "display_name": "Buried Lab Airlock",
+      "position": [-104.0, 0.0, -92.0],
+      "discovered_by": "operation.buried_lab_excavation",
+      "recommended_outpost_role": "scout",
+      "description": "A newly exposed airlock beside the buried laboratories, warning of movement through the root seams."
     }
   ]
 }

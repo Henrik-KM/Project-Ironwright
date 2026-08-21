@@ -23,7 +23,7 @@ func _run_all() -> void:
     _expect(world.outpost_director != null, "The full-game world must contain an outpost director.")
     _expect(world.strategic_hud != null, "The full-game world must contain the strategic command HUD.")
     _expect(world.progression.heartforge_tier == 1, "The oppressive opening must begin at Heartforge tier 1.")
-    _expect(world.outpost_sites.size() >= 4, "The foundation must load fixed authored world sites.")
+    _expect(world.outpost_sites.size() >= 20, "The full-game world must provide the commercial lower-bound pool of fixed support sites.")
     _expect(world.outpost_director.discovered_sites().is_empty(), "Outpost sites must remain hidden during the opening.")
     _expect(world.run_state.build_cost(&"engineer") == 56, "The Engineer build cost must be available in run state.")
 
