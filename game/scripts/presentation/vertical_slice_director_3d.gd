@@ -93,12 +93,12 @@ func _create_materials() -> void:
     masonry = ModelKit3D.material(Color("504b46"), 0.02, 0.86)
     soot_masonry = ModelKit3D.material(Color("2d3031"), 0.02, 0.9)
     interior_dark = ModelKit3D.material(Color("0d1214"), 0.0, 0.98)
-    wet_asphalt = ModelKit3D.material(Color("11181c"), 0.18, 0.34)
-    wet_concrete = ModelKit3D.material(Color("424b4d"), 0.06, 0.58)
-    wet_concrete_dark = ModelKit3D.material(Color("303a3d"), 0.12, 0.66)
+    wet_asphalt = ModelKit3D.material(Color("1b2529"), 0.22, 0.3)
+    wet_concrete = ModelKit3D.material(Color("536164"), 0.08, 0.52)
+    wet_concrete_dark = ModelKit3D.material(Color("3c4a4d"), 0.14, 0.6)
     painted_metal = ModelKit3D.material(Color("465458"), 0.72, 0.36)
     rust_metal = ModelKit3D.material(Color("6c3f29"), 0.48, 0.64)
-    black_metal = ModelKit3D.material(Color("151c1f"), 0.82, 0.31)
+    black_metal = ModelKit3D.material(Color("1c282c"), 0.78, 0.34)
     warm_glass = ModelKit3D.material(Color("6b4829"), 0.16, 0.28, Color("f49a4a"), 1.8)
     cold_glass = ModelKit3D.material(Color("21444a"), 0.22, 0.26, Color("65ccd2"), 1.4)
     fabric = ModelKit3D.material(Color("4b3b34"), 0.0, 0.96)
@@ -222,6 +222,39 @@ func _build_heartforge_plaza() -> void:
     var plaza := Node3D.new()
     plaza.name = "HeartforgePlazaDetail"
     root.add_child(plaza)
+
+    # A recessed service ring establishes a visual centre around the forge.
+    # It is presentation-only and deliberately leaves the existing player
+    # route and Heartforge collision untouched.
+    var service_ring := Node3D.new()
+    service_ring.name = "HeartforgeServiceRing"
+    plaza.add_child(service_ring)
+    var ring_mesh := TorusMesh.new()
+    ring_mesh.inner_radius = 2.72
+    ring_mesh.outer_radius = 3.02
+    ring_mesh.rings = 20
+    ring_mesh.ring_segments = 56
+    var ring_instance := MeshInstance3D.new()
+    ring_instance.name = "ForgeRecessedServiceRing"
+    ring_instance.mesh = ring_mesh
+    ring_instance.material_override = black_metal
+    ring_instance.position = Vector3(0.0, 0.13, 0.0)
+    service_ring.add_child(ring_instance)
+    for index in range(8):
+        var angle := TAU * float(index) / 8.0
+        var marker_material := warm_glass if index % 2 == 0 else cold_glass
+        ModelKit3D.add_beveled_box(
+            service_ring,
+            Vector3(0.72, 0.065, 0.16),
+            Vector3(cos(angle) * 3.16, 0.18, sin(angle) * 3.16),
+            marker_material,
+            Vector3(0.0, angle, 0.0),
+            "ForgeServiceMarker",
+            0.18
+        )
+    var ring_light := _add_light(service_ring, Vector3(0.0, 0.38, 0.0), Color("80cdd4"), 0.18, 6.0, false)
+    ring_light.set_meta(&"vertical_base_energy", 0.18)
+    practical_lights.append(ring_light)
 
     # Broken municipal pavers create human scale around the forge instead of a
     # single featureless grey polygon.
@@ -596,6 +629,8 @@ func _build_lighting_rig() -> void:
         [Vector3(7.8, 3.0, -2.0), Color("9fcbd8"), 0.85, 10.0, false],
         [Vector3(0.0, 3.4, -10.0), Color("7ec4d1"), 0.72, 9.5, false],
         [Vector3(-9.0, 3.8, -7.0), Color("dca46d"), 0.68, 7.0, false],
+        [Vector3(0.0, 7.2, 8.0), Color("86c9d4"), 0.32, 17.0, false],
+        [Vector3(0.0, 4.0, -8.0), Color("d07043"), 0.28, 10.0, false],
     ]
     for data in definitions:
         var light := _add_light(root, data[0], data[1], float(data[2]), float(data[3]), bool(data[4]))
