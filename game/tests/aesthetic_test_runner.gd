@@ -520,6 +520,13 @@ func _run_all() -> void:
     if not robots.is_empty():
         var robot := robots[0] as Node3D
         _expect(robot.get_node_or_null("ProceduralAnimator3D") is ProceduralAnimator3D, "Robots must receive procedural gait and recoil animation.")
+        var robot_animation := robot.get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
+        _expect(robot_animation != null and robot_animation.animation_player != null, "Robots must route authored animation clips through a runtime presentation bridge.")
+        if robot_animation != null and robot_animation.animation_player != null:
+            _expect(_animation_player_has_clip(robot_animation.animation_player, &"Idle"), "Robot authored models must expose an Idle clip.")
+            _expect(_animation_player_has_clip(robot_animation.animation_player, &"Walk"), "Robot authored models must expose a Walk clip.")
+            robot_animation._on_weapon_fired(Vector3.ZERO, Vector3.FORWARD, null)
+            _expect(_animation_clip_matches(robot_animation.active_clip, &"Fire"), "Robot weapon events must select the authored Fire clip.")
         _expect(_model_has_details(robot), "Robots must receive additional role-readable detail.")
         _expect(_find_named(robot, "ShoulderPlate") != null, "Robots must expose layered shoulder armour.")
         _expect(_find_named(robot, "ChassisDetailPanel") != null, "Robots must expose a layered high-detail chassis panel.")
@@ -537,6 +544,18 @@ func _run_all() -> void:
         _expect(_find_named(robot, "BulwarkAuthoredModel") != null, "The opening companion must use the authored Bulwark model shell.")
         _expect(_find_named(robot, "ProductionAssetMarker") != null, "The authored Bulwark model must expose its production asset marker.")
         _expect(_find_named(robot, "BulwarkRadiatorLouver") != null and _find_named(robot, "BulwarkFrontSensorVisor") != null and _find_named(robot, "BulwarkEmitterCollar") != null, "The Bulwark must receive a second high-definition protection hardware layer.")
+
+    var organic_actors := get_nodes_in_group("organic_enemies")
+    if not organic_actors.is_empty():
+        var organic := organic_actors[0] as Node3D
+        var organic_animation := organic.get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
+        _expect(organic_animation != null and organic_animation.animation_player != null, "Organic actors must route authored animation clips through a runtime presentation bridge.")
+        if organic_animation != null and organic_animation.animation_player != null:
+            _expect(_animation_player_has_clip(organic_animation.animation_player, &"Idle"), "Organic authored models must expose an Idle clip.")
+            _expect(_animation_player_has_clip(organic_animation.animation_player, &"Walk"), "Organic authored models must expose a Walk clip.")
+            _expect(_animation_player_has_clip(organic_animation.animation_player, &"Attack"), "Organic authored models must expose an Attack clip.")
+            organic_animation._on_attack_started(organic, player)
+            _expect(_animation_clip_matches(organic_animation.active_clip, &"Attack"), "Organic attack signals must select the authored Attack clip.")
 
     var role_samples: Array[RobotUnit3D] = []
     var role_names := [&"salvager", &"guardian", &"scout", &"engineer"]
@@ -782,6 +801,10 @@ func _animation_player_has_clip(player: AnimationPlayer, clip_name: StringName) 
         if String(candidate).ends_with("/" + String(clip_name)) or String(candidate).ends_with(String(clip_name)):
             return true
     return false
+
+
+func _animation_clip_matches(active_clip: StringName, clip_name: StringName) -> bool:
+    return String(active_clip).ends_with("/" + String(clip_name)) or String(active_clip).ends_with(String(clip_name))
 
 
 func _family_attack_signature_node(species: StringName) -> StringName:

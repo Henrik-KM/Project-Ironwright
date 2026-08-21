@@ -10,6 +10,13 @@ The shared model kit now has a high-detail baseline: curved primitives use dense
 
 The current actor rebuild also raises the shared source-builder tessellation floor: curved authored parts use at least 24 radial segments and spherical parts at least 16 rings before export. The Mechromancer, five friendly robot frames and every current organic family have been regenerated from those builders, and `scripts/validate_aesthetic.py` checks their exported POSITION density. This protects close tactical silhouettes from silent coarse-geometry regressions while preserving stable names, sockets, animation clips and presentation-only scope.
 
+The imported robot and organic clips now have a shared runtime bridge: actor
+movement, work states, weapon fire and organic attack wind-ups select the
+corresponding authored clip while the existing procedural detail layer remains
+responsible for small secondary motion. This closes the gap between exported
+animation contracts and live state presentation without claiming that the
+current sparse prototype clips are the final production rig library.
+
 ## Immediate failures identified from the first full-game screenshot review
 
 - Giant screen-fixed world labels can obscure most of the playfield.

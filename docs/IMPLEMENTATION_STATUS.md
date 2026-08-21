@@ -143,6 +143,19 @@ identities. Manual channels remain finish-before-save.
 - kept the change presentation-only: stable asset IDs, named sockets,
   animation contracts, collision, AI, simulation and workload are unchanged.
 
+## Focused authored actor animation bridge milestone
+
+- added a shared runtime bridge that resolves imported robot and organic
+  `AnimationPlayer` clips from the actor's existing state and signals;
+- robots now select Idle, Walk and Work presentation clips from movement,
+  salvage, repair and construction states, with Fire clips on weapon events;
+- organic enemies now select Idle and Walk from ecological movement and play
+  Attack clips from the telegraphed attack signal and wind-up state;
+- kept procedural secondary motion, collision, AI, ecology and reduced-detail
+  simulation ownership unchanged, so this remains a bounded presentation pass;
+- added native aesthetic assertions that the runtime bridge and representative
+  imported clips are present on both machine and organic actors.
+
 ## Focused endgame protocol readability milestone
 
 - reduced active protocol lattice emission and Heartforge core-light energy so the final crisis preserves tactical silhouettes and readable machine-company staging;
