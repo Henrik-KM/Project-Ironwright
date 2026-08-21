@@ -18,6 +18,7 @@ const DEATH_PRESENTATION_SECONDS := 0.72
 signal killed(enemy: OrganicEnemy3D, killer: Node)
 signal attack_started(enemy: OrganicEnemy3D, target: Node)
 signal attack_landed(enemy: OrganicEnemy3D, target: Node)
+signal health_changed(enemy: OrganicEnemy3D, current: float, maximum: float)
 signal behaviour_changed(enemy: OrganicEnemy3D, behaviour: StringName)
 
 var species: StringName = &"skitterling"
@@ -499,6 +500,7 @@ func apply_damage(amount: float, source: Node = null) -> void:
     if not alive or amount <= 0.0:
         return
     current_health = maxf(0.0, current_health - amount)
+    health_changed.emit(self, current_health, maximum_health)
     aggression = 1.0
     if source is Node3D:
         investigate_position = source.global_position

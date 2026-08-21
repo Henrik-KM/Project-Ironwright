@@ -187,7 +187,7 @@ ACTOR_ANIMATION_CHANNEL_FLOORS = {
     "rootweaver": 2,
 }
 
-ORGANIC_ANIMATION_CLIPS = ["Idle", "Walk", "Attack", "Feed", "Nest", "Retreat", "Death"]
+ORGANIC_ANIMATION_CLIPS = ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]
 
 AUTHORED_REGION_ASSETS = {
     "riverworks": {

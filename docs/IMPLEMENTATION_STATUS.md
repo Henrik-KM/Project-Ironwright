@@ -1227,6 +1227,18 @@ final retail art, animation and external visual approval are still required.
 - broader encounter-space and hostile-art review remains part of the commercial
   work below.
 
+## Focused authored impact-reaction milestone
+
+- added a shared authored `Hit` clip contract to all five friendly robot
+  families and all twelve organic families, with body and sensor/anatomy
+  channels preserved in every exported glTF;
+- added health-change routing to the runtime animation bridge so non-lethal
+  damage produces a readable authored impact beat while lethal damage still
+  takes the existing death presentation path;
+- added native aesthetic and manifest validation for the clips, channels and
+  live damage-to-animation selection without changing health, combat damage,
+  collision, ecology or player workload.
+
 The live playtest also found and closed a legacy-save edge: snapshots created
 before authored run variation now reconcile their missing weather profile before
 presentation restore, with release regression coverage for that migration path.

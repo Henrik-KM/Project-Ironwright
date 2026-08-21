@@ -145,6 +145,10 @@ def main() -> None:
             ("PathfinderDishHub", "rotation", [0.0, 0.7, 1.4], quat((0.0, 0.0, -0.16)) + quat((0.0, 0.0, 0.16)) + quat((0.0, 0.0, -0.16))),
             ("Beacon", "rotation", [0.0, 0.7, 1.4], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, 0.08)) + quat((0.0, 0.0, 0.0))),
         ]),
+        animation("Hit", [
+            ("PathfinderModel", "translation", [0.0, 0.10, 0.24], [0.0, 0.0, 0.0, 0.0, 0.0, 0.12, 0.0, 0.0, 0.0]),
+            ("Sensor", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.0)) + quat((-0.15, 0.08, 0.0)) + quat((0.0, 0.0, 0.0))),
+        ]),
     ]
 
     document = {
@@ -161,7 +165,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "pathfinder.scout.v1",
             "required_nodes": ["PathfinderModel", "Sensor", "OpticLens", "ScoutFin", "BeaconRing", "ScoutOptic", "PathfinderSensorPod", "ProductionAssetMarker"],
-            "animation_clips": ["Idle", "Walk", "Survey"],
+            "animation_clips": ["Idle", "Walk", "Survey", "Hit"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

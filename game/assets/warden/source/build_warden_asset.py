@@ -158,6 +158,10 @@ def main() -> None:
             ("WardenAutocannon", "translation", [0.0, 0.08, 0.18], [0.0, 1.48, -1.18, 0.0, 1.48, -1.28, 0.0, 1.48, -1.18]),
             ("Sensor", "rotation", [0.0, 0.08, 0.18], quat((0.0, 0.0, 0.0)) + quat((0.0, -0.1, 0.0)) + quat((0.0, 0.0, 0.0))),
         ]),
+        animation("Hit", [
+            ("WardenModel", "translation", [0.0, 0.10, 0.24], [0.0, 0.0, 0.0, 0.0, 0.0, 0.12, 0.0, 0.0, 0.0]),
+            ("Sensor", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.0)) + quat((-0.15, 0.08, 0.0)) + quat((0.0, 0.0, 0.0))),
+        ]),
     ]
 
     document = {
@@ -174,7 +178,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "warden.guardian.v1",
             "required_nodes": ["WardenModel", "Sensor", "OpticLens", "WardenAutocannon", "WeaponMuzzle", "WardenHeatExchanger", "ProductionAssetMarker"],
-            "animation_clips": ["Idle", "Walk", "Fire"],
+            "animation_clips": ["Idle", "Walk", "Fire", "Hit"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

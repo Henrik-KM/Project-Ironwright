@@ -21,7 +21,8 @@
   "animation_clips": [
     "Idle",
     "Walk",
-    "Survey"
+    "Survey",
+    "Hit"
   ],
   "socket_contract": [
     "sensor",

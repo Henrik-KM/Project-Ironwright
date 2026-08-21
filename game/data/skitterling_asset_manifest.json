@@ -6,5 +6,5 @@
   "quality": "authored_high_definition",
   "license": "Original Project Ironwright asset",
   "required_nodes": ["SkitterlingModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SkitterlingCarapace0", "SkitterlingCarapaceCap0", "SkitterlingAntennaL", "SkitterlingAntennaJointL", "SkitterlingMandibleL", "SkitterlingMandiblePlateL", "SkitterlingSensoryFan0", "ProductionAssetMarker"],
-  "animation_clips": ["Idle", "Walk", "Attack", "Feed", "Nest", "Retreat", "Death"]
+  "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]
 }

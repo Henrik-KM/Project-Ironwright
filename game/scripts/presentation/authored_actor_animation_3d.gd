@@ -16,6 +16,8 @@ var one_shot_remaining: float = 0.0
 var _has_state_name: bool = false
 var _has_attack_windup: bool = false
 var _has_visual_lod_level: bool = false
+var _has_current_health: bool = false
+var _last_health: float = -1.0
 
 
 func configure(next_subject: Node3D) -> void:
@@ -31,6 +33,9 @@ func _ready() -> void:
     _has_state_name = _property_exists(subject, &"state_name")
     _has_attack_windup = _property_exists(subject, &"attack_windup_remaining")
     _has_visual_lod_level = _property_exists(subject, &"visual_lod_level")
+    _has_current_health = _property_exists(subject, &"current_health")
+    if _has_current_health:
+        _last_health = float(subject.get(&"current_health"))
     model_root = _resolve_model_root()
     if model_root != null:
         animation_player = _find_animation_player(model_root)
@@ -74,6 +79,8 @@ func _connect_subject_signals() -> void:
         _connect_once(subject, &"attack_started", Callable(self, "_on_attack_started"))
     if subject.has_signal(&"killed"):
         _connect_once(subject, &"killed", Callable(self, "_on_killed"))
+    if subject.has_signal(&"health_changed"):
+        _connect_once(subject, &"health_changed", Callable(self, "_on_health_changed"))
 
 
 func _connect_once(source: Object, signal_name: StringName, callback: Callable) -> void:
@@ -169,6 +176,13 @@ func _on_attack_started(_enemy: Node, _target: Node) -> void:
 
 func _on_killed(_enemy: Node, _killer: Node) -> void:
     _play_one_shot(&"Death")
+
+
+func _on_health_changed(_actor: Node, current: float, _maximum: float) -> void:
+    var was_damaged := _last_health >= 0.0 and current < _last_health and current > 0.0
+    _last_health = current
+    if was_damaged:
+        _play_one_shot(&"Hit")
 
 
 func _state_name() -> StringName:
