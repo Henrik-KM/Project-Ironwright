@@ -1470,6 +1470,15 @@ presentation restore, with release regression coverage for that migration path.
   visible and `ACTIVE 18`, `MEDIUM 12`, `REDUCED 163`; the responsive preview
   measured approximately 1.73 GB working set on this development machine.
 
+## Focused shared reduced-proxy resource milestone
+
+- moved robot and organic reduced-detail silhouettes into shared Godot mesh
+  resources with their existing material and emission treatment;
+- release actors now reuse one proxy mesh per visual family across medium and
+  reduced populations, including actors promoted from deferred authored shells;
+- added native coverage that rejects per-actor duplicate proxy mesh resources
+  while preserving the existing detail-band and promotion contracts.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.

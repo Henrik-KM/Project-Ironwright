@@ -1,6 +1,8 @@
 class_name RobotUnitRelease3D
 extends RobotUnit3D
 
+const REDUCED_PROXY_MESH: BoxMesh = preload("res://assets/release/proxies/robot_proxy_mesh.tres")
+
 var _spatial_index: SpatialIndex3D
 var visual_lod_level: int = 0
 var reduced_detail: bool = false
@@ -114,15 +116,7 @@ func _ensure_reduced_proxy() -> void:
         return
     _reduced_proxy = MeshInstance3D.new()
     _reduced_proxy.name = "ReducedDetailProxy"
-    var proxy_mesh := BoxMesh.new()
-    proxy_mesh.size = Vector3(0.72, 1.45, 0.72)
-    _reduced_proxy.mesh = proxy_mesh
-    var proxy_material := StandardMaterial3D.new()
-    proxy_material.albedo_color = Color("42666e")
-    proxy_material.emission_enabled = true
-    proxy_material.emission = Color("5ecbd0")
-    proxy_material.emission_energy_multiplier = 0.55
-    _reduced_proxy.material_override = proxy_material
+    _reduced_proxy.mesh = REDUCED_PROXY_MESH
     _reduced_proxy.position = Vector3(0.0, 0.78, 0.0)
     _reduced_proxy.visible = false
     var proxy_parent := _model_root if _model_root != null else _ensure_deferred_proxy_root()
