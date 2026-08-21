@@ -83,7 +83,7 @@ func _on_node_added(node: Node) -> void:
     # Actors, outpost upgrades and discovered-region dressing are created
     # throughout a run. Keep the release material pass live instead of
     # leaving late-created meshes on their greybox fallback materials.
-    if node == null:
+    if node == null or not (node is MeshInstance3D):
         return
     call_deferred("_texture_subtree_id", node.get_instance_id())
 
@@ -125,10 +125,10 @@ func _texture_recursive(node: Node) -> void:
 
 
 func _texture_subtree_id(instance_id: int) -> void:
-    var node := instance_from_id(instance_id) as Node
-    if node == null or not is_instance_valid(node) or node == dressing_root:
+    var mesh := instance_from_id(instance_id) as MeshInstance3D
+    if mesh == null or not is_instance_valid(mesh) or mesh == dressing_root:
         return
-    _texture_recursive(node)
+    _texture_mesh(mesh)
 
 
 func apply_to_node(node: Node) -> void:
