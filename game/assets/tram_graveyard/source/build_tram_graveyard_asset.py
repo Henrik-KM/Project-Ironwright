@@ -21,8 +21,8 @@ OUTPUT_PATH = SOURCE_DIR / "tram_graveyard.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Tram weathered teal", "pbrMetallicRoughness": {"baseColorFactor": [0.09, 0.20, 0.22, 1.0], "metallicFactor": 0.38, "roughnessFactor": 0.68}},
-        {"name": "Tram oxidized iron", "pbrMetallicRoughness": {"baseColorFactor": [0.34, 0.15, 0.08, 1.0], "metallicFactor": 0.48, "roughnessFactor": 0.64}},
+        {"name": "Tram weathered teal", "pbrMetallicRoughness": {"baseColorFactor": [0.13, 0.27, 0.29, 1.0], "metallicFactor": 0.38, "roughnessFactor": 0.68}},
+        {"name": "Tram oxidized iron", "pbrMetallicRoughness": {"baseColorFactor": [0.42, 0.19, 0.09, 1.0], "metallicFactor": 0.48, "roughnessFactor": 0.64}},
         {"name": "Tram dark undercarriage", "pbrMetallicRoughness": {"baseColorFactor": [0.045, 0.065, 0.075, 1.0], "metallicFactor": 0.74, "roughnessFactor": 0.42}},
         {"name": "Tram cold window", "pbrMetallicRoughness": {"baseColorFactor": [0.04, 0.20, 0.27, 1.0], "metallicFactor": 0.16, "roughnessFactor": 0.24}, "emissiveFactor": [0.04, 0.30, 0.46]},
         {"name": "Tram service amber", "pbrMetallicRoughness": {"baseColorFactor": [0.62, 0.25, 0.055, 1.0], "metallicFactor": 0.14, "roughnessFactor": 0.38}, "emissiveFactor": [0.95, 0.22, 0.025]},
@@ -98,6 +98,10 @@ def main() -> None:
         add_node(prefix + "DoorTrim", mesh_ids["DoorTrim"], (0.0, 2.54, -1.36), parent=carriage_root)
         for index, x in enumerate((-2.75, -0.92, 0.92, 2.75)):
             add_node(prefix + "Window%d" % index, mesh_ids["Window"], (x, 2.30, -1.27), extras={"socket_type": "carriage_window"}, parent=carriage_root)
+            add_node(prefix + "FrontWindow%d" % index, mesh_ids["Window"], (x, 2.30, 1.27), extras={"socket_type": "approach_window"}, parent=carriage_root)
+        add_node(prefix + "FrontDoor", mesh_ids["Door"], (0.0, 1.52, 1.28), extras={"socket_type": "approach_door"}, parent=carriage_root)
+        add_node(prefix + "FrontDoorTrim", mesh_ids["DoorTrim"], (0.0, 2.54, 1.36), parent=carriage_root)
+        add_node(prefix + "FrontServiceLamp", mesh_ids["ServiceLamp"], (0.0, 3.05, 1.42), extras={"socket_type": "approach_service_light"}, parent=carriage_root)
         add_node(prefix + "Undercarriage", mesh_ids["Undercarriage"], (0.0, 0.45, 0.0), parent=carriage_root)
         for index, x in enumerate((-2.55, 2.55)):
             add_node(prefix + "Wheel%d" % index, mesh_ids["Wheel"], (x, 0.28, -0.62), rotation=(math.pi * 0.5, 0.0, 0.0), parent=carriage_root)
@@ -142,7 +146,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "tram.graveyard.v1",
-            "required_nodes": ["TramGraveyardModel", "TramCarriageA", "TramCarriageADoor", "TramMaintenancePit", "TramSignalMast", "TramSignalLamp", "TramOrganicSeep0", "ProductionAssetMarker"],
+            "required_nodes": ["TramGraveyardModel", "TramCarriageA", "TramCarriageAFrontWindow0", "TramCarriageAFrontDoor", "TramMaintenancePit", "TramSignalMast", "TramSignalLamp", "TramOrganicSeep0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

@@ -17,26 +17,26 @@
       "name": "TramGraveyardModel",
       "children": [
         1,
-        13,
-        25,
-        28,
-        29,
-        30,
-        31,
-        32,
-        33,
-        34,
-        35,
-        36,
-        37,
+        20,
         39,
-        40,
-        41,
         42,
         43,
         44,
         45,
-        46
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60
       ],
       "extras": {
         "ironwright_asset_id": "tram.graveyard.v1",
@@ -71,7 +71,14 @@
         9,
         10,
         11,
-        12
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
       ]
     },
     {
@@ -126,6 +133,18 @@
       }
     },
     {
+      "name": "TramCarriageAFrontWindow0",
+      "translation": [
+        -2.75,
+        2.3,
+        1.27
+      ],
+      "mesh": 2,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
       "name": "TramCarriageAWindow1",
       "translation": [
         -0.92,
@@ -135,6 +154,18 @@
       "mesh": 2,
       "extras": {
         "socket_type": "carriage_window"
+      }
+    },
+    {
+      "name": "TramCarriageAFrontWindow1",
+      "translation": [
+        -0.92,
+        2.3,
+        1.27
+      ],
+      "mesh": 2,
+      "extras": {
+        "socket_type": "approach_window"
       }
     },
     {
@@ -150,6 +181,18 @@
       }
     },
     {
+      "name": "TramCarriageAFrontWindow2",
+      "translation": [
+        0.92,
+        2.3,
+        1.27
+      ],
+      "mesh": 2,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
       "name": "TramCarriageAWindow3",
       "translation": [
         2.75,
@@ -159,6 +202,51 @@
       "mesh": 2,
       "extras": {
         "socket_type": "carriage_window"
+      }
+    },
+    {
+      "name": "TramCarriageAFrontWindow3",
+      "translation": [
+        2.75,
+        2.3,
+        1.27
+      ],
+      "mesh": 2,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TramCarriageAFrontDoor",
+      "translation": [
+        0.0,
+        1.52,
+        1.28
+      ],
+      "mesh": 3,
+      "extras": {
+        "socket_type": "approach_door"
+      }
+    },
+    {
+      "name": "TramCarriageAFrontDoorTrim",
+      "translation": [
+        0.0,
+        2.54,
+        1.36
+      ],
+      "mesh": 4
+    },
+    {
+      "name": "TramCarriageAFrontServiceLamp",
+      "translation": [
+        0.0,
+        3.05,
+        1.42
+      ],
+      "mesh": 16,
+      "extras": {
+        "socket_type": "approach_service_light"
       }
     },
     {
@@ -217,17 +305,24 @@
         "surface": "damaged_tram_carriage"
       },
       "children": [
-        14,
-        15,
-        16,
-        17,
-        18,
-        19,
-        20,
         21,
         22,
         23,
-        24
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38
       ]
     },
     {
@@ -282,6 +377,18 @@
       }
     },
     {
+      "name": "TramCarriageBFrontWindow0",
+      "translation": [
+        -2.75,
+        2.3,
+        1.27
+      ],
+      "mesh": 2,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
       "name": "TramCarriageBWindow1",
       "translation": [
         -0.92,
@@ -291,6 +398,18 @@
       "mesh": 2,
       "extras": {
         "socket_type": "carriage_window"
+      }
+    },
+    {
+      "name": "TramCarriageBFrontWindow1",
+      "translation": [
+        -0.92,
+        2.3,
+        1.27
+      ],
+      "mesh": 2,
+      "extras": {
+        "socket_type": "approach_window"
       }
     },
     {
@@ -306,6 +425,18 @@
       }
     },
     {
+      "name": "TramCarriageBFrontWindow2",
+      "translation": [
+        0.92,
+        2.3,
+        1.27
+      ],
+      "mesh": 2,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
       "name": "TramCarriageBWindow3",
       "translation": [
         2.75,
@@ -315,6 +446,51 @@
       "mesh": 2,
       "extras": {
         "socket_type": "carriage_window"
+      }
+    },
+    {
+      "name": "TramCarriageBFrontWindow3",
+      "translation": [
+        2.75,
+        2.3,
+        1.27
+      ],
+      "mesh": 2,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TramCarriageBFrontDoor",
+      "translation": [
+        0.0,
+        1.52,
+        1.28
+      ],
+      "mesh": 3,
+      "extras": {
+        "socket_type": "approach_door"
+      }
+    },
+    {
+      "name": "TramCarriageBFrontDoorTrim",
+      "translation": [
+        0.0,
+        2.54,
+        1.36
+      ],
+      "mesh": 4
+    },
+    {
+      "name": "TramCarriageBFrontServiceLamp",
+      "translation": [
+        0.0,
+        3.05,
+        1.42
+      ],
+      "mesh": 16,
+      "extras": {
+        "socket_type": "approach_service_light"
       }
     },
     {
@@ -368,8 +544,8 @@
         "socket_type": "maintenance_pit"
       },
       "children": [
-        26,
-        27
+        40,
+        41
       ]
     },
     {
@@ -522,7 +698,7 @@
         "socket_type": "signal_mast"
       },
       "children": [
-        38
+        52
       ]
     },
     {
@@ -902,9 +1078,9 @@
       "name": "Tram weathered teal",
       "pbrMetallicRoughness": {
         "baseColorFactor": [
-          0.09,
-          0.2,
-          0.22,
+          0.13,
+          0.27,
+          0.29,
           1.0
         ],
         "metallicFactor": 0.38,
@@ -915,9 +1091,9 @@
       "name": "Tram oxidized iron",
       "pbrMetallicRoughness": {
         "baseColorFactor": [
-          0.34,
-          0.15,
-          0.08,
+          0.42,
+          0.19,
+          0.09,
           1.0
         ],
         "metallicFactor": 0.48,
@@ -1866,7 +2042,8 @@
     "required_nodes": [
       "TramGraveyardModel",
       "TramCarriageA",
-      "TramCarriageADoor",
+      "TramCarriageAFrontWindow0",
+      "TramCarriageAFrontDoor",
       "TramMaintenancePit",
       "TramSignalMast",
       "TramSignalLamp",

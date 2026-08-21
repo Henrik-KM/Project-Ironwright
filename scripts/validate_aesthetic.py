@@ -156,6 +156,8 @@ AUTHORED_REGION_ASSETS = {
             "TramGraveyardModel",
             "TramCarriageA",
             "TramCarriageADoor",
+            "TramCarriageAFrontWindow0",
+            "TramCarriageAFrontDoor",
             "TramMaintenancePit",
             "TramSignalMast",
             "TramSignalLamp",
@@ -209,6 +211,8 @@ AUTHORED_REGION_ASSETS = {
         "required": [
             "TenementModel",
             "TenementBlockL",
+            "TenementFrontWindowL0_0",
+            "TenementBlockLEdgeL",
             "TenementBalcony0",
             "TenementFireEscapeLadder",
             "TenementRoofWaterTank",

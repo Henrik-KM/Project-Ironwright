@@ -1,5 +1,10 @@
 # Changelog
 
+## Pre-alpha authored region approach readability
+
+- Added camera-facing opaque service windows and facade edge breaks to the East Tenements shell so its residential identity survives the tactical approach frame.
+- Added camera-facing carriage windows, door hardware, service lamps and stronger teal/rust separation to Tram Graveyard so its rail identity survives the tactical approach frame.
+
 ## Pre-alpha authored landmark continuity
 
 - Corrected three authored parent-child landmark sockets that were using

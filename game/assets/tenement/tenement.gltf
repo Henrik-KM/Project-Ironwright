@@ -32,19 +32,37 @@
         14,
         15,
         16,
+        17,
+        18,
         19,
+        20,
+        21,
         22,
+        23,
+        24,
         25,
+        26,
         27,
         28,
         29,
         30,
         31,
         32,
-        33,
-        34,
         35,
-        36
+        38,
+        41,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54
       ],
       "extras": {
         "ironwright_asset_id": "tenement.east_blocks.v1",
@@ -239,6 +257,198 @@
       }
     },
     {
+      "name": "TenementFrontWindowL0_0",
+      "translation": [
+        -6.8,
+        1.65,
+        2.5
+      ],
+      "mesh": 3,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TenementFrontWindowL0_1",
+      "translation": [
+        -6.8,
+        3.9,
+        2.5
+      ],
+      "mesh": 3,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TenementFrontWindowL0_2",
+      "translation": [
+        -6.8,
+        6.15,
+        2.5
+      ],
+      "mesh": 3,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TenementFrontWindowL1_0",
+      "translation": [
+        -3.2,
+        1.65,
+        2.5
+      ],
+      "mesh": 3,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TenementFrontWindowL1_1",
+      "translation": [
+        -3.2,
+        3.9,
+        2.5
+      ],
+      "mesh": 3,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TenementFrontWindowL1_2",
+      "translation": [
+        -3.2,
+        6.15,
+        2.5
+      ],
+      "mesh": 3,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TenementFrontWindowR0_0",
+      "translation": [
+        3.2,
+        1.65,
+        4.9
+      ],
+      "mesh": 3,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TenementFrontWindowR0_1",
+      "translation": [
+        3.2,
+        3.9,
+        4.9
+      ],
+      "mesh": 3,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TenementFrontWindowR0_2",
+      "translation": [
+        3.2,
+        6.15,
+        4.9
+      ],
+      "mesh": 3,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TenementFrontWindowR1_0",
+      "translation": [
+        6.8,
+        1.65,
+        4.9
+      ],
+      "mesh": 3,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TenementFrontWindowR1_1",
+      "translation": [
+        6.8,
+        3.9,
+        4.9
+      ],
+      "mesh": 3,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TenementFrontWindowR1_2",
+      "translation": [
+        6.8,
+        6.15,
+        4.9
+      ],
+      "mesh": 3,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TenementBlockLEdgeL",
+      "translation": [
+        -8.15,
+        4.5,
+        0.0
+      ],
+      "mesh": 2,
+      "extras": {
+        "socket_type": "facade_edge"
+      }
+    },
+    {
+      "name": "TenementBlockLEdgeR",
+      "translation": [
+        -1.85,
+        4.5,
+        0.0
+      ],
+      "mesh": 2,
+      "extras": {
+        "socket_type": "facade_edge"
+      }
+    },
+    {
+      "name": "TenementBlockREdgeL",
+      "translation": [
+        1.85,
+        4.5,
+        2.4
+      ],
+      "mesh": 2,
+      "extras": {
+        "socket_type": "facade_edge"
+      }
+    },
+    {
+      "name": "TenementBlockREdgeR",
+      "translation": [
+        8.15,
+        4.5,
+        2.4
+      ],
+      "mesh": 2,
+      "extras": {
+        "socket_type": "facade_edge"
+      }
+    },
+    {
       "name": "TenementBalcony0",
       "translation": [
         -0.1,
@@ -250,8 +460,8 @@
         "socket_type": "balcony"
       },
       "children": [
-        17,
-        18
+        33,
+        34
       ]
     },
     {
@@ -296,8 +506,8 @@
         "socket_type": "balcony"
       },
       "children": [
-        20,
-        21
+        36,
+        37
       ]
     },
     {
@@ -342,8 +552,8 @@
         "socket_type": "balcony"
       },
       "children": [
-        23,
-        24
+        39,
+        40
       ]
     },
     {
@@ -388,7 +598,7 @@
         "socket_type": "fire_escape"
       },
       "children": [
-        26
+        42
       ]
     },
     {
@@ -503,6 +713,30 @@
       "mesh": 11,
       "extras": {
         "socket_type": "window_light"
+      }
+    },
+    {
+      "name": "TenementFrontWindowLightL",
+      "translation": [
+        -3.0,
+        5.25,
+        2.5
+      ],
+      "mesh": 11,
+      "extras": {
+        "socket_type": "approach_window_light"
+      }
+    },
+    {
+      "name": "TenementFrontWindowLightR",
+      "translation": [
+        6.8,
+        5.25,
+        4.9
+      ],
+      "mesh": 11,
+      "extras": {
+        "socket_type": "approach_window_light"
       }
     },
     {
@@ -741,9 +975,9 @@
       "name": "Tenement brick",
       "pbrMetallicRoughness": {
         "baseColorFactor": [
-          0.18,
+          0.24,
+          0.095,
           0.075,
-          0.065,
           1.0
         ],
         "metallicFactor": 0.03,
@@ -796,22 +1030,20 @@
     },
     {
       "name": "Tenement window",
-      "alphaMode": "BLEND",
-      "doubleSided": true,
       "pbrMetallicRoughness": {
         "baseColorFactor": [
-          0.12,
-          0.25,
+          0.06,
+          0.24,
           0.3,
-          0.44
+          1.0
         ],
         "metallicFactor": 0.1,
         "roughnessFactor": 0.26
       },
       "emissiveFactor": [
-        0.02,
-        0.1,
-        0.12
+        0.03,
+        0.18,
+        0.24
       ]
     },
     {
@@ -1532,6 +1764,8 @@
     "required_nodes": [
       "TenementModel",
       "TenementBlockL",
+      "TenementFrontWindowL0_0",
+      "TenementBlockLEdgeL",
       "TenementBalcony0",
       "TenementFireEscapeLadder",
       "TenementRoofWaterTank",

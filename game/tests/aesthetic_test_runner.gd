@@ -168,6 +168,7 @@ func _run_all() -> void:
             if landmark.region_kind == &"rail":
                 _expect(landmark.find_child("TramMaintenanceBay", true, false) != null, "Tram Graveyard must expose an authored maintenance bay.")
                 _expect(landmark.find_child("TramCarriageDoor", true, false) != null, "Tram Graveyard must expose a readable carriage door.")
+                _expect(landmark.find_child("TramCarriageAFrontWindow0", true, false) != null and landmark.find_child("TramCarriageAFrontDoor", true, false) != null, "Tram Graveyard must expose approach-facing carriage hardware.")
                 _expect(landmark.find_child("TramInspectionPit", true, false) != null, "Tram Graveyard must expose a bounded inspection-pit signature.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/TramGraveyardAuthoredModel") != null, "Tram Graveyard must expose its authored carriage and maintenance landmark shell.")
                 var tram_signal := landmark.find_child("TramSignalLamp", true, false) as Node3D
@@ -236,6 +237,7 @@ func _run_all() -> void:
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing/TenementVerticalLifeDetails") != null, "East Tenements must expose an authored vertical residential vignette.")
                 _expect(landmark.find_child("TenementFireEscapeLadder", true, false) != null, "East Tenements must expose a readable fire-escape route signature.")
                 _expect(landmark.find_child("TenementRoofWaterTank", true, false) != null, "East Tenements must expose a rooftop service identity.")
+                _expect(landmark.find_child("TenementFrontWindowL0_0", true, false) != null and landmark.find_child("TenementBlockLEdgeL", true, false) != null, "East Tenements must expose approach-facing windows and facade edge breaks.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/TenementAuthoredModel") != null, "East Tenements must expose its authored residential block landmark shell.")
                 var tenement_creep := landmark.find_child("TenementOrganicCreep0", true, false) as Node3D
                 _expect(tenement_creep != null, "East Tenements must expose a named organic-creep motion socket.")
