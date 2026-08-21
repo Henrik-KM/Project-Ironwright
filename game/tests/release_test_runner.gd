@@ -151,6 +151,23 @@ func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void
     _expect(world.hud.resource_label.get_theme_constant("outline_size") >= 4, "High contrast must strengthen text outlines.")
     settings.set_value(&"text_scale", 1.0, false)
     settings.set_value(&"high_contrast_ui", false, false)
+    settings.set_value(&"game_speed", 1.25, false)
+    _expect(is_equal_approx(Engine.time_scale, 1.25), "Game speed accessibility setting must apply to the running release clock.")
+    settings.set_value(&"game_speed", 1.0, false)
+    _expect(is_equal_approx(Engine.time_scale, 1.0), "Game speed accessibility setting must restore the default clock.")
+
+    var original_up := settings.get_key_binding(&"iw_move_up")
+    var original_down := settings.get_key_binding(&"iw_move_down")
+    _expect(original_up != KEY_NONE and original_down != KEY_NONE, "Release settings must expose valid movement bindings.")
+    _expect(settings.set_key_binding(&"iw_move_up", KEY_I, false), "Release settings must accept a remapped keyboard action.")
+    _expect(settings.get_key_binding(&"iw_move_up") == KEY_I, "Remapped keyboard action must persist in the live settings state.")
+    var remapped_event_found := false
+    for event in InputMap.action_get_events(&"iw_move_up"):
+        if event is InputEventKey and (event as InputEventKey).keycode == KEY_I:
+            remapped_event_found = true
+    _expect(remapped_event_found, "Remapped keyboard action must update the live InputMap event.")
+    _expect(settings.set_key_binding(&"iw_move_up", original_up, false), "Release settings must restore a remapped keyboard action.")
+    _expect(settings.get_key_binding(&"iw_move_up") == original_up and settings.get_key_binding(&"iw_move_down") == original_down, "Restoring a keyboard action must leave the other movement bindings intact.")
 
 
 func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
@@ -359,7 +376,9 @@ func _test_front_end(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.hud.visible and world.strategic_hud.visible and world.operations_hud.visible, "Entering the playable world must restore all tactical HUD layers.")
     front_end.show_settings_from_title()
     _expect(front_end.active_screen == &"settings", "Accessibility and audio settings screen must open from title.")
-    _expect(front_end.settings_controls.size() >= 16, "Settings screen must expose release accessibility, audio, language and controller options.")
+    _expect(front_end.settings_controls.size() >= 18, "Settings screen must expose release accessibility, audio, language, pacing and controller options.")
+    for action in ReleaseSettingsService3D.REMAPPABLE_ACTIONS:
+        _expect(front_end.remap_buttons.has(action), "Settings screen must expose a remapping control for %s." % String(action))
     var raw_localization_labels := 0
     for node in front_end.settings_panel.find_children("*", "Label", true, false):
         if node is Label and String((node as Label).text).begins_with("settings."):

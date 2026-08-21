@@ -23,8 +23,10 @@ var continue_button: Button
 var no_save_label: Label
 var settings_title: Label
 var settings_controls: Dictionary = {}
+var remap_buttons: Dictionary = {}
 var active_screen: StringName = &"hidden"
 var last_focus: Control
+var remap_capture_action: StringName = &""
 
 
 func configure(next_localization: LocalizationService3D, next_settings: ReleaseSettingsService3D) -> void:
@@ -47,6 +49,17 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
     if not visible or not (event is InputEventKey or event is InputEventJoypadButton):
+        return
+    if active_screen == &"settings" and remap_capture_action != &"":
+        if event is InputEventKey and (event as InputEventKey).pressed and not (event as InputEventKey).echo:
+            var key_event := event as InputEventKey
+            if key_event.keycode == KEY_ESCAPE:
+                remap_capture_action = &""
+            elif settings_service != null:
+                settings_service.set_key_binding(remap_capture_action, key_event.keycode)
+                remap_capture_action = &""
+            _populate_settings_controls()
+            get_viewport().set_input_as_handled()
         return
     if event.is_action_pressed(&"ui_cancel") or event.is_action_pressed(&"iw_cancel"):
         if active_screen == &"settings":
@@ -196,6 +209,13 @@ func _build_settings_rows(parent: VBoxContainer) -> void:
     settings_controls["target_fps"] = fps
     parent.add_child(_settings_row("settings.target_fps", fps))
 
+    var game_speed := OptionButton.new()
+    for value in [0.75, 1.0, 1.25]:
+        game_speed.add_item("%.2fx" % value)
+        game_speed.set_item_metadata(game_speed.item_count - 1, value)
+    settings_controls["game_speed"] = game_speed
+    parent.add_child(_settings_row("settings.game_speed", game_speed))
+
     for key in ["high_contrast_ui", "reduced_motion", "reduced_flashes", "hold_interactions", "controller_vibration", "subtitles", "show_world_guidance"]:
         var toggle := CheckButton.new()
         toggle.text = ""
@@ -206,6 +226,18 @@ func _build_settings_rows(parent: VBoxContainer) -> void:
         elif key == "show_world_guidance":
             label_key = "settings.world_guidance"
         parent.add_child(_settings_row(label_key, toggle))
+
+    var remap_hint := _body_label("settings.remap_hint", 13, Color("9fb1ae"), 42)
+    remap_hint.name = "RemapHint"
+    remap_hint.set_meta(&"localization_key", "settings.remap_hint")
+    parent.add_child(remap_hint)
+    for action in ReleaseSettingsService3D.REMAPPABLE_ACTIONS:
+        var button := Button.new()
+        button.name = "Remap_%s" % String(action)
+        button.custom_minimum_size = Vector2(270, 36)
+        button.pressed.connect(_begin_remap.bind(action))
+        remap_buttons[action] = button
+        parent.add_child(_settings_row("settings.%s" % _remap_label_suffix(action), button))
 
 
 func _settings_row(label_key: String, control: Control) -> HBoxContainer:
@@ -229,6 +261,7 @@ func show_title(has_save: bool) -> void:
     settings_panel.visible = false
     continue_button.disabled = not has_save
     no_save_label.visible = not has_save
+    remap_capture_action = &""
     _refresh_text()
     _populate_settings_controls()
     _focus_first_button(title_panel)
@@ -240,6 +273,7 @@ func show_pause() -> void:
     title_panel.visible = false
     pause_panel.visible = true
     settings_panel.visible = false
+    remap_capture_action = &""
     _refresh_text()
     _focus_first_button(pause_panel)
 
@@ -260,6 +294,7 @@ func _show_settings() -> void:
     title_panel.visible = false
     pause_panel.visible = false
     settings_panel.visible = true
+    remap_capture_action = &""
     _populate_settings_controls()
     _refresh_text()
     var language := settings_controls.get("language") as Control
@@ -301,6 +336,11 @@ func _populate_settings_controls() -> void:
     _select_metadata(settings_controls.get("difficulty") as OptionButton, str(settings_service.get_value(&"difficulty", "survival")))
     _select_metadata(settings_controls.get("colorblind_mode") as OptionButton, str(settings_service.get_value(&"colorblind_mode", "off")))
     _select_metadata(settings_controls.get("target_fps") as OptionButton, int(settings_service.get_value(&"target_fps", 60)))
+    _select_metadata(settings_controls.get("game_speed") as OptionButton, float(settings_service.get_value(&"game_speed", 1.0)))
+    for action in ReleaseSettingsService3D.REMAPPABLE_ACTIONS:
+        var button := remap_buttons.get(action) as Button
+        if button != null:
+            button.text = settings_service.key_binding_display_name(action)
 
 
 func _apply_settings() -> void:
@@ -311,6 +351,7 @@ func _apply_settings() -> void:
     values["difficulty"] = _selected_metadata(settings_controls.get("difficulty") as OptionButton, "survival")
     values["colorblind_mode"] = _selected_metadata(settings_controls.get("colorblind_mode") as OptionButton, "off")
     values["target_fps"] = int(_selected_metadata(settings_controls.get("target_fps") as OptionButton, 60))
+    values["game_speed"] = float(_selected_metadata(settings_controls.get("game_speed") as OptionButton, 1.0))
     for key in ["master_volume", "music_volume", "ambience_volume", "effects_volume", "text_scale", "camera_shake"]:
         var slider := settings_controls.get(key) as HSlider
         if slider != null:
@@ -326,6 +367,27 @@ func _apply_settings() -> void:
         localization.set_locale(StringName(str(values["language"])))
     settings_applied.emit(values.duplicate(true))
     _refresh_text()
+
+
+func _begin_remap(action: StringName) -> void:
+    if not ReleaseSettingsService3D.REMAPPABLE_ACTIONS.has(action):
+        return
+    remap_capture_action = action
+    var button := remap_buttons.get(action) as Button
+    if button != null:
+        button.text = localization.text("settings.press_key") if localization != null else "PRESS A KEY"
+    if button != null:
+        button.grab_focus()
+
+
+func _remap_label_suffix(action: StringName) -> String:
+    match action:
+        &"iw_move_up": return "move_up"
+        &"iw_move_down": return "move_down"
+        &"iw_move_left": return "move_left"
+        &"iw_move_right": return "move_right"
+        &"iw_interact": return "interact"
+    return String(action)
 
 
 func _on_locale_changed(locale: StringName) -> void:

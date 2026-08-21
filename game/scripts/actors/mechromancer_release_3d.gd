@@ -18,19 +18,18 @@ func _resolve_release_services() -> void:
 func _update_movement(delta: float) -> void:
     var input_vector := Vector2.ZERO
     if input_enabled:
-        var keyboard := Vector2(
-            float(Input.is_key_pressed(KEY_D)) - float(Input.is_key_pressed(KEY_A)),
-            float(Input.is_key_pressed(KEY_S)) - float(Input.is_key_pressed(KEY_W))
-        )
-        var controller := Vector2.ZERO
         if (
             InputMap.has_action(&"iw_move_left")
             and InputMap.has_action(&"iw_move_right")
             and InputMap.has_action(&"iw_move_up")
             and InputMap.has_action(&"iw_move_down")
         ):
-            controller = Input.get_vector(&"iw_move_left", &"iw_move_right", &"iw_move_up", &"iw_move_down")
-        input_vector = keyboard if keyboard.length_squared() > controller.length_squared() else controller
+            input_vector = Input.get_vector(&"iw_move_left", &"iw_move_right", &"iw_move_up", &"iw_move_down")
+        else:
+            input_vector = Vector2(
+                float(Input.is_key_pressed(KEY_D)) - float(Input.is_key_pressed(KEY_A)),
+                float(Input.is_key_pressed(KEY_S)) - float(Input.is_key_pressed(KEY_W))
+            )
     input_vector = input_vector.normalized()
 
     var target_velocity := Vector3(input_vector.x, 0.0, input_vector.y) * move_speed
@@ -63,9 +62,7 @@ func _update_channel(delta: float) -> void:
         _settings_service = get_tree().get_first_node_in_group(&"release_settings_service") as ReleaseSettingsService3D
     if _settings_service != null:
         hold_required = hold_required and bool(_settings_service.get_value(&"hold_interactions", true))
-    var interact_pressed := Input.is_key_pressed(KEY_E)
-    if InputMap.has_action(&"iw_interact"):
-        interact_pressed = interact_pressed or Input.is_action_pressed(&"iw_interact")
+    var interact_pressed := Input.is_action_pressed(&"iw_interact") if InputMap.has_action(&"iw_interact") else Input.is_key_pressed(KEY_E)
     if hold_required and not interact_pressed:
         cancel_channel()
         return

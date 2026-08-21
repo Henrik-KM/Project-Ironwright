@@ -52,6 +52,15 @@ interaction channels in the canonical Blender-to-glTF path. This improves the
 primary player silhouette without claiming that final authored hit libraries,
 upgrade cinematics or full progression-state rigs are complete.
 
+The release settings surface now also carries localized keyboard remapping for
+movement and exposed interactions. A captured key updates the live action map,
+swaps conflicts safely and persists through the transactional settings file;
+controller bindings remain available in parallel. This closes a practical
+accessibility and control-readability gap without adding gameplay workload.
+The same surface exposes bounded 0.75x, 1.0x and 1.25x game speed for players
+who need more time to read a threat or want a faster repeat run; it changes
+clock pacing only and does not alter ecology or combat rules.
+
 ## Immediate failures identified from the first full-game screenshot review
 
 - Giant screen-fixed world labels can obscure most of the playfield.

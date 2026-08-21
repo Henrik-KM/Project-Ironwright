@@ -107,6 +107,11 @@ func _movement_action_strength(action: StringName) -> float:
 
 
 func _keyboard_movement_strength(action: StringName) -> float:
+    if InputMap.has_action(action):
+        for event in InputMap.action_get_events(action):
+            if event is InputEventKey and Input.is_key_pressed((event as InputEventKey).keycode):
+                return 1.0
+        return 0.0
     match action:
         &"iw_move_left":
             return 1.0 if Input.is_key_pressed(KEY_A) else 0.0
@@ -120,7 +125,9 @@ func _keyboard_movement_strength(action: StringName) -> float:
 
 
 func _interact_held() -> bool:
-    return Input.is_key_pressed(KEY_E) or (InputMap.has_action(&"iw_interact") and Input.is_action_pressed(&"iw_interact"))
+    if InputMap.has_action(&"iw_interact"):
+        return Input.is_action_pressed(&"iw_interact")
+    return Input.is_key_pressed(KEY_E)
 
 
 func _nearest_enemy_in_range(maximum_range: float) -> Node3D:
