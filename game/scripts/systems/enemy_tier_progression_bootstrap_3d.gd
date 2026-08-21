@@ -1,9 +1,12 @@
 class_name EnemyTierProgressionBootstrap3D
 extends Node
 
-const SIDECAR_PATH := "user://saves/world_0.enemy_tiers.json"
-const SIDECAR_TEMP_PATH := "user://saves/world_0.enemy_tiers.tmp"
-const SIDECAR_BACKUP_PATH := "user://saves/world_0.enemy_tiers.backup.json"
+const DEFAULT_SIDECAR_ROOT := "user://saves"
+const DEFAULT_SIDECAR_SLOT: StringName = &"world_0"
+
+var sidecar_path: String = "%s/%s.enemy_tiers.json" % [DEFAULT_SIDECAR_ROOT, DEFAULT_SIDECAR_SLOT]
+var sidecar_temp_path: String = "%s/%s.enemy_tiers.tmp" % [DEFAULT_SIDECAR_ROOT, DEFAULT_SIDECAR_SLOT]
+var sidecar_backup_path: String = "%s/%s.enemy_tiers.backup.json" % [DEFAULT_SIDECAR_ROOT, DEFAULT_SIDECAR_SLOT]
 
 var world: Node
 var director: EnemyTierProgressionDirector3D
@@ -66,6 +69,8 @@ func _initialize() -> void:
     main_hud = _find_node_with_method(world, &"push_notification")
     transactional_save_service = get_tree().get_first_node_in_group(&"transactional_save_service")
     if transactional_save_service != null:
+        if _has_property(transactional_save_service, &"save_root"):
+            _configure_sidecar_paths(str(transactional_save_service.get("save_root")), DEFAULT_SIDECAR_SLOT)
         if transactional_save_service.has_signal(&"save_completed"):
             transactional_save_service.connect(&"save_completed", Callable(self, "_on_world_save_completed"))
         if transactional_save_service.has_signal(&"load_completed"):
@@ -160,45 +165,47 @@ func _notify(message: String) -> void:
         main_hud.call(&"push_notification", message)
 
 
-func _on_world_save_completed(slot_id: StringName, path: String) -> void:
-    _save_sidecar()
+func _on_world_save_completed(slot_id: StringName, path: String) -> bool:
+    _configure_sidecar_from_save_path(slot_id, path)
+    return _save_sidecar()
 
 
 func _on_world_load_completed(slot_id: StringName, source_path: String, recovered_backup: bool) -> void:
+    _configure_sidecar_from_save_path(slot_id, source_path)
     prefer_backup_restore = recovered_backup
     pending_restore = true
 
 
 func _save_sidecar() -> bool:
-    DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://saves"))
+    DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(sidecar_path.get_base_dir()))
     var payload := director.to_dictionary()
-    var payload_json := JSON.stringify(payload)
+    var payload_json := _canonical_json(payload)
     var envelope := {
         "schema_version": 1,
         "saved_at_unix": int(Time.get_unix_time_from_system()),
         "checksum_sha256": _sha256(payload_json),
         "payload": payload,
     }
-    var file := FileAccess.open(SIDECAR_TEMP_PATH, FileAccess.WRITE)
+    var file := FileAccess.open(sidecar_temp_path, FileAccess.WRITE)
     if file == null:
         return false
     file.store_string(JSON.stringify(envelope))
     file.flush()
     file.close()
-    if _read_verified(SIDECAR_TEMP_PATH).is_empty():
-        DirAccess.remove_absolute(ProjectSettings.globalize_path(SIDECAR_TEMP_PATH))
+    if _read_verified(sidecar_temp_path).is_empty():
+        DirAccess.remove_absolute(ProjectSettings.globalize_path(sidecar_temp_path))
         return false
-    if FileAccess.file_exists(SIDECAR_BACKUP_PATH):
-        DirAccess.remove_absolute(ProjectSettings.globalize_path(SIDECAR_BACKUP_PATH))
-    if FileAccess.file_exists(SIDECAR_PATH):
-        DirAccess.rename_absolute(ProjectSettings.globalize_path(SIDECAR_PATH), ProjectSettings.globalize_path(SIDECAR_BACKUP_PATH))
-    return DirAccess.rename_absolute(ProjectSettings.globalize_path(SIDECAR_TEMP_PATH), ProjectSettings.globalize_path(SIDECAR_PATH)) == OK
+    if FileAccess.file_exists(sidecar_backup_path):
+        DirAccess.remove_absolute(ProjectSettings.globalize_path(sidecar_backup_path))
+    if FileAccess.file_exists(sidecar_path):
+        DirAccess.rename_absolute(ProjectSettings.globalize_path(sidecar_path), ProjectSettings.globalize_path(sidecar_backup_path))
+    return DirAccess.rename_absolute(ProjectSettings.globalize_path(sidecar_temp_path), ProjectSettings.globalize_path(sidecar_path)) == OK
 
 
 func _restore_sidecar(prefer_backup: bool = false) -> bool:
-    var envelope := _read_verified(SIDECAR_BACKUP_PATH if prefer_backup else SIDECAR_PATH)
+    var envelope := _read_verified(sidecar_backup_path if prefer_backup else sidecar_path)
     if envelope.is_empty():
-        envelope = _read_verified(SIDECAR_PATH if prefer_backup else SIDECAR_BACKUP_PATH)
+        envelope = _read_verified(sidecar_path if prefer_backup else sidecar_backup_path)
     if envelope.is_empty():
         return false
     var payload: Variant = envelope.get("payload", {})
@@ -206,6 +213,47 @@ func _restore_sidecar(prefer_backup: bool = false) -> bool:
         return false
     director.restore_from_dictionary(payload)
     return true
+
+
+func _configure_sidecar_paths(save_root: String, slot_id: StringName = DEFAULT_SIDECAR_SLOT) -> void:
+    var normalized_root := save_root.strip_edges()
+    while normalized_root.ends_with("/"):
+        normalized_root = normalized_root.left(-1)
+    if normalized_root.is_empty():
+        normalized_root = DEFAULT_SIDECAR_ROOT
+    var safe_slot := _safe_slot(slot_id)
+    sidecar_path = "%s/%s.enemy_tiers.json" % [normalized_root, safe_slot]
+    sidecar_temp_path = "%s/%s.enemy_tiers.tmp" % [normalized_root, safe_slot]
+    sidecar_backup_path = "%s/%s.enemy_tiers.backup.json" % [normalized_root, safe_slot]
+
+
+func _configure_sidecar_from_save_path(slot_id: StringName, save_path: String) -> void:
+    if save_path.strip_edges().is_empty():
+        return
+    _configure_sidecar_paths(save_path.get_base_dir(), slot_id)
+
+
+func _canonical_json(value: Variant) -> String:
+    if value is Dictionary:
+        var source := value as Dictionary
+        var keys: Array[String] = []
+        for key in source.keys():
+            keys.append(str(key))
+        keys.sort()
+        var pairs: Array[String] = []
+        for key in keys:
+            pairs.append("%s:%s" % [JSON.stringify(key), _canonical_json(source.get(key))])
+        return "{%s}" % ",".join(pairs)
+    if value is Array:
+        var items: Array[String] = []
+        for item in value:
+            items.append(_canonical_json(item))
+        return "[%s]" % ",".join(items)
+    if value is float:
+        var number := float(value)
+        if is_finite(number) and is_equal_approx(number, round(number)):
+            return str(int(number))
+    return JSON.stringify(value)
 
 
 func _read_verified(path: String) -> Dictionary:
@@ -222,7 +270,7 @@ func _read_verified(path: String) -> Dictionary:
     if not (payload is Dictionary):
         return {}
     var expected := str(envelope.get("checksum_sha256", ""))
-    if expected.is_empty() or expected != _sha256(JSON.stringify(payload)):
+    if expected.is_empty() or expected != _sha256(_canonical_json(payload)):
         return {}
     return envelope
 
@@ -233,6 +281,16 @@ func _sha256(value: String) -> String:
         return ""
     context.update(value.to_utf8_buffer())
     return context.finish().hex_encode()
+
+
+func _safe_slot(slot_id: StringName) -> String:
+    var value := String(slot_id).to_lower().replace(" ", "_")
+    var safe := ""
+    for character in value:
+        var code := character.to_ascii_buffer()[0]
+        if code in range(48, 58) or code in range(97, 123) or character == "_" or character == "-":
+            safe += character
+    return safe if not safe.is_empty() else String(DEFAULT_SIDECAR_SLOT)
 
 
 func _find_node_with_method(root: Node, method_name: StringName) -> Node:

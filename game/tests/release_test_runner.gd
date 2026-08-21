@@ -32,6 +32,7 @@ func _run_all() -> void:
     await _test_runtime_material_continuity(world)
     await _test_spatial_and_performance(world)
     _test_transactional_save_service()
+    _test_enemy_tier_sidecar_isolation(world)
     _test_unified_snapshot(world)
     _test_front_end(world)
 
@@ -507,6 +508,38 @@ func _test_transactional_save_service() -> void:
     _expect((failed_report.get("attempts", []) as Array).size() == 4 and recovery_failures.size() == 1, "Failed save recovery must report every bounded candidate and emit one failure signal.")
     service.delete_slot(TEST_SLOT)
     service.queue_free()
+
+
+func _test_enemy_tier_sidecar_isolation(world: IronwrightReleaseWorld3D) -> void:
+    var bootstrap := world.get_node_or_null("EnemyTierProgressionBootstrap")
+    _expect(bootstrap != null, "Release runtime must include the enemy-tier sidecar bootstrap.")
+    if bootstrap == null:
+        return
+
+    var isolated_root := "user://release_enemy_tier_sidecar_test"
+    var isolated_slot: StringName = &"isolated_slot"
+    var isolated_save_path := "%s/%s.json" % [isolated_root, isolated_slot]
+    bootstrap.call("_configure_sidecar_paths", isolated_root, isolated_slot)
+    var expected_path := "%s/%s.enemy_tiers.json" % [isolated_root, isolated_slot]
+    _expect(str(bootstrap.get("sidecar_path")) == expected_path, "Enemy-tier sidecars must follow the configured save root and slot.")
+    _expect(not str(bootstrap.get("sidecar_path")).contains("user://saves/world_0"), "Enemy-tier sidecars must not fall back to the shared default path after isolation.")
+
+    _expect(bool(bootstrap.call("_on_world_save_completed", isolated_slot, isolated_save_path)), "An isolated enemy-tier sidecar save must complete successfully.")
+    _expect(FileAccess.file_exists(expected_path), "A completed isolated save must write its enemy-tier sidecar beside that save.")
+
+    var second_root := "user://release_enemy_tier_sidecar_test_second"
+    var second_slot: StringName = &"second_slot"
+    bootstrap.call("_configure_sidecar_from_save_path", second_slot, "%s/%s.json" % [second_root, second_slot])
+    _expect(str(bootstrap.get("sidecar_path")) == "%s/%s.enemy_tiers.json" % [second_root, second_slot], "Loading a save from another root must retarget the enemy-tier sidecar.")
+
+    for path in [
+        expected_path,
+        expected_path.replace(".json", ".tmp"),
+        expected_path.replace(".json", ".backup.json"),
+    ]:
+        if FileAccess.file_exists(path):
+            DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+    bootstrap.call("_configure_sidecar_paths", "user://saves", "world_0")
 
 
 func _test_unified_snapshot(world: IronwrightReleaseWorld3D) -> void:
