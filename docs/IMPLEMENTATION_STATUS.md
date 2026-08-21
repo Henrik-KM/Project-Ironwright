@@ -1426,3 +1426,13 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   pulse;
 - added aesthetic coverage for visibility, named authored detail sockets and
   the discovered-state pulse, then inspected the result in a live renderer.
+
+## Focused ordinary urban shell milestone
+
+- replaced the repeated town building body cubes with beveled presentation
+  shells while retaining the authoritative box collisions;
+- added side-elevation floor plates and window bays, roof slabs, collapsed-roof
+  silhouettes and bounded utility/ventilation hardware across the ordinary
+  building kit;
+- added aesthetic coverage for multi-face building detail and inspected the
+  production-material result at close tactical scale in a live renderer.

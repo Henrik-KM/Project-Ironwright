@@ -81,6 +81,14 @@ The central approach now also carries a bounded civic-infrastructure layer: stor
 
 The ordinary ruined blocks now also carry a bounded high-definition facade grammar: layered window bays, floor plates, roof parapets, service shutters, rain downpipes and restrained damage braces break the remaining broad shells into readable lived-in structures. The facade layer is presentation-only and does not alter building collision, navigation or simulation state.
 
+The ordinary building masses now carry the next bounded depth pass: beveled
+collision-preserving shells, a side elevation with floor plates and windows,
+roof slabs, collapsed roof silhouettes and small utility/ventilation hardware.
+This makes the repeated town blocks read as damaged architecture from multiple
+tactical approaches instead of front-facing dressing on broad cubes. The pass
+remains presentation-only and does not add interiors, navigation changes,
+utility simulation or a new player task.
+
 Tiered organic nests now carry the same close-range production bar: a segmented dorsal carapace, membrane plates, visible vascular channels, a root collar and fine perimeter spines build a readable encounter landmark from layered original geometry. These details remain presentation-only and do not alter nest health, spawning, collision or regrowth.
 
 Ordinary early-game nests now carry the same bounded close-range anatomy bar at a smaller authored scale, so the first hostile landmark does not read as a placeholder beside later nest encounters. Their geometry remains presentation-only and does not alter nest health, spawning, collision or regrowth.

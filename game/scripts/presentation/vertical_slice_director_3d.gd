@@ -147,8 +147,8 @@ func _replace_central_building_visuals() -> void:
         if body == null:
             continue
         for child in body.get_children():
-            if child is MeshInstance3D:
-                (child as MeshInstance3D).visible = false
+            if child is MeshInstance3D or child.name == "Shell":
+                (child as Node3D).visible = false
         _build_cutaway_facade(body, float(definition[2]), definition[3] as StringName)
 
 

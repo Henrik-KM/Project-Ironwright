@@ -253,6 +253,54 @@ func _add_high_definition_facade(
         0.16
     )
 
+    var side_detail := Node3D.new()
+    side_detail.name = "FacadeSideDetail%02d" % index
+    parent.add_child(side_detail)
+    var side_x := size.x * 0.515 * (-1.0 if index % 2 == 0 else 1.0)
+    var side_front_z := -size.z * 0.38
+    var side_bay_count := maxi(2, int(size.z / 3.1))
+    var side_bay_span := size.z * 0.72 / float(side_bay_count)
+    for floor_index in range(floor_count):
+        var side_floor_y := 1.48 + float(floor_index) * 2.35
+        if side_floor_y > size.y - 0.7:
+            continue
+        ModelKit3D.add_beveled_box(
+            side_detail,
+            Vector3(0.22, 0.08, size.z * 0.76),
+            Vector3(side_x, side_floor_y - 0.72, 0.0),
+            frame,
+            Vector3.ZERO,
+            "FacadeSideFloorPlate%02d" % floor_index,
+            0.18
+        )
+        for bay_index in range(side_bay_count):
+            var bay_z := side_front_z + side_bay_span * (float(bay_index) + 0.5)
+            var lit_side := (index + floor_index + bay_index + 2) % 9 == 0
+            ModelKit3D.add_beveled_box(
+                side_detail,
+                Vector3(0.1, 1.02, minf(2.0, side_bay_span * 0.72)),
+                Vector3(side_x, side_floor_y, bay_z),
+                window_warm if lit_side else window_dark,
+                Vector3.ZERO,
+                "FacadeSideWindow%02d_%02d" % [floor_index, bay_index],
+                0.12
+            )
+    ModelKit3D.add_beveled_box(
+        side_detail,
+        Vector3(0.18, size.y * 0.82, 0.22),
+        Vector3(side_x, size.y * 0.42, side_front_z),
+        frame,
+        Vector3.ZERO,
+        "FacadeSidePier",
+        0.18
+    )
+    var roof_utility := Node3D.new()
+    roof_utility.name = "FacadeRoofUtility%02d" % index
+    roof_utility.position = Vector3(size.x * 0.23, size.y + 0.3, size.z * 0.12)
+    facade.add_child(roof_utility)
+    ModelKit3D.add_louvered_panel(roof_utility, Vector3(1.15, 0.48, 0.3), Vector3.ZERO, frame, service, Vector3(0.0, -0.12, 0.0), "FacadeRoofUtilityHousing", 3)
+    ModelKit3D.add_cylinder(roof_utility, 0.065, 0.68, Vector3(-0.68, 0.25, 0.0), weathered, Vector3.ZERO, "FacadeRoofVent")
+
     if index % 3 == 0:
         var brace_y := minf(size.y * 0.72, size.y - 1.0)
         _add_facade_brace(
@@ -283,21 +331,30 @@ func _create_ruined_building(position: Vector3, size: Vector3, index: int) -> vo
     body.position = position
     add_child(body)
     var material := building_materials[index % building_materials.size()]
-    ModelKit3D.add_box(body, size, Vector3(0.0, size.y * 0.5, 0.0), material, Vector3.ZERO, "Shell")
+    ModelKit3D.add_beveled_box(body, size, Vector3(0.0, size.y * 0.5, 0.0), material, Vector3.ZERO, "Shell", 0.075)
     ModelKit3D.add_collision_box(body, size, Vector3(0.0, size.y * 0.5, 0.0))
 
     var frame_material := ModelKit3D.material(Color("1f2526"), 0.42, 0.58)
+    var roof_metal := ModelKit3D.material(Color("343b3b"), 0.62, 0.52)
     for side in [-1.0, 1.0]:
         ModelKit3D.add_beveled_box(body, Vector3(0.24, size.y * 0.84, 0.28), Vector3(side * size.x * 0.41, size.y * 0.43, -size.z * 0.53), frame_material, Vector3.ZERO, "BuildingCornerFrame", 0.24)
     ModelKit3D.add_beveled_box(body, Vector3(size.x * 0.88, 0.18, 0.32), Vector3(0.0, size.y + 0.12, -size.z * 0.12), frame_material, Vector3(0.0, 0.02, 0.0), "BuildingFacadeCrown", 0.22)
+    ModelKit3D.add_beveled_box(body, Vector3(size.x * 0.92, 0.16, size.z * 0.86), Vector3(0.0, size.y + 0.08, 0.05), roof_metal, Vector3.ZERO, "BuildingRoofSlab", 0.18)
 
     var roof_damage_side := -1.0 if index % 2 == 0 else 1.0
     ModelKit3D.add_box(body, Vector3(size.x * 0.42, 1.0, size.z * 0.5), Vector3(roof_damage_side * size.x * 0.26, size.y + 0.35, -size.z * 0.15), rubble_material, Vector3(0.12, 0.16, roof_damage_side * 0.18), "CollapsedRoof")
+    var roof_detail := Node3D.new()
+    roof_detail.name = "BuildingRoofUtilityDetail"
+    roof_detail.position = Vector3(-roof_damage_side * size.x * 0.2, size.y + 0.18, size.z * 0.16)
+    body.add_child(roof_detail)
+    ModelKit3D.add_louvered_panel(roof_detail, Vector3(1.35, 0.52, 0.34), Vector3.ZERO, roof_metal, frame_material, Vector3(0.0, 0.18, 0.0), "RoofUtilityUnit", 3)
+    ModelKit3D.add_cylinder(roof_detail, 0.075, 0.72, Vector3(0.76, 0.28, 0.08), frame_material, Vector3.ZERO, "RoofUtilityVent")
+    ModelKit3D.add_cylinder(roof_detail, 0.12, 0.08, Vector3(0.76, 0.64, 0.08), roof_metal, Vector3.ZERO, "RoofUtilityCap")
     for floor_index in range(1, int(size.y / 2.6)):
         var window_y := float(floor_index) * 2.25
         for side in [-1.0, 1.0]:
             var window_mat := ModelKit3D.material(Color("111617"), 0.0, 0.88)
-            ModelKit3D.add_box(body, Vector3(1.25, 1.1, 0.08), Vector3(side * size.x * 0.23, window_y, -size.z * 0.505), window_mat, Vector3.ZERO, "Window")
+            ModelKit3D.add_beveled_box(body, Vector3(1.25, 1.1, 0.08), Vector3(side * size.x * 0.23, window_y, -size.z * 0.505), window_mat, Vector3.ZERO, "Window", 0.12)
 
 
 func _build_wrecks_and_debris() -> void:
