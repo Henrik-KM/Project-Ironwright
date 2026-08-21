@@ -165,8 +165,11 @@ func _build_ui() -> void:
 
     map_banner = _label(root_control, "COMMAND MAP · LIVE PHYSICAL POSITIONS · F TO FOLLOW ACTIVE GROUP", 17, Color("79d8dc"))
     map_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    map_banner.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     map_banner.set_anchors_preset(Control.PRESET_TOP_WIDE)
-    map_banner.offset_top = 20
+    map_banner.offset_left = 18
+    map_banner.offset_right = -18
+    map_banner.offset_top = 16
     map_banner.offset_bottom = 52
     map_banner.visible = false
 
@@ -276,6 +279,15 @@ func apply_safe_layout(viewport_size: Vector2) -> void:
         prompt_panel.offset_top = -108.0
         prompt_panel.offset_bottom = -40.0
         prompt_label.size.x = prompt_width - 40.0
+
+    if map_banner != null:
+        # Keep the deliberate command-map affordance inside the safe viewport
+        # at the small release capture size as well as in a wide window.
+        map_banner.set_anchors_preset(Control.PRESET_TOP_WIDE)
+        map_banner.offset_left = 18.0
+        map_banner.offset_right = -18.0
+        map_banner.offset_top = 16.0
+        map_banner.offset_bottom = 52.0
 
     if viewport_size.x < 980.0:
         objective_panel.size.x = 370.0
