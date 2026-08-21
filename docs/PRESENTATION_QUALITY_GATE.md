@@ -96,6 +96,8 @@ The central approach now also carries a bounded civic-infrastructure layer: stor
 
 The ordinary ruined blocks now also carry a bounded high-definition facade grammar: layered window bays, floor plates, roof parapets, service shutters, rain downpipes and restrained damage braces break the remaining broad shells into readable lived-in structures. The facade layer is presentation-only and does not alter building collision, navigation or simulation state.
 
+The deliberate command-map mode now keeps its live-position banner inside an explicit viewport-safe inset and allows wrapping at small capture sizes, so the strategic affordance remains readable without competing with the objective card or ecology intelligence panel.
+
 The ordinary building masses now carry the next bounded depth pass: beveled
 collision-preserving shells, a side elevation with floor plates and windows,
 roof slabs, collapsed roof silhouettes and small utility/ventilation hardware.

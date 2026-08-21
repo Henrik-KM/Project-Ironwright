@@ -585,6 +585,13 @@ func _test_front_end(world: IronwrightReleaseWorld3D) -> void:
     _expect(raw_localization_labels == 0, "Settings labels must resolve localization keys instead of exposing raw settings.* identifiers.")
     front_end.hide_all()
 
+    world.hud.show_map_banner(true)
+    var map_banner_rect := world.hud.map_banner.get_global_rect()
+    var viewport_size := Vector2(world.get_viewport().get_visible_rect().size)
+    _expect(map_banner_rect.position.x >= -0.5 and map_banner_rect.end.x <= viewport_size.x + 0.5, "The command-map banner must remain inside the viewport-safe horizontal bounds.")
+    _expect(map_banner_rect.size.x >= 300.0, "The command-map banner must retain enough width to keep its live-position guidance readable.")
+    world.hud.show_map_banner(false)
+
 
 func _expect(condition: bool, message: String) -> void:
     if not condition:

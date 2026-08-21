@@ -1230,6 +1230,16 @@ environmentally distinct without changing ecology, routing or player workload.
 
 ## Commercial work still remaining
 
+## Focused command-map chrome milestone
+
+- made the live command-map banner use explicit viewport-safe horizontal
+  insets and word wrapping at the small release capture size;
+- kept the map camera, physical positions, ecology intelligence panel and
+  follow affordance unchanged while preventing the banner from clipping at
+  the window edge;
+- added release regression coverage for the banner's resolved safe rectangle
+  and minimum readable width.
+
 ## Focused organic action-pose presentation milestone
 
 - layered distinct physical poses onto the existing Feed, Nest, Retreat and Death clips for every organic family;
