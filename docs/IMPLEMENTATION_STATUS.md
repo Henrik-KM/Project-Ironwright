@@ -687,6 +687,18 @@ identities. Manual channels remain finish-before-save.
   deterministic waterline/growth motion; live district review remains
   required.
 
+## Focused West Grid authored-space milestone
+
+- replaced the occluding generic industrial blocks with the original
+  high-definition `west.grid.substation.v1` shell: turbine hall, lit windows,
+  pressure-tank yard, transformer fins, pipe bridge, warning lights and
+  restrained organic creep;
+- retained the existing West Grid survey, salvage, route, ecology, discovery,
+  outpost and operation ownership; the new geometry is presentation-only;
+- native aesthetic and release coverage verifies the named sockets and
+  deterministic signal, warning-light and organic-growth motion; live district
+  review remains required.
+
 ## Focused remote-ground continuity milestone
 
 - added persistent non-visual ground collision sized from every remote

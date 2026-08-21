@@ -72,6 +72,9 @@ REQUIRED = [
     "game/assets/flood_market/source/build_flood_market_asset.py",
     "game/assets/flood_market/flood_market.gltf",
     "game/data/flood_market_asset_manifest.json",
+    "game/assets/west_grid/source/build_west_grid_asset.py",
+    "game/assets/west_grid/west_grid.gltf",
+    "game/data/west_grid_asset_manifest.json",
 ]
 
 AUTHORED_ORGANIC_ASSETS = {
@@ -220,6 +223,20 @@ AUTHORED_REGION_ASSETS = {
             "FloodMarketWaterline0",
             "FloodMarketServiceCrane",
             "FloodMarketOrganicGrowth0",
+            "ProductionAssetMarker",
+        ],
+    },
+    "west_grid": {
+        "asset_id": "west.grid.substation.v1",
+        "root": "WestGridModel",
+        "required": [
+            "WestGridModel",
+            "WestGridTurbineHall",
+            "WestGridPressureTank0",
+            "WestGridTransformer0",
+            "WestGridPipeBridge",
+            "WestGridWarningLight0",
+            "WestGridOrganicCreep0",
             "ProductionAssetMarker",
         ],
     },
