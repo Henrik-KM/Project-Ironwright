@@ -1,5 +1,20 @@
 # Implementation status
 
+## Focused adaptive route-memory milestone
+
+- Long-range operations now persist bounded disruption memory by discovered
+  region, so a blocked street informs later autonomous route selection without
+  exposing a route-management panel or adding per-unit orders.
+- West Grid, Flood Market, Riverworks, Tram Graveyard, Buried Laboratories and
+  Root Cistern now carry authored alternate street routes. After a sustained
+  obstruction the operation still performs its immediate bounded side-route
+  recovery, then remembers the disruption and selects the appropriate authored
+  alternate on a later operation.
+- Route memory is included in the versioned operation save state, decays after
+  an undisturbed successful return, remains bounded to a fixed entry count, and
+  has complete-run coverage for learning, alternate-waypoint selection and
+  save/load restoration.
+
 ## Focused authored-machine damage presentation milestone
 
 - Friendly authored machine actors now expose bounded persistent scar and leak overlays when their health is reduced.

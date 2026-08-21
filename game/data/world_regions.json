@@ -35,6 +35,9 @@
       "base_pressure": 0.86,
       "spawn_budget": 10,
       "route_from_heartforge": [[-28.0, 0.0, 0.0], [-54.0, 0.0, 8.0], [-76.0, 0.0, 14.0], [-92.0, 0.0, 18.0]],
+      "route_variants": [
+        {"label": "canal service road", "points": [[-24.0, 0.0, -6.0], [-48.0, 0.0, -18.0], [-76.0, 0.0, -8.0], [-92.0, 0.0, 18.0]]}
+      ],
       "description": "A flooded substation and tram-maintenance corridor threaded through hunting territory."
     },
     {
@@ -71,6 +74,9 @@
       "base_pressure": 1.05,
       "spawn_budget": 12,
       "route_from_heartforge": [[28.0, 0.0, 8.0], [52.0, 0.0, 24.0], [72.0, 0.0, 44.0], [88.0, 0.0, 62.0]],
+      "route_variants": [
+        {"label": "market back lanes", "points": [[18.0, 0.0, 16.0], [44.0, 0.0, 40.0], [68.0, 0.0, 76.0], [88.0, 0.0, 62.0]]}
+      ],
       "description": "A drowned market hall where membrane growth traps intact municipal machinery."
     },
     {
@@ -83,6 +89,9 @@
       "base_pressure": 1.14,
       "spawn_budget": 14,
       "route_from_heartforge": [[-20.0, 0.0, 28.0], [-38.0, 0.0, 52.0], [-56.0, 0.0, 76.0], [-72.0, 0.0, 98.0]],
+      "route_variants": [
+        {"label": "retaining-wall road", "points": [[-12.0, 0.0, 18.0], [-46.0, 0.0, 34.0], [-82.0, 0.0, 58.0], [-72.0, 0.0, 98.0]]}
+      ],
       "description": "Pumping halls, retaining walls and drowned service roads occupied by heavy amphibious predators."
     },
     {
@@ -95,6 +104,9 @@
       "base_pressure": 1.18,
       "spawn_budget": 15,
       "route_from_heartforge": [[-30.0, 0.0, 4.0], [-66.0, 0.0, 12.0], [-108.0, 0.0, 24.0], [-154.0, 0.0, 32.0]],
+      "route_variants": [
+        {"label": "maintenance spur", "points": [[-24.0, 0.0, -8.0], [-68.0, 0.0, -10.0], [-120.0, 0.0, 8.0], [-154.0, 0.0, 32.0]]}
+      ],
       "description": "A maze of derailed carriages, overhead lines and maintenance pits that can yield rare machine stock."
     },
     {
@@ -131,6 +143,9 @@
       "base_pressure": 1.48,
       "spawn_budget": 18,
       "route_from_heartforge": [[-30.0, 0.0, -22.0], [-58.0, 0.0, -48.0], [-90.0, 0.0, -78.0], [-126.0, 0.0, -108.0]],
+      "route_variants": [
+        {"label": "buried utility cut", "points": [[-18.0, 0.0, -30.0], [-46.0, 0.0, -62.0], [-82.0, 0.0, -96.0], [-126.0, 0.0, -108.0]]}
+      ],
       "description": "Subterranean biological research facilities exposed by collapse and root growth."
     },
     {
@@ -143,6 +158,9 @@
       "base_pressure": 1.75,
       "spawn_budget": 22,
       "route_from_heartforge": [[28.0, 0.0, -24.0], [58.0, 0.0, -52.0], [92.0, 0.0, -84.0], [128.0, 0.0, -116.0]],
+      "route_variants": [
+        {"label": "eastern root bypass", "points": [[18.0, 0.0, -18.0], [48.0, 0.0, -66.0], [104.0, 0.0, -72.0], [128.0, 0.0, -116.0]]}
+      ],
       "description": "A buried pumping complex where the hostile ecology converges into one deep signalling organ."
     }
   ]

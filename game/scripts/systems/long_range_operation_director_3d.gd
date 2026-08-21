@@ -10,6 +10,9 @@ const OPERATIONS_PATH := "res://data/strategic_operations.json"
 const ROUTE_BLOCK_GRACE_SECONDS := 2.4
 const MAX_ROUTE_RECOVERIES := 3
 const ROUTE_RECOVERY_LATERAL_OFFSET := 11.0
+const ROUTE_MEMORY_SWITCH_THRESHOLD := 1.0
+const ROUTE_MEMORY_SUCCESS_DECAY := 0.22
+const ROUTE_MEMORY_MAX_ENTRIES := 24
 
 var run_state: RunState3D
 var progression: ProgressionDirector3D
@@ -25,6 +28,7 @@ var operations: Dictionary = {}
 var completed_operations: Array[StringName] = []
 var recovered_components: Array[StringName] = []
 var active_operation: Dictionary = {}
+var route_memory: Dictionary = {}
 var load_errors: Array[String] = []
 var threat_serial: int = 0
 var endgame_pressure_reduction: float = 0.0
@@ -178,7 +182,8 @@ func authorize(operation_id: StringName) -> bool:
         return false
 
     var region_id := StringName(str(entry.get("region_id", "region.heartforge_district")))
-    var route := region_director.route_from_heartforge(region_id, heartforge.global_position)
+    var route_variant := _preferred_route_variant(region_id)
+    var route := region_director.route_from_heartforge_variant(region_id, heartforge.global_position, route_variant)
     for index in range(team.size()):
         team[index].set_group(&"long_range_operation", index)
 
@@ -189,6 +194,7 @@ func authorize(operation_id: StringName) -> bool:
         "members": team,
         "region_id": region_id,
         "route": route,
+        "route_variant": route_variant,
         "route_index": 1,
         "anchor": heartforge.global_position,
         "last_forward": Vector3(0.0, 0.0, -1.0),
@@ -205,7 +211,10 @@ func authorize(operation_id: StringName) -> bool:
     if outpost_director != null:
         outpost_director.set_process(false)
     _hold_nonmembers_at_home(team)
-    operation_changed.emit(operation_id, &"outbound", "%s has departed as a cohesive physical group." % str(entry.get("display_name", String(operation_id))))
+    var route_detail := "%s has departed as a cohesive physical group." % str(entry.get("display_name", String(operation_id)))
+    if route_variant > 0:
+        route_detail += " Route memory selected the %s after earlier disruption." % region_director.route_variant_label(region_id, route_variant)
+    operation_changed.emit(operation_id, &"outbound", route_detail)
     return true
 
 
@@ -277,6 +286,10 @@ func _update_active_operation(delta: float) -> void:
             if int(active_operation.get("route_recovery_count", 0)) >= _route_recovery_limit():
                 _begin_route_retreat("The route remained blocked after %d bounded recovery attempts; the cohesive group is retreating with its machines intact." % _route_recovery_limit())
                 return
+            _record_route_disruption(
+                StringName(active_operation.get("region_id", &"region.heartforge_district")),
+                int(active_operation.get("route_variant", 0))
+            )
             _insert_route_recovery(anchor, waypoint, route_index)
             route_recovery_active = true
             route = active_operation.get("route", PackedVector3Array()) as PackedVector3Array
@@ -429,6 +442,11 @@ func _complete_return() -> void:
     var operation_id := StringName(active_operation.get("id", &""))
     var entry: Dictionary = active_operation.get("data", {})
     var rewards: Dictionary = active_operation.get("pending_rewards", {})
+    _record_route_success(
+        StringName(active_operation.get("region_id", &"region.heartforge_district")),
+        int(active_operation.get("route_variant", 0)),
+        int(active_operation.get("route_recovery_count", 0))
+    )
     _apply_rewards(rewards)
     if operation_id not in completed_operations:
         completed_operations.append(operation_id)
@@ -636,6 +654,7 @@ func context_dictionary() -> Dictionary:
         "components": components,
         "components_count": components.size(),
         "endgame_pressure_reduction": endgame_pressure_reduction,
+        "route_memory": _serialize_route_memory(),
     }
 
 
@@ -647,10 +666,11 @@ func to_dictionary() -> Dictionary:
     for component_id in recovered_components:
         components.append(String(component_id))
     return {
-        "schema_version": 2,
+        "schema_version": 3,
         "completed_operations": completed,
         "recovered_components": components,
         "endgame_pressure_reduction": endgame_pressure_reduction,
+        "route_memory": _serialize_route_memory(),
         "active_operation": _serialize_active_operation(),
     }
 
@@ -668,7 +688,92 @@ func restore_from_dictionary(data: Dictionary) -> void:
         if component_id != &"" and component_id not in recovered_components:
             recovered_components.append(component_id)
     endgame_pressure_reduction = clampf(float(data.get("endgame_pressure_reduction", 0.0)), 0.0, 0.55)
+    route_memory.clear()
+    for raw_memory in data.get("route_memory", []):
+        if not (raw_memory is Dictionary):
+            continue
+        var saved_memory := raw_memory as Dictionary
+        var region_id := str(saved_memory.get("region_id", ""))
+        if region_id.is_empty() or route_memory.size() >= ROUTE_MEMORY_MAX_ENTRIES:
+            continue
+        route_memory[region_id] = {
+            "risk": clampf(float(saved_memory.get("risk", 0.0)), 0.0, 6.0),
+            "preferred_variant": maxi(0, int(saved_memory.get("preferred_variant", 0))),
+            "recoveries": maxi(0, int(saved_memory.get("recoveries", 0))),
+        }
     _restore_active_operation(data.get("active_operation", {}))
+
+
+func _preferred_route_variant(region_id: StringName) -> int:
+    if region_director == null:
+        return 0
+    var variant_count := region_director.route_variant_count(region_id)
+    if variant_count <= 0:
+        return 0
+    var memory: Variant = route_memory.get(String(region_id), {})
+    if not (memory is Dictionary):
+        return 0
+    if float((memory as Dictionary).get("risk", 0.0)) < ROUTE_MEMORY_SWITCH_THRESHOLD:
+        return 0
+    return clampi(int((memory as Dictionary).get("preferred_variant", 1)), 1, variant_count)
+
+
+func _record_route_disruption(region_id: StringName, current_variant: int) -> void:
+    var key := String(region_id)
+    if not route_memory.has(key) and route_memory.size() >= ROUTE_MEMORY_MAX_ENTRIES:
+        var oldest_key := str(route_memory.keys()[0])
+        route_memory.erase(oldest_key)
+    var memory: Dictionary = route_memory.get(key, {
+        "risk": 0.0,
+        "preferred_variant": 0,
+        "recoveries": 0,
+    })
+    memory["risk"] = clampf(float(memory.get("risk", 0.0)) + 1.0, 0.0, 6.0)
+    memory["recoveries"] = maxi(0, int(memory.get("recoveries", 0))) + 1
+    var variant_count := region_director.route_variant_count(region_id) if region_director != null else 0
+    if variant_count > 0:
+        var recovery_number := int(memory.get("recoveries", 1))
+        var next_variant := ((recovery_number - 1) % variant_count) + 1
+        if next_variant == current_variant:
+            next_variant = (next_variant % variant_count) + 1
+        memory["preferred_variant"] = next_variant
+    route_memory[key] = memory
+
+
+func _record_route_success(region_id: StringName, route_variant: int, recovery_count: int) -> void:
+    var key := String(region_id)
+    if not route_memory.has(key):
+        return
+    var memory: Dictionary = route_memory[key]
+    if recovery_count <= 0:
+        memory["risk"] = maxf(0.0, float(memory.get("risk", 0.0)) - ROUTE_MEMORY_SUCCESS_DECAY)
+        if float(memory.get("risk", 0.0)) < ROUTE_MEMORY_SWITCH_THRESHOLD:
+            memory["preferred_variant"] = 0
+    else:
+        memory["risk"] = minf(6.0, float(memory.get("risk", 0.0)) + 0.15)
+    route_memory[key] = memory
+
+
+func _serialize_route_memory() -> Array[Dictionary]:
+    var serialized: Array[Dictionary] = []
+    var keys: Array[String] = []
+    for raw_key in route_memory.keys():
+        keys.append(str(raw_key))
+    keys.sort()
+    for key in keys:
+        if serialized.size() >= ROUTE_MEMORY_MAX_ENTRIES:
+            break
+        var memory: Variant = route_memory.get(key, {})
+        if not (memory is Dictionary):
+            continue
+        var value := memory as Dictionary
+        serialized.append({
+            "region_id": key,
+            "risk": clampf(float(value.get("risk", 0.0)), 0.0, 6.0),
+            "preferred_variant": maxi(0, int(value.get("preferred_variant", 0))),
+            "recoveries": maxi(0, int(value.get("recoveries", 0))),
+        })
+    return serialized
 
 
 func _serialize_active_operation() -> Dictionary:
@@ -688,6 +793,7 @@ func _serialize_active_operation() -> Dictionary:
         "member_names": member_names,
         "region_id": String(active_operation.get("region_id", &"region.heartforge_district")),
         "route": route_values,
+        "route_variant": int(active_operation.get("route_variant", 0)),
         "route_index": int(active_operation.get("route_index", 1)),
         "anchor": _vector_to_array(active_operation.get("anchor", heartforge.global_position)),
         "last_forward": _vector_to_array(active_operation.get("last_forward", Vector3.FORWARD)),
@@ -727,6 +833,7 @@ func _restore_active_operation(raw_data: Variant) -> void:
         "members": members,
         "region_id": StringName(str(saved.get("region_id", "region.heartforge_district"))),
         "route": route,
+        "route_variant": maxi(0, int(saved.get("route_variant", 0))),
         "route_index": maxi(1, int(saved.get("route_index", 1))),
         "anchor": _array_to_vector(saved.get("anchor", [heartforge.global_position.x, heartforge.global_position.y, heartforge.global_position.z])),
         "last_forward": _array_to_vector(saved.get("last_forward", [0.0, 0.0, -1.0])),
