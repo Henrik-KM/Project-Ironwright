@@ -362,6 +362,7 @@ func _show_title_screen() -> void:
     release_started = false
     paused = true
     player.input_enabled = false
+    _set_tactical_hud_visible(false)
     get_tree().paused = true
     release_front_end.show_title(transactional_save_service.has_valid_save(RELEASE_SLOT) or _legacy_save_exists())
 
@@ -372,9 +373,21 @@ func _start_release_world() -> void:
     game_ended = false
     get_tree().paused = false
     player.input_enabled = true
+    _set_tactical_hud_visible(true)
     release_front_end.hide_all()
     settings_service.apply_accessibility_to_tree(self)
     hud.push_notification("PROJECT IRONWRIGHT 1.0 RELEASE CANDIDATE · %s" % balance_director.current_profile_id.to_upper())
+
+
+func _set_tactical_hud_visible(should_show: bool) -> void:
+    if hud != null:
+        hud.visible = should_show
+    if strategic_hud != null:
+        strategic_hud.visible = should_show
+    if operations_hud != null:
+        operations_hud.visible = should_show
+
+
 func _show_pause_menu() -> void:
     if not release_started:
         return
