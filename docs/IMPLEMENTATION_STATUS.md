@@ -131,6 +131,18 @@ identities. Manual channels remain finish-before-save.
 - physical region landmarks and discovery beacons;
   - bounded transient notifications and clear objective hierarchy.
 
+## Focused high-definition actor tessellation milestone
+
+- raised the shared original actor builder baseline to 24 radial segments for
+  curved surfaces and 16 rings for spherical surfaces;
+- regenerated the Mechromancer, complete friendly robot roster and all current
+  organic actor families from the source builders;
+- added a static geometry-density regression gate covering the full actor
+  roster, so a future rebuild cannot silently return tactical-facing shells to
+  coarse low-resolution primitives;
+- kept the change presentation-only: stable asset IDs, named sockets,
+  animation contracts, collision, AI, simulation and workload are unchanged.
+
 ## Focused endgame protocol readability milestone
 
 - reduced active protocol lattice emission and Heartforge core-light energy so the final crisis preserves tactical silhouettes and readable machine-company staging;
