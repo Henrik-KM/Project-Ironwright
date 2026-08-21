@@ -56,6 +56,14 @@ func _process(delta: float) -> void:
     var motion_scale := 1.0
     if settings_service != null and bool(settings_service.get_value(&"reduced_motion", false)):
         motion_scale = 0.22
+    if subject is Outpost3D:
+        var outpost := subject as Outpost3D
+        # A quiet site should not look like a permanently staffed factory.
+        # Activity is raised by the autonomous role action and decays on its
+        # own, preserving a small amount of life while keeping work legible.
+        motion_scale *= 0.16 + outpost.presentation_activity * 0.84
+        if outpost.presentation_status == &"destroyed":
+            motion_scale = 0.0
     for node in animated_nodes:
         if not is_instance_valid(node) or not base_transforms.has(node):
             continue
@@ -88,6 +96,9 @@ func _animate_node(node: Node3D, motion_scale: float) -> void:
         node.rotation.y += local_phase * 0.11 * motion_scale
     elif node_name.begins_with("DefenceBarrel") or node_name.begins_with("TurretMast"):
         node.rotation.y += sin(local_phase * 0.8) * 0.22 * motion_scale
+    elif node_name.begins_with("ResourceIntakeBeacon") or node_name.begins_with("DefenceMuzzleGlow") or node_name.begins_with("RepairFieldEmitter") or node_name.begins_with("StatusBeacon"):
+        var pulse := 1.0 + sin(local_phase * 3.0) * 0.16 * motion_scale
+        node.scale *= Vector3.ONE * pulse
     elif node_name.begins_with("HangingCloth"):
         node.rotation.z += sin(local_phase * 1.8) * 0.08 * motion_scale
     elif node_name.begins_with("MyceliumGlow") or node_name.begins_with("RootSignal"):
@@ -111,6 +122,10 @@ func _is_release_animated_name(node_name: String) -> bool:
         "ObservatoryDish",
         "DefenceBarrel",
         "TurretMast",
+        "ResourceIntakeBeacon",
+        "DefenceMuzzleGlow",
+        "RepairFieldEmitter",
+        "StatusBeacon",
         "HangingCloth",
         "MyceliumGlow",
         "RootSignal",
