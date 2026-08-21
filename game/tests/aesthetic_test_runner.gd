@@ -547,6 +547,8 @@ func _run_all() -> void:
     var heartforge := world.get_node_or_null("Heartforge") as Heartforge3D
     _expect(heartforge != null, "The aesthetic test needs the Heartforge progression model.")
     if heartforge != null:
+        _expect(heartforge.find_child("HeartforgeAuthoredModel", true, false) != null, "The Heartforge must use the authored production shell.")
+        _expect(_find_named(heartforge, "ProductionAssetMarker") != null, "The authored Heartforge must expose its production asset marker.")
         _expect(heartforge.find_child("CoreCladdingDetail", true, false) != null, "The Heartforge must expose a layered high-definition core cladding detail.")
         _expect(heartforge.find_child("CoreServiceLouver", true, false) != null, "The Heartforge must expose a readable powered service louver.")
         _expect(heartforge.find_child("CoreInspectionPort", true, false) != null, "The Heartforge must expose a readable inspection port.")

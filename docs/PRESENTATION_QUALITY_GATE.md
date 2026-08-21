@@ -8,7 +8,13 @@ The current visual state is explicitly classified as **pre-alpha production prot
 
 The shared model kit now has a high-detail baseline: curved primitives use denser radial/ring resolution, machine chassis and representative cutaway facades use original beveled core/rail/cap geometry, and organic shells receive layered surface panels, fasteners and material-break ridges. The release material pass now also gives every authored texture family a generated normal-relief companion, so close tactical light breaks across wet metal, brick, chitin and membrane rather than reading as flat albedo. The opening Mechromancer equipment and all six friendly machine frames now use authored shells, including the Signal Relay's protected mast, directional dish and beacon. Veilstalker, the common Razorhound, Sporecaster, Broodmass, Burrower, Skitterling and the late Cistern Apex now have authored hostile shells. The five later organic families now add a second anatomy layer of wing spars, jaw/gill hardware, resonator ribs and root-route spines, with family-specific motion; the common Skitterling, Burrower, Sporecaster and Broodmass shells now add close-camera caps, flutes, ribs and socket hardware as well. Cathedral Quarter now also carries a secondary landmark layer of entry, tower, rose-window, choir and bell hardware. These are presentation-only details and do not change gameplay collision or introduce a per-unit maintenance burden. It is a production-facing pass, not a claim that final authored meshes have replaced the remaining procedural families.
 
-The current Heartforge focal-model refinement adds a bounded upper reactor collar, radial heat fins, a player-facing louvered control face, tri-signal lenses and cable branches to the central machine. These details remain presentation-only and preserve the existing collision, interaction, progression and adaptive-geometry contracts.
+The current Heartforge focal-model refinement uses an original high-definition
+glTF primary shell with a bounded upper reactor collar, radial heat fins,
+octagonal cladding, a player-facing louvered control face, tri-signal lenses,
+fabrication hardware and cable branches. Adaptive tiers, selected retrofits,
+damage memory and lights remain runtime-owned around that source-authored core;
+the presentation layer preserves the existing collision, interaction and
+progression contracts.
 
 The current actor rebuild also raises the shared source-builder tessellation floor: curved authored parts use at least 24 radial segments and spherical parts at least 16 rings before export. The Mechromancer, six friendly robot frames and every current organic family have been regenerated from those builders, and `scripts/validate_aesthetic.py` checks their exported POSITION density. This protects close tactical silhouettes from silent coarse-geometry regressions while preserving stable names, sockets, animation clips and presentation-only scope.
 

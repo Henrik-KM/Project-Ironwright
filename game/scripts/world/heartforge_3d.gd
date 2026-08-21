@@ -4,6 +4,8 @@ extends StaticBody3D
 signal health_changed(current: float, maximum: float)
 signal destroyed
 
+const AUTHORED_HEARTFORGE_MODEL_SCENE: PackedScene = preload("res://assets/heartforge/heartforge.gltf")
+
 @export var maximum_health: float = 520.0
 var current_health: float = 520.0
 var interaction_radius: float = 4.1
@@ -244,6 +246,22 @@ func _build_visuals() -> void:
         var angle := TAU * float(angle_index) / 8.0
         var position := Vector3(cos(angle) * 2.35, 1.75, sin(angle) * 2.35)
         ModelKit3D.add_box(_model_root, Vector3(0.24, 2.1, 0.42), position, rust, Vector3(0.0, -angle, 0.0), "Rib")
+
+    # The permanent Heartforge shell is source-authored. Keep the former
+    # named procedural socket set hidden as a migration-compatible contract;
+    # adaptive tiers, retrofits, damage, lights and the interaction surface
+    # remain runtime-owned around the imported production asset.
+    var authored_model := AUTHORED_HEARTFORGE_MODEL_SCENE.instantiate()
+    authored_model.name = "HeartforgeAuthoredModel"
+    _model_root.add_child(authored_model)
+    var legacy_shell := Node3D.new()
+    legacy_shell.name = "LegacyProceduralHeartforgeShell"
+    for child in _model_root.get_children():
+        if child == authored_model or child == legacy_shell:
+            continue
+        child.reparent(legacy_shell)
+    _model_root.add_child(legacy_shell)
+    legacy_shell.visible = false
 
     # The core remains the warm focal source, but its ground influence is
     # bounded so the Heartforge does not flatten the surrounding paving.
