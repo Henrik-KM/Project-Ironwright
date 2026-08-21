@@ -1096,6 +1096,15 @@ final retail art, animation and external visual approval are still required.
 
 ## Commercial work still remaining
 
+## Focused tier-signal anatomy presentation milestone
+
+- added a shared high-definition anatomy layer to every tiered organic actor;
+- added tier-specific dorsal plates, paired vascular channels, crown ring nodes
+  and emissive signal detail with stable presentation names;
+- attached deterministic living pulse and attack-wind-up motion through the
+  existing procedural animator without changing collision or ecology;
+- extended the aesthetic runner to verify the tier layer, sockets and motion.
+
 ## Focused tiered-nest anatomy presentation milestone
 
 - added a bounded `NestHighDefinitionDetail` layer to the production tiered

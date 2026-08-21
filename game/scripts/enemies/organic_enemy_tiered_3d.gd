@@ -234,23 +234,79 @@ func _refresh_visuals() -> void:
     _tier_visual_root = Node3D.new()
     _tier_visual_root.name = "TierSilhouette"
     _model_root.add_child(_tier_visual_root)
-    if enemy_tier <= 1:
-        return
-
     var tier_colors := {
+        1: Color("9e7046"),
         2: Color("d68a48"),
         3: Color("b55568"),
         4: Color("8a5fd1"),
         5: Color("e03759"),
     }
     var tier_color: Color = tier_colors.get(enemy_tier, Color("d68a48"))
+    var tier_detail := Node3D.new()
+    tier_detail.name = "TierHighDefinitionDetail"
+    _tier_visual_root.add_child(tier_detail)
     var crest_material := ModelKit3D.material(tier_color.darkened(0.68), 0.05, 0.52, tier_color, 1.1 + float(enemy_tier) * 0.45)
+    var edge_material := ModelKit3D.material(Color("8a806d").lerp(tier_color, 0.16), 0.0, 0.76)
+    var channel_material := ModelKit3D.material(tier_color.darkened(0.48), 0.08, 0.42, tier_color, 1.3 + float(enemy_tier) * 0.55)
     var bone := ModelKit3D.material(Color("8a806d"), 0.0, 0.82)
+
+    # The tier read is carried by anatomy rather than a floating icon: a
+    # compact dorsal series and paired vascular channels make population
+    # pressure legible at the tactical camera without changing the actor's
+    # collision or simulation state.
+    var dorsal_count := 2 + enemy_tier
+    for index in range(dorsal_count):
+        var fraction := float(index) / float(maxi(1, dorsal_count - 1))
+        var dorsal_z := lerpf(-0.72, 0.72, fraction)
+        var dorsal_y := 1.18 + float(enemy_tier) * 0.06 + sin(fraction * PI) * 0.12
+        ModelKit3D.add_organic_plate(
+            tier_detail,
+            0.12 + float(enemy_tier) * 0.018,
+            Vector3(0.0, dorsal_y, dorsal_z),
+            crest_material,
+            edge_material,
+            Vector3(1.18 + float(enemy_tier) * 0.04, 0.36, 0.76),
+            "TierDorsalPlate%02d" % index
+        )
+
+    var channel_count := 1 + int(enemy_tier / 2)
+    for side in [-1.0, 1.0]:
+        var side_label := "L" if side < 0.0 else "R"
+        for index in range(channel_count):
+            var fraction := float(index) / float(maxi(1, channel_count - 1))
+            var channel_z := lerpf(-0.58, 0.58, fraction)
+            var channel_y := 0.91 + float(enemy_tier) * 0.045 + sin(fraction * PI) * 0.08
+            ModelKit3D.add_capsule(
+                tier_detail,
+                0.018 + float(enemy_tier) * 0.004,
+                0.34 + float(enemy_tier) * 0.07,
+                Vector3(side * (0.31 + float(enemy_tier) * 0.055), channel_y, channel_z),
+                channel_material,
+                Vector3(PI * 0.5, 0.0, 0.0),
+                "TierVascularChannel%s%02d" % [side_label, index]
+            )
+
+    var crown_ring := Node3D.new()
+    crown_ring.name = "TierCrownRing"
+    crown_ring.position = Vector3(0.0, 1.52 + float(enemy_tier) * 0.1, 0.0)
+    tier_detail.add_child(crown_ring)
+    var crown_count := 4 + enemy_tier
+    for index in range(crown_count):
+        var angle := TAU * float(index) / float(crown_count)
+        ModelKit3D.add_sphere(
+            crown_ring,
+            0.034 + float(enemy_tier) * 0.007,
+            Vector3(cos(angle) * (0.22 + float(enemy_tier) * 0.035), 0.0, sin(angle) * (0.22 + float(enemy_tier) * 0.035)),
+            channel_material,
+            Vector3(1.0, 0.66, 1.0),
+            "TierCrownNode%02d" % index
+        )
+
     var crest_count := enemy_tier + 1
     for index in range(crest_count):
         var z := -0.8 + float(index) * 0.42
         ModelKit3D.add_capsule(
-            _tier_visual_root,
+            tier_detail,
             0.045 + float(enemy_tier) * 0.012,
             0.48 + float(enemy_tier) * 0.16,
             Vector3(0.0, 1.15 + float(enemy_tier) * 0.12, z),
@@ -261,7 +317,7 @@ func _refresh_visuals() -> void:
     for index in range(enemy_tier - 1):
         var angle := TAU * float(index) / float(maxi(1, enemy_tier - 1))
         ModelKit3D.add_sphere(
-            _tier_visual_root,
+            tier_detail,
             0.07 + float(enemy_tier) * 0.018,
             Vector3(cos(angle) * 0.48, 1.05 + float(enemy_tier) * 0.09, sin(angle) * 0.48),
             crest_material,

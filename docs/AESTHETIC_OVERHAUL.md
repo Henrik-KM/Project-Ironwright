@@ -369,3 +369,16 @@ flutes and lamp guards, gill ribs and spore-sac caps, and lobe, maw and crown
 hardware. The added anatomy is part of each stable authored asset contract and
 is animated through existing family signatures, preserving the same
 presentation-only boundary and avoiding any new recurring player task.
+
+## Focused tier-signal anatomy milestone
+
+Tiered organic populations now carry a shared close-camera presentation layer:
+overlapping dorsal plates, paired vascular channels, a compact crown ring and
+tier-specific emissive signal nodes. The layer makes ecological intelligence
+and threat pressure readable through the body itself, while preserving every
+species silhouette and the existing `OrganicModel` attachment contract.
+
+The channels, plates, crest and crown nodes receive restrained deterministic
+motion from `ProceduralAnimator3D`, including a stronger pulse during attack
+wind-up. This remains presentation-only: tier statistics, collision, targeting,
+spawning and reduced-detail simulation are unchanged.
