@@ -63,6 +63,9 @@ var _target: Node3D
 var _model_root: Node3D
 var defer_authored_visuals: bool = false
 var _deferred_proxy_root: Node3D
+var _damage_visual_root: Node3D
+var _damage_signal_material: StandardMaterial3D
+var _damage_presentation_enabled: bool = true
 
 
 func _ready() -> void:
@@ -87,6 +90,7 @@ func configure(next_species: StringName, player: Node3D, heartforge: Node3D) -> 
     _apply_species_stats()
     if is_inside_tree():
         _refresh_visuals()
+        _refresh_damage_presentation()
         _choose_next_ecological_behaviour(true)
 
 
@@ -507,6 +511,7 @@ func apply_damage(amount: float, source: Node = null) -> void:
         return
     current_health = maxf(0.0, current_health - amount)
     health_changed.emit(self, current_health, maximum_health)
+    _refresh_damage_presentation()
     aggression = 1.0
     if source is Node3D:
         investigate_position = source.global_position
@@ -602,6 +607,7 @@ func _build_visuals() -> void:
     _model_root.name = "OrganicModel"
     add_child(_model_root)
     _refresh_visuals()
+    _build_damage_presentation()
 
 
 func ensure_authored_visuals() -> void:
@@ -611,6 +617,90 @@ func ensure_authored_visuals() -> void:
         _deferred_proxy_root.free()
     _deferred_proxy_root = null
     _build_visuals()
+
+
+func set_damage_presentation_enabled(value: bool) -> void:
+    _damage_presentation_enabled = value
+    _refresh_damage_presentation()
+
+
+func _build_damage_presentation() -> void:
+    if _damage_visual_root != null and is_instance_valid(_damage_visual_root):
+        _damage_visual_root.free()
+    _damage_visual_root = Node3D.new()
+    _damage_visual_root.name = "OrganicDamagePresentation"
+    add_child(_damage_visual_root)
+
+    var size_scale := 1.0
+    match species:
+        &"broodmass":
+            size_scale = 1.28
+        &"miremaw", &"rootweaver":
+            size_scale = 1.42
+        &"apex":
+            size_scale = 1.7
+
+    _damage_signal_material = ModelKit3D.material(
+        Color("3d1422"),
+        0.08,
+        0.56,
+        Color("d82f52"),
+        0.95
+    )
+    var leak_material := ModelKit3D.material(
+        Color("4b1b2a"),
+        0.02,
+        0.48,
+        Color("ff5370"),
+        2.1
+    )
+    var positions := [
+        Vector3(-0.38, 1.0, -0.72),
+        Vector3(0.32, 1.22, -0.6),
+        Vector3(0.04, 0.78, 0.7),
+    ]
+    for index in range(3):
+        var position: Vector3 = positions[index] * size_scale
+        ModelKit3D.add_beveled_box(
+            _damage_visual_root,
+            Vector3(0.07, 0.38 + float(index) * 0.1, 0.11) * size_scale,
+            position,
+            _damage_signal_material,
+            Vector3(0.0, 0.0, -0.32 + float(index) * 0.24),
+            "OrganicDamageScar%02d" % index,
+            0.24 * size_scale
+        )
+        ModelKit3D.add_sphere(
+            _damage_visual_root,
+            (0.065 + float(index) * 0.012) * size_scale,
+            position + Vector3.UP * (0.23 + float(index) * 0.07) * size_scale,
+            leak_material,
+            Vector3(1.0, 0.72, 1.0),
+            "OrganicDamageLeak%02d" % index
+        )
+    _refresh_damage_presentation()
+
+
+func _refresh_damage_presentation() -> void:
+    if _damage_visual_root == null or not is_instance_valid(_damage_visual_root):
+        return
+    var integrity := clampf(current_health / maxf(1.0, maximum_health), 0.0, 1.0)
+    var damage := 1.0 - integrity
+    var active := _damage_presentation_enabled and alive and damage > 0.08
+    _damage_visual_root.visible = active
+    if _damage_signal_material != null:
+        _damage_signal_material.emission_energy_multiplier = lerpf(0.65, 3.4, damage)
+        _damage_signal_material.albedo_color = Color("321322").lerp(Color("76233f"), damage)
+    for index in range(3):
+        var scar := _damage_visual_root.get_node_or_null("OrganicDamageScar%02d" % index) as Node3D
+        var leak := _damage_visual_root.get_node_or_null("OrganicDamageLeak%02d" % index) as Node3D
+        var threshold := 0.08 + float(index) * 0.18
+        var visibility := clampf((damage - threshold) / 0.18, 0.0, 1.0)
+        if scar != null:
+            scar.visible = active and visibility > 0.0
+            scar.scale = Vector3(1.0, 0.7 + visibility * 0.3, 1.0)
+        if leak != null:
+            leak.visible = active and visibility > 0.25
 
 
 func _ensure_deferred_proxy_root() -> Node3D:

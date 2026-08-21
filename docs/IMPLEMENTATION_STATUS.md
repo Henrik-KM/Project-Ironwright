@@ -12,6 +12,12 @@
 - Save and load callbacks retarget the sidecar from the authoritative snapshot path, preventing parallel scenario runs and isolated saves from corrupting one another.
 - Release regression coverage verifies isolated writes and cross-root retargeting.
 
+## Focused organic damage presentation milestone
+
+- Organic enemies now expose bounded persistent wound and leak overlays when their health is reduced, making combat consequences readable against the authored shell library.
+- The overlays are hidden automatically outside close-detail presentation so reduced-detail organisms retain their lightweight silhouette and simulation budget.
+- Release regression coverage verifies damage visibility, LOD suppression and close-detail restoration.
+
 ## Native Godot 3D — complete end-to-end systemic alpha
 
 The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGameWorld3D`, which preserves the aesthetic, opening UX, progression, and outpost layers while adding the full start-to-victory systemic run.
