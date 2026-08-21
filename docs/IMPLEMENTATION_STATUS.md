@@ -1631,3 +1631,12 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - preserved the optional, on-demand archive UI and bounded save payload while
   adding native trigger and save/load coverage for the new machine-witness and
   ecological-convergence records.
+
+## Focused accessibility feedback wiring milestone
+
+- connected the live presentation feedback layer to the persisted release
+  settings service, including camera-shake strength and reduced-motion mode;
+- made reduced-flash mode suppress transient 3D flash lights and HUD damage
+  flashes while preserving the underlying combat feedback and captions;
+- added release regression coverage and verified the controls in the exported
+  Windows build through the real settings screen.

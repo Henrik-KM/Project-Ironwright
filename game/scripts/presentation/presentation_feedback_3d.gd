@@ -9,6 +9,7 @@ var player: Node3D
 var heartforge: Node3D
 var camera: Camera3D
 var noise_system: Node
+var settings_service: ReleaseSettingsService3D
 var elapsed: float = 0.0
 var camera_shake: float = 0.0
 var active_channel_kind: StringName = &""
@@ -49,18 +50,54 @@ func _ready() -> void:
     rust_material = ModelKit3D.material(Color("72462e"), 0.46, 0.72)
     dark_material = ModelKit3D.material(Color("20282a"), 0.78, 0.38)
     organic_material = ModelKit3D.material(Color("40282f"), 0.02, 0.78, Color("8e2935"), 0.55)
+    _resolve_settings_service()
+    call_deferred("_resolve_settings_service")
     _attach_existing_actors()
     get_tree().node_added.connect(_on_node_added)
     _connect_world_feedback()
 
 
 func _process(delta: float) -> void:
+    if settings_service == null or not is_instance_valid(settings_service):
+        _resolve_settings_service()
     elapsed += delta
     camera_shake = move_toward(camera_shake, 0.0, delta * 2.8)
     _animate_camera()
     _animate_channel_sparks(delta)
     _refresh_autonomous_labor_signatures(delta)
     _refresh_autonomous_construction_signature(delta)
+
+
+func accessibility_snapshot() -> Dictionary:
+    _resolve_settings_service()
+    return {
+        "settings_resolved": settings_service != null and is_instance_valid(settings_service),
+        "reduced_flashes": _reduced_flashes_enabled(),
+        "reduced_motion": _reduced_motion_enabled(),
+        "camera_shake_scale": _camera_shake_scale(),
+    }
+
+
+func _resolve_settings_service() -> void:
+    if settings_service != null and is_instance_valid(settings_service):
+        return
+    settings_service = get_tree().get_first_node_in_group(&"release_settings_service") as ReleaseSettingsService3D
+
+
+func _reduced_flashes_enabled() -> bool:
+    return settings_service != null and bool(settings_service.get_value(&"reduced_flashes", false))
+
+
+func _reduced_motion_enabled() -> bool:
+    return settings_service != null and bool(settings_service.get_value(&"reduced_motion", false))
+
+
+func _camera_shake_scale() -> float:
+    if _reduced_motion_enabled():
+        return 0.0
+    if settings_service == null:
+        return 1.0
+    return clampf(float(settings_service.get_value(&"camera_shake", 0.65)), 0.0, 1.0)
 
 
 func _attach_existing_actors() -> void:
@@ -309,7 +346,7 @@ func _on_player_health_changed(current: float, maximum: float) -> void:
         _spawn_burst(impact_position, Color("ffb05e"), 12, 2.2, Vector3(0.0, -3.8, 0.0), 0.45, "PlayerImpactResponse")
         _spawn_flash(impact_position, Color("ff8c4e"), 1.1, 4.0, 0.1)
     var hud := get_tree().get_first_node_in_group(&"beautiful_hud")
-    if hud != null and hud.has_method(&"flash_damage"):
+    if not _reduced_flashes_enabled() and hud != null and hud.has_method(&"flash_damage"):
         hud.call(&"flash_damage", 1.0 - ratio)
 
 
@@ -641,16 +678,17 @@ func _vfx_material(color: Color, alpha: float, emission_energy: float) -> Standa
 func _animate_camera() -> void:
     if camera == null:
         return
-    if camera_shake <= 0.001:
+    var effective_shake := camera_shake * _camera_shake_scale()
+    if effective_shake <= 0.001:
         camera.h_offset = move_toward(camera.h_offset, 0.0, 0.08)
         camera.v_offset = move_toward(camera.v_offset, 0.0, 0.08)
         return
-    camera.h_offset = sin(elapsed * 39.0) * camera_shake * 0.16
-    camera.v_offset = cos(elapsed * 47.0) * camera_shake * 0.11
+    camera.h_offset = sin(elapsed * 39.0) * effective_shake * 0.16
+    camera.v_offset = cos(elapsed * 47.0) * effective_shake * 0.11
 
 
 func _spawn_flash(position: Vector3, color: Color, energy: float, light_range: float, lifetime: float) -> void:
-    if world == null:
+    if world == null or _reduced_flashes_enabled():
         return
     var light := OmniLight3D.new()
     light.light_color = color
