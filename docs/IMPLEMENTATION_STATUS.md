@@ -1242,6 +1242,13 @@ environmentally distinct without changing ecology, routing or player workload.
 - added aesthetic coverage for every new role-signature assembly and retained
   the requirement for live tactical-camera review.
 
+## Focused strategic-surface viewport polish milestone
+
+- disabled horizontal scrolling on the strategic command content because all
+  release copy is designed to wrap within the safe panel width;
+- added first-session coverage proving the strategic surface cannot expose a
+  horizontal scrollbar at the release viewport.
+
 ## Focused command-map chrome milestone
 
 - made the live command-map banner use explicit viewport-safe horizontal
