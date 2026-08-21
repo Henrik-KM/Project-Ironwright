@@ -42,6 +42,10 @@ var caption_panel: PanelContainer
 var caption_label: Label
 var caption_clock: float = 0.0
 var evaluation_clock: float = 0.0
+var operation_report_clock: float = 0.0
+var operation_report_count: int = 0
+var last_operation_signature: StringName = &""
+var spatial_operation_reports: Array[AudioStreamPlayer3D] = []
 
 
 func configure(
@@ -75,6 +79,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
     evaluation_clock += delta
     caption_clock = maxf(0.0, caption_clock - delta)
+    operation_report_clock = maxf(0.0, operation_report_clock - delta)
     if caption_panel != null and caption_clock <= 0.0:
         caption_panel.visible = false
     _update_ambience(delta)
@@ -173,6 +178,68 @@ func play_effect(effect_id: StringName, caption_key: String = "", pitch_variatio
     audio.play()
     if not caption_key.is_empty():
         show_caption(caption_key)
+
+
+func notify_operation(kind: StringName, state: StringName, detail: String, world_position: Vector3 = Vector3.ZERO) -> void:
+    var signature := StringName("%s.%s" % [String(kind), String(state)])
+    if signature == last_operation_signature and operation_report_clock > 0.0:
+        return
+    last_operation_signature = signature
+    operation_report_clock = 1.4 if state in [&"working", &"engaged"] else 0.35
+    operation_report_count += 1
+    var pitch := 0.92
+    var volume := -7.0
+    match state:
+        &"outbound":
+            pitch = 1.02
+            volume = -6.0
+        &"working", &"engaged":
+            pitch = 0.88
+            volume = -8.0
+        &"returning":
+            pitch = 0.98
+            volume = -6.0
+        &"complete", &"constructed", &"secured":
+            pitch = 1.08
+            volume = -3.0
+        &"aborted", &"destroyed":
+            pitch = 0.72
+            volume = -5.0
+    var anchor := world_position
+    if anchor == Vector3.ZERO and heartforge != null and is_instance_valid(heartforge):
+        anchor = heartforge.global_position
+    _play_spatial_report(anchor, volume, pitch)
+    show_caption("audio.caption.report")
+
+
+func _play_spatial_report(world_position: Vector3, volume_db: float, pitch_scale: float) -> void:
+    var stream: AudioStream = stream_library.get(&"machine_report", null)
+    if stream == null:
+        return
+    while spatial_operation_reports.size() >= 8:
+        var oldest: AudioStreamPlayer3D = spatial_operation_reports[0]
+        spatial_operation_reports.remove_at(0)
+        if is_instance_valid(oldest):
+            oldest.queue_free()
+    var audio := AudioStreamPlayer3D.new()
+    audio.name = "OperationReport_%02d" % operation_report_count
+    audio.bus = "Effects"
+    audio.stream = stream
+    audio.volume_db = volume_db
+    audio.pitch_scale = pitch_scale
+    audio.max_distance = 42.0
+    audio.unit_size = 5.0
+    audio.finished.connect(_on_spatial_report_finished.bind(audio))
+    add_child(audio)
+    audio.global_position = world_position
+    spatial_operation_reports.append(audio)
+    audio.play()
+
+
+func _on_spatial_report_finished(audio: AudioStreamPlayer3D) -> void:
+    spatial_operation_reports.erase(audio)
+    if is_instance_valid(audio):
+        audio.queue_free()
 
 
 func show_caption(key: String, seconds: float = 2.2) -> void:

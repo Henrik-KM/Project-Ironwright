@@ -382,6 +382,12 @@ func _on_heartforge_tier_changed(tier: int) -> void:
 
 func _on_outpost_operation_changed(kind: StringName, state: StringName, detail: String) -> void:
     hud.push_notification("%s · %s\n%s" % [String(kind).to_upper(), String(state).to_upper(), detail])
+    var release_audio := get_node_or_null("ReleaseAudioDirector") as ReleaseAudioDirector3D
+    if release_audio != null:
+        var anchor := heartforge.global_position if heartforge != null else Vector3.ZERO
+        if outpost_director != null and not outpost_director.operation.is_empty():
+            anchor = outpost_director.operation.get("anchor", anchor)
+        release_audio.notify_operation(kind, state, detail, anchor)
 
 
 func _on_outpost_changed(outpost: Outpost3D) -> void:
