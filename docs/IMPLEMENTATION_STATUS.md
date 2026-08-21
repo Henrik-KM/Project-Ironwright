@@ -54,6 +54,7 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - Buried Laboratories now has an original high-definition containment-hall shell while retaining the existing research encounter and operation contracts.
 - Municipal Glasshouse now has an original high-definition climate-frame shell while retaining the existing greenhouse encounter and operation contracts.
 - North Ruins now has an original high-definition civic archive shell while retaining the existing salvage and expedition contracts.
+- East Tenements now has an original high-definition residential block shell while retaining the existing vertical-life encounter contract.
 
 ### Long-range operations
 
@@ -662,6 +663,16 @@ identities. Manual channels remain finish-before-save.
   discovery and operation ownership; the new geometry is presentation-only;
 - native aesthetic and release coverage verifies the named sockets and
   deterministic beacon/creep motion; live district review remains required.
+
+## Focused East Tenements authored-space milestone
+
+- added the original high-definition `tenement.east_blocks.v1` shell with
+  residential blocks, windows, balconies, fire escape, roof water tank,
+  hanging cloth and restrained organic creep;
+- retained the existing tenement encounter dressing, salvage, route, ecology,
+  discovery and operation ownership; the new geometry is presentation-only;
+- native aesthetic and release coverage verifies the named sockets and
+  deterministic organic-creep motion; live district review remains required.
 
 ## Focused remote-ground continuity milestone
 

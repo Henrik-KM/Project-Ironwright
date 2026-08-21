@@ -196,6 +196,14 @@ func _run_all() -> void:
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing/TenementVerticalLifeDetails") != null, "East Tenements must expose an authored vertical residential vignette.")
                 _expect(landmark.find_child("TenementFireEscapeLadder", true, false) != null, "East Tenements must expose a readable fire-escape route signature.")
                 _expect(landmark.find_child("TenementRoofWaterTank", true, false) != null, "East Tenements must expose a rooftop service identity.")
+                _expect(landmark.get_node_or_null("PersistentRegionGeometry/TenementAuthoredModel") != null, "East Tenements must expose its authored residential block landmark shell.")
+                var tenement_creep := landmark.find_child("TenementOrganicCreep0", true, false) as Node3D
+                _expect(tenement_creep != null, "East Tenements must expose a named organic-creep motion socket.")
+                if tenement_creep != null:
+                    landmark.set_presentation_detail_level(0)
+                    var tenement_before := tenement_creep.scale
+                    landmark.call("_process", 0.5)
+                    _expect(not tenement_creep.scale.is_equal_approx(tenement_before), "East Tenements organic creep must carry deterministic presentation motion.")
     var region_atmosphere := world.get_node_or_null("RegionAtmosphereDirector") as RegionAtmosphereDirector3D
     _expect(region_atmosphere != null, "The complete world must install region-aware atmosphere presentation.")
     if region_atmosphere != null:

@@ -158,6 +158,8 @@ func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
     _expect(glasshouse != null and glasshouse.find_child("GlasshouseClimateLouver", true, false) != null, "Commercial release must retain the authored Municipal Glasshouse landmark.")
     var archive := world.region_director.get_landmark(&"region.north_ruins")
     _expect(archive != null and archive.find_child("ArchiveVaultDoor", true, false) != null, "Commercial release must retain the authored North Ruins landmark.")
+    var tenement := world.region_director.get_landmark(&"region.east_tenements")
+    _expect(tenement != null and tenement.find_child("TenementFireEscapeLadder", true, false) != null, "Commercial release must retain the authored East Tenements landmark.")
     _expect(world.balance_director.profile_ids().size() == 3, "Story, Survival and Brutal profiles must be present.")
     _expect(world.balance_director.set_profile(&"story"), "Story profile must be selectable.")
     _expect(world.balance_director.active_enemy_cap() < 96, "Story profile must lower the active enemy cap.")

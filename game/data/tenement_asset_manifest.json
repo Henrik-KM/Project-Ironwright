@@ -1,0 +1,16 @@
+{
+  "asset_id": "tenement.east_blocks.v1",
+  "kind": "world_landmark",
+  "source": "game/assets/tenement/source/build_tenement_asset.py",
+  "runtime_model": "game/assets/tenement/tenement.gltf",
+  "required_nodes": [
+    "TenementModel",
+    "TenementBlockL",
+    "TenementBalcony0",
+    "TenementFireEscapeLadder",
+    "TenementRoofWaterTank",
+    "TenementOrganicCreep0",
+    "ProductionAssetMarker"
+  ],
+  "presentation_only": true
+}

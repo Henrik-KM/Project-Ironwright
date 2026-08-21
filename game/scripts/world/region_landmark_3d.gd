@@ -9,6 +9,7 @@ const AUTHORED_TRAM_GRAVEYARD_MODEL_SCENE: PackedScene = preload("res://assets/t
 const AUTHORED_BURIED_LABS_MODEL_SCENE: PackedScene = preload("res://assets/buried_labs/buried_labs.gltf")
 const AUTHORED_GLASSHOUSE_MODEL_SCENE: PackedScene = preload("res://assets/glasshouse/glasshouse.gltf")
 const AUTHORED_ARCHIVE_MODEL_SCENE: PackedScene = preload("res://assets/archive/archive.gltf")
+const AUTHORED_TENEMENT_MODEL_SCENE: PackedScene = preload("res://assets/tenement/tenement.gltf")
 
 signal landmark_changed(landmark: RegionLandmark3D)
 
@@ -197,17 +198,7 @@ func _build_visuals() -> void:
         &"archive":
             _build_authored_archive_visuals()
         &"tenement":
-            var tenement := Node3D.new()
-            tenement.name = "TenementIdentityDetails"
-            _visual_root.add_child(tenement)
-            _add_ruin_block(Vector3(-8.0, 0.0, 0.0), Vector3(8.0, 9.0, 6.0), brick)
-            _add_ruin_block(Vector3(7.0, 0.0, -2.0), Vector3(7.0, 7.0, 5.0), concrete)
-            for level in range(3):
-                ModelKit3D.add_beveled_box(tenement, Vector3(15.0, 0.14, 0.46), Vector3(0.0, 1.65 + float(level) * 2.2, 4.2), metal, Vector3(0.02, 0.0, 0.0), "TenementWalkway", 0.24)
-                _add_beam(tenement, Vector3(-5.5, 0.4 + float(level) * 2.2, 4.2), Vector3(-5.5, 1.65 + float(level) * 2.2, 4.2), 0.07, rust, "TenementWalkwayPost")
-                _add_beam(tenement, Vector3(5.5, 0.4 + float(level) * 2.2, 4.2), Vector3(5.5, 1.65 + float(level) * 2.2, 4.2), 0.07, rust, "TenementWalkwayPost")
-            for index in range(4):
-                ModelKit3D.add_box(tenement, Vector3(1.15, 1.0, 0.05), Vector3(-5.2 + float(index) * 3.4, 2.7 + float(index % 2) * 2.2, 4.0), membrane, Vector3.ZERO, "TenementHangingCloth")
+            _build_authored_tenement_visuals()
         &"greenhouse":
             _build_authored_glasshouse_visuals()
         &"waterfront":
@@ -515,6 +506,29 @@ func _build_authored_archive_visuals() -> void:
     _visual_root.add_child(authored_marker)
 
 
+func _build_authored_tenement_visuals() -> void:
+    # East Tenements retain their vertical-life encounter dressing while the
+    # authored shell supplies the readable residential block silhouette.
+    var identity_details := Node3D.new()
+    identity_details.name = "TenementIdentityDetails"
+    _visual_root.add_child(identity_details)
+    var authored_scene_instance := AUTHORED_TENEMENT_MODEL_SCENE.instantiate()
+    var imported_root := authored_scene_instance.get_node_or_null("TenementModel") as Node
+    if imported_root == null:
+        imported_root = authored_scene_instance
+    var authored_children := imported_root.get_children()
+    for child in authored_children:
+        child.owner = null
+        imported_root.remove_child(child)
+        _visual_root.add_child(child)
+    if imported_root != authored_scene_instance:
+        imported_root.free()
+    authored_scene_instance.free()
+    var authored_marker := Node3D.new()
+    authored_marker.name = "TenementAuthoredModel"
+    _visual_root.add_child(authored_marker)
+
+
 func _capture_region_motion_nodes() -> void:
     _motion_nodes.clear()
     _motion_base_transforms.clear()
@@ -584,6 +598,9 @@ func _animate_region_details() -> void:
         elif node_name.begins_with("ArchiveOrganicCreep"):
             node.rotation.y += sin(local_phase * 0.82) * 0.06
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.18) * 0.07)
+        elif node_name.begins_with("TenementOrganicCreep"):
+            node.rotation.y += sin(local_phase * 0.8) * 0.06
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.15) * 0.07)
         elif node_name.begins_with("RiverworksGrowth") or node_name.begins_with("RiverbankGrowth"):
             node.rotation.y += sin(local_phase * 1.15) * 0.12
             node.scale *= Vector3(1.0, 1.0 + sin(local_phase * 1.8) * 0.08, 1.0)
@@ -612,6 +629,7 @@ func _is_region_motion_name(node_name: String) -> bool:
         "GlasshouseGrowthPulse",
         "ArchiveRoofBeaconLight",
         "ArchiveOrganicCreep",
+        "TenementOrganicCreep",
     ]:
         if node_name.begins_with(prefix):
             return true
