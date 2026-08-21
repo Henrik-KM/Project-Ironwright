@@ -55,6 +55,8 @@ The opening route now also has a bounded authored street-dressing pass: a collap
 
 The central urban district now also carries a bounded high-definition street-detail layer: civic benches, service cabinets, planters, route signs and small weed clusters break up the procedural paving with readable human-scale maintenance evidence. The layer is presentation-only, uses the existing original model kit, and remains bounded so environmental richness does not become a new simulation or maintenance burden.
 
+The central approach now also carries a bounded civic-infrastructure layer: storm-drain junctions, service-riser faces, signal masts and sagging overhead utility spans continue the municipal scale language between the focal plaza and the wider street grid. These details are presentation-only and do not add collision, routing, utility simulation or player maintenance.
+
 Tiered organic nests now carry the same close-range production bar: a segmented dorsal carapace, membrane plates, visible vascular channels, a root collar and fine perimeter spines build a readable encounter landmark from layered original geometry. These details remain presentation-only and do not alter nest health, spawning, collision or regrowth.
 
 ## Release-readiness rule

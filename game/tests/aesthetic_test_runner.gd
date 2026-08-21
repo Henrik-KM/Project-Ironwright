@@ -42,6 +42,11 @@ func _run_all() -> void:
     if city != null:
         _expect(city.find_child("CivicBenchSeat", true, false) != null and city.find_child("CivicServiceCabinet", true, false) != null, "The street-detail layer must expose readable civic furniture and maintenance hardware.")
         _expect(city.find_child("CivicPlanterGrowth", true, false) != null and city.find_child("CivicRouteSign", true, false) != null, "The street-detail layer must expose vegetation and civic route identity.")
+        _expect(city.get_node_or_null("HighDefinitionCivicInfrastructure") != null, "The central town must carry a bounded civic-infrastructure layer beyond isolated street props.")
+        _expect(city.find_child("CivicDrainJunction00", true, false) != null and city.find_child("CivicDrainSlot00", true, false) != null, "Civic infrastructure must expose readable storm-drain junction hardware.")
+        _expect(city.find_child("CivicUtilityRiser00", true, false) != null and city.find_child("CivicRiserServiceFace", true, false) != null, "Civic infrastructure must expose layered utility-riser service hardware.")
+        _expect(city.find_child("CivicSignalMast00", true, false) != null and city.find_child("CivicSignalLens", true, false) != null, "Civic infrastructure must expose a readable signal-mast scale cue.")
+        _expect(city.find_child("CivicOverheadCable00A", true, false) != null and city.find_child("CivicOverheadCable03B", true, false) != null, "Civic infrastructure must preserve bounded overhead service-cable continuity.")
     var nest_sample := EnemyTierNest3D.new()
     nest_sample.configure({"id": "aesthetic.high_definition_nest", "position": [72.0, 0.0, 72.0], "maturity": 1.0, "supported_tiers": [3]})
     root.add_child(nest_sample)

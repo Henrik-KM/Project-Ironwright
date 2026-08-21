@@ -19,6 +19,7 @@ func _ready() -> void:
     _build_buildings()
     _build_wrecks_and_debris()
     _build_lived_in_street_details()
+    _build_civic_infrastructure()
     _build_lighting()
     _build_north_ruins()
 
@@ -193,6 +194,102 @@ func _build_lived_in_street_details() -> void:
         var x := -34.0 + float(index % 7) * 11.0
         var z := -34.0 + float(index / 7) * 68.0
         _add_weed_cluster(details, Vector3(x, 0.0, z), vegetation, vegetation_light, index)
+
+
+func _build_civic_infrastructure() -> void:
+    var infrastructure := Node3D.new()
+    infrastructure.name = "HighDefinitionCivicInfrastructure"
+    add_child(infrastructure)
+
+    var steel := ModelKit3D.material(Color("3b4849"), 0.76, 0.4)
+    var weathered_steel := ModelKit3D.material(Color("604538"), 0.5, 0.68)
+    var dark := ModelKit3D.material(Color("151c1e"), 0.7, 0.42)
+    var concrete := ModelKit3D.material(Color("4b5150"), 0.02, 0.82)
+    var cyan := ModelKit3D.material(Color("1d535a"), 0.3, 0.32, Color("62d7dd"), 1.45)
+    var amber := ModelKit3D.material(Color("76502f"), 0.24, 0.44, Color("ed9a52"), 1.1)
+
+    var junction_positions := [
+        Vector3(-4.7, 0.0, -4.7), Vector3(4.7, 0.0, 4.7),
+        Vector3(-32.7, 0.0, -4.7), Vector3(32.7, 0.0, 4.7),
+    ]
+    for index in range(junction_positions.size()):
+        _add_civic_drain_junction(infrastructure, junction_positions[index], index, dark, steel, concrete)
+
+    var riser_specs := [
+        [Vector3(-5.0, 0.0, -11.8), 0.0, cyan],
+        [Vector3(5.0, 0.0, 11.8), PI, amber],
+        [Vector3(-33.0, 0.0, 11.2), PI * 0.5, cyan],
+        [Vector3(33.0, 0.0, -11.2), -PI * 0.5, amber],
+    ]
+    for index in range(riser_specs.size()):
+        var spec: Array = riser_specs[index]
+        _add_civic_utility_riser(infrastructure, spec[0] as Vector3, float(spec[1]), index, steel if index % 2 == 0 else weathered_steel, dark, spec[2] as StandardMaterial3D)
+
+    var mast_specs := [
+        [Vector3(-4.8, 0.0, -4.1), 0.0, cyan],
+        [Vector3(4.8, 0.0, 4.1), PI, amber],
+    ]
+    for index in range(mast_specs.size()):
+        var mast_spec: Array = mast_specs[index]
+        _add_civic_signal_mast(infrastructure, mast_spec[0] as Vector3, float(mast_spec[1]), index, steel, dark, mast_spec[2] as StandardMaterial3D)
+
+    _add_civic_cable_span(infrastructure, Vector3(-4.35, 4.2, -26.0), Vector3(-4.35, 4.2, -9.0), dark, 0)
+    _add_civic_cable_span(infrastructure, Vector3(4.35, 4.05, 9.0), Vector3(4.35, 4.05, 26.0), dark, 1)
+    _add_civic_cable_span(infrastructure, Vector3(-32.0, 3.85, -4.35), Vector3(-24.0, 3.85, -4.35), dark, 2)
+    _add_civic_cable_span(infrastructure, Vector3(24.0, 3.7, 4.35), Vector3(32.0, 3.7, 4.35), dark, 3)
+
+
+func _add_civic_drain_junction(parent: Node3D, position: Vector3, index: int, dark: StandardMaterial3D, steel: StandardMaterial3D, concrete: StandardMaterial3D) -> void:
+    var junction := Node3D.new()
+    junction.name = "CivicDrainJunction%02d" % index
+    junction.position = position
+    parent.add_child(junction)
+    ModelKit3D.add_beveled_box(junction, Vector3(1.35, 0.1, 1.05), Vector3(0.0, 0.1, 0.0), concrete, Vector3.ZERO, "CivicDrainFrame", 0.18)
+    ModelKit3D.add_box(junction, Vector3(1.05, 0.045, 0.78), Vector3(0.0, 0.17, 0.0), dark, Vector3.ZERO, "CivicDrainRecess")
+    for slot in range(5):
+        ModelKit3D.add_beveled_box(junction, Vector3(0.07, 0.035, 0.72), Vector3(-0.4 + float(slot) * 0.2, 0.205, 0.0), steel, Vector3.ZERO, "CivicDrainSlot%02d" % slot, 0.12)
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(junction, Vector3(0.12, 0.06, 1.02), Vector3(side * 0.62, 0.18, 0.0), steel, Vector3.ZERO, "CivicDrainRail", 0.12)
+
+
+func _add_civic_utility_riser(parent: Node3D, position: Vector3, heading: float, index: int, body: StandardMaterial3D, dark: StandardMaterial3D, status: StandardMaterial3D) -> void:
+    var riser := Node3D.new()
+    riser.name = "CivicUtilityRiser%02d" % index
+    riser.position = position
+    riser.rotation.y = heading
+    parent.add_child(riser)
+    ModelKit3D.add_beveled_box(riser, Vector3(0.72, 1.62, 0.46), Vector3(0.0, 0.82, 0.0), body, Vector3.ZERO, "CivicRiserBody", 0.14)
+    ModelKit3D.add_louvered_panel(riser, Vector3(0.44, 0.34, 0.08), Vector3(0.0, 0.62, -0.28), dark, body, Vector3.ZERO, "CivicRiserVent", 3)
+    ModelKit3D.add_surface_panel(riser, Vector3(0.42, 0.42, 0.07), Vector3(0.0, 1.16, -0.28), dark, status, Vector3.ZERO, "CivicRiserServiceFace")
+    ModelKit3D.add_cylinder(riser, 0.045, 1.05, Vector3(0.24, 1.58, 0.03), dark, Vector3(0.0, 0.0, 0.08), "CivicRiserConduit")
+    ModelKit3D.add_sphere(riser, 0.075, Vector3(0.0, 1.44, -0.33), status, Vector3.ONE, "CivicRiserStatus")
+    ModelKit3D.add_beveled_box(riser, Vector3(0.86, 0.12, 0.58), Vector3(0.0, 1.72, 0.0), body, Vector3(0.0, 0.0, 0.04), "CivicRiserCap", 0.16)
+
+
+func _add_civic_signal_mast(parent: Node3D, position: Vector3, heading: float, index: int, steel: StandardMaterial3D, dark: StandardMaterial3D, signal_material: StandardMaterial3D) -> void:
+    var mast := Node3D.new()
+    mast.name = "CivicSignalMast%02d" % index
+    mast.position = position
+    mast.rotation.y = heading
+    parent.add_child(mast)
+    ModelKit3D.add_cylinder(mast, 0.075, 3.45, Vector3(0.0, 1.72, 0.0), steel, Vector3.ZERO, "CivicSignalPost")
+    ModelKit3D.add_beveled_box(mast, Vector3(1.45, 0.12, 0.14), Vector3(0.0, 3.32, 0.0), dark, Vector3.ZERO, "CivicSignalArm", 0.14)
+    ModelKit3D.add_beveled_box(mast, Vector3(0.42, 0.72, 0.2), Vector3(0.54, 2.94, 0.0), dark, Vector3.ZERO, "CivicSignalHousing", 0.12)
+    ModelKit3D.add_sphere(mast, 0.11, Vector3(0.54, 3.08, -0.12), signal_material, Vector3(1.0, 0.76, 0.72), "CivicSignalLens")
+    ModelKit3D.add_beveled_box(mast, Vector3(0.92, 0.12, 0.08), Vector3(-0.14, 2.84, -0.11), signal_material, Vector3.ZERO, "CivicSignalStripe", 0.12)
+
+
+func _add_civic_cable_span(parent: Node3D, start: Vector3, end: Vector3, material: StandardMaterial3D, index: int) -> void:
+    var midpoint := start.lerp(end, 0.5)
+    midpoint.y -= 0.5
+    _add_civic_cable_segment(parent, start, midpoint, material, "CivicOverheadCable%02dA" % index)
+    _add_civic_cable_segment(parent, midpoint, end, material, "CivicOverheadCable%02dB" % index)
+
+
+func _add_civic_cable_segment(parent: Node3D, start: Vector3, end: Vector3, material: StandardMaterial3D, name_hint: String) -> void:
+    var direction := end - start
+    var cable := ModelKit3D.add_cylinder(parent, 0.035, direction.length(), (start + end) * 0.5, material, Vector3.ZERO, name_hint)
+    cable.quaternion = Quaternion(Vector3.UP, direction.normalized())
 
 
 func _add_street_bench(parent: Node3D, position: Vector3, heading: float, metal: StandardMaterial3D, wood: StandardMaterial3D) -> void:
