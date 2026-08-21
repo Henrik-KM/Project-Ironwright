@@ -311,7 +311,7 @@ func _on_nest_restored(nest: Node) -> void:
 func _register_enemy(enemy: Node) -> void:
     if enemy == null or not is_instance_valid(enemy) or enemy.is_in_group(&"enemy_tier_nests"):
         return
-    if enemy.get("maximum_health") == null or enemy.get("current_health") == null:
+    if not _has_tierable_combat_stats(enemy):
         return
     var instance_id := enemy.get_instance_id()
     if connected_enemies.has(instance_id):
@@ -332,7 +332,7 @@ func _register_enemy(enemy: Node) -> void:
 
 
 func assign_enemy_tier(enemy: Node, tier: int, home_nest_id: StringName) -> void:
-    if enemy == null or not is_instance_valid(enemy):
+    if enemy == null or not is_instance_valid(enemy) or not _has_tierable_combat_stats(enemy):
         return
     tier = clampi(tier, 1, maximum_tier)
     enemy.set_meta(&"enemy_tier", tier)
@@ -358,6 +358,17 @@ func assign_enemy_tier(enemy: Node, tier: int, home_nest_id: StringName) -> void
         brain.name = "EnemyTierBrain"
         enemy.add_child(brain)
     brain.call(&"configure", enemy, self, tier, home_nest_id)
+
+
+func _has_tierable_combat_stats(enemy: Node) -> bool:
+    # Ordinary nests share the organic_enemies group so ecology and threat
+    # presentation can find them, but they are not combat actors and do not
+    # expose attack or movement stats. Keep that structural distinction explicit
+    # instead of attempting float(null) during world registration.
+    return enemy.get("maximum_health") != null \
+        and enemy.get("current_health") != null \
+        and enemy.get("attack_damage") != null \
+        and enemy.get("move_speed") != null
 
 
 func _on_enemy_killed(enemy: Node, killer: Node = null) -> void:
