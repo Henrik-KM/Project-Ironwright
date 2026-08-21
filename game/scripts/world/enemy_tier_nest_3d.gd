@@ -237,6 +237,9 @@ func _build_visuals() -> void:
     var bone := ModelKit3D.material(Color("877d68"), 0.0, 0.84)
     var membrane := ModelKit3D.material(Color("5d1837"), 0.0, 0.64, Color("b83462"), 1.7)
     var wound := ModelKit3D.material(Color("31131f"), 0.0, 0.76, Color("d94c69"), 2.4)
+    var shell_edge := ModelKit3D.material(Color("a38a70"), 0.0, 0.72)
+    var vein := ModelKit3D.material(Color("3b1029"), 0.0, 0.58, Color("ed5d85"), 2.2)
+    var root_dark := ModelKit3D.material(Color("1b151c"), 0.0, 0.88)
 
     ModelKit3D.add_sphere(_model_root, 1.75, Vector3(0.0, 1.0, 0.0), chitin, Vector3(1.4, 0.72, 1.4), "NestCore")
     for index in range(10):
@@ -263,6 +266,57 @@ func _build_visuals() -> void:
             "BroodSac_%02d" % index
         )
     ModelKit3D.add_sphere(_model_root, 0.48, Vector3(0.0, 1.75, 0.0), wound, Vector3(1.0, 1.25, 1.0), "NestPulse")
+
+    # The nest is a close-range encounter landmark, so its readable silhouette
+    # needs a second authored anatomy layer rather than a smooth core with
+    # decorative spikes. This layer remains presentation-only and bounded.
+    var detail_root := Node3D.new()
+    detail_root.name = "NestHighDefinitionDetail"
+    _model_root.add_child(detail_root)
+    ModelKit3D.add_segmented_carapace(
+        detail_root,
+        1.2,
+        Vector3(0.0, 1.08, 0.0),
+        chitin,
+        shell_edge,
+        Vector3(1.35, 0.52, 1.2),
+        5,
+        "NestDorsalCarapace"
+    )
+    ModelKit3D.add_tapered_cylinder(detail_root, 1.48, 1.72, 0.08, Vector3(0.0, 0.42, 0.0), root_dark, Vector3.ZERO, "NestRootCollar")
+    for index in range(6):
+        var plate_angle := TAU * float(index) / 6.0 + 0.33
+        var plate_position := Vector3(cos(plate_angle) * 1.34, 0.95 + float(index % 2) * 0.16, sin(plate_angle) * 1.34)
+        ModelKit3D.add_organic_plate(
+            detail_root,
+            0.3 + float(index % 2) * 0.04,
+            plate_position,
+            membrane,
+            shell_edge,
+            Vector3(0.92, 0.48, 0.72),
+            "NestMembranePlate%02d" % index
+        )
+        ModelKit3D.add_tapered_cylinder(
+            detail_root,
+            0.035,
+            0.065,
+            1.16,
+            Vector3(cos(plate_angle) * 0.58, 1.48, sin(plate_angle) * 0.58),
+            vein,
+            Vector3(0.0, -plate_angle, 0.52),
+            "NestVeinChannel%02d" % index
+        )
+    for index in range(8):
+        var spine_angle := TAU * float(index) / 8.0 + 0.18
+        ModelKit3D.add_capsule(
+            detail_root,
+            0.055 + float(index % 2) * 0.018,
+            1.35 + float(index % 3) * 0.18,
+            Vector3(cos(spine_angle) * 1.82, 0.68 + float(index % 2) * 0.12, sin(spine_angle) * 1.82),
+            shell_edge,
+            Vector3(0.0, -spine_angle, 0.92),
+            "NestFineSpine%02d" % index
+        )
     _pulse_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.8, 0.0), Color("d84b69"), 1.3, 7.5)
     _refresh_visual_state()
 

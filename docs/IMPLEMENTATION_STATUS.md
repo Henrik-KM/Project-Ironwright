@@ -1083,6 +1083,21 @@ final retail art, animation and external visual approval are still required.
 
 ## Commercial work still remaining
 
+## Focused tiered-nest anatomy presentation milestone
+
+- added a bounded `NestHighDefinitionDetail` layer to the production tiered
+  organic nest shell;
+- added segmented dorsal carapace, membrane plates, vascular channels, root
+  collar and fine perimeter spines with stable presentation sockets;
+- added aesthetic coverage for the close-range nest anatomy while preserving
+  tier spawning, collision, health, regrowth and save state;
+- broader encounter-space and hostile-art review remains part of the commercial
+  work below.
+
+The live playtest also found and closed a legacy-save edge: snapshots created
+before authored run variation now reconcile their missing weather profile before
+presentation restore, with release regression coverage for that migration path.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.

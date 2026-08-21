@@ -21,7 +21,9 @@ version 4 under `user://saves`. Its `payload.base.run_state` now includes the
 persisted `world_seed` and stable `world_variant_id` selected for the run. The
 variant changes presentation-only weather and atmosphere profiles; it does not
 create a second simulation or add recurring player work. Older slot payloads
-default missing variation fields and select an authored profile on load.
+default missing variation fields and select an authored profile on load. When a
+legacy payload has no seed or variant ID, the loader creates the seed and
+selects the stable profile before applying restored presentation state.
 
 The schema is written by `TransactionalSaveService3D`. It first writes
 `ironwright_run.json.tmp`, flushes and closes it, rotates the existing primary

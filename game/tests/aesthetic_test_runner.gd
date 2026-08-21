@@ -39,6 +39,14 @@ func _run_all() -> void:
     if city != null:
         _expect(city.find_child("CivicBenchSeat", true, false) != null and city.find_child("CivicServiceCabinet", true, false) != null, "The street-detail layer must expose readable civic furniture and maintenance hardware.")
         _expect(city.find_child("CivicPlanterGrowth", true, false) != null and city.find_child("CivicRouteSign", true, false) != null, "The street-detail layer must expose vegetation and civic route identity.")
+    var nest_sample := EnemyTierNest3D.new()
+    nest_sample.configure({"id": "aesthetic.high_definition_nest", "position": [72.0, 0.0, 72.0], "maturity": 1.0, "supported_tiers": [3]})
+    root.add_child(nest_sample)
+    await process_frame
+    _expect(nest_sample.find_child("NestHighDefinitionDetail", true, false) != null, "Tiered organic nests must carry a bounded high-definition anatomy layer.")
+    _expect(nest_sample.find_child("NestDorsalCarapace", true, false) != null and nest_sample.find_child("NestRootCollar", true, false) != null, "Tiered organic nests must expose layered carapace and root-collar detail.")
+    _expect(nest_sample.find_child("NestMembranePlate00", true, false) != null and nest_sample.find_child("NestVeinChannel00", true, false) != null and nest_sample.find_child("NestFineSpine00", true, false) != null, "Tiered organic nests must expose membrane, vascular and fine-spine sockets.")
+    nest_sample.queue_free()
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgeMaintenanceDetail") != null, "The Heartforge must expose a dedicated presentation-only maintenance detail layer.")
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgePlazaDetail/HeartforgeServiceRing/ForgeRecessedServiceRing") != null, "The Heartforge plaza must expose a readable recessed service ring around its focal machine.")
     _expect(_find_named(world, "RouteThresholdAmberBand") != null, "The opening service lane must expose a far amber threshold landmark for the first objective.")
