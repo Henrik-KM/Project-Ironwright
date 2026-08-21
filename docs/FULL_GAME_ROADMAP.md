@@ -574,7 +574,7 @@ These are planning ranges, not promises:
 - 12–18 organic species/behaviour families plus nests, parasites, and apex forms;
 - 4 primary outpost roles with three tiers and contextual variants;
 - 4–6 Heartforge tiers or equivalent major structural stages;
-- 35–60 consequential technologies, many mutually exclusive or path-shaping;
+- 35–60 consequential technologies, many mutually exclusive or path-shaping; the current systemic alpha now reaches the 35-entry lower bound through machine, outpost, route, replacement and ecological research modifiers;
 - 20–35 fixed discovered support sites across the full world;
 - 5–8 major urban regions with authored identity;
 - 30–60 expedition/objective templates driven by world state;

@@ -98,6 +98,15 @@ func has_effect(effect_id: StringName) -> bool:
     return bool(unlocked_effects.get(effect_id, false))
 
 
+func modifier_value(modifier_id: StringName, fallback: float = 0.0) -> float:
+    var total := fallback
+    for technology_id in unlocked_technologies:
+        var entry := technology(technology_id)
+        var modifiers: Dictionary = entry.get("modifiers", {})
+        total += float(modifiers.get(String(modifier_id), modifiers.get(modifier_id, 0.0)))
+    return total
+
+
 func technology(technology_id: StringName) -> Dictionary:
     var raw: Variant = technologies.get(technology_id, {})
     return (raw as Dictionary).duplicate(true) if raw is Dictionary else {}

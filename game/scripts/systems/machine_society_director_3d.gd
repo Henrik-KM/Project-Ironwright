@@ -64,13 +64,17 @@ func _evaluate_society() -> void:
         var current_count := autonomy_director.count_robots(archetype)
         if current_count >= target_count:
             continue
-        var cost := run_state.build_cost(archetype)
+        var cost_multiplier := 1.0
+        if progression != null:
+            cost_multiplier += progression.modifier_value(&"replacement_cost_multiplier")
+        cost_multiplier = maxf(0.55, cost_multiplier)
+        var cost := int(round(float(run_state.build_cost(archetype)) * cost_multiplier))
         if run_state.scrap < cost:
             _set_status("Autonomous replacement needs %d Scrap for the next %s." % [cost, String(archetype).capitalize()])
             return
         if not run_state.spend_scrap(cost):
             return
-        _spawn_replacement(archetype, current_count)
+        _spawn_replacement(archetype, current_count, cost)
         return
 
     _set_status("Ordinary machine composition is self-maintaining at the current Heartforge tier.")
@@ -93,9 +97,9 @@ func desired_composition() -> Dictionary:
     return {&"salvager": 1, &"guardian": 1, &"scout": 1, &"engineer": 1}
 
 
-func _spawn_replacement(archetype: StringName, current_count: int) -> void:
+func _spawn_replacement(archetype: StringName, current_count: int, paid_cost: int) -> void:
     if not spawn_robot_callback.is_valid():
-        run_state.refund_scrap(run_state.build_cost(archetype))
+        run_state.refund_scrap(paid_cost)
         return
     var angle := TAU * float(autonomous_builds + current_count + 1) / 8.0
     var position := heartforge.global_position + Vector3(cos(angle) * 3.4, 0.0, sin(angle) * 3.4 + 2.8)
@@ -103,7 +107,10 @@ func _spawn_replacement(archetype: StringName, current_count: int) -> void:
     spawn_robot_callback.call(archetype, position, level)
     run_state.robots_built += 1
     autonomous_builds += 1
-    fabrication_clock = maxf(8.0, 18.0 - float(progression.heartforge_tier) * 1.5)
+    var cadence_multiplier := 1.0
+    if progression != null:
+        cadence_multiplier += progression.modifier_value(&"replacement_cadence_multiplier")
+    fabrication_clock = maxf(6.0, (18.0 - float(progression.heartforge_tier) * 1.5) * maxf(0.5, cadence_multiplier))
     if noise_system != null:
         noise_system.emit_noise(heartforge.global_position, 24.0, 0.62, &"autonomous_replacement")
     var reason := "The machine society replaced a missing %s to maintain its broad strategic composition without a production queue." % String(archetype).capitalize()

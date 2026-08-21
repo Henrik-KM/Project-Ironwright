@@ -1,5 +1,11 @@
 # Implementation status
 
+## Focused consequential technology breadth milestone
+
+- Expanded the data-driven research tree from 20 to 35 consequential technologies, reaching the commercial lower bound without adding a management dashboard or recurring per-unit task.
+- Added persistent machine, outpost, route, replacement and ecological modifiers. Existing robots and outposts refresh immediately when research completes, while save/load continues to serialize stable technology identifiers and recompute modifiers from content.
+- Added regression coverage for tree breadth, live modifier application and the route/replacement integration points. External balance and human acceptance remain release gates.
+
 ## Focused adaptive route-memory milestone
 
 - Long-range operations now persist bounded disruption memory by discovered

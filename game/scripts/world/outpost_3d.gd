@@ -19,6 +19,7 @@ var current_health: float = 240.0
 var alive: bool = true
 var stored_scrap: int = 0
 var run_state: RunState3D
+var progression: ProgressionDirector3D
 
 var _model_root: Node3D
 var _status_light: OmniLight3D
@@ -50,6 +51,14 @@ func configure(
     tier = clampi(next_tier, 1, 3)
     run_state = next_run_state
     _apply_tier_stats(true)
+
+
+func set_progression(next_progression: ProgressionDirector3D) -> void:
+    var health_ratio := current_health / maxf(1.0, maximum_health)
+    progression = next_progression
+    _apply_tier_stats(false)
+    current_health = maximum_health * health_ratio
+    health_changed.emit(self, current_health, maximum_health)
 
 
 func _ready() -> void:
@@ -171,6 +180,8 @@ func restore_from_dictionary(data: Dictionary) -> void:
 
 func _apply_tier_stats(reset_health: bool) -> void:
     maximum_health = [240.0, 390.0, 590.0][tier - 1]
+    if progression != null:
+        maximum_health *= 1.0 + progression.modifier_value(&"outpost_health_multiplier")
     if reset_health:
         current_health = maximum_health
 
@@ -203,7 +214,10 @@ func _perform_resource_role() -> void:
     if _role_clock < interval:
         return
     _role_clock = 0.0
-    stored_scrap = mini(120, stored_scrap + 4 + tier * 3)
+    var yield_multiplier := 1.0
+    if progression != null:
+        yield_multiplier += progression.modifier_value(&"outpost_resource_multiplier")
+    stored_scrap = mini(120, stored_scrap + int(round(float(4 + tier * 3) * yield_multiplier)))
     _set_presentation_activity(&"harvesting", 1.0, 1.0)
     if stored_scrap >= 20:
         cargo_ready.emit(self)
@@ -218,6 +232,8 @@ func _perform_defence_role() -> void:
         return
     _weapon_cooldown = maxf(0.48, 1.05 - float(tier) * 0.15)
     var damage := 7.0 + float(tier) * 6.0
+    if progression != null:
+        damage *= 1.0 + progression.modifier_value(&"outpost_defence_multiplier")
     if enemy.has_method("apply_damage"):
         enemy.call("apply_damage", damage, self)
     _set_presentation_activity(&"defending", 1.0, 0.65)
@@ -227,7 +243,10 @@ func _perform_defence_role() -> void:
 func _perform_scout_role() -> void:
     if _warning_cooldown > 0.0:
         return
-    var enemy := _nearest_enemy(18.0 + float(tier) * 7.0)
+    var range_multiplier := 1.0
+    if progression != null:
+        range_multiplier += progression.modifier_value(&"outpost_scout_range_multiplier")
+    var enemy := _nearest_enemy((18.0 + float(tier) * 7.0) * range_multiplier)
     if enemy == null:
         return
     _warning_cooldown = maxf(2.5, 6.5 - float(tier))
@@ -248,7 +267,10 @@ func _perform_repair_role() -> void:
         if global_position.distance_to(robot.global_position) > repair_range:
             continue
         if robot.has_method("repair"):
-            robot.call("repair", 4.0 + float(tier) * 3.0)
+            var repair_amount := 4.0 + float(tier) * 3.0
+            if progression != null:
+                repair_amount *= 1.0 + progression.modifier_value(&"outpost_repair_multiplier")
+            robot.call("repair", repair_amount)
             repaired_robot = true
     if repaired_robot:
         _set_presentation_activity(&"repairing", 1.0, 1.0)

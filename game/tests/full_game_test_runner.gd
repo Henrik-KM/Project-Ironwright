@@ -23,6 +23,7 @@ func _run_all() -> void:
     _expect(world.outpost_director != null, "The full-game world must contain an outpost director.")
     _expect(world.strategic_hud != null, "The full-game world must contain the strategic command HUD.")
     _expect(world.progression.heartforge_tier == 1, "The oppressive opening must begin at Heartforge tier 1.")
+    _expect(world.progression.technologies.size() >= 35, "The commercial progression tree must contain at least 35 consequential technologies.")
     _expect(world.outpost_sites.size() >= 20, "The full-game world must provide the commercial lower-bound pool of fixed support sites.")
     _expect(world.outpost_director.discovered_sites().is_empty(), "Outpost sites must remain hidden during the opening.")
     _expect(world.run_state.build_cost(&"engineer") == 56, "The Engineer build cost must be available in run state.")
@@ -46,6 +47,12 @@ func _run_all() -> void:
     _expect(world.progression.heartforge_tier == 2, "Heartforge tier 2 must unlock through progression.")
     _expect(world.progression.has_effect(&"engineer_build_available"), "Tier 2 must unlock the Engineer frame.")
     _expect(world.progression.has_effect(&"outpost_role_resource"), "Tier 2 must unlock the first outpost role.")
+    world._spawn_robot(&"guardian", Vector3(-2.0, 0.0, 4.0), 1)
+    var guardian_probe := world.autonomy_director.living_robots(&"guardian")[0]
+    var baseline_guardian_speed := guardian_probe.move_speed
+    _expect(world.progression.purchase(&"tech.machine.actuator_tuning"), "Actuator Tuning should be purchasable at Heartforge tier 2.")
+    _expect(world.progression.modifier_value(&"robot_speed_multiplier") >= 0.08, "Actuator Tuning must expose a persistent machine speed modifier.")
+    _expect(guardian_probe.move_speed > baseline_guardian_speed, "Existing machines must receive progression modifiers immediately.")
 
     var discovered := world.outpost_director.discover_sites_by(&"expedition.north_ruins")
     _expect(discovered >= 3, "The North Ruins expedition must reveal multiple fixed support sites.")

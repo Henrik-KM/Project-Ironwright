@@ -271,6 +271,9 @@ func _spawn_salvage(position: Vector3, amount: int, display_name: String) -> Sal
 func _spawn_robot(archetype: StringName, position: Vector3, level: int) -> RobotUnit3D:
     var robot := ROBOT_SCENE.instantiate() as RobotUnit3D
     robot.configure(archetype, level)
+    var progression_node := get_node_or_null("ProgressionDirector") as ProgressionDirector3D
+    if progression_node != null:
+        robot.set_progression(progression_node)
     robot.defer_authored_visuals = should_defer_spawn_visuals(position)
     robot.process_mode = Node.PROCESS_MODE_PAUSABLE
     robot.position = position

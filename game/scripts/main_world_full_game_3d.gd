@@ -115,6 +115,8 @@ func _setup_full_game_services() -> void:
     progression.technology_unlocked.connect(_on_technology_unlocked)
     progression.phase_changed.connect(_on_phase_changed)
     progression.heartforge_tier_changed.connect(_on_heartforge_tier_changed)
+    progression.progression_changed.connect(_refresh_progression_modifiers)
+    _refresh_progression_modifiers()
 
     outpost_director.operation_changed.connect(_on_outpost_operation_changed)
     outpost_director.outpost_changed.connect(_on_outpost_changed)
@@ -122,6 +124,11 @@ func _setup_full_game_services() -> void:
     outpost_director.haul_returned.connect(_on_outpost_haul_returned)
 
     _spawn_world_sites()
+
+
+func _refresh_progression_modifiers() -> void:
+    for robot in autonomy_director.living_robots():
+        robot.set_progression(progression)
 
 
 func _spawn_world_sites() -> void:

@@ -39,6 +39,7 @@ var salvage_progress: float = 0.0
 var salvage_duration: float = 5.4
 var player_reference: Node3D
 var heartforge_reference: Node3D
+var progression: ProgressionDirector3D
 var alive: bool = true
 var obstacle_recovery_remaining: float = 0.0
 var obstacle_recovery_direction: Vector3 = Vector3.ZERO
@@ -70,6 +71,15 @@ func configure(next_archetype: StringName, next_level: int) -> void:
     _apply_level_stats()
     if is_inside_tree():
         _refresh_visual_identity()
+
+
+func set_progression(next_progression: ProgressionDirector3D) -> void:
+    var health_ratio := current_health / maxf(1.0, maximum_health)
+    progression = next_progression
+    _apply_level_stats()
+    current_health = maximum_health * health_ratio
+    _refresh_damage_presentation()
+    health_changed.emit(self, current_health, maximum_health)
 
 
 func _physics_process(delta: float) -> void:
@@ -309,6 +319,13 @@ func _apply_level_stats() -> void:
             salvage_rate = [1.0, 1.35, 1.8][level - 1]
             attack_range = 5.0
             attack_interval = 1.25
+    if progression != null:
+        maximum_health *= 1.0 + progression.modifier_value(&"robot_health_multiplier")
+        move_speed *= 1.0 + progression.modifier_value(&"robot_speed_multiplier")
+        attack_damage *= 1.0 + progression.modifier_value(&"robot_damage_multiplier")
+        salvage_rate *= 1.0 + progression.modifier_value(&"robot_salvage_multiplier")
+        construction_rate *= 1.0 + progression.modifier_value(&"robot_construction_multiplier")
+        signal_strength *= 1.0 + progression.modifier_value(&"robot_signal_multiplier")
     current_health = maximum_health
 
 
