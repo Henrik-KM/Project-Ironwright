@@ -24,6 +24,8 @@ The opening route now also has a bounded authored street-dressing pass: a collap
 
 The central urban district now also carries a bounded high-definition street-detail layer: civic benches, service cabinets, planters, route signs and small weed clusters break up the procedural paving with readable human-scale maintenance evidence. The layer is presentation-only, uses the existing original model kit, and remains bounded so environmental richness does not become a new simulation or maintenance burden.
 
+Tiered organic nests now carry the same close-range production bar: a segmented dorsal carapace, membrane plates, visible vascular channels, a root collar and fine perimeter spines build a readable encounter landmark from layered original geometry. These details remain presentation-only and do not alter nest health, spawning, collision or regrowth.
+
 ## Release-readiness rule
 
 No agent may describe Project Ironwright as commercially finished, release-ready, or a release candidate based solely on:

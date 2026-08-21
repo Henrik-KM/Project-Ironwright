@@ -716,7 +716,7 @@ func _restore_release_snapshot(snapshot: Dictionary) -> void:
     _clear_runtime_entities()
     run_state.restore_from_dictionary(base.get("run_state", {}))
     if run_variation_director != null:
-        run_variation_director.apply_current()
+        run_variation_director.ensure_current_variant()
     var player_data: Dictionary = base.get("player", {})
     player.global_position = _array_to_vector(player_data.get("position", [0, 0, 6]))
     player.current_health = clampf(float(player_data.get("health", player.maximum_health)), 0.0, player.maximum_health)

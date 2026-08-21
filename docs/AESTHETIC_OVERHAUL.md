@@ -340,6 +340,15 @@ collision, simulation state or a recurring player task. The layer uses the
 existing original procedural model kit and is covered by the aesthetic presence
 runner.
 
+## Focused tiered-nest anatomy milestone
+
+Tiered organic nests now carry a second close-range anatomy layer: a segmented
+dorsal carapace, membrane plates, visible vascular channels, a root collar and
+fine perimeter spines. The layered silhouette makes nest defence and ecological
+pressure legible as a physical place instead of a single smooth brood mass;
+the geometry remains presentation-only and preserves the existing collision,
+health, spawning and regrowth contracts.
+
 ## Focused late-organic anatomy refinement milestone
 
 The five later organic family shells now receive a second authored detail

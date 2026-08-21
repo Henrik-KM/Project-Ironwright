@@ -46,8 +46,20 @@ func apply_current() -> void:
     var variant_id := run_state.world_variant_id
     var profile: Dictionary = profiles.get(variant_id, {})
     if profile.is_empty():
-        push_error("Run variation profile is missing: %s" % String(variant_id))
-        return
+        # Older saves predate authored run variation and have no variant ID.
+        # Reconcile them through the same deterministic seed path used by a
+        # new run instead of applying an empty profile and leaving the load in
+        # a partially restored presentation state.
+        var ids := profile_ids()
+        if ids.is_empty():
+            push_error("Run variation profile is missing and no fallback profiles are available: %s" % String(variant_id))
+            return
+        run_state.ensure_world_variant(ids)
+        variant_id = run_state.world_variant_id
+        profile = profiles.get(variant_id, {})
+        if profile.is_empty():
+            push_error("Run variation fallback profile is missing: %s" % String(variant_id))
+            return
     var normalized := profile.duplicate(true)
     normalized["rain_color"] = Color(str(profile.get("rain_color", "#7895a3")))
     if vertical_slice != null:

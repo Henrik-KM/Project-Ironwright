@@ -69,6 +69,16 @@ func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
     _expect(restored_state.world_seed == world.run_state.world_seed, "World variation seed must survive run-state serialization.")
     _expect(restored_state.world_variant_id == world.run_state.world_variant_id, "World variation ID must survive run-state serialization.")
 
+    var legacy_state := RunState3D.new()
+    legacy_state.restore_from_dictionary({"schema_version": 2, "scrap": 24, "event_log": []})
+    var legacy_variation := RunVariationDirector3D.new()
+    legacy_variation.configure(legacy_state, world.vertical_slice, world.region_atmosphere_director)
+    legacy_variation._load_profiles()
+    legacy_variation.apply_current()
+    _expect(legacy_state.world_seed != 0 and legacy_state.world_variant_id in legacy_variation.profile_ids(), "Legacy saves without a world-condition ID must deterministically reconcile to an authored profile during load.")
+    legacy_variation.free()
+    legacy_state.free()
+
 
 func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     var service := world.localization_service
