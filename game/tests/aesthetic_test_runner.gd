@@ -432,6 +432,15 @@ func _run_all() -> void:
         _expect(heartforge.find_child("Tier3SignalConduit", true, false) != null, "Tier 3 Heartforge geometry must add signal conduits.")
         _expect(heartforge.find_child("Tier4SignalMast", true, false) != null, "Tier 4 Heartforge geometry must add the signal mast.")
         _expect(heartforge.find_child("Tier5SovereigntyCrown", true, false) != null, "Tier 5 Heartforge geometry must culminate in a readable crown.")
+        _expect(heartforge.find_child("HeartforgeDamagePresentation", true, false) != null, "The Heartforge must expose a bounded damage-memory presentation layer.")
+        _expect(heartforge.find_child("HeartforgeDamageScar00", true, false) != null and heartforge.find_child("HeartforgeDamageLeak00", true, false) != null, "The Heartforge damage layer must expose stable scar and leak sockets.")
+        heartforge.apply_damage(heartforge.maximum_health * 0.68)
+        var damage_layer := heartforge.find_child("HeartforgeDamagePresentation", true, false) as Node3D
+        var damage_scar := heartforge.find_child("HeartforgeDamageScar00", true, false) as Node3D
+        _expect(damage_layer != null and damage_layer.visible, "Heartforge damage must visibly expose the failure memory after integrity loss.")
+        _expect(damage_scar != null and damage_scar.visible, "Heartforge damage must reveal the first scar at meaningful integrity loss.")
+        heartforge.repair(heartforge.maximum_health)
+        _expect(damage_layer != null and not damage_layer.visible, "Heartforge repair must clear the damage-memory layer when integrity is restored.")
 
     var environment_node := _find_world_environment(world)
     _expect(environment_node != null and environment_node.environment != null, "The world needs a configured environment.")

@@ -299,7 +299,8 @@ This separation allows authored Blender/glTF assets and animation libraries to r
 The aesthetic pass is acceptable when:
 
 1. nearby streets and actors are readable without increasing global brightness to daylight;
-2. the Heartforge reads immediately as warmer and safer than the city;
+2. the Heartforge reads immediately as warmer and safer than the city, and
+   visibly remembers meaningful damage until the machines repair it;
 3. the scene contains deliberate practical lighting rather than one global ambient value;
 4. player, robot and enemy movement no longer looks completely rigid;
 5. firing, damage, salvage and noise have visible response;
