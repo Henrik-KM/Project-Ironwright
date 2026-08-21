@@ -281,6 +281,11 @@ func _test_front_end(world: IronwrightReleaseWorld3D) -> void:
     front_end.show_settings_from_title()
     _expect(front_end.active_screen == &"settings", "Accessibility and audio settings screen must open from title.")
     _expect(front_end.settings_controls.size() >= 16, "Settings screen must expose release accessibility, audio, language and controller options.")
+    var raw_localization_labels := 0
+    for node in front_end.settings_panel.find_children("*", "Label", true, false):
+        if node is Label and String((node as Label).text).begins_with("settings."):
+            raw_localization_labels += 1
+    _expect(raw_localization_labels == 0, "Settings labels must resolve localization keys instead of exposing raw settings.* identifiers.")
     front_end.hide_all()
 
 

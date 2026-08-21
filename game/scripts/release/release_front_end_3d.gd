@@ -200,7 +200,12 @@ func _build_settings_rows(parent: VBoxContainer) -> void:
         var toggle := CheckButton.new()
         toggle.text = ""
         settings_controls[key] = toggle
-        parent.add_child(_settings_row("settings.%s" % key, toggle))
+        var label_key := "settings.%s" % key
+        if key == "high_contrast_ui":
+            label_key = "settings.high_contrast"
+        elif key == "show_world_guidance":
+            label_key = "settings.world_guidance"
+        parent.add_child(_settings_row(label_key, toggle))
 
 
 func _settings_row(label_key: String, control: Control) -> HBoxContainer:
