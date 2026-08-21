@@ -54,7 +54,7 @@
     "long_range_operations_implemented": 12,
     "fixed_world_sites_implemented": 20,
     "endgame_protocols_implemented": 2,
-    "consequential_technologies_implemented": 20,
+    "consequential_technologies_implemented": 35,
     "commercial_robot_families_target": [6, 8],
     "commercial_organic_species_target": [12, 18],
     "commercial_fixed_world_sites_target": [20, 35],

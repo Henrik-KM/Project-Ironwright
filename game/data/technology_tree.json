@@ -247,6 +247,171 @@
       },
       "effects": ["protocol_containment_available"],
       "automatic": false
+    },
+    {
+      "id": "tech.machine.actuator_tuning",
+      "display_name": "Actuator Tuning",
+      "branch": "machines",
+      "description": "Tune locomotion governors across the machine society, improving travel without adding manual route work.",
+      "cost": {"scrap": 110, "rare_cores": 0},
+      "requirements": {"heartforge_tier": 2},
+      "effects": ["machine_actuator_tuning"],
+      "modifiers": {"robot_speed_multiplier": 0.08},
+      "automatic": false
+    },
+    {
+      "id": "tech.machine.reinforced_chassis",
+      "display_name": "Reinforced Chassis",
+      "branch": "machines",
+      "description": "Distribute layered salvage plating through every ordinary frame so remote losses are less likely to become permanent.",
+      "cost": {"scrap": 130, "rare_cores": 0},
+      "requirements": {"heartforge_tier": 2},
+      "effects": ["machine_reinforced_chassis"],
+      "modifiers": {"robot_health_multiplier": 0.12},
+      "automatic": false
+    },
+    {
+      "id": "tech.machine.weapon_calibration",
+      "display_name": "Weapon Calibration",
+      "branch": "machines",
+      "description": "Retune machine weapon timing and impact geometry, shortening the danger window around autonomous work.",
+      "cost": {"scrap": 140, "rare_cores": 0},
+      "requirements": {"heartforge_tier": 2, "technology": "tech.machine.group_coordination"},
+      "effects": ["machine_weapon_calibration"],
+      "modifiers": {"robot_damage_multiplier": 0.12},
+      "automatic": false
+    },
+    {
+      "id": "tech.machine.salvage_compaction",
+      "display_name": "Salvage Compaction",
+      "branch": "machines",
+      "description": "Compress useful material at the wreck so autonomous salvagers return more value from the same protected excursion.",
+      "cost": {"scrap": 125, "rare_cores": 0},
+      "requirements": {"heartforge_tier": 2, "technology": "tech.machine.task_memory"},
+      "effects": ["machine_salvage_compaction"],
+      "modifiers": {"robot_salvage_multiplier": 0.18},
+      "automatic": false
+    },
+    {
+      "id": "tech.machine.modular_tooling",
+      "display_name": "Modular Tooling",
+      "branch": "machines",
+      "description": "Standardize Engineer tool heads so construction and rebuilding finish sooner while remaining fully machine-executed.",
+      "cost": {"scrap": 125, "rare_cores": 0},
+      "requirements": {"heartforge_tier": 2, "technology": "tech.machine.field_engineering"},
+      "effects": ["machine_modular_tooling"],
+      "modifiers": {"robot_construction_multiplier": 0.20},
+      "automatic": false
+    },
+    {
+      "id": "tech.machine.signal_lattice",
+      "display_name": "Signal Lattice",
+      "branch": "machines",
+      "description": "Give relay-capable frames a clearer shared signal so long operations retain intent across blocked streets and district transitions.",
+      "cost": {"scrap": 160, "rare_cores": 1},
+      "requirements": {"heartforge_tier": 3, "technology": "tech.machine.group_coordination"},
+      "effects": ["machine_signal_lattice"],
+      "modifiers": {"robot_signal_multiplier": 0.20},
+      "automatic": false
+    },
+    {
+      "id": "tech.outpost.reinforced_foundations",
+      "display_name": "Reinforced Foundations",
+      "branch": "outposts",
+      "description": "Authorize deeper foundation anchors so autonomous support posts withstand more organic pressure before requiring reconstruction.",
+      "cost": {"scrap": 150, "rare_cores": 0},
+      "requirements": {"heartforge_tier": 2, "technology": "tech.outpost.resource"},
+      "effects": ["outpost_reinforced_foundations"],
+      "modifiers": {"outpost_health_multiplier": 0.18},
+      "automatic": false
+    },
+    {
+      "id": "tech.outpost.reserve_caches",
+      "display_name": "Reserve Caches",
+      "branch": "outposts",
+      "description": "Let resource posts sort and protect a larger yield from each autonomous cycle without creating a player-managed stockpile task.",
+      "cost": {"scrap": 135, "rare_cores": 0},
+      "requirements": {"heartforge_tier": 2, "technology": "tech.outpost.resource"},
+      "effects": ["outpost_reserve_caches"],
+      "modifiers": {"outpost_resource_multiplier": 0.18},
+      "automatic": false
+    },
+    {
+      "id": "tech.outpost.service_cradles",
+      "display_name": "Service Cradles",
+      "branch": "outposts",
+      "description": "Give Field Repair Posts a stable service cradle that improves automatic recovery for nearby machines.",
+      "cost": {"scrap": 165, "rare_cores": 1},
+      "requirements": {"heartforge_tier": 3, "technology": "tech.outpost.repair"},
+      "effects": ["outpost_service_cradles"],
+      "modifiers": {"outpost_repair_multiplier": 0.25},
+      "automatic": false
+    },
+    {
+      "id": "tech.outpost.defence_emitters",
+      "display_name": "Defence Emitters",
+      "branch": "outposts",
+      "description": "Tune proxy-defence emitters to make fixed sites meaningful pressure valves rather than decorative markers.",
+      "cost": {"scrap": 165, "rare_cores": 1},
+      "requirements": {"heartforge_tier": 3, "technology": "tech.outpost.defence"},
+      "effects": ["outpost_defence_emitters"],
+      "modifiers": {"outpost_defence_multiplier": 0.18},
+      "automatic": false
+    },
+    {
+      "id": "tech.outpost.watchtower_lenses",
+      "display_name": "Watchtower Lenses",
+      "branch": "outposts",
+      "description": "Extend the sensor envelope of early-warning posts so the machine society receives more time to choose a response.",
+      "cost": {"scrap": 150, "rare_cores": 1},
+      "requirements": {"heartforge_tier": 3, "technology": "tech.outpost.scout"},
+      "effects": ["outpost_watchtower_lenses"],
+      "modifiers": {"outpost_scout_range_multiplier": 0.28},
+      "automatic": false
+    },
+    {
+      "id": "tech.doctrine.route_cartography",
+      "display_name": "Route Cartography",
+      "branch": "doctrine",
+      "description": "Archive successful detours as machine-readable route memory, granting one additional bounded recovery when organic pressure closes a street.",
+      "cost": {"scrap": 180, "rare_cores": 1},
+      "requirements": {"heartforge_tier": 3, "technology": "tech.doctrine.deep_operations"},
+      "effects": ["route_cartography"],
+      "modifiers": {"route_recovery_bonus": 1},
+      "automatic": false
+    },
+    {
+      "id": "tech.machine.replacement_fabricators",
+      "display_name": "Replacement Fabricators",
+      "branch": "machines",
+      "description": "Recover more reusable geometry from failed frames, lowering the Scrap cost of ordinary autonomous replacement.",
+      "cost": {"scrap": 210, "rare_cores": 1},
+      "requirements": {"heartforge_tier": 3, "technology": "tech.machine.forge_assistance"},
+      "effects": ["machine_replacement_fabricators"],
+      "modifiers": {"replacement_cost_multiplier": -0.18},
+      "automatic": false
+    },
+    {
+      "id": "tech.machine.thermal_cadence",
+      "display_name": "Thermal Cadence",
+      "branch": "machines",
+      "description": "Spread autonomous forge heat across the Heartforge shell so ordinary replacement cycles recover sooner without a production queue.",
+      "cost": {"scrap": 240, "rare_cores": 1},
+      "requirements": {"heartforge_tier": 4, "technology": "tech.machine.forge_assistance"},
+      "effects": ["machine_thermal_cadence"],
+      "modifiers": {"replacement_cadence_multiplier": -0.22},
+      "automatic": false
+    },
+    {
+      "id": "tech.ecology.quiet_activity",
+      "display_name": "Quiet Activity",
+      "branch": "ecology",
+      "description": "Teach routine machines to phase activity through the living town, reducing ordinary disturbance while preserving the danger of major works.",
+      "cost": {"scrap": 190, "rare_cores": 1},
+      "requirements": {"heartforge_tier": 4, "technology": "tech.ecology.signal_dampening"},
+      "effects": ["quiet_activity"],
+      "modifiers": {"noise_reduction": 0.14},
+      "automatic": false
     }
   ]
 }

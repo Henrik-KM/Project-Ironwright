@@ -570,9 +570,12 @@ func _group_pace(members: Array[RobotUnit3D]) -> float:
 
 func _route_recovery_limit() -> int:
     var relay_bonus := 1 if _active_relay_count() > 0 else 0
+    var research_bonus := 0
+    if progression != null:
+        research_bonus = maxi(0, int(floor(progression.modifier_value(&"route_recovery_bonus"))))
     if progression != null and progression.has_effect(&"doctrine_defiance"):
-        return MAX_ROUTE_RECOVERIES + 2 + relay_bonus
-    return MAX_ROUTE_RECOVERIES + relay_bonus
+        return MAX_ROUTE_RECOVERIES + 2 + relay_bonus + research_bonus
+    return MAX_ROUTE_RECOVERIES + relay_bonus + research_bonus
 
 
 func _active_relay_count() -> int:

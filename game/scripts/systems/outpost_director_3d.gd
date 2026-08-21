@@ -44,6 +44,7 @@ func configure(
     heartforge = next_heartforge
     world_parent = next_world_parent
     operation_detail_director = next_operation_detail_director
+    progression.progression_changed.connect(_on_progression_changed)
 
 
 func register_site(site: OutpostSite3D) -> void:
@@ -385,11 +386,18 @@ func _abort_operation(reason: String) -> void:
 func _spawn_outpost(site: OutpostSite3D, role: StringName, tier: int) -> Outpost3D:
     var outpost := Outpost3D.new()
     outpost.configure(site.site_id, role, tier, run_state)
+    outpost.set_progression(progression)
     outpost.position = site.position
     world_parent.add_child(outpost)
     site.attach_outpost(outpost)
     _connect_outpost(outpost)
     return outpost
+
+
+func _on_progression_changed() -> void:
+    for site in sites:
+        if site.has_outpost() and site.outpost != null:
+            site.outpost.set_progression(progression)
 
 
 func _connect_outpost(outpost: Outpost3D) -> void:

@@ -481,7 +481,7 @@ func _on_ecology_report(message: String) -> void:
 func _on_complete_game_noise(position: Vector3, radius: float, intensity: float, source_kind: StringName) -> void:
     var adjusted := intensity
     if progression != null and progression.has_effect(&"signal_dampening") and source_kind not in [&"heartforge_evolution", &"strategic_operation"]:
-        adjusted *= 0.68
+        adjusted *= maxf(0.35, 0.68 - progression.modifier_value(&"noise_reduction"))
     if adaptive_defense_director != null:
         adjusted *= adaptive_defense_director.activity_noise_multiplier()
     strategic_ecology_director.record_disturbance(position, adjusted, source_kind)
