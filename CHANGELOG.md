@@ -1,5 +1,13 @@
 # Changelog
 
+## Pre-alpha authored landmark continuity
+
+- Corrected three authored parent-child landmark sockets that were using
+  world-space offsets: the Tram Graveyard signal lamp, East Tenements
+  fire-escape rail and Riverworks sluice ribs now remain attached to their
+  parent structures.
+- Added native aesthetic regression checks for those spatial relationships.
+
 ## Pre-alpha ecology progression
 
 ### Population-driven enemy escalation

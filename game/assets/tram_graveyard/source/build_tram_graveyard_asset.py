@@ -118,7 +118,9 @@ def main() -> None:
         add_node("TramSleeper%d" % index, mesh_ids["Sleeper"], (0.0, 0.18, z), extras={"socket_type": "sleeper"})
 
     signal = add_node("TramSignalMast", mesh_ids["SignalMast"], (-7.0, 3.1, -2.4), extras={"socket_type": "signal_mast"})
-    add_node("TramSignalLamp", mesh_ids["Signal"], (-7.0, 6.35, -2.4), extras={"socket_type": "signal_lamp"}, parent=signal)
+    # The mast owns the lamp transform. Keep this offset local so the signal
+    # remains attached when the authored landmark is rotated or repositioned.
+    add_node("TramSignalLamp", mesh_ids["Signal"], (0.0, 3.25, 0.0), extras={"socket_type": "signal_lamp"}, parent=signal)
     add_node("TramOverheadBeam", mesh_ids["OverheadBeam"], (0.0, 6.1, 0.8), extras={"socket_type": "overhead_service"})
     for index, x in enumerate((-5.0, 5.0)):
         add_node("TramServiceCable%d" % index, mesh_ids["Cable"], (x, 4.8, 0.8), rotation=(0.0, (-0.34 if index == 0 else 0.34), 0.0), extras={"socket_type": "service_cable"})

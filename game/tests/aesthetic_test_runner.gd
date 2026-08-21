@@ -175,6 +175,8 @@ func _run_all() -> void:
                 _expect(tram_signal != null and tram_seep != null, "Tram Graveyard must expose named signal and organic seepage motion sockets.")
                 if tram_signal != null and tram_seep != null:
                     landmark.set_presentation_detail_level(0)
+                    var tram_mast := landmark.find_child("TramSignalMast", true, false) as Node3D
+                    _expect(tram_mast != null and tram_signal.global_position.distance_to(tram_mast.global_position + Vector3.UP * 3.25) < 0.25, "Tram signal lamp must remain attached to the authored mast socket.")
                     var signal_before := tram_signal.scale
                     var seep_before := tram_seep.scale
                     landmark.call("_process", 0.5)
@@ -207,6 +209,9 @@ func _run_all() -> void:
                 var riverworks_signal := landmark.find_child("RiverworksSluiceSignal", true, false) as Node3D
                 _expect(riverworks_rotor != null and riverworks_signal != null, "Riverworks must expose named animated pump and flow signal sockets.")
                 if riverworks_rotor != null and riverworks_signal != null:
+                    var riverworks_gate := landmark.find_child("RiverworksSluiceGate", true, false) as Node3D
+                    var riverworks_rib := landmark.find_child("RiverworksSluiceRib1", true, false) as Node3D
+                    _expect(riverworks_gate != null and riverworks_rib != null and riverworks_rib.global_position.distance_to(riverworks_gate.global_position + Vector3(0.0, 0.0, -0.17)) < 0.25, "Riverworks sluice ribs must remain attached to the authored gate assembly.")
                     var rotor_before := riverworks_rotor.rotation.y
                     var signal_before := riverworks_signal.scale
                     landmark.call("_process", 0.5)
@@ -236,6 +241,9 @@ func _run_all() -> void:
                 _expect(tenement_creep != null, "East Tenements must expose a named organic-creep motion socket.")
                 if tenement_creep != null:
                     landmark.set_presentation_detail_level(0)
+                    var tenement_ladder := landmark.find_child("TenementFireEscapeLadder", true, false) as Node3D
+                    var tenement_rail := landmark.find_child("TenementFireEscapeRail", true, false) as Node3D
+                    _expect(tenement_ladder != null and tenement_rail != null and tenement_rail.global_position.distance_to(tenement_ladder.global_position + Vector3(0.0, 0.0, 1.5)) < 0.25, "East Tenements fire-escape rail must remain attached to the authored ladder.")
                     var tenement_before := tenement_creep.scale
                     landmark.call("_process", 0.5)
                     _expect(not tenement_creep.scale.is_equal_approx(tenement_before), "East Tenements organic creep must carry deterministic presentation motion.")

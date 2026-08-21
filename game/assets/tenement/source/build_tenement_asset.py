@@ -98,7 +98,9 @@ def main() -> None:
         for side in (-1.0, 1.0):
             add_node("TenementBalconyRail%d_%s" % (index, "L" if side < 0 else "R"), mesh_ids["Rail"], (side * 1.35, 0.85, 0.0), rotation=(math.pi * 0.5, 0.0, 0.0), parent=balcony)
     escape = add_node("TenementFireEscapeLadder", mesh_ids["Ladder"], (-8.3, 4.4, 3.2), rotation=(0.0, 0.0, 0.0), extras={"socket_type": "fire_escape"})
-    add_node("TenementFireEscapeRail", mesh_ids["Rail"], (-8.3, 4.4, 4.7), rotation=(math.pi * 0.5, 0.0, 0.0), parent=escape)
+    # The rail is a child of the ladder; use the ladder-local height and depth
+    # so the route signature stays coherent under landmark transforms.
+    add_node("TenementFireEscapeRail", mesh_ids["Rail"], (0.0, 0.0, 1.5), rotation=(math.pi * 0.5, 0.0, 0.0), parent=escape)
     add_node("TenementRoofWaterTank", mesh_ids["Tank"], (5.8, 10.4, 2.6), extras={"socket_type": "roof_water_tank"})
     add_node("TenementRoofWaterTankCap", mesh_ids["TankCap"], (5.8, 11.55, 2.6), parent=0)
     for index, (x, y, z) in enumerate(((-4.2, 2.35, 3.9), (0.8, 4.55, 6.0), (5.1, 1.4, -2.9))):
