@@ -209,18 +209,29 @@ func _run_all() -> void:
                 _expect(landmark.find_child("TramCarriageAFrontWindow0", true, false) != null and landmark.find_child("TramCarriageAFrontDoor", true, false) != null, "Tram Graveyard must expose approach-facing carriage hardware.")
                 _expect(landmark.find_child("TramInspectionPit", true, false) != null, "Tram Graveyard must expose a bounded inspection-pit signature.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/TramGraveyardAuthoredModel") != null, "Tram Graveyard must expose its authored carriage and maintenance landmark shell.")
+                _expect(landmark.find_child("TramCarriageAFrontHeadlampHousing", true, false) != null and landmark.find_child("TramCarriageABogiePlate0", true, false) != null and landmark.find_child("TramCarriageAPantograph", true, false) != null, "Tram Graveyard must expose layered carriage service hardware.")
+                _expect(landmark.find_child("TramPitRung0", true, false) != null and landmark.find_child("TramCableClamp0", true, false) != null and landmark.find_child("TramSignalHousing", true, false) != null, "Tram Graveyard must expose maintenance-pit and overhead service details.")
                 var tram_signal := landmark.find_child("TramSignalLamp", true, false) as Node3D
                 var tram_seep := landmark.find_child("TramOrganicSeep0", true, false) as Node3D
-                _expect(tram_signal != null and tram_seep != null, "Tram Graveyard must expose named signal and organic seepage motion sockets.")
-                if tram_signal != null and tram_seep != null:
+                var tram_signal_housing := landmark.find_child("TramSignalHousing", true, false) as Node3D
+                var tram_headlamp := landmark.find_child("TramCarriageAFrontHeadlampLens", true, false) as Node3D
+                var tram_tendril := landmark.find_child("TramOrganicSeepTendril0_0", true, false) as Node3D
+                _expect(tram_signal != null and tram_seep != null and tram_signal_housing != null and tram_headlamp != null and tram_tendril != null, "Tram Graveyard must expose named signal, headlamp, housing and organic motion sockets.")
+                if tram_signal != null and tram_seep != null and tram_signal_housing != null and tram_headlamp != null and tram_tendril != null:
                     landmark.set_presentation_detail_level(0)
                     var tram_mast := landmark.find_child("TramSignalMast", true, false) as Node3D
                     _expect(tram_mast != null and tram_signal.global_position.distance_to(tram_mast.global_position + Vector3.UP * 3.25) < 0.25, "Tram signal lamp must remain attached to the authored mast socket.")
                     var signal_before := tram_signal.scale
                     var seep_before := tram_seep.scale
+                    var housing_before := tram_signal_housing.scale
+                    var headlamp_before := tram_headlamp.scale
+                    var tendril_before := tram_tendril.rotation.z
                     landmark.call("_process", 0.5)
                     _expect(not tram_signal.scale.is_equal_approx(signal_before), "Tram signal lamp must pulse as a restrained presentation cue.")
                     _expect(not tram_seep.scale.is_equal_approx(seep_before), "Tram organic seepage must carry deterministic presentation motion.")
+                    _expect(not tram_signal_housing.scale.is_equal_approx(housing_before), "Tram signal housing must carry restrained service motion.")
+                    _expect(not tram_headlamp.scale.is_equal_approx(headlamp_before), "Tram headlamp lens must carry a restrained powered cue.")
+                    _expect(not is_equal_approx(tram_tendril.rotation.z, tendril_before), "Tram organic seepage tendrils must carry deterministic environmental motion.")
             if landmark.region_kind == &"observatory":
                 _expect(landmark.find_child("ObservatoryOpticsStation", true, false) != null, "Observatory Ridge must expose an authored optics station.")
                 _expect(landmark.find_child("ObservatoryLensBarrel", true, false) != null, "Observatory Ridge must expose a readable survey lens.")
