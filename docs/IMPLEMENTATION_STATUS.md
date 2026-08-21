@@ -1427,6 +1427,16 @@ presentation restore, with release regression coverage for that migration path.
 - added release coverage for the stable deck, dish, rib, hub and receiver
   detail sockets.
 
+## Focused remote waterworks-dressing refinement milestone
+
+- replaced five release-dressed pump walkway and housing boxes with bounded
+  beveled walkways, grates, gantry crossbars and braces, pump housings,
+  cooling louvers, control panels, rotor caps and discharge pipes;
+- preserved the presentation-only waterworks-dressing contract and existing
+  Riverworks landmark, salvage, route, ecology and operation state;
+- added release coverage for the stable walkway, gantry, housing, control and
+  pump detail sockets.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.

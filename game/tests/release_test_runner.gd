@@ -245,6 +245,12 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         _expect(observatory_dressing.find_child("ObservatoryBase", true, false) != null and observatory_dressing.find_child("ObservatoryServiceDeck", true, false) != null, "Release observatory dressing must expose layered base and service deck detail.")
         _expect(observatory_dressing.find_child("ObservatoryDish", true, false) != null and observatory_dressing.find_child("ObservatoryDishRib00", true, false) != null and observatory_dressing.find_child("ObservatoryDishHub", true, false) != null, "Release observatory dressing must expose ribbed dish geometry.")
         _expect(observatory_dressing.find_child("DishFeed", true, false) != null and observatory_dressing.find_child("DishReceiverLens", true, false) != null, "Release observatory dressing must expose receiver hardware.")
+    var waterworks_dressing := world.release_world_art.dressing_root.find_child("HighDefinitionWaterworksDressing", true, false) if world.release_world_art.dressing_root != null else null
+    _expect(waterworks_dressing != null, "Release waterworks dressing must expose a bounded high-definition pump layer.")
+    if waterworks_dressing != null:
+        _expect(waterworks_dressing.find_child("PumpWalkway00", true, false) != null and waterworks_dressing.find_child("PumpWalkwayGrate00_00", true, false) != null, "Release waterworks dressing must expose layered walkways and grates.")
+        _expect(waterworks_dressing.find_child("PumpGantry00", true, false) != null and waterworks_dressing.find_child("PumpGantryCrossbar00", true, false) != null, "Release waterworks dressing must expose gantry hardware.")
+        _expect(waterworks_dressing.find_child("PumpHousing00", true, false) != null and waterworks_dressing.find_child("PumpHousingLouver00", true, false) != null and waterworks_dressing.find_child("PumpControlPanel00", true, false) != null, "Release waterworks dressing must expose pump housing and controls.")
 
 
 func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
