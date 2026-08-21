@@ -1190,7 +1190,9 @@ Remaining production work includes:
 - performance profiling and optimization on agreed target hardware;
 - broader environmental narrative and sparse story arcs beyond the current
   Town Archive records, plus broader run variation beyond the authored weather
-  profiles;
+  profiles; the archive now carries one persistent discovery record for every
+  remote region, including Flood Market, Riverworks, Tram Graveyard, Cathedral
+  Quarter and Buried Laboratories;
 - 30–100-hour balance and repeated full internal runs;
 - professional localization review of all remaining gameplay prose;
 - external alpha, beta, packaging, store assets, signing and release QA.

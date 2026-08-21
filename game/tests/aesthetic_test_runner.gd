@@ -97,11 +97,30 @@ func _run_all() -> void:
             _expect(int(presentation_feedback.call("active_construction_signature_count")) == 0, "Construction feedback must clear when the remote operation leaves its working state.")
     var encounter_dressing := world.get_node_or_null("RegionEncounterDressingDirector") as RegionEncounterDressingDirector3D
     var region_director := world.get_node_or_null("WorldRegionDirector") as WorldRegionDirector3D
+    var story_archive := world.get_node_or_null("StoryArchiveDirector") as StoryArchiveDirector3D
     _expect(encounter_dressing != null, "The complete world must provide discovery-driven authored region dressing.")
+    _expect(story_archive != null, "The complete world must provide the persistent Town Archive director.")
     if encounter_dressing != null and region_director != null:
         for raw_region_id in region_director.region_data.keys():
             region_director.discover_region(StringName(raw_region_id))
         await process_frame
+        if story_archive != null:
+            var expected_regional_records := {
+                "region.north_ruins": &"story.north_ruins.ledger",
+                "region.west_grid": &"story.west_grid.reroute",
+                "region.east_tenements": &"story.east_tenements.bridge",
+                "region.glasshouse": &"story.glasshouse.cultivation",
+                "region.flood_market": &"story.flood_market.inventory",
+                "region.riverworks": &"story.riverworks.pumpwatch",
+                "region.tram_graveyard": &"story.tram_graveyard.last_route",
+                "region.cathedral_quarter": &"story.cathedral.choir",
+                "region.observatory_ridge": &"story.observatory.migration",
+                "region.buried_labs": &"story.buried_labs.protocol",
+                "region.root_cistern": &"story.root_cistern.signal",
+            }
+            for raw_region_id in expected_regional_records:
+                var expected_record: StringName = expected_regional_records[raw_region_id]
+                _expect(story_archive.has_record(expected_record), "Discovering %s must unlock its persistent Town Archive record." % raw_region_id)
         for raw_region_id in region_director.region_data.keys():
             var landmark := region_director.get_landmark(StringName(raw_region_id))
             if landmark == null or landmark.region_kind == &"sanctuary":

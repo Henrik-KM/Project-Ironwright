@@ -42,6 +42,16 @@
       "description": "Residents linked the upper walkways with salvaged signal cable so repair frames could cross without touching the streets. The routes are still visible beneath the nests."
     },
     {
+      "id": "story.flood_market.inventory",
+      "arc": "civic_afterimage",
+      "trigger": "region_discovered",
+      "trigger_id": "region.flood_market",
+      "sequence": 45,
+      "display_name": "The Flood Inventory",
+      "source_name": "Flood Market",
+      "description": "The market ledger stops listing customers before it stops listing repairs. Beneath the waterline, vendors kept marking which machines could still carry medicine, lamps and children through the drowned lanes."
+    },
+    {
       "id": "story.glasshouse.cultivation",
       "arc": "ecological_convergence",
       "trigger": "region_discovered",
@@ -60,6 +70,46 @@
       "display_name": "The Migration Map",
       "source_name": "Observatory Ridge",
       "description": "The surviving optics reveal that the organisms are not wandering at random. Their paths converge on one buried signal source beneath the town."
+    },
+    {
+      "id": "story.riverworks.pumpwatch",
+      "arc": "civic_afterimage",
+      "trigger": "region_discovered",
+      "trigger_id": "region.riverworks",
+      "sequence": 65,
+      "display_name": "The Pump Watch",
+      "source_name": "Riverworks",
+      "description": "The last pump crew left a rotation of hand-written watch marks on the sluice wall. Every mark is paired with a machine designation, as if the town expected its repair frames to inherit the river."
+    },
+    {
+      "id": "story.tram_graveyard.last_route",
+      "arc": "machine_witness",
+      "trigger": "region_discovered",
+      "trigger_id": "region.tram_graveyard",
+      "sequence": 68,
+      "display_name": "The Last Route",
+      "source_name": "Tram Graveyard",
+      "description": "A maintenance frame kept one tram route lit after the overhead line failed. Its route memory ends at the Heartforge, then begins again, repeating the journey for passengers who never returned."
+    },
+    {
+      "id": "story.cathedral.choir",
+      "arc": "ecological_convergence",
+      "trigger": "region_discovered",
+      "trigger_id": "region.cathedral_quarter",
+      "sequence": 72,
+      "display_name": "The Buried Choir",
+      "source_name": "Cathedral Quarter",
+      "description": "The old bell tower was not calling survivors. It was measuring the response beneath the nave, turning every resonance into a map of the brood colony growing below."
+    },
+    {
+      "id": "story.buried_labs.protocol",
+      "arc": "ecological_convergence",
+      "trigger": "region_discovered",
+      "trigger_id": "region.buried_labs",
+      "sequence": 76,
+      "display_name": "The Containment Protocol",
+      "source_name": "Buried Laboratories",
+      "description": "The laboratory protocol names the organisms as a response before it names them as a threat. The final annotation admits that containment was abandoned when the machines began adapting faster than the researchers."
     },
     {
       "id": "story.root_cistern.signal",
