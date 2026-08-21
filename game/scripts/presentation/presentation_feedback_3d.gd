@@ -22,6 +22,8 @@ var channel_field: Node3D
 var channel_field_material: StandardMaterial3D
 var channel_field_color: Color = Color.WHITE
 var labor_signatures: Dictionary = {}
+var last_actor_health: Dictionary = {}
+var last_player_health: float = -1.0
 var construction_signature: Node3D
 
 
@@ -179,6 +181,8 @@ func _connect_world_feedback() -> void:
         _connect_once(player, &"channel_completed", Callable(self, "_on_channel_finished"))
         _connect_once(player, &"channel_cancelled", Callable(self, "_on_channel_finished"))
         _connect_once(player, &"health_changed", Callable(self, "_on_player_health_changed"))
+        if _property_exists(player, &"current_health"):
+            last_player_health = float(player.get(&"current_health"))
     if heartforge != null:
         _connect_once(heartforge, &"health_changed", Callable(self, "_on_heartforge_health_changed"))
 
@@ -189,6 +193,11 @@ func _connect_actor_feedback(actor: Node3D) -> void:
     _connect_once(actor, &"attack_started", Callable(self, "_on_attack_started"))
     _connect_once(actor, &"attack_landed", Callable(self, "_on_attack_landed"))
     _connect_once(actor, &"killed", Callable(self, "_on_enemy_killed"))
+    _connect_once(actor, &"destroyed", Callable(self, "_on_actor_destroyed"))
+    if not actor.is_in_group(&"player_character"):
+        _connect_once(actor, &"health_changed", Callable(self, "_on_actor_health_changed"))
+        if _property_exists(actor, &"current_health"):
+            last_actor_health[actor.get_instance_id()] = float(actor.get(&"current_health"))
 
 
 func _connect_once(source: Object, signal_name: StringName, callback: Callable) -> void:
@@ -230,12 +239,36 @@ func _on_attack_landed(enemy: Node, target: Node) -> void:
     camera_shake = maxf(camera_shake, 0.11)
 
 
+func _on_actor_health_changed(actor: Node, current: float, _maximum: float) -> void:
+    if not actor is Node3D:
+        return
+    var actor_id := actor.get_instance_id()
+    var previous := float(last_actor_health.get(actor_id, current))
+    last_actor_health[actor_id] = current
+    if current <= 0.0 or current >= previous:
+        return
+    var friendly := actor.is_in_group(&"friendly_robots")
+    var position := (actor as Node3D).global_position + Vector3.UP * (0.82 if friendly else 0.66)
+    var color := Color("74e1e7") if friendly else Color("f06a58")
+    var burst_amount := 11 if friendly else 14
+    _spawn_burst(position, color, burst_amount, 2.1 if friendly else 2.5, Vector3(0.0, -3.2, 0.0), 0.42, "ActorImpactResponse")
+    _spawn_flash(position, color, 0.8 if friendly else 0.95, 3.2 if friendly else 3.8, 0.09)
+    camera_shake = maxf(camera_shake, 0.06 if friendly else 0.075)
+
+
 func _on_enemy_killed(enemy: Node, _killer: Node) -> void:
+    if enemy != null:
+        last_actor_health.erase(enemy.get_instance_id())
     if enemy is Node3D:
         var position := (enemy as Node3D).global_position + Vector3.UP * 0.5
         _spawn_burst(position, Color("b13d45"), 22, 2.8, Vector3(0.0, -4.0, 0.0), 0.9)
         _spawn_flash(position, Color("9b2635"), 1.2, 5.0, 0.16)
         camera_shake = maxf(camera_shake, 0.22)
+
+
+func _on_actor_destroyed(actor: Node) -> void:
+    if actor != null:
+        last_actor_health.erase(actor.get_instance_id())
 
 
 func _on_noise_emitted(position: Vector3, radius: float, intensity: float, source_kind: StringName) -> void:
@@ -267,8 +300,14 @@ func _on_channel_finished(_kind: StringName, _target: Node, _metadata: Dictionar
 func _on_player_health_changed(current: float, maximum: float) -> void:
     if maximum <= 0.0:
         return
+    var previous := last_player_health
+    last_player_health = current
     var ratio := current / maximum
     camera_shake = maxf(camera_shake, lerpf(0.42, 0.12, ratio))
+    if previous >= 0.0 and current < previous and current > 0.0 and player != null:
+        var impact_position := player.global_position + Vector3.UP * 1.1
+        _spawn_burst(impact_position, Color("ffb05e"), 12, 2.2, Vector3(0.0, -3.8, 0.0), 0.45, "PlayerImpactResponse")
+        _spawn_flash(impact_position, Color("ff8c4e"), 1.1, 4.0, 0.1)
     var hud := get_tree().get_first_node_in_group(&"beautiful_hud")
     if hud != null and hud.has_method(&"flash_damage"):
         hud.call(&"flash_damage", 1.0 - ratio)

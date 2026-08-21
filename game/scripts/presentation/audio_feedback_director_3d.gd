@@ -25,6 +25,8 @@ var profiles: Dictionary = {}
 var active_players: Array[AudioStreamPlayer3D] = []
 var event_count: int = 0
 var last_profile: StringName = &""
+var last_actor_health: Dictionary = {}
+var last_player_health: float = -1.0
 var _last_heartforge_health: float = -1.0
 var _last_endgame_stage: int = -1
 
@@ -38,7 +40,7 @@ func configure(next_world: Node3D, next_player: Node3D, next_heartforge: Node3D,
 
 func _ready() -> void:
     process_mode = Node.PROCESS_MODE_ALWAYS
-    for profile in [&"pistol", &"machine_weapon", &"salvage", &"forge", &"organic_attack", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition", &"endgame_start", &"endgame_stage", &"endgame_complete", &"endgame_failure"]:
+    for profile in [&"pistol", &"machine_weapon", &"machine_impact", &"player_impact", &"salvage", &"forge", &"organic_attack", &"organic_impact", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition", &"endgame_start", &"endgame_stage", &"endgame_complete", &"endgame_failure"]:
         profiles[profile] = _build_profile(profile)
     for species in ORGANIC_SPECIES:
         profiles[_organic_profile_id(species, false)] = _build_profile(_organic_profile_id(species, false))
@@ -150,6 +152,10 @@ func _register_if_actor(node: Variant) -> void:
 
 
 func _register_actor(actor: Node) -> void:
+    if actor.is_in_group(&"player_character"):
+        _connect_once(actor, &"health_changed", Callable(self, "_on_player_health_changed"))
+        if actor.get(&"current_health") != null:
+            last_player_health = float(actor.get(&"current_health"))
     if actor.has_signal(&"pistol_fired"):
         _connect_once(actor, &"pistol_fired", Callable(self, "_on_pistol_fired"))
     if actor.has_signal(&"weapon_fired"):
@@ -158,6 +164,10 @@ func _register_actor(actor: Node) -> void:
         _connect_once(actor, &"attack_landed", Callable(self, "_on_attack_landed"))
     if actor.has_signal(&"killed"):
         _connect_once(actor, &"killed", Callable(self, "_on_actor_killed"))
+    if actor.is_in_group(&"friendly_robots") or actor.is_in_group(&"organic_enemies"):
+        _connect_once(actor, &"health_changed", Callable(self, "_on_actor_health_changed"))
+        if actor.get(&"current_health") != null:
+            last_actor_health[actor.get_instance_id()] = float(actor.get(&"current_health"))
 
 
 func _connect_once(source: Object, signal_name: StringName, callback: Callable) -> void:
@@ -185,9 +195,31 @@ func _on_attack_landed(enemy: Node, target: Node) -> void:
 
 
 func _on_actor_killed(enemy: Node, _killer: Node) -> void:
+    if enemy != null:
+        last_actor_health.erase(enemy.get_instance_id())
     if enemy is Node3D and enemy.is_in_group(&"organic_enemies"):
         var species: StringName = enemy.species if enemy is OrganicEnemy3D else &"skitterling"
         play_profile(_organic_profile_id(species, true), (enemy as Node3D).global_position, -8.0, _organic_pitch(species, true))
+
+
+func _on_actor_health_changed(actor: Node, current: float, _maximum: float) -> void:
+    if not actor is Node3D:
+        return
+    var actor_id := actor.get_instance_id()
+    var previous := float(last_actor_health.get(actor_id, current))
+    last_actor_health[actor_id] = current
+    if current <= 0.0 or current >= previous:
+        return
+    var friendly := actor.is_in_group(&"friendly_robots")
+    var profile := &"machine_impact" if friendly else &"organic_impact"
+    play_profile(profile, (actor as Node3D).global_position + Vector3.UP * 0.7, -8.0, 1.0 if friendly else 0.92)
+
+
+func _on_player_health_changed(current: float, _maximum: float) -> void:
+    var previous := last_player_health
+    last_player_health = current
+    if previous >= 0.0 and current < previous and current > 0.0 and player != null:
+        play_profile(&"player_impact", player.global_position + Vector3.UP * 1.0, -5.5, 0.96)
 
 
 func _on_noise_emitted(position: Vector3, _radius: float, intensity: float, source_kind: StringName) -> void:
@@ -271,12 +303,18 @@ func _build_profile(profile: StringName) -> AudioStreamWAV:
         match profile:
             &"machine_weapon":
                 duration = 0.24
+            &"machine_impact":
+                duration = 0.2
+            &"player_impact":
+                duration = 0.24
             &"salvage":
                 duration = 0.34
             &"forge":
                 duration = 0.5
             &"organic_attack":
                 duration = 0.28
+            &"organic_impact":
+                duration = 0.24
             &"organic_death":
                 duration = 0.55
             &"heartforge_damage":
@@ -329,12 +367,18 @@ func _sample_profile(profile: StringName, normalized: float, time: float, durati
             return (sin(TAU * (650.0 * time - 380.0 * time * time / duration)) * 0.46 + noise * 0.38) * envelope
         &"machine_weapon":
             return (sin(TAU * (190.0 * time + 110.0 * time * time / duration)) * 0.52 + sin(TAU * 820.0 * time) * 0.12) * envelope
+        &"machine_impact":
+            return (noise * 0.34 + sin(TAU * (250.0 * time - 90.0 * time * time / duration)) * 0.48 + sin(TAU * 540.0 * time) * 0.12) * envelope
+        &"player_impact":
+            return (noise * 0.3 + sin(TAU * (148.0 * time - 52.0 * time * time / duration)) * 0.5 + sin(TAU * 420.0 * time) * 0.12) * envelope
         &"salvage":
             return (sin(TAU * 92.0 * time) * 0.45 + sin(TAU * 184.0 * time) * 0.18 + noise * 0.09) * (0.35 + envelope * 0.65)
         &"forge":
             return (sin(TAU * 58.0 * time) * 0.5 + sin(TAU * 116.0 * time) * 0.2 + sin(TAU * 420.0 * time) * 0.1) * (0.3 + envelope * 0.7)
         &"organic_attack":
             return (noise * 0.58 + sin(TAU * (140.0 * time + 90.0 * time * time / duration)) * 0.34) * envelope
+        &"organic_impact":
+            return (noise * 0.62 + sin(TAU * (112.0 * time + 70.0 * time * time / duration)) * 0.38) * envelope
         &"organic_death":
             return (noise * 0.28 + sin(TAU * (360.0 * time - 270.0 * time * time / duration)) * 0.48) * envelope
         &"heartforge_damage":

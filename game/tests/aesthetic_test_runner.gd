@@ -24,7 +24,7 @@ func _run_all() -> void:
     var audio_director := world.get_node_or_null("AudioFeedbackDirector") as AudioFeedbackDirector3D
     _expect(audio_director != null, "The world must provide spatial survival audio feedback.")
     if audio_director != null:
-        for profile in [&"pistol", &"machine_weapon", &"salvage", &"forge", &"organic_attack", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition", &"endgame_start", &"endgame_stage", &"endgame_complete", &"endgame_failure"]:
+        for profile in [&"pistol", &"machine_weapon", &"machine_impact", &"player_impact", &"salvage", &"forge", &"organic_attack", &"organic_impact", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition", &"endgame_start", &"endgame_stage", &"endgame_complete", &"endgame_failure"]:
             _expect(audio_director.has_profile(profile), "The audio director must provide the %s profile." % profile)
         for species in [&"veilstalker", &"razorhound", &"apex", &"sporecaster", &"broodmass", &"burrower", &"skitterling", &"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver"]:
             _expect(audio_director.has_profile(audio_director.organic_profile_id(species)), "Each organic species must provide a distinct attack vocal signature.")
@@ -68,6 +68,16 @@ func _run_all() -> void:
             var telegraph := world.get_node_or_null("OrganicAttackTelegraph") as Node3D
             _expect(telegraph != null, "Organic attacks must create a bounded world-space warning telegraph.")
             _expect(telegraph != null and telegraph.get_node_or_null("OrganicAttackTelegraphRing") != null, "Organic attack warnings must expose a bright readable ring at the target area.")
+            presentation_feedback.call("_on_actor_health_changed", hostile_sample, hostile_sample.current_health - 1.0, hostile_sample.maximum_health)
+            _expect(world.find_children("ActorImpactResponse", "CPUParticles3D", true, false).size() > 0, "Non-lethal organic damage must create a bounded world-space impact response.")
+            audio_director.call("_on_actor_health_changed", hostile_sample, hostile_sample.current_health - 1.0, hostile_sample.maximum_health)
+            _expect(audio_director.last_profile == &"organic_impact", "Non-lethal organic damage must use the organic impact audio profile.")
+        var friendly_sample := get_first_node_in_group(&"friendly_robots") as RobotUnit3D
+        if friendly_sample != null:
+            presentation_feedback.call("_on_actor_health_changed", friendly_sample, friendly_sample.current_health - 1.0, friendly_sample.maximum_health)
+            _expect(world.find_children("ActorImpactResponse", "CPUParticles3D", true, false).size() > 0, "Non-lethal machine damage must create a bounded world-space impact response.")
+            audio_director.call("_on_actor_health_changed", friendly_sample, friendly_sample.current_health - 1.0, friendly_sample.maximum_health)
+            _expect(audio_director.last_profile == &"machine_impact", "Non-lethal machine damage must use the machine impact audio profile.")
         var labor_pile := get_first_node_in_group(&"salvage_piles") as SalvagePile3D
         var labor_robot := get_first_node_in_group(&"friendly_robots") as RobotUnit3D
         if labor_pile != null and labor_robot != null:
