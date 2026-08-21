@@ -1161,6 +1161,13 @@ final retail art, animation and external visual approval are still required.
 - kept the layer presentation-only so it does not add collision, route ownership, utility simulation or recurring player maintenance;
 - added native aesthetic coverage for infrastructure roots, representative hardware and cable continuity.
 
+## Focused ruined-facade presentation milestone
+
+- added a bounded `HighDefinitionFacadeDetails` layer to all sixteen ordinary procedural city blocks;
+- added layered window bays, floor plates, roof parapets, service shutters, weathering downpipes and restrained structural damage braces;
+- kept the facade grammar presentation-only so collision, navigation, routing, ecology and player workload remain unchanged;
+- added native aesthetic coverage for the shared facade root, window bays, service hardware, roofline and damage signatures.
+
 ## Focused tier-signal anatomy presentation milestone
 
 - added a shared high-definition anatomy layer to every tiered organic actor;

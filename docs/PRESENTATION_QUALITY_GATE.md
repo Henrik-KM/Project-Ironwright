@@ -57,6 +57,8 @@ The central urban district now also carries a bounded high-definition street-det
 
 The central approach now also carries a bounded civic-infrastructure layer: storm-drain junctions, service-riser faces, signal masts and sagging overhead utility spans continue the municipal scale language between the focal plaza and the wider street grid. These details are presentation-only and do not add collision, routing, utility simulation or player maintenance.
 
+The ordinary ruined blocks now also carry a bounded high-definition facade grammar: layered window bays, floor plates, roof parapets, service shutters, rain downpipes and restrained damage braces break the remaining broad shells into readable lived-in structures. The facade layer is presentation-only and does not alter building collision, navigation or simulation state.
+
 Tiered organic nests now carry the same close-range production bar: a segmented dorsal carapace, membrane plates, visible vascular channels, a root collar and fine perimeter spines build a readable encounter landmark from layered original geometry. These details remain presentation-only and do not alter nest health, spawning, collision or regrowth.
 
 ## Release-readiness rule
