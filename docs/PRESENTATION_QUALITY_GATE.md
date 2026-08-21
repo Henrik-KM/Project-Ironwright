@@ -85,6 +85,8 @@ Tiered organic nests now carry the same close-range production bar: a segmented 
 
 Ordinary early-game nests now carry the same bounded close-range anatomy bar at a smaller authored scale, so the first hostile landmark does not read as a placeholder beside later nest encounters. Their geometry remains presentation-only and does not alter nest health, spawning, collision or regrowth.
 
+The first-session salvage target now carries a bounded high-definition wreck layer: beveled chassis construction, a damaged service panel, exposed axles and suspension, bundled live cables, broken-glass shards and a small status lens. These details remain presentation-only and preserve the existing Scrap, channel, noise, collision and autonomous reservation contracts.
+
 ## Release-readiness rule
 
 No agent may describe Project Ironwright as commercially finished, release-ready, or a release candidate based solely on:

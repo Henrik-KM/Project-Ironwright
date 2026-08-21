@@ -67,6 +67,14 @@ func _run_all() -> void:
     _expect(ordinary_nest_sample.find_child("NestDorsalCarapace", true, false) != null and ordinary_nest_sample.find_child("NestRootCollar", true, false) != null, "Ordinary organic nests must expose layered carapace and root-collar detail.")
     _expect(ordinary_nest_sample.find_child("NestMembranePlate00", true, false) != null and ordinary_nest_sample.find_child("NestVeinChannel00", true, false) != null and ordinary_nest_sample.find_child("NestFineSpine00", true, false) != null, "Ordinary organic nests must expose membrane, vascular and fine-spine sockets.")
     ordinary_nest_sample.queue_free()
+    var salvage_sample := SalvagePile3D.new()
+    salvage_sample.remaining_scrap = 56
+    root.add_child(salvage_sample)
+    await process_frame
+    _expect(salvage_sample.find_child("HighDefinitionSalvageDetail", true, false) != null, "The first salvage target must carry a bounded high-definition wreck detail layer.")
+    _expect(salvage_sample.find_child("WreckServicePanel", true, false) != null and salvage_sample.find_child("SalvageAxle00", true, false) != null, "The salvage wreck must expose authored service and axle anatomy.")
+    _expect(salvage_sample.find_child("SalvageCableBundle00", true, false) != null and salvage_sample.find_child("BrokenGlassShard00", true, false) != null and salvage_sample.find_child("SalvageStatusLens", true, false) != null, "The salvage wreck must expose cable, damage and readable status detail.")
+    salvage_sample.queue_free()
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgeMaintenanceDetail") != null, "The Heartforge must expose a dedicated presentation-only maintenance detail layer.")
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgePlazaDetail/HeartforgeServiceRing/ForgeRecessedServiceRing") != null, "The Heartforge plaza must expose a readable recessed service ring around its focal machine.")
     _expect(_find_named(world, "RouteThresholdAmberBand") != null, "The opening service lane must expose a far amber threshold landmark for the first objective.")

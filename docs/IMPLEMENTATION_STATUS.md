@@ -1266,6 +1266,15 @@ final retail art, animation and external visual approval are still required.
 - added aesthetic coverage proving ordinary and tiered nests share the same
   close-range anatomy quality bar while remaining bounded and presentation-only.
 
+## Focused salvage-landmark anatomy presentation milestone
+
+- upgraded the first-session `SalvagePile3D` from a block-and-wheel prop to a
+  bounded wreck layer with beveled chassis, service hardware, axles,
+  suspension, live cable bundles, broken-glass damage and a status lens;
+- preserved the salvage target's collision, Scrap accounting, manual channel,
+  noise, depletion, and autonomous reservation behavior;
+- added native aesthetic coverage for the named salvage anatomy sockets.
+
 ## Focused authored impact-reaction milestone
 
 - added a shared authored `Hit` clip contract to all five friendly robot
