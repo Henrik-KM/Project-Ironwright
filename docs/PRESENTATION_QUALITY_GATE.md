@@ -133,7 +133,7 @@ The presentation milestones proceed in this order:
 6. cohesive urban modular kit with damaged facades, interiors, street furniture and vegetation — opening route set-piece pass implemented, every remote landmark now has a bounded presentation-only district apron, and West Grid, Riverworks, Cathedral Quarter, Observatory Ridge, Tram Graveyard, Buried Laboratories, Municipal Glasshouse, North Ruins, East Tenements, Flood Market and Root Cistern now have authored landmark shells; broader district breadth still required;
 7. final lighting/material pass for the opening district;
 8. human visual acceptance of representative opening gameplay;
-9. repeat the accepted bar across mid- and late-game regions — representative Riverworks, Cathedral Quarter and Root Cistern live review now passes for the reviewed approach frames; West Grid, Observatory Ridge, Tram Graveyard, Buried Laboratories, Municipal Glasshouse, North Ruins, East Tenements and Flood Market have new authored shells awaiting live acceptance, and the remaining region families still require review;
+9. repeat the accepted bar across mid- and late-game regions — representative Riverworks, Cathedral Quarter and Root Cistern live review now passes for the reviewed approach frames; live approach-frame inspection has now been exercised for West Grid, Observatory Ridge, Tram Graveyard, Buried Laboratories, Municipal Glasshouse, North Ruins, East Tenements and Flood Market, with the authored identities reading in the current tactical camera; formal human acceptance and broader remaining region-family review are still required;
 10. only then expand asset breadth further.
 
 Breadth must not outrun quality again.
