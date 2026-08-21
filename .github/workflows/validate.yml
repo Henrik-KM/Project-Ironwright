@@ -76,3 +76,6 @@ jobs:
 
       - name: Run commercial release tests
         run: godot --headless --path game --script res://tests/release_test_runner.gd
+
+      - name: Run large-population performance tests
+        run: godot --headless --path game --script res://tests/performance_stress_test_runner.gd
