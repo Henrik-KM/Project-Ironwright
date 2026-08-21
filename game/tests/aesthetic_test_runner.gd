@@ -715,9 +715,15 @@ func _run_all() -> void:
     for index in outpost_samples.size():
         var sample := outpost_samples[index]
         _expect(_find_named(sample, "OutpostRoleSignature") != null, "Outposts must expose one bounded role-signature presentation root.")
+        _expect(_find_named(sample, "OutpostDamagePresentation") != null and _find_named(sample, "OutpostDamageScar00") != null and _find_named(sample, "OutpostDamageLeak00") != null, "Outposts must expose bounded integrity damage-memory presentation sockets.")
         _expect(_find_named(sample, "CoreShelterCore") != null and _find_named(sample, "CoreVent") != null, "Outposts must use the high-definition shelter and service-surface treatment.")
         _expect(_find_named(sample, "TierFrame1") != null and _find_named(sample, "TierFrame2") != null and _find_named(sample, "TierFrame3") != null, "Tier 3 outposts must expose three stable structural frames.")
         _expect(_outpost_model_has_details(sample, outpost_roles[index]), "The %s outpost must expose a role-readable high-detail silhouette." % outpost_roles[index])
+        _expect(not bool(_find_named(sample, "OutpostDamagePresentation").visible), "Healthy outposts must keep damage-memory presentation hidden.")
+        sample.apply_damage(sample.maximum_health * 0.68)
+        _expect(bool(_find_named(sample, "OutpostDamagePresentation").visible) and bool(_find_named(sample, "OutpostDamageLeak00").visible), "Damaged outposts must reveal scar and leak presentation at meaningful integrity loss.")
+        sample.repair(sample.maximum_health)
+        _expect(not bool(_find_named(sample, "OutpostDamagePresentation").visible), "Repair must clear outpost damage-memory presentation when integrity is restored.")
         sample.queue_free()
 
     var enemy_samples: Array[OrganicEnemy3D] = []
