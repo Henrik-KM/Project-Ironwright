@@ -1407,3 +1407,11 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   canonical keyboard fallback when the release settings service is absent;
 - added release regression coverage for live action-map updates, persisted
   binding state and all five remapping controls, plus a live UI remap check.
+
+## Focused ecology registration robustness milestone
+
+- separated combat-actor stat registration from the shared organic threat group;
+- ordinary nests can remain discoverable to ecology and presentation systems
+  without being assigned combat tiers or receiving invalid combat-stat casts;
+- added a regression covering ordinary-nest registration and verified the
+  release boot no longer emits the tier-director conversion diagnostic.

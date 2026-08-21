@@ -113,6 +113,7 @@ func _run_all() -> void:
     await _test_nest_source_removal_after_evolution()
     _test_dynamic_event_modifiers()
     await _test_tier_behaviour_progression()
+    await _test_ordinary_nest_is_not_combat_actor()
     _test_serialization_round_trip()
 
     world.queue_free()
@@ -174,6 +175,17 @@ func _test_bounded_spawn_credit() -> void:
     director.debug_set_anonymous_rate(1, 500.0)
     director.debug_simulation_tick(600.0)
     _expect(float(director.spawn_credit.get(1, 0.0)) <= director.spawn_credit_cap + 0.0001, "Missing spawn sources must never accumulate an unbounded birth backlog.")
+
+
+func _test_ordinary_nest_is_not_combat_actor() -> void:
+    var ordinary_nest := OrganicNest3D.new()
+    ordinary_nest.configure({"id": "nest.test_ordinary_registration", "maturity": 0.5, "supported_tiers": [1]})
+    world.add_child(ordinary_nest)
+    await process_frame
+    director._register_enemy(ordinary_nest)
+    _expect(not director.connected_enemies.has(ordinary_nest.get_instance_id()), "Ordinary nests may share the organic threat group but must not enter combat-tier stat registration.")
+    ordinary_nest.queue_free()
+    await process_frame
 
 
 func _test_physical_nest_spawning_and_cap() -> void:
