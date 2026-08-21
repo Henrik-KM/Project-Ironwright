@@ -224,6 +224,8 @@ func _find_first_mesh_with_token(node: Node, token: String) -> MeshInstance3D:
 
 func _test_spatial_and_performance(world: IronwrightReleaseWorld3D) -> void:
     var near_enemy := world._spawn_enemy(world.player.global_position + Vector3(6.0, 0.0, 0.0), &"roofleaper") as OrganicEnemyRelease3D
+    var medium_enemy := world._spawn_enemy(world.player.global_position + Vector3(80.0, 0.0, 0.0), &"glassmoth") as OrganicEnemyRelease3D
+    var medium_robot := world._spawn_robot(&"scout", world.player.global_position + Vector3(82.0, 0.0, 0.0), 1) as RobotUnitRelease3D
     var far_enemy := world._spawn_enemy(world.player.global_position + Vector3(260.0, 0.0, 0.0), &"rootweaver") as OrganicEnemyRelease3D
     await process_frame
     world.spatial_index.rebuild()
@@ -231,6 +233,10 @@ func _test_spatial_and_performance(world: IronwrightReleaseWorld3D) -> void:
     _expect(nearest == near_enemy, "Spatial index must return the nearest active organic enemy.")
     world.performance_director.force_evaluate_for_test()
     _expect(not near_enemy.reduced_detail and near_enemy.visual_lod_level == 0, "Nearby organisms must remain fully active.")
+    _expect(not medium_enemy.reduced_detail and medium_enemy.visual_lod_level == 1 and medium_enemy.coarse_simulation, "Medium-distance organisms must retain state while using coarse simulation.")
+    _expect(not medium_robot.reduced_detail and medium_robot.visual_lod_level == 1 and medium_robot.coarse_simulation, "Medium-distance machines must retain state while using coarse simulation.")
+    _expect(bool(medium_enemy.find_child("ReducedDetailProxy", true, false).visible), "Medium organisms must retain a lightweight readable silhouette proxy.")
+    _expect(bool(medium_robot.find_child("ReducedDetailProxy", true, false).visible), "Medium machines must retain a lightweight readable silhouette proxy.")
     _expect(far_enemy.reduced_detail and far_enemy.visual_lod_level == 2, "Distant organisms must enter reduced-detail simulation.")
     var before := far_enemy.global_position
     far_enemy.investigate_position = before + Vector3(10.0, 0.0, 0.0)
@@ -238,6 +244,8 @@ func _test_spatial_and_performance(world: IronwrightReleaseWorld3D) -> void:
     far_enemy.reduced_detail_tick(1.0)
     _expect(far_enemy.global_position.distance_to(before) > 0.01, "Reduced-detail organisms must continue causal physical movement.")
     near_enemy.queue_free()
+    medium_enemy.queue_free()
+    medium_robot.queue_free()
     far_enemy.queue_free()
 
 

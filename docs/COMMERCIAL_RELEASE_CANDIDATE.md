@@ -117,7 +117,9 @@ A performance director divides the physical world into three presentation and si
 
 Reduced detail is not an abstract mission timer. Distant organisms retain positions, targets, health, aggression and physical movement. Returning to the area restores full simulation around the same state.
 
-The active and medium radii adapt conservatively to measured frame rate. When performance falls substantially below the selected target, the active radius contracts and distant update intervals increase. When performance recovers, detail expands again within bounded limits.
+The director also enforces bounded active and medium actor budgets, assigning the nearest actors first. Medium actors retain their targets and state but advance on a coarse cadence; reduced actors use deterministic coarse movement and combat ticks. Release actors outside the active visual tier use a lightweight silhouette proxy so high-definition shells do not multiply routine rendering cost.
+
+The active and medium radii, actor budgets and distant update intervals adapt conservatively to measured frame rate. When performance falls substantially below the selected target, the active radius contracts, budgets tighten and distant update intervals increase. When performance recovers, detail expands again within bounded limits.
 
 Collections, effect pools, reports, save histories and telemetry remain bounded. The release tests verify that a distant organism enters reduced-detail simulation and continues moving causally.
 

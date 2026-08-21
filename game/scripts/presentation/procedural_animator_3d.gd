@@ -13,8 +13,11 @@ var idle_phase: float = 0.0
 var recoil: float = 0.0
 var hit_impulse: float = 0.0
 var deterministic_offset: float = 0.0
+var animation_elapsed: float = 0.0
+var animation_frame_offset: int = 0
 var _has_state_name: bool = false
 var _has_channel_kind: bool = false
+var _has_visual_lod_level: bool = false
 var _last_health: float = -1.0
 
 
@@ -29,8 +32,10 @@ func _ready() -> void:
         set_process(false)
         return
     deterministic_offset = float(subject.get_instance_id() % 997) * 0.017
+    animation_frame_offset = subject.get_instance_id() % 2
     _has_state_name = _property_exists(subject, &"state_name")
     _has_channel_kind = _property_exists(subject, &"channel_kind")
+    _has_visual_lod_level = _property_exists(subject, &"visual_lod_level")
     _resolve_model_root()
     if model_root == null:
         call_deferred("_resolve_and_capture")
@@ -96,17 +101,25 @@ func _connect_feedback_signals() -> void:
 func _process(delta: float) -> void:
     if subject == null or not is_instance_valid(subject) or model_root == null:
         return
+    if _has_visual_lod_level and int(subject.get(&"visual_lod_level")) >= 1:
+        return
+    animation_elapsed += delta
+    var cadence := _animation_cadence()
+    if cadence > 1 and (int(Engine.get_process_frames()) + animation_frame_offset) % cadence != 0:
+        return
+    var animation_delta := animation_elapsed
+    animation_elapsed = 0.0
     _capture_missing_recursive(model_root)
-    recoil = move_toward(recoil, 0.0, delta * 8.5)
-    hit_impulse = move_toward(hit_impulse, 0.0, delta * 5.0)
-    idle_phase = fmod(idle_phase + delta * 1.35, TAU)
+    recoil = move_toward(recoil, 0.0, animation_delta * 8.5)
+    hit_impulse = move_toward(hit_impulse, 0.0, animation_delta * 5.0)
+    idle_phase = fmod(idle_phase + animation_delta * 1.35, TAU)
 
     var horizontal_speed := 0.0
     if subject is CharacterBody3D:
         var body := subject as CharacterBody3D
         horizontal_speed = Vector2(body.velocity.x, body.velocity.z).length()
     var movement_blend := clampf(horizontal_speed / 4.5, 0.0, 1.0)
-    phase = fmod(phase + delta * lerpf(2.4, 8.6, movement_blend), TAU)
+    phase = fmod(phase + animation_delta * lerpf(2.4, 8.6, movement_blend), TAU)
 
     _restore_base_transforms()
     if subject.is_in_group(&"player_character"):
@@ -115,6 +128,17 @@ func _process(delta: float) -> void:
         _animate_robot(movement_blend, delta)
     elif subject.is_in_group(&"organic_enemies"):
         _animate_organic(movement_blend)
+
+
+func _animation_cadence() -> int:
+    if not _has_visual_lod_level:
+        return 1
+    var lod_level := clampi(int(subject.get(&"visual_lod_level")), 0, 2)
+    # Release actors keep full animation detail nearby, but stagger the
+    # presentation-only work across frames so a large active contact does not
+    # turn every model into a per-frame recursive traversal. The accumulated
+    # delta above keeps the motion continuous at the lower update cadence.
+    return [2, 3, 5][lod_level]
 
 
 func _restore_base_transforms() -> void:
