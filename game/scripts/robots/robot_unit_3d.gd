@@ -43,6 +43,9 @@ var obstacle_recovery_direction: Vector3 = Vector3.ZERO
 
 var _model_root: Node3D
 var _sensor_light: OmniLight3D
+var _damage_visual_root: Node3D
+var _damage_signal_material: StandardMaterial3D
+var _damage_presentation_enabled: bool = true
 var defer_authored_visuals: bool = false
 var _deferred_proxy_root: Node3D
 
@@ -214,6 +217,7 @@ func apply_damage(amount: float, source: Node = null) -> void:
     if not alive or amount <= 0.0:
         return
     current_health = maxf(0.0, current_health - amount)
+    _refresh_damage_presentation()
     health_changed.emit(self, current_health, maximum_health)
     if current_health <= 0.0:
         alive = false
@@ -227,6 +231,7 @@ func repair(amount: float) -> void:
     if not alive:
         return
     current_health = minf(maximum_health, current_health + maxf(0.0, amount))
+    _refresh_damage_presentation()
     health_changed.emit(self, current_health, maximum_health)
 
 
@@ -308,6 +313,7 @@ func _build_visuals() -> void:
     _model_root.name = "RobotModel"
     add_child(_model_root)
     _refresh_visual_identity()
+    _build_damage_presentation()
 
 
 func ensure_authored_visuals() -> void:
@@ -317,6 +323,81 @@ func ensure_authored_visuals() -> void:
         _deferred_proxy_root.free()
     _deferred_proxy_root = null
     _build_visuals()
+
+
+func set_damage_presentation_enabled(value: bool) -> void:
+    _damage_presentation_enabled = value
+    _refresh_damage_presentation()
+
+
+func _build_damage_presentation() -> void:
+    if _damage_visual_root != null and is_instance_valid(_damage_visual_root):
+        _damage_visual_root.free()
+    _damage_visual_root = Node3D.new()
+    _damage_visual_root.name = "RobotDamagePresentation"
+    add_child(_damage_visual_root)
+
+    _damage_signal_material = ModelKit3D.material(
+        Color("431d25"),
+        0.08,
+        0.48,
+        Color("f04d55"),
+        0.8
+    )
+    var leak_material := ModelKit3D.material(
+        Color("52252b"),
+        0.04,
+        0.42,
+        Color("ff7055"),
+        1.8
+    )
+    var positions := [
+        Vector3(-0.48, 1.06, -0.94),
+        Vector3(0.34, 1.26, -0.9),
+        Vector3(0.0, 0.76, 0.86),
+    ]
+    for index in range(3):
+        var position: Vector3 = positions[index]
+        ModelKit3D.add_beveled_box(
+            _damage_visual_root,
+            Vector3(0.075, 0.46 + float(index) * 0.1, 0.12),
+            position,
+            _damage_signal_material,
+            Vector3(0.0, 0.0, -0.28 + float(index) * 0.22),
+            "RobotDamageScar%02d" % index,
+            0.28
+        )
+        ModelKit3D.add_sphere(
+            _damage_visual_root,
+            0.07 + float(index) * 0.012,
+            position + Vector3.UP * (0.26 + float(index) * 0.08),
+            leak_material,
+            Vector3(1.0, 0.72, 1.0),
+            "RobotDamageLeak%02d" % index
+        )
+    _refresh_damage_presentation()
+
+
+func _refresh_damage_presentation() -> void:
+    if _damage_visual_root == null or not is_instance_valid(_damage_visual_root):
+        return
+    var integrity := clampf(current_health / maxf(1.0, maximum_health), 0.0, 1.0)
+    var damage := 1.0 - integrity
+    var active := _damage_presentation_enabled and alive and damage > 0.08
+    _damage_visual_root.visible = active
+    if _damage_signal_material != null:
+        _damage_signal_material.emission_energy_multiplier = lerpf(0.55, 3.0, damage)
+        _damage_signal_material.albedo_color = Color("381a21").lerp(Color("762c35"), damage)
+    for index in range(3):
+        var scar := _damage_visual_root.get_node_or_null("RobotDamageScar%02d" % index) as Node3D
+        var leak := _damage_visual_root.get_node_or_null("RobotDamageLeak%02d" % index) as Node3D
+        var threshold := 0.08 + float(index) * 0.2
+        var visibility := clampf((damage - threshold) / 0.18, 0.0, 1.0)
+        if scar != null:
+            scar.visible = active and visibility > 0.0
+            scar.scale = Vector3(1.0, 0.68 + visibility * 0.32, 1.0)
+        if leak != null:
+            leak.visible = active and visibility > 0.25
 
 
 func _ensure_deferred_proxy_root() -> Node3D:

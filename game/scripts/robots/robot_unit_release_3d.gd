@@ -90,6 +90,7 @@ func _coarse_detail_tick(delta: float) -> void:
 
 func set_visual_lod(level_value: int) -> void:
     visual_lod_level = clampi(level_value, 0, 2)
+    set_damage_presentation_enabled(visual_lod_level == 0)
     if _model_root == null:
         if visual_lod_level == 0:
             ensure_authored_visuals()
