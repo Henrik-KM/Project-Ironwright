@@ -14,7 +14,7 @@ Schema version 2 contains:
 - `extensions.full_game`: progression, outposts, discovered regions, long-range
   operations, machine society, strategic ecology, endgame, continuity, victory,
   sanctuary continuation, the post-victory archive, and persistent
-  region-salvage flags.
+  region-salvage flags, plus the persisted `story_archive` record IDs.
 
 The release-candidate slot service uses its own versioned envelope at schema
 version 4 under `user://saves`. Its `payload.base.run_state` now includes the

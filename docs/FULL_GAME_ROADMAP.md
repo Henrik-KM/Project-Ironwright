@@ -418,7 +418,8 @@ Narrative:
 - environmental history of the town and Heartforge;
 - machine naming and relationship moments without per-unit management;
 - discoveries that explain technologies and ecology;
-- sparse run-level story arcs compatible with systemic replay;
+- sparse run-level story arcs compatible with systemic replay, including the
+  persisted Town Archive recovered through real region and component discoveries;
 - endings linked to strategic choices.
 
 Exit gate:

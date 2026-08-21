@@ -5,12 +5,14 @@ const REGION_ATMOSPHERE_SCRIPT := preload("res://scripts/presentation/region_atm
 const REGION_LOD_SCRIPT := preload("res://scripts/presentation/region_presentation_lod_director_3d.gd")
 const ENDGAME_ESCALATION_SCRIPT := preload("res://scripts/presentation/endgame_escalation_director_3d.gd")
 const REGION_ENCOUNTER_SCRIPT := preload("res://scripts/presentation/region_encounter_dressing_director_3d.gd")
+const STORY_ARCHIVE_SCRIPT := preload("res://scripts/systems/story_archive_director_3d.gd")
 
 var region_director: WorldRegionDirector3D
 var region_atmosphere_director: RegionAtmosphereDirector3D
 var region_lod_director: RegionPresentationLodDirector3D
 var endgame_escalation_director: EndgameEscalationDirector3D
 var region_encounter_dressing_director: RegionEncounterDressingDirector3D
+var story_archive_director: StoryArchiveDirector3D
 var long_operation_director: LongRangeOperationDirector3D
 var machine_society_director: MachineSocietyDirector3D
 var strategic_ecology_director: StrategicEcologyDirector3D
@@ -27,7 +29,7 @@ func _ready() -> void:
     _setup_complete_game_services()
     _connect_complete_game_services()
     progression.set_context_provider(Callable(self, "_progression_context"))
-    hud.help_label.text = "WASD MOVE · E INTERACT · T EVOLVE · O OUTPOSTS · P OPERATIONS · V ENDGAME · F FOLLOW · M MAP · F5/F9 SAVE/LOAD"
+    hud.help_label.text = "WASD MOVE · E INTERACT · T EVOLVE · O OUTPOSTS · P OPERATIONS · L ARCHIVE · V ENDGAME · F FOLLOW · M MAP · F5/F9 SAVE/LOAD"
     run_state.log_event("The complete systemic run is active. Survive, expand autonomy, recover the root components, and choose how the town ends.")
     hud.push_notification("COMPLETE GAME ALPHA ONLINE · P LONG-RANGE OPERATIONS · V FINAL PROTOCOLS")
 
@@ -55,7 +57,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
         if operations_hud != null and operations_hud.is_open():
             match key:
-                KEY_ESCAPE, KEY_P, KEY_V:
+                KEY_ESCAPE, KEY_L, KEY_P, KEY_V:
                     _close_operations_hud()
                 KEY_LEFT:
                     operations_hud.select_previous()
@@ -82,6 +84,9 @@ func _unhandled_input(event: InputEvent) -> void:
             if key == KEY_V:
                 _open_endgame_hud()
                 return
+            if key == KEY_L:
+                _open_story_archive()
+                return
 
     super._unhandled_input(event)
 
@@ -92,6 +97,13 @@ func _setup_complete_game_services() -> void:
     region_director.process_mode = Node.PROCESS_MODE_PAUSABLE
     region_director.configure(self)
     add_child(region_director)
+
+    story_archive_director = STORY_ARCHIVE_SCRIPT.new() as StoryArchiveDirector3D
+    story_archive_director.name = "StoryArchiveDirector"
+    story_archive_director.process_mode = Node.PROCESS_MODE_ALWAYS
+    story_archive_director.configure(run_state, region_director)
+    story_archive_director.record_unlocked.connect(_on_story_record_unlocked)
+    add_child(story_archive_director)
 
     region_atmosphere_director = REGION_ATMOSPHERE_SCRIPT.new() as RegionAtmosphereDirector3D
     region_atmosphere_director.name = "RegionAtmosphereDirector"
@@ -128,6 +140,7 @@ func _setup_complete_game_services() -> void:
         Callable(self, "_progression_context")
     )
     add_child(long_operation_director)
+    story_archive_director.connect_component_source(long_operation_director)
 
     machine_society_director = MachineSocietyDirector3D.new()
     machine_society_director.name = "MachineSocietyDirector"
@@ -367,6 +380,17 @@ func _on_region_discovered(region_id: StringName, display_name: String) -> void:
     hud.push_notification("REGION DISCOVERED · %s · PHYSICAL ROUTES NOW KNOWN" % display_name.to_upper())
 
 
+func _on_story_record_unlocked(_record_id: StringName, display_name: String, description: String) -> void:
+    hud.push_notification("TOWN RECORD · %s\n%s" % [display_name.to_upper(), description])
+
+
+func _open_story_archive() -> void:
+    if operations_hud == null or story_archive_director == null:
+        return
+    operations_hud.open_archive(story_archive_director.archive_records())
+    player.input_enabled = false
+
+
 func _ensure_region_salvage(region_id: StringName) -> void:
     if bool(spawned_region_salvage.get(region_id, false)):
         return
@@ -448,6 +472,7 @@ func _save_extension_data() -> Dictionary:
     var full_game_data: Dictionary = extensions.get("full_game", {})
     full_game_data.merge({
         "regions": region_director.to_dictionary(),
+        "story_archive": story_archive_director.to_dictionary(),
         "long_operations": long_operation_director.to_dictionary(),
         "machine_society": machine_society_director.to_dictionary(),
         "strategic_ecology": strategic_ecology_director.to_dictionary(),
@@ -477,6 +502,7 @@ func _restore_extension_data(extensions: Variant) -> void:
             region_director.discover_region(&"region.north_ruins")
         return
     region_director.restore_from_dictionary(data.get("regions", {}))
+    story_archive_director.restore_from_dictionary(data.get("story_archive", {}))
     long_operation_director.restore_from_dictionary(data.get("long_operations", {}))
     machine_society_director.restore_from_dictionary(data.get("machine_society", {}))
     strategic_ecology_director.restore_from_dictionary(data.get("strategic_ecology", {}))
@@ -492,6 +518,7 @@ func _restore_extension_data(extensions: Variant) -> void:
         spawned_region_salvage[StringName(str(raw_key))] = bool(saved_salvage[raw_key])
     for region_data in region_director.discovered_regions():
         _ensure_region_salvage(StringName(str(region_data.get("id", ""))))
+    story_archive_director.reconcile_discovered_state()
     progression._evaluate_automatic_technologies()
     hud.push_notification("COMPLETE RUN STATE RESTORED · REGIONS, OPERATIONS, ECOLOGY, MACHINE SOCIETY AND ENDGAME RETAINED")
 

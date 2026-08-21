@@ -18,6 +18,7 @@ var authorize_button: Button
 var mode: StringName = &"operations"
 var operations: Array[Dictionary] = []
 var protocols: Array[Dictionary] = []
+var archive_records: Array[Dictionary] = []
 var selected_index: int = 0
 var current_operation_status: String = "No long-range operation"
 var endgame_status: String = "No final protocol active"
@@ -133,6 +134,16 @@ func open_endgame() -> void:
     _refresh()
 
 
+func open_archive(next_records: Array[Dictionary]) -> void:
+    mode = &"archive"
+    archive_records = next_records.duplicate(true)
+    selected_index = 0
+    backdrop.visible = true
+    panel.visible = true
+    apply_safe_layout(Vector2(get_viewport().get_visible_rect().size))
+    _refresh()
+
+
 func close() -> void:
     backdrop.visible = false
     panel.visible = false
@@ -173,6 +184,8 @@ func select_next() -> void:
 
 
 func _authorize_selected() -> void:
+    if mode == &"archive":
+        return
     if mode == &"endgame":
         var protocol_id := selected_protocol_id()
         if protocol_id != &"":
@@ -212,7 +225,11 @@ func _on_viewport_resized() -> void:
 
 
 func _current_items() -> Array[Dictionary]:
-    return protocols if mode == &"endgame" else operations
+    if mode == &"endgame":
+        return protocols
+    if mode == &"archive":
+        return archive_records
+    return operations
 
 
 func _current_count() -> int:
@@ -238,14 +255,18 @@ func _refresh() -> void:
     if mode == &"endgame":
         title_label.text = "FINAL PROTOCOLS"
         status_label.text = "%s\nThe final crisis is player-triggered and causal. No recurring wave schedule exists." % endgame_status
+    elif mode == &"archive":
+        title_label.text = "TOWN ARCHIVE"
+        status_label.text = "%d record%s recovered from physical discoveries.\nThis history is persistent and optional; it never creates another maintenance task." % [items.size(), "" if items.size() == 1 else "s"]
     else:
         title_label.text = "LONG-RANGE OPERATIONS"
         status_label.text = "%s\nEvery group travels through the same persistent world and delivers rewards only after returning." % current_operation_status
 
     if items.is_empty():
-        selection_label.text = "NO OPERATION AVAILABLE" if mode == &"operations" else "FINAL PROTOCOL LOCKED"
+        selection_label.text = "NO RECORDS RECOVERED" if mode == &"archive" else ("NO OPERATION AVAILABLE" if mode == &"operations" else "FINAL PROTOCOL LOCKED")
         description_label.text = _empty_state_text()
-        requirements_label.text = "Continue the current strategic objective. The screen becomes actionable only when a real choice exists."
+        requirements_label.text = "Explore and complete real discoveries to recover the town's remaining records." if mode == &"archive" else "Continue the current strategic objective. The screen becomes actionable only when a real choice exists."
+        authorize_button.visible = mode != &"archive"
         authorize_button.text = "NO OPERATION AVAILABLE" if mode == &"operations" else "FINAL PROTOCOL LOCKED"
         authorize_button.disabled = true
         return
@@ -253,6 +274,11 @@ func _refresh() -> void:
     var item := items[selected_index]
     selection_label.text = str(item.get("display_name", "Unknown")).to_upper()
     description_label.text = str(item.get("description", ""))
+    if mode == &"archive":
+        authorize_button.visible = false
+        requirements_label.text = "SOURCE: %s\nARC: %s · Press L or ESC to close." % [str(item.get("source_name", "Unknown")).to_upper(), str(item.get("arc", "town_history")).replace("_", " ").to_upper()]
+        return
+    authorize_button.visible = true
     authorize_button.disabled = false
     if mode == &"endgame":
         authorize_button.text = "INITIATE IRREVERSIBLE PROTOCOL"
@@ -273,6 +299,8 @@ func _refresh() -> void:
 
 
 func _empty_state_text() -> String:
+    if mode == &"archive":
+        return "No town records have been recovered yet. The first record is preserved at the Heartforge; later records emerge from physical regional discoveries and the post-victory archive."
     if mode == &"endgame":
         return "Recover the required biological components, map the Root Cistern, evolve the Heartforge to tier 5, and authorize an endgame technology. Until then, no final decision is being hidden."
     return "Complete the current Heartforge, outpost, or technology prerequisite. Routine salvage, repair, rebuilding, and replacement continue without opening another management task."
