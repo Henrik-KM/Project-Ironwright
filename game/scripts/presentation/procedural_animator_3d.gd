@@ -299,6 +299,9 @@ func _animate_organic(movement_blend: float) -> void:
     for head in _nodes_with_prefix(model_root, "Head"):
         head.rotation.y += sin(idle_phase * 1.9 + deterministic_offset) * (0.12 if hunting else 0.06)
         head.rotation.x += sin(idle_phase * 3.1 + deterministic_offset) * 0.035
+        if hit_impulse > 0.0:
+            head.rotation.z += hit_impulse * 0.16
+            head.rotation.x -= hit_impulse * 0.09
         if feeding:
             head.rotation.x += 0.22 + sin(idle_phase * 2.8 + deterministic_offset) * 0.07
         elif nest_guard:
@@ -307,6 +310,9 @@ func _animate_organic(movement_blend: float) -> void:
             head.rotation.x -= 0.1
     for mandible in _nodes_with_prefix(model_root, "Mandible"):
         mandible.rotation.y += sin(idle_phase * (5.0 if hunting else 2.6) + deterministic_offset) * 0.19
+        if hit_impulse > 0.0:
+            mandible.rotation.x += hit_impulse * 0.18
+            mandible.rotation.y -= hit_impulse * 0.08
         if feeding:
             mandible.rotation.y += sin(idle_phase * 4.2 + deterministic_offset) * 0.16
         if windup > 0.0:
@@ -314,6 +320,8 @@ func _animate_organic(movement_blend: float) -> void:
     for tail in _nodes_with_prefix(model_root, "Tail"):
         tail.rotation.y += sin(idle_phase * (3.4 if hunting else 1.6) + deterministic_offset) * 0.24
         tail.rotation.z += cos(idle_phase * 1.8 + deterministic_offset) * 0.08
+        if hit_impulse > 0.0:
+            tail.rotation.z -= hit_impulse * 0.11
         if retreating:
             tail.rotation.x += 0.18
             tail.rotation.z -= 0.12

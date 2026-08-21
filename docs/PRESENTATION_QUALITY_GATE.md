@@ -36,6 +36,11 @@ through the short presentation window. These details remain presentation-only;
 ecology state, AI decisions, collision, damage and queue-free timing remain
 owned by the existing enemy actor.
 
+Organic non-lethal impacts now also travel through the silhouette: sensory
+heads recoil, mandibles give a short defensive lift, and tails counterbalance
+the hit impulse while the shared authored `Hit` clip and world-space response
+remain active. This is a bounded presentation response, not a new combat rule.
+
 The runtime damage response also carries a bounded world-space impact burst and
 distinct spatial sound language for Mechromancer, machine and organic
 non-lethal hits. This reinforces the authored `Hit` beat without adding combat
