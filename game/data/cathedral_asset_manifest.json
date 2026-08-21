@@ -6,10 +6,17 @@
   "required_nodes": [
     "CathedralModel",
     "CathedralNave",
+    "CathedralDoorPostL",
+    "CathedralTowerSlit0",
     "CathedralRoseWindow",
+    "CathedralRoseLatch0",
     "CathedralChoirCore",
     "CathedralChoirSignal",
+    "CathedralChoirSignalRing",
+    "CathedralChoirRibL",
     "CathedralBell",
+    "CathedralBellClapper",
+    "CathedralOrganicVeinKnuckle17",
     "ProductionAssetMarker"
   ],
   "presentation_only": true

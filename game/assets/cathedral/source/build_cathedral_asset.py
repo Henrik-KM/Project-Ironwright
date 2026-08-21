@@ -44,18 +44,28 @@ def main() -> None:
         "Brick": mesh("Brick", add_box(builder, (2.2, 1.1, 0.22), brick)),
         "Tower": mesh("Tower", add_box(builder, (3.4, 8.4, 3.4), brick)),
         "TowerCap": mesh("TowerCap", add_box(builder, (3.9, 0.38, 3.9), iron)),
-        "Glass": mesh("Glass", add_cylinder(builder, 1.42, 0.16, blue_glass, 24)),
-        "Rose": mesh("Rose", add_cylinder(builder, 0.72, 0.18, rose_glass, 20)),
+        "Glass": mesh("Glass", add_cylinder(builder, 1.42, 0.16, blue_glass, 32)),
+        "Rose": mesh("Rose", add_cylinder(builder, 0.72, 0.18, rose_glass, 28)),
         "Rib": mesh("Rib", add_box(builder, (0.14, 3.0, 0.22), iron)),
         "Buttress": mesh("Buttress", add_box(builder, (0.72, 3.8, 1.0), stone)),
-        "Choir": mesh("Choir", add_uv_sphere(builder, 0.72, membrane, 16, 24)),
-        "Spine": mesh("Spine", add_cylinder(builder, 0.14, 3.0, membrane, 18)),
-        "Vein": mesh("Vein", add_cylinder(builder, 0.075, 3.8, membrane, 12)),
-        "Signal": mesh("Signal", add_uv_sphere(builder, 0.14, rose_glass, 14, 20)),
-        "Bell": mesh("Bell", add_uv_sphere(builder, 0.42, iron, 16, 22)),
-        "Lamp": mesh("Lamp", add_uv_sphere(builder, 0.10, warm, 12, 16)),
+        "Choir": mesh("Choir", add_uv_sphere(builder, 0.72, membrane, 20, 28)),
+        "Spine": mesh("Spine", add_cylinder(builder, 0.14, 3.0, membrane, 22)),
+        "Vein": mesh("Vein", add_cylinder(builder, 0.075, 3.8, membrane, 18)),
+        "Signal": mesh("Signal", add_uv_sphere(builder, 0.14, rose_glass, 18, 26)),
+        "Bell": mesh("Bell", add_uv_sphere(builder, 0.42, iron, 20, 28)),
+        "Lamp": mesh("Lamp", add_uv_sphere(builder, 0.10, warm, 16, 22)),
         "Aisle": mesh("Aisle", add_box(builder, (0.42, 0.18, 5.0), iron)),
         "Cross": mesh("Cross", add_box(builder, (0.18, 1.8, 0.18), iron)),
+        "DoorPost": mesh("DoorPost", add_box(builder, (0.18, 2.45, 0.22), iron)),
+        "DoorLintel": mesh("DoorLintel", add_box(builder, (3.5, 0.18, 0.22), iron)),
+        "TowerSlit": mesh("TowerSlit", add_box(builder, (0.18, 0.82, 0.12), blue_glass)),
+        "WindowLatch": mesh("WindowLatch", add_uv_sphere(builder, 0.075, iron, 14, 20)),
+        "ChoirRib": mesh("ChoirRib", add_cylinder(builder, 0.055, 2.4, iron, 18)),
+        "ChoirRing": mesh("ChoirRing", add_cylinder(builder, 0.24, 0.08, rose_glass, 24)),
+        "BellClapper": mesh("BellClapper", add_cylinder(builder, 0.075, 0.72, iron, 18)),
+        "ButtressCap": mesh("ButtressCap", add_box(builder, (0.88, 0.18, 1.08), iron)),
+        "VeinKnuckle": mesh("VeinKnuckle", add_uv_sphere(builder, 0.11, rose_glass, 14, 20)),
+        "RoofDrain": mesh("RoofDrain", add_cylinder(builder, 0.075, 1.1, iron, 18)),
     }
 
     nodes: list[dict] = [{
@@ -98,32 +108,46 @@ def main() -> None:
     add_node("CathedralTower", mesh_ids["Tower"], (-4.15, 4.2, -0.75), extras={"surface": "soot_brick_tower"})
     add_node("CathedralTowerCap", mesh_ids["TowerCap"], (-4.15, 8.58, -0.75))
     add_node("CathedralBell", mesh_ids["Bell"], (-4.15, 6.45, -2.48), extras={"socket_type": "bell"})
+    add_node("CathedralBellClapper", mesh_ids["BellClapper"], (-4.15, 6.18, -2.48), rotation=(0.0, 0.0, 0.12), extras={"surface": "bell_clapper"})
     add_node("CathedralTowerCross", mesh_ids["Cross"], (-4.15, 9.45, -0.75), rotation=(0.0, 0.0, 0.0))
+    for index, height in enumerate((3.45, 4.75, 6.05)):
+        add_node("CathedralTowerSlit%d" % index, mesh_ids["TowerSlit"], (-4.15, height, -2.48), extras={"surface": "tower_lancet"})
+
+    add_node("CathedralDoorPostL", mesh_ids["DoorPost"], (-1.72, 1.32, -2.22), extras={"surface": "nave_entry_frame"})
+    add_node("CathedralDoorPostR", mesh_ids["DoorPost"], (1.72, 1.32, -2.22), extras={"surface": "nave_entry_frame"})
+    add_node("CathedralDoorLintel", mesh_ids["DoorLintel"], (0.0, 2.52, -2.22), extras={"surface": "nave_entry_frame"})
 
     add_node("CathedralRoseWindow", mesh_ids["Glass"], (0.0, 3.15, -2.08), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "rose_window"})
     add_node("CathedralRoseCore", mesh_ids["Rose"], (0.0, 3.15, -2.20), rotation=(math.pi * 0.5, 0.0, 0.0))
     for index, angle in enumerate((0.0, math.pi * 0.25, math.pi * 0.5, math.pi * 0.75)):
         add_node("CathedralRoseRib%d" % index, mesh_ids["Rib"], (math.cos(angle) * 0.78, 3.15 + math.sin(angle) * 0.78, -2.32), rotation=(0.0, 0.0, angle), extras={"socket_type": "rose_frame"})
+        add_node("CathedralRoseLatch%d" % index, mesh_ids["WindowLatch"], (math.cos(angle) * 1.02, 3.15 + math.sin(angle) * 1.02, -2.36), extras={"surface": "rose_window_latch"})
 
     for side in (-1.0, 1.0):
         for index in range(3):
             x = side * (5.35 - float(index) * 0.25)
             add_node("CathedralButtress", mesh_ids["Buttress"], (x, 1.9, -0.4 + float(index) * 2.8), rotation=(0.0, 0.0, side * 0.06))
+            add_node("CathedralButtressCap%d_%d" % (0 if side < 0 else 1, index), mesh_ids["ButtressCap"], (x, 3.9, -0.4 + float(index) * 2.8), rotation=(0.0, 0.0, side * 0.06), extras={"surface": "buttress_cap"})
         add_node("CathedralAisle", mesh_ids["Aisle"], (side * 3.2, 0.22, 1.4), rotation=(0.0, 0.0, 0.0))
         add_node("CathedralAisleLamp", mesh_ids["Lamp"], (side * 3.2, 1.05, -1.2))
 
     for index, x in enumerate((-4.5, -1.5, 1.5, 4.5)):
         add_node("CathedralRoofRib%d" % index, mesh_ids["Rib"], (x, 5.35, 1.2), rotation=(0.0, 0.0, math.pi * 0.5), extras={"socket_type": "roof_rib"})
         add_node("CathedralWindowBlue%d" % index, mesh_ids["Rose"], (x, 2.72, -2.18), rotation=(math.pi * 0.5, 0.0, 0.0))
+        add_node("CathedralRoofDrain%d" % index, mesh_ids["RoofDrain"], (x, 4.55, 1.25), rotation=(0.0, 0.0, math.pi * 0.5), extras={"surface": "roof_drain"})
 
     add_node("CathedralChoirSpine", mesh_ids["Spine"], (0.0, 1.65, 4.45), extras={"socket_type": "choir_spine"})
     add_node("CathedralChoirCore", mesh_ids["Choir"], (0.0, 1.45, 4.45), extras={"socket_type": "choir_core"})
     add_node("CathedralChoirSignal", mesh_ids["Signal"], (0.0, 3.15, 4.45), extras={"socket_type": "choir_signal"})
+    add_node("CathedralChoirSignalRing", mesh_ids["ChoirRing"], (0.0, 3.15, 4.45), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "choir_signal_ring"})
+    add_node("CathedralChoirRibL", mesh_ids["ChoirRib"], (-0.68, 2.05, 4.45), rotation=(0.0, 0.0, 0.16), extras={"surface": "choir_rib"})
+    add_node("CathedralChoirRibR", mesh_ids["ChoirRib"], (0.68, 2.05, 4.45), rotation=(0.0, 0.0, -0.16), extras={"surface": "choir_rib"})
     for index, side in enumerate((-1.0, 1.0)):
         for height in (1.7, 2.8):
             add_node("CathedralOrganicVein%d" % (index * 2 + int(height * 10)), mesh_ids["Vein"], (side * 0.72, height, 4.45), rotation=(0.0, side * 0.36, side * 0.10), extras={"socket_type": "organic_vein"})
+            add_node("CathedralOrganicVeinKnuckle%d" % (index * 2 + int(height * 10)), mesh_ids["VeinKnuckle"], (side * 0.72, height + 0.26, 4.34), extras={"surface": "organic_vein_joint"})
 
-    add_node("ProductionAssetMarker", None, extras={"asset_contract": "cathedral.quarter.v1", "source": "original_procedural_mesh_builder"})
+    add_node("ProductionAssetMarker", None, extras={"asset_contract": "cathedral.quarter.v1", "source": "original_authored_landmark_builder"})
 
     document = {
         "asset": {"version": "2.0", "generator": "Project Ironwright original Cathedral Quarter asset builder"},
@@ -137,7 +161,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "cathedral.quarter.v1",
-            "required_nodes": ["CathedralModel", "CathedralNave", "CathedralRoseWindow", "CathedralChoirCore", "CathedralChoirSignal", "CathedralBell", "ProductionAssetMarker"],
+            "required_nodes": ["CathedralModel", "CathedralNave", "CathedralRoseWindow", "CathedralDoorPostL", "CathedralTowerSlit0", "CathedralRoseLatch0", "CathedralChoirCore", "CathedralChoirSignal", "CathedralChoirSignalRing", "CathedralChoirRibL", "CathedralBell", "CathedralBellClapper", "CathedralOrganicVeinKnuckle17", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
