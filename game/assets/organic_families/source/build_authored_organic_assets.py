@@ -57,6 +57,20 @@ FAMILIES = {
         "socket_contract": "root_arms, route_spines, spore_fan, crown_oculi",
         "signature_nodes": ["RootweaverKnuckleL", "RootweaverKnuckleR", "RootweaverCrownPlate0", "RootweaverRootSpineR"],
     },
+    "thornback": {
+        "display": "Thornback",
+        "asset_id": "thornback.territorial.v1",
+        "colors": ([0.055, 0.045, 0.035, 1.0], [0.30, 0.19, 0.10, 1.0], [0.36, 0.12, 0.08, 1.0], [0.57, 0.46, 0.30, 1.0], [0.92, 0.38, 0.08, 1.0], [0.34, 0.12, 0.07, 1.0]),
+        "socket_contract": "thorn_crown, dorsal_spines, jaw_plates, threat_eyes",
+        "signature_nodes": ["ThornbackCrown", "ThornbackSpineL", "ThornbackSpineR", "ThornbackJawPlateL"],
+    },
+    "ashmantle": {
+        "display": "Ashmantle",
+        "asset_id": "ashmantle.route_predator.v1",
+        "colors": ([0.035, 0.045, 0.055, 1.0], [0.16, 0.20, 0.24, 1.0], [0.20, 0.27, 0.32, 1.0], [0.52, 0.48, 0.38, 1.0], [0.94, 0.23, 0.08, 1.0], [0.18, 0.10, 0.08, 1.0]),
+        "socket_contract": "heat_mantle, louver_fins, route_siphon, sensory_tendrils",
+        "signature_nodes": ["AshmantleMantle", "AshmantleHeatLouverL", "AshmantleHeatLouverR", "AshmantleSiphon"],
+    },
 }
 
 
@@ -210,7 +224,7 @@ def build_family(name: str, spec: dict) -> None:
             add_node(f"CarrionbellSignalTendril{index}", mesh_ids["Tendon"], (x, 0.68, -0.72 - (index % 2) * 0.12), rotation=(0.32, 0.0, (index - 2) * 0.12), extras={"socket_type": "signal_tendril"})
         walk_node = "CarrionbellMantle"
         attack_node = "CarrionbellResonator"
-    else:
+    elif name == "rootweaver":
         add_node("RootweaverCrown", mesh_ids["Soft"], (0.0, 1.55, -0.42), scale=(1.28, 1.2, 1.18), extras={"socket_type": "crown_oculi"})
         add_node("RootweaverCrownPlate0", mesh_ids["Plate"], (-0.36, 1.92, -0.44), rotation=(0.0, -0.22, -0.08), scale=(0.72, 1.0, 0.84), extras={"surface": "crown_plate"})
         add_node("RootweaverCrownPlate1", mesh_ids["Plate"], (0.36, 1.92, -0.44), rotation=(0.0, 0.22, 0.08), scale=(0.72, 1.0, 0.84), extras={"surface": "crown_plate"})
@@ -227,6 +241,31 @@ def build_family(name: str, spec: dict) -> None:
             add_node(f"RootweaverOculus{suffix}", mesh_ids["Eye"], (side * 0.26, 1.92, -0.82), extras={"socket_type": "crown_oculus"})
         walk_node = "RootweaverArmL"
         attack_node = "RootweaverSporeFan"
+    elif name == "thornback":
+        add_node("ThornbackCrown", mesh_ids["Soft"], (0.0, 1.22, -1.02), scale=(1.28, 0.86, 1.16), extras={"socket_type": "thorn_crown"})
+        add_node("ThornbackCrownPlate", mesh_ids["Plate"], (0.0, 1.58, -0.96), rotation=(0.0, 0.0, 0.08), scale=(1.16, 1.0, 0.8), extras={"surface": "crown_plate"})
+        for side in (-1.0, 1.0):
+            suffix = "L" if side < 0 else "R"
+            add_node(f"ThornbackJawPlate{suffix}", mesh_ids["PlateCap"], (side * 0.42, 0.72, -1.42), rotation=(side * 0.38, 0.0, side * 0.12), scale=(0.82, 1.0, 0.74), extras={"surface": "jaw_plate"})
+            add_node(f"ThornbackSpine{suffix}", mesh_ids["LongBone"], (side * 0.76, 1.42, 0.14), rotation=(0.0, side * 0.24, side * 0.34), scale=(0.82, 1.0, 0.86), extras={"socket_type": "dorsal_spine"})
+            add_node(f"ThornbackEye{suffix}", mesh_ids["Eye"], (side * 0.24, 1.34, -1.36), extras={"socket_type": "threat_eye"})
+        for index in range(3):
+            add_node(f"ThornbackDorsalRidge{index}", mesh_ids["Ridge"], (-0.18 + index * 0.18, 1.56 + index * 0.06, -0.24 + index * 0.42), rotation=(0.0, 0.0, -0.12 + index * 0.08), scale=(0.66, 1.0, 0.78), extras={"surface": "dorsal_ridge"})
+        walk_node = "ThornbackSpineL"
+        attack_node = "ThornbackJawPlateL"
+    else:
+        add_node("AshmantleMantle", mesh_ids["Soft"], (0.0, 1.28, 0.18), scale=(1.5, 0.92, 1.34), extras={"socket_type": "heat_mantle"})
+        add_node("AshmantleSiphon", mesh_ids["Soft"], (0.0, 0.82, -1.42), scale=(0.72, 0.64, 1.14), extras={"socket_type": "route_siphon"})
+        for side in (-1.0, 1.0):
+            suffix = "L" if side < 0 else "R"
+            add_node(f"AshmantleHeatLouver{suffix}", mesh_ids["Plate"], (side * 0.82, 1.20, 0.28), rotation=(0.0, side * 0.28, side * 0.12), scale=(0.72, 1.0, 1.12), extras={"surface": "heat_louver"})
+            add_node(f"AshmantleLouverRib{suffix}", mesh_ids["MembraneRib"], (side * 1.04, 1.24, 0.30), rotation=(0.0, side * 0.34, side * 0.22), scale=(0.7, 1.0, 0.86), extras={"surface": "louver_rib"})
+            add_node(f"AshmantleTendril{suffix}", mesh_ids["Tendon"], (side * 0.28, 1.18, -1.58), rotation=(0.5, 0.0, side * 0.2), extras={"socket_type": "sensory_tendril"})
+            add_node(f"AshmantleEye{suffix}", mesh_ids["Eye"], (side * 0.22, 1.34, -1.62), extras={"socket_type": "threat_eye"})
+        for index in range(4):
+            add_node(f"AshmantleMantleRib{index}", mesh_ids["Ridge"], (-0.54 + index * 0.36, 1.66, 0.18), rotation=(0.0, (index - 1.5) * 0.08, 0.0), scale=(0.72, 1.0, 0.64), extras={"surface": "mantle_rib"})
+        walk_node = "AshmantleHeatLouverL"
+        attack_node = "AshmantleSiphon"
 
     add_node("ProductionAssetMarker", None, extras={"asset_contract": spec["asset_id"], "source": "original_shared_mesh_builder"})
     node_index = {node["name"]: index for index, node in enumerate(nodes)}

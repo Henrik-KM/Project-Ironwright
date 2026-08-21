@@ -26,7 +26,7 @@ func _run_all() -> void:
     if audio_director != null:
         for profile in [&"pistol", &"machine_weapon", &"machine_impact", &"player_impact", &"salvage", &"forge", &"organic_attack", &"organic_impact", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition", &"endgame_start", &"endgame_stage", &"endgame_complete", &"endgame_failure"]:
             _expect(audio_director.has_profile(profile), "The audio director must provide the %s profile." % profile)
-        for species in [&"veilstalker", &"razorhound", &"apex", &"sporecaster", &"broodmass", &"burrower", &"skitterling", &"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver"]:
+        for species in [&"veilstalker", &"razorhound", &"apex", &"sporecaster", &"broodmass", &"burrower", &"skitterling", &"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle"]:
             _expect(audio_director.has_profile(audio_director.organic_profile_id(species)), "Each organic species must provide a distinct attack vocal signature.")
             _expect(audio_director.has_profile(audio_director.organic_profile_id(species, true)), "Each organic species must provide a distinct death vocal signature.")
         if world.noise_system != null:
@@ -768,7 +768,7 @@ func _run_all() -> void:
         sample.queue_free()
 
     var enemy_samples: Array[OrganicEnemy3D] = []
-    var species_names := [&"skitterling", &"razorhound", &"roofleaper", &"glassmoth", &"veilstalker", &"burrower", &"sporecaster", &"broodmass", &"miremaw", &"carrionbell", &"rootweaver", &"apex"]
+    var species_names := [&"skitterling", &"razorhound", &"roofleaper", &"glassmoth", &"veilstalker", &"burrower", &"sporecaster", &"broodmass", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle", &"apex"]
     var sample_player := get_first_node_in_group("player_character") as Node3D
     var sample_forge := world.get_node_or_null("Heartforge") as Node3D
     for index in species_names.size():
@@ -801,7 +801,7 @@ func _run_all() -> void:
                 _expect(tier_channel.transform != tier_before, "%s tier vascular channels must carry a visible living pulse." % species_names[index])
         if species_names[index] == &"razorhound":
             _expect(_find_named(enemy_samples[index], "RazorhoundAuthoredModel") != null and _find_named(enemy_samples[index], "ProductionAssetMarker") != null, "The Razorhound must expose its authored production asset contract.")
-        if species_names[index] in [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver"]:
+        if species_names[index] in [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle"]:
             var authored_marker_name := "%sAuthoredModel" % String(species_names[index]).capitalize()
             _expect(_find_named(enemy_samples[index], authored_marker_name) != null and _find_named(enemy_samples[index], "ProductionAssetMarker") != null, "The %s must expose its authored production asset contract." % species_names[index])
         match species_names[index]:
@@ -828,6 +828,12 @@ func _run_all() -> void:
             &"rootweaver":
                 _expect(_find_named(enemy_samples[index], "RootweaverKnuckleL") != null and _find_named(enemy_samples[index], "RootweaverKnuckleR") != null, "The Rootweaver must expose joint detail where its route arms meet the body.")
                 _expect(_find_named(enemy_samples[index], "RootweaverCrownPlate0") != null and _find_named(enemy_samples[index], "RootweaverRootSpineR") != null, "The Rootweaver must expose crown plating and layered route spines.")
+            &"thornback":
+                _expect(_find_named(enemy_samples[index], "ThornbackSpineL") != null and _find_named(enemy_samples[index], "ThornbackSpineR") != null, "The Thornback must expose paired dorsal spines for its territorial silhouette.")
+                _expect(_find_named(enemy_samples[index], "ThornbackJawPlateL") != null and _find_named(enemy_samples[index], "ThornbackCrown") != null, "The Thornback must expose layered jaw and crown hardware.")
+            &"ashmantle":
+                _expect(_find_named(enemy_samples[index], "AshmantleHeatLouverL") != null and _find_named(enemy_samples[index], "AshmantleHeatLouverR") != null, "The Ashmantle must expose paired heat-louver anatomy.")
+                _expect(_find_named(enemy_samples[index], "AshmantleSiphon") != null and _find_named(enemy_samples[index], "AshmantleTendrilR") != null, "The Ashmantle must expose a route siphon and sensory tendril signature.")
         if species_names[index] == &"apex":
             var apex_crown := _find_named(enemy_samples[index], "ApexCrown") as Node3D
             var apex_plate := _find_named(enemy_samples[index], "ApexCrownPlate") as Node3D
@@ -1048,6 +1054,8 @@ func _family_attack_signature_node(species: StringName) -> StringName:
         &"miremaw": return &"MiremawJawHookL"
         &"carrionbell": return &"CarrionbellResonator"
         &"rootweaver": return &"RootweaverArmL"
+        &"thornback": return &"ThornbackJawPlateL"
+        &"ashmantle": return &"AshmantleSiphon"
         &"apex": return &"ApexJawL"
     return &""
 
@@ -1132,4 +1140,8 @@ func _enemy_model_has_details(enemy: OrganicEnemy3D, species: StringName) -> boo
             return _find_named(enemy, "CarrionbellMantle") != null and _find_named(enemy, "CarrionbellCrownPlate") != null and _find_named(enemy, "CarrionbellResonator") != null
         &"rootweaver":
             return _find_named(enemy, "RootweaverCrown") != null and _find_named(enemy, "RootweaverArmL") != null and _find_named(enemy, "RootweaverSporeFan") != null
+        &"thornback":
+            return _find_named(enemy, "ThornbackCrown") != null and _find_named(enemy, "ThornbackSpineL") != null and _find_named(enemy, "ThornbackJawPlateL") != null
+        &"ashmantle":
+            return _find_named(enemy, "AshmantleMantle") != null and _find_named(enemy, "AshmantleHeatLouverL") != null and _find_named(enemy, "AshmantleSiphon") != null
     return false

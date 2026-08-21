@@ -13,6 +13,8 @@ const AUTHORED_GLASSMOTH_MODEL_SCENE: PackedScene = preload("res://assets/glassm
 const AUTHORED_MIREMAW_MODEL_SCENE: PackedScene = preload("res://assets/miremaw/miremaw.gltf")
 const AUTHORED_CARRIONBELL_MODEL_SCENE: PackedScene = preload("res://assets/carrionbell/carrionbell.gltf")
 const AUTHORED_ROOTWEAVER_MODEL_SCENE: PackedScene = preload("res://assets/rootweaver/rootweaver.gltf")
+const AUTHORED_THORNBACK_MODEL_SCENE: PackedScene = preload("res://assets/thornback/thornback.gltf")
+const AUTHORED_ASHMANTLE_MODEL_SCENE: PackedScene = preload("res://assets/ashmantle/ashmantle.gltf")
 const DEATH_PRESENTATION_SECONDS := 0.72
 
 signal killed(enemy: OrganicEnemy3D, killer: Node)
@@ -115,7 +117,7 @@ func hear_noise(position: Vector3, radius: float, intensity: float, source_kind:
     last_known_prey_position = position
     has_last_known_prey = true
     _set_state(&"investigating")
-    if species in [&"razorhound", &"veilstalker"] and intensity >= 0.55:
+    if species in [&"razorhound", &"veilstalker", &"thornback"] and intensity >= 0.55:
         _alert_nearby_pack(position, intensity)
 
 
@@ -235,6 +237,12 @@ func _prey_priority_multiplier(target: Node3D) -> float:
     elif species == &"broodmass":
         if target is RobotUnit3D and (target as RobotUnit3D).archetype == &"guardian":
             return 0.82
+    elif species == &"ashmantle":
+        if target is RobotUnit3D and (target as RobotUnit3D).archetype in [&"engineer", &"salvager"]:
+            return 0.68
+    elif species == &"thornback":
+        if target is Outpost3D:
+            return 0.82
     return 1.0
 
 
@@ -243,6 +251,8 @@ func _hunt_speed() -> float:
         return move_speed * 1.05
     if species == &"veilstalker":
         return move_speed * 0.96
+    if species == &"ashmantle":
+        return move_speed * 0.94
     return move_speed
 
 
@@ -323,6 +333,10 @@ func _default_ecology_directive() -> StringName:
             return &"scout"
         &"burrower":
             return &"patrol"
+        &"thornback":
+            return &"protect_nest"
+        &"ashmantle":
+            return &"scout"
         &"sporecaster":
             return &"protect_nest"
         &"broodmass":
@@ -496,7 +510,7 @@ func _resolve_pending_attack() -> void:
 
 func _attack_windup_duration() -> float:
     match species:
-        &"sporecaster":
+        &"sporecaster", &"ashmantle":
             return 0.34
         &"broodmass", &"apex":
             return 0.3
@@ -518,7 +532,7 @@ func apply_damage(amount: float, source: Node = null) -> void:
         last_known_prey_position = source.global_position
         has_last_known_prey = true
         investigate_seconds = 10.0
-        if species in [&"razorhound", &"veilstalker"]:
+        if species in [&"razorhound", &"veilstalker", &"thornback"]:
             _alert_nearby_pack(source.global_position, 1.0)
     if current_health > 0.0:
         return
@@ -578,6 +592,20 @@ func _apply_species_stats() -> void:
             attack_range = 2.35
             detection_range = 32.0
             attack_interval = 1.55
+        &"thornback":
+            maximum_health = 74.0
+            move_speed = 4.2
+            attack_damage = 15.0
+            attack_range = 1.6
+            detection_range = 18.0
+            attack_interval = 1.35
+        &"ashmantle":
+            maximum_health = 126.0
+            move_speed = 3.7
+            attack_damage = 17.0
+            attack_range = 5.8
+            detection_range = 26.0
+            attack_interval = 2.0
         _:
             maximum_health = 28.0
             move_speed = 4.4
@@ -597,6 +625,12 @@ func _build_collision() -> void:
     elif species == &"apex":
         collision_radius = 1.15
         collision_height = 2.0
+    elif species == &"thornback":
+        collision_radius = 0.68
+        collision_height = 1.2
+    elif species == &"ashmantle":
+        collision_radius = 0.78
+        collision_height = 1.55
     if get_node_or_null("CollisionShape3D") == null:
         ModelKit3D.add_collision_capsule(self, collision_radius, collision_height, Vector3(0.0, collision_height * 0.5, 0.0))
 
@@ -756,6 +790,12 @@ func _refresh_visuals() -> void:
         return
     if species == &"rootweaver":
         _build_authored_organic_family_visuals(AUTHORED_ROOTWEAVER_MODEL_SCENE, &"RootweaverModel", &"RootweaverAuthoredModel")
+        return
+    if species == &"thornback":
+        _build_authored_organic_family_visuals(AUTHORED_THORNBACK_MODEL_SCENE, &"ThornbackModel", &"ThornbackAuthoredModel")
+        return
+    if species == &"ashmantle":
+        _build_authored_organic_family_visuals(AUTHORED_ASHMANTLE_MODEL_SCENE, &"AshmantleModel", &"AshmantleAuthoredModel")
         return
     var flesh := ModelKit3D.material(Color("201719"), 0.0, 0.91)
     var chitin := ModelKit3D.material(Color("332529"), 0.12, 0.66)

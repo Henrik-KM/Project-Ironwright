@@ -328,6 +328,10 @@ func _organic_signature_pitch(species: StringName, death: bool) -> float:
             pitch = 0.96
         &"veilstalker", &"sporecaster":
             pitch = 1.08
+        &"ashmantle":
+            pitch = 0.88
+        &"thornback":
+            pitch = 0.92
         &"roofleaper":
             pitch = 1.2
         &"glassmoth":

@@ -1,0 +1,10 @@
+{
+  "asset_id": "ashmantle.route_predator.v1",
+  "display_name": "Ashmantle route-predator shell",
+  "source": "game/assets/organic_families/source/build_authored_organic_assets.py",
+  "runtime_path": "res://assets/ashmantle/ashmantle.gltf",
+  "quality": "authored_high_definition",
+  "license": "Original Project Ironwright asset",
+  "required_nodes": ["AshmantleModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "AshmantleMantle", "AshmantleHeatLouverL", "AshmantleHeatLouverR", "AshmantleSiphon", "AshmantleTendrilR", "ProductionAssetMarker"],
+  "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]
+}

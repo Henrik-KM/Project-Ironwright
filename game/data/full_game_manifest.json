@@ -17,6 +17,7 @@
     "autonomous_machine_society",
     "heartforge_tiers_1_to_5",
     "continuous_regional_ecology",
+    "fourteen_authored_organic_families",
     "midgame_operation_chain",
     "late_machine_war_foundation",
     "endgame_and_first_victory",
@@ -46,7 +47,7 @@
   ],
   "content_families": {
     "robot_families_implemented": 6,
-    "organic_species_implemented": 12,
+    "organic_species_implemented": 14,
     "heartforge_tiers_implemented": 5,
     "outpost_roles_implemented": 4,
     "outpost_tiers_implemented": 3,

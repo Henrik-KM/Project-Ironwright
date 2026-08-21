@@ -529,6 +529,28 @@ func _animate_authored_family_signature(species: StringName, threat_blend: float
                 spine.rotation.z += attack_sway * (0.04 + movement_blend * 0.06)
             for root_spine in _nodes_with_prefix(model_root, "RootweaverRootSpine"):
                 root_spine.rotation.z += attack_sway * (0.05 + threat_blend * 0.10)
+        &"thornback":
+            var thorn_index := 0
+            for spine in _nodes_with_prefix(model_root, "ThornbackSpine"):
+                var side := -1.0 if thorn_index % 2 == 0 else 1.0
+                spine.rotation.z += side * (0.04 + threat_blend * 0.16)
+                thorn_index += 1
+            for plate in _nodes_with_prefix(model_root, "ThornbackJawPlate"):
+                plate.rotation.x += 0.08 + threat_blend * 0.28
+                plate.rotation.y += attack_sway * 0.08
+            for ridge in _nodes_with_prefix(model_root, "ThornbackDorsalRidge"):
+                ridge.rotation.x += attack_sway * (0.035 + threat_blend * 0.08)
+        &"ashmantle":
+            for louver in _nodes_with_prefix(model_root, "AshmantleHeatLouver"):
+                louver.rotation.z += attack_sway * (0.04 + threat_blend * 0.16)
+                louver.scale *= Vector3(1.0 + threat_blend * 0.08, 1.0, 1.0 + threat_blend * 0.08)
+            for rib in _nodes_with_prefix(model_root, "AshmantleLouverRib"):
+                rib.rotation.z += attack_sway * (0.05 + threat_blend * 0.12)
+            for tendril in _nodes_with_prefix(model_root, "AshmantleTendril"):
+                tendril.rotation.z += attack_sway * (0.08 + threat_blend * 0.18)
+            for siphon in _nodes_with_prefix(model_root, "AshmantleSiphon"):
+                siphon.scale *= Vector3(1.0 + threat_blend * 0.12, 1.0 + threat_blend * 0.18, 1.0 + threat_blend * 0.12)
+                siphon.rotation.x += threat_blend * 0.18
 
 
 func _attack_windup_remaining() -> float:
