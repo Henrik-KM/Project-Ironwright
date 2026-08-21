@@ -18,6 +18,7 @@ func _ready() -> void:
     _build_street_edges()
     _build_buildings()
     _build_wrecks_and_debris()
+    _build_lived_in_street_details()
     _build_lighting()
     _build_north_ruins()
 
@@ -157,6 +158,105 @@ func _build_wrecks_and_debris() -> void:
                 Vector3(0.1 * piece, 0.35 * piece, 0.2),
                 "Rubble"
             )
+
+
+func _build_lived_in_street_details() -> void:
+    var details := Node3D.new()
+    details.name = "HighDefinitionStreetDetails"
+    add_child(details)
+
+    var civic_metal := ModelKit3D.material(Color("303a3b"), 0.72, 0.48)
+    var civic_rust := ModelKit3D.material(Color("70432f"), 0.42, 0.72)
+    var civic_concrete := ModelKit3D.material(Color("4a4e4c"), 0.0, 0.84)
+    var civic_dark := ModelKit3D.material(Color("171d1f"), 0.62, 0.42)
+    var vegetation := ModelKit3D.material(Color("29443a"), 0.0, 0.92)
+    var vegetation_light := ModelKit3D.material(Color("55714b"), 0.0, 0.86)
+    var civic_amber := ModelKit3D.material(Color("7e512d"), 0.12, 0.36, Color("f1a35b"), 1.2)
+    var civic_cyan := ModelKit3D.material(Color("1e4e55"), 0.28, 0.3, Color("6adce1"), 1.6)
+
+    _add_street_bench(details, Vector3(-20.0, 0.0, -8.0), 0.0, civic_metal, civic_rust)
+    _add_street_bench(details, Vector3(20.0, 0.0, 8.0), PI, civic_metal, civic_rust)
+    _add_street_bench(details, Vector3(-8.0, 0.0, 22.0), PI * 0.5, civic_metal, civic_rust)
+
+    _add_service_cabinet(details, Vector3(-24.0, 0.0, 8.0), 0.0, civic_metal, civic_dark, civic_cyan)
+    _add_service_cabinet(details, Vector3(24.0, 0.0, -8.0), PI, civic_rust, civic_dark, civic_amber)
+    _add_service_cabinet(details, Vector3(8.0, 0.0, -24.0), PI * 0.5, civic_metal, civic_dark, civic_cyan)
+
+    _add_planter(details, Vector3(-8.0, 0.0, -22.0), civic_concrete, vegetation, vegetation_light)
+    _add_planter(details, Vector3(8.0, 0.0, 22.0), civic_concrete, vegetation, vegetation_light)
+    _add_planter(details, Vector3(-22.0, 0.0, 20.0), civic_rust, vegetation, vegetation_light)
+
+    _add_civic_sign(details, Vector3(-20.0, 0.0, 18.0), PI * 0.5, civic_metal, civic_dark, civic_amber)
+    _add_civic_sign(details, Vector3(20.0, 0.0, -18.0), -PI * 0.5, civic_metal, civic_dark, civic_cyan)
+
+    for index in range(14):
+        var x := -34.0 + float(index % 7) * 11.0
+        var z := -34.0 + float(index / 7) * 68.0
+        _add_weed_cluster(details, Vector3(x, 0.0, z), vegetation, vegetation_light, index)
+
+
+func _add_street_bench(parent: Node3D, position: Vector3, heading: float, metal: StandardMaterial3D, wood: StandardMaterial3D) -> void:
+    var bench := Node3D.new()
+    bench.name = "CivicBench"
+    bench.position = position
+    bench.rotation.y = heading
+    parent.add_child(bench)
+    ModelKit3D.add_beveled_box(bench, Vector3(2.0, 0.16, 0.56), Vector3(0.0, 0.78, 0.0), wood, Vector3.ZERO, "CivicBenchSeat", 0.12)
+    ModelKit3D.add_beveled_box(bench, Vector3(2.0, 0.72, 0.14), Vector3(0.0, 1.08, 0.22), wood, Vector3(-0.08, 0.0, 0.0), "CivicBenchBack", 0.1)
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_cylinder(bench, 0.055, 0.72, Vector3(float(side) * 0.7, 0.39, 0.0), metal, Vector3.ZERO, "CivicBenchLeg")
+        ModelKit3D.add_cylinder(bench, 0.05, 0.7, Vector3(float(side) * 0.7, 0.39, 0.16), metal, Vector3.ZERO, "CivicBenchBrace")
+
+
+func _add_service_cabinet(parent: Node3D, position: Vector3, heading: float, body: StandardMaterial3D, dark: StandardMaterial3D, status: StandardMaterial3D) -> void:
+    var cabinet := Node3D.new()
+    cabinet.name = "CivicServiceCabinet"
+    cabinet.position = position
+    cabinet.rotation.y = heading
+    parent.add_child(cabinet)
+    ModelKit3D.add_beveled_box(cabinet, Vector3(1.15, 1.7, 0.62), Vector3(0.0, 0.86, 0.0), body, Vector3(0.0, 0.0, 0.02), "CivicCabinetShell", 0.14)
+    ModelKit3D.add_surface_panel(cabinet, Vector3(0.72, 0.92, 0.08), Vector3(0.0, 0.93, -0.34), dark, status, Vector3.ZERO, "CivicCabinetDoor")
+    ModelKit3D.add_louvered_panel(cabinet, Vector3(0.52, 0.32, 0.08), Vector3(0.0, 0.52, -0.39), dark, body, Vector3.ZERO, "CivicCabinetVent", 3)
+    ModelKit3D.add_cylinder(cabinet, 0.035, 0.8, Vector3(0.38, 1.74, 0.04), dark, Vector3(0.0, 0.0, 0.12), "CivicCabinetCable")
+    ModelKit3D.add_sphere(cabinet, 0.065, Vector3(0.0, 1.48, -0.4), status, Vector3.ONE, "CivicCabinetStatus")
+
+
+func _add_planter(parent: Node3D, position: Vector3, concrete: StandardMaterial3D, vegetation: StandardMaterial3D, vegetation_light: StandardMaterial3D) -> void:
+    var planter := Node3D.new()
+    planter.name = "CivicPlanter"
+    planter.position = position
+    parent.add_child(planter)
+    ModelKit3D.add_beveled_box(planter, Vector3(1.8, 0.64, 1.3), Vector3.ZERO + Vector3.UP * 0.32, concrete, Vector3.ZERO, "CivicPlanterBasin", 0.12)
+    ModelKit3D.add_beveled_box(planter, Vector3(1.48, 0.14, 1.0), Vector3.UP * 0.68, civic_dark_material(), Vector3.ZERO, "CivicPlanterSoil", 0.05)
+    for index in range(5):
+        var side := -1.0 if index % 2 == 0 else 1.0
+        ModelKit3D.add_capsule(planter, 0.09 + float(index % 2) * 0.03, 0.75 + float(index % 3) * 0.18, Vector3(-0.52 + float(index) * 0.25, 1.0 + float(index % 2) * 0.12, side * 0.16), vegetation if index % 2 == 0 else vegetation_light, Vector3(0.75, 1.0, 0.75), "CivicPlanterGrowth")
+
+
+func _add_civic_sign(parent: Node3D, position: Vector3, heading: float, pole: StandardMaterial3D, plate: StandardMaterial3D, light: StandardMaterial3D) -> void:
+    var sign := Node3D.new()
+    sign.name = "CivicRouteSign"
+    sign.position = position
+    sign.rotation.y = heading
+    parent.add_child(sign)
+    ModelKit3D.add_cylinder(sign, 0.06, 2.8, Vector3(0.0, 1.4, 0.0), pole, Vector3.ZERO, "CivicSignPost")
+    ModelKit3D.add_beveled_box(sign, Vector3(1.2, 0.52, 0.1), Vector3(0.0, 2.48, 0.0), plate, Vector3(0.0, 0.0, 0.03), "CivicSignPlate", 0.08)
+    ModelKit3D.add_box(sign, Vector3(0.72, 0.06, 0.035), Vector3(0.0, 2.48, -0.07), light, Vector3.ZERO, "CivicSignStripe")
+
+
+func _add_weed_cluster(parent: Node3D, position: Vector3, vegetation: StandardMaterial3D, vegetation_light: StandardMaterial3D, index: int) -> void:
+    var cluster := Node3D.new()
+    cluster.name = "StreetWeedCluster%02d" % index
+    cluster.position = position
+    cluster.rotation.y = float(index) * 0.41
+    parent.add_child(cluster)
+    for blade in range(4):
+        var material := vegetation if blade % 2 == 0 else vegetation_light
+        ModelKit3D.add_tapered_cylinder(cluster, 0.045, 0.015, 0.62 + float(blade % 2) * 0.22, Vector3(-0.18 + float(blade) * 0.12, 0.32, 0.0), material, Vector3(0.0, float(blade) * 0.14 - 0.2, float(blade) * 0.08 - 0.12), "StreetWeedBlade")
+
+
+func civic_dark_material() -> StandardMaterial3D:
+    return ModelKit3D.material(Color("1e2424"), 0.08, 0.92)
 
 
 func _build_lighting() -> void:
