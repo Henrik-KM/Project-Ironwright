@@ -289,6 +289,19 @@ identities. Manual channels remain finish-before-save.
 - both actor paths expose a short diagnostic reason and have regression
   coverage against a physical wall and floor.
 
+## Focused long-range route-recovery milestone
+
+- long-range groups now hold briefly when an organic blocks their current
+  street instead of freezing indefinitely;
+- after the bounded grace interval, the director inserts a deterministic
+  lateral side route, keeps the same formation abstraction and reports the
+  reason through the existing exception notification path;
+- after three unsuccessful recovery attempts, the group retreats through the
+  persistent route without delivering an incomplete objective;
+- recovery counters, active side-route state and physical route changes are
+  serialized with the in-flight operation, with complete-game regression
+  coverage for blockage, movement, retreat-ready state and save/load.
+
 ## Focused organic contact-feedback milestone
 
 - organic attack wind-up, landing and damage remain separate readable events;

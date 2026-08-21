@@ -7,6 +7,9 @@ signal component_recovered(component_id: StringName)
 signal site_discovery_requested(site_id: StringName)
 
 const OPERATIONS_PATH := "res://data/strategic_operations.json"
+const ROUTE_BLOCK_GRACE_SECONDS := 2.4
+const MAX_ROUTE_RECOVERIES := 3
+const ROUTE_RECOVERY_LATERAL_OFFSET := 11.0
 
 var run_state: RunState3D
 var progression: ProgressionDirector3D
@@ -192,6 +195,10 @@ func authorize(operation_id: StringName) -> bool:
         "work_clock": 0.0,
         "noise_clock": 0.0,
         "threat_clock": 0.0,
+        "blocked_clock": 0.0,
+        "route_recovery_count": 0,
+        "route_recovery_active": false,
+        "route_recovery_target": Vector3.ZERO,
         "pending_rewards": {},
     }
     autonomy_director.set_process(false)
@@ -228,29 +235,112 @@ func _update_active_operation(delta: float) -> void:
             active_operation["threat_clock"] = 0.0
             var operation_id := StringName(active_operation.get("id", &""))
             operation_changed.emit(operation_id, &"working", "The entire group arrived and began the objective under escort.")
+        elif state == &"retreating":
+            _abort("The cohesive group reached the Heartforge after abandoning an obstructed route.")
         else:
             _complete_return()
         return
 
     var anchor: Vector3 = active_operation.get("anchor", heartforge.global_position)
+    var route_recovery_active := bool(active_operation.get("route_recovery_active", false))
     var waypoint: Vector3 = route[route_index]
     var direction := waypoint - anchor
     direction.y = 0.0
     if direction.length() <= 0.75:
         active_operation["route_index"] = route_index + 1
+        if route_recovery_active:
+            active_operation["route_recovery_active"] = false
+            active_operation["route_recovery_target"] = Vector3.ZERO
+            active_operation["blocked_clock"] = 0.0
+            operation_changed.emit(
+                StringName(active_operation.get("id", &"")),
+                &"outbound",
+                "The group cleared the obstruction and resumed its authored route in formation."
+            )
         return
     direction = direction.normalized()
     active_operation["last_forward"] = direction
 
     var separation := _maximum_separation(anchor, members)
     var pace_multiplier := FormationRules3D.pace_multiplier(separation)
-    if _hostile_near(anchor, 10.0):
+    var hostile_blocking := state != &"retreating" and _hostile_near(anchor, 10.0)
+    if hostile_blocking and not route_recovery_active:
+        active_operation["blocked_clock"] = float(active_operation.get("blocked_clock", 0.0)) + delta
+        if float(active_operation.get("blocked_clock", 0.0)) >= ROUTE_BLOCK_GRACE_SECONDS:
+            if int(active_operation.get("route_recovery_count", 0)) >= MAX_ROUTE_RECOVERIES:
+                _begin_route_retreat("The route remained blocked after three bounded recovery attempts; the cohesive group is retreating with its machines intact.")
+                return
+            _insert_route_recovery(anchor, waypoint, route_index)
+            route_recovery_active = true
+            route = active_operation.get("route", PackedVector3Array()) as PackedVector3Array
+            waypoint = route[route_index]
+            direction = waypoint - anchor
+            direction.y = 0.0
+            if direction.length() > 0.01:
+                direction = direction.normalized()
+            active_operation["last_forward"] = direction
+            operation_changed.emit(
+                StringName(active_operation.get("id", &"")),
+                &"rerouting",
+                "Organic pressure blocked the street. The group is taking a bounded side route while preserving formation cohesion."
+            )
+        else:
+            pace_multiplier = 0.0
+    elif not hostile_blocking:
+        active_operation["blocked_clock"] = 0.0
+    if hostile_blocking and not route_recovery_active:
         pace_multiplier = 0.0
     var pace := _group_pace(members) * pace_multiplier
     anchor += direction * pace * delta
     active_operation["anchor"] = anchor
     _position_members(pace)
     _apply_reduced_detail(members)
+
+
+func _insert_route_recovery(anchor: Vector3, waypoint: Vector3, route_index: int) -> void:
+    var direction := waypoint - anchor
+    direction.y = 0.0
+    if direction.length() <= 0.01:
+        direction = active_operation.get("last_forward", Vector3.FORWARD)
+        direction.y = 0.0
+    direction = direction.normalized()
+    var lateral := Vector3(-direction.z, 0.0, direction.x)
+    var side := -1.0 if int(active_operation.get("route_recovery_count", 0)) % 2 == 0 else 1.0
+    var detour := anchor + direction * 5.0 + lateral * side * ROUTE_RECOVERY_LATERAL_OFFSET
+    var route: PackedVector3Array = active_operation.get("route", PackedVector3Array())
+    var rerouted := PackedVector3Array()
+    for index in range(route_index):
+        rerouted.append(route[index])
+    rerouted.append(detour)
+    for index in range(route_index, route.size()):
+        rerouted.append(route[index])
+    active_operation["route"] = rerouted
+    active_operation["route_recovery_count"] = int(active_operation.get("route_recovery_count", 0)) + 1
+    active_operation["route_recovery_active"] = true
+    active_operation["route_recovery_target"] = detour
+    active_operation["blocked_clock"] = 0.0
+
+
+func _begin_route_retreat(reason: String) -> void:
+    var route: PackedVector3Array = active_operation.get("route", PackedVector3Array())
+    var route_index := clampi(int(active_operation.get("route_index", 1)), 1, route.size())
+    var retreat_route := PackedVector3Array()
+    retreat_route.append(active_operation.get("anchor", heartforge.global_position))
+    for index in range(route_index - 1, -1, -1):
+        retreat_route.append(route[index])
+    if retreat_route.size() == 1:
+        retreat_route.append(heartforge.global_position)
+    active_operation["state"] = &"retreating"
+    active_operation["route"] = retreat_route
+    active_operation["route_index"] = 1
+    active_operation["route_recovery_active"] = false
+    active_operation["blocked_clock"] = 0.0
+    active_operation["last_forward"] = (retreat_route[1] - retreat_route[0]).normalized()
+    operation_changed.emit(
+        StringName(active_operation.get("id", &"")),
+        &"retreating",
+        "%s The group is returning through the persistent streets without delivering an incomplete objective." % reason
+    )
 
 
 func _apply_reduced_detail(members: Array[RobotUnit3D]) -> void:
@@ -322,6 +412,9 @@ func _begin_return() -> void:
     active_operation["route_index"] = 1
     active_operation["anchor"] = region_director.center(StringName(active_operation.get("region_id", &"region.heartforge_district")))
     active_operation["last_forward"] = Vector3(0.0, 0.0, 1.0)
+    active_operation["blocked_clock"] = 0.0
+    active_operation["route_recovery_active"] = false
+    active_operation["route_recovery_target"] = Vector3.ZERO
     operation_changed.emit(StringName(active_operation.get("id", &"")), &"returning", "The machines are returning through the same physical streets with the secured objective.")
 
 
@@ -570,6 +663,10 @@ func _serialize_active_operation() -> Dictionary:
         "work_clock": float(active_operation.get("work_clock", 0.0)),
         "noise_clock": float(active_operation.get("noise_clock", 0.0)),
         "threat_clock": float(active_operation.get("threat_clock", 0.0)),
+        "blocked_clock": float(active_operation.get("blocked_clock", 0.0)),
+        "route_recovery_count": int(active_operation.get("route_recovery_count", 0)),
+        "route_recovery_active": bool(active_operation.get("route_recovery_active", false)),
+        "route_recovery_target": _vector_to_array(active_operation.get("route_recovery_target", Vector3.ZERO)),
         "pending_rewards": (active_operation.get("pending_rewards", {}) as Dictionary).duplicate(true),
     }
 
@@ -605,6 +702,10 @@ func _restore_active_operation(raw_data: Variant) -> void:
         "work_clock": maxf(0.0, float(saved.get("work_clock", 0.0))),
         "noise_clock": maxf(0.0, float(saved.get("noise_clock", 0.0))),
         "threat_clock": maxf(0.0, float(saved.get("threat_clock", 0.0))),
+        "blocked_clock": maxf(0.0, float(saved.get("blocked_clock", 0.0))),
+        "route_recovery_count": clampi(int(saved.get("route_recovery_count", 0)), 0, MAX_ROUTE_RECOVERIES),
+        "route_recovery_active": bool(saved.get("route_recovery_active", false)),
+        "route_recovery_target": _array_to_vector(saved.get("route_recovery_target", [0.0, 0.0, 0.0])),
         "pending_rewards": (saved.get("pending_rewards", {}) as Dictionary).duplicate(true),
     }
     for index in range(members.size()):

@@ -80,6 +80,39 @@ func _run_all() -> void:
     _expect(FileAccess.file_exists(TEST_SAVE_PATH), "The complete-world save hook must write while a long-range group is in flight.")
     world._load_game()
     _expect(StringName(world.long_operation_director.active_operation.get("id", &"")) == checkpoint_id, "Loading must restore the active long-range operation identity.")
+    var route_blocker := Node3D.new()
+    route_blocker.name = "RouteRecoveryOrganicBlocker"
+    route_blocker.add_to_group(&"organic_enemies")
+    world.add_child(route_blocker)
+    route_blocker.global_position = world.long_operation_director.active_operation.get("anchor", world.heartforge.global_position)
+    world.long_operation_director._update_active_operation(2.5)
+    _expect(int(world.long_operation_director.active_operation.get("route_recovery_count", 0)) == 1, "A sustained organic blockage must trigger one bounded route recovery attempt.")
+    _expect(bool(world.long_operation_director.active_operation.get("route_recovery_active", false)), "A route recovery must remain an explicit active formation decision until the side route is cleared.")
+    var recovery_anchor: Vector3 = world.long_operation_director.active_operation.get("anchor", world.heartforge.global_position)
+    route_blocker.remove_from_group(&"organic_enemies")
+    route_blocker.queue_free()
+    await process_frame
+    world.long_operation_director._update_active_operation(5.0)
+    _expect(world.long_operation_director.active_operation.get("anchor", recovery_anchor).distance_to(recovery_anchor) > 0.1, "A recovered group must resume physical movement instead of remaining frozen at the blockage.")
+    world._save_game()
+    world._load_game()
+    _expect(int(world.long_operation_director.active_operation.get("route_recovery_count", 0)) == 1, "Route-recovery progress must survive an in-flight operation save/load.")
+    var recovered_operation_snapshot := world.long_operation_director.to_dictionary()
+    var retreat_blocker := Node3D.new()
+    retreat_blocker.name = "RouteRecoveryRetreatBlocker"
+    retreat_blocker.add_to_group(&"organic_enemies")
+    world.add_child(retreat_blocker)
+    retreat_blocker.global_position = world.long_operation_director.active_operation.get("anchor", world.heartforge.global_position)
+    world.long_operation_director.active_operation["route_recovery_count"] = 3
+    world.long_operation_director.active_operation["route_recovery_active"] = false
+    world.long_operation_director.active_operation["blocked_clock"] = 0.0
+    world.long_operation_director._update_active_operation(2.5)
+    _expect(StringName(world.long_operation_director.active_operation.get("state", &"")) == &"retreating", "A group that exhausts bounded side routes must enter explainable physical retreat instead of looping forever.")
+    retreat_blocker.remove_from_group(&"organic_enemies")
+    retreat_blocker.queue_free()
+    await process_frame
+    world.long_operation_director.restore_from_dictionary(recovered_operation_snapshot)
+    _expect(StringName(world.long_operation_director.active_operation.get("state", &"")) == &"outbound", "Restoring the checkpoint after a diagnostic retreat decision must resume the saved outbound operation.")
     _expect(_finish_active_operation(world), "A checkpointed long-range operation must resume and complete physically.")
     _expect(world.run_state.rare_cores == cores_before_west + 1, "Checkpointed operation rewards must be delivered only after physical return.")
     _cleanup_save_files()
