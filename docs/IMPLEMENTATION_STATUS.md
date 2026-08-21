@@ -1302,6 +1302,17 @@ presentation restore, with release regression coverage for that migration path.
   while preserving the rule that district breadth does not create collision,
   storage, routes, jobs or recurring player maintenance.
 
+## Focused Heartforge focal-model refinement milestone
+
+- added a bounded high-definition reactor/control layer to the Heartforge,
+  including an upper collar, radial heat fins, a player-facing louvered control
+  face, tri-signal lenses and cable branches;
+- kept the new detail presentation-only so the existing collision, interaction
+  radius, progression tiers, damage state and adaptive geometry remain stable;
+- added native aesthetic coverage for the focal layer and its stable detail
+  sockets so the opening machine reads as a maintained reactor rather than a
+  broad cylindrical placeholder.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.
