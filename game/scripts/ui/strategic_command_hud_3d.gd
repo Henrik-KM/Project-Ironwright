@@ -384,6 +384,16 @@ func _refresh_outposts() -> void:
     secondary_button.text = "AUTHORIZE AUTONOMOUS UPGRADE"
     secondary_button.visible = true
 
+    if heartforge_tier < 2:
+        selection_label.text = "PROTOCOLS LOCKED"
+        detail_label.text = "Autonomous outposts unlock at Heartforge Tier 2. Recover a Cognition Core and authorize the next Heartforge evolution before asking machines to establish a fixed support site."
+        cost_label.text = "Status: locked by Heartforge progression · no site placement or worker management is available."
+        primary_button.text = "OUTPOST PROTOCOLS LOCKED"
+        primary_button.disabled = true
+        secondary_button.text = "OUTPOST PROTOCOLS LOCKED"
+        secondary_button.disabled = true
+        return
+
     if sites.is_empty():
         selection_label.text = "NO DISCOVERED SITES"
         detail_label.text = "Pathfinders must discover viable foundations through physical excursions. Outposts cannot be placed freely and do not claim territory."

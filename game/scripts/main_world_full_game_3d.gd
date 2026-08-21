@@ -168,12 +168,6 @@ func _open_evolution_hud() -> void:
 func _open_outpost_hud() -> void:
     if player.is_channeling() or hud.forge_open:
         return
-    if progression.heartforge_tier < 2:
-        hud.push_notification("OUTPOST PROTOCOLS LOCKED · RETURN A COGNITION CORE AND EVOLVE THE HEARTFORGE")
-        return
-    if outpost_director.discovered_sites().is_empty():
-        hud.push_notification("NO OUTPOST SITES DISCOVERED · COMPLETE A PHYSICAL SURVEY EXPEDITION")
-        return
     strategic_hud.open_outposts()
     player.input_enabled = false
 
