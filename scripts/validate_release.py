@@ -59,6 +59,18 @@ TEXTURE_NAMES = [
     "rust_panel.png",
 ]
 
+NORMAL_TEXTURE_NAMES = [
+    "asphalt_wet_normal.png",
+    "brick_ruin_normal.png",
+    "chitin_normal.png",
+    "concrete_wet_normal.png",
+    "grime_decal_normal.png",
+    "membrane_normal.png",
+    "metal_brushed_normal.png",
+    "moss_growth_normal.png",
+    "rust_panel_normal.png",
+]
+
 AUDIO_NAMES = [
     "ambience_city.wav",
     "ambience_sanctuary.wav",
@@ -93,6 +105,11 @@ def validate_release_required_paths() -> None:
     missing += [
         f"game/assets/release/textures/{name}"
         for name in TEXTURE_NAMES
+        if not (ROOT / "game/assets/release/textures" / name).is_file()
+    ]
+    missing += [
+        f"game/assets/release/textures/{name}"
+        for name in NORMAL_TEXTURE_NAMES
         if not (ROOT / "game/assets/release/textures" / name).is_file()
     ]
     missing += [
@@ -217,7 +234,7 @@ def validate_release_content_breadth() -> None:
 
 def validate_release_assets() -> None:
     texture_root = ROOT / "game/assets/release/textures"
-    for name in TEXTURE_NAMES:
+    for name in [*TEXTURE_NAMES, *NORMAL_TEXTURE_NAMES]:
         path = texture_root / name
         data = path.read_bytes()
         if len(data) < 2_000 or not data.startswith(b"\x89PNG\r\n\x1a\n"):

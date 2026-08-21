@@ -144,6 +144,15 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         "res://assets/release/textures/metal_brushed.png",
         "res://assets/release/textures/moss_growth.png",
         "res://assets/release/textures/rust_panel.png",
+        "res://assets/release/textures/asphalt_wet_normal.png",
+        "res://assets/release/textures/brick_ruin_normal.png",
+        "res://assets/release/textures/chitin_normal.png",
+        "res://assets/release/textures/concrete_wet_normal.png",
+        "res://assets/release/textures/grime_decal_normal.png",
+        "res://assets/release/textures/membrane_normal.png",
+        "res://assets/release/textures/metal_brushed_normal.png",
+        "res://assets/release/textures/moss_growth_normal.png",
+        "res://assets/release/textures/rust_panel_normal.png",
     ]
     for path in texture_paths:
         _expect(ResourceLoader.exists(path), "Release texture must import: %s" % path)
@@ -164,6 +173,7 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         _expect(load(path) is AudioStream, "Release audio must load as AudioStream: %s" % path)
 
     _expect(world.release_world_art.textures.size() == 9, "Release art director must load all nine texture families.")
+    _expect(world.release_world_art.normal_textures.size() == 9, "Release art director must load normal relief for all nine texture families.")
     _expect(world.release_world_art.regions_dressed >= 12, "Every persistent region must receive release dressing.")
     _expect(world.release_world_art.meshes_textured > 30, "The existing world must receive a broad textured material pass.")
     _expect(world.release_audio.stream_library.size() >= 13, "Release audio director must load music, ambience and effects.")
@@ -207,6 +217,8 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     var opening_robot := get_first_node_in_group(&"friendly_robots") as Node
     var opening_authored_mesh := _find_first_mesh(opening_robot.get_node_or_null("RobotModel/BulwarkAuthoredModel") if opening_robot != null else null)
     _expect(opening_authored_mesh != null and opening_authored_mesh.get_meta(&"release_material_family", &"") == &"metal", "Authored Bulwark shell meshes must receive the release metal material pass.")
+    var opening_material := opening_authored_mesh.material_override as StandardMaterial3D if opening_authored_mesh != null else null
+    _expect(opening_material != null and opening_material.normal_enabled and opening_material.normal_texture != null, "Authored Bulwark shell materials must carry the generated normal-relief companion.")
     var late_robot := world._spawn_robot(&"salvager", world.player.global_position + Vector3(3.0, 0.0, -3.0), 1)
     var late_enemy := world._spawn_enemy(world.player.global_position + Vector3(-4.0, 0.0, -4.0), &"veilstalker")
     var late_authored_family := world._spawn_enemy(world.player.global_position + Vector3(-6.0, 0.0, -2.0), &"rootweaver")

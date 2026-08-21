@@ -1181,6 +1181,9 @@ Remaining production work includes:
 
 - authored production models, rigs, animations, VFX and encounter-space art
   beyond the current procedural/high-definition presentation library;
+- generated normal-relief companions are now applied to every release texture
+  family so close tactical surfaces carry authored micro-form under the same
+  warm/cool lighting hierarchy;
 - substantially more environmental detail and authored encounter spaces;
 - profiling and tuning of active/reduced-detail simulation at much larger world
   and entity scale;
