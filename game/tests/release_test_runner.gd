@@ -251,6 +251,12 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         _expect(waterworks_dressing.find_child("PumpWalkway00", true, false) != null and waterworks_dressing.find_child("PumpWalkwayGrate00_00", true, false) != null, "Release waterworks dressing must expose layered walkways and grates.")
         _expect(waterworks_dressing.find_child("PumpGantry00", true, false) != null and waterworks_dressing.find_child("PumpGantryCrossbar00", true, false) != null, "Release waterworks dressing must expose gantry hardware.")
         _expect(waterworks_dressing.find_child("PumpHousing00", true, false) != null and waterworks_dressing.find_child("PumpHousingLouver00", true, false) != null and waterworks_dressing.find_child("PumpControlPanel00", true, false) != null, "Release waterworks dressing must expose pump housing and controls.")
+    var tenement_dressing := world.release_world_art.dressing_root.find_child("HighDefinitionTenementDressing", true, false) if world.release_world_art.dressing_root != null else null
+    _expect(tenement_dressing != null, "Release tenement dressing must expose a bounded high-definition residential layer.")
+    if tenement_dressing != null:
+        _expect(tenement_dressing.find_child("TenementBalcony00", true, false) != null and tenement_dressing.find_child("TenementBalconyRail00", true, false) != null, "Release tenement dressing must expose layered balcony and railing detail.")
+        _expect(tenement_dressing.find_child("TenementBalconyPost00_00", true, false) != null and tenement_dressing.find_child("TenementBalconyService00", true, false) != null, "Release tenement dressing must expose balcony support and service hardware.")
+        _expect(tenement_dressing.find_child("TenementClothesline00", true, false) != null and tenement_dressing.find_child("TenementHangingCloth00_00", true, false) != null, "Release tenement dressing must expose readable residential clothing detail.")
 
 
 func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
