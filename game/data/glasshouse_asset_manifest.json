@@ -6,9 +6,15 @@
   "required_nodes": [
     "GlasshouseModel",
     "GlasshouseFrameBay0",
+    "GlasshouseRoofRib0",
+    "GlasshousePaneLatch0",
     "GlasshouseClimateLouver",
+    "GlasshouseClimateActuator",
     "GlasshouseBrokenSkylight",
     "GlasshouseGrowthBed0",
+    "GlasshouseBedEdge0",
+    "GlasshouseGrowthTendril0_0",
+    "GlasshouseLightHousing0",
     "GlasshouseServiceDoor",
     "ProductionAssetMarker"
   ],

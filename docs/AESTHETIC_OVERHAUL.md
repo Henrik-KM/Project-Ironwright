@@ -71,6 +71,10 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
   organic tendrils. The detail pass strengthens the market, flood-channel and
   ecological-breach read without changing the landmark's collision, operation
   or salvage contract.
+- Municipal Glasshouse now carries denser roof ribs, glazing latches, climate
+  actuator hardware, bed service edges, grow-light housings and organic
+  tendrils. The detail pass strengthens the shattered greenhouse, cultivation
+  and mycelial-containment read without changing its operation or collision.
 - the release material pass remains live for late-created robots, organic
   families, outpost upgrades and discovered-region dressing, so the visual
   language does not regress after the opening scene.
