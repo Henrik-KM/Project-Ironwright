@@ -1138,6 +1138,9 @@ final retail art, animation and external visual approval are still required.
   damage, ecology, collision or persistence contracts;
 - added native aesthetic coverage for every species signature while retaining
   the separate commercial gate for final recorded authored sound assets.
+- mirrored species-specific pitch routing in the release-candidate audio
+  director so the shipping entrypoint does not collapse hostile identity back
+  to one generic impact response.
 
 ## Focused tiered-nest anatomy presentation milestone
 
