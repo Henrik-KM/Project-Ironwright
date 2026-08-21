@@ -94,7 +94,9 @@ def main() -> None:
 
     sluice = add_node("RiverworksSluiceGate", mesh_ids["Sluice"], (0.0, 2.0, 5.8), extras={"socket_type": "sluice_gate"})
     for index, x in enumerate((-2.0, 0.0, 2.0)):
-        add_node("RiverworksSluiceRib%d" % index, mesh_ids["SluiceRib"], (x, 2.0, 5.63), parent=sluice)
+        # Sluice ribs inherit the gate's position. These offsets must remain
+        # local or the ribs drift away from the gate in the world.
+        add_node("RiverworksSluiceRib%d" % index, mesh_ids["SluiceRib"], (x, 0.0, -0.17), parent=sluice)
     add_node("RiverworksSluiceSignal", mesh_ids["Signal"], (0.0, 4.32, 5.8), extras={"socket_type": "flow_signal"})
     for index, (x, z) in enumerate(((-5.5, 6.6), (5.5, 6.6), (-5.5, -2.8), (5.5, -2.8))):
         add_node("RiverworksGrowth%d" % index, mesh_ids["Growth"], (x, 0.45, z), scale=(1.0, 0.7, 1.15), extras={"socket_type": "ecology_growth"})

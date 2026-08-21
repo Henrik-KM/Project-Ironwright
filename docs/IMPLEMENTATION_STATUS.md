@@ -643,6 +643,15 @@ identities. Manual channels remain finish-before-save.
   ownership; the refinement remains presentation-only and was live-reviewed at
   tactical distance.
 
+## Authored landmark socket continuity refinement
+
+- corrected the local transforms for the Tram Graveyard signal lamp, East
+  Tenements fire-escape rail and Riverworks sluice ribs so parented detail stays
+  attached to its authored structure under landmark transforms;
+- added native aesthetic regression coverage for those parent-child spatial
+  relationships without changing collision, traversal, ecology or operation
+  ownership.
+
 ## Focused Tram Graveyard authored-space milestone
 
 - added the original high-definition `tram.graveyard.v1` shell with damaged

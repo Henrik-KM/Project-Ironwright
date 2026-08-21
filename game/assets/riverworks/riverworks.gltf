@@ -255,8 +255,8 @@
       "name": "RiverworksSluiceRib0",
       "translation": [
         -2.0,
-        2.0,
-        5.63
+        0.0,
+        -0.17
       ],
       "mesh": 6
     },
@@ -264,8 +264,8 @@
       "name": "RiverworksSluiceRib1",
       "translation": [
         0.0,
-        2.0,
-        5.63
+        0.0,
+        -0.17
       ],
       "mesh": 6
     },
@@ -273,8 +273,8 @@
       "name": "RiverworksSluiceRib2",
       "translation": [
         2.0,
-        2.0,
-        5.63
+        0.0,
+        -0.17
       ],
       "mesh": 6
     },
