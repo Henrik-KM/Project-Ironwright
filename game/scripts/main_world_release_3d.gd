@@ -337,6 +337,9 @@ func _connect_release_services() -> void:
     transactional_save_service.migration_completed.connect(func(slot_id: StringName, legacy_sources: Array[String]) -> void:
         hud.push_notification(localization_service.text("save.migrated"))
     )
+    transactional_save_service.schema_migrated.connect(func(slot_id: StringName, from_version: int, to_version: int, fields: Array[String]) -> void:
+        hud.push_notification("%s · %d→%d" % [localization_service.text("save.migrated"), from_version, to_version])
+    )
 
     balance_director.profile_changed.connect(func(profile_id: StringName, profile_data: Dictionary) -> void:
         _apply_balance_profile()
