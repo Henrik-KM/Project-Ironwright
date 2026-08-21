@@ -98,6 +98,10 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
   mast collar, cabin window and console framing, service-deck posts, cable
   anchors, and survey-light housings. The detail pass strengthens the survey
   identity without changing the calibration operation contract.
+- Riverworks now carries pump service panels and braces, an impeller hub,
+  maintenance handle, sluice rail and latch hardware, flow-signal housing,
+  cable clamps, and organic tendrils. The detail pass strengthens the waterworks
+  identity without changing the pump operation contract.
 - the release material pass remains live for late-created robots, organic
   families, outpost upgrades and discovered-region dressing, so the visual
   language does not regress after the opening scene.
