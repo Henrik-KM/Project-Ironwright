@@ -84,7 +84,7 @@ func _setup_vertical_slice_presentation() -> void:
         hud.notifications.clear()
         hud.notification_ages.clear()
         hud._refresh_notifications()
-        hud.push_notification("PRE-ALPHA VERTICAL SLICE · HEARTFORGE DISTRICT PRESENTATION IN ACTIVE PRODUCTION")
+        hud.push_notification("HEARTFORGE DISTRICT · KEEP THE BULWARK CLOSE")
     run_state.log_event("Presentation status: pre-alpha production prototype. The Heartforge district is the current representative vertical slice.")
     run_state.log_event("The Heartforge district now uses the representative vertical presentation slice. The remainder of the world inherits this quality only after the slice passes human review.")
 
@@ -394,7 +394,7 @@ func _start_release_world() -> void:
     if run_variation_director != null:
         run_variation_director.ensure_current_variant()
         hud.push_notification("WORLD CONDITION · %s" % run_variation_director.current_display_name())
-    hud.push_notification("PROJECT IRONWRIGHT 1.0 RELEASE CANDIDATE · %s" % balance_director.current_profile_id.to_upper())
+    hud.push_notification("SURVIVAL PROFILE · THE TOWN IS LISTENING")
 
 
 func _set_tactical_hud_visible(should_show: bool) -> void:

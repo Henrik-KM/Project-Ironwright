@@ -15,7 +15,7 @@ func _ready() -> void:
     _setup_full_game_services()
     _extend_forge_interface()
     run_state.log_event("Full-game progression is active. The North Ruins are now the beginning rather than the ending.")
-    hud.push_notification("FULL-GAME FOUNDATION ONLINE · T EVOLUTION · O OUTPOSTS AFTER DISCOVERY")
+    hud.push_notification("MACHINE SOCIETY AWAKENING · T EVOLUTION · O OUTPOSTS AFTER DISCOVERY")
 
 
 func _process(delta: float) -> void:

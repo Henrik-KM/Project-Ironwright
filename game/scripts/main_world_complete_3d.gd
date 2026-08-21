@@ -33,7 +33,7 @@ func _ready() -> void:
     progression.set_context_provider(Callable(self, "_progression_context"))
     hud.help_label.text = "WASD MOVE · E INTERACT · T EVOLVE · O OUTPOSTS · P OPERATIONS · L ARCHIVE · V ENDGAME · F FOLLOW · M MAP · F5/F9 SAVE/LOAD"
     run_state.log_event("The complete systemic run is active. Survive, expand autonomy, recover the root components, and choose how the town ends.")
-    hud.push_notification("COMPLETE GAME ALPHA ONLINE · P LONG-RANGE OPERATIONS · V FINAL PROTOCOLS")
+    hud.push_notification("TOWN NETWORKS OPEN · P LONG-RANGE OPERATIONS · V FINAL PROTOCOLS")
 
 
 func _process(delta: float) -> void:

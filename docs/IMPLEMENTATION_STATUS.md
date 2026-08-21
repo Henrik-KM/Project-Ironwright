@@ -1640,3 +1640,13 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   flashes while preserving the underlying combat feedback and captions;
 - added release regression coverage and verified the controls in the exported
   Windows build through the real settings screen.
+
+## Focused diegetic opening-report milestone
+
+- removed internal alpha, foundation, overhaul and release-candidate status
+  labels from the opening notification stack and title-screen version line;
+- replaced them with restrained Heartforge, town-network and machine-society
+  reports that preserve actionable controls without exposing production
+  workflow language to the player;
+- added first-session and release regression coverage for the user-visible
+  report and title surfaces.

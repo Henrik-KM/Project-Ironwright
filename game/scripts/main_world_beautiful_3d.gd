@@ -17,4 +17,4 @@ func _ready() -> void:
     add_child(aesthetic_director)
     run_state.log_event("Blue-hour light reaches the streets. The Heartforge is still small, but it finally feels inhabited.")
     if hud != null:
-        hud.push_notification("AESTHETIC OVERHAUL ONLINE · WARM SANCTUARY · READABLE BLUE-HOUR CITY · PROCEDURAL ANIMATION")
+        hud.push_notification("HEARTHFORGE DISTRICT · WARM LIGHT HOLDS THE STREET")
