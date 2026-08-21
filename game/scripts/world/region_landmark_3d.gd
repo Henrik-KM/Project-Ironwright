@@ -638,9 +638,13 @@ func _animate_region_details() -> void:
             node.rotation.z += sin(local_phase * 0.65) * 0.18
         elif node_name.begins_with("ArchiveRoofBeaconLight"):
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.75) * 0.09)
+        elif node_name.begins_with("ArchiveBeaconCollar"):
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.55) * 0.06)
         elif node_name.begins_with("ArchiveOrganicCreep"):
             node.rotation.y += sin(local_phase * 0.82) * 0.06
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.18) * 0.07)
+        elif node_name.begins_with("ArchiveOrganicTendril"):
+            node.rotation.z += sin(local_phase * 1.0) * 0.11
         elif node_name.begins_with("TenementOrganicCreep"):
             node.rotation.y += sin(local_phase * 0.8) * 0.06
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.15) * 0.07)
@@ -683,7 +687,9 @@ func _is_region_motion_name(node_name: String) -> bool:
         "GlasshouseGrowthTendril",
         "GlasshouseClimateActuator",
         "ArchiveRoofBeaconLight",
+        "ArchiveBeaconCollar",
         "ArchiveOrganicCreep",
+        "ArchiveOrganicTendril",
         "TenementOrganicCreep",
         "FloodMarketGrowthLight",
         "FloodMarketWaterline",

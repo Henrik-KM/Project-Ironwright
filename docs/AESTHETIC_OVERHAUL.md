@@ -82,6 +82,10 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
   braces, laundry lines, roof-tank service hardware, light housings and organic
   tendrils. The detail pass strengthens the lived-in vertical residential read
   without changing the roofline operation or route contract.
+- North Ruins now carry civic window frames and mullions, layered vault-door
+  framing, a records plaque, roof-beacon service hardware, shelf filing rails,
+  and organic tendrils. The detail pass strengthens the archive identity
+  without changing the expedition or salvage contract.
 - the release material pass remains live for late-created robots, organic
   families, outpost upgrades and discovered-region dressing, so the visual
   language does not regress after the opening scene.
