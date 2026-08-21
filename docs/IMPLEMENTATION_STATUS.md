@@ -246,6 +246,16 @@ identities. Manual channels remain finish-before-save.
 - removed the oversized anchored portrait from the tactical render while
   retaining the source texture and node contract for non-tactical presentation.
 
+## Focused opening focal-composition milestone
+
+- lowered and tightened the release opening camera to a 15.2 height and 8.8
+  distance so the Mechromancer and Bulwark carry the foreground while the
+  Heartforge, rain and amber escape lane remain visible;
+- kept directional remote framing, threat-aware height, line-of-sight recovery,
+  collision, interaction reach and movement lead unchanged;
+- added a stricter native framing assertion so future presentation changes do
+  not let the opening forge dominate the focal cast again.
+
 ## Focused Mechromancer asset milestone
 
 - replaced the procedural player mannequin with the original

@@ -58,8 +58,11 @@ func _process(delta: float) -> void:
 func _setup_vertical_slice_presentation() -> void:
     # Keep the Heartforge readable while giving the Mechromancer and companion
     # enough screen presence for their authored silhouettes to carry the frame.
-    camera_height = 16.8
-    camera_distance = 10.0
+    # Bring the vulnerable technician and indispensable companion into the
+    # opening's visual foreground while retaining the forge, weather and
+    # amber escape lane as readable context.
+    camera_height = 15.2
+    camera_distance = 8.8
     if camera != null:
         camera.fov = 44.0
         camera.near = 0.35
