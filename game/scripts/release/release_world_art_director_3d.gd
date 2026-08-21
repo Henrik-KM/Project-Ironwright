@@ -491,11 +491,82 @@ func _dress_research(root: Node3D) -> void:
     var concrete := _textured_material(&"concrete", Color("3f4243"), 0.0, 0.7)
     var metal := _textured_material(&"metal", Color("3c4749"), 0.65, 0.42)
     var glow := _emissive_material(Color("6bc9d0"), 2.6)
+    var research_detail := Node3D.new()
+    research_detail.name = "HighDefinitionResearchDressing"
+    root.add_child(research_detail)
+    var dark_metal := _textured_material(&"metal", Color("202c30"), 0.78, 0.34)
+    var warning := _textured_material(&"rust", Color("70412e"), 0.38, 0.68)
+    var glass := ModelKit3D.material(Color("1c5660"), 0.26, 0.24, Color("6be1e6"), 1.2)
     for index in range(8):
         var angle := TAU * float(index) / 8.0
-        ModelKit3D.add_box(root, Vector3(3.2, 2.0, 1.4), Vector3(cos(angle) * 10.0, 1.0, sin(angle) * 10.0), concrete, Vector3(0.0, -angle, 0.0), "LabConsole")
-        ModelKit3D.add_box(root, Vector3(1.8, 0.08, 0.8), Vector3(cos(angle) * 9.2, 1.4, sin(angle) * 9.2), glow, Vector3(0.0, -angle, 0.0), "LabDisplay")
-        ModelKit3D.add_cylinder(root, 0.2, 3.4, Vector3(cos(angle) * 6.0, 1.7, sin(angle) * 6.0), metal, Vector3.ZERO, "LabCylinder")
+        var console := ModelKit3D.add_beveled_box(
+            research_detail,
+            Vector3(3.2, 2.0, 1.4),
+            Vector3(cos(angle) * 10.0, 1.0, sin(angle) * 10.0),
+            concrete,
+            Vector3(0.0, -angle, 0.0),
+            "LabConsole%02d" % index,
+            0.16
+        )
+        # The research identity is a containment workstation with readable
+        # ports and instrument panels, not a new simulated laboratory job.
+        ModelKit3D.add_surface_panel(
+            console,
+            Vector3(1.8, 0.72, 0.1),
+            Vector3(0.0, 0.68, -0.72),
+            dark_metal,
+            glow,
+            Vector3.ZERO,
+            "LabDisplay%02d" % index
+        )
+        ModelKit3D.add_louvered_panel(
+            console,
+            Vector3(1.3, 0.82, 0.12),
+            Vector3(0.0, -0.18, 0.72),
+            dark_metal,
+            warning,
+            Vector3.ZERO,
+            "LabCoolingLouver%02d" % index,
+            3
+        )
+        ModelKit3D.add_surface_panel(
+            console,
+            Vector3(0.74, 0.56, 0.1),
+            Vector3(1.18, 0.42, 0.72),
+            metal,
+            warning,
+            Vector3.ZERO,
+            "LabSamplePort%02d" % index
+        )
+        var vessel_position := Vector3(cos(angle) * 6.0, 1.7, sin(angle) * 6.0)
+        ModelKit3D.add_tapered_cylinder(
+            research_detail,
+            0.2,
+            0.27,
+            3.4,
+            vessel_position,
+            metal,
+            Vector3.ZERO,
+            "LabContainmentVessel%02d" % index
+        )
+        ModelKit3D.add_cylinder(
+            research_detail,
+            0.09,
+            2.6,
+            vessel_position + Vector3.UP * 0.05,
+            glass,
+            Vector3.ZERO,
+            "LabContainmentCore%02d" % index
+        )
+        ModelKit3D.add_beveled_box(
+            research_detail,
+            Vector3(0.68, 0.12, 0.68),
+            vessel_position + Vector3.UP * 1.78,
+            warning,
+            Vector3.ZERO,
+            "LabContainmentCap%02d" % index,
+            0.18
+        )
 
 
 func _dress_cistern(root: Node3D) -> void:

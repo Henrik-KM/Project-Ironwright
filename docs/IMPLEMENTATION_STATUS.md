@@ -1407,6 +1407,16 @@ presentation restore, with release regression coverage for that migration path.
 - added release coverage for the stable stall, canopy, counter, display and
   awning detail sockets.
 
+## Focused remote research-dressing refinement milestone
+
+- replaced eight release-dressed laboratory console boxes with bounded beveled
+  housings, instrument displays, cooling louvers, sample ports and layered
+  containment vessels;
+- preserved the presentation-only research-dressing contract and existing
+  Buried Laboratories landmark, operation, ecology and progression state;
+- added release coverage for the stable console, display, cooling, sample and
+  containment detail sockets.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.
