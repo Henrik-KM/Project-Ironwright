@@ -94,6 +94,7 @@ func _run_all() -> void:
     _expect(strategic.selection_label.text == "PROTOCOLS LOCKED", "The locked outpost surface must identify the progression gate instead of disappearing behind a toast.")
     _expect("Heartforge Tier 2" in strategic.detail_label.text, "The locked outpost surface must explain the next concrete progression step.")
     _expect(strategic.primary_button.disabled and strategic.secondary_button.disabled, "A locked outpost surface must remain informative but non-actionable.")
+    _expect(strategic.scroll.horizontal_scroll_mode == ScrollContainer.SCROLL_MODE_DISABLED, "Strategic copy must wrap inside the release panel instead of exposing a horizontal scrollbar.")
     strategic.close()
 
     world._process(0.1)

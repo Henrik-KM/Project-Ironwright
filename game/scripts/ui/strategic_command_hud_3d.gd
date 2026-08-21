@@ -66,6 +66,7 @@ func _build_ui() -> void:
     scroll.name = "StrategicScroll"
     scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+    scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
     panel.add_child(scroll)
 
     var box := VBoxContainer.new()
