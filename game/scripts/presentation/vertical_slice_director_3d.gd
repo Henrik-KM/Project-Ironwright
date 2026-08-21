@@ -359,6 +359,29 @@ func _build_service_lane() -> void:
         ModelKit3D.add_box(lane, Vector3(0.12, 0.025, 1.8), Vector3(-2.25, 0.145, float(z)), warning_paint, Vector3.ZERO, "ServiceEdgeMark")
         ModelKit3D.add_box(lane, Vector3(0.12, 0.025, 1.8), Vector3(2.25, 0.145, float(z)), warning_paint, Vector3.ZERO, "ServiceEdgeMark")
 
+    # The first objective needs one unmistakable landmark beyond the forge.
+    # This is a visual affordance only: the lane remains owned by the
+    # persistent world and receives no new collision, routing or task state.
+    var threshold_arch := Node3D.new()
+    threshold_arch.name = "AmberRouteThresholdArch"
+    lane.add_child(threshold_arch)
+    var arch_dark := ModelKit3D.material(Color("1a2528"), 0.58, 0.5)
+    var arch_amber := ModelKit3D.material(Color("71472a"), 0.28, 0.42, Color("f2a65a"), 1.15)
+    for side in [-1.0, 1.0]:
+        _add_beam(threshold_arch, Vector3(side * 2.52, 0.25, -9.6), Vector3(side * 2.18, 5.8, -9.6), 0.11, arch_dark, "RouteThresholdPost")
+    _add_beam(threshold_arch, Vector3(-2.18, 5.8, -9.6), Vector3(2.18, 5.8, -9.6), 0.13, arch_dark, "RouteThresholdHeader")
+    ModelKit3D.add_beveled_box(threshold_arch, Vector3(3.35, 0.16, 0.08), Vector3(0.0, 5.5, -9.72), arch_amber, Vector3.ZERO, "RouteThresholdAmberBand", 0.12)
+    for index in range(3):
+        var marker_z := -13.0 - float(index) * 4.7
+        var marker := ModelKit3D.add_beveled_box(lane, Vector3(0.82, 0.06, 0.26), Vector3(0.0, 0.19, marker_z), arch_amber, Vector3.ZERO, "AmberRouteChevron", 0.1)
+        marker.rotation.y = PI * 0.5
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_cylinder(lane, 0.08, 1.75, Vector3(side * 2.62, 0.95, -5.4), arch_dark, Vector3.ZERO, "AmberRouteGuideBeacon")
+        ModelKit3D.add_sphere(lane, 0.22, Vector3(side * 2.62, 1.92, -5.4), arch_amber, Vector3(1.0, 0.72, 1.0), "AmberRouteGuideLamp")
+    var threshold_light := _add_light(threshold_arch, Vector3(0.0, 5.42, -9.82), Color("f2a65a"), 0.46, 7.5, false)
+    threshold_light.set_meta(&"vertical_base_energy", 0.46)
+    practical_lights.append(threshold_light)
+
 
 func _build_street_encounter_dressing() -> void:
     var dressing := Node3D.new()

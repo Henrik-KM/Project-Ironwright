@@ -12,6 +12,8 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - weak automatic Mechromancer pistol;
 - indispensable Bulwark companion;
 - world-space wreck marker and route guidance;
+- raised amber route threshold, near guide beacons and repeated lane chevrons
+  keep the first salvage objective legible from the starting tactical frame;
 - timed manual salvage that disables attack and emits ecological noise;
 - timed manual early robot fabrication;
 - Scrapper, Warden, Pathfinder, Engineer and Bulwark frames;
