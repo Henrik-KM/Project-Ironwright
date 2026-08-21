@@ -81,27 +81,27 @@ AUTHORED_ORGANIC_ASSETS = {
     "roofleaper": {
         "asset_id": "roofleaper.ambusher.v1",
         "root": "RoofleaperModel",
-        "required": ["RoofleaperModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "RoofleaperCrown", "RoofleaperWingL", "ProductionAssetMarker"],
+        "required": ["RoofleaperModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "RoofleaperCrown", "RoofleaperWingL", "RoofleaperFineVeinL", "RoofleaperFineVeinR", "ProductionAssetMarker"],
     },
     "glassmoth": {
         "asset_id": "glassmoth.swarm.v1",
         "root": "GlassmothModel",
-        "required": ["GlassmothModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "GlassmothThorax", "GlassmothWingL0", "ProductionAssetMarker"],
+        "required": ["GlassmothModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "GlassmothThorax", "GlassmothWingL0", "GlassmothFineVeinL0", "GlassmothFineVeinR0", "ProductionAssetMarker"],
     },
     "miremaw": {
         "asset_id": "miremaw.amphibious.v1",
         "root": "MiremawModel",
-        "required": ["MiremawModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "MiremawHead", "MiremawGillFan", "ProductionAssetMarker"],
+        "required": ["MiremawModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "MiremawHead", "MiremawGillFan", "MiremawGillRidgeL", "MiremawGillRidgeR", "ProductionAssetMarker"],
     },
     "carrionbell": {
         "asset_id": "carrionbell.signal.v1",
         "root": "CarrionbellModel",
-        "required": ["CarrionbellModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "CarrionbellMantle", "CarrionbellResonator", "ProductionAssetMarker"],
+        "required": ["CarrionbellModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "CarrionbellMantle", "CarrionbellResonator", "CarrionbellResonatorRing", "ProductionAssetMarker"],
     },
     "rootweaver": {
         "asset_id": "rootweaver.route_controller.v1",
         "root": "RootweaverModel",
-        "required": ["RootweaverModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "RootweaverCrown", "RootweaverSporeFan", "ProductionAssetMarker"],
+        "required": ["RootweaverModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "RootweaverCrown", "RootweaverSporeFan", "RootweaverKnuckleL", "RootweaverKnuckleR", "ProductionAssetMarker"],
     },
 }
 

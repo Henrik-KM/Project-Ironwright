@@ -153,6 +153,10 @@ families remain procedural until their own production asset milestones.
   lateral seams across the full organic roster;
 - species-specific sensory fans, gill membranes, cheek plates, drill rings and
   dorsal frills for stronger close-camera silhouettes;
+- the later Roofleaper, Glassmoth, Miremaw, Carrion Bell and Rootweaver shells
+  now use denser core/crown geometry plus family-specific secondary anatomy:
+  vascular wing veins, luminous wing veins, gill ridges, a raised resonator lip
+  and route-arm knuckles;
 - a ribbed, layered Veilstalker thorax and plated dorsal construction for the
   first focused hostile-family quality pass, now backed by an original authored
   glTF shell with cowl, threat eyes, veil membranes, hooks and tendrils;
