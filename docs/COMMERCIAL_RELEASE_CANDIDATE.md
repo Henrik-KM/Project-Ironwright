@@ -151,7 +151,7 @@ Saving follows a transactional sequence:
 5. preserve the previous current save as backup 1;
 6. atomically rename the verified temporary file into place.
 
-If the current file is corrupt or incomplete, loading tries rotating verified backups in order. A regression test writes two revisions, corrupts the current file and verifies recovery of the previous valid revision.
+If the current file is corrupt or incomplete, loading tries rotating verified backups in order. A bounded recovery report records every candidate, its validation or migration result, the selected source and whether migration or backup recovery was used. If no candidate is valid, the service fails closed, emits a localized diagnostic and retains the human-readable report for logs and tests. Regression coverage writes two revisions, corrupts the current file, verifies recovery of the previous valid revision and verifies total failure with all bounded candidates invalid.
 
 The service also migrates the legacy base, full-game extension and complete-alpha save files into the unified schema. Existing alpha players therefore do not have to discard their world.
 

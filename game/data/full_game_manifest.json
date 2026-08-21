@@ -110,6 +110,7 @@
     "first_victory",
     "complete_alpha_save_state",
     "versioned_transactional_save_migration",
+    "human_readable_save_recovery_report",
     "start_to_victory_automated_test"
   ],
   "remaining_commercial_work": [
@@ -117,7 +118,6 @@
     "production_animation_and_audio",
     "large_scale_reduced_detail_simulation",
     "content_breadth_and_balance",
-    "save_migration_breadth_and_corruption_coverage",
     "controller_accessibility_localization",
     "performance_optimization",
     "narrative_and_environmental_storytelling",

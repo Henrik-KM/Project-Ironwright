@@ -116,6 +116,8 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - first-session UX tests;
 - outpost/progression tests;
 - transactional persistence tests including backup recovery and legacy migration;
+- bounded per-candidate save-recovery reports, localized total-failure diagnostics,
+  and corruption coverage for current and rotating-backup candidates;
 - accelerated native start-to-victory complete-alpha test.
 
 The complete-game save path now checkpoints active long-range operations with
