@@ -13,6 +13,7 @@ func _initialize() -> void:
 
 func _run_all() -> void:
     await _test_remote_ground_continuity()
+    await _test_directional_camera_reframe()
     await _test_salvage_escort_split()
     await _test_world_labels_are_not_screen_fixed()
     await _test_prealpha_hud_is_quiet()
@@ -39,6 +40,27 @@ func _test_remote_ground_continuity() -> void:
     _expect(world.player.global_position.y > -0.1, "Remote-region ground continuity must prevent the Mechromancer from falling through the persistent world.")
     var remote_landmark := world.region_director.get_landmark(&"region.west_grid")
     _expect(remote_landmark != null and remote_landmark.get_node_or_null("PersistentRegionCollision/PersistentRegionGround") != null, "Remote regions must own a persistent ground collision shape outside the authored city floor.")
+    world.free()
+    await process_frame
+
+
+func _test_directional_camera_reframe() -> void:
+    var world := MAIN_SCENE.instantiate() as IronwrightReleaseWorld3D
+    root.add_child(world)
+    await process_frame
+    await physics_frame
+    world.player.input_enabled = false
+    world.camera_heading = Vector3(0.0, 0.0, 1.0)
+    world.camera_target_velocity = Vector3.ZERO
+    world.player.velocity = Vector3(5.0, 0.0, 0.0)
+    world._update_camera(0.65)
+    _expect(world.camera_heading.x < -0.5, "The tactical camera must move behind the player's travel direction so east/west routes stay in view.")
+    _expect(world._is_remote_camera_context(Vector3(-92.0, 0.0, 18.0)), "A remote district must opt into the wider tactical composition.")
+    _expect(not world._is_remote_camera_context(Vector3.ZERO), "The Heartforge opening must retain its close tactical composition.")
+    var heading_after_motion := world.camera_heading
+    world.player.velocity = Vector3.ZERO
+    world._update_camera(0.65)
+    _expect(world.camera_heading.distance_to(heading_after_motion) < 0.05, "The tactical camera must hold its established heading when the player stops instead of rotating during idle play.")
     world.free()
     await process_frame
 
