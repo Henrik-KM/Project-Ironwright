@@ -94,11 +94,17 @@ func _polish_actor(node: Node) -> void:
             mechromancer_presentation.name = "MechromancerPresentation3D"
             mechromancer_presentation.configure(actor)
             actor.add_child(mechromancer_presentation)
-    elif actor.get_node_or_null("ProceduralAnimator3D") == null:
-        var animator := ProceduralAnimator3D.new()
-        animator.name = "ProceduralAnimator3D"
-        animator.configure(actor)
-        actor.add_child(animator)
+    else:
+        if actor.get_node_or_null("ProceduralAnimator3D") == null:
+            var animator := ProceduralAnimator3D.new()
+            animator.name = "ProceduralAnimator3D"
+            animator.configure(actor)
+            actor.add_child(animator)
+        if actor.get_node_or_null("AuthoredActorAnimation3D") == null:
+            var authored_animation := AuthoredActorAnimation3D.new()
+            authored_animation.name = "AuthoredActorAnimation3D"
+            authored_animation.configure(actor)
+            actor.add_child(authored_animation)
     if actor.get_node_or_null("AestheticDetails") == null:
         _add_actor_details(actor)
     _connect_actor_feedback(actor)
