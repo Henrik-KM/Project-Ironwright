@@ -159,7 +159,9 @@ func _nearby_threat_camera_bias(target: Vector3) -> Vector3:
     if threat_count <= 0:
         return Vector3.ZERO
     var intensity := clampf(float(threat_count) * 0.18 + (1.0 - clampf(nearest / 15.0, 0.0, 1.0)) * 0.45, 0.0, 1.0)
-    return Vector3(0.0, intensity * 2.6, intensity * 1.2)
+    # Threats deserve a little more vertical context without shrinking the
+    # silhouettes that communicate attack language and species identity.
+    return Vector3(0.0, intensity * 2.6, -intensity * 1.2)
 
 
 func _active_follow_target() -> Node3D:

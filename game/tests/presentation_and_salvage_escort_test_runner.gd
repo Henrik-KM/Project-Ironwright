@@ -14,6 +14,7 @@ func _initialize() -> void:
 func _run_all() -> void:
     await _test_remote_ground_continuity()
     await _test_directional_camera_reframe()
+    await _test_threat_camera_readability()
     await _test_salvage_escort_split()
     await _test_world_labels_are_not_screen_fixed()
     await _test_prealpha_hud_is_quiet()
@@ -61,6 +62,22 @@ func _test_directional_camera_reframe() -> void:
     world.player.velocity = Vector3.ZERO
     world._update_camera(0.65)
     _expect(world.camera_heading.distance_to(heading_after_motion) < 0.05, "The tactical camera must hold its established heading when the player stops instead of rotating during idle play.")
+    world.free()
+    await process_frame
+
+
+func _test_threat_camera_readability() -> void:
+    var world := MAIN_SCENE.instantiate() as IronwrightReleaseWorld3D
+    root.add_child(world)
+    await process_frame
+    await physics_frame
+    var enemy := world._spawn_enemy(world.player.global_position + Vector3(3.0, 0.0, 0.0), &"sporecaster")
+    await physics_frame
+    var bias := world._nearby_threat_camera_bias(world.player.global_position)
+    _expect(bias.y > 0.0, "Nearby threats must raise the tactical camera enough to preserve the defensive envelope.")
+    _expect(bias.z <= 0.0, "Nearby threats must not pull the tactical camera farther away from readable organic silhouettes.")
+    if enemy != null and is_instance_valid(enemy):
+        enemy.queue_free()
     world.free()
     await process_frame
 
