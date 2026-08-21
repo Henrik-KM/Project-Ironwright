@@ -1114,6 +1114,14 @@ final retail art, animation and external visual approval are still required.
 - kept the layer presentation-only with no new resource, collision or routine
   player task, and added native aesthetic coverage for its sockets and motion.
 
+## Focused Heartforge damage-memory presentation milestone
+
+- added progressive high-definition scar and leak geometry to the Heartforge;
+- tied the layer to the existing integrity and repair signals so the home shows
+  meaningful failure and returns to a clean state after successful repair;
+- preserved the existing health, collision, destruction and save contracts and
+  added native aesthetic coverage for the damage-memory sockets.
+
 ## Focused tiered-nest anatomy presentation milestone
 
 - added a bounded `NestHighDefinitionDetail` layer to the production tiered

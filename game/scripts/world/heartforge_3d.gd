@@ -12,6 +12,8 @@ var progression_tier: int = 1
 var _core_light: OmniLight3D
 var _model_root: Node3D
 var _adaptive_geometry: Node3D
+var _damage_visual_root: Node3D
+var _damage_signal_material: StandardMaterial3D
 
 
 func _ready() -> void:
@@ -28,6 +30,7 @@ func apply_damage(amount: float, source: Node = null) -> void:
     if amount <= 0.0 or current_health <= 0.0:
         return
     current_health = maxf(0.0, current_health - amount)
+    _refresh_damage_presentation()
     health_changed.emit(current_health, maximum_health)
     if current_health <= 0.0:
         destroyed.emit()
@@ -37,6 +40,7 @@ func repair(amount: float) -> void:
     if current_health <= 0.0:
         return
     current_health = minf(maximum_health, current_health + maxf(0.0, amount))
+    _refresh_damage_presentation()
     health_changed.emit(current_health, maximum_health)
 
 
@@ -159,6 +163,54 @@ func _build_visuals() -> void:
     # bounded so the Heartforge does not flatten the surrounding paving.
     _core_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 2.1, 0.0), Color("ff7d32"), 3.6, 16.0)
     ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.2, 3.15), Color("62e1e7"), 1.4, 7.0)
+
+    _damage_visual_root = Node3D.new()
+    _damage_visual_root.name = "HeartforgeDamagePresentation"
+    _model_root.add_child(_damage_visual_root)
+    _damage_signal_material = ModelKit3D.material(Color("551c26"), 0.04, 0.44, Color("e74352"), 0.7)
+    var scar_edge := ModelKit3D.material(Color("a55a39"), 0.18, 0.62)
+    for index in range(3):
+        var angle := -0.72 + float(index) * 0.74
+        var position := Vector3(sin(angle) * 1.78, 1.22 + float(index % 2) * 0.82, cos(angle) * 1.78)
+        ModelKit3D.add_beveled_box(
+            _damage_visual_root,
+            Vector3(0.08, 0.72 + float(index) * 0.12, 0.18),
+            position,
+            _damage_signal_material,
+            Vector3(0.0, -angle, 0.22),
+            "HeartforgeDamageScar%02d" % index,
+            0.28
+        )
+        ModelKit3D.add_sphere(
+            _damage_visual_root,
+            0.08 + float(index) * 0.012,
+            position + Vector3.UP * (0.48 + float(index % 2) * 0.1),
+            _damage_signal_material,
+            Vector3(1.0, 0.72, 1.0),
+            "HeartforgeDamageLeak%02d" % index
+        )
+    _refresh_damage_presentation()
+
+
+func _refresh_damage_presentation() -> void:
+    if _damage_visual_root == null:
+        return
+    var integrity := clampf(current_health / maxf(1.0, maximum_health), 0.0, 1.0)
+    var damage := 1.0 - integrity
+    _damage_visual_root.visible = damage > 0.035
+    if _damage_signal_material != null:
+        _damage_signal_material.emission_energy_multiplier = lerpf(0.45, 3.4, damage)
+        _damage_signal_material.albedo_color = Color("3e1820").lerp(Color("7b2430"), damage)
+    for index in range(3):
+        var scar := _damage_visual_root.get_node_or_null("HeartforgeDamageScar%02d" % index) as Node3D
+        var leak := _damage_visual_root.get_node_or_null("HeartforgeDamageLeak%02d" % index) as Node3D
+        var threshold := 0.1 + float(index) * 0.2
+        var visibility := clampf((damage - threshold) / 0.18, 0.0, 1.0)
+        if scar != null:
+            scar.visible = visibility > 0.0
+            scar.scale = Vector3(1.0, 0.72 + visibility * 0.28, 1.0)
+        if leak != null:
+            leak.visible = visibility > 0.25
 
 
 func _build_adaptive_geometry(tier: int) -> void:
