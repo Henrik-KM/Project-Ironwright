@@ -509,6 +509,7 @@ func _run_all() -> void:
             if player_presentation.animation_player != null:
                 for clip_name in [&"Idle", &"Walk", &"Fire", &"Work", &"Hit"]:
                     _expect(_animation_player_has_clip(player_presentation.animation_player, clip_name), "The authored Mechromancer must expose the %s animation clip." % clip_name)
+                    _expect(_animation_player_track_count(player_presentation.animation_player, clip_name) >= 2, "The authored Mechromancer %s clip must carry body and equipment motion channels." % clip_name)
         if audio_director != null:
             var event_count_before := audio_director.event_count
             audio_director.play_profile(&"pistol", player.global_position)
