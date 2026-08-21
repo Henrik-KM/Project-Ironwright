@@ -294,7 +294,10 @@ func _build_foreground_refuge_threshold() -> void:
 
     var slab := ModelKit3D.material(Color("39484b"), 0.28, 0.62)
     var slab_edge := ModelKit3D.material(Color("1b2528"), 0.62, 0.48)
-    var route_glow := ModelKit3D.material(Color("315b60"), 0.32, 0.46, Color("74d6db"), 0.72)
+    # The objective calls this the amber route. Keep it visually distinct
+    # from the Heartforge's cyan service hardware so the opening instruction
+    # and the ground affordance agree at a glance.
+    var route_glow := ModelKit3D.material(Color("6b4728"), 0.34, 0.48, Color("f2a65a"), 1.0)
 
     # The lower tactical frame is the player's first lived-in threshold, not
     # an empty camera margin. Broken service slabs add scale and depth while
