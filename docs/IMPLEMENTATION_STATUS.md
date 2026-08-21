@@ -1378,6 +1378,15 @@ presentation restore, with release regression coverage for that migration path.
 - preserved the presentation-only contract for the opening story dressing;
 - added native vertical-slice coverage for the stable story-prop detail sockets.
 
+## Focused remote rail-dressing refinement milestone
+
+- replaced six release-dressed derailed-car boxes with bounded beveled carriage
+  shells, broken window bands, service panels, roof vents and bogie/axle detail;
+- preserved the presentation-only rail-dressing contract and existing authored
+  Tram Graveyard landmark, salvage, route and operation state;
+- added release coverage for the stable carriage, window, service and
+  undercarriage detail sockets.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.
