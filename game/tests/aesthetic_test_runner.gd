@@ -631,6 +631,10 @@ func _run_all() -> void:
         sample.configure(species_names[index], sample_player, sample_forge)
         sample.position = Vector3(20.0 + float(index) * 2.4, 0.0, 18.0)
         root.add_child(sample)
+        var authored_animation := AuthoredActorAnimation3D.new()
+        authored_animation.name = "AuthoredActorAnimation3D"
+        authored_animation.configure(sample)
+        sample.add_child(authored_animation)
         enemy_samples.append(sample)
     await process_frame
     for index in enemy_samples.size():
@@ -693,7 +697,33 @@ func _run_all() -> void:
             var spore_oculus := _find_named(enemy_samples[index], "SporecasterOculusL") as Node3D
             var spore_plate := _find_named(enemy_samples[index], "SporecasterCowlPlateL") as Node3D
             _expect(spore_cowl != null and spore_oculus != null and spore_plate != null and spore_oculus.position.distance_to(Vector3(-0.23, 0.16, -0.39)) < 0.01 and spore_plate.position.distance_to(Vector3(-0.32, 0.08, -0.09)) < 0.01, "Sporecaster sensory-cowl details must remain attached through local authored sockets.")
+        var authored_animation := enemy_samples[index].get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
+        _expect(authored_animation != null and authored_animation.animation_player != null, "%s must expose its imported authored animation bridge." % species_names[index])
+        if authored_animation != null and authored_animation.animation_player != null:
+            for clip_name in [&"Idle", &"Walk", &"Attack", &"Feed", &"Nest", &"Retreat", &"Death"]:
+                _expect(_animation_player_has_clip(authored_animation.animation_player, clip_name), "%s must import the authored %s clip." % [species_names[index], clip_name])
+                _expect(_animation_player_track_count(authored_animation.animation_player, clip_name) >= 2, "%s authored %s clip must carry multiple readable channels." % [species_names[index], clip_name])
+            var previous_state: StringName = StringName(enemy_samples[index].get(&"state_name"))
+            enemy_samples[index].set(&"state_name", &"feeding")
+            enemy_samples[index].set_meta(&"enemy_behaviour", "feed")
+            authored_animation._select_loop_clip()
+            _expect(_animation_clip_matches(authored_animation.active_clip, &"Feed"), "%s feeding state must select Feed." % species_names[index])
+            enemy_samples[index].set(&"state_name", &"nest_guard")
+            enemy_samples[index].set_meta(&"enemy_behaviour", "guard_nest")
+            authored_animation._select_loop_clip()
+            _expect(_animation_clip_matches(authored_animation.active_clip, &"Nest"), "%s nest guard state must select Nest." % species_names[index])
+            enemy_samples[index].set(&"state_name", &"retreating")
+            enemy_samples[index].set_meta(&"enemy_behaviour", "retreat")
+            authored_animation._select_loop_clip()
+            _expect(_animation_clip_matches(authored_animation.active_clip, &"Retreat"), "%s retreat state must select Retreat." % species_names[index])
+            enemy_samples[index].set(&"state_name", previous_state)
+            enemy_samples[index].remove_meta(&"enemy_behaviour")
         _expect_family_attack_motion(enemy_samples[index], _family_attack_signature_node(species_names[index]))
+        if authored_animation != null:
+            enemy_samples[index].apply_damage(99999.0)
+            _expect(not enemy_samples[index].is_alive(), "%s death must mark gameplay state dead immediately." % species_names[index])
+            _expect(enemy_samples[index].death_presentation_remaining > 0.0, "%s death must retain a short presentation window." % species_names[index])
+            _expect(_animation_clip_matches(authored_animation.active_clip, &"Death"), "%s death must select the authored Death clip." % species_names[index])
         enemy_samples[index].queue_free()
 
     var veilstalker: Node3D

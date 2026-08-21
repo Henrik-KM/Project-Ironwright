@@ -50,6 +50,8 @@ func _process(delta: float) -> void:
         return
     if one_shot_remaining > 0.0:
         return
+    if _state_name() == &"dead":
+        return
     _select_loop_clip()
 
 
@@ -70,6 +72,8 @@ func _connect_subject_signals() -> void:
         _connect_once(subject, &"weapon_fired", Callable(self, "_on_weapon_fired"))
     if subject.has_signal(&"attack_started"):
         _connect_once(subject, &"attack_started", Callable(self, "_on_attack_started"))
+    if subject.has_signal(&"killed"):
+        _connect_once(subject, &"killed", Callable(self, "_on_killed"))
 
 
 func _connect_once(source: Object, signal_name: StringName, callback: Callable) -> void:
@@ -78,7 +82,7 @@ func _connect_once(source: Object, signal_name: StringName, callback: Callable) 
 
 
 func _configure_animation_loops() -> void:
-    for clip_name in [&"Idle", &"Walk", &"Work", &"Survey"]:
+    for clip_name in [&"Idle", &"Walk", &"Work", &"Survey", &"Feed", &"Nest", &"Retreat"]:
         var resolved := _resolve_clip(clip_name)
         if resolved == &"":
             continue
@@ -101,7 +105,14 @@ func _select_loop_clip() -> void:
         if state == &"attacking" and _has_attack_windup and float(subject.get(&"attack_windup_remaining")) > 0.0:
             _play_one_shot(&"Attack")
             return
-        if _is_moving(state):
+        var behaviour := _behaviour_name()
+        if state == &"feeding" or behaviour == &"feed":
+            selected = &"Feed"
+        elif state == &"nest_guard" or behaviour in [&"guard_nest", &"nest_guard"]:
+            selected = &"Nest"
+        elif state == &"retreating" or behaviour == &"retreat":
+            selected = &"Retreat"
+        elif _is_moving(state):
             selected = &"Walk"
     _play_clip(selected, true)
 
@@ -156,10 +167,20 @@ func _on_attack_started(_enemy: Node, _target: Node) -> void:
     _play_one_shot(&"Attack")
 
 
+func _on_killed(_enemy: Node, _killer: Node) -> void:
+    _play_one_shot(&"Death")
+
+
 func _state_name() -> StringName:
     if not _has_state_name:
         return &""
     return StringName(subject.get(&"state_name"))
+
+
+func _behaviour_name() -> StringName:
+    if subject == null or not subject.has_meta(&"enemy_behaviour"):
+        return &""
+    return StringName(str(subject.get_meta(&"enemy_behaviour", "")))
 
 
 func _property_exists(object: Object, property_name: StringName) -> bool:

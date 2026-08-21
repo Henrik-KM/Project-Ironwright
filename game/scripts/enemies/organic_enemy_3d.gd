@@ -13,6 +13,7 @@ const AUTHORED_GLASSMOTH_MODEL_SCENE: PackedScene = preload("res://assets/glassm
 const AUTHORED_MIREMAW_MODEL_SCENE: PackedScene = preload("res://assets/miremaw/miremaw.gltf")
 const AUTHORED_CARRIONBELL_MODEL_SCENE: PackedScene = preload("res://assets/carrionbell/carrionbell.gltf")
 const AUTHORED_ROOTWEAVER_MODEL_SCENE: PackedScene = preload("res://assets/rootweaver/rootweaver.gltf")
+const DEATH_PRESENTATION_SECONDS := 0.72
 
 signal killed(enemy: OrganicEnemy3D, killer: Node)
 signal attack_started(enemy: OrganicEnemy3D, target: Node)
@@ -37,6 +38,7 @@ var aggression: float = 0.2
 var player_reference: Node3D
 var heartforge_reference: Node3D
 var alive: bool = true
+var death_presentation_remaining: float = 0.0
 
 # Organic creatures exist in an ecology rather than as stationary combat
 # turrets. Every creature has a home territory and a current ecological role.
@@ -121,6 +123,9 @@ func receive_pack_alert(position: Vector3, intensity: float) -> void:
 
 func _physics_process(delta: float) -> void:
     if not alive:
+        death_presentation_remaining = maxf(0.0, death_presentation_remaining - delta)
+        if death_presentation_remaining <= 0.0:
+            queue_free()
         return
     attack_cooldown = maxf(0.0, attack_cooldown - delta)
     if attack_windup_remaining > 0.0:
@@ -506,8 +511,12 @@ func apply_damage(amount: float, source: Node = null) -> void:
         return
     alive = false
     _set_state(&"dead")
+    velocity = Vector3.ZERO
+    attack_windup_remaining = 0.0
+    collision_layer = 0
+    collision_mask = 0
+    death_presentation_remaining = DEATH_PRESENTATION_SECONDS
     killed.emit(self, source)
-    queue_free()
 
 
 func is_alive() -> bool:
@@ -782,6 +791,7 @@ func _build_authored_veilstalker_visuals() -> void:
         child.owner = null
         imported_root.remove_child(child)
         _model_root.add_child(child)
+    _extract_authored_animation_player(authored_scene_instance, _model_root, StringName(imported_root.name))
     if imported_root != authored_scene_instance:
         imported_root.free()
     authored_scene_instance.free()
@@ -811,6 +821,7 @@ func _build_authored_razorhound_visuals() -> void:
         child.owner = null
         imported_root.remove_child(child)
         _model_root.add_child(child)
+    _extract_authored_animation_player(authored_scene_instance, _model_root, StringName(imported_root.name))
     if imported_root != authored_scene_instance:
         imported_root.free()
     authored_scene_instance.free()
@@ -832,6 +843,7 @@ func _build_authored_apex_visuals() -> void:
         child.owner = null
         imported_root.remove_child(child)
         _model_root.add_child(child)
+    _extract_authored_animation_player(authored_scene_instance, _model_root, StringName(imported_root.name))
     if imported_root != authored_scene_instance:
         imported_root.free()
     authored_scene_instance.free()
@@ -853,6 +865,7 @@ func _build_authored_sporecaster_visuals() -> void:
         child.owner = null
         imported_root.remove_child(child)
         _model_root.add_child(child)
+    _extract_authored_animation_player(authored_scene_instance, _model_root, StringName(imported_root.name))
     if imported_root != authored_scene_instance:
         imported_root.free()
     authored_scene_instance.free()
@@ -873,6 +886,7 @@ func _build_authored_broodmass_visuals() -> void:
         child.owner = null
         imported_root.remove_child(child)
         _model_root.add_child(child)
+    _extract_authored_animation_player(authored_scene_instance, _model_root, StringName(imported_root.name))
     if imported_root != authored_scene_instance:
         imported_root.free()
     authored_scene_instance.free()
@@ -893,6 +907,7 @@ func _build_authored_burrower_visuals() -> void:
         child.owner = null
         imported_root.remove_child(child)
         _model_root.add_child(child)
+    _extract_authored_animation_player(authored_scene_instance, _model_root, StringName(imported_root.name))
     if imported_root != authored_scene_instance:
         imported_root.free()
     authored_scene_instance.free()
@@ -917,6 +932,7 @@ func _build_authored_skitterling_visuals() -> void:
         child.owner = null
         imported_root.remove_child(child)
         authored_shell_root.add_child(child)
+    _extract_authored_animation_player(authored_scene_instance, authored_shell_root, StringName(imported_root.name))
     if imported_root != authored_scene_instance:
         imported_root.free()
     authored_scene_instance.free()
@@ -939,9 +955,53 @@ func _build_authored_organic_family_visuals(model_scene: PackedScene, imported_r
         child.owner = null
         imported_root.remove_child(child)
         _model_root.add_child(child)
+    _extract_authored_animation_player(authored_scene_instance, _model_root, StringName(imported_root.name))
     if imported_root != authored_scene_instance:
         imported_root.free()
     authored_scene_instance.free()
     var authored_marker := Node3D.new()
     authored_marker.name = String(marker_name)
     _model_root.add_child(authored_marker)
+
+
+func _extract_authored_animation_player(scene_instance: Node, target_root: Node3D, imported_root_name: StringName, target_prefix: StringName = &"") -> void:
+    var player := _find_animation_player(scene_instance)
+    if player == null or target_root == null:
+        return
+    _retarget_authored_animation_tracks(player, imported_root_name, target_prefix)
+    var previous_parent := player.get_parent()
+    if previous_parent != null:
+        previous_parent.remove_child(player)
+    player.owner = null
+    target_root.add_child(player)
+
+
+func _retarget_authored_animation_tracks(player: AnimationPlayer, imported_root_name: StringName, target_prefix: StringName) -> void:
+    if player == null or imported_root_name == &"":
+        return
+    var imported_prefix := String(imported_root_name)
+    var target_prefix_text := String(target_prefix)
+    for animation_name in player.get_animation_list():
+        var animation := player.get_animation(animation_name)
+        if animation == null:
+            continue
+        for track_index in animation.get_track_count():
+            var original_path := String(animation.track_get_path(track_index))
+            var mapped_path := original_path
+            if original_path == imported_prefix:
+                mapped_path = "."
+            elif original_path.begins_with(imported_prefix + "/"):
+                var suffix := original_path.substr(imported_prefix.length() + 1)
+                mapped_path = suffix if target_prefix_text == "" else target_prefix_text + "/" + suffix
+            if mapped_path != original_path:
+                animation.track_set_path(track_index, NodePath(mapped_path))
+
+
+func _find_animation_player(root: Node) -> AnimationPlayer:
+    if root is AnimationPlayer:
+        return root as AnimationPlayer
+    for child in root.get_children():
+        var result := _find_animation_player(child)
+        if result != null:
+            return result
+    return null

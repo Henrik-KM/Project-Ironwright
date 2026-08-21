@@ -6,5 +6,5 @@
   "quality": "authored_high_definition",
   "license": "Original Project Ironwright asset",
   "required_nodes": ["MiremawModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "MiremawHead", "MiremawGillFan", "MiremawJawHookL", "MiremawGillRidgeL", "MiremawGillRidgeR", "MiremawJawPlateL", "MiremawGillSpineR", "ProductionAssetMarker"],
-  "animation_clips": ["Idle", "Walk", "Attack"]
+  "animation_clips": ["Idle", "Walk", "Attack", "Feed", "Nest", "Retreat", "Death"]
 }
