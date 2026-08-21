@@ -27,6 +27,7 @@ var _last_map_label_mode: bool = false
 var vertical_slice: VerticalSliceDirector3D
 var vertical_slice_actor_art: VerticalSliceActorArt3D
 var camera_target_velocity: Vector3 = Vector3.ZERO
+var camera_heading: Vector3 = Vector3(0.0, 0.0, 1.0)
 
 
 func _ready() -> void:
@@ -105,6 +106,7 @@ func _update_camera(delta: float) -> void:
     var subject_velocity := player.velocity if not follow_operation else Vector3.ZERO
     subject_velocity.y = 0.0
     camera_target_velocity = camera_target_velocity.lerp(subject_velocity, 1.0 - exp(-delta * 3.2))
+    _update_camera_heading(subject_velocity, delta)
     var lead := camera_target_velocity * 0.38
     if lead.length() > 2.5:
         lead = lead.normalized() * 2.5
@@ -113,10 +115,35 @@ func _update_camera(delta: float) -> void:
     var threat_bias := _nearby_threat_camera_bias(target)
     var dynamic_height := camera_height + threat_bias.y
     var dynamic_distance := camera_distance + threat_bias.z
-    var desired := target + Vector3(0.0, dynamic_height, dynamic_distance)
-    var resolved := _resolve_camera_occlusion(target, desired)
+    if _is_remote_camera_context(target):
+        dynamic_height += 9.0
+        dynamic_distance += 10.0
+    var desired := target + Vector3(0.0, dynamic_height, 0.0) + _camera_horizontal_offset(dynamic_distance)
+    var resolved := _resolve_camera_occlusion(target, desired, dynamic_height, dynamic_distance)
     camera.global_position = camera.global_position.lerp(resolved, 1.0 - exp(-delta * 7.2))
     camera.look_at(target + Vector3.UP * 0.68, Vector3.UP)
+
+
+func _update_camera_heading(velocity: Vector3, delta: float) -> void:
+    var planar_velocity := Vector3(velocity.x, 0.0, velocity.z)
+    if planar_velocity.length_squared() <= 0.16:
+        return
+    var desired_heading := -planar_velocity.normalized()
+    var blend := 1.0 - exp(-delta * 2.4)
+    camera_heading = camera_heading.lerp(desired_heading, blend).normalized()
+
+
+func _camera_horizontal_offset(distance: float) -> Vector3:
+    var horizontal_heading := Vector3(camera_heading.x, 0.0, camera_heading.z)
+    if horizontal_heading.length_squared() <= 0.001:
+        horizontal_heading = Vector3(0.0, 0.0, 1.0)
+    return horizontal_heading.normalized() * distance
+
+
+func _is_remote_camera_context(position: Vector3) -> bool:
+    if region_director == null:
+        return false
+    return region_director.region_for_position(position) != &"region.heartforge_district"
 
 
 func _nearby_threat_camera_bias(target: Vector3) -> Vector3:
@@ -149,14 +176,15 @@ func _active_follow_target() -> Node3D:
     return null
 
 
-func _resolve_camera_occlusion(target: Vector3, desired: Vector3) -> Vector3:
+func _resolve_camera_occlusion(target: Vector3, desired: Vector3, dynamic_height: float, dynamic_distance: float) -> Vector3:
     var space_state := get_world_3d().direct_space_state
     var target_eye := target + Vector3.UP * 1.1
+    var horizontal_offset := _camera_horizontal_offset(dynamic_distance)
     var candidates: Array[Vector3] = [
         desired,
-        target + Vector3(0.0, camera_height + 5.5, camera_distance * 0.72),
-        target + Vector3(0.0, camera_height + 10.0, camera_distance * 0.48),
-        target + Vector3(0.0, camera_height + 15.0, camera_distance * 0.22),
+        target + Vector3(0.0, dynamic_height + 5.5, 0.0) + horizontal_offset * 0.72,
+        target + Vector3(0.0, dynamic_height + 10.0, 0.0) + horizontal_offset * 0.48,
+        target + Vector3(0.0, dynamic_height + 15.0, 0.0) + horizontal_offset * 0.22,
     ]
 
     var exclusions: Array[RID] = []
