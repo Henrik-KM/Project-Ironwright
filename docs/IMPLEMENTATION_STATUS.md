@@ -1511,6 +1511,17 @@ presentation restore, with release regression coverage for that migration path.
 - extended release regression coverage for operation signatures, spatial cue
   creation and repeated-work suppression.
 
+## Focused outpost damage presentation milestone
+
+- added a bounded authored integrity layer to each autonomous outpost with a
+  visible scar plate, exposed leak emitter and critical warning bar;
+- tied the layer to the existing health and repair signals so outposts become
+  visually legible as they weaken and clear their damage memory when restored;
+- preserved the existing role silhouette, collision, destruction, rebuild,
+  save and autonomous-maintenance contracts;
+- extended aesthetic coverage for healthy, damaged, critical and repaired
+  outpost presentation states.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.

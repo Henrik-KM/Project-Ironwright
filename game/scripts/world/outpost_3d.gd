@@ -21,6 +21,10 @@ var run_state: RunState3D
 
 var _model_root: Node3D
 var _status_light: OmniLight3D
+var _damage_root: Node3D
+var _damage_scar: Node3D
+var _damage_leak: Node3D
+var _critical_light: OmniLight3D
 var _repair_clock: float = 0.0
 var _role_clock: float = 0.0
 var _weapon_cooldown: float = 0.0
@@ -66,6 +70,7 @@ func apply_damage(amount: float, source: Node = null) -> void:
     current_health = maxf(0.0, current_health - amount)
     health_changed.emit(self, current_health, maximum_health)
     if current_health > 0.0:
+        _refresh_damage_presentation()
         return
     alive = false
     collision_layer = 0
@@ -79,6 +84,7 @@ func repair(amount: float) -> void:
         return
     current_health = minf(maximum_health, current_health + amount)
     health_changed.emit(self, current_health, maximum_health)
+    _refresh_damage_presentation()
 
 
 func upgrade_to(next_tier: int) -> bool:
@@ -331,3 +337,44 @@ func _refresh_visuals() -> void:
             ModelKit3D.add_sphere(role_signature, 0.2, Vector3(0.0, 1.02, -2.15), glow, Vector3(1.4, 0.5, 1.0), "RepairFieldEmitter")
 
     _status_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 2.9, -1.0), role_color, 0.9 + float(tier) * 0.35, 6.0 + float(tier) * 2.0)
+    _build_damage_presentation()
+
+
+func _build_damage_presentation() -> void:
+    _damage_root = Node3D.new()
+    _damage_root.name = "OutpostDamagePresentation"
+    _model_root.add_child(_damage_root)
+    var scar_material := ModelKit3D.material(Color("7e2c25"), 0.4, 0.72)
+    var leak_material := ModelKit3D.material(Color("b65c31"), 0.28, 0.62, Color("f08a42"), 2.4)
+    var critical_material := ModelKit3D.material(Color("712018"), 0.24, 0.68, Color("e34d32"), 3.0)
+    _damage_scar = Node3D.new()
+    _damage_scar.name = "OutpostDamageScar00"
+    _damage_root.add_child(_damage_scar)
+    ModelKit3D.add_beveled_box(_damage_scar, Vector3(0.36, 1.02, 0.12), Vector3(-1.18, 1.24, -1.79), scar_material, Vector3(0.0, 0.0, -0.34), "ScarPlate", 0.05)
+    ModelKit3D.add_beveled_box(_damage_scar, Vector3(0.2, 0.54, 0.1), Vector3(-0.72, 1.66, -1.8), scar_material, Vector3(0.0, 0.0, 0.48), "ScarBrace", 0.04)
+    _damage_leak = Node3D.new()
+    _damage_leak.name = "OutpostDamageLeak00"
+    _damage_root.add_child(_damage_leak)
+    ModelKit3D.add_cylinder(_damage_leak, 0.055, 0.7, Vector3(0.82, 1.18, -1.82), leak_material, Vector3(0.15, 0.0, 0.35), "LeakCable")
+    ModelKit3D.add_sphere(_damage_leak, 0.12, Vector3(0.62, 0.82, -1.85), leak_material, Vector3(1.0, 0.7, 1.0), "LeakEmitter")
+    var critical_marker := Node3D.new()
+    critical_marker.name = "OutpostCriticalMarker"
+    _damage_root.add_child(critical_marker)
+    ModelKit3D.add_beveled_box(critical_marker, Vector3(0.72, 0.1, 0.16), Vector3(0.0, 2.52, -1.92), critical_material, Vector3.ZERO, "CriticalWarningBar", 0.04)
+    _critical_light = ModelKit3D.add_glow_light(critical_marker, Vector3.ZERO, Color("e34d32"), 0.0, 2.8)
+    _refresh_damage_presentation()
+
+
+func _refresh_damage_presentation() -> void:
+    if _damage_root == null:
+        return
+    var integrity := current_health / maxf(1.0, maximum_health)
+    var damaged := alive and integrity < 0.78
+    var critical := alive and integrity < 0.42
+    _damage_root.visible = damaged
+    if _damage_scar != null:
+        _damage_scar.visible = damaged
+    if _damage_leak != null:
+        _damage_leak.visible = critical
+    if _critical_light != null:
+        _critical_light.light_energy = 0.9 if critical else 0.0
