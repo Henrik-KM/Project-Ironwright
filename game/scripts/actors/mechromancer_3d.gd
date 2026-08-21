@@ -67,8 +67,8 @@ func _physics_process(delta: float) -> void:
 func _update_movement(delta: float) -> void:
     var input_vector := Vector2.ZERO
     if input_enabled:
-        input_vector.x = float(Input.is_key_pressed(KEY_D)) - float(Input.is_key_pressed(KEY_A))
-        input_vector.y = float(Input.is_key_pressed(KEY_S)) - float(Input.is_key_pressed(KEY_W))
+        input_vector.x = _movement_action_strength(&"iw_move_right") - _movement_action_strength(&"iw_move_left")
+        input_vector.y = _movement_action_strength(&"iw_move_down") - _movement_action_strength(&"iw_move_up")
     input_vector = input_vector.normalized()
 
     var target_velocity := Vector3(input_vector.x, 0.0, input_vector.y) * move_speed
@@ -97,6 +97,30 @@ func _update_automatic_pistol() -> void:
     if current_target.has_method("apply_damage"):
         current_target.call("apply_damage", pistol_damage, self)
     pistol_fired.emit(origin, impact, current_target)
+
+
+func _movement_action_strength(action: StringName) -> float:
+    var strength := 0.0
+    if InputMap.has_action(action):
+        strength = Input.get_action_strength(action)
+    return maxf(strength, _keyboard_movement_strength(action))
+
+
+func _keyboard_movement_strength(action: StringName) -> float:
+    match action:
+        &"iw_move_left":
+            return 1.0 if Input.is_key_pressed(KEY_A) else 0.0
+        &"iw_move_right":
+            return 1.0 if Input.is_key_pressed(KEY_D) else 0.0
+        &"iw_move_up":
+            return 1.0 if Input.is_key_pressed(KEY_W) else 0.0
+        &"iw_move_down":
+            return 1.0 if Input.is_key_pressed(KEY_S) else 0.0
+    return 0.0
+
+
+func _interact_held() -> bool:
+    return Input.is_key_pressed(KEY_E) or (InputMap.has_action(&"iw_interact") and Input.is_action_pressed(&"iw_interact"))
 
 
 func _nearest_enemy_in_range(maximum_range: float) -> Node3D:
@@ -161,7 +185,7 @@ func cancel_channel() -> void:
 
 
 func _update_channel(delta: float) -> void:
-    if channel_requires_hold and not Input.is_key_pressed(KEY_E):
+    if channel_requires_hold and not _interact_held():
         cancel_channel()
         return
     if channel_target != null and not is_instance_valid(channel_target):
