@@ -48,10 +48,35 @@ func _run_all() -> void:
     _expect(int(snapshot.get("candidate_count", 0)) >= 192, "The stress population must register every spawned actor with the detail director.")
     _expect(int(snapshot.get("sorted_candidate_count", 0)) < int(snapshot.get("candidate_count", 0)), "Large populations must sort only the medium-detail neighborhood instead of every distant actor.")
 
+    var near_enemy := actors[0] as OrganicEnemyRelease3D
+    var near_robot := actors[1] as RobotUnitRelease3D
+    var medium_enemy := actors[2] as OrganicEnemyRelease3D
+    var medium_robot := actors[3] as RobotUnitRelease3D
     var far_enemy := actors[46] as OrganicEnemyRelease3D
     var far_robot := actors[47] as RobotUnitRelease3D
+    _expect(near_enemy != null and near_enemy.get_node_or_null("OrganicModel") != null, "A nearby organic actor must retain its authored presentation shell.")
+    _expect(near_robot != null and near_robot.get_node_or_null("RobotModel") != null, "A nearby machine actor must retain its authored presentation shell.")
+    _expect(medium_enemy != null and medium_enemy.get_node_or_null("OrganicModel") == null and medium_enemy.get_node_or_null("DeferredVisualProxy") != null, "A medium-distance organic actor must remain on a lightweight proxy until active promotion.")
+    _expect(medium_robot != null and medium_robot.get_node_or_null("RobotModel") == null and medium_robot.get_node_or_null("DeferredVisualProxy") != null, "A medium-distance machine actor must remain on a lightweight proxy until active promotion.")
+    _expect(far_enemy != null and far_enemy.get_node_or_null("OrganicModel") == null and far_enemy.get_node_or_null("DeferredVisualProxy") != null, "A distant organic actor must begin with only a lightweight deferred proxy.")
+    _expect(far_robot != null and far_robot.get_node_or_null("RobotModel") == null and far_robot.get_node_or_null("DeferredVisualProxy") != null, "A distant machine actor must begin with only a lightweight deferred proxy.")
     _expect(far_enemy != null and far_enemy.reduced_detail and far_enemy.visual_lod_level == 2, "A distant organic actor must retain reduced-detail state at scale.")
     _expect(far_robot != null and far_robot.reduced_detail and far_robot.visual_lod_level == 2, "A distant machine actor must retain reduced-detail state at scale.")
+    if far_enemy != null and far_robot != null:
+        var far_enemy_position := far_enemy.global_position
+        var far_robot_position := far_robot.global_position
+        world.performance_director.active_entity_budget = 96
+        world.performance_director.medium_entity_budget = 128
+        far_enemy.global_position = world.player.global_position + Vector3(8.0, 0.0, 0.0)
+        far_robot.global_position = world.player.global_position + Vector3(10.0, 0.0, 0.0)
+        world.spatial_index.rebuild()
+        world.performance_director.force_evaluate_for_test()
+        _expect(far_enemy.get_node_or_null("OrganicModel") != null, "Promoting a deferred organic actor to active detail must materialize its authored presentation shell.")
+        _expect(far_robot.get_node_or_null("RobotModel") != null, "Promoting a deferred machine actor to active detail must materialize its authored presentation shell.")
+        far_enemy.global_position = far_enemy_position
+        far_robot.global_position = far_robot_position
+        world.spatial_index.rebuild()
+        world.performance_director.force_evaluate_for_test()
     if far_enemy != null:
         var enemy_before := far_enemy.global_position
         if far_robot != null:

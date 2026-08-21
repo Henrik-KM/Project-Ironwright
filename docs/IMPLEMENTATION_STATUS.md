@@ -1455,6 +1455,21 @@ presentation restore, with release regression coverage for that migration path.
 - added release coverage for the stable balcony, railing, support, service and
   clothing detail sockets.
 
+## Focused deferred authored-visual population milestone
+
+- release-spawned actors outside the active visual radius now begin with their
+  collision and a lightweight silhouette proxy instead of immediately building
+  the full authored high-definition shell;
+- active promotion materializes the authored robot or organic shell on demand,
+  while medium and reduced actors retain physical positions, simulation state,
+  collision and deterministic coarse movement;
+- extended the 192-actor stress scenario to cover deferred spawn, active
+  promotion and restoration, including the candidate-count and bounded-sort
+  diagnostics;
+- live-reviewed the 193-actor Godot preview with the authored Heartforge frame
+  visible and `ACTIVE 18`, `MEDIUM 12`, `REDUCED 163`; the responsive preview
+  measured approximately 1.73 GB working set on this development machine.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.
@@ -1478,6 +1493,9 @@ Remaining production work includes:
 - large-population detail evaluation now assigns actors beyond the medium radius
   directly to reduced simulation and sorts only the nearby neighborhood, with a
   192-actor regression scenario covering budget limits and causal movement;
+- spawn-time deferred authored visuals now keep actors outside the active radius
+  on collision plus lightweight proxies until active promotion, with native
+  coverage for authored-shell materialization;
 - performance profiling and optimization on agreed target hardware;
 - broader environmental narrative and sparse story arcs beyond the current
   Town Archive records, plus broader run variation beyond the authored weather

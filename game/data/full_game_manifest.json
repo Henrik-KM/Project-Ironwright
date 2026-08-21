@@ -111,6 +111,7 @@
     "complete_alpha_save_state",
     "versioned_transactional_save_migration",
     "human_readable_save_recovery_report",
+    "spawn_time_deferred_authored_visuals",
     "start_to_victory_automated_test"
   ],
   "remaining_commercial_work": [

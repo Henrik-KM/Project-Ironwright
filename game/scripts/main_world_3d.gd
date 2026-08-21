@@ -271,6 +271,7 @@ func _spawn_salvage(position: Vector3, amount: int, display_name: String) -> Sal
 func _spawn_robot(archetype: StringName, position: Vector3, level: int) -> RobotUnit3D:
     var robot := ROBOT_SCENE.instantiate() as RobotUnit3D
     robot.configure(archetype, level)
+    robot.defer_authored_visuals = should_defer_spawn_visuals(position)
     robot.process_mode = Node.PROCESS_MODE_PAUSABLE
     robot.position = position
     add_child(robot)
@@ -284,11 +285,16 @@ func _spawn_enemy(position: Vector3, species: StringName) -> OrganicEnemy3D:
     var enemy := ENEMY_SCENE.instantiate() as OrganicEnemy3D
     enemy.name = "%s_%02d" % [String(species).capitalize(), enemy_serial]
     enemy.configure(species, player, heartforge)
+    enemy.defer_authored_visuals = should_defer_spawn_visuals(position)
     enemy.process_mode = Node.PROCESS_MODE_PAUSABLE
     enemy.position = position
     add_child(enemy)
     enemy.killed.connect(_on_enemy_killed)
     return enemy
+
+
+func should_defer_spawn_visuals(_position: Vector3) -> bool:
+    return false
 
 
 func _update_camera(delta: float) -> void:

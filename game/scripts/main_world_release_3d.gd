@@ -596,6 +596,12 @@ func _spawn_enemy(position: Vector3, species: StringName) -> OrganicEnemy3D:
     return enemy
 
 
+func should_defer_spawn_visuals(position: Vector3) -> bool:
+    if performance_director == null or player == null:
+        return false
+    return position.distance_to(_release_focus_position()) > performance_director.active_radius
+
+
 func _spawn_salvage(position: Vector3, amount: int, display_name: String) -> SalvagePile3D:
     var adjusted := balance_director.scale_scrap_yield(amount) if balance_director != null else amount
     var pile := super._spawn_salvage(position, adjusted, display_name)
