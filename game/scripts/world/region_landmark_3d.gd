@@ -11,6 +11,7 @@ const AUTHORED_GLASSHOUSE_MODEL_SCENE: PackedScene = preload("res://assets/glass
 const AUTHORED_ARCHIVE_MODEL_SCENE: PackedScene = preload("res://assets/archive/archive.gltf")
 const AUTHORED_TENEMENT_MODEL_SCENE: PackedScene = preload("res://assets/tenement/tenement.gltf")
 const AUTHORED_FLOOD_MARKET_MODEL_SCENE: PackedScene = preload("res://assets/flood_market/flood_market.gltf")
+const AUTHORED_WEST_GRID_MODEL_SCENE: PackedScene = preload("res://assets/west_grid/west_grid.gltf")
 
 signal landmark_changed(landmark: RegionLandmark3D)
 
@@ -172,11 +173,7 @@ func _build_visuals() -> void:
         &"sanctuary":
             ModelKit3D.add_cylinder(_visual_root, 8.0, 0.16, Vector3(0.0, 0.08, 0.0), concrete, Vector3.ZERO, "TownSquare")
         &"industrial":
-            _add_ruin_block(Vector3(-7.0, 0.0, -5.0), Vector3(8.0, 7.0, 5.0), metal)
-            _add_ruin_block(Vector3(7.0, 0.0, 6.0), Vector3(10.0, 4.5, 6.0), concrete)
-            ModelKit3D.add_cylinder(_visual_root, 1.4, 7.5, Vector3(11.0, 3.75, -7.0), rust, Vector3.ZERO, "SubstationTank")
-            ModelKit3D.add_beveled_box(_visual_root, Vector3(3.4, 0.28, 2.5), Vector3(11.0, 0.18, -7.0), edge, Vector3.ZERO, "SubstationTankPlinth", 0.22)
-            ModelKit3D.add_surface_panel(_visual_root, Vector3(1.5, 1.0, 0.1), Vector3(11.0, 3.1, -8.38), edge, rust, Vector3.ZERO, "SubstationAccessPanel")
+            _build_authored_west_grid_visuals()
         &"commercial":
             for index in range(7):
                 ModelKit3D.add_beveled_box(_visual_root, Vector3(2.2, 0.18, 1.5), Vector3(-6.0 + float(index) * 2.0, 0.12, 7.0), metal, Vector3.ZERO, "MarketTable", 0.24)
@@ -549,6 +546,27 @@ func _build_authored_flood_market_visuals() -> void:
     _visual_root.add_child(authored_marker)
 
 
+func _build_authored_west_grid_visuals() -> void:
+    # West Grid keeps its industrial encounter and outpost ownership while the
+    # authored shell supplies the turbine hall, transformer yard and service
+    # infrastructure silhouette.
+    var authored_scene_instance := AUTHORED_WEST_GRID_MODEL_SCENE.instantiate()
+    var imported_root := authored_scene_instance.get_node_or_null("WestGridModel") as Node
+    if imported_root == null:
+        imported_root = authored_scene_instance
+    var authored_children := imported_root.get_children()
+    for child in authored_children:
+        child.owner = null
+        imported_root.remove_child(child)
+        _visual_root.add_child(child)
+    if imported_root != authored_scene_instance:
+        imported_root.free()
+    authored_scene_instance.free()
+    var authored_marker := Node3D.new()
+    authored_marker.name = "WestGridAuthoredModel"
+    _visual_root.add_child(authored_marker)
+
+
 func _capture_region_motion_nodes() -> void:
     _motion_nodes.clear()
     _motion_base_transforms.clear()
@@ -626,6 +644,11 @@ func _animate_region_details() -> void:
         elif node_name.begins_with("FloodMarketOrganicGrowth"):
             node.rotation.y += sin(local_phase * 0.82) * 0.06
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.12) * 0.07)
+        elif node_name.begins_with("WestGridTankSignal") or node_name.begins_with("WestGridWarningLight"):
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.75) * 0.08)
+        elif node_name.begins_with("WestGridOrganicCreep"):
+            node.rotation.y += sin(local_phase * 0.84) * 0.06
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.08) * 0.07)
         elif node_name.begins_with("RiverworksGrowth") or node_name.begins_with("RiverbankGrowth"):
             node.rotation.y += sin(local_phase * 1.15) * 0.12
             node.scale *= Vector3(1.0, 1.0 + sin(local_phase * 1.8) * 0.08, 1.0)
@@ -658,6 +681,9 @@ func _is_region_motion_name(node_name: String) -> bool:
         "FloodMarketGrowthLight",
         "FloodMarketWaterline",
         "FloodMarketOrganicGrowth",
+        "WestGridTankSignal",
+        "WestGridWarningLight",
+        "WestGridOrganicCreep",
     ]:
         if node_name.begins_with(prefix):
             return true
