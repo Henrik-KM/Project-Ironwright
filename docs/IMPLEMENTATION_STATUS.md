@@ -305,6 +305,18 @@ identities. Manual channels remain finish-before-save.
   preserving the existing collision, authored animation, pistol and shield
   gameplay contracts.
 
+## Focused hero model micro-detail milestone
+
+- added a restrained Mechromancer forearm diagnostic, cable clamp and paired
+  knee guards so the vulnerable field-engineer silhouette carries readable
+  close-range hardware without becoming a mannequin or changing its gameplay
+  capsule;
+- added a Bulwark service face, guarded shoulder rails, service latches and
+  foot plates so the companion reads as maintained protective machinery from
+  both the front and three-quarter tactical views;
+- kept the pass presentation-only, bounded and light-free apart from the
+  existing focal lamps, with native aesthetic coverage for every new socket.
+
 ## Focused Veilstalker presentation milestone
 
 - added the original `veilstalker.predator.v1` high-definition glTF shell and

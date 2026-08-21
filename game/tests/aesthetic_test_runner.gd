@@ -598,6 +598,8 @@ func _run_all() -> void:
         _expect(player_model != null and player_model.scale.x >= 1.2, "The authored Mechromancer must be legible at tactical-camera distance.")
         _expect(_find_named(player, "RespiratorCollarCore") != null and _find_named(player, "FieldPackCornerCap") != null, "The Mechromancer must receive beveled authored equipment surfaces.")
         _expect(_find_named(player, "FieldShoulderLampLens") != null and _find_named(player, "FieldUtilityCanister") != null and _find_named(player, "FieldToolDeck") != null, "The Mechromancer must receive a second high-definition field-instrument detail layer.")
+        _expect(_find_named(player, "FieldForearmDiagnostic") != null and _find_named(player, "FieldForearmDiagnosticLens") != null, "The Mechromancer must expose a readable forearm diagnostic detail.")
+        _expect(_find_named(player, "FieldKneeGuardLeft") != null and _find_named(player, "FieldKneeGuardRight") != null and _find_named(player, "FieldCableClamp") != null, "The Mechromancer micro-detail pass must preserve protected field hardware.")
         if player_presentation != null:
             _expect(player_presentation.animation_player != null, "The authored Mechromancer must expose an imported animation player.")
             if player_presentation.animation_player != null:
@@ -646,6 +648,7 @@ func _run_all() -> void:
         _expect(_find_named(robot, "BulwarkAuthoredModel") != null, "The opening companion must use the authored Bulwark model shell.")
         _expect(_find_named(robot, "ProductionAssetMarker") != null, "The authored Bulwark model must expose its production asset marker.")
         _expect(_find_named(robot, "BulwarkRadiatorLouver") != null and _find_named(robot, "BulwarkFrontSensorVisor") != null and _find_named(robot, "BulwarkEmitterCollar") != null, "The Bulwark must receive a second high-definition protection hardware layer.")
+        _expect(_find_named(robot, "BulwarkServiceFace") != null and _find_named(robot, "BulwarkServiceLatchLeft") != null and _find_named(robot, "BulwarkShoulderRailLeft") != null and _find_named(robot, "BulwarkFootPlateLeft") != null, "The Bulwark must expose its refined service face, shoulder rail and foot hardware.")
 
     var organic_actors := get_nodes_in_group("organic_enemies")
     if not organic_actors.is_empty():
