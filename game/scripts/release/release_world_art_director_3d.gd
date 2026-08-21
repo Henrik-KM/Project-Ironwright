@@ -450,8 +450,77 @@ func _dress_cistern(root: Node3D) -> void:
 func _dress_archive(root: Node3D) -> void:
     var brick := _textured_material(&"brick", Color("504840"), 0.0, 0.82)
     var grime := _textured_material(&"grime", Color("4b443c"), 0.0, 0.88)
+    var archive_detail := Node3D.new()
+    archive_detail.name = "HighDefinitionArchiveDressing"
+    root.add_child(archive_detail)
+    var glass := ModelKit3D.material(Color("1b2c31"), 0.2, 0.34, Color("6dbac0"), 0.24)
+    var service_metal := _textured_material(&"metal", Color("3d4546"), 0.64, 0.5)
+    var paper := _textured_material(&"concrete", Color("6d6253"), 0.0, 0.92)
     for index in range(6):
-        ModelKit3D.add_box(root, Vector3(4.0, 5.0 + float(index % 3) * 2.0, 3.2), Vector3(-12.0 + float(index) * 4.8, 2.5, -3.0 + float(index % 2) * 6.0), brick if index % 2 == 0 else grime, Vector3(0.0, 0.08 * float(index), 0.0), "ArchiveFragment")
+        var height := 5.0 + float(index % 3) * 2.0
+        var position := Vector3(-12.0 + float(index) * 4.8, 2.5, -3.0 + float(index % 2) * 6.0)
+        var rotation := Vector3(0.0, 0.08 * float(index), 0.0)
+        var fragment_material := brick if index % 2 == 0 else grime
+        var fragment := ModelKit3D.add_beveled_box(
+            archive_detail,
+            Vector3(4.0, height, 3.2),
+            position,
+            fragment_material,
+            rotation,
+            "ArchiveFragment%02d" % index,
+            0.16
+        )
+        # Archive identity is carried by readable records bays and service
+        # hardware, not by a new interaction or simulated inventory system.
+        for bay_index in range(2):
+            var bay_x := -1.05 + float(bay_index) * 2.1
+            ModelKit3D.add_beveled_box(
+                fragment,
+                Vector3(1.42, minf(1.35, height * 0.22), 0.08),
+                Vector3(bay_x, height * 0.1, -1.63),
+                glass if bay_index != index % 2 else paper,
+                Vector3.ZERO,
+                "ArchiveWindow%02d_%02d" % [index, bay_index],
+                0.1
+            )
+        ModelKit3D.add_louvered_panel(
+            fragment,
+            Vector3(1.2, 1.05, 0.12),
+            Vector3(0.0, -0.62, 1.63),
+            service_metal,
+            paper,
+            Vector3.ZERO,
+            "ArchiveRecordsShutter%02d" % index,
+            4
+        )
+        ModelKit3D.add_beveled_box(
+            fragment,
+            Vector3(2.75, 0.16, 1.86),
+            Vector3(0.0, height * 0.5 + 0.06, 0.0),
+            grime,
+            Vector3(0.0, 0.0, 0.02 * float(index % 2)),
+            "ArchiveRoofSlab%02d" % index,
+            0.18
+        )
+        ModelKit3D.add_surface_panel(
+            fragment,
+            Vector3(0.9, 0.62, 0.1),
+            Vector3(1.28, 0.78, 1.66),
+            service_metal,
+            paper,
+            Vector3.ZERO,
+            "ArchiveServiceRiser%02d" % index
+        )
+        for rail_index in range(2):
+            ModelKit3D.add_cylinder(
+                fragment,
+                0.045,
+                1.45,
+                Vector3(-1.35 + float(rail_index) * 2.7, 1.12, 1.66),
+                service_metal,
+                Vector3(PI * 0.5, 0.0, 0.0),
+                "ArchiveFilingRail%02d_%02d" % [index, rail_index]
+            )
 
 
 func _textured_material(texture_id: StringName, tint: Color, metallic: float, roughness: float) -> StandardMaterial3D:
