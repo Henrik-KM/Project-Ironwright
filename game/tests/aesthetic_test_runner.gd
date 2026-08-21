@@ -672,6 +672,11 @@ func _run_all() -> void:
         sample.configure(role_names[index], 1)
         sample.position = Vector3(15.0 + float(index) * 2.4, 0.0, 10.0)
         root.add_child(sample)
+        if role_names[index] == &"relay":
+            var relay_animation_component := AuthoredActorAnimation3D.new()
+            relay_animation_component.name = "AuthoredActorAnimation3D"
+            relay_animation_component.configure(sample)
+            sample.add_child(relay_animation_component)
         role_samples.append(sample)
     await process_frame
     for index in role_samples.size():
@@ -686,7 +691,15 @@ func _run_all() -> void:
             _expect(_find_named(role_samples[index], "EngineerAuthoredModel") != null, "The engineer must use the authored Engineer model shell.")
             _expect(_find_named(role_samples[index], "ProductionAssetMarker") != null, "The authored Engineer model must expose its production asset marker.")
         elif role_names[index] == &"relay":
+            _expect(_find_named(role_samples[index], "RelayAuthoredModel") != null, "The Signal Relay must use the authored Relay model shell.")
+            _expect(_find_named(role_samples[index], "ProductionAssetMarker") != null, "The authored Signal Relay model must expose its production asset marker.")
             _expect(_find_named(role_samples[index], "RelaySignalBeacon") != null and _find_named(role_samples[index], "RelayDirectionalDish") != null, "The Signal Relay must expose a distinct mast, dish and beacon silhouette.")
+            var relay_animation := role_samples[index].get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
+            _expect(relay_animation != null and relay_animation.animation_player != null, "The Signal Relay must route authored animation clips through a runtime presentation bridge.")
+            if relay_animation != null and relay_animation.animation_player != null:
+                for clip_name in [&"Idle", &"Walk", &"Work", &"Fire", &"Hit"]:
+                    _expect(_animation_player_has_clip(relay_animation.animation_player, clip_name), "The authored Signal Relay must expose the %s animation clip." % clip_name)
+                    _expect(_animation_player_track_count(relay_animation.animation_player, clip_name) >= 2, "The Signal Relay %s clip must carry primary and secondary authored motion channels." % clip_name)
         if role_names[index] == &"guardian":
             _expect(_find_named(role_samples[index], "WardenTargetingFace") != null and _find_named(role_samples[index], "WardenRecoilCollarLeft") != null, "The Warden must expose its maintained targeting and recoil hardware.")
             _expect(_find_named(role_samples[index], "WardenThermalFinLeft") != null and _find_named(role_samples[index], "WardenOpticShroud") != null and _find_named(role_samples[index], "WardenBreechClamp") != null, "The Warden must expose its third-pass thermal, optic and breech hardware.")

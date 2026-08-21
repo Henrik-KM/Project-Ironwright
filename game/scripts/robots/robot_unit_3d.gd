@@ -6,6 +6,7 @@ const AUTHORED_WARDEN_MODEL_SCENE: PackedScene = preload("res://assets/warden/wa
 const AUTHORED_SCRAPPER_MODEL_SCENE: PackedScene = preload("res://assets/scrapper/scrapper.gltf")
 const AUTHORED_PATHFINDER_MODEL_SCENE: PackedScene = preload("res://assets/pathfinder/pathfinder.gltf")
 const AUTHORED_ENGINEER_MODEL_SCENE: PackedScene = preload("res://assets/engineer/engineer.gltf")
+const AUTHORED_RELAY_MODEL_SCENE: PackedScene = preload("res://assets/relay/relay.gltf")
 
 signal destroyed(robot: RobotUnit3D)
 signal health_changed(robot: RobotUnit3D, current: float, maximum: float)
@@ -962,51 +963,21 @@ func _build_authored_engineer_visuals() -> void:
 
 func _build_signal_relay_visuals() -> void:
     # The Relay is a deliberately distinct late-game chassis: a tall, quiet
-    # communications instrument with a protected mast and directional array,
-    # not a reskinned combat or construction frame.
-    var chassis := ModelKit3D.material(Color("29383d"), 0.82, 0.32)
+    # communications instrument with a protected mast and directional array.
+    # Its primary shell is source-authored glTF; the bounded runtime finish
+    # below carries progression-state detail without replacing that shell.
+    # Keep the imported scene root intact so Godot's generated AnimationPlayer
+    # remains alongside RelayModel. The other authored shells predate this
+    # animation contract and can be extracted safely; the Relay keeps the
+    # source scene as one bounded presentation unit.
+    var authored_model := AUTHORED_RELAY_MODEL_SCENE.instantiate()
+    authored_model.name = "RelayAuthoredModel"
+    _model_root.add_child(authored_model)
+
     var dark_steel := ModelKit3D.material(Color("111b20"), 0.88, 0.28)
-    var ceramic := ModelKit3D.material(Color("6f7a78"), 0.12, 0.62)
     var cyan_color := Color("79e3e8")
     var cyan := ModelKit3D.material(Color("164c52"), 0.34, 0.22, cyan_color, 2.6)
     var amber := ModelKit3D.material(Color("6d3e20"), 0.38, 0.42, Color("e5a45b"), 1.3)
-    ModelKit3D.add_beveled_box(_model_root, Vector3(1.12, 0.64, 1.36), Vector3(0.0, 0.82, 0.0), chassis, Vector3.ZERO, "RelayChassis", 0.18)
-    ModelKit3D.add_surface_panel(_model_root, Vector3(0.72, 0.3, 0.08), Vector3(0.0, 1.12, -0.7), dark_steel, cyan, Vector3.ZERO, "RelayServiceFace")
-    ModelKit3D.add_louvered_panel(_model_root, Vector3(0.72, 0.32, 0.14), Vector3(0.0, 0.86, 0.7), dark_steel, ceramic, Vector3.ZERO, "RelayHeatSink", 4)
-    ModelKit3D.add_box(_model_root, Vector3(0.16, 0.42, 0.92), Vector3(0.0, 0.9, 0.0), amber, Vector3.ZERO, "RelaySpine")
-    for side in [-1.0, 1.0]:
-        var side_sign := float(side)
-        ModelKit3D.add_cylinder(_model_root, 0.1, 0.58, Vector3(side_sign * 0.45, 0.42, 0.0), dark_steel, Vector3.ZERO, "RelayLeg%s" % ("Left" if side_sign < 0.0 else "Right"))
-        ModelKit3D.add_beveled_box(_model_root, Vector3(0.24, 0.12, 0.42), Vector3(side_sign * 0.5, 0.12, -0.02), ceramic, Vector3.ZERO, "RelayFoot%s" % ("Left" if side_sign < 0.0 else "Right"), 0.16)
-        ModelKit3D.add_cylinder(_model_root, 0.045, 0.48, Vector3(side_sign * 0.52, 1.18, 0.18), cyan, Vector3(0.0, 0.0, side_sign * 0.4), "RelayBrace%s" % ("Left" if side_sign < 0.0 else "Right"))
-    ModelKit3D.add_cylinder(_model_root, 0.075, 1.18, Vector3(0.0, 1.62, 0.08), dark_steel, Vector3.ZERO, "RelayMast")
-    ModelKit3D.add_cylinder(_model_root, 0.115, 0.08, Vector3(0.0, 1.58, 0.08), amber, Vector3(0.0, 0.0, 0.0), "RelayMastCollar")
-    var dish := MeshInstance3D.new()
-    dish.name = "RelayDirectionalDish"
-    var dish_mesh := CylinderMesh.new()
-    dish_mesh.top_radius = 0.34
-    dish_mesh.bottom_radius = 0.1
-    dish_mesh.height = 0.12
-    dish_mesh.radial_segments = 24
-    dish_mesh.rings = 4
-    dish.mesh = dish_mesh
-    dish.material_override = ceramic
-    dish.position = Vector3(0.0, 2.12, -0.03)
-    dish.rotation = Vector3(0.55, 0.0, 0.0)
-    _model_root.add_child(dish)
-    var dish_rim := MeshInstance3D.new()
-    dish_rim.name = "RelayDishRim"
-    var dish_rim_mesh := TorusMesh.new()
-    dish_rim_mesh.inner_radius = 0.28
-    dish_rim_mesh.outer_radius = 0.315
-    dish_rim_mesh.rings = 16
-    dish_rim_mesh.ring_segments = 32
-    dish_rim.mesh = dish_rim_mesh
-    dish_rim.material_override = cyan
-    dish_rim.position = Vector3(0.0, 2.22, 0.02)
-    dish_rim.rotation = Vector3(0.55, 0.0, 0.0)
-    _model_root.add_child(dish_rim)
-    ModelKit3D.add_sphere(_model_root, 0.09, Vector3(0.0, 2.28, -0.04), cyan, Vector3(1.0, 0.72, 0.72), "RelayBeacon")
     if level >= 2:
         ModelKit3D.add_louvered_panel(_model_root, Vector3(0.24, 0.32, 0.1), Vector3(-0.7, 1.0, 0.0), dark_steel, cyan, Vector3(0.0, 0.0, 0.2), "RelaySignalPanel", 3)
         ModelKit3D.add_louvered_panel(_model_root, Vector3(0.24, 0.32, 0.1), Vector3(0.7, 1.0, 0.0), dark_steel, cyan, Vector3(0.0, 0.0, -0.2), "RelaySignalPanel", 3)
