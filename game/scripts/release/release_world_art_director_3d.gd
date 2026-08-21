@@ -348,11 +348,74 @@ func _dress_greenhouse(root: Node3D) -> void:
 func _dress_market(root: Node3D) -> void:
     var concrete := _textured_material(&"concrete", Color("4b4e4d"), 0.0, 0.74)
     var membrane := _textured_material(&"membrane", Color("69223e"), 0.0, 0.66)
+    var market_detail := Node3D.new()
+    market_detail.name = "HighDefinitionMarketDressing"
+    root.add_child(market_detail)
+    var market_metal := _textured_material(&"metal", Color("3a4546"), 0.64, 0.48)
+    var market_rust := _textured_material(&"rust", Color("795039"), 0.38, 0.72)
+    var canopy := ModelKit3D.material(Color("542138"), 0.02, 0.62, Color("c84f79"), 0.46)
     for index in range(9):
         var x := -12.0 + float(index % 3) * 12.0
         var z := -10.0 + float(index / 3) * 9.0
-        ModelKit3D.add_box(root, Vector3(5.0, 1.2, 3.0), Vector3(x, 0.6, z), concrete, Vector3.ZERO, "MarketStall")
-        ModelKit3D.add_sphere(root, 0.75, Vector3(x + 1.4, 1.0, z), membrane, Vector3(1.2, 0.7, 1.8), "MarketMembrane")
+        var stall := ModelKit3D.add_beveled_box(
+            market_detail,
+            Vector3(5.0, 1.2, 3.0),
+            Vector3(x, 0.6, z),
+            concrete,
+            Vector3.ZERO,
+            "MarketStall%02d" % index,
+            0.16
+        )
+        # The commercial identity is a market structure with a readable
+        # counter, canopy and display hardware, not a new inventory system.
+        ModelKit3D.add_beveled_box(
+            stall,
+            Vector3(3.7, 0.12, 2.55),
+            Vector3(0.0, 1.92, 0.0),
+            canopy,
+            Vector3(0.0, 0.0, 0.035 * float(index % 2)),
+            "MarketCanopy%02d" % index,
+            0.18
+        )
+        ModelKit3D.add_louvered_panel(
+            stall,
+            Vector3(2.6, 0.62, 0.1),
+            Vector3(0.0, 1.0, -1.56),
+            market_metal,
+            market_rust,
+            Vector3.ZERO,
+            "MarketCounter%02d" % index,
+            3
+        )
+        for corner in [-1.0, 1.0]:
+            for front_back in [-1.0, 1.0]:
+                ModelKit3D.add_cylinder(
+                    stall,
+                    0.055,
+                    2.0,
+                    Vector3(corner * 1.95, 1.0, front_back * 1.08),
+                    market_rust,
+                    Vector3.ZERO,
+                    "MarketCanopyPost%02d_%02d_%02d" % [index, int(corner), int(front_back)]
+                )
+        for display_index in range(2):
+            ModelKit3D.add_beveled_box(
+                stall,
+                Vector3(0.9, 0.58, 0.76),
+                Vector3(-1.35 + float(display_index) * 2.7, 1.08, 0.36),
+                market_rust if display_index == 0 else market_metal,
+                Vector3(0.0, 0.05 * float(display_index), 0.0),
+                "MarketDisplayCrate%02d_%02d" % [index, display_index],
+                0.14
+            )
+        ModelKit3D.add_membrane_fan(
+            stall,
+            0.72,
+            Vector3(1.4, 1.02, 0.0),
+            membrane,
+            5,
+            "MarketMembraneAwning%02d" % index
+        )
 
 
 func _dress_waterfront(root: Node3D) -> void:

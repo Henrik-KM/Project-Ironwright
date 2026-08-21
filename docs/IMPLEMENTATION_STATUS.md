@@ -1397,6 +1397,16 @@ presentation restore, with release regression coverage for that migration path.
 - added release coverage for the stable archive, records, service and filing
   detail sockets.
 
+## Focused remote market-dressing refinement milestone
+
+- replaced nine release-dressed market stall boxes with bounded beveled shells,
+  membrane canopies, canopy posts, louvered counters, display crates and
+  layered organic awnings;
+- preserved the presentation-only market-dressing contract and existing Flood
+  Market landmark, salvage, route, ecology and operation state;
+- added release coverage for the stable stall, canopy, counter, display and
+  awning detail sockets.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.
