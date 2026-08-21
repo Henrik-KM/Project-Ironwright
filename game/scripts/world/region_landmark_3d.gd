@@ -628,6 +628,14 @@ func _animate_region_details() -> void:
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.45) * 0.05)
         elif node_name.begins_with("TramSignalLamp"):
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.8) * 0.08)
+        elif node_name.begins_with("TramSignalHousing"):
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.55) * 0.04)
+        elif node_name.begins_with("TramCableClamp"):
+            node.rotation.y += sin(local_phase * 0.65) * 0.06
+        elif node_name.ends_with("FrontHeadlampLens"):
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.7) * 0.07)
+        elif node_name.begins_with("TramOrganicSeepTendril"):
+            node.rotation.z += sin(local_phase * 1.0) * 0.12
         elif node_name.begins_with("TramOrganicSeep"):
             node.rotation.y += sin(local_phase * 0.9) * 0.06
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.25) * 0.06)
@@ -709,7 +717,12 @@ func _is_region_motion_name(node_name: String) -> bool:
         "ObservatoryMastCollar",
         "ObservatorySurveyLightHousing",
         "TramSignalLamp",
+        "TramSignalHousing",
+        "TramCableClamp",
+        "TramCarriageAFrontHeadlampLens",
+        "TramCarriageBFrontHeadlampLens",
         "TramOrganicSeep",
+        "TramOrganicSeepTendril",
         "BuriedLabsVesselLight",
         "BuriedLabsTransferLight",
         "BuriedLabsVesselPort",
