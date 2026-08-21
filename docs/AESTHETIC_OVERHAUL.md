@@ -66,6 +66,10 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
   scar rails, while the bespoke regions use distinct facade, utility, signal or
   organic-growth signatures. These details remain presentation-only and under
   the landmark LOD boundary.
+- discovered non-sanctuary regions now carry a restrained pressure-growth read:
+  paired plates and signal nodes pulse and intensify with effective ecological
+  pressure, then quiet after suppression. This is a direct visual consequence
+  of the existing region state, not a new resource or dashboard.
 - Flood Market now carries a denser commercial shell with canopy ribs, stall
   service frames, water-foam bands, crane wheel hardware, glow housings and
   organic tendrils. The detail pass strengthens the market, flood-channel and

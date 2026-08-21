@@ -107,6 +107,20 @@ func _run_all() -> void:
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing") != null, "Each non-sanctuary region must receive stable authored encounter dressing on discovery.")
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/AuthoredDistrictSurfaceFinish") != null, "Each non-sanctuary region must receive a bounded authored surface-finish layer.")
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/RegionPracticalLight0") != null and landmark.get_node_or_null("PersistentRegionGeometry/RegionPracticalLight1") != null, "Each non-sanctuary region must receive two bounded palette-aware practical lights.")
+            _expect(landmark.get_node_or_null("PersistentRegionGeometry/RegionalPressureRead") != null, "Each discovered non-sanctuary region must expose a bounded pressure-growth presentation layer.")
+            _expect(landmark.find_child("RegionalPressurePlate00", true, false) != null and landmark.find_child("RegionalPressureSignal00", true, false) != null, "Regional pressure growth must expose stable plate and signal anatomy sockets.")
+            var pressure_read := landmark.get_node_or_null("PersistentRegionGeometry/RegionalPressureRead") as Node3D
+            var pressure_signal := landmark.find_child("RegionalPressureSignal00", true, false) as Node3D
+            if pressure_read != null and pressure_signal != null:
+                landmark.set_pressure(0.9)
+                landmark.set_presentation_detail_level(0)
+                var pressure_scale_before := pressure_read.scale
+                var pressure_signal_before := pressure_signal.scale
+                landmark.call("_process", 0.5)
+                _expect(not pressure_read.scale.is_equal_approx(pressure_scale_before), "Regional pressure growth must pulse at the current ecological intensity.")
+                _expect(not pressure_signal.scale.is_equal_approx(pressure_signal_before), "Regional pressure signals must carry a readable living pulse.")
+                landmark.add_suppression(0.55)
+                _expect(landmark.effective_pressure() < 0.9, "Regional suppression must reduce the pressure value driving the presentation layer.")
             _expect(landmark.find_child("*Facade*", true, false) != null, "Each non-sanctuary region must expose a readable district-specific surface signature.")
             if landmark.region_kind == &"industrial":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/WestGridAuthoredModel") != null, "West Grid must expose its authored turbine-hall and transformer-yard landmark shell.")

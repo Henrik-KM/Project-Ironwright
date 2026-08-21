@@ -1105,6 +1105,15 @@ final retail art, animation and external visual approval are still required.
   existing procedural animator without changing collision or ecology;
 - extended the aesthetic runner to verify the tier layer, sockets and motion.
 
+## Focused regional pressure-growth presentation milestone
+
+- added a bounded high-definition pressure-growth layer to every discovered
+  non-sanctuary region;
+- connected its scale, pulse and emissive intensity to the existing effective
+  ecological pressure and suppression state;
+- kept the layer presentation-only with no new resource, collision or routine
+  player task, and added native aesthetic coverage for its sockets and motion.
+
 ## Focused tiered-nest anatomy presentation milestone
 
 - added a bounded `NestHighDefinitionDetail` layer to the production tiered

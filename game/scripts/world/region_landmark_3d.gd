@@ -34,6 +34,8 @@ var _map_emphasis: bool = false
 var presentation_detail_level: int = 0
 var _motion_nodes: Array[Node3D] = []
 var _motion_base_transforms: Dictionary = {}
+var _pressure_read_root: Node3D
+var _pressure_signal_material: StandardMaterial3D
 
 
 func configure(data: Dictionary) -> void:
@@ -114,11 +116,13 @@ func set_discovered(value: bool) -> void:
 
 func set_pressure(value: float) -> void:
     pressure = maxf(0.0, value)
+    _refresh_pressure_read()
     landmark_changed.emit(self)
 
 
 func add_suppression(amount: float) -> void:
     suppression = clampf(suppression + maxf(0.0, amount), 0.0, 0.85)
+    _refresh_pressure_read()
     landmark_changed.emit(self)
 
 
@@ -141,6 +145,7 @@ func restore_from_dictionary(data: Dictionary) -> void:
     suppression = clampf(float(data.get("suppression", suppression)), 0.0, 0.85)
     if is_inside_tree():
         _refresh_discovery()
+        _refresh_pressure_read()
         landmark_changed.emit(self)
 
 
@@ -271,6 +276,7 @@ func _build_visuals() -> void:
 
     _add_region_surface_finish()
     _add_region_practical_lights()
+    _build_pressure_read()
     _capture_region_motion_nodes()
 
     _beacon_root = Node3D.new()
@@ -587,6 +593,56 @@ func _capture_region_motion_nodes_recursive(node: Node) -> void:
             _capture_region_motion_nodes_recursive(child)
 
 
+func _build_pressure_read() -> void:
+    if _visual_root == null or region_kind == &"sanctuary":
+        return
+    _pressure_read_root = Node3D.new()
+    _pressure_read_root.name = "RegionalPressureRead"
+    _visual_root.add_child(_pressure_read_root)
+
+    var signal_color := _region_color().lerp(Color("d54965"), 0.32)
+    _pressure_signal_material = ModelKit3D.material(
+        signal_color.darkened(0.52),
+        0.08,
+        0.42,
+        signal_color,
+        0.45
+    )
+    var edge_material := ModelKit3D.material(Color("5e343d"), 0.02, 0.72)
+    for index in range(6):
+        var angle := TAU * float(index) / 6.0
+        var radius_scale := 2.45 + float(index % 2) * 0.32
+        var position := Vector3(cos(angle) * radius_scale, 0.42 + float(index % 3) * 0.08, sin(angle) * radius_scale)
+        ModelKit3D.add_organic_plate(
+            _pressure_read_root,
+            0.28 + float(index % 2) * 0.04,
+            position,
+            _pressure_signal_material,
+            edge_material,
+            Vector3(0.72, 0.3, 1.45),
+            "RegionalPressurePlate%02d" % index
+        )
+        ModelKit3D.add_sphere(
+            _pressure_read_root,
+            0.07,
+            position + Vector3.UP * (0.32 + float(index % 2) * 0.05),
+            _pressure_signal_material,
+            Vector3(1.0, 0.7, 1.0),
+            "RegionalPressureSignal%02d" % index
+        )
+    _refresh_pressure_read()
+
+
+func _refresh_pressure_read() -> void:
+    if _pressure_read_root == null:
+        return
+    var intensity := clampf(effective_pressure(), 0.0, 1.0)
+    _pressure_read_root.visible = discovered and region_kind != &"sanctuary"
+    if _pressure_signal_material != null:
+        _pressure_signal_material.emission_energy_multiplier = lerpf(0.3, 2.8, intensity)
+        _pressure_signal_material.albedo_color = _region_color().darkened(lerpf(0.78, 0.42, intensity))
+
+
 func _animate_region_details() -> void:
     for index in _motion_nodes.size():
         var node := _motion_nodes[index]
@@ -595,7 +651,18 @@ func _animate_region_details() -> void:
         node.transform = _motion_base_transforms[node]
         var local_phase := _elapsed + float(index) * 0.31
         var node_name := String(node.name)
-        if node_name.begins_with("RiverworksRotor"):
+        if node_name.begins_with("RegionalPressureRead"):
+            var intensity := clampf(effective_pressure(), 0.0, 1.0)
+            var pressure_scale := lerpf(0.78, 1.18, intensity)
+            var pressure_pulse := 1.0 + sin(local_phase * (1.45 + intensity * 1.1)) * (0.025 + intensity * 0.035)
+            node.scale = _motion_base_transforms[node].basis.get_scale() * pressure_scale * pressure_pulse
+            node.rotation.y += _elapsed * (0.08 + intensity * 0.16)
+        elif node_name.begins_with("RegionalPressureSignal"):
+            var signal_pulse := 1.0 + sin(local_phase * 2.25) * (0.05 + effective_pressure() * 0.12)
+            node.scale = _motion_base_transforms[node].basis.get_scale() * signal_pulse
+        elif node_name.begins_with("RegionalPressurePlate"):
+            node.rotation.z += sin(local_phase * 1.2) * (0.025 + effective_pressure() * 0.04)
+        elif node_name.begins_with("RiverworksRotor"):
             node.rotation.y += _elapsed * 0.82
         elif node_name.begins_with("RiverworksMaintenanceValve"):
             node.rotation.z += sin(local_phase * 0.8) * 0.14
@@ -703,6 +770,9 @@ func _animate_region_details() -> void:
 
 func _is_region_motion_name(node_name: String) -> bool:
     for prefix in [
+        "RegionalPressureRead",
+        "RegionalPressureSignal",
+        "RegionalPressurePlate",
         "RiverworksRotor",
         "RiverworksMaintenanceValve",
         "RiverworksSluiceSignal",
@@ -949,6 +1019,7 @@ func _refresh_discovery() -> void:
         _beacon_root.visible = discovered
     if _label != null:
         _label.visible = discovered and _map_emphasis
+    _refresh_pressure_read()
 
 
 func _region_color() -> Color:
