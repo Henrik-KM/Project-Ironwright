@@ -633,6 +633,16 @@ identities. Manual channels remain finish-before-save.
   and deterministic survey motion; live district review remains required for
   this new slice.
 
+## Focused Observatory approach-facing station refinement
+
+- added a raised survey service deck, bounded rail silhouette, approach-facing
+  control windows, front console and service case to the authored observatory;
+- tuned the weathered concrete, alloy and oxidized-trim separation so the dish
+  reads as a maintained instrument inside a surviving municipal station;
+- retained the existing route, ecology, discovery, mapping and operation
+  ownership; the refinement remains presentation-only and was live-reviewed at
+  tactical distance.
+
 ## Focused Tram Graveyard authored-space milestone
 
 - added the original high-definition `tram.graveyard.v1` shell with damaged

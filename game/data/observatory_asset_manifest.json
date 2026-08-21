@@ -9,6 +9,10 @@
     "ObservatoryFeedSignal",
     "ObservatoryMast",
     "ObservatoryConsole",
+    "ObservatoryFrontConsole",
+    "ObservatoryServiceDeck",
+    "ObservatoryControlWindow0",
+    "ObservatorySurveyRail0",
     "ProductionAssetMarker"
   ],
   "presentation_only": true

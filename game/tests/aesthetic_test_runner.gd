@@ -185,6 +185,10 @@ func _run_all() -> void:
                 _expect(landmark.find_child("ObservatoryLensBarrel", true, false) != null, "Observatory Ridge must expose a readable survey lens.")
                 _expect(landmark.find_child("ObservatoryStarMapPanel", true, false) != null, "Observatory Ridge must expose a readable survey console.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/ObservatoryAuthoredModel") != null, "Observatory Ridge must expose its authored radio-observatory landmark shell.")
+                _expect(landmark.find_child("ObservatoryServiceDeck", true, false) != null, "Observatory Ridge must expose an authored survey service deck.")
+                _expect(landmark.find_child("ObservatoryControlWindow0", true, false) != null, "Observatory Ridge must expose readable control-cabin windows.")
+                _expect(landmark.find_child("ObservatoryFrontConsole", true, false) != null, "Observatory Ridge must expose an approach-facing survey console.")
+                _expect(landmark.find_child("ObservatorySurveyRail0", true, false) != null, "Observatory Ridge must expose a bounded survey-deck rail silhouette.")
                 var observatory_dish := landmark.find_child("ObservatoryDish", true, false) as Node3D
                 var observatory_feed := landmark.find_child("ObservatoryFeedSignal", true, false) as Node3D
                 _expect(observatory_dish != null and observatory_feed != null, "Observatory Ridge must expose named dish and feed-signal sockets.")

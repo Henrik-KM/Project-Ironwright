@@ -21,9 +21,9 @@ OUTPUT_PATH = SOURCE_DIR / "observatory.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Observatory weathered concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.24, 0.27, 0.29, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.82}},
-        {"name": "Observatory dark alloy", "pbrMetallicRoughness": {"baseColorFactor": [0.07, 0.10, 0.13, 1.0], "metallicFactor": 0.80, "roughnessFactor": 0.38}},
-        {"name": "Observatory oxidized trim", "pbrMetallicRoughness": {"baseColorFactor": [0.38, 0.18, 0.08, 1.0], "metallicFactor": 0.48, "roughnessFactor": 0.60}},
+        {"name": "Observatory weathered concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.30, 0.34, 0.36, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.78}},
+        {"name": "Observatory dark alloy", "pbrMetallicRoughness": {"baseColorFactor": [0.11, 0.17, 0.20, 1.0], "metallicFactor": 0.74, "roughnessFactor": 0.42}},
+        {"name": "Observatory oxidized trim", "pbrMetallicRoughness": {"baseColorFactor": [0.46, 0.22, 0.09, 1.0], "metallicFactor": 0.42, "roughnessFactor": 0.62}},
         {"name": "Observatory violet dish", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.12, 0.30, 1.0], "metallicFactor": 0.38, "roughnessFactor": 0.42}, "emissiveFactor": [0.18, 0.08, 0.42]},
         {"name": "Observatory cyan signal", "pbrMetallicRoughness": {"baseColorFactor": [0.04, 0.24, 0.30, 1.0], "metallicFactor": 0.22, "roughnessFactor": 0.26}, "emissiveFactor": [0.08, 0.72, 0.86]},
         {"name": "Observatory warm console", "pbrMetallicRoughness": {"baseColorFactor": [0.58, 0.24, 0.06, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.38}, "emissiveFactor": [0.90, 0.20, 0.035]},
@@ -49,6 +49,10 @@ def main() -> None:
         "Cable": mesh("Cable", add_cylinder(builder, 0.045, 4.5, warm, 10)),
         "Console": mesh("Console", add_box(builder, (1.1, 0.55, 0.12), warm)),
         "Light": mesh("Light", add_uv_sphere(builder, 0.10, warm, 12, 16)),
+        "Deck": mesh("Deck", add_box(builder, (6.8, 0.18, 2.9), alloy)),
+        "Rail": mesh("Rail", add_cylinder(builder, 0.06, 2.1, rust, 12)),
+        "Window": mesh("Window", add_box(builder, (0.92, 0.72, 0.08), cyan)),
+        "ServiceCase": mesh("ServiceCase", add_box(builder, (1.1, 0.72, 0.78), rust)),
     }
 
     nodes: list[dict] = [{
@@ -88,6 +92,13 @@ def main() -> None:
     add_node("ObservatoryControlCap", mesh_ids["ControlCap"], (3.6, 2.62, -2.2))
     add_node("ObservatoryConsole", mesh_ids["Console"], (3.6, 1.46, -3.48), extras={"socket_type": "survey_console"})
     add_node("ObservatoryConsoleLight", mesh_ids["Light"], (3.6, 1.95, -3.53))
+    add_node("ObservatoryServiceDeck", mesh_ids["Deck"], (2.2, 0.48, -3.05), extras={"socket_type": "service_deck"})
+    for index, (x, z) in enumerate(((0.0, -4.2), (4.4, -4.2), (0.0, -1.9), (4.4, -1.9))):
+        add_node("ObservatorySurveyRail%d" % index, mesh_ids["Rail"], (x, 1.55, z), extras={"socket_type": "survey_rail"})
+    add_node("ObservatoryControlWindow0", mesh_ids["Window"], (3.05, 1.78, -0.93), extras={"socket_type": "control_window"})
+    add_node("ObservatoryControlWindow1", mesh_ids["Window"], (4.15, 1.78, -0.93), extras={"socket_type": "control_window"})
+    add_node("ObservatoryFrontConsole", mesh_ids["Console"], (3.6, 1.42, -0.88), extras={"socket_type": "survey_console_front"})
+    add_node("ObservatoryServiceCase", mesh_ids["ServiceCase"], (0.2, 0.9, -3.2), extras={"socket_type": "survey_service_case"})
 
     add_node("ObservatoryDish", mesh_ids["Dish"], (-0.4, 3.05, 1.0), scale=(1.0, 0.28, 0.82), rotation=(math.pi * 0.12, 0.0, 0.0), extras={"socket_type": "dish"})
     add_node("ObservatoryDishRim", mesh_ids["DishRim"], (-0.4, 3.15, -1.52), rotation=(0.0, 0.0, 0.0))
@@ -116,7 +127,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "observatory.ridge.v1",
-            "required_nodes": ["ObservatoryModel", "ObservatoryDish", "ObservatoryFeedSignal", "ObservatoryMast", "ObservatoryConsole", "ProductionAssetMarker"],
+            "required_nodes": ["ObservatoryModel", "ObservatoryDish", "ObservatoryFeedSignal", "ObservatoryMast", "ObservatoryConsole", "ObservatoryFrontConsole", "ObservatoryServiceDeck", "ObservatoryControlWindow0", "ObservatorySurveyRail0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
