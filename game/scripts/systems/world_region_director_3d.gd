@@ -135,16 +135,51 @@ func region_for_position(position: Vector3) -> StringName:
 
 
 func route_from_heartforge(region_id: StringName, origin: Vector3) -> PackedVector3Array:
+    return route_from_heartforge_variant(region_id, origin, 0)
+
+
+func route_from_heartforge_variant(region_id: StringName, origin: Vector3, variant_index: int = 0) -> PackedVector3Array:
     var result := PackedVector3Array()
     result.append(origin)
     var data := get_region_data(region_id)
-    for raw_point in data.get("route_from_heartforge", []):
+    var raw_route: Array = data.get("route_from_heartforge", [])
+    if variant_index > 0:
+        var variants: Array = data.get("route_variants", [])
+        var variant_offset := variant_index - 1
+        if variant_offset >= 0 and variant_offset < variants.size():
+            var raw_variant: Variant = variants[variant_offset]
+            if raw_variant is Dictionary:
+                raw_route = (raw_variant as Dictionary).get("points", [])
+            elif raw_variant is Array:
+                raw_route = raw_variant as Array
+    for raw_point in raw_route:
         if raw_point is Array and raw_point.size() >= 3:
             result.append(Vector3(float(raw_point[0]), float(raw_point[1]), float(raw_point[2])))
     var destination := center(region_id)
     if result.is_empty() or result[result.size() - 1].distance_to(destination) > 0.5:
         result.append(destination)
     return result
+
+
+func route_variant_count(region_id: StringName) -> int:
+    var data := get_region_data(region_id)
+    var variants: Array = data.get("route_variants", [])
+    return variants.size()
+
+
+func route_variant_label(region_id: StringName, variant_index: int) -> String:
+    if variant_index <= 0:
+        return "primary route"
+    var data := get_region_data(region_id)
+    var variants: Array = data.get("route_variants", [])
+    var offset := variant_index - 1
+    if offset < 0 or offset >= variants.size():
+        return "alternate route"
+    var raw_variant: Variant = variants[offset]
+    if raw_variant is Dictionary:
+        var label := str((raw_variant as Dictionary).get("label", "alternate route"))
+        return label if not label.is_empty() else "alternate route"
+    return "alternate route"
 
 
 func add_pressure(region_id: StringName, amount: float) -> void:
