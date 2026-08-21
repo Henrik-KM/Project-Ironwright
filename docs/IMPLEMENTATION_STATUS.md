@@ -1060,6 +1060,17 @@ identities. Manual channels remain finish-before-save.
 - live tiered opening review reached the title screen and opening tactical frame;
   broader balance and long-run ecological review remain part of pre-alpha work.
 
+## Focused opening-cast separation milestone
+
+- added two low-energy foreground practical lights so the Mechromancer and
+  Bulwark silhouettes separate from the warm Heartforge key without changing
+  camera framing, actor positions, collision or tactical light budgets;
+- added aesthetic regression coverage for the cast-cool-key and cast-warm-fill
+  roles;
+- normalized the release and tiered world entrypoint indentation so a fresh
+  Godot import resolves the inherited release class instead of relying on a
+  stale script cache.
+
 ## Focused remaining-organic-family presentation milestone
 
 - added a high-definition procedural presentation pass for Roofleaper,

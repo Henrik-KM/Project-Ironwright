@@ -240,6 +240,11 @@ damaged masonry from flattening into bright pools in the tactical frame. The
 pass remains presentation-only and does not alter collision, progression or
 autonomy workload.
 
+The release opening now also carries two low-energy cast-separation sources:
+one cool key and one warm fill placed in the foreground band. They lift the
+Mechromancer and Bulwark silhouettes against the Heartforge without changing
+camera framing, actor positions or the bounded practical-light budget.
+
 The opening cast now also keeps the Bulwark protection field as a compact dark
 cyan arc with a bounded emitter glow, while the Heartforge plaza pavers use a
 rougher, darker wet-concrete family. The companion role stays readable without
