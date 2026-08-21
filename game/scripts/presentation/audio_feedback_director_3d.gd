@@ -12,6 +12,10 @@ signal sound_event(profile: StringName, position: Vector3)
 
 const MIX_RATE := 22050
 const MAX_ACTIVE_PLAYERS := 18
+const ORGANIC_SPECIES := [
+    &"veilstalker", &"razorhound", &"apex", &"sporecaster", &"broodmass", &"burrower",
+    &"skitterling", &"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver",
+]
 
 var world: Node3D
 var player: Node3D
@@ -36,6 +40,9 @@ func _ready() -> void:
     process_mode = Node.PROCESS_MODE_ALWAYS
     for profile in [&"pistol", &"machine_weapon", &"salvage", &"forge", &"organic_attack", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition", &"endgame_start", &"endgame_stage", &"endgame_complete", &"endgame_failure"]:
         profiles[profile] = _build_profile(profile)
+    for species in ORGANIC_SPECIES:
+        profiles[_organic_profile_id(species, false)] = _build_profile(_organic_profile_id(species, false))
+        profiles[_organic_profile_id(species, true)] = _build_profile(_organic_profile_id(species, true))
     _register_existing_actors()
     get_tree().node_added.connect(_on_node_added)
     if player != null and player.has_signal(&"channel_started"):
@@ -65,6 +72,10 @@ func available_profiles() -> Array[StringName]:
 
 func has_profile(profile: StringName) -> bool:
     return profiles.has(profile) and profiles[profile] is AudioStreamWAV
+
+
+func organic_profile_id(species: StringName, death: bool = false) -> StringName:
+    return _organic_profile_id(species, death)
 
 
 func play_profile(profile: StringName, position: Vector3, volume_db: float = -7.0, pitch_scale: float = 1.0) -> void:
@@ -169,12 +180,14 @@ func _on_attack_landed(enemy: Node, target: Node) -> void:
     var position := (enemy as Node3D).global_position if enemy is Node3D else Vector3.ZERO
     if target is Node3D:
         position = ((enemy as Node3D).global_position + (target as Node3D).global_position) * 0.5
-    play_profile(&"organic_attack", position, -7.5)
+    var species: StringName = enemy.species if enemy is OrganicEnemy3D else &"skitterling"
+    play_profile(_organic_profile_id(species, false), position, -7.5, _organic_pitch(species, false))
 
 
 func _on_actor_killed(enemy: Node, _killer: Node) -> void:
     if enemy is Node3D and enemy.is_in_group(&"organic_enemies"):
-        play_profile(&"organic_death", (enemy as Node3D).global_position, -8.0)
+        var species: StringName = enemy.species if enemy is OrganicEnemy3D else &"skitterling"
+        play_profile(_organic_profile_id(species, true), (enemy as Node3D).global_position, -8.0, _organic_pitch(species, true))
 
 
 func _on_noise_emitted(position: Vector3, _radius: float, intensity: float, source_kind: StringName) -> void:
@@ -249,31 +262,37 @@ func _on_endgame_failed(_protocol_id: StringName, _reason: String) -> void:
 
 func _build_profile(profile: StringName) -> AudioStreamWAV:
     var duration := 0.2
-    match profile:
-        &"machine_weapon":
-            duration = 0.24
-        &"salvage":
-            duration = 0.34
-        &"forge":
-            duration = 0.5
-        &"organic_attack":
-            duration = 0.28
-        &"organic_death":
-            duration = 0.55
-        &"heartforge_damage":
-            duration = 0.34
-        &"noise_pulse":
-            duration = 0.16
-        &"region_transition":
-            duration = 0.78
-        &"endgame_start":
-            duration = 1.15
-        &"endgame_stage":
-            duration = 0.58
-        &"endgame_complete":
-            duration = 1.8
-        &"endgame_failure":
-            duration = 0.72
+    var profile_text := String(profile)
+    if profile_text.begins_with("organic_attack_"):
+        duration = 0.44
+    elif profile_text.begins_with("organic_death_"):
+        duration = 0.62
+    else:
+        match profile:
+            &"machine_weapon":
+                duration = 0.24
+            &"salvage":
+                duration = 0.34
+            &"forge":
+                duration = 0.5
+            &"organic_attack":
+                duration = 0.28
+            &"organic_death":
+                duration = 0.55
+            &"heartforge_damage":
+                duration = 0.34
+            &"noise_pulse":
+                duration = 0.16
+            &"region_transition":
+                duration = 0.78
+            &"endgame_start":
+                duration = 1.15
+            &"endgame_stage":
+                duration = 0.58
+            &"endgame_complete":
+                duration = 1.8
+            &"endgame_failure":
+                duration = 0.72
 
     var sample_count := maxi(1, int(duration * MIX_RATE))
     var data := PackedByteArray()
@@ -299,6 +318,12 @@ func _sample_profile(profile: StringName, normalized: float, time: float, durati
     var release := clampf((1.0 - normalized) / 0.18, 0.0, 1.0)
     var envelope := attack * release
     var noise := sin(float(index) * 12.9898 + 78.233) * 0.5 + sin(float(index) * 4.1414) * 0.25
+    var profile_text := String(profile)
+    if profile_text.begins_with("organic_attack_") or profile_text.begins_with("organic_death_"):
+        var death := profile_text.begins_with("organic_death_")
+        var prefix := "organic_death_" if death else "organic_attack_"
+        var species := StringName(profile_text.trim_prefix(prefix))
+        return _sample_organic_signature(species, death, normalized, time, duration, envelope, noise)
     match profile:
         &"pistol":
             return (sin(TAU * (650.0 * time - 380.0 * time * time / duration)) * 0.46 + noise * 0.38) * envelope
@@ -335,3 +360,56 @@ func _sample_profile(profile: StringName, normalized: float, time: float, durati
         &"endgame_failure":
             return (sin(TAU * (54.0 * time - 36.0 * time * time / duration)) * 0.48 + noise * 0.2) * envelope
     return 0.0
+
+
+func _organic_profile_id(species: StringName, death: bool) -> StringName:
+    var safe_species := String(species) if species in ORGANIC_SPECIES else "skitterling"
+    return StringName("organic_death_%s" % safe_species if death else "organic_attack_%s" % safe_species)
+
+
+func _organic_pitch(species: StringName, death: bool) -> float:
+    var parameters := _organic_signature_parameters(species)
+    var base := float(parameters.get("pitch", 1.0))
+    return clampf(base * (0.92 if death else 1.0), 0.68, 1.34)
+
+
+func _organic_signature_parameters(species: StringName) -> Dictionary:
+    match species:
+        &"veilstalker":
+            return {"base": 178.0, "overtone": 410.0, "pitch": 1.08, "texture": 0.16, "sweep": 72.0}
+        &"razorhound":
+            return {"base": 124.0, "overtone": 286.0, "pitch": 0.94, "texture": 0.36, "sweep": 118.0}
+        &"apex":
+            return {"base": 58.0, "overtone": 172.0, "pitch": 0.72, "texture": 0.22, "sweep": 34.0}
+        &"sporecaster":
+            return {"base": 92.0, "overtone": 348.0, "pitch": 0.86, "texture": 0.42, "sweep": 52.0}
+        &"broodmass":
+            return {"base": 68.0, "overtone": 136.0, "pitch": 0.76, "texture": 0.31, "sweep": 28.0}
+        &"burrower":
+            return {"base": 82.0, "overtone": 218.0, "pitch": 0.82, "texture": 0.46, "sweep": 44.0}
+        &"roofleaper":
+            return {"base": 232.0, "overtone": 612.0, "pitch": 1.24, "texture": 0.25, "sweep": 142.0}
+        &"glassmoth":
+            return {"base": 318.0, "overtone": 860.0, "pitch": 1.3, "texture": 0.12, "sweep": 206.0}
+        &"miremaw":
+            return {"base": 104.0, "overtone": 244.0, "pitch": 0.88, "texture": 0.54, "sweep": 36.0}
+        &"carrionbell":
+            return {"base": 148.0, "overtone": 296.0, "pitch": 0.98, "texture": 0.18, "sweep": -52.0}
+        &"rootweaver":
+            return {"base": 74.0, "overtone": 196.0, "pitch": 0.8, "texture": 0.38, "sweep": 22.0}
+        _:
+            return {"base": 206.0, "overtone": 480.0, "pitch": 1.0, "texture": 0.32, "sweep": 84.0}
+
+
+func _sample_organic_signature(species: StringName, death: bool, normalized: float, time: float, duration: float, envelope: float, noise: float) -> float:
+    var parameters := _organic_signature_parameters(species)
+    var base := float(parameters["base"])
+    var overtone := float(parameters["overtone"])
+    var texture := float(parameters["texture"])
+    var sweep := float(parameters["sweep"])
+    var direction := -1.0 if death else 1.0
+    var body := sin(TAU * (base * time + direction * sweep * time * time / duration)) * (0.5 if death else 0.42)
+    var harmonic := sin(TAU * (overtone * time + sweep * 0.35 * time)) * (0.16 if death else 0.23)
+    var rasp := noise * texture
+    var pulse := sin(TAU * (2.0 + (3.0 if death else 5.0)) * normalized) * 0.08
+    return (body + harmonic + rasp + pulse) * envelope
