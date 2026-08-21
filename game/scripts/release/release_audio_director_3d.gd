@@ -160,7 +160,7 @@ func _build_caption_ui() -> void:
     caption_panel.visible = false
 
 
-func play_effect(effect_id: StringName, caption_key: String = "", pitch_variation: float = 0.0, volume_db: float = 0.0) -> void:
+func play_effect(effect_id: StringName, caption_key: String = "", pitch_variation: float = 0.0, volume_db: float = 0.0, base_pitch: float = 1.0) -> void:
     var stream: AudioStream = stream_library.get(effect_id, null)
     if stream == null or sfx_pool.is_empty():
         return
@@ -168,7 +168,7 @@ func play_effect(effect_id: StringName, caption_key: String = "", pitch_variatio
     sfx_cursor += 1
     audio.stop()
     audio.stream = stream
-    audio.pitch_scale = 1.0 + sin(float(sfx_cursor) * 1.731) * pitch_variation
+    audio.pitch_scale = clampf(base_pitch + sin(float(sfx_cursor) * 1.731) * pitch_variation, 0.55, 1.55)
     audio.volume_db = volume_db
     audio.play()
     if not caption_key.is_empty():
@@ -243,11 +243,31 @@ func _on_channel_started(kind: StringName, duration: float, description: String)
 
 func _on_organic_attack(enemy: OrganicEnemy3D, target: Node) -> void:
     if player != null and is_instance_valid(player) and target == player:
-        play_effect(&"organic_hit", "audio.caption.organic", 0.05, -2.0)
+        play_effect(&"organic_hit", "audio.caption.organic", 0.05, -2.0, _organic_signature_pitch(enemy.species, false))
 
 
 func _on_organic_killed(enemy: OrganicEnemy3D, killer: Node) -> void:
-    play_effect(&"organic_hit", "", 0.08, -9.0)
+    play_effect(&"organic_hit", "", 0.08, -9.0, _organic_signature_pitch(enemy.species, true))
+
+
+func _organic_signature_pitch(species: StringName, death: bool) -> float:
+    var pitch := 1.0
+    match species:
+        &"apex", &"broodmass", &"rootweaver":
+            pitch = 0.74
+        &"burrower", &"miremaw":
+            pitch = 0.84
+        &"razorhound", &"carrionbell":
+            pitch = 0.96
+        &"veilstalker", &"sporecaster":
+            pitch = 1.08
+        &"roofleaper":
+            pitch = 1.2
+        &"glassmoth":
+            pitch = 1.28
+        _:
+            pitch = 1.0
+    return pitch * (0.92 if death else 1.0)
 
 
 func _update_ambience(delta: float) -> void:

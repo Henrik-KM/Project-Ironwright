@@ -48,6 +48,9 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.balance_director is BalanceDirector3D, "Release runtime must install long-run balance profiles.")
     _expect(world.performance_director is PerformanceDirector3D, "Release runtime must install active/reduced-detail simulation.")
     _expect(world.release_audio is ReleaseAudioDirector3D, "Release runtime must install adaptive audio.")
+    if world.release_audio is ReleaseAudioDirector3D:
+        _expect(is_equal_approx(world.release_audio._organic_signature_pitch(&"glassmoth", false), 1.28), "Release audio must preserve the high signature of Glassmoth.")
+        _expect(world.release_audio._organic_signature_pitch(&"apex", true) < world.release_audio._organic_signature_pitch(&"apex", false), "Release audio must lower a species signature on death.")
     _expect(world.release_world_art is ReleaseWorldArtDirector3D, "Release runtime must install production environment dressing.")
     _expect(world.release_animation is ReleaseAnimationDirector3D, "Release runtime must install secondary animation.")
     _expect(world.release_front_end is ReleaseFrontEnd3D, "Release runtime must install title, pause and settings screens.")
