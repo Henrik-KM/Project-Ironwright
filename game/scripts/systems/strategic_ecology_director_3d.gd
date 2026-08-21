@@ -97,6 +97,10 @@ func record_organic_kill(position: Vector3, species: StringName) -> void:
         reduction = 0.08
     elif species == &"carrionbell":
         reduction = 0.012
+    elif species == &"ashmantle":
+        reduction = 0.014
+    elif species == &"thornback":
+        reduction = 0.006
     var landmark := region_director.get_landmark(region_id)
     if landmark != null:
         landmark.set_pressure(maxf(0.05, landmark.pressure - reduction))
@@ -240,7 +244,7 @@ func _spawn_species(position: Vector3, species: StringName, region_id: StringNam
 func _directive_for_region(region_id: StringName, species: StringName, selector: int) -> StringName:
     var data := region_director.get_region_data(region_id)
     var kind := StringName(str(data.get("kind", "urban")))
-    if species in [&"broodmass", &"sporecaster"]:
+    if species in [&"broodmass", &"sporecaster", &"thornback"]:
         return &"protect_nest"
     if species == &"razorhound":
         return &"hunt"
@@ -248,6 +252,8 @@ func _directive_for_region(region_id: StringName, species: StringName, selector:
         return &"scout"
     if species == &"burrower":
         return &"patrol"
+    if species == &"ashmantle":
+        return &"scout"
     match kind:
         &"nest", &"endgame":
             return &"protect_nest" if selector % 3 != 0 else &"hunt"
@@ -264,17 +270,17 @@ func _species_for_region(region_id: StringName, selector: int) -> StringName:
     var kind := StringName(str(data.get("kind", "urban")))
     match kind:
         &"industrial":
-            return &"carrionbell" if selector % 7 == 0 else (&"burrower" if selector % 3 == 0 else &"razorhound")
+            return &"ashmantle" if selector % 11 == 0 else (&"carrionbell" if selector % 7 == 0 else (&"burrower" if selector % 3 == 0 else &"razorhound"))
         &"tenement":
             return &"roofleaper" if selector % 2 == 0 else &"razorhound"
         &"greenhouse":
-            return &"glassmoth" if selector % 2 == 0 else &"sporecaster"
+            return &"thornback" if selector % 7 == 0 else (&"glassmoth" if selector % 2 == 0 else &"sporecaster")
         &"commercial":
-            return &"sporecaster" if selector % 3 == 0 else (&"glassmoth" if selector % 5 == 0 else &"skitterling")
+            return &"ashmantle" if selector % 11 == 0 else (&"sporecaster" if selector % 3 == 0 else (&"glassmoth" if selector % 5 == 0 else &"skitterling"))
         &"waterfront":
-            return &"miremaw" if selector % 6 == 0 else (&"burrower" if selector % 3 == 0 else &"razorhound")
+            return &"thornback" if selector % 9 == 0 else (&"miremaw" if selector % 6 == 0 else (&"burrower" if selector % 3 == 0 else &"razorhound"))
         &"rail":
-            return &"carrionbell" if selector % 5 == 0 else (&"burrower" if selector % 2 == 0 else &"razorhound")
+            return &"ashmantle" if selector % 9 == 0 else (&"carrionbell" if selector % 5 == 0 else (&"burrower" if selector % 2 == 0 else &"razorhound"))
         &"nest":
             return &"broodmass" if selector % 5 == 0 else (&"sporecaster" if selector % 2 == 0 else &"razorhound")
         &"observatory":

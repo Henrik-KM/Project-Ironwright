@@ -46,6 +46,10 @@ REQUIRED = [
     "game/assets/mechromancer/source/build_mechromancer_asset.py",
     "game/data/mechromancer_asset_manifest.json",
     "game/assets/organic_families/source/build_authored_organic_assets.py",
+    "game/assets/thornback/thornback.gltf",
+    "game/data/thornback_asset_manifest.json",
+    "game/assets/ashmantle/ashmantle.gltf",
+    "game/data/ashmantle_asset_manifest.json",
     "game/assets/skitterling/source/build_skitterling_asset.py",
     "game/assets/skitterling/skitterling.gltf",
     "game/data/skitterling_asset_manifest.json",
@@ -139,6 +143,16 @@ AUTHORED_ORGANIC_ASSETS = {
         "root": "RootweaverModel",
         "required": ["RootweaverModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "RootweaverCrown", "RootweaverSporeFan", "RootweaverKnuckleL", "RootweaverKnuckleR", "RootweaverCrownPlate0", "RootweaverRootSpineR", "ProductionAssetMarker"],
     },
+    "thornback": {
+        "asset_id": "thornback.territorial.v1",
+        "root": "ThornbackModel",
+        "required": ["ThornbackModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "ThornbackCrown", "ThornbackSpineL", "ThornbackSpineR", "ThornbackJawPlateL", "ThornbackEyeR", "ProductionAssetMarker"],
+    },
+    "ashmantle": {
+        "asset_id": "ashmantle.route_predator.v1",
+        "root": "AshmantleModel",
+        "required": ["AshmantleModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "AshmantleMantle", "AshmantleHeatLouverL", "AshmantleHeatLouverR", "AshmantleSiphon", "AshmantleTendrilR", "ProductionAssetMarker"],
+    },
 }
 
 # These are presentation assets used at tactical-camera and close inspection
@@ -164,6 +178,8 @@ ACTOR_GEOMETRY_FLOORS = {
     "miremaw": 4300,
     "carrionbell": 4300,
     "rootweaver": 4300,
+    "thornback": 4300,
+    "ashmantle": 4300,
 }
 
 ACTOR_ANIMATION_CHANNEL_FLOORS = {
@@ -185,6 +201,8 @@ ACTOR_ANIMATION_CHANNEL_FLOORS = {
     "miremaw": 2,
     "carrionbell": 2,
     "rootweaver": 2,
+    "thornback": 2,
+    "ashmantle": 2,
 }
 
 ORGANIC_ANIMATION_CLIPS = ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]

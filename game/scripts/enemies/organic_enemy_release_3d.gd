@@ -187,6 +187,20 @@ func _apply_species_stats() -> void:
             attack_range = 6.7
             detection_range = 31.0
             attack_interval = 1.85
+        &"thornback":
+            maximum_health = 74.0
+            move_speed = 4.2
+            attack_damage = 15.0
+            attack_range = 1.6
+            detection_range = 18.0
+            attack_interval = 1.35
+        &"ashmantle":
+            maximum_health = 126.0
+            move_speed = 3.7
+            attack_damage = 17.0
+            attack_range = 5.8
+            detection_range = 26.0
+            attack_interval = 2.0
     current_health = maximum_health
 
 
@@ -194,7 +208,7 @@ func _refresh_visuals() -> void:
     super._refresh_visuals()
     if _model_root == null:
         return
-    if species in [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver"]:
+    if species in [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle"]:
         return
     var chitin := ModelKit3D.material(Color("33252b"), 0.08, 0.72)
     var bone := ModelKit3D.material(Color("817762"), 0.0, 0.84)

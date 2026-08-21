@@ -375,8 +375,8 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     var late_enemy := world._spawn_enemy(world.player.global_position + Vector3(-4.0, 0.0, -4.0), &"veilstalker")
     var late_authored_family := world._spawn_enemy(world.player.global_position + Vector3(-6.0, 0.0, -2.0), &"rootweaver")
     var later_families: Array[OrganicEnemyRelease3D] = []
-    for index in range(4):
-        var later_species := [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell"][index] as StringName
+    for index in range(6):
+        var later_species := [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"thornback", &"ashmantle"][index] as StringName
         later_families.append(world._spawn_enemy(world.player.global_position + Vector3(-8.0 + float(index) * 3.0, 0.0, -6.0), later_species) as OrganicEnemyRelease3D)
     await process_frame
     await process_frame

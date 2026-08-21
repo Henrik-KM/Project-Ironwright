@@ -14,7 +14,7 @@ const MIX_RATE := 22050
 const MAX_ACTIVE_PLAYERS := 18
 const ORGANIC_SPECIES := [
     &"veilstalker", &"razorhound", &"apex", &"sporecaster", &"broodmass", &"burrower",
-    &"skitterling", &"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver",
+    &"skitterling", &"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle",
 ]
 
 var world: Node3D
@@ -441,6 +441,10 @@ func _organic_signature_parameters(species: StringName) -> Dictionary:
             return {"base": 148.0, "overtone": 296.0, "pitch": 0.98, "texture": 0.18, "sweep": -52.0}
         &"rootweaver":
             return {"base": 74.0, "overtone": 196.0, "pitch": 0.8, "texture": 0.38, "sweep": 22.0}
+        &"thornback":
+            return {"base": 116.0, "overtone": 248.0, "pitch": 0.92, "texture": 0.48, "sweep": 96.0}
+        &"ashmantle":
+            return {"base": 86.0, "overtone": 322.0, "pitch": 0.88, "texture": 0.28, "sweep": -68.0}
         _:
             return {"base": 206.0, "overtone": 480.0, "pitch": 1.0, "texture": 0.32, "sweep": 84.0}
 

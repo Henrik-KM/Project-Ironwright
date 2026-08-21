@@ -639,9 +639,9 @@ func infer_tier_for_species(species: StringName) -> int:
             return 5
         &"broodmass", &"rootweaver", &"miremaw":
             return 4
-        &"veilstalker", &"sporecaster", &"carrionbell", &"glassmoth":
+        &"veilstalker", &"sporecaster", &"carrionbell", &"glassmoth", &"ashmantle":
             return 3
-        &"burrower", &"roofleaper", &"razorhound":
+        &"burrower", &"roofleaper", &"razorhound", &"thornback":
             return 2
         _:
             return 1

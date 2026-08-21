@@ -13,6 +13,8 @@ const SPECIES_TIERS: Dictionary = {
     &"miremaw": 4,
     &"carrionbell": 4,
     &"rootweaver": 4,
+    &"thornback": 2,
+    &"ashmantle": 3,
     &"apex": 5,
 }
 

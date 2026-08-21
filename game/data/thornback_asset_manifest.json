@@ -1,0 +1,10 @@
+{
+  "asset_id": "thornback.territorial.v1",
+  "display_name": "Thornback territorial shell",
+  "source": "game/assets/organic_families/source/build_authored_organic_assets.py",
+  "runtime_path": "res://assets/thornback/thornback.gltf",
+  "quality": "authored_high_definition",
+  "license": "Original Project Ironwright asset",
+  "required_nodes": ["ThornbackModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "ThornbackCrown", "ThornbackSpineL", "ThornbackSpineR", "ThornbackJawPlateL", "ThornbackEyeR", "ProductionAssetMarker"],
+  "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]
+}

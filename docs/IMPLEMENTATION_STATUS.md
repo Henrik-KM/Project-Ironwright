@@ -1,5 +1,12 @@
 # Implementation status
 
+## Focused organic-roster breadth and authored-shell milestone
+
+- Expanded the authored organic roster from 12 to 14 families with Thornback territorial guardians and Ashmantle route predators.
+- Added stable glTF asset manifests, eight-clip animation contracts, high-definition silhouette sockets, release material integration, family-specific audio signatures and deterministic region ecology selection.
+- Preserved the existing population-driven tier system, proxy LOD, collision ownership and anti-chore contract; the new families add ecological variety without a new player-managed task.
+- Broader hostile-family review, balance and external visual acceptance remain release gates.
+
 ## Focused consequential technology breadth milestone
 
 - Expanded the data-driven research tree from 20 to 35 consequential technologies, reaching the commercial lower bound without adding a management dashboard or recurring per-unit task.
