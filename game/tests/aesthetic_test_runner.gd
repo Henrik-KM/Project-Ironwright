@@ -257,18 +257,30 @@ func _run_all() -> void:
                 _expect(landmark.find_child("RiverWaterlineBreak", true, false) != null, "Riverworks must expose bounded waterline breaks at the dock edge.")
                 _expect(landmark.find_child("RiverWaterChannel", true, false) != null, "Riverworks must expose a readable shallow water channel.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/RiverworksAuthoredModel") != null, "Riverworks must expose its authored pump landmark shell.")
+                _expect(landmark.find_child("RiverworksPumpPanel", true, false) != null and landmark.find_child("RiverworksRotorHub", true, false) != null and landmark.find_child("RiverworksValveHandle", true, false) != null, "Riverworks must expose pump service and maintenance hardware.")
+                _expect(landmark.find_child("RiverworksSluiceRail", true, false) != null and landmark.find_child("RiverworksSluiceLatch", true, false) != null and landmark.find_child("RiverworksSluiceSignalHousing", true, false) != null, "Riverworks must expose layered sluice and flow-signal hardware.")
+                _expect(landmark.find_child("RiverworksCableClamp", true, false) != null and landmark.find_child("RiverworksGrowthTendril0_0", true, false) != null, "Riverworks must expose maintenance-cable and organic detail.")
                 var riverworks_rotor := landmark.find_child("RiverworksRotor", true, false) as Node3D
                 var riverworks_signal := landmark.find_child("RiverworksSluiceSignal", true, false) as Node3D
-                _expect(riverworks_rotor != null and riverworks_signal != null, "Riverworks must expose named animated pump and flow signal sockets.")
-                if riverworks_rotor != null and riverworks_signal != null:
+                var riverworks_valve_handle := landmark.find_child("RiverworksValveHandle", true, false) as Node3D
+                var riverworks_signal_housing := landmark.find_child("RiverworksSluiceSignalHousing", true, false) as Node3D
+                var riverworks_tendril := landmark.find_child("RiverworksGrowthTendril0_0", true, false) as Node3D
+                _expect(riverworks_rotor != null and riverworks_signal != null and riverworks_valve_handle != null and riverworks_signal_housing != null and riverworks_tendril != null, "Riverworks must expose named pump, flow, valve, signal-housing and tendril motion sockets.")
+                if riverworks_rotor != null and riverworks_signal != null and riverworks_valve_handle != null and riverworks_signal_housing != null and riverworks_tendril != null:
                     var riverworks_gate := landmark.find_child("RiverworksSluiceGate", true, false) as Node3D
                     var riverworks_rib := landmark.find_child("RiverworksSluiceRib1", true, false) as Node3D
                     _expect(riverworks_gate != null and riverworks_rib != null and riverworks_rib.global_position.distance_to(riverworks_gate.global_position + Vector3(0.0, 0.0, -0.17)) < 0.25, "Riverworks sluice ribs must remain attached to the authored gate assembly.")
                     var rotor_before := riverworks_rotor.rotation.y
                     var signal_before := riverworks_signal.scale
+                    var valve_handle_before := riverworks_valve_handle.rotation
+                    var signal_housing_before := riverworks_signal_housing.scale
+                    var tendril_before := riverworks_tendril.rotation
                     landmark.call("_process", 0.5)
                     _expect(absf(riverworks_rotor.rotation.y - rotor_before) > 0.1, "Riverworks pump rotor must carry deterministic presentation motion.")
                     _expect(not riverworks_signal.scale.is_equal_approx(signal_before), "Riverworks flow signal must pulse as a restrained presentation cue.")
+                    _expect(not riverworks_valve_handle.rotation.is_equal_approx(valve_handle_before), "Riverworks maintenance handle must carry restrained service motion.")
+                    _expect(not riverworks_signal_housing.scale.is_equal_approx(signal_housing_before), "Riverworks flow-signal housing must carry restrained signal motion.")
+                    _expect(not riverworks_tendril.rotation.is_equal_approx(tendril_before), "Riverworks organic tendril must carry deterministic presentation motion.")
             if landmark.region_kind == &"research":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/BuriedLaboratoriesIdentityDetails") != null, "Buried Laboratories must expose its authored containment vignette.")
                 _expect(landmark.find_child("LabContainmentVessel", true, false) != null, "Buried Laboratories must expose readable containment vessels.")

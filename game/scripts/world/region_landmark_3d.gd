@@ -599,6 +599,10 @@ func _animate_region_details() -> void:
             node.rotation.y += _elapsed * 0.82
         elif node_name.begins_with("RiverworksMaintenanceValve"):
             node.rotation.z += sin(local_phase * 0.8) * 0.14
+        elif node_name.begins_with("RiverworksValveHandle"):
+            node.rotation.z += sin(local_phase * 0.72) * 0.12
+        elif node_name.begins_with("RiverworksSluiceSignalHousing"):
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.75) * 0.05)
         elif node_name.begins_with("RiverworksSluiceSignal") or node_name.begins_with("RootCisternPulse"):
             var signal_pulse := 1.0 + sin(local_phase * 2.4) * 0.12
             node.scale = _motion_base_transforms[node].basis.get_scale() * signal_pulse
@@ -676,9 +680,11 @@ func _animate_region_details() -> void:
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.08) * 0.07)
         elif node_name.begins_with("WestGridOrganicTendril"):
             node.rotation.z += sin(local_phase * 1.04) * 0.12
-        elif node_name.begins_with("RiverworksGrowth") or node_name.begins_with("RiverbankGrowth"):
+        elif (node_name.begins_with("RiverworksGrowth") and not node_name.begins_with("RiverworksGrowthTendril")) or node_name.begins_with("RiverbankGrowth"):
             node.rotation.y += sin(local_phase * 1.15) * 0.12
             node.scale *= Vector3(1.0, 1.0 + sin(local_phase * 1.8) * 0.08, 1.0)
+        elif node_name.begins_with("RiverworksGrowthTendril"):
+            node.rotation.z += sin(local_phase * 1.02) * 0.12
 
 
 func _is_region_motion_name(node_name: String) -> bool:
@@ -686,7 +692,10 @@ func _is_region_motion_name(node_name: String) -> bool:
         "RiverworksRotor",
         "RiverworksMaintenanceValve",
         "RiverworksSluiceSignal",
+        "RiverworksSluiceSignalHousing",
+        "RiverworksValveHandle",
         "RiverworksGrowth",
+        "RiverworksGrowthTendril",
         "RiverbankGrowth",
         "RootCisternPulse",
         "CathedralChoirSignal",
