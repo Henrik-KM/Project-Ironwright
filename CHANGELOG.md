@@ -4,6 +4,7 @@
 
 - Added camera-facing opaque service windows and facade edge breaks to the East Tenements shell so its residential identity survives the tactical approach frame.
 - Added camera-facing carriage windows, door hardware, service lamps and stronger teal/rust separation to Tram Graveyard so its rail identity survives the tactical approach frame.
+- Completed a live approach-frame inspection sweep across the authored mid- and late-game landmarks; formal human acceptance remains an explicit release gate.
 
 ## Pre-alpha authored landmark continuity
 
