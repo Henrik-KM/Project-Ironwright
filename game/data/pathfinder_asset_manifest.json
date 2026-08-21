@@ -22,7 +22,9 @@
     "Idle",
     "Walk",
     "Survey",
-    "Hit"
+    "Hit",
+    "Retreat",
+    "Death"
   ],
   "socket_contract": [
     "sensor",

@@ -207,6 +207,15 @@ ACTOR_ANIMATION_CHANNEL_FLOORS = {
 
 ORGANIC_ANIMATION_CLIPS = ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]
 
+FRIENDLY_ROBOT_FAMILIES = {
+    "bulwark": ["Idle", "Walk", "Fire", "Hit", "Retreat", "Death"],
+    "warden": ["Idle", "Walk", "Fire", "Hit", "Retreat", "Death"],
+    "scrapper": ["Idle", "Walk", "Work", "Hit", "Retreat", "Death"],
+    "engineer": ["Idle", "Walk", "Work", "Hit", "Retreat", "Death"],
+    "pathfinder": ["Idle", "Walk", "Survey", "Hit", "Retreat", "Death"],
+    "relay": ["Idle", "Walk", "Work", "Fire", "Hit", "Retreat", "Death"],
+}
+
 AUTHORED_REGION_ASSETS = {
     "riverworks": {
         "asset_id": "riverworks.landmark.v1",
@@ -571,6 +580,31 @@ def validate_authored_organic_assets() -> None:
                 fail(f"{family} glTF is missing required animation clip: {required}")
 
 
+def validate_authored_robot_assets() -> None:
+    for family, expected_clips in FRIENDLY_ROBOT_FAMILIES.items():
+        manifest_path = ROOT / f"game/data/{family}_asset_manifest.json"
+        gltf_path = ROOT / f"game/assets/{family}/{family}.gltf"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        gltf = json.loads(gltf_path.read_text(encoding="utf-8"))
+        if not manifest.get("asset_id"):
+            fail(f"{family} robot asset manifest must carry a stable asset ID.")
+        root_name = next(
+            (str(node.get("name")) for node in gltf.get("nodes", []) if str(node.get("name", "")).endswith("Model")),
+            "",
+        )
+        root_extras = next(
+            (node.get("extras", {}) for node in gltf.get("nodes", []) if node.get("name") == root_name),
+            {},
+        )
+        gltf_asset_id = gltf.get("extras", {}).get("ironwright_asset_id") or root_extras.get("ironwright_asset_id")
+        if gltf_asset_id != manifest["asset_id"]:
+            fail(f"{family} robot glTF and manifest asset IDs must match.")
+        animation_names = {str(animation.get("name")) for animation in gltf.get("animations", [])}
+        for required in expected_clips:
+            if required not in animation_names:
+                fail(f"{family} robot glTF is missing required animation clip: {required}")
+
+
 def validate_authored_region_assets() -> None:
     for family, expected in AUTHORED_REGION_ASSETS.items():
         manifest_path = ROOT / f"game/data/{family}_asset_manifest.json"
@@ -604,6 +638,7 @@ def main() -> int:
         validate_mechromancer_asset()
         validate_actor_geometry_density()
         validate_actor_animation_breadth()
+        validate_authored_robot_assets()
         validate_authored_organic_assets()
         validate_authored_region_assets()
 

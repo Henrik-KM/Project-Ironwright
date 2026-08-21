@@ -20,6 +20,6 @@
     "RelayBeacon",
     "ProductionAssetMarker"
   ],
-  "animation_clips": ["Idle", "Walk", "Work", "Fire", "Hit"],
+  "animation_clips": ["Idle", "Walk", "Work", "Fire", "Hit", "Retreat", "Death"],
   "socket_contract": ["sensor", "optic", "signal_mast", "directional_dish", "signal_beacon"]
 }

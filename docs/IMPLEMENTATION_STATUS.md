@@ -11,6 +11,11 @@
 - Added four sparse Town Archive records tied to the new operation completion events, extending the civic, machine-witness and ecological-convergence arcs into the added expedition breadth.
 - Kept records discoverable only after the corresponding physical group returns, with save-safe archive identifiers and no new recurring interface task.
 
+## Focused friendly-machine recovery animation milestone
+
+- Extended all six authored friendly robot shells with imported `Retreat` and `Death` clips carrying body and sensor/equipment channels, so route recovery and machine loss communicate physical weight instead of falling back to a generic walk or silent removal.
+- Routed the real friendly-robot retreat state through the authored clip bridge and expanded aesthetic coverage for clip breadth and state selection; gameplay, formation and replacement policy remain unchanged.
+
 ## Focused organic-roster breadth and authored-shell milestone
 
 - Expanded the authored organic roster from 12 to 14 families with Thornback territorial guardians and Ashmantle route predators.
