@@ -83,6 +83,8 @@ The ordinary ruined blocks now also carry a bounded high-definition facade gramm
 
 Tiered organic nests now carry the same close-range production bar: a segmented dorsal carapace, membrane plates, visible vascular channels, a root collar and fine perimeter spines build a readable encounter landmark from layered original geometry. These details remain presentation-only and do not alter nest health, spawning, collision or regrowth.
 
+Ordinary early-game nests now carry the same bounded close-range anatomy bar at a smaller authored scale, so the first hostile landmark does not read as a placeholder beside later nest encounters. Their geometry remains presentation-only and does not alter nest health, spawning, collision or regrowth.
+
 ## Release-readiness rule
 
 No agent may describe Project Ironwright as commercially finished, release-ready, or a release candidate based solely on:

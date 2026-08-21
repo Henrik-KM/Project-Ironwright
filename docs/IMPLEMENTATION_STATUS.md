@@ -1256,6 +1256,16 @@ final retail art, animation and external visual approval are still required.
 - broader encounter-space and hostile-art review remains part of the commercial
   work below.
 
+## Focused ordinary-nest anatomy presentation milestone
+
+- added a smaller authored `NestHighDefinitionDetail` layer to the ordinary
+  early-game nest shell;
+- added segmented dorsal carapace, membrane plates, vascular channels, root
+  collar and fine perimeter spines without changing the ordinary nest's
+  gameplay state, collision, spawning, maturity or persistence;
+- added aesthetic coverage proving ordinary and tiered nests share the same
+  close-range anatomy quality bar while remaining bounded and presentation-only.
+
 ## Focused authored impact-reaction milestone
 
 - added a shared authored `Hit` clip contract to all five friendly robot
