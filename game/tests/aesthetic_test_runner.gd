@@ -547,6 +547,19 @@ func _run_all() -> void:
         _expect(_enemy_model_has_details(enemy_samples[index], species_names[index]), "The %s organic family must expose a role-readable silhouette." % species_names[index])
         _expect(_find_named(enemy_samples[index], "OrganicDorsalPlate") != null, "The %s organic family must expose a layered shell material break." % species_names[index])
         _expect(_find_named(enemy_samples[index], "TorsoCore") != null and _find_named(enemy_samples[index], "TorsoSegment0") != null, "The %s organic family must expose segmented high-definition torso anatomy." % species_names[index])
+        var tiered_sample := enemy_samples[index] as OrganicEnemyTiered3D
+        _expect(tiered_sample != null and _find_named(enemy_samples[index], "TierHighDefinitionDetail") != null, "The %s must expose the shared high-definition tier anatomy layer." % species_names[index])
+        if tiered_sample != null:
+            _expect(_find_named(enemy_samples[index], "TierDorsalPlate00") != null and _find_named(enemy_samples[index], "TierVascularChannelL00") != null and _find_named(enemy_samples[index], "TierVascularChannelR00") != null, "The %s must expose paired tier dorsal and vascular anatomy." % species_names[index])
+            _expect(_find_named(enemy_samples[index], "TierCrownRing") != null and _find_named(enemy_samples[index], "TierCrownNode00") != null, "The %s must expose the stable tier crown ring presentation socket." % species_names[index])
+            var tier_animator := enemy_samples[index].get_node_or_null("ProceduralAnimator3D") as ProceduralAnimator3D
+            var tier_channel := _find_named(enemy_samples[index], "TierVascularChannelL00") as Node3D
+            if tier_animator != null and tier_channel != null:
+                var tier_before := tier_channel.transform
+                tier_animator.idle_phase = 0.73
+                tier_animator._restore_base_transforms()
+                tier_animator._animate_organic(0.0)
+                _expect(tier_channel.transform != tier_before, "%s tier vascular channels must carry a visible living pulse." % species_names[index])
         if species_names[index] == &"razorhound":
             _expect(_find_named(enemy_samples[index], "RazorhoundAuthoredModel") != null and _find_named(enemy_samples[index], "ProductionAssetMarker") != null, "The Razorhound must expose its authored production asset contract.")
         if species_names[index] in [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver"]:

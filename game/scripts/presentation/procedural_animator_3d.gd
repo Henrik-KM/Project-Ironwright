@@ -302,6 +302,8 @@ func _animate_organic(movement_blend: float) -> void:
         model_root.position.z += 0.06 * charge
         model_root.rotation.x += 0.1 * charge
 
+    _animate_tier_anatomy(threat_blend, movement_blend)
+
     if _organic_species() == &"veilstalker":
         var attacking := state == &"attacking"
         var stalking := hunting or state in [&"scouting", &"patrolling"]
@@ -334,6 +336,28 @@ func _animate_organic(movement_blend: float) -> void:
             model_root.rotation.x -= 0.08 + absf(sin(phase * 1.7)) * 0.04
 
     _animate_authored_family_signature(_organic_species(), threat_blend, movement_blend)
+
+
+func _animate_tier_anatomy(threat_blend: float, movement_blend: float) -> void:
+    if subject == null or not _property_exists(subject, &"enemy_tier"):
+        return
+    var tier := clampi(int(subject.get(&"enemy_tier")), 1, 5)
+    var channel_pulse := 1.0 + sin(idle_phase * (1.55 + float(tier) * 0.18) + deterministic_offset) * (0.08 + float(tier) * 0.018)
+    var signal_pulse := 1.0 + sin(idle_phase * (2.15 + float(tier) * 0.24) + deterministic_offset) * (0.06 + threat_blend * 0.14)
+    for channel in _nodes_with_prefix(model_root, "TierVascularChannel"):
+        channel.scale = Vector3(channel_pulse, 1.0, 1.0 + threat_blend * 0.18)
+        channel.rotation.y += sin(idle_phase * 1.4 + deterministic_offset) * 0.035
+    for plate in _nodes_with_prefix(model_root, "TierDorsalPlate"):
+        plate.rotation.x += sin(idle_phase * (1.25 + float(tier) * 0.12) + deterministic_offset) * (0.018 + movement_blend * 0.025)
+        plate.position.y += sin(idle_phase * 1.7 + deterministic_offset) * 0.012 * (1.0 + threat_blend)
+    for crest in _nodes_with_prefix(model_root, "TierCrest"):
+        crest.rotation.z += sin(phase * 1.1 + deterministic_offset) * (0.022 + threat_blend * 0.07)
+    for signal_node in _nodes_with_prefix(model_root, "TierSignal"):
+        signal_node.scale = Vector3.ONE * signal_pulse
+    for crown_node in _nodes_with_prefix(model_root, "TierCrownNode"):
+        crown_node.scale = Vector3.ONE * signal_pulse
+    for ring in _nodes_with_prefix(model_root, "TierCrownRing"):
+        ring.rotation.y += (0.12 + float(tier) * 0.035) * (0.55 + threat_blend)
 
 
 func _organic_species() -> StringName:
