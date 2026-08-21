@@ -53,6 +53,7 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - region-specific physical salvage after discovery;
 - authored visual identity for every district kind, including original high-definition Riverworks pump/sluice, Cathedral nave/choir and Observatory survey landmark shells plus the authored Root Cistern organ shell.
 - the Tram Graveyard now has an original high-definition carriage and maintenance landmark shell while retaining the existing rail encounter and operation contracts.
+- the opening Heartforge perimeter now has a bounded high-definition barricade kit with beveled improvised shells, service plates, fasteners, braces, beacon lights and capped cable posts, while retaining the existing sanctuary boundary and opening objective flow.
 - Buried Laboratories now has an original high-definition containment-hall shell while retaining the existing research encounter and operation contracts.
 - Municipal Glasshouse now has an original high-definition climate-frame shell while retaining the existing greenhouse encounter and operation contracts.
 - North Ruins now has an original high-definition civic archive shell while retaining the existing salvage and expedition contracts.

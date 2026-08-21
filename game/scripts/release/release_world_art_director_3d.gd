@@ -262,11 +262,49 @@ func _dress_heartforge_district() -> void:
     var root := _region_root("HeartforgeReleaseDressing", Vector3.ZERO)
     var warm_metal := _textured_material(&"rust", Color("8f5a36"), 0.45, 0.65)
     var dark_metal := _textured_material(&"metal", Color("30383a"), 0.72, 0.48)
+    var plate_metal := _textured_material(&"metal", Color("4c5a58"), 0.78, 0.42)
+    var beacon_material := _emissive_material(Color("ffbd71"), 3.4)
+    var heartforge_detail := Node3D.new()
+    heartforge_detail.name = "HighDefinitionHeartforgeDressing"
+    root.add_child(heartforge_detail)
     for index in range(6):
         var angle := TAU * float(index) / 6.0
         var position := Vector3(cos(angle) * 11.5, 0.0, sin(angle) * 11.5)
-        ModelKit3D.add_box(root, Vector3(2.8, 0.9, 1.2), position + Vector3.UP * 0.45, warm_metal, Vector3(0.0, -angle, 0.0), "ImprovisedBarrier")
-        ModelKit3D.add_cylinder(root, 0.08, 2.6, position + Vector3.UP * 1.3, dark_metal, Vector3.ZERO, "CablePost")
+        var barrier := Node3D.new()
+        barrier.name = "HeartforgeBarrier%02d" % index
+        barrier.position = position + Vector3.UP * 0.45
+        barrier.rotation.y = -angle
+        heartforge_detail.add_child(barrier)
+        ModelKit3D.add_beveled_box(barrier, Vector3(2.8, 0.9, 1.2), Vector3.ZERO, warm_metal, Vector3.ZERO, "ImprovisedBarrier", 0.16)
+        ModelKit3D.add_surface_panel(
+            barrier,
+            Vector3(1.75, 0.42, 0.1),
+            Vector3(0.0, 0.08, -0.62),
+            dark_metal,
+            plate_metal,
+            Vector3.ZERO,
+            "HeartforgeBarrierService%02d" % index
+        )
+        for side in [-1.0, 1.0]:
+            ModelKit3D.add_cylinder(
+                barrier,
+                0.055,
+                1.85,
+                Vector3(side * 0.88, 0.5, 0.0),
+                plate_metal,
+                Vector3(0.0, 0.0, side * 0.24),
+                "HeartforgeBarrierBrace%02d" % index
+            )
+            ModelKit3D.add_sphere(
+                barrier,
+                0.09,
+                Vector3(side * 0.78, 0.41, -0.66),
+                beacon_material,
+                Vector3.ONE,
+                "HeartforgeBarrierBeacon%02d" % index
+            )
+        ModelKit3D.add_cylinder(heartforge_detail, 0.08, 2.6, position + Vector3.UP * 1.3, dark_metal, Vector3.ZERO, "CablePost")
+        ModelKit3D.add_cylinder(heartforge_detail, 0.11, 0.18, position + Vector3.UP * 2.58, plate_metal, Vector3.ZERO, "CablePostCap")
     for index in range(16):
         var angle := TAU * float(index) / 16.0
         var radius := 7.2 + float(index % 3) * 1.4

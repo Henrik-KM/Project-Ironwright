@@ -263,6 +263,8 @@ func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.region_director.region_data.size() >= 12, "Commercial release must contain at least twelve persistent regions.")
     _expect(world.long_operation_director.operations.size() >= 12, "Commercial release must contain at least twelve physical long-range operations.")
     _expect(world.outpost_sites.size() >= 8, "Commercial release must contain at least eight bounded outpost sites.")
+    var heartforge_detail := world.release_world_art.dressing_root.find_child("HighDefinitionHeartforgeDressing", true, false) if world.release_world_art.dressing_root != null else null
+    _expect(heartforge_detail != null and heartforge_detail.find_child("HeartforgeBarrier00", true, false) != null and heartforge_detail.find_child("HeartforgeBarrierService00", true, false) != null, "The opening Heartforge perimeter must retain its authored barrier and service-detail dressing.")
     var riverworks := world.region_director.get_landmark(&"region.riverworks")
     _expect(riverworks != null and riverworks.find_child("RiverworksRotor", true, false) != null, "Commercial release must retain the authored Riverworks pump landmark.")
     var cathedral := world.region_director.get_landmark(&"region.cathedral_quarter")
