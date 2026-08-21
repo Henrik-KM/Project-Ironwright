@@ -380,6 +380,16 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     await process_frame
     await process_frame
 
+    var organic_damage_root := late_enemy.get_node_or_null("OrganicDamagePresentation") as Node3D
+    _expect(organic_damage_root != null, "Organic enemies must carry a bounded persistent damage presentation root.")
+    if organic_damage_root != null:
+        late_enemy.apply_damage(float(late_enemy.maximum_health) * 0.34)
+        _expect(organic_damage_root.visible, "Nearby damaged organisms must expose persistent wound and leak presentation.")
+        late_enemy.set_visual_lod(1)
+        _expect(not organic_damage_root.visible, "Reduced-detail organism presentation must hide persistent damage overlays.")
+        late_enemy.set_visual_lod(0)
+        _expect(organic_damage_root.visible, "Restored close organism presentation must show persistent damage overlays again.")
+
     var robot_core := late_robot.get_node_or_null("RobotModel/Chassis/ChassisCore") as MeshInstance3D
     var enemy_core := late_enemy.get_node_or_null("OrganicModel/Torso/TorsoCore") as MeshInstance3D
     var enemy_authored_mesh := _find_first_mesh_with_token(late_enemy.get_node_or_null("OrganicModel"), "veilstalker")
