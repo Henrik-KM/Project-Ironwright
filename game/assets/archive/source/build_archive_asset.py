@@ -41,17 +41,27 @@ def main() -> None:
         "Floor": mesh("ArchiveFloor", add_box(builder, (18.0, 0.16, 14.0), stone)),
         "Facade": mesh("ArchiveFacade", add_box(builder, (12.0, 5.6, 0.42), stone)),
         "BrickWing": mesh("ArchiveBrickWing", add_box(builder, (4.4, 4.2, 4.4), brick)),
-        "Door": mesh("ArchiveVaultDoor", add_cylinder(builder, 1.65, 0.24, iron, 24)),
-        "DoorRing": mesh("ArchiveVaultRing", add_cylinder(builder, 2.0, 0.16, amber, 24)),
+        "Door": mesh("ArchiveVaultDoor", add_cylinder(builder, 1.65, 0.24, iron, 32)),
+        "DoorRing": mesh("ArchiveVaultRing", add_cylinder(builder, 2.0, 0.16, amber, 32)),
         "Step": mesh("ArchiveStep", add_box(builder, (4.4, 0.28, 1.0), stone)),
         "Shelf": mesh("ArchiveShelf", add_box(builder, (2.8, 2.5, 0.24), iron)),
         "Paper": mesh("ArchivePaperStack", add_box(builder, (1.9, 0.32, 0.85), paper)),
         "BeaconMast": mesh("ArchiveBeaconMast", add_cylinder(builder, 0.13, 6.0, iron, 16)),
-        "Beacon": mesh("ArchiveBeacon", add_uv_sphere(builder, 0.26, amber, 14, 20)),
+        "Beacon": mesh("ArchiveBeacon", add_uv_sphere(builder, 0.26, amber, 18, 28)),
         "Window": mesh("ArchiveWindow", add_box(builder, (2.4, 1.55, 0.08), glass)),
-        "Creep": mesh("ArchiveOrganicCreep", add_uv_sphere(builder, 0.46, organic, 14, 20)),
+        "Creep": mesh("ArchiveOrganicCreep", add_uv_sphere(builder, 0.46, organic, 18, 28)),
         "Cable": mesh("ArchiveCable", add_cylinder(builder, 0.045, 4.8, amber, 10)),
         "Marker": mesh("ArchiveMarker", add_box(builder, (0.7, 0.08, 0.7), amber)),
+        "WindowFrame": mesh("ArchiveWindowFrame", add_box(builder, (2.72, 0.10, 1.84), iron)),
+        "WindowMullion": mesh("ArchiveWindowMullion", add_box(builder, (0.10, 1.62, 0.12), iron)),
+        "DoorJamb": mesh("ArchiveDoorJamb", add_box(builder, (0.24, 3.45, 0.34), stone)),
+        "DoorLintel": mesh("ArchiveDoorLintel", add_box(builder, (4.75, 0.24, 0.34), stone)),
+        "ShelfDivider": mesh("ArchiveShelfDivider", add_box(builder, (0.12, 2.42, 0.38), iron)),
+        "ShelfRail": mesh("ArchiveShelfRail", add_box(builder, (2.52, 0.08, 0.08), amber)),
+        "BeaconBrace": mesh("ArchiveBeaconBrace", add_box(builder, (0.12, 1.42, 0.12), iron)),
+        "BeaconCollar": mesh("ArchiveBeaconCollar", add_cylinder(builder, 0.36, 0.16, amber, 24)),
+        "Plaque": mesh("ArchivePlaque", add_box(builder, (3.0, 0.58, 0.08), amber)),
+        "CreepTendril": mesh("ArchiveCreepTendril", add_cylinder(builder, 0.045, 0.78, organic, 14)),
     }
 
     nodes: list[dict] = [{
@@ -92,18 +102,33 @@ def main() -> None:
     add_node("ArchiveBrickWingR", mesh_ids["BrickWing"], (7.0, 2.1, -2.5), rotation=(0.0, 0.04, 0.0))
     add_node("ArchiveFacadeWindowL", mesh_ids["Window"], (-3.2, 3.0, 1.46), extras={"socket_type": "civic_window"})
     add_node("ArchiveFacadeWindowR", mesh_ids["Window"], (3.2, 3.0, 1.46), extras={"socket_type": "civic_window"})
+    for side, x in (("L", -3.2), ("R", 3.2)):
+        add_node("ArchiveWindowFrame%s" % side, mesh_ids["WindowFrame"], (x, 3.0, 1.40), extras={"surface": "civic_window_frame"})
+        add_node("ArchiveWindowMullion%s" % side, mesh_ids["WindowMullion"], (x, 3.0, 1.31), extras={"surface": "civic_window_mullion"})
+    add_node("ArchiveVaultDoorJambL", mesh_ids["DoorJamb"], (-2.28, 2.15, 1.38), extras={"surface": "vault_door_jamb"})
+    add_node("ArchiveVaultDoorJambR", mesh_ids["DoorJamb"], (2.28, 2.15, 1.38), extras={"surface": "vault_door_jamb"})
+    add_node("ArchiveVaultDoorLintel", mesh_ids["DoorLintel"], (0.0, 3.86, 1.38), extras={"surface": "vault_door_lintel"})
     add_node("ArchiveVaultDoor", mesh_ids["Door"], (0.0, 2.15, 1.42), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "vault_door"})
     add_node("ArchiveVaultDoorRing", mesh_ids["DoorRing"], (0.0, 2.15, 1.28), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "vault_door_ring"})
+    add_node("ArchiveCivicPlaque", mesh_ids["Plaque"], (0.0, 4.48, 1.26), extras={"socket_type": "archive_plaque"})
     add_node("ArchiveVaultSteps", mesh_ids["Step"], (0.0, 0.18, 0.2), extras={"socket_type": "vault_steps"})
     for side, x in enumerate((-4.9, 4.9)):
         shelf = add_node("ArchiveStack%d" % side, mesh_ids["Shelf"], (x, 1.35, -3.2), extras={"socket_type": "archive_stack"})
         for index in range(3):
             add_node("ArchivePaperStack%d_%d" % (side, index), mesh_ids["Paper"], (0.0, -0.88 + float(index) * 0.72, 0.0), parent=shelf)
+        for divider_index, divider_x in enumerate((-0.94, 0.0, 0.94)):
+            add_node("ArchiveShelfDivider%d_%d" % (side, divider_index), mesh_ids["ShelfDivider"], (divider_x, 0.0, 0.0), parent=shelf, extras={"surface": "archive_shelf_divider"})
+        add_node("ArchiveShelfRail%d" % side, mesh_ids["ShelfRail"], (0.0, 0.12, 0.0), parent=shelf, extras={"surface": "archive_shelf_rail"})
     add_node("ArchiveRoofBeacon", mesh_ids["BeaconMast"], (0.0, 5.8, 2.4), extras={"socket_type": "roof_beacon"})
     add_node("ArchiveRoofBeaconLight", mesh_ids["Beacon"], (0.0, 8.85, 2.4), extras={"socket_type": "beacon_light"})
+    add_node("ArchiveBeaconCollar", mesh_ids["BeaconCollar"], (0.0, 8.48, 2.4), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "beacon_service_collar"})
+    add_node("ArchiveBeaconBraceL", mesh_ids["BeaconBrace"], (-0.42, 7.2, 2.4), extras={"surface": "beacon_brace"})
+    add_node("ArchiveBeaconBraceR", mesh_ids["BeaconBrace"], (0.42, 7.2, 2.4), extras={"surface": "beacon_brace"})
     add_node("ArchiveBeaconCable", mesh_ids["Cable"], (0.0, 4.0, 2.4), rotation=(0.0, 0.0, math.pi * 0.5), extras={"socket_type": "beacon_cable"})
     for index, (x, z, scale) in enumerate(((-7.0, 4.8, (1.2, 0.72, 1.0)), (6.6, -4.8, (0.9, 0.64, 1.25)))):
         add_node("ArchiveOrganicCreep%d" % index, mesh_ids["Creep"], (x, 0.46, z), scale=scale, extras={"socket_type": "organic_creep"})
+        for tendril_index, tendril_x in enumerate((-0.22, 0.16)):
+            add_node("ArchiveOrganicTendril%d_%d" % (index, tendril_index), mesh_ids["CreepTendril"], (x + tendril_x, 0.82, z), rotation=(0.0, 0.0, -0.26 + float(tendril_index) * 0.42), extras={"surface": "organic_tendril"})
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "archive.north_ruins.v1", "source": "original_procedural_mesh_builder"})
 
     document = {
@@ -118,7 +143,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "archive.north_ruins.v1",
-            "required_nodes": ["ArchiveModel", "ArchiveCivicFacade", "ArchiveVaultDoor", "ArchiveRoofBeacon", "ArchiveStack0", "ArchiveOrganicCreep0", "ProductionAssetMarker"],
+            "required_nodes": ["ArchiveModel", "ArchiveCivicFacade", "ArchiveFacadeWindowL", "ArchiveWindowFrameL", "ArchiveWindowMullionL", "ArchiveVaultDoor", "ArchiveVaultDoorJambL", "ArchiveVaultDoorLintel", "ArchiveCivicPlaque", "ArchiveRoofBeacon", "ArchiveBeaconCollar", "ArchiveBeaconBraceL", "ArchiveStack0", "ArchiveShelfDivider0_0", "ArchiveShelfRail0", "ArchiveOrganicCreep0", "ArchiveOrganicTendril0_0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

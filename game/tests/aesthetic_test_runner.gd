@@ -146,17 +146,28 @@ func _run_all() -> void:
                 _expect(landmark.find_child("ArchiveCivicFacade", true, false) != null, "North Ruins must expose an authored civic archive facade.")
                 _expect(landmark.find_child("ArchiveVaultDoor", true, false) != null, "North Ruins must expose a readable archive vault entrance.")
                 _expect(landmark.find_child("ArchiveRoofBeacon", true, false) != null, "North Ruins must expose a surviving archive beacon silhouette.")
+                _expect(landmark.find_child("ArchiveWindowFrameL", true, false) != null and landmark.find_child("ArchiveWindowMullionL", true, false) != null, "North Ruins must expose civic window framing and mullion detail.")
+                _expect(landmark.find_child("ArchiveVaultDoorJambL", true, false) != null and landmark.find_child("ArchiveVaultDoorLintel", true, false) != null and landmark.find_child("ArchiveCivicPlaque", true, false) != null, "North Ruins must expose layered vault entrance framing and civic identity detail.")
+                _expect(landmark.find_child("ArchiveBeaconCollar", true, false) != null and landmark.find_child("ArchiveBeaconBraceL", true, false) != null, "North Ruins must expose roof beacon service hardware.")
+                _expect(landmark.find_child("ArchiveShelfDivider0_0", true, false) != null and landmark.find_child("ArchiveShelfRail0", true, false) != null, "North Ruins must expose archive stack filing hardware.")
+                _expect(landmark.find_child("ArchiveOrganicTendril0_0", true, false) != null, "North Ruins organic growth must expose secondary tendril anatomy.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/ArchiveAuthoredModel") != null, "North Ruins must expose its authored civic archive landmark shell.")
                 var archive_beacon := landmark.find_child("ArchiveRoofBeaconLight", true, false) as Node3D
                 var archive_creep := landmark.find_child("ArchiveOrganicCreep0", true, false) as Node3D
-                _expect(archive_beacon != null and archive_creep != null, "North Ruins must expose named beacon and organic-creep motion sockets.")
-                if archive_beacon != null and archive_creep != null:
+                var archive_collar := landmark.find_child("ArchiveBeaconCollar", true, false) as Node3D
+                var archive_tendril := landmark.find_child("ArchiveOrganicTendril0_0", true, false) as Node3D
+                _expect(archive_beacon != null and archive_creep != null and archive_collar != null and archive_tendril != null, "North Ruins must expose named beacon, collar, creep and tendril motion sockets.")
+                if archive_beacon != null and archive_creep != null and archive_collar != null and archive_tendril != null:
                     landmark.set_presentation_detail_level(0)
                     var beacon_before := archive_beacon.scale
                     var creep_before := archive_creep.scale
+                    var collar_before := archive_collar.scale
+                    var tendril_before := archive_tendril.rotation
                     landmark.call("_process", 0.5)
                     _expect(not archive_beacon.scale.is_equal_approx(beacon_before), "North Ruins beacon must pulse as a restrained presentation cue.")
                     _expect(not archive_creep.scale.is_equal_approx(creep_before), "North Ruins organic creep must carry deterministic presentation motion.")
+                    _expect(not archive_collar.scale.is_equal_approx(collar_before), "North Ruins beacon collar must carry restrained service motion.")
+                    _expect(not archive_tendril.rotation.is_equal_approx(tendril_before), "North Ruins organic tendril must carry deterministic presentation motion.")
             if landmark.region_kind == &"greenhouse":
                 _expect(landmark.find_child("GreenhouseLightCanopy", true, false) != null, "Municipal Glasshouse must expose an authored light canopy.")
                 _expect(landmark.find_child("GreenhouseClimateLouver", true, false) != null, "Municipal Glasshouse must expose readable climate infrastructure.")

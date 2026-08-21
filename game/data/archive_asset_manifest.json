@@ -6,10 +6,21 @@
   "required_nodes": [
     "ArchiveModel",
     "ArchiveCivicFacade",
+    "ArchiveFacadeWindowL",
+    "ArchiveWindowFrameL",
+    "ArchiveWindowMullionL",
     "ArchiveVaultDoor",
+    "ArchiveVaultDoorJambL",
+    "ArchiveVaultDoorLintel",
+    "ArchiveCivicPlaque",
     "ArchiveRoofBeacon",
+    "ArchiveBeaconCollar",
+    "ArchiveBeaconBraceL",
     "ArchiveStack0",
+    "ArchiveShelfDivider0_0",
+    "ArchiveShelfRail0",
     "ArchiveOrganicCreep0",
+    "ArchiveOrganicTendril0_0",
     "ProductionAssetMarker"
   ],
   "presentation_only": true
