@@ -29,6 +29,12 @@ The production texture set contains nine authored procedural texture families:
 - organic chitin;
 - living membrane.
 
+Each family also ships with a generated tangent-space normal-relief companion.
+The release art director applies those maps through the same world-space
+triplanar materials, giving hard surfaces, chitin and membrane shells readable
+micro-form under the tactical lighting without changing collision, simulation,
+or actor budgets.
+
 The release art director applies these textures through triplanar world-space materials to the existing procedural geometry. This is deliberate: the systems remain independent from the current art source, while the shipped world no longer presents as flat greybox geometry. Roads, buildings, vehicles, machinery, friendly robots and organisms receive materials appropriate to their role and construction.
 
 Every persistent region also receives a distinct environment-dressing kit. The Heartforge District gains a denser inhabited perimeter, cable posts and warm practical lights. The West Grid receives tanks, pipework and industrial structures. East Tenements gain balconies, suspended cloth and vertical route language. The Municipal Glasshouse receives broken frames, overgrowth and luminous mycelium. Flood Market gains stalls, drowned concrete and membrane growth. Riverworks gains pump gantries and service decks. Tram Graveyard contains derailed vehicles and overhead infrastructure. Cathedral Quarter gains brood spines and resonant sacs. Observatory Ridge receives the surviving optics. Buried Laboratories gain consoles, cylinders and cold displays. Root Cistern receives root pylons, signal organs and the final basin.

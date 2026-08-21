@@ -15,6 +15,17 @@ const TEXTURE_PATHS: Dictionary = {
     &"moss": TEXTURE_ROOT + "/moss_growth.png",
     &"rust": TEXTURE_ROOT + "/rust_panel.png",
 }
+const NORMAL_TEXTURE_PATHS: Dictionary = {
+    &"asphalt": TEXTURE_ROOT + "/asphalt_wet_normal.png",
+    &"brick": TEXTURE_ROOT + "/brick_ruin_normal.png",
+    &"chitin": TEXTURE_ROOT + "/chitin_normal.png",
+    &"concrete": TEXTURE_ROOT + "/concrete_wet_normal.png",
+    &"grime": TEXTURE_ROOT + "/grime_decal_normal.png",
+    &"membrane": TEXTURE_ROOT + "/membrane_normal.png",
+    &"metal": TEXTURE_ROOT + "/metal_brushed_normal.png",
+    &"moss": TEXTURE_ROOT + "/moss_growth_normal.png",
+    &"rust": TEXTURE_ROOT + "/rust_panel_normal.png",
+}
 const AUTHORED_MACHINE_TOKENS: Array[String] = [
     "bulwark",
     "warden",
@@ -55,6 +66,7 @@ var world: Node3D
 var region_director: WorldRegionDirector3D
 var settings_service: ReleaseSettingsService3D
 var textures: Dictionary = {}
+var normal_textures: Dictionary = {}
 var dressing_root: Node3D
 var meshes_textured: int = 0
 var regions_dressed: int = 0
@@ -90,6 +102,7 @@ func _on_node_added(node: Node) -> void:
 
 func _load_textures() -> void:
     textures.clear()
+    normal_textures.clear()
     load_errors.clear()
     for raw_id in TEXTURE_PATHS:
         var texture_id := raw_id as StringName
@@ -100,6 +113,15 @@ func _load_textures() -> void:
         var texture := load(path) as Texture2D
         if texture != null:
             textures[texture_id] = texture
+    for raw_id in NORMAL_TEXTURE_PATHS:
+        var texture_id := raw_id as StringName
+        var path := str(NORMAL_TEXTURE_PATHS[texture_id])
+        if not ResourceLoader.exists(path):
+            load_errors.append("Missing release normal texture: %s" % path)
+            continue
+        var texture := load(path) as Texture2D
+        if texture != null:
+            normal_textures[texture_id] = texture
 
 
 func _apply_release_art() -> void:
@@ -149,6 +171,10 @@ func _texture_mesh(mesh_instance: MeshInstance3D) -> void:
     material.uv1_triplanar = true
     material.uv1_world_triplanar = true
     material.uv1_scale = _uv_scale(category)
+    if normal_textures.has(category):
+        material.normal_enabled = true
+        material.normal_texture = normal_textures[category]
+        material.normal_scale = _normal_scale(category)
     if category in [&"asphalt", &"concrete"]:
         material.roughness = 0.62 if category == &"asphalt" else 0.78
     elif category in [&"metal", &"rust"]:
@@ -218,6 +244,18 @@ func _uv_scale(category: StringName) -> Vector3:
             return Vector3(0.7, 0.7, 0.7)
         _:
             return Vector3(0.22, 0.22, 0.22)
+
+
+func _normal_scale(category: StringName) -> float:
+    match category:
+        &"chitin", &"membrane":
+            return 0.78
+        &"brick", &"rust", &"moss":
+            return 0.62
+        &"metal":
+            return 0.42
+        _:
+            return 0.5
 
 
 func _dress_heartforge_district() -> void:

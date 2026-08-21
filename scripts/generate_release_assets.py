@@ -185,6 +185,39 @@ TEXTURES: dict[str, Callable[[int, int], tuple[int, int, int, int]]] = {
 }
 
 
+NORMAL_TEXTURES: dict[str, tuple[str, float]] = {
+    "asphalt_wet_normal.png": ("asphalt_wet.png", 3.4),
+    "brick_ruin_normal.png": ("brick_ruin.png", 4.2),
+    "chitin_normal.png": ("chitin.png", 5.2),
+    "concrete_wet_normal.png": ("concrete_wet.png", 3.0),
+    "grime_decal_normal.png": ("grime_decal.png", 2.4),
+    "membrane_normal.png": ("membrane.png", 4.8),
+    "metal_brushed_normal.png": ("metal_brushed.png", 3.2),
+    "moss_growth_normal.png": ("moss_growth.png", 3.8),
+    "rust_panel_normal.png": ("rust_panel.png", 4.0),
+}
+
+
+def normal_pixel(source: Callable[[int, int], tuple[int, int, int, int]], strength: float) -> Callable[[int, int], tuple[int, int, int, int]]:
+    def sample(x: int, y: int) -> tuple[int, int, int, int]:
+        def height(px: int, py: int) -> float:
+            red, green, blue, _ = source(px % 256, py % 256)
+            return (red * 0.2126 + green * 0.7152 + blue * 0.0722) / 255.0
+
+        dx = height(x + 1, y) - height(x - 1, y)
+        dy = height(x, y + 1) - height(x, y - 1)
+        nx = -dx * strength
+        ny = -dy * strength
+        nz = 1.0
+        length = math.sqrt(nx * nx + ny * ny + nz * nz)
+        nx /= length
+        ny /= length
+        nz /= length
+        return clamp((nx * 0.5 + 0.5) * 255.0), clamp((ny * 0.5 + 0.5) * 255.0), clamp((nz * 0.5 + 0.5) * 255.0), 255
+
+    return sample
+
+
 def quantized_frequency(frequency: float, duration: float) -> float:
     return round(frequency * duration) / duration
 
@@ -340,6 +373,8 @@ AUDIO: dict[str, tuple[float, Callable[[float, float], float]]] = {
 def generate_textures() -> None:
     for name, function in TEXTURES.items():
         write_png(TEXTURE_ROOT / name, function)
+    for name, (source_name, strength) in NORMAL_TEXTURES.items():
+        write_png(TEXTURE_ROOT / name, normal_pixel(TEXTURES[source_name], strength))
 
 
 def generate_audio() -> None:
@@ -356,7 +391,7 @@ def main() -> int:
         generate_textures()
     if not args.textures_only:
         generate_audio()
-    print(f"Generated {len(TEXTURES)} textures and {len(AUDIO)} audio assets under {ASSET_ROOT.relative_to(ROOT)}")
+    print(f"Generated {len(TEXTURES) + len(NORMAL_TEXTURES)} textures and {len(AUDIO)} audio assets under {ASSET_ROOT.relative_to(ROOT)}")
     return 0
 
 
