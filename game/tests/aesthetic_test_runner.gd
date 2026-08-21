@@ -167,14 +167,20 @@ func _run_all() -> void:
                 _expect(landmark.find_child("GlasshouseBedEdge0", true, false) != null and landmark.find_child("GlasshouseGrowthTendril0_0", true, false) != null and landmark.find_child("GlasshouseLightHousing0", true, false) != null, "Municipal Glasshouse growth beds must expose secondary service and organic detail.")
                 var glasshouse_canopy := landmark.find_child("GlasshouseCanopyPulse", true, false) as Node3D
                 var glasshouse_growth := landmark.find_child("GlasshouseGrowthPulse0_0", true, false) as Node3D
-                _expect(glasshouse_canopy != null and glasshouse_growth != null, "Municipal Glasshouse must expose named canopy and growth motion sockets.")
-                if glasshouse_canopy != null and glasshouse_growth != null:
+                var glasshouse_tendril := landmark.find_child("GlasshouseGrowthTendril0_0", true, false) as Node3D
+                var glasshouse_actuator := landmark.find_child("GlasshouseClimateActuator", true, false) as Node3D
+                _expect(glasshouse_canopy != null and glasshouse_growth != null and glasshouse_tendril != null and glasshouse_actuator != null, "Municipal Glasshouse must expose named canopy, growth, tendril and climate motion sockets.")
+                if glasshouse_canopy != null and glasshouse_growth != null and glasshouse_tendril != null and glasshouse_actuator != null:
                     landmark.set_presentation_detail_level(0)
                     var canopy_before := glasshouse_canopy.scale
                     var growth_before := glasshouse_growth.scale
+                    var tendril_before := glasshouse_tendril.rotation.z
+                    var actuator_before := glasshouse_actuator.rotation.z
                     landmark.call("_process", 0.5)
                     _expect(not glasshouse_canopy.scale.is_equal_approx(canopy_before), "Municipal Glasshouse canopy signal must pulse as a restrained presentation cue.")
                     _expect(not glasshouse_growth.scale.is_equal_approx(growth_before), "Municipal Glasshouse growth must carry deterministic presentation motion.")
+                    _expect(not is_equal_approx(glasshouse_tendril.rotation.z, tendril_before), "Municipal Glasshouse organic tendrils must carry deterministic environmental motion.")
+                    _expect(not is_equal_approx(glasshouse_actuator.rotation.z, actuator_before), "Municipal Glasshouse climate hardware must carry deterministic functional motion.")
             if landmark.region_kind == &"rail":
                 _expect(landmark.find_child("TramMaintenanceBay", true, false) != null, "Tram Graveyard must expose an authored maintenance bay.")
                 _expect(landmark.find_child("TramCarriageDoor", true, false) != null, "Tram Graveyard must expose a readable carriage door.")
