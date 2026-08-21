@@ -108,6 +108,11 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
   fasteners and organic seepage tendrils. Its wheel, signal and seep meshes
   also use denser close-camera resolution. The detail pass strengthens the rail
   identity without changing the encounter or operation contract.
+- Root Cistern now carries layered core plates, claws and veins, pylon collars
+  and braces, capped signal pulses, cable clamps, basin spines and root
+  tendrils. Its core, layer, pylon, signal, pulse, cable and basin meshes also
+  use denser close-camera resolution. The detail pass strengthens the final
+  basin identity without changing the capstone operation contract.
 - the release material pass remains live for late-created robots, organic
   families, outpost upgrades and discovered-region dressing, so the visual
   language does not regress after the opening scene.
