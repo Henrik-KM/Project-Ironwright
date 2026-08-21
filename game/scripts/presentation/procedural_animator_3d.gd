@@ -347,6 +347,8 @@ func _animate_authored_family_signature(species: StringName, threat_blend: float
         &"burrower":
             for drill in _nodes_with_prefix(model_root, "BurrowerDrill"):
                 drill.rotation.z += idle_phase * (1.4 + threat_blend * 2.6)
+            for flute in _nodes_with_prefix(model_root, "BurrowerDrillFlute"):
+                flute.rotation.z -= idle_phase * (0.8 + threat_blend * 1.6)
             for lamp in _nodes_with_prefix(model_root, "BurrowerLamp"):
                 lamp.scale = lamp.scale * (1.0 + sin(idle_phase * 3.0) * (0.025 + threat_blend * 0.08))
             if threat_blend > 0.0:
@@ -360,6 +362,8 @@ func _animate_authored_family_signature(species: StringName, threat_blend: float
                 stem.rotation.z += attack_sway * (0.025 + threat_blend * 0.11)
             for oculus in _nodes_with_prefix(model_root, "SporecasterOculus"):
                 oculus.rotation.y += sin(idle_phase * 1.7 + deterministic_offset) * 0.13
+            for rib in _nodes_with_prefix(model_root, "SporecasterGillRib"):
+                rib.rotation.z += attack_sway * (0.04 + threat_blend * 0.09)
         &"broodmass":
             for maw in _nodes_with_prefix(model_root, "BroodmassMaw"):
                 maw.rotation.y += 0.16 * threat_blend

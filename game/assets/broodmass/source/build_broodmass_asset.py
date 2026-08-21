@@ -36,18 +36,21 @@ def main() -> None:
 
     flesh, shell, membrane, bone, eye, tendon = range(6)
     mesh_ids = {
-        "Core": mesh("Core", add_uv_sphere(builder, 0.74, flesh, 18, 28)),
-        "Segment": mesh("Segment", add_uv_sphere(builder, 0.58, shell, 16, 24)),
-        "Lobe": mesh("Lobe", add_uv_sphere(builder, 0.42, flesh, 14, 22)),
+        "Core": mesh("Core", add_uv_sphere(builder, 0.74, flesh, 22, 34)),
+        "Segment": mesh("Segment", add_uv_sphere(builder, 0.58, shell, 20, 30)),
+        "Lobe": mesh("Lobe", add_uv_sphere(builder, 0.42, flesh, 18, 28)),
         "Rib": mesh("Rib", add_box(builder, (1.5, 0.15, 0.24), shell)),
         "Fan": mesh("Fan", add_box(builder, (0.18, 1.4, 0.8), membrane)),
-        "Maw": mesh("Maw", add_uv_sphere(builder, 0.44, membrane, 14, 22)),
-        "Spine": mesh("Spine", add_cylinder(builder, 0.13, 1.15, bone, 14)),
-        "Leg": mesh("Leg", add_cylinder(builder, 0.12, 1.72, tendon, 14)),
-        "Hook": mesh("Hook", add_cylinder(builder, 0.075, 0.78, bone, 14)),
-        "Eye": mesh("Eye", add_uv_sphere(builder, 0.105, eye, 10, 16)),
-        "Tendon": mesh("Tendon", add_cylinder(builder, 0.065, 0.82, tendon, 12)),
-        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.055, bone, 8, 12)),
+        "Maw": mesh("Maw", add_uv_sphere(builder, 0.44, membrane, 18, 28)),
+        "Spine": mesh("Spine", add_cylinder(builder, 0.13, 1.15, bone, 18)),
+        "Leg": mesh("Leg", add_cylinder(builder, 0.12, 1.72, tendon, 18)),
+        "Hook": mesh("Hook", add_cylinder(builder, 0.075, 0.78, bone, 18)),
+        "Eye": mesh("Eye", add_uv_sphere(builder, 0.105, eye, 14, 22)),
+        "Tendon": mesh("Tendon", add_cylinder(builder, 0.065, 0.82, tendon, 16)),
+        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.055, bone, 10, 16)),
+        "LobeRidge": mesh("LobeRidge", add_box(builder, (0.5, 0.08, 0.16), bone)),
+        "MawRidge": mesh("MawRidge", add_box(builder, (0.62, 0.09, 0.14), bone)),
+        "CrownFastener": mesh("CrownFastener", add_uv_sphere(builder, 0.065, bone, 12, 18)),
     }
 
     nodes: list[dict] = [{
@@ -95,6 +98,7 @@ def main() -> None:
     for side in (-1.0, 1.0):
         suffix = "L" if side < 0 else "R"
         add_node("BroodmassLobe%s" % suffix, mesh_ids["Lobe"], (side * 0.78, 1.28, 0.5), scale=(1.32, 0.9, 1.2), extras={"socket_type": "brood_lobe"})
+        add_node("BroodmassLobeRidge%s" % suffix, mesh_ids["LobeRidge"], (side * 0.78, 1.58, 0.46), rotation=(0.0, side * 0.2, side * 0.12), scale=(0.82, 1.0, 0.9), extras={"surface": "lobe_ridge"})
         add_node("BroodmassEye%s" % suffix, mesh_ids["Eye"], (side * 0.35, 1.66, -1.02), extras={"socket_type": "threat_eye"})
         add_node("BroodmassTendon%s" % suffix, mesh_ids["Tendon"], (side * 0.45, 1.0, -1.15), rotation=(0.7, 0.0, side * 0.12))
 
@@ -102,12 +106,14 @@ def main() -> None:
     # Maw hardware is parented to the maw shell; use local offsets so it does
     # not double-apply the shell's world-space position.
     add_node("BroodmassMawPlate", mesh_ids["Rib"], (0.0, 0.24, -0.02), scale=(0.86, 0.82, 1.1), parent=maw)
+    add_node("BroodmassMawRidge", mesh_ids["MawRidge"], (0.0, 0.34, -0.28), scale=(0.88, 1.0, 0.9), parent=maw, extras={"surface": "maw_ridge"})
     for side in (-1.0, 1.0):
         add_node("BroodmassMawHook%s" % ("L" if side < 0 else "R"), mesh_ids["Hook"], (side * 0.34, -0.42, -0.24), rotation=(0.78, 0.0, side * 0.15), parent=maw)
 
     for index in range(7):
         x = -1.1 + index * 0.367
         add_node("CrownSpine%d" % index, mesh_ids["Spine"], (x, 2.0 + (index % 2) * 0.1, 0.18), rotation=(0.0, 0.0, -0.25 + index * 0.08), extras={"surface": "bone_ridge"})
+        add_node("CrownFastener%d" % index, mesh_ids["CrownFastener"], (x, 1.9 + (index % 2) * 0.1, 0.14), extras={"surface": "crown_socket"})
 
     for side in (-1.0, 1.0):
         suffix = "L" if side < 0 else "R"
@@ -151,7 +157,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "broodmass.nest.v1",
-            "required_nodes": ["BroodmassModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BroodmassLobeL", "BroodmassMaw", "CrownSpine0", "BroodmassFanL", "ProductionAssetMarker"],
+            "required_nodes": ["BroodmassModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BroodmassLobeL", "BroodmassLobeRidgeL", "BroodmassMaw", "BroodmassMawRidge", "CrownSpine0", "CrownFastener0", "BroodmassFanL", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack"],
         },
     }

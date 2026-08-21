@@ -523,6 +523,14 @@ func _run_all() -> void:
             var authored_marker_name := "%sAuthoredModel" % String(species_names[index]).capitalize()
             _expect(_find_named(enemy_samples[index], authored_marker_name) != null and _find_named(enemy_samples[index], "ProductionAssetMarker") != null, "The %s must expose its authored production asset contract." % species_names[index])
         match species_names[index]:
+            &"skitterling":
+                _expect(_find_named(enemy_samples[index], "SkitterlingCarapaceCap0") != null and _find_named(enemy_samples[index], "SkitterlingMandiblePlateL") != null, "The Skitterling must expose shell caps and mandible plates for close-camera readability.")
+            &"burrower":
+                _expect(_find_named(enemy_samples[index], "BurrowerDrillFlute0") != null and _find_named(enemy_samples[index], "BurrowerLampGuardL") != null, "The Burrower must expose drill flutes and protected bore lamps.")
+            &"sporecaster":
+                _expect(_find_named(enemy_samples[index], "SporecasterGillRib0") != null and _find_named(enemy_samples[index], "SporecasterSacCap0") != null, "The Sporecaster must expose layered gill ribs and capped spore sacs.")
+            &"broodmass":
+                _expect(_find_named(enemy_samples[index], "BroodmassLobeRidgeL") != null and _find_named(enemy_samples[index], "BroodmassMawRidge") != null and _find_named(enemy_samples[index], "CrownFastener0") != null, "The Broodmass must expose layered lobe, maw and crown hardware.")
             &"roofleaper":
                 _expect(_find_named(enemy_samples[index], "RoofleaperFineVeinL") != null and _find_named(enemy_samples[index], "RoofleaperFineVeinR") != null, "The Roofleaper must expose fine vascular wing detail on both membranes.")
                 _expect(_find_named(enemy_samples[index], "RoofleaperWingFrameL") != null and _find_named(enemy_samples[index], "RoofleaperWingFastenerR") != null, "The Roofleaper must expose structural wing spars and socket fasteners.")

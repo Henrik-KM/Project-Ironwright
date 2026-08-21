@@ -5,6 +5,6 @@
   "runtime_path": "res://assets/skitterling/skitterling.gltf",
   "quality": "authored_high_definition",
   "license": "Original Project Ironwright asset",
-  "required_nodes": ["SkitterlingModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SkitterlingCarapace0", "SkitterlingAntennaL", "SkitterlingMandibleL", "SkitterlingSensoryFan0", "ProductionAssetMarker"],
+  "required_nodes": ["SkitterlingModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SkitterlingCarapace0", "SkitterlingCarapaceCap0", "SkitterlingAntennaL", "SkitterlingAntennaJointL", "SkitterlingMandibleL", "SkitterlingMandiblePlateL", "SkitterlingSensoryFan0", "ProductionAssetMarker"],
   "animation_clips": ["Idle", "Walk", "Attack"]
 }

@@ -37,18 +37,20 @@ def main() -> None:
 
     flesh, shell, membrane, bone, eye, tendon = range(6)
     mesh_ids = {
-        "Core": mesh("Core", add_uv_sphere(builder, 0.58, flesh, 16, 26)),
-        "Segment": mesh("Segment", add_uv_sphere(builder, 0.44, shell, 14, 24)),
-        "Cowl": mesh("Cowl", add_uv_sphere(builder, 0.38, shell, 14, 22)),
+        "Core": mesh("Core", add_uv_sphere(builder, 0.58, flesh, 20, 32)),
+        "Segment": mesh("Segment", add_uv_sphere(builder, 0.44, shell, 18, 28)),
+        "Cowl": mesh("Cowl", add_uv_sphere(builder, 0.38, shell, 18, 28)),
         "Rib": mesh("Rib", add_box(builder, (1.04, 0.12, 0.22), shell)),
         "Gill": mesh("Gill", add_box(builder, (0.16, 1.25, 0.74), membrane)),
-        "Sac": mesh("Sac", add_uv_sphere(builder, 0.30, membrane, 14, 22)),
-        "Eye": mesh("Eye", add_uv_sphere(builder, 0.085, eye, 10, 16)),
-        "Stem": mesh("Stem", add_cylinder(builder, 0.045, 0.54, tendon, 12)),
-        "Leg": mesh("Leg", add_cylinder(builder, 0.09, 1.25, tendon, 12)),
-        "Talon": mesh("Talon", add_cylinder(builder, 0.055, 0.62, bone, 12)),
-        "Spine": mesh("Spine", add_cylinder(builder, 0.075, 0.84, bone, 12)),
-        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 8, 12)),
+        "Sac": mesh("Sac", add_uv_sphere(builder, 0.30, membrane, 18, 28)),
+        "Eye": mesh("Eye", add_uv_sphere(builder, 0.085, eye, 14, 22)),
+        "Stem": mesh("Stem", add_cylinder(builder, 0.045, 0.54, tendon, 16)),
+        "Leg": mesh("Leg", add_cylinder(builder, 0.09, 1.25, tendon, 18)),
+        "Talon": mesh("Talon", add_cylinder(builder, 0.055, 0.62, bone, 16)),
+        "Spine": mesh("Spine", add_cylinder(builder, 0.075, 0.84, bone, 18)),
+        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 10, 16)),
+        "GillRib": mesh("GillRib", add_cylinder(builder, 0.026, 0.86, bone, 16)),
+        "SacCap": mesh("SacCap", add_uv_sphere(builder, 0.12, bone, 14, 20)),
     }
 
     nodes: list[dict] = [{
@@ -106,11 +108,13 @@ def main() -> None:
         x = side * (0.62 + abs(index - 3) * 0.16)
         z = 0.12 + math.sin(angle) * 0.36
         add_node("SporecasterGillFan%d" % index, mesh_ids["Gill"], (x, 1.25 + abs(index - 3) * 0.08, z), rotation=(0.0, side * 0.16, side * (0.54 - index * 0.08)), scale=(1.0, 0.82 + abs(index - 3) * 0.12, 0.72), extras={"surface": "layered_gill_membrane"})
+        add_node("SporecasterGillRib%d" % index, mesh_ids["GillRib"], (x, 1.3 + abs(index - 3) * 0.08, z), rotation=(0.0, side * 0.16, side * (0.54 - index * 0.08)), scale=(0.72, 1.0, 0.82), extras={"surface": "gill_rib"})
 
     sac_positions = [(-0.62, 1.62, 0.12), (-0.3, 1.8, 0.34), (0.0, 1.92, 0.46), (0.3, 1.8, 0.34), (0.62, 1.62, 0.12)]
     for index, (x, y, z) in enumerate(sac_positions):
         add_node("SporecasterStem%d" % index, mesh_ids["Stem"], (x, y - 0.26, z), rotation=(0.0, 0.0, x * -0.3), extras={"socket_type": "spore_stem"})
         add_node("SporecasterSac%d" % index, mesh_ids["Sac"], (x, y, z), scale=(0.78, 1.18, 0.78), extras={"socket_type": "spore_sac"})
+        add_node("SporecasterSacCap%d" % index, mesh_ids["SacCap"], (x, y + 0.22, z - 0.02), scale=(0.9, 0.7, 0.9), extras={"surface": "spore_cap"})
         add_node("SporecasterOculusSac%d" % index, mesh_ids["Eye"], (x, y + 0.23, z - 0.16), extras={"socket_type": "spore_eye"})
 
     for index in range(6):
@@ -157,7 +161,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "sporecaster.infestation.v1",
-            "required_nodes": ["SporecasterModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SporecasterGillFan0", "SporecasterSac0", "SporecasterStem0", "SporecasterOculusL", "ProductionAssetMarker"],
+            "required_nodes": ["SporecasterModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SporecasterGillFan0", "SporecasterGillRib0", "SporecasterSac0", "SporecasterSacCap0", "SporecasterStem0", "SporecasterOculusL", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack"],
         },
     }

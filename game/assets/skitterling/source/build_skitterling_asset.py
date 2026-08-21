@@ -36,16 +36,18 @@ def main() -> None:
 
     wet, shell, tendon, bone, eye, membrane = range(6)
     mesh_ids = {
-        "Core": mesh("Core", add_uv_sphere(builder, 0.38, wet, 16, 24)),
-        "Segment": mesh("Segment", add_uv_sphere(builder, 0.3, shell, 14, 22)),
+        "Core": mesh("Core", add_uv_sphere(builder, 0.38, wet, 20, 32)),
+        "Segment": mesh("Segment", add_uv_sphere(builder, 0.3, shell, 18, 28)),
         "Ridge": mesh("Ridge", add_box(builder, (0.72, 0.12, 0.18), shell)),
-        "Antenna": mesh("Antenna", add_cylinder(builder, 0.035, 0.72, tendon, 12)),
-        "Mandible": mesh("Mandible", add_cylinder(builder, 0.045, 0.56, bone, 12)),
-        "Eye": mesh("Eye", add_uv_sphere(builder, 0.065, eye, 10, 16)),
-        "Leg": mesh("Leg", add_cylinder(builder, 0.06, 0.78, tendon, 12)),
-        "Claw": mesh("Claw", add_cylinder(builder, 0.04, 0.42, bone, 12)),
+        "Antenna": mesh("Antenna", add_cylinder(builder, 0.035, 0.72, tendon, 16)),
+        "Mandible": mesh("Mandible", add_cylinder(builder, 0.045, 0.56, bone, 16)),
+        "Eye": mesh("Eye", add_uv_sphere(builder, 0.065, eye, 14, 22)),
+        "Leg": mesh("Leg", add_cylinder(builder, 0.06, 0.78, tendon, 16)),
+        "Claw": mesh("Claw", add_cylinder(builder, 0.04, 0.42, bone, 16)),
         "Fan": mesh("Fan", add_box(builder, (0.08, 0.42, 0.34), membrane)),
-        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.03, bone, 8, 12)),
+        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.03, bone, 10, 16)),
+        "CarapaceCap": mesh("CarapaceCap", add_box(builder, (0.42, 0.08, 0.14), shell)),
+        "SensoryRib": mesh("SensoryRib", add_cylinder(builder, 0.022, 0.46, bone, 14)),
     }
 
     nodes: list[dict] = [{
@@ -86,6 +88,7 @@ def main() -> None:
         z = -0.46 + index * 0.34
         add_node("TorsoSegment%d" % index, mesh_ids["Segment"], (0.0, 0.47, z), scale=(1.08 - index * 0.04, 0.72, 1.05 - index * 0.03), parent=torso)
         add_node("SkitterlingCarapace%d" % index, mesh_ids["Ridge"], (0.0, 0.78, z), rotation=(0.0, 0.0, 0.04), scale=(1.0 - index * 0.07, 1.0, 1.0), parent=torso, extras={"surface": "shell_ridge"})
+        add_node("SkitterlingCarapaceCap%d" % index, mesh_ids["CarapaceCap"], (0.0, 0.87, z - 0.02), rotation=(0.0, 0.0, 0.04), scale=(0.82 - index * 0.04, 1.0, 0.82), parent=torso, extras={"surface": "shell_cap"})
         add_node("SkitterlingFastenerL%d" % index, mesh_ids["Fastener"], (-0.32, 0.68, z), parent=torso)
         add_node("SkitterlingFastenerR%d" % index, mesh_ids["Fastener"], (0.32, 0.68, z), parent=torso)
     add_node("OrganicDorsalPlate", mesh_ids["Ridge"], (-0.1, 0.92, 0.18), scale=(1.1, 0.9, 1.2), extras={"surface": "layered_shell_break"})
@@ -94,11 +97,14 @@ def main() -> None:
         suffix = "L" if side < 0 else "R"
         add_node("SkitterlingEye%s" % suffix, mesh_ids["Eye"], (side * 0.16, 0.8, -0.92), extras={"socket_type": "scavenger_eye"})
         add_node("SkitterlingAntenna%s" % suffix, mesh_ids["Antenna"], (side * 0.2, 0.74, -0.82), rotation=(0.56, 0.0, side * 0.18), extras={"socket_type": "antenna"})
+        add_node("SkitterlingAntennaJoint%s" % suffix, mesh_ids["Fastener"], (side * 0.2, 0.76, -0.84), extras={"surface": "antenna_socket"})
         add_node("SkitterlingMandible%s" % suffix, mesh_ids["Mandible"], (side * 0.18, 0.42, -1.02), rotation=(0.8, 0.0, side * 0.22), extras={"socket_type": "mandible"})
+        add_node("SkitterlingMandiblePlate%s" % suffix, mesh_ids["CarapaceCap"], (side * 0.2, 0.5, -1.0), rotation=(0.8, 0.0, side * 0.22), scale=(0.58, 1.0, 0.7), extras={"surface": "mandible_plate"})
 
     for index in range(3):
         side = -1.0 if index % 2 == 0 else 1.0
         add_node("SkitterlingSensoryFan%d" % index, mesh_ids["Fan"], (side * (0.06 + index * 0.06), 0.92, 0.24 + index * 0.16), rotation=(0.0, side * 0.12, side * (0.22 + index * 0.08)), scale=(1.0, 1.0 + index * 0.14, 1.0), extras={"surface": "sensory_membrane"})
+        add_node("SkitterlingSensoryRib%d" % index, mesh_ids["SensoryRib"], (side * (0.14 + index * 0.06), 0.95, 0.24 + index * 0.16), rotation=(0.0, side * 0.18, side * (0.22 + index * 0.08)), extras={"surface": "sensory_rib"})
 
     for side in (-1.0, 1.0):
         suffix = "L" if side < 0 else "R"
@@ -141,7 +147,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "skitterling.scavenger.v1",
-            "required_nodes": ["SkitterlingModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SkitterlingCarapace0", "SkitterlingAntennaL", "SkitterlingMandibleL", "SkitterlingSensoryFan0", "ProductionAssetMarker"],
+            "required_nodes": ["SkitterlingModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SkitterlingCarapace0", "SkitterlingCarapaceCap0", "SkitterlingAntennaL", "SkitterlingAntennaJointL", "SkitterlingMandibleL", "SkitterlingMandiblePlateL", "SkitterlingSensoryFan0", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack"],
         },
     }
