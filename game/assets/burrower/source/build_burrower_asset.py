@@ -135,9 +135,18 @@ def main() -> None:
         return {"name": name, "samplers": samplers, "channels": entries}
 
     animations = [
-        animation("Idle", [("BurrowerModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.014, 0.0, 0.0, 0.0, 0.0])]),
-        animation("Walk", [("BurrowerLegL0", "rotation", [0.0, 0.24, 0.48], quat((0.2, 0.0, 0.0)) + quat((-0.2, 0.0, 0.0)) + quat((0.2, 0.0, 0.0)))]),
-        animation("Attack", [("BurrowerDrillAssembly", "translation", [0.0, 0.22, 0.44], [0.0, 0.82, -1.4, 0.0, 0.82, -1.68, 0.0, 0.82, -1.4])]),
+        animation("Idle", [
+            ("BurrowerModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.014, 0.0, 0.0, 0.0, 0.0]),
+            ("Torso", "rotation", [0.0, 0.8, 1.6], quat((0.014, 0.0, 0.0)) + quat((-0.014, 0.0, 0.0)) + quat((0.014, 0.0, 0.0))),
+        ]),
+        animation("Walk", [
+            ("BurrowerLegL0", "rotation", [0.0, 0.24, 0.48], quat((0.2, 0.0, 0.0)) + quat((-0.2, 0.0, 0.0)) + quat((0.2, 0.0, 0.0))),
+            ("Torso", "rotation", [0.0, 0.24, 0.48], quat((0.045, 0.0, 0.0)) + quat((-0.045, 0.0, 0.0)) + quat((0.045, 0.0, 0.0))),
+        ]),
+        animation("Attack", [
+            ("BurrowerDrillAssembly", "translation", [0.0, 0.22, 0.44], [0.0, 0.82, -1.4, 0.0, 0.82, -1.68, 0.0, 0.82, -1.4]),
+            ("Torso", "rotation", [0.0, 0.22, 0.44], quat((0.04, 0.0, 0.0)) + quat((-0.11, 0.0, 0.0)) + quat((0.04, 0.0, 0.0))),
+        ]),
     ]
     document = {
         "asset": {"version": "2.0", "generator": "Project Ironwright original Burrower asset builder"},

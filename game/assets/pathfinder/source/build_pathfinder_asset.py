@@ -130,9 +130,21 @@ def main() -> None:
         return {"name": name, "samplers": samplers, "channels": entries}
 
     animations = [
-        animation("Idle", [("PathfinderModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.012, 0.0, 0.0, 0.0, 0.0])]),
-        animation("Walk", [("Leg", "rotation", [0.0, 0.22, 0.44], quat((0.25, 0.0, 0.0)) + quat((-0.25, 0.0, 0.0)) + quat((0.25, 0.0, 0.0)))]),
-        animation("Survey", [("PathfinderDish", "rotation", [0.0, 0.7, 1.4], quat((0.0, -0.2, 0.0)) + quat((0.0, 0.2, 0.0)) + quat((0.0, -0.2, 0.0)))]),
+        animation("Idle", [
+            ("PathfinderModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.012, 0.0, 0.0, 0.0, 0.0]),
+            ("Sensor", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.08, 0.0)) + quat((0.0, 0.08, 0.0)) + quat((0.0, -0.08, 0.0))),
+            ("Beacon", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.0, -0.04)) + quat((0.0, 0.0, 0.04)) + quat((0.0, 0.0, -0.04))),
+        ]),
+        animation("Walk", [
+            ("Leg", "rotation", [0.0, 0.22, 0.44], quat((0.25, 0.0, 0.0)) + quat((-0.25, 0.0, 0.0)) + quat((0.25, 0.0, 0.0))),
+            ("Chassis", "rotation", [0.0, 0.22, 0.44], quat((0.034, 0.0, 0.0)) + quat((-0.034, 0.0, 0.0)) + quat((0.034, 0.0, 0.0))),
+            ("PathfinderSensorRail", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, 0.035)) + quat((0.0, 0.0, -0.035)) + quat((0.0, 0.0, 0.035))),
+        ]),
+        animation("Survey", [
+            ("PathfinderDish", "rotation", [0.0, 0.7, 1.4], quat((0.0, -0.2, 0.0)) + quat((0.0, 0.2, 0.0)) + quat((0.0, -0.2, 0.0))),
+            ("PathfinderDishHub", "rotation", [0.0, 0.7, 1.4], quat((0.0, 0.0, -0.16)) + quat((0.0, 0.0, 0.16)) + quat((0.0, 0.0, -0.16))),
+            ("Beacon", "rotation", [0.0, 0.7, 1.4], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, 0.08)) + quat((0.0, 0.0, 0.0))),
+        ]),
     ]
 
     document = {

@@ -231,16 +231,32 @@ def build_family(name: str, spec: dict) -> None:
     add_node("ProductionAssetMarker", None, extras={"asset_contract": spec["asset_id"], "source": "original_shared_mesh_builder"})
     node_index = {node["name"]: index for index, node in enumerate(nodes)}
 
-    def animation(animation_name: str, target_name: str, path: str, times: list[float], values: list[float]) -> dict:
-        type_name, width = (("VEC3", 3) if path == "translation" else ("VEC4", 4))
-        time_accessor = builder.accessor(times, 5126, "SCALAR", len(times), minimum=[min(times)], maximum=[max(times)])
-        output_accessor = builder.accessor(values, 5126, type_name, len(values) // width)
-        return {"name": animation_name, "samplers": [{"input": time_accessor, "output": output_accessor, "interpolation": "LINEAR"}], "channels": [{"sampler": 0, "target": {"node": node_index[target_name], "path": path}}]}
+    def animation(animation_name: str, channels: list[tuple[str, str, list[float], list[float]]]) -> dict:
+        samplers: list[dict] = []
+        entries: list[dict] = []
+        types = {"translation": ("VEC3", 3), "rotation": ("VEC4", 4)}
+        for target_name, path, times, values in channels:
+            type_name, width = types[path]
+            time_accessor = builder.accessor(times, 5126, "SCALAR", len(times), minimum=[min(times)], maximum=[max(times)])
+            output_accessor = builder.accessor(values, 5126, type_name, len(values) // width)
+            sampler_index = len(samplers)
+            samplers.append({"input": time_accessor, "output": output_accessor, "interpolation": "LINEAR"})
+            entries.append({"sampler": sampler_index, "target": {"node": node_index[target_name], "path": path}})
+        return {"name": animation_name, "samplers": samplers, "channels": entries}
 
     animations = [
-        animation("Idle", root_name, "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.014, 0.0, 0.0, 0.0, 0.0]),
-        animation("Walk", walk_node, "rotation", [0.0, 0.22, 0.44], quat((0.2, 0.0, 0.0)) + quat((-0.2, 0.0, 0.0)) + quat((0.2, 0.0, 0.0))),
-        animation("Attack", attack_node, "translation", [0.0, 0.24, 0.48], [0.0, 0.0, 0.0, 0.0, 0.0, -0.16, 0.0, 0.0, 0.0]),
+        animation("Idle", [
+            (root_name, "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.014, 0.0, 0.0, 0.0, 0.0]),
+            ("Torso", "rotation", [0.0, 0.8, 1.6], quat((0.012, 0.0, 0.0)) + quat((-0.012, 0.0, 0.0)) + quat((0.012, 0.0, 0.0))),
+        ]),
+        animation("Walk", [
+            (walk_node, "rotation", [0.0, 0.22, 0.44], quat((0.2, 0.0, 0.0)) + quat((-0.2, 0.0, 0.0)) + quat((0.2, 0.0, 0.0))),
+            ("Torso", "rotation", [0.0, 0.22, 0.44], quat((0.04, 0.0, 0.0)) + quat((-0.04, 0.0, 0.0)) + quat((0.04, 0.0, 0.0))),
+        ]),
+        animation("Attack", [
+            (attack_node, "translation", [0.0, 0.24, 0.48], [0.0, 0.0, 0.0, 0.0, 0.0, -0.16, 0.0, 0.0, 0.0]),
+            ("Torso", "rotation", [0.0, 0.24, 0.48], quat((0.05, 0.0, 0.0)) + quat((-0.09, 0.0, 0.0)) + quat((0.05, 0.0, 0.0))),
+        ]),
     ]
     document = {
         "asset": {"version": "2.0", "generator": f"Project Ironwright original {spec['display']} asset builder"},

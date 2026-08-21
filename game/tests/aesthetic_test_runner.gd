@@ -525,6 +525,9 @@ func _run_all() -> void:
         if robot_animation != null and robot_animation.animation_player != null:
             _expect(_animation_player_has_clip(robot_animation.animation_player, &"Idle"), "Robot authored models must expose an Idle clip.")
             _expect(_animation_player_has_clip(robot_animation.animation_player, &"Walk"), "Robot authored models must expose a Walk clip.")
+            _expect(_animation_player_track_count(robot_animation.animation_player, &"Idle") >= 2, "Robot Idle clips must carry primary and secondary authored motion channels.")
+            _expect(_animation_player_track_count(robot_animation.animation_player, &"Walk") >= 2, "Robot Walk clips must carry body and locomotion authored motion channels.")
+            _expect(_animation_player_track_count(robot_animation.animation_player, &"Fire") >= 2, "Robot Fire clips must carry weapon and reaction authored motion channels.")
             robot_animation._on_weapon_fired(Vector3.ZERO, Vector3.FORWARD, null)
             _expect(_animation_clip_matches(robot_animation.active_clip, &"Fire"), "Robot weapon events must select the authored Fire clip.")
         _expect(_model_has_details(robot), "Robots must receive additional role-readable detail.")
@@ -554,6 +557,9 @@ func _run_all() -> void:
             _expect(_animation_player_has_clip(organic_animation.animation_player, &"Idle"), "Organic authored models must expose an Idle clip.")
             _expect(_animation_player_has_clip(organic_animation.animation_player, &"Walk"), "Organic authored models must expose a Walk clip.")
             _expect(_animation_player_has_clip(organic_animation.animation_player, &"Attack"), "Organic authored models must expose an Attack clip.")
+            _expect(_animation_player_track_count(organic_animation.animation_player, &"Idle") >= 2, "Organic Idle clips must carry body and breathing authored motion channels.")
+            _expect(_animation_player_track_count(organic_animation.animation_player, &"Walk") >= 2, "Organic Walk clips must carry body and locomotion authored motion channels.")
+            _expect(_animation_player_track_count(organic_animation.animation_player, &"Attack") >= 2, "Organic Attack clips must carry body and threat authored motion channels.")
             organic_animation._on_attack_started(organic, player)
             _expect(_animation_clip_matches(organic_animation.active_clip, &"Attack"), "Organic attack signals must select the authored Attack clip.")
 
@@ -801,6 +807,22 @@ func _animation_player_has_clip(player: AnimationPlayer, clip_name: StringName) 
         if String(candidate).ends_with("/" + String(clip_name)) or String(candidate).ends_with(String(clip_name)):
             return true
     return false
+
+
+func _animation_player_track_count(player: AnimationPlayer, clip_name: StringName) -> int:
+    if player == null:
+        return 0
+    var resolved := clip_name
+    if not player.has_animation(resolved):
+        for candidate in player.get_animation_list():
+            var candidate_text := String(candidate)
+            if candidate_text.ends_with("/" + String(clip_name)) or candidate_text.ends_with(String(clip_name)):
+                resolved = StringName(candidate_text)
+                break
+    if not player.has_animation(resolved):
+        return 0
+    var animation := player.get_animation(resolved)
+    return animation.get_track_count() if animation != null else 0
 
 
 func _animation_clip_matches(active_clip: StringName, clip_name: StringName) -> bool:

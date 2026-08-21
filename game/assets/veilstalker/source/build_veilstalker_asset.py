@@ -134,9 +134,18 @@ def main() -> None:
         return {"name": name, "samplers": samplers, "channels": entries}
 
     animations = [
-        animation("Idle", [("VeilstalkerModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.018, 0.0, 0.0, 0.0, 0.0])]),
-        animation("Walk", [("TorsoSegment0", "rotation", [0.0, 0.22, 0.44], quat((0.12, 0.0, 0.0)) + quat((-0.12, 0.0, 0.0)) + quat((0.12, 0.0, 0.0)))]),
-        animation("Attack", [("VeilstalkerVeil", "rotation", [0.0, 0.34, 0.68], quat((0.0, 0.0, -0.16)) + quat((0.0, 0.0, 0.12)) + quat((0.0, 0.0, -0.16)))])
+        animation("Idle", [
+            ("VeilstalkerModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.018, 0.0, 0.0, 0.0, 0.0]),
+            ("Torso", "rotation", [0.0, 0.8, 1.6], quat((0.012, 0.0, 0.0)) + quat((-0.012, 0.0, 0.0)) + quat((0.012, 0.0, 0.0))),
+        ]),
+        animation("Walk", [
+            ("TorsoSegment0", "rotation", [0.0, 0.22, 0.44], quat((0.12, 0.0, 0.0)) + quat((-0.12, 0.0, 0.0)) + quat((0.12, 0.0, 0.0))),
+            ("Torso", "rotation", [0.0, 0.22, 0.44], quat((0.05, 0.0, 0.0)) + quat((-0.05, 0.0, 0.0)) + quat((0.05, 0.0, 0.0))),
+        ]),
+        animation("Attack", [
+            ("VeilstalkerVeil", "rotation", [0.0, 0.34, 0.68], quat((0.0, 0.0, -0.16)) + quat((0.0, 0.0, 0.12)) + quat((0.0, 0.0, -0.16))),
+            ("Torso", "rotation", [0.0, 0.34, 0.68], quat((0.04, 0.0, 0.0)) + quat((-0.1, 0.0, 0.0)) + quat((0.04, 0.0, 0.0))),
+        ]),
     ]
 
     document = {

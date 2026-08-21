@@ -144,9 +144,20 @@ def main() -> None:
         return {"name": name, "samplers": samplers, "channels": entries}
 
     animations = [
-        animation("Idle", [("WardenModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.0])]),
-        animation("Walk", [("Leg", "rotation", [0.0, 0.22, 0.44], quat((0.2, 0.0, 0.0)) + quat((-0.2, 0.0, 0.0)) + quat((0.2, 0.0, 0.0)))]),
-        animation("Fire", [("WardenAutocannon", "translation", [0.0, 0.08, 0.18], [0.0, 1.48, -1.18, 0.0, 1.48, -1.28, 0.0, 1.48, -1.18])]),
+        animation("Idle", [
+            ("WardenModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.0]),
+            ("Sensor", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.05, 0.0)) + quat((0.0, 0.05, 0.0)) + quat((0.0, -0.05, 0.0))),
+            ("WardenSensorBeacon", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, 0.05)) + quat((0.0, 0.0, 0.0))),
+        ]),
+        animation("Walk", [
+            ("Leg", "rotation", [0.0, 0.22, 0.44], quat((0.2, 0.0, 0.0)) + quat((-0.2, 0.0, 0.0)) + quat((0.2, 0.0, 0.0))),
+            ("Chassis", "rotation", [0.0, 0.22, 0.44], quat((0.03, 0.0, 0.0)) + quat((-0.03, 0.0, 0.0)) + quat((0.03, 0.0, 0.0))),
+            ("WardenSensorMast", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, 0.04)) + quat((0.0, 0.0, -0.04)) + quat((0.0, 0.0, 0.04))),
+        ]),
+        animation("Fire", [
+            ("WardenAutocannon", "translation", [0.0, 0.08, 0.18], [0.0, 1.48, -1.18, 0.0, 1.48, -1.28, 0.0, 1.48, -1.18]),
+            ("Sensor", "rotation", [0.0, 0.08, 0.18], quat((0.0, 0.0, 0.0)) + quat((0.0, -0.1, 0.0)) + quat((0.0, 0.0, 0.0))),
+        ]),
     ]
 
     document = {

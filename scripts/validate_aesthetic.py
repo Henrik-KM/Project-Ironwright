@@ -18,6 +18,7 @@ REQUIRED = [
     "game/scripts/presentation/presentation_feedback_3d.gd",
     "game/scripts/presentation/procedural_animator_3d.gd",
     "game/scripts/presentation/mechromancer_presentation_3d.gd",
+    "game/scripts/presentation/authored_actor_animation_3d.gd",
     "game/scripts/presentation/objective_guidance_3d.gd",
     "game/scripts/presentation/vertical_slice_director_3d.gd",
     "game/scripts/presentation/vertical_slice_actor_art_3d.gd",
@@ -163,6 +164,26 @@ ACTOR_GEOMETRY_FLOORS = {
     "miremaw": 4300,
     "carrionbell": 4300,
     "rootweaver": 4300,
+}
+
+ACTOR_ANIMATION_CHANNEL_FLOORS = {
+    "bulwark": 2,
+    "warden": 2,
+    "scrapper": 2,
+    "pathfinder": 2,
+    "engineer": 2,
+    "veilstalker": 2,
+    "razorhound": 2,
+    "apex": 2,
+    "sporecaster": 2,
+    "broodmass": 2,
+    "burrower": 2,
+    "skitterling": 2,
+    "roofleaper": 2,
+    "glassmoth": 2,
+    "miremaw": 2,
+    "carrionbell": 2,
+    "rootweaver": 2,
 }
 
 AUTHORED_REGION_ASSETS = {
@@ -446,6 +467,24 @@ def validate_actor_geometry_density() -> None:
             )
 
 
+def validate_actor_animation_breadth() -> None:
+    """Require every imported production actor clip to carry multiple channels."""
+    for family, floor in ACTOR_ANIMATION_CHANNEL_FLOORS.items():
+        gltf_path = ROOT / f"game/assets/{family}/{family}.gltf"
+        gltf = json.loads(gltf_path.read_text(encoding="utf-8"))
+        animations = gltf.get("animations", [])
+        names = [str(animation.get("name", "")) for animation in animations]
+        if len(names) != len(set(names)):
+            fail(f"{family} authored actor animation names must be unique.")
+        for animation in animations:
+            channel_count = len(animation.get("channels", []))
+            if channel_count < floor:
+                fail(
+                    f"{family} authored {animation.get('name', '<unnamed>')} animation is too sparse: "
+                    f"{channel_count} channels < {floor}."
+                )
+
+
 def validate_mechromancer_asset() -> None:
     manifest_path = ROOT / "game/data/mechromancer_asset_manifest.json"
     gltf_path = ROOT / "game/assets/mechromancer/mechromancer.gltf"
@@ -543,6 +582,7 @@ def main() -> int:
 
         validate_mechromancer_asset()
         validate_actor_geometry_density()
+        validate_actor_animation_breadth()
         validate_authored_organic_assets()
         validate_authored_region_assets()
 

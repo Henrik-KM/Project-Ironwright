@@ -17,6 +17,13 @@ responsible for small secondary motion. This closes the gap between exported
 animation contracts and live state presentation without claiming that the
 current sparse prototype clips are the final production rig library.
 
+The current source-authored actor clip pass now carries multiple channels per
+robot and organic clip: body weight, role or signature motion, and the primary
+tool or attack beat. This improves live readability while remaining a
+prototype clip library; final production rigs, shared hit libraries and broader
+feeding, nesting, retreat and death animation still remain on the commercial
+gate.
+
 ## Immediate failures identified from the first full-game screenshot review
 
 - Giant screen-fixed world labels can obscure most of the playfield.

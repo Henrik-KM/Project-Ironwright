@@ -137,9 +137,21 @@ def main() -> None:
         return {"name": name, "samplers": samplers, "channels": entries}
 
     animations = [
-        animation("Idle", [("ScrapperModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.012, 0.0, 0.0, 0.0, 0.0])]),
-        animation("Walk", [("Leg", "rotation", [0.0, 0.22, 0.44], quat((0.24, 0.0, 0.0)) + quat((-0.24, 0.0, 0.0)) + quat((0.24, 0.0, 0.0)))]),
-        animation("Work", [("Dismantler", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 1.05)) + quat((0.18, 0.0, 1.05)) + quat((0.0, 0.0, 1.05)))]),
+        animation("Idle", [
+            ("ScrapperModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.012, 0.0, 0.0, 0.0, 0.0]),
+            ("Sensor", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.07, 0.0)) + quat((0.0, 0.07, 0.0)) + quat((0.0, -0.07, 0.0))),
+            ("CargoStrap", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.0, -0.04)) + quat((0.0, 0.0, 0.04)) + quat((0.0, 0.0, -0.04))),
+        ]),
+        animation("Walk", [
+            ("Leg", "rotation", [0.0, 0.22, 0.44], quat((0.24, 0.0, 0.0)) + quat((-0.24, 0.0, 0.0)) + quat((0.24, 0.0, 0.0))),
+            ("Chassis", "rotation", [0.0, 0.22, 0.44], quat((0.032, 0.0, 0.0)) + quat((-0.032, 0.0, 0.0)) + quat((0.032, 0.0, 0.0))),
+            ("CargoBin", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.03, 0.0)) + quat((0.0, -0.03, 0.0)) + quat((0.0, 0.03, 0.0))),
+        ]),
+        animation("Work", [
+            ("Dismantler", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 1.05)) + quat((0.18, 0.0, 1.05)) + quat((0.0, 0.0, 1.05))),
+            ("ScrapperIntake", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, -0.12)) + quat((0.0, 0.0, 0.0))),
+            ("CargoStrap", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, 0.08)) + quat((0.0, 0.0, 0.0))),
+        ]),
     ]
 
     document = {

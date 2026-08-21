@@ -144,9 +144,18 @@ def main() -> None:
         return {"name": name, "samplers": samplers, "channels": entries}
 
     animations = [
-        animation("Idle", [("SporecasterModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.015, 0.0, 0.0, 0.0, 0.0])]),
-        animation("Walk", [("SporecasterLegL0", "rotation", [0.0, 0.24, 0.48], quat((0.2, 0.0, 0.0)) + quat((-0.2, 0.0, 0.0)) + quat((0.2, 0.0, 0.0)))]),
-        animation("Attack", [("SporecasterSac2", "scale", [0.0, 0.22, 0.44], [0.78, 1.18, 0.78, 0.96, 1.36, 0.96, 0.78, 1.18, 0.78])]),
+        animation("Idle", [
+            ("SporecasterModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.015, 0.0, 0.0, 0.0, 0.0]),
+            ("Torso", "rotation", [0.0, 0.8, 1.6], quat((0.015, 0.0, 0.0)) + quat((-0.015, 0.0, 0.0)) + quat((0.015, 0.0, 0.0))),
+        ]),
+        animation("Walk", [
+            ("SporecasterLegL0", "rotation", [0.0, 0.24, 0.48], quat((0.2, 0.0, 0.0)) + quat((-0.2, 0.0, 0.0)) + quat((0.2, 0.0, 0.0))),
+            ("Torso", "rotation", [0.0, 0.24, 0.48], quat((0.04, 0.0, 0.0)) + quat((-0.04, 0.0, 0.0)) + quat((0.04, 0.0, 0.0))),
+        ]),
+        animation("Attack", [
+            ("SporecasterSac2", "scale", [0.0, 0.22, 0.44], [0.78, 1.18, 0.78, 0.96, 1.36, 0.96, 0.78, 1.18, 0.78]),
+            ("Torso", "rotation", [0.0, 0.22, 0.44], quat((0.04, 0.0, 0.0)) + quat((-0.08, 0.0, 0.0)) + quat((0.04, 0.0, 0.0))),
+        ]),
     ]
     document = {
         "asset": {"version": "2.0", "generator": "Project Ironwright original Sporecaster asset builder"},
