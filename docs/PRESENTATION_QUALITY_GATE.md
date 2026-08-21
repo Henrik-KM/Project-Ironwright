@@ -111,6 +111,8 @@ Remote Observatory Ridge release dressing now carries the same model grammar as 
 
 Remote Riverworks release dressing now carries the same model grammar as well: five pump platforms use beveled walkways, grates, gantry crossbars and braces, pump housings, cooling louvers, control panels, rotor caps and discharge pipes instead of isolated walkway and housing boxes. The detail is presentation-only and preserves the existing waterworks landmark, salvage, route, ecology and operation contracts.
 
+Riverworks now also carries a bounded wet-infrastructure depth pass: separated water channels with foam breaks, retaining walls, a raised pipe manifold and a sluice gate/control assembly. The added geometry is presentation-only and preserves the existing waterworks landmark, salvage, route, ecology and operation contracts while giving the tactical frame a readable water-management hierarchy instead of a pale flat platform.
+
 Remote East Tenements release dressing now carries the same model grammar as well: eight balcony assemblies use beveled floors, rails, support posts, service faces, clotheslines and varied hanging cloth panels instead of isolated balcony and clothing boxes. The detail is presentation-only and preserves the existing residential landmark, route, ecology and operation contracts.
 
 ## Release-readiness rule
