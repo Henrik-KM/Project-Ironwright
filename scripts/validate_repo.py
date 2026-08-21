@@ -106,9 +106,10 @@ def validate_design_contracts() -> None:
         raise ValidationError("design_contracts.json must contain hard_limits, required, and forbidden objects")
 
     expected_limits = {
-        "permanent_player_bases_max": 1,
+        "player_operated_primary_bases_max": 1,
         "ordinary_stockpiled_resources_max": 1,
         "ordinary_resource_id": "scrap",
+        "outpost_sites_are_bounded": True,
     }
     for key, expected in expected_limits.items():
         if hard_limits.get(key) != expected:
@@ -121,13 +122,23 @@ def validate_design_contracts() -> None:
 
     required_true = [
         "base_defence_is_primary",
-        "base_is_constrained",
-        "base_evolves_automatically",
+        "heartforge_is_only_player_operated_home",
         "robot_autonomy_removes_work",
         "continuous_ecological_pressure",
         "rare_major_attacks_are_causal",
-        "early_game_is_small_dark_and_frightening",
-        "excursions_return_to_heartforge",
+        "mechromancer_begins_with_weak_automatic_pistol",
+        "early_survival_depends_on_companion",
+        "manual_salvage_is_loud_timed_and_disables_attack",
+        "early_robot_fabrication_is_manual_timed_and_disables_attack",
+        "full_world_exists_at_all_times",
+        "remote_entities_keep_physical_positions",
+        "expeditions_physically_traverse_world",
+        "remote_groups_use_cohesion_and_regrouping",
+        "autonomous_outposts_on_discovered_fixed_sites",
+        "outpost_builders_and_escorts_physically_travel",
+        "outposts_self_repair",
+        "destroyed_outposts_rebuild_automatically",
+        "resource_output_is_physically_hauled",
         "repeated_failure_before_first_victory_is_expected",
         "save_is_persistent_across_many_sessions",
     ]
@@ -140,8 +151,11 @@ def validate_design_contracts() -> None:
 
     forbidden_true = [
         "territory_claiming",
-        "permanent_outposts",
-        "multiple_base_network",
+        "freeform_outpost_placement",
+        "multiple_player_operated_base_network",
+        "per_outpost_worker_assignment",
+        "per_outpost_production_queues",
+        "manual_supply_line_management",
         "production_chain_economy",
         "player_managed_power_grid",
         "scheduled_recurring_wave_loop",
@@ -242,12 +256,15 @@ def validate_concept_art() -> None:
 
 def validate_godot_scaffold() -> None:
     project_text = (ROOT / "game/project.godot").read_text(encoding="utf-8")
-    if 'run/main_scene="res://scenes/bootstrap.tscn"' not in project_text:
-        raise ValidationError("Godot project must boot scenes/bootstrap.tscn")
+    if 'run/main_scene="res://scenes/main_3d.tscn"' not in project_text:
+        raise ValidationError("Godot project must boot scenes/main_3d.tscn")
 
-    scene_text = (ROOT / "game/scenes/bootstrap.tscn").read_text(encoding="utf-8")
-    if 'res://scripts/bootstrap.gd' not in scene_text:
-        raise ValidationError("Bootstrap scene must reference bootstrap.gd")
+    scene_text = (ROOT / "game/scenes/main_3d.tscn").read_text(encoding="utf-8")
+    if (
+        "res://scripts/main_world_release_3d.gd" not in scene_text
+        and "res://scripts/main_world_tiered_3d.gd" not in scene_text
+    ):
+        raise ValidationError("Main scene must boot the commercial release or tiered world")
 
     script_text = (ROOT / "game/scripts/bootstrap.gd").read_text(encoding="utf-8")
     if "res://data/prototype_scope.json" not in script_text:
@@ -257,7 +274,7 @@ def validate_godot_scaffold() -> None:
 def validate_design_documents() -> None:
     design_locks = (ROOT / "docs/DESIGN_LOCKS.md").read_text(encoding="utf-8").lower()
     required_phrases = [
-        "one home",
+        "one primary home",
         "one ordinary resource",
         "no scheduled-wave main loop",
         "enemies are organic",
@@ -374,7 +391,7 @@ def main() -> int:
         return 1
 
     file_count = len(iter_manifest_files())
-    print(f"Project Ironwight repository validation passed ({file_count} files checked).")
+    print(f"Project Ironwright repository validation passed ({file_count} files checked).")
     return 0
 
 
