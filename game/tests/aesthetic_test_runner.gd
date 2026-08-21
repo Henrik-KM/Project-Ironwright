@@ -230,15 +230,28 @@ func _run_all() -> void:
                 _expect(landmark.find_child("ObservatoryControlWindow0", true, false) != null, "Observatory Ridge must expose readable control-cabin windows.")
                 _expect(landmark.find_child("ObservatoryFrontConsole", true, false) != null, "Observatory Ridge must expose an approach-facing survey console.")
                 _expect(landmark.find_child("ObservatorySurveyRail0", true, false) != null, "Observatory Ridge must expose a bounded survey-deck rail silhouette.")
+                _expect(landmark.find_child("ObservatoryDishRib0", true, false) != null and landmark.find_child("ObservatoryDishActuator", true, false) != null and landmark.find_child("ObservatoryFeedCollar", true, false) != null, "Observatory Ridge must expose dish structural and feed hardware.")
+                _expect(landmark.find_child("ObservatoryMastCollar", true, false) != null and landmark.find_child("ObservatoryDeckPost0", true, false) != null, "Observatory Ridge must expose mast and service-deck hardware.")
+                _expect(landmark.find_child("ObservatoryControlWindowFrame0", true, false) != null and landmark.find_child("ObservatoryControlWindowMullion0", true, false) != null and landmark.find_child("ObservatoryFrontConsoleFrame", true, false) != null, "Observatory Ridge must expose cabin and console framing detail.")
+                _expect(landmark.find_child("ObservatoryCableAnchor0", true, false) != null and landmark.find_child("ObservatorySurveyLightHousing0", true, false) != null, "Observatory Ridge must expose survey-cable and deck-light hardware.")
                 var observatory_dish := landmark.find_child("ObservatoryDish", true, false) as Node3D
                 var observatory_feed := landmark.find_child("ObservatoryFeedSignal", true, false) as Node3D
-                _expect(observatory_dish != null and observatory_feed != null, "Observatory Ridge must expose named dish and feed-signal sockets.")
-                if observatory_dish != null and observatory_feed != null:
+                var observatory_actuator := landmark.find_child("ObservatoryDishActuator", true, false) as Node3D
+                var observatory_collar := landmark.find_child("ObservatoryFeedCollar", true, false) as Node3D
+                var observatory_mast_collar := landmark.find_child("ObservatoryMastCollar", true, false) as Node3D
+                _expect(observatory_dish != null and observatory_feed != null and observatory_actuator != null and observatory_collar != null and observatory_mast_collar != null, "Observatory Ridge must expose named dish, actuator, feed, collar and mast motion sockets.")
+                if observatory_dish != null and observatory_feed != null and observatory_actuator != null and observatory_collar != null and observatory_mast_collar != null:
                     var dish_before := observatory_dish.rotation.y
                     var feed_before := observatory_feed.scale
+                    var actuator_before := observatory_actuator.rotation
+                    var collar_before := observatory_collar.scale
+                    var mast_collar_before := observatory_mast_collar.scale
                     landmark.call("_process", 0.5)
                     _expect(absf(observatory_dish.rotation.y - dish_before) > 0.01, "Observatory dish must carry deterministic presentation motion.")
                     _expect(not observatory_feed.scale.is_equal_approx(feed_before), "Observatory feed signal must pulse as a restrained presentation cue.")
+                    _expect(not observatory_actuator.rotation.is_equal_approx(actuator_before), "Observatory dish actuator must carry restrained mechanical motion.")
+                    _expect(not observatory_collar.scale.is_equal_approx(collar_before), "Observatory feed collar must carry restrained signal motion.")
+                    _expect(not observatory_mast_collar.scale.is_equal_approx(mast_collar_before), "Observatory mast collar must carry restrained service motion.")
             if landmark.region_kind == &"waterfront":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/WaterfrontIdentityDetails/RiverworksSluiceDetails") != null, "Riverworks must expose an authored sluice assembly.")
                 _expect(landmark.find_child("RiverWaterlineBreak", true, false) != null, "Riverworks must expose bounded waterline breaks at the dock edge.")
