@@ -435,6 +435,12 @@ func _ensure_region_salvage(region_id: StringName) -> void:
 
 func _on_long_operation_changed(operation_id: StringName, state: StringName, detail: String) -> void:
     hud.push_notification("%s · %s\n%s" % [String(operation_id).replace("operation.", "").replace("_", " ").to_upper(), String(state).to_upper(), detail])
+    var release_audio := get_node_or_null("ReleaseAudioDirector") as ReleaseAudioDirector3D
+    if release_audio != null:
+        var anchor := heartforge.global_position if heartforge != null else Vector3.ZERO
+        if long_operation_director != null and not long_operation_director.active_operation.is_empty():
+            anchor = long_operation_director.active_operation.get("anchor", anchor)
+        release_audio.notify_operation(operation_id, state, detail, anchor)
 
 
 func _on_adaptive_defense_proposal(summary: String) -> void:

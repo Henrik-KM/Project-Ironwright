@@ -477,6 +477,14 @@ func _apply_level_to_existing_robots(archetype: StringName) -> void:
 
 func _on_operation_changed(kind: StringName, state: StringName, detail: String) -> void:
     hud.push_notification("%s · %s\n%s" % [String(kind).to_upper(), String(state).to_upper(), detail])
+    var release_audio := get_node_or_null("ReleaseAudioDirector") as ReleaseAudioDirector3D
+    if release_audio != null:
+        var anchor := heartforge.global_position if heartforge != null else Vector3.ZERO
+        if kind == &"salvage" and not autonomy_director.salvage_operation.is_empty():
+            anchor = autonomy_director.salvage_operation.get("anchor", anchor)
+        elif kind == &"expedition" and not autonomy_director.expedition_operation.is_empty():
+            anchor = autonomy_director.expedition_operation.get("anchor", anchor)
+        release_audio.notify_operation(kind, state, detail, anchor)
 
 
 func _on_expedition_returned() -> void:

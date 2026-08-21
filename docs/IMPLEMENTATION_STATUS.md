@@ -1500,6 +1500,17 @@ presentation restore, with release regression coverage for that migration path.
 - extended release regression coverage for live InputMap updates, persistence
   state and both remapping control families.
 
+## Focused autonomous operation audio milestone
+
+- connected autonomous salvage, expedition, long-range and outpost operation
+  transitions to the existing machine-report sound language;
+- placed bounded report cues at the operation's current physical anchor through
+  `AudioStreamPlayer3D`, with state-specific pitch and distance attenuation;
+- rate-limited repeated work reports, retained the optional sound caption and
+  capped active report nodes so richer feedback does not become audio spam;
+- extended release regression coverage for operation signatures, spatial cue
+  creation and repeated-work suppression.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.
