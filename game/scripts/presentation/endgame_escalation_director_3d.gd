@@ -123,7 +123,7 @@ func _ensure_lattice() -> void:
     visual_root = Node3D.new()
     visual_root.name = "EndgameProtocolVisuals"
     world.add_child(visual_root)
-    visual_root.global_position = heartforge.global_position
+    visual_root.global_position = _heartforge_capstone_anchor()
 
     lattice_root = Node3D.new()
     lattice_root.name = "ProtocolLattice"
@@ -133,9 +133,9 @@ func _ensure_lattice() -> void:
     var accent_mat := ModelKit3D.material(Color("6a3825"), 0.3, 0.3, Color("d88239"), 0.42)
     _lattice_materials = [lattice_mat, accent_mat]
 
-    ModelKit3D.add_cylinder(lattice_root, 3.28, 0.12, Vector3(0.0, 0.18, 0.0), lattice_mat, Vector3.ZERO, "ProtocolBaseRing")
-    pulse_ring = ModelKit3D.add_cylinder(lattice_root, 2.25, 0.08, Vector3(0.0, 0.34, 0.0), accent_mat, Vector3.ZERO, "ProtocolPulseRing")
-    ModelKit3D.add_cylinder(lattice_root, 1.18, 0.16, Vector3(0.0, 2.5, 0.0), accent_mat, Vector3.ZERO, "ProtocolCoreHalo")
+    _add_ring(lattice_root, 3.16, 3.28, Vector3(0.0, 0.18, 0.0), lattice_mat, "ProtocolBaseRing")
+    pulse_ring = _add_ring(lattice_root, 2.17, 2.25, Vector3(0.0, 0.34, 0.0), accent_mat, "ProtocolPulseRing")
+    _add_ring(lattice_root, 1.02, 1.18, Vector3(0.0, 2.5, 0.0), accent_mat, "ProtocolCoreHalo")
 
     for index in range(8):
         var angle := TAU * float(index) / 8.0
@@ -153,7 +153,7 @@ func _ensure_lattice() -> void:
             var angle := TAU * float(index) / float(4 + stage_index * 2) + float(stage_index) * 0.28
             var position := Vector3(cos(angle) * radius, height, sin(angle) * radius)
             ModelKit3D.add_tapered_cylinder(stage_root, 0.07, 0.12, 1.1 + float(stage_index) * 0.4, position, accent_mat, Vector3(0.0, 0.0, angle), "ProtocolArc%d_%d" % [stage_index, index])
-        ModelKit3D.add_cylinder(stage_root, radius, 0.07, Vector3(0.0, height - 0.52, 0.0), lattice_mat, Vector3.ZERO, "ProtocolStageRing%d" % stage_index)
+        _add_ring(stage_root, radius - 0.07, radius, Vector3(0.0, height - 0.52, 0.0), lattice_mat, "ProtocolStageRing%d" % stage_index)
 
     completion_root = Node3D.new()
     completion_root.name = "SanctuaryCrown"
@@ -162,7 +162,7 @@ func _ensure_lattice() -> void:
     var completion_mat := ModelKit3D.material(Color("4f746d"), 0.46, 0.26, Color("69f0d2"), 4.6)
     var completion_accent := ModelKit3D.material(Color("8b6331"), 0.38, 0.28, Color("ffd36a"), 3.8)
     _completion_materials = [completion_mat, completion_accent]
-    ModelKit3D.add_cylinder(completion_root, 3.4, 0.1, Vector3(0.0, 0.26, 0.0), completion_mat, Vector3.ZERO, "SanctuaryCrownRing")
+    _add_ring(completion_root, 3.3, 3.4, Vector3(0.0, 0.26, 0.0), completion_mat, "SanctuaryCrownRing")
     for index in range(8):
         var angle := TAU * float(index) / 8.0
         var position := Vector3(cos(angle) * 2.78, 3.45, sin(angle) * 2.78)
@@ -176,6 +176,36 @@ func _ensure_lattice() -> void:
     core_light.omni_range = 15.0
     core_light.position = Vector3(0.0, 2.5, 0.0)
     visual_root.add_child(core_light)
+
+
+func _add_ring(parent: Node3D, inner_radius: float, outer_radius: float, position: Vector3, material: StandardMaterial3D, node_name: String) -> MeshInstance3D:
+    var ring := MeshInstance3D.new()
+    ring.name = node_name
+    var ring_mesh := TorusMesh.new()
+    ring_mesh.inner_radius = inner_radius
+    ring_mesh.outer_radius = outer_radius
+    ring_mesh.rings = 20
+    ring_mesh.ring_segments = 40
+    ring.mesh = ring_mesh
+    ring.material_override = material
+    ring.position = position
+    parent.add_child(ring)
+    return ring
+
+
+func _heartforge_capstone_anchor() -> Vector3:
+    var approach := Vector3(0.0, 0.0, 1.0)
+    if world != null:
+        var focus := world.get("player") as Node3D
+        if focus != null:
+            var planar_approach := focus.global_position - heartforge.global_position
+            planar_approach.y = 0.0
+            if planar_approach.length_squared() > 0.04:
+                approach = planar_approach.normalized()
+    # Place the capstone on the player-facing side of the Heartforge so the
+    # final transformation reads in the tactical frame instead of hiding
+    # behind the machine that it transforms.
+    return heartforge.global_position + approach * 5.0 + Vector3.UP * 0.35
 
 
 func _apply_lattice_progress(progress: float) -> void:
