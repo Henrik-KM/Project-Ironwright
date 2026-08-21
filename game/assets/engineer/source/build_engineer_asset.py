@@ -131,9 +131,21 @@ def main() -> None:
         return {"name": name, "samplers": samplers, "channels": entries}
 
     animations = [
-        animation("Idle", [("EngineerModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.012, 0.0, 0.0, 0.0, 0.0])]),
-        animation("Walk", [("Leg", "rotation", [0.0, 0.22, 0.44], quat((0.22, 0.0, 0.0)) + quat((-0.22, 0.0, 0.0)) + quat((0.22, 0.0, 0.0)))]),
-        animation("Work", [("WelderArm", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 1.0)) + quat((0.18, 0.0, 1.0)) + quat((0.0, 0.0, 1.0)))]),
+        animation("Idle", [
+            ("EngineerModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.012, 0.0, 0.0, 0.0, 0.0]),
+            ("Sensor", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.06, 0.0)) + quat((0.0, 0.06, 0.0)) + quat((0.0, -0.06, 0.0))),
+            ("MaterialCradle", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.0, -0.025)) + quat((0.0, 0.0, 0.025)) + quat((0.0, 0.0, -0.025))),
+        ]),
+        animation("Walk", [
+            ("Leg", "rotation", [0.0, 0.22, 0.44], quat((0.22, 0.0, 0.0)) + quat((-0.22, 0.0, 0.0)) + quat((0.22, 0.0, 0.0))),
+            ("Chassis", "rotation", [0.0, 0.22, 0.44], quat((0.03, 0.0, 0.0)) + quat((-0.03, 0.0, 0.0)) + quat((0.03, 0.0, 0.0))),
+            ("MaterialCradle", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.035, 0.0)) + quat((0.0, -0.035, 0.0)) + quat((0.0, 0.035, 0.0))),
+        ]),
+        animation("Work", [
+            ("WelderArm", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 1.0)) + quat((0.18, 0.0, 1.0)) + quat((0.0, 0.0, 1.0))),
+            ("AssemblyArm", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, -0.82)) + quat((-0.16, 0.0, -0.82)) + quat((0.0, 0.0, -0.82))),
+            ("PistonJoint", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.18, 0.0)) + quat((0.0, 0.0, 0.0))),
+        ]),
     ]
 
     document = {

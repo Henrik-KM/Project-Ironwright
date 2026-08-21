@@ -130,9 +130,18 @@ def main() -> None:
         return {"name": name, "samplers": samplers, "channels": entries}
 
     animations = [
-        animation("Idle", [("SkitterlingModel", "translation", [0.0, 0.7, 1.4], [0.0, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.0])]),
-        animation("Walk", [("SkitterlingLegL0", "rotation", [0.0, 0.18, 0.36], quat((0.22, 0.0, 0.0)) + quat((-0.22, 0.0, 0.0)) + quat((0.22, 0.0, 0.0)))]),
-        animation("Attack", [("SkitterlingMandibleL", "translation", [0.0, 0.2, 0.4], [0.0, 0.42, -1.02, 0.0, 0.42, -1.16, 0.0, 0.42, -1.02])]),
+        animation("Idle", [
+            ("SkitterlingModel", "translation", [0.0, 0.7, 1.4], [0.0, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.0]),
+            ("Torso", "rotation", [0.0, 0.7, 1.4], quat((0.015, 0.0, 0.0)) + quat((-0.015, 0.0, 0.0)) + quat((0.015, 0.0, 0.0))),
+        ]),
+        animation("Walk", [
+            ("SkitterlingLegL0", "rotation", [0.0, 0.18, 0.36], quat((0.22, 0.0, 0.0)) + quat((-0.22, 0.0, 0.0)) + quat((0.22, 0.0, 0.0))),
+            ("Torso", "rotation", [0.0, 0.18, 0.36], quat((0.045, 0.0, 0.0)) + quat((-0.045, 0.0, 0.0)) + quat((0.045, 0.0, 0.0))),
+        ]),
+        animation("Attack", [
+            ("SkitterlingMandibleL", "translation", [0.0, 0.2, 0.4], [0.0, 0.42, -1.02, 0.0, 0.42, -1.16, 0.0, 0.42, -1.02]),
+            ("Torso", "rotation", [0.0, 0.2, 0.4], quat((0.04, 0.0, 0.0)) + quat((-0.1, 0.0, 0.0)) + quat((0.04, 0.0, 0.0))),
+        ]),
     ]
     document = {
         "asset": {"version": "2.0", "generator": "Project Ironwright original Skitterling asset builder"},

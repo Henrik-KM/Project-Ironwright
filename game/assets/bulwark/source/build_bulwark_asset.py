@@ -320,12 +320,22 @@ def main() -> None:
         return {"name": name, "samplers": samplers, "channels": channel_entries}
 
     animations = [
-        animation("Idle", [("BulwarkModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.012, 0.0, 0.0, 0.0, 0.0])]),
+        animation("Idle", [
+            ("BulwarkModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.012, 0.0, 0.0, 0.0, 0.0]),
+            ("Sensor", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.06, 0.0)) + quat((0.0, 0.06, 0.0)) + quat((0.0, -0.06, 0.0))),
+            ("ShieldRib", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.0, -0.018)) + quat((0.0, 0.0, 0.018)) + quat((0.0, 0.0, -0.018))),
+        ]),
         animation("Walk", [
             ("Leg", "rotation", [0.0, 0.22, 0.44], quat((0.22, 0.0, 0.0)) + quat((-0.22, 0.0, 0.0)) + quat((0.22, 0.0, 0.0))),
             ("Foot", "rotation", [0.0, 0.22, 0.44], quat((-0.12, 0.0, 0.0)) + quat((0.12, 0.0, 0.0)) + quat((-0.12, 0.0, 0.0))),
+            ("Chassis", "rotation", [0.0, 0.22, 0.44], quat((0.035, 0.0, 0.0)) + quat((-0.035, 0.0, 0.0)) + quat((0.035, 0.0, 0.0))),
+            ("CompanionCrown", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.04, 0.0)) + quat((0.0, -0.04, 0.0)) + quat((0.0, 0.04, 0.0))),
         ]),
-        animation("Fire", [("BulwarkGun", "translation", [0.0, 0.08, 0.18], [0.0, 0.0, -0.82, 0.0, 0.0, -0.9, 0.0, 0.0, -0.82])]),
+        animation("Fire", [
+            ("BulwarkGun", "translation", [0.0, 0.08, 0.18], [0.0, 0.0, -0.82, 0.0, 0.0, -0.9, 0.0, 0.0, -0.82]),
+            ("Sensor", "rotation", [0.0, 0.08, 0.18], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.12, 0.0)) + quat((0.0, 0.0, 0.0))),
+            ("ShieldRib", "rotation", [0.0, 0.08, 0.18], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, -0.04)) + quat((0.0, 0.0, 0.0))),
+        ]),
     ]
 
     document = {

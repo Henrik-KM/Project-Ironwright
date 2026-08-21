@@ -140,9 +140,18 @@ def main() -> None:
         return {"name": name, "samplers": samplers, "channels": entries}
 
     animations = [
-        animation("Idle", [("BroodmassModel", "translation", [0.0, 0.9, 1.8], [0.0, 0.0, 0.0, 0.0, 0.018, 0.0, 0.0, 0.0, 0.0])]),
-        animation("Walk", [("BroodmassLegL0", "rotation", [0.0, 0.28, 0.56], quat((0.2, 0.0, 0.0)) + quat((-0.2, 0.0, 0.0)) + quat((0.2, 0.0, 0.0)))]),
-        animation("Attack", [("BroodmassMaw", "translation", [0.0, 0.26, 0.52], [0.0, 1.16, -1.52, 0.0, 1.16, -1.76, 0.0, 1.16, -1.52])]),
+        animation("Idle", [
+            ("BroodmassModel", "translation", [0.0, 0.9, 1.8], [0.0, 0.0, 0.0, 0.0, 0.018, 0.0, 0.0, 0.0, 0.0]),
+            ("Torso", "rotation", [0.0, 0.9, 1.8], quat((0.012, 0.0, 0.0)) + quat((-0.012, 0.0, 0.0)) + quat((0.012, 0.0, 0.0))),
+        ]),
+        animation("Walk", [
+            ("BroodmassLegL0", "rotation", [0.0, 0.28, 0.56], quat((0.2, 0.0, 0.0)) + quat((-0.2, 0.0, 0.0)) + quat((0.2, 0.0, 0.0))),
+            ("Torso", "rotation", [0.0, 0.28, 0.56], quat((0.05, 0.0, 0.0)) + quat((-0.05, 0.0, 0.0)) + quat((0.05, 0.0, 0.0))),
+        ]),
+        animation("Attack", [
+            ("BroodmassMaw", "translation", [0.0, 0.26, 0.52], [0.0, 1.16, -1.52, 0.0, 1.16, -1.76, 0.0, 1.16, -1.52]),
+            ("Torso", "rotation", [0.0, 0.26, 0.52], quat((0.04, 0.0, 0.0)) + quat((-0.1, 0.0, 0.0)) + quat((0.04, 0.0, 0.0))),
+        ]),
     ]
     document = {
         "asset": {"version": "2.0", "generator": "Project Ironwright original Broodmass asset builder"},

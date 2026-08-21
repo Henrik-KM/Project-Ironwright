@@ -156,6 +156,17 @@ identities. Manual channels remain finish-before-save.
 - added native aesthetic assertions that the runtime bridge and representative
   imported clips are present on both machine and organic actors.
 
+## Focused multi-channel actor animation milestone
+
+- expanded the source-authored robot clips with sensor, chassis, crown, tool,
+  recoil and role-specific secondary channels;
+- expanded all twelve organic family clips with body weight layered over
+  locomotion and attack signatures;
+- regenerated the affected glTF roster from the source builders while keeping
+  stable actor IDs, sockets, collision and runtime ownership;
+- added an executable channel-breadth gate so a future export cannot silently
+  collapse a production actor clip back to a single sparse track.
+
 ## Focused endgame protocol readability milestone
 
 - reduced active protocol lattice emission and Heartforge core-light energy so the final crisis preserves tactical silhouettes and readable machine-company staging;

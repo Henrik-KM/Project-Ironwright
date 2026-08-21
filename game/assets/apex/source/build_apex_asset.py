@@ -134,9 +134,18 @@ def main() -> None:
         return {"name": name, "samplers": samplers, "channels": entries}
 
     animations = [
-        animation("Idle", [("ApexModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.018, 0.0, 0.0, 0.0, 0.0])]),
-        animation("Walk", [("ApexLegL0", "rotation", [0.0, 0.28, 0.56], quat((0.22, 0.0, 0.0)) + quat((-0.22, 0.0, 0.0)) + quat((0.22, 0.0, 0.0)))]),
-        animation("Attack", [("ApexCrown", "translation", [0.0, 0.24, 0.48], [0.0, 2.0, -1.02, 0.0, 2.0, -1.26, 0.0, 2.0, -1.02])]),
+        animation("Idle", [
+            ("ApexModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.018, 0.0, 0.0, 0.0, 0.0]),
+            ("Torso", "rotation", [0.0, 0.8, 1.6], quat((0.012, 0.0, 0.0)) + quat((-0.012, 0.0, 0.0)) + quat((0.012, 0.0, 0.0))),
+        ]),
+        animation("Walk", [
+            ("ApexLegL0", "rotation", [0.0, 0.28, 0.56], quat((0.22, 0.0, 0.0)) + quat((-0.22, 0.0, 0.0)) + quat((0.22, 0.0, 0.0))),
+            ("Torso", "rotation", [0.0, 0.28, 0.56], quat((0.055, 0.0, 0.0)) + quat((-0.055, 0.0, 0.0)) + quat((0.055, 0.0, 0.0))),
+        ]),
+        animation("Attack", [
+            ("ApexCrown", "translation", [0.0, 0.24, 0.48], [0.0, 2.0, -1.02, 0.0, 2.0, -1.26, 0.0, 2.0, -1.02]),
+            ("Torso", "rotation", [0.0, 0.24, 0.48], quat((0.05, 0.0, 0.0)) + quat((-0.12, 0.0, 0.0)) + quat((0.05, 0.0, 0.0))),
+        ]),
     ]
     document = {
         "asset": {"version": "2.0", "generator": "Project Ironwright original Apex asset builder"},
