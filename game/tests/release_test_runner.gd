@@ -215,6 +215,12 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.release_world_art.meshes_textured > 30, "The existing world must receive a broad textured material pass.")
     _expect(world.release_audio.stream_library.size() >= 13, "Release audio director must load music, ambience and effects.")
     _expect(not world.release_animation.attached_subjects.is_empty(), "Release secondary animation must attach to world subjects.")
+    var rail_dressing := world.release_world_art.dressing_root.find_child("HighDefinitionRailDressing", true, false) if world.release_world_art.dressing_root != null else null
+    _expect(rail_dressing != null, "Release rail dressing must expose a bounded high-definition carriage layer.")
+    if rail_dressing != null:
+        _expect(rail_dressing.find_child("DerailedTram00", true, false) != null and rail_dressing.find_child("TramWindow00_00", true, false) != null, "Release rail dressing must expose layered carriage shell and window detail.")
+        _expect(rail_dressing.find_child("TramServicePanel00", true, false) != null and rail_dressing.find_child("TramRoofVent00", true, false) != null, "Release rail dressing must expose service and roof hardware.")
+        _expect(rail_dressing.find_child("TramBogiePlate00_00", true, false) != null and rail_dressing.find_child("TramAxle00_00", true, false) != null, "Release rail dressing must expose readable undercarriage detail.")
 
 
 func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
