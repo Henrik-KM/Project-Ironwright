@@ -1489,6 +1489,17 @@ presentation restore, with release regression coverage for that migration path.
 - extended aesthetic coverage for the basin inlay and core crown socket
   contracts, with live renderer review required at tactical distance.
 
+## Focused controller remapping accessibility milestone
+
+- added persisted controller-button bindings for the five primary movement and
+  interaction actions, with safe conflict swapping matching keyboard remaps;
+- exposed controller remapping beside keyboard remapping in the localized
+  release settings panel, including direct button capture and readable labels;
+- preserved the always-available analog movement axes and the fixed strategic
+  shortcut actions while making the primary scheme adaptable;
+- extended release regression coverage for live InputMap updates, persistence
+  state and both remapping control families.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.
