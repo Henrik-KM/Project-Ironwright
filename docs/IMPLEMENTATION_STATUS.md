@@ -27,6 +27,12 @@
 - Preserved the outpost's role signatures, tier frames, damage-memory overlays, repair, hauling and autonomous operation as runtime behavior around the authored shell.
 - Added a source builder, production asset manifest, marker coverage and exact-export live review for the Tier 3 resource outpost.
 
+## Focused authored Heartforge core milestone
+
+- Replaced the permanent Heartforge primary shell with an original high-definition glTF asset containing the reactor housing, thermal core, octagonal cladding, powered service face, focal control bank, fabrication bench and external support hardware.
+- Kept adaptive tier geometry, selected retrofit details, damage-memory, warm/cyan lighting, collision, interaction and progression runtime-owned around the imported shell.
+- Added a source builder, production asset manifest, stable socket coverage and exact-export opening-scene playtest for the run-critical home.
+
 ## Focused Signal Relay authored-asset milestone
 
 - Replaced the Signal Relay's procedural primary shell with an original high-definition glTF asset containing a protected chassis, heat sink, mast, directional dish, beacon and stable presentation sockets.

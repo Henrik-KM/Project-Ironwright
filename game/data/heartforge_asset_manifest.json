@@ -1,0 +1,28 @@
+{
+  "asset_id": "heartforge.core.v1",
+  "runtime_scene": "res://assets/heartforge/heartforge.gltf",
+  "source_builder": "game/assets/heartforge/source/build_heartforge_asset.py",
+  "source_type": "original_project_ironwright_shared_mesh_builder",
+  "third_party_assets": [],
+  "presentation_only": true,
+  "stable_nodes": [
+    "HeartforgeModel",
+    "Foundation",
+    "CoreHousing",
+    "FurnaceCore",
+    "CoreCladdingDetail",
+    "CoreServiceLouverCore",
+    "CoreInspectionPort",
+    "HeartforgeFocalDetail",
+    "HeartforgeUpperCollar",
+    "HeartforgeFocalControlFace",
+    "ForgeBench",
+    "ProductionAssetMarker"
+  ],
+  "socket_contract": [
+    "heartforge_anchor",
+    "primary_reactor_shell",
+    "player_facing_control",
+    "manual_fabrication_surface"
+  ]
+}
