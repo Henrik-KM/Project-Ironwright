@@ -60,6 +60,9 @@ jobs:
       - name: Run commercial release regression
         run: godot --headless --path game --script res://tests/release_test_runner.gd
 
+      - name: Run large-population performance regression
+        run: godot --headless --path game --script res://tests/performance_stress_test_runner.gd
+
       - name: Export Windows and Linux release candidates
         run: |
           rm -rf dist

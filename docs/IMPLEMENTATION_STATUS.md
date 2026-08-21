@@ -1149,6 +1149,15 @@ final retail art, animation and external visual approval are still required.
   recursive subtree scans, preserving material continuity while reducing the
   presentation overhead of larger active populations.
 
+## Focused large-population performance milestone
+
+- added a 48-actor native stress scenario spanning active, medium and reduced
+  detail bands;
+- verified actor budgets, readable LOD state and causal movement for distant
+  organic and machine actors;
+- wired the scenario into validation, release-candidate certification and
+  packaging workflows so scale regressions block future merges.
+
 ## Focused tiered-nest anatomy presentation milestone
 
 - added a bounded `NestHighDefinitionDetail` layer to the production tiered
