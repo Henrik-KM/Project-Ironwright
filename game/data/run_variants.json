@@ -42,6 +42,20 @@
       "fog_energy_bias": -0.03,
       "brightness_bias": 0.018,
       "glow_bias": -0.015
+    },
+    {
+      "id": "weather.signal_bloom",
+      "display_name": "Signal Bloom",
+      "description": "A charged organic resonance stains the fog cyan and makes every machine light feel watched.",
+      "rain_amount": 430,
+      "rain_velocity_min": 8.0,
+      "rain_velocity_max": 13.0,
+      "rain_color": "#76bfc8",
+      "fog_density_bias": 0.0018,
+      "ambient_energy_bias": -0.018,
+      "fog_energy_bias": 0.07,
+      "brightness_bias": -0.004,
+      "glow_bias": 0.16
     }
   ]
 }

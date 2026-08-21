@@ -1127,7 +1127,7 @@ final retail art, animation and external visual approval are still required.
 
 ## Focused authored run-variation milestone
 
-- added three authored weather-condition profiles loaded from
+- added four authored weather-condition profiles loaded from
   `game/data/run_variants.json`;
 - selected a profile from a recorded run seed, persisted the stable condition
   ID through `RunState3D`, and reapplied it after save/load;
@@ -1135,6 +1135,10 @@ final retail art, animation and external visual approval are still required.
   keeping the simulation, ecology, routing and player workload unchanged;
 - added release coverage for profile loading, deterministic identity and
   run-state round-trip preservation.
+
+The fourth `Signal Bloom` condition adds a charged cyan fog/glow identity to
+the same persisted presentation-only contract, so a new run can feel
+environmentally distinct without changing ecology, routing or player workload.
 
 ## Focused Town Archive narrative milestone
 
