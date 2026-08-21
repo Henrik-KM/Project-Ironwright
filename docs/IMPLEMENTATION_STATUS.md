@@ -1130,6 +1130,15 @@ final retail art, animation and external visual approval are still required.
 - preserved persistent region identity, collision, pressure, discovery and
   save state while adding aesthetic coverage for both sides of the transition.
 
+## Focused organic vocal-signature milestone
+
+- added distinct deterministic attack and death vocal profiles for all twelve
+  organic species, using the existing bounded spatial audio director;
+- routed species identity through the event layer without changing enemy AI,
+  damage, ecology, collision or persistence contracts;
+- added native aesthetic coverage for every species signature while retaining
+  the separate commercial gate for final recorded authored sound assets.
+
 ## Focused tiered-nest anatomy presentation milestone
 
 - added a bounded `NestHighDefinitionDetail` layer to the production tiered

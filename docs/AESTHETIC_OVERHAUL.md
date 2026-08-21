@@ -251,7 +251,9 @@ Implemented feedback includes:
 - persistent forge embers and smoke;
 - HUD damage flash and sanctuary-integrity status;
 - spatial sound cues for weapons, salvage, fabrication, organic contact,
-  causal noise and Heartforge damage.
+  causal noise and Heartforge damage;
+- distinct deterministic attack/death vocal signatures for all twelve organic
+  species so combat remains readable by ear as well as silhouette.
 
 ## Focused final-protocol capstone milestone
 
