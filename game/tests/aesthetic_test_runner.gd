@@ -605,9 +605,11 @@ func _run_all() -> void:
         if player_presentation != null:
             _expect(player_presentation.animation_player != null, "The authored Mechromancer must expose an imported animation player.")
             if player_presentation.animation_player != null:
-                for clip_name in [&"Idle", &"Walk", &"Fire", &"Work", &"Hit"]:
+                for clip_name in [&"Idle", &"Walk", &"Fire", &"Work", &"Upgrade", &"Hit"]:
                     _expect(_animation_player_has_clip(player_presentation.animation_player, clip_name), "The authored Mechromancer must expose the %s animation clip." % clip_name)
                     _expect(_animation_player_track_count(player_presentation.animation_player, clip_name) >= 2, "The authored Mechromancer %s clip must carry body and equipment motion channels." % clip_name)
+                player_presentation._on_channel_started(&"forge_upgrade", 1.0, "Upgrade the Heartforge.")
+                _expect(_animation_clip_matches(player_presentation.active_clip, &"Upgrade"), "The forge_upgrade channel must select the authored Mechromancer Upgrade clip.")
         if audio_director != null:
             var event_count_before := audio_director.event_count
             audio_director.play_profile(&"pistol", player.global_position)

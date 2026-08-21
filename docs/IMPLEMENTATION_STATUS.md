@@ -16,6 +16,11 @@
 - Extended all six authored friendly robot shells with imported `Retreat` and `Death` clips carrying body and sensor/equipment channels, so route recovery and machine loss communicate physical weight instead of falling back to a generic walk or silent removal.
 - Routed the real friendly-robot retreat state through the authored clip bridge and expanded aesthetic coverage for clip breadth and state selection; gameplay, formation and replacement policy remain unchanged.
 
+## Focused Mechromancer upgrade animation milestone
+
+- Added an authored `Upgrade` clip to the canonical Blender source and fallback asset, with a stronger two-hand tool posture and shoulder-lamp inspection beat for Heartforge upgrades.
+- Routed the real `forge_upgrade` channel through that clip while preserving generic Work motion for salvage, fabrication and other channels; no gameplay timing or resource rule changed.
+
 ## Focused organic-roster breadth and authored-shell milestone
 
 - Expanded the authored organic roster from 12 to 14 families with Thornback territorial guardians and Ashmantle route predators.

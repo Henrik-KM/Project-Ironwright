@@ -328,6 +328,11 @@ def main() -> None:
             ("RightArm", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 0.10)) + quat((-0.72, 0.0, 0.25)) + quat((0.0, 0.0, 0.10)), "LINEAR"),
             ("FieldTool", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, -0.16)) + quat((0.0, 0.0, -0.34)) + quat((0.0, 0.0, -0.16)), "LINEAR"),
         ]),
+        animation("Upgrade", [
+            ("LeftArm", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, -0.10)) + quat((-0.82, 0.0, -0.28)) + quat((0.0, 0.0, -0.10)), "LINEAR"),
+            ("RightArm", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 0.10)) + quat((-0.88, 0.0, 0.28)) + quat((0.0, 0.0, 0.10)), "LINEAR"),
+            ("FieldTool", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, -0.16)) + quat((0.0, 0.0, -0.48)) + quat((0.0, 0.0, -0.16)), "LINEAR"),
+        ]),
         animation("Hit", [
             ("MechromancerModel", "rotation", [0.0, 0.08, 0.24], quat((0.0, 0.0, 0.0)) + quat((0.10, 0.0, 0.05)) + quat((0.0, 0.0, 0.0)), "LINEAR"),
             ("FieldPack", "rotation", [0.0, 0.08, 0.24], quat((0.0, 0.0, 0.0)) + quat((0.0, -0.08, 0.0)) + quat((0.0, 0.0, 0.0)), "LINEAR"),
@@ -349,7 +354,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "mechromancer.player.v1",
             "required_nodes": ["MechromancerModel", "PistolMuzzle", "ShoulderLamp", "FaceAnchor", "FieldPack", "CoatTailLeft", "CoatTailRight"],
-            "animation_clips": ["Idle", "Walk", "Fire", "Work", "Hit"],
+            "animation_clips": ["Idle", "Walk", "Fire", "Work", "Upgrade", "Hit"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

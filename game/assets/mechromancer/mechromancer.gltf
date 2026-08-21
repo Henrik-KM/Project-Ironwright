@@ -12,7 +12,7 @@
 			"extras":{
 				"ironwright_asset_id":"mechromancer.player.v1",
 				"required_nodes":"MechromancerModel,PistolMuzzle,ShoulderLamp,FaceAnchor,FieldPack,CoatTailLeft,CoatTailRight",
-				"animation_clips":"Idle,Walk,Fire,Work,Hit"
+				"animation_clips":"Idle,Walk,Fire,Work,Upgrade,Hit"
 			},
 			"name":"Scene",
 			"nodes":[
@@ -1521,6 +1521,61 @@
 				{
 					"sampler":0,
 					"target":{
+						"node":24,
+						"path":"rotation"
+					}
+				},
+				{
+					"sampler":1,
+					"target":{
+						"node":41,
+						"path":"rotation"
+					}
+				},
+				{
+					"sampler":2,
+					"target":{
+						"node":66,
+						"path":"rotation"
+					}
+				},
+				{
+					"sampler":3,
+					"target":{
+						"node":79,
+						"path":"rotation"
+					}
+				}
+			],
+			"name":"Upgrade",
+			"samplers":[
+				{
+					"input":329,
+					"interpolation":"LINEAR",
+					"output":334
+				},
+				{
+					"input":329,
+					"interpolation":"LINEAR",
+					"output":335
+				},
+				{
+					"input":329,
+					"interpolation":"LINEAR",
+					"output":336
+				},
+				{
+					"input":329,
+					"interpolation":"LINEAR",
+					"output":337
+				}
+			]
+		},
+		{
+			"channels":[
+				{
+					"sampler":0,
+					"target":{
 						"node":66,
 						"path":"rotation"
 					}
@@ -1543,19 +1598,19 @@
 			"name":"Fire",
 			"samplers":[
 				{
-					"input":334,
+					"input":338,
 					"interpolation":"LINEAR",
-					"output":335
+					"output":339
 				},
 				{
-					"input":334,
+					"input":338,
 					"interpolation":"LINEAR",
-					"output":336
+					"output":340
 				},
 				{
-					"input":334,
+					"input":338,
 					"interpolation":"LINEAR",
-					"output":337
+					"output":341
 				}
 			]
 		}
@@ -6087,6 +6142,30 @@
 		{
 			"bufferView":334,
 			"componentType":5126,
+			"count":24,
+			"type":"VEC4"
+		},
+		{
+			"bufferView":335,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC4"
+		},
+		{
+			"bufferView":336,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC4"
+		},
+		{
+			"bufferView":337,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC4"
+		},
+		{
+			"bufferView":338,
+			"componentType":5126,
 			"count":5,
 			"max":[
 				0.20833333333333334
@@ -6097,19 +6176,19 @@
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":335,
+			"bufferView":339,
 			"componentType":5126,
 			"count":5,
 			"type":"VEC4"
 		},
 		{
-			"bufferView":336,
+			"bufferView":340,
 			"componentType":5126,
 			"count":5,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":337,
+			"bufferView":341,
 			"componentType":5126,
 			"count":5,
 			"type":"VEC4"
@@ -8100,23 +8179,43 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":20,
+			"byteLength":384,
 			"byteOffset":596364
 		},
 		{
 			"buffer":0,
+			"byteLength":384,
+			"byteOffset":596748
+		},
+		{
+			"buffer":0,
+			"byteLength":384,
+			"byteOffset":597132
+		},
+		{
+			"buffer":0,
+			"byteLength":384,
+			"byteOffset":597516
+		},
+		{
+			"buffer":0,
+			"byteLength":20,
+			"byteOffset":597900
+		},
+		{
+			"buffer":0,
 			"byteLength":80,
-			"byteOffset":596384
+			"byteOffset":597920
 		},
 		{
 			"buffer":0,
 			"byteLength":60,
-			"byteOffset":596464
+			"byteOffset":598000
 		},
 		{
 			"buffer":0,
 			"byteLength":80,
-			"byteOffset":596524
+			"byteOffset":598060
 		}
 	],
 	"samplers":[
@@ -8127,7 +8226,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":596604,
+			"byteLength":598140,
 			"uri":"mechromancer.bin"
 		}
 	]
