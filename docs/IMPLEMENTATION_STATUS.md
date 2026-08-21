@@ -194,6 +194,18 @@ identities. Manual channels remain finish-before-save.
   tools, scout fins, forge coils and guardian shield ribs;
 - added executable aesthetic coverage for each robot archetype's detail sockets.
 
+## Focused focal-pair authored detail refinement
+
+- added a second presentation-only detail layer to the Mechromancer with a
+  protected shoulder-lamp housing, utility canister, clamp and compact tool
+  deck;
+- refined the Bulwark shield arc mesh resolution and added radiator louvers,
+  front sensor visor and an emitter collar so its protection role reads as
+  maintained hardware rather than a single glowing primitive;
+- added native aesthetic coverage for the new focal-pair sockets while
+  preserving the existing collision, authored animation, pistol and shield
+  gameplay contracts.
+
 ## Focused Veilstalker presentation milestone
 
 - added the original `veilstalker.predator.v1` high-definition glTF shell and
