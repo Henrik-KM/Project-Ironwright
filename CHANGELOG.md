@@ -1,5 +1,11 @@
 # Changelog
 
+## Pre-alpha victory overlay readability milestone
+
+- centered the first-victory overlay with viewport-safe offsets instead of relying on a bottom-right anchor;
+- wrapped long ending copy into deliberate readable lines and reduced the body type size for the full conclusion text;
+- added native coverage for the wrapped copy and centered overlay bounds, plus a live completed-frame review.
+
 ## Pre-alpha endgame protocol readability milestone
 
 - Tuned the active Severance lattice and Heartforge core-light budget so the final crisis remains visually charged without obscuring the Heartforge, Mechromancer or Bulwark silhouettes.
