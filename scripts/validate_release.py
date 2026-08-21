@@ -112,8 +112,17 @@ def validate_release_entrypoint() -> None:
         raise legacy.ValidationError("Godot project version must match the release candidate")
 
     scene = (ROOT / "game/scenes/main_3d.tscn").read_text(encoding="utf-8")
-    if "res://scripts/main_world_release_3d.gd" not in scene:
-        raise legacy.ValidationError("Native scene must boot the release world")
+    # The release scene may enter through the population-driven tier wrapper;
+    # that wrapper inherits IronwrightReleaseWorld3D and is the canonical
+    # production entrypoint when the tier bootstrap is present.
+    valid_scene_scripts = {
+        "res://scripts/main_world_release_3d.gd",
+        "res://scripts/main_world_tiered_3d.gd",
+    }
+    if not any(script in scene for script in valid_scene_scripts):
+        raise legacy.ValidationError("Native scene must boot the release world or its tiered production wrapper")
+    if "res://scripts/main_world_tiered_3d.gd" in scene and "EnemyTierProgressionBootstrap" not in scene:
+        raise legacy.ValidationError("Tiered production entrypoint must include the enemy progression bootstrap")
 
     world = (ROOT / "game/scripts/main_world_release_3d.gd").read_text(encoding="utf-8")
     for token in [

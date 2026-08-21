@@ -11,7 +11,7 @@ This document distinguishes what is implemented in the repository from the final
 
 ## Integration contract
 
-The canonical native entrypoint is `res://scenes/main_3d.tscn` → `main_world_release_3d.gd`. The release world inherits the production systemic chain and owns the current Heartforge vertical-slice camera, environment and actor presentation layer. Release saves use the versioned transactional service and retain local autonomy, outpost and long-range operation state; only an active player manual channel defers saving. Remote work remains physically resumable.
+The canonical native entrypoint is `res://scenes/main_3d.tscn` → `main_world_tiered_3d.gd` → `main_world_release_3d.gd`. The tiered wrapper inherits the release world and installs the population-driven enemy progression bootstrap used by the production build. The release world inherits the production systemic chain and owns the current Heartforge vertical-slice camera, environment and actor presentation layer. Release saves use the versioned transactional service and retain local autonomy, outpost and long-range operation state; only an active player manual channel defers saving. Remote work remains physically resumable.
 
 ## Production assets
 
