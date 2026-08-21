@@ -83,6 +83,7 @@ func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
     restored_state.restore_from_dictionary(saved_state)
     _expect(restored_state.world_seed == world.run_state.world_seed, "World variation seed must survive run-state serialization.")
     _expect(restored_state.world_variant_id == world.run_state.world_variant_id, "World variation ID must survive run-state serialization.")
+    restored_state.free()
 
     var legacy_state := RunState3D.new()
     legacy_state.restore_from_dictionary({"schema_version": 2, "scrap": 24, "event_log": []})
