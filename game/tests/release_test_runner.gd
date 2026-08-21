@@ -210,6 +210,10 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     var late_robot := world._spawn_robot(&"salvager", world.player.global_position + Vector3(3.0, 0.0, -3.0), 1)
     var late_enemy := world._spawn_enemy(world.player.global_position + Vector3(-4.0, 0.0, -4.0), &"veilstalker")
     var late_authored_family := world._spawn_enemy(world.player.global_position + Vector3(-6.0, 0.0, -2.0), &"rootweaver")
+    var later_families: Array[OrganicEnemyRelease3D] = []
+    for index in range(4):
+        var later_species := [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell"][index] as StringName
+        later_families.append(world._spawn_enemy(world.player.global_position + Vector3(-8.0 + float(index) * 3.0, 0.0, -6.0), later_species) as OrganicEnemyRelease3D)
     await process_frame
     await process_frame
 
@@ -221,11 +225,16 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     _expect(enemy_core != null and enemy_core.get_meta(&"release_material_family", &"") == &"chitin", "Late-spawned organic families must receive the release chitin material pass.")
     _expect(enemy_authored_mesh != null and enemy_authored_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Authored Veilstalker shell meshes must receive the release chitin material pass.")
     _expect(late_authored_family != null and late_authored_family.find_child("RootweaverAuthoredModel", true, false) != null and late_authored_family_mesh != null and late_authored_family_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Late-spawned Rootweaver shells must retain their authored marker and release chitin material pass.")
+    for family in later_families:
+        var family_mesh := _find_first_mesh(family.get_node_or_null("OrganicModel") if family != null else null)
+        _expect(family_mesh != null and family_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Every later organic family shell must receive the release chitin material pass.")
     _expect(world.release_world_art.meshes_textured > textured_before, "Runtime release art must texture meshes added after initial boot.")
 
     late_robot.queue_free()
     late_enemy.queue_free()
     late_authored_family.queue_free()
+    for family in later_families:
+        family.queue_free()
 
 
 func _find_first_mesh(node: Node) -> MeshInstance3D:
