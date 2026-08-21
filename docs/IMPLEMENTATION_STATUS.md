@@ -1260,6 +1260,20 @@ final retail art, animation and external visual approval are still required.
 - added full-game coverage for doctrine availability, exclusivity, UI
   visibility and save-state persistence.
 
+## Focused adaptive Heartforge proposal milestone
+
+- made the Tier IV `unlock_adaptive_defence` effect active through a rare
+  exception proposal driven by observed Heartforge integrity and regional
+  pressure;
+- added three broad, mutually exclusive structural principles with explicit
+  problem, trade-off, Scrap cost and machine construction time;
+- reused the strategic command surface so the player authorizes intent while
+  machines perform the timed retrofit, with no manual geometry or recurring
+  repair configuration;
+- added visible high-definition Heartforge adaptation detail, real incoming
+  damage and activity-noise trade-offs, and unified save/load coverage for
+  pending, active and completed responses.
+
 The live playtest also found and closed a legacy-save edge: snapshots created
 before authored run variation now reconcile their missing weather profile before
 presentation restore, with release regression coverage for that migration path.

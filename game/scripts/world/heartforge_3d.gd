@@ -9,9 +9,12 @@ var current_health: float = 520.0
 var interaction_radius: float = 4.1
 var active_operation: StringName = &""
 var progression_tier: int = 1
+var adaptation_profile: StringName = &""
+var incoming_damage_multiplier: float = 1.0
 var _core_light: OmniLight3D
 var _model_root: Node3D
 var _adaptive_geometry: Node3D
+var _adaptation_detail: Node3D
 var _damage_visual_root: Node3D
 var _damage_signal_material: StandardMaterial3D
 
@@ -29,7 +32,7 @@ func _ready() -> void:
 func apply_damage(amount: float, source: Node = null) -> void:
     if amount <= 0.0 or current_health <= 0.0:
         return
-    current_health = maxf(0.0, current_health - amount)
+    current_health = maxf(0.0, current_health - amount * incoming_damage_multiplier)
     _refresh_damage_presentation()
     health_changed.emit(current_health, maximum_health)
     if current_health <= 0.0:
@@ -52,6 +55,27 @@ func set_operation(kind: StringName) -> void:
     active_operation = kind
     if _core_light != null:
         _core_light.light_energy = 5.6 if kind != &"" else 3.6
+
+
+func set_adaptation_profile(next_profile: StringName) -> void:
+    adaptation_profile = next_profile
+    match next_profile:
+        &"adaptation.anchored_shell":
+            incoming_damage_multiplier = 0.74
+        &"adaptation.sacrificial_hollow":
+            incoming_damage_multiplier = 0.86
+        &"adaptation.quiet_core":
+            incoming_damage_multiplier = 0.93
+        _:
+            incoming_damage_multiplier = 1.0
+    if _model_root == null:
+        return
+    if _adaptation_detail != null:
+        _adaptation_detail.free()
+    _adaptation_detail = Node3D.new()
+    _adaptation_detail.name = "HeartforgeAdaptationDetail"
+    _model_root.add_child(_adaptation_detail)
+    _build_adaptation_detail(next_profile)
 
 
 func set_progression_tier(next_tier: int) -> void:
@@ -247,3 +271,33 @@ func _build_adaptive_geometry(tier: int) -> void:
             var crown_position := Vector3(cos(angle) * 2.72, 4.9, sin(angle) * 2.72)
             ModelKit3D.add_beveled_box(_adaptive_geometry, Vector3(0.24, 0.78, 0.52), crown_position, cyan, Vector3(0.0, -angle, 0.0), "Tier5CrownFin", 0.08)
         ModelKit3D.add_cylinder(_adaptive_geometry, 0.34, 1.15, Vector3(0.0, 5.15, 0.0), heat, Vector3.ZERO, "Tier5CrownBeacon")
+
+
+func _build_adaptation_detail(profile: StringName) -> void:
+    if _adaptation_detail == null or profile == &"":
+        return
+    var iron := ModelKit3D.material(Color("465053"), 0.76, 0.4)
+    var dark := ModelKit3D.material(Color("172123"), 0.72, 0.5)
+    var rust := ModelKit3D.material(Color("8d5938"), 0.4, 0.7)
+    var cyan := ModelKit3D.material(Color("28646a"), 0.32, 0.3, Color("77e9ee"), 1.8)
+    var amber := ModelKit3D.material(Color("8b4b25"), 0.28, 0.42, Color("ff7a32"), 2.4)
+    match profile:
+        &"adaptation.anchored_shell":
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(0.3, 2.55, 0.62), Vector3(side * 2.02, 1.65, 0.0), iron, Vector3(0.0, side * 0.12, 0.0), "AnchorShellBrace", 0.1)
+                ModelKit3D.add_cylinder(_adaptation_detail, 0.1, 3.2, Vector3(side * 2.24, 1.8, 0.0), rust, Vector3.ZERO, "AnchorShellServiceColumn")
+            ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(4.9, 0.22, 0.34), Vector3(0.0, 3.32, 0.0), dark, Vector3.ZERO, "AnchorShellCrossbar", 0.08)
+            ModelKit3D.add_cylinder(_adaptation_detail, 2.38, 0.1, Vector3(0.0, 3.42, 0.0), cyan, Vector3.ZERO, "AnchorShellSignalRing")
+        &"adaptation.sacrificial_hollow":
+            for angle_index in range(8):
+                var angle := TAU * float(angle_index) / 8.0
+                var position := Vector3(cos(angle) * 2.52, 1.34, sin(angle) * 2.52)
+                ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(0.22, 1.24, 0.48), position, rust, Vector3(0.0, -angle, 0.0), "SacrificialHollowRib", 0.08)
+            ModelKit3D.add_cylinder(_adaptation_detail, 2.78, 0.14, Vector3(0.0, 0.86, 0.0), amber, Vector3.ZERO, "SacrificialHollowRing")
+            ModelKit3D.add_louvered_panel(_adaptation_detail, Vector3(0.82, 0.72, 0.12), Vector3(0.0, 1.72, 2.42), dark, amber, Vector3.ZERO, "SacrificialHollowService", 5)
+        &"adaptation.quiet_core":
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(0.5, 2.5, 0.24), Vector3(side * 1.92, 2.05, 0.0), dark, Vector3(0.0, side * 0.08, 0.0), "QuietCoreShroud", 0.14)
+                ModelKit3D.add_cylinder(_adaptation_detail, 0.07, 2.7, Vector3(side * 2.15, 2.1, 0.0), cyan, Vector3.ZERO, "QuietCoreDampedRail")
+            ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(2.32, 0.16, 0.88), Vector3(0.0, 2.18, 2.02), dark, Vector3.ZERO, "QuietCoreServiceShroud", 0.12)
+            ModelKit3D.add_surface_panel(_adaptation_detail, Vector3(1.2, 0.5, 0.1), Vector3(0.0, 2.2, 2.48), dark, cyan, Vector3.ZERO, "QuietCoreSignalPanel")

@@ -6,6 +6,7 @@ const REGION_LOD_SCRIPT := preload("res://scripts/presentation/region_presentati
 const ENDGAME_ESCALATION_SCRIPT := preload("res://scripts/presentation/endgame_escalation_director_3d.gd")
 const REGION_ENCOUNTER_SCRIPT := preload("res://scripts/presentation/region_encounter_dressing_director_3d.gd")
 const STORY_ARCHIVE_SCRIPT := preload("res://scripts/systems/story_archive_director_3d.gd")
+const ADAPTIVE_DEFENSE_SCRIPT := preload("res://scripts/systems/adaptive_defense_director_3d.gd")
 
 var region_director: WorldRegionDirector3D
 var region_atmosphere_director: RegionAtmosphereDirector3D
@@ -18,6 +19,7 @@ var machine_society_director: MachineSocietyDirector3D
 var strategic_ecology_director: StrategicEcologyDirector3D
 var endgame_director: EndgameDirector3D
 var operations_hud: OperationsCommandHUD3D
+var adaptive_defense_director: AdaptiveDefenseDirector3D
 var continuity_used: bool = false
 var first_victory_achieved: bool = false
 var sanctuary_continuation: bool = false
@@ -40,6 +42,8 @@ func _process(delta: float) -> void:
         return
     operations_hud.update_operations(long_operation_director.available_operations(), long_operation_director.operation_summary())
     operations_hud.update_protocols(endgame_director.available_protocols(), endgame_director.status_summary())
+    if adaptive_defense_director != null:
+        strategic_hud.update_adaptation(adaptive_defense_director.available_plans(), adaptive_defense_director.proposal_summary())
 
     if not endgame_director.active_protocol.is_empty():
         hud.set_operation(endgame_director.status_summary())
@@ -176,6 +180,12 @@ func _setup_complete_game_services() -> void:
     )
     add_child(endgame_director)
 
+    adaptive_defense_director = ADAPTIVE_DEFENSE_SCRIPT.new() as AdaptiveDefenseDirector3D
+    adaptive_defense_director.name = "AdaptiveDefenseDirector"
+    adaptive_defense_director.process_mode = Node.PROCESS_MODE_PAUSABLE
+    adaptive_defense_director.configure(run_state, progression, region_director, heartforge)
+    add_child(adaptive_defense_director)
+
     endgame_escalation_director = ENDGAME_ESCALATION_SCRIPT.new() as EndgameEscalationDirector3D
     endgame_escalation_director.name = "EndgameEscalationDirector"
     endgame_escalation_director.configure(self, heartforge, endgame_director)
@@ -191,6 +201,7 @@ func _setup_complete_game_services() -> void:
 
 
 func _connect_complete_game_services() -> void:
+    strategic_hud.adaptation_requested.connect(_authorize_adaptation)
     operations_hud.operation_requested.connect(_authorize_long_operation)
     operations_hud.protocol_requested.connect(_initiate_protocol)
     operations_hud.close_requested.connect(_close_operations_hud)
@@ -207,6 +218,9 @@ func _connect_complete_game_services() -> void:
     endgame_director.endgame_progress.connect(_on_endgame_progress)
     endgame_director.endgame_completed.connect(_on_endgame_completed)
     endgame_director.endgame_failed.connect(_on_endgame_failed)
+    adaptive_defense_director.proposal_available.connect(_on_adaptive_defense_proposal)
+    adaptive_defense_director.adaptation_changed.connect(_on_adaptation_changed)
+    adaptive_defense_director.adaptation_completed.connect(_on_adaptation_completed)
 
     noise_system.noise_emitted.connect(_on_complete_game_noise)
 
@@ -244,6 +258,14 @@ func _open_operations_hud() -> void:
     player.input_enabled = false
 
 
+func _open_evolution_hud() -> void:
+    if adaptive_defense_director != null and adaptive_defense_director.has_pending_proposal():
+        strategic_hud.open_adaptation(adaptive_defense_director.available_plans(), adaptive_defense_director.proposal_summary())
+        player.input_enabled = false
+        return
+    super._open_evolution_hud()
+
+
 func _open_endgame_hud() -> void:
     if player.is_channeling() or hud.forge_open or strategic_hud.is_open():
         return
@@ -268,6 +290,14 @@ func _authorize_long_operation(operation_id: StringName) -> void:
         hud.push_notification("LONG-RANGE OPERATION AUTHORIZED · FOLLOWS REAL STREETS · F TO TOGGLE FOLLOW")
     else:
         hud.push_notification("OPERATION UNAVAILABLE · CHECK HEARTFORGE TIER, OUTPOSTS, SCRAP, TEAM COMPOSITION AND ACTIVE OPERATIONS")
+
+
+func _authorize_adaptation(adaptation_id: StringName) -> void:
+    if adaptive_defense_director != null and adaptive_defense_director.authorize(adaptation_id):
+        _close_strategic_hud()
+        hud.push_notification("ADAPTIVE DEFENCE AUTHORIZED · MACHINES ARE RETROFITTING THE HEARTFORGE WITHOUT MANUAL PLACEMENT")
+    else:
+        hud.push_notification("ADAPTIVE DEFENCE UNAVAILABLE · CHECK THE PROPOSAL AND SCRAP RESERVE")
 
 
 func _initiate_protocol(protocol_id: StringName) -> void:
@@ -407,6 +437,18 @@ func _on_long_operation_changed(operation_id: StringName, state: StringName, det
     hud.push_notification("%s · %s\n%s" % [String(operation_id).replace("operation.", "").replace("_", " ").to_upper(), String(state).to_upper(), detail])
 
 
+func _on_adaptive_defense_proposal(summary: String) -> void:
+    hud.push_notification("ADAPTIVE DEFENCE PROPOSAL · PRESS T TO CHOOSE\n%s" % summary)
+
+
+func _on_adaptation_changed(adaptation_id: StringName, state: StringName, detail: String) -> void:
+    hud.push_notification("HEARTFORGE ADAPTATION · %s · %s\n%s" % [String(adaptation_id).replace("adaptation.", "").replace("_", " ").to_upper(), String(state).to_upper(), detail])
+
+
+func _on_adaptation_completed(_adaptation_id: StringName, display_name: String) -> void:
+    hud.push_notification("HEARTFORGE RESPONSE ONLINE · %s · THE NEW STRUCTURE IS NOW MACHINE-MAINTAINED" % display_name.to_upper())
+
+
 func _on_long_operation_returned(operation_id: StringName, display_name: String, rewards: Dictionary) -> void:
     hud.push_notification("OPERATION COMPLETE · %s · REWARDS DELIVERED PHYSICALLY" % display_name.to_upper())
     progression._evaluate_automatic_technologies()
@@ -432,6 +474,8 @@ func _on_complete_game_noise(position: Vector3, radius: float, intensity: float,
     var adjusted := intensity
     if progression != null and progression.has_effect(&"signal_dampening") and source_kind not in [&"heartforge_evolution", &"strategic_operation"]:
         adjusted *= 0.68
+    if adaptive_defense_director != null:
+        adjusted *= adaptive_defense_director.activity_noise_multiplier()
     strategic_ecology_director.record_disturbance(position, adjusted, source_kind)
 
 
@@ -477,6 +521,7 @@ func _save_extension_data() -> Dictionary:
         "machine_society": machine_society_director.to_dictionary(),
         "strategic_ecology": strategic_ecology_director.to_dictionary(),
         "endgame": endgame_director.to_dictionary(),
+        "adaptive_defence": adaptive_defense_director.to_dictionary(),
         "continuity_used": continuity_used,
         "first_victory_achieved": first_victory_achieved,
         "sanctuary_continuation": sanctuary_continuation,
@@ -507,6 +552,7 @@ func _restore_extension_data(extensions: Variant) -> void:
     machine_society_director.restore_from_dictionary(data.get("machine_society", {}))
     strategic_ecology_director.restore_from_dictionary(data.get("strategic_ecology", {}))
     endgame_director.restore_from_dictionary(data.get("endgame", {}))
+    adaptive_defense_director.restore_from_dictionary(data.get("adaptive_defence", {}))
     if endgame_escalation_director != null:
         endgame_escalation_director.sync_from_endgame_state()
     continuity_used = bool(data.get("continuity_used", false))

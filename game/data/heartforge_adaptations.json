@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "adaptations": [
+    {
+      "id": "adaptation.anchored_shell",
+      "display_name": "Anchor Deeply",
+      "description": "The machines sink a redundant brace lattice into the Heartforge shell where repeated frontal impacts are breaking through.",
+      "problem": "Observed damage is concentrating on the Heartforge perimeter.",
+      "tradeoff": "The anchored shell absorbs the most direct damage, but its heavy service frame makes ordinary machine activity louder.",
+      "cost": {"scrap": 180},
+      "build_seconds": 16.0,
+      "damage_multiplier": 0.74,
+      "noise_multiplier": 1.18
+    },
+    {
+      "id": "adaptation.sacrificial_hollow",
+      "display_name": "Create a Sacrificial Hollow",
+      "description": "The machines hollow the outer ring into a replaceable buffer so the living core sits behind a deliberately expendable shell.",
+      "problem": "The Heartforge needs a buffer that can fail without exposing the core immediately.",
+      "tradeoff": "The hollow reduces incoming damage, but its exposed service cavities draw more organic attention during construction and repair.",
+      "cost": {"scrap": 150},
+      "build_seconds": 14.0,
+      "damage_multiplier": 0.86,
+      "noise_multiplier": 1.10
+    },
+    {
+      "id": "adaptation.quiet_core",
+      "display_name": "Reduce Vibration",
+      "description": "The machines wrap the cognition core in damped shrouds that lower the ordinary signal reaching the surrounding ecology.",
+      "problem": "Organic pressure is concentrating around the Heartforge's ordinary machine signature.",
+      "tradeoff": "The quiet core attracts less routine attention, but it leaves less physical shell between a determined assault and the core.",
+      "cost": {"scrap": 135},
+      "build_seconds": 12.0,
+      "damage_multiplier": 0.93,
+      "noise_multiplier": 0.64
+    }
+  ]
+}

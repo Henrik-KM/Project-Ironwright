@@ -245,6 +245,8 @@ Systems:
 - machine-generated upgrade plans based on selected function and observed threats;
 - visual preview explaining purpose and trade-off;
 - automatic construction sequence;
+- one rare adaptive-defence proposal that presents broad principles and
+  records the selected Heartforge response;
 - automatic wall, shelter, firing position, sensor, and repair-layout adaptation within a bounded footprint;
 - damage-state visuals and reconstruction;
 - base evolution history retained in save state;

@@ -57,6 +57,8 @@ func _unhandled_input(event: InputEvent) -> void:
                 KEY_ENTER, KEY_SPACE:
                     if strategic_hud.mode == &"evolution":
                         _purchase_technology(strategic_hud.selected_technology_id())
+                    elif strategic_hud.mode == &"adaptation":
+                        _authorize_adaptation(strategic_hud.selected_adaptation_id())
                     else:
                         _authorize_outpost_build(strategic_hud.selected_site_id(), strategic_hud.selected_role())
                 KEY_B:
@@ -270,6 +272,10 @@ func _authorize_outpost_upgrade(site_id: StringName) -> void:
         hud.push_notification("OUTPOST UPGRADE AUTHORIZED · THE PROTECTED TEAM WILL TRAVEL, REBUILD AND RETURN")
     else:
         hud.push_notification("OUTPOST UPGRADE UNAVAILABLE · CHECK HEARTFORGE TIER, SCRAP, ENGINEER, ESCORT AND ACTIVE OPERATIONS")
+
+
+func _authorize_adaptation(_adaptation_id: StringName) -> void:
+    hud.push_notification("ADAPTIVE DEFENCE IS UNAVAILABLE BEFORE HEARTFORGE TIER IV")
 
 
 func _on_expedition_returned() -> void:
