@@ -7,6 +7,7 @@ const LEGACY_FOUNDATION_SAVE := "user://ironwright_full_game_extension.json"
 const LEGACY_COMPLETE_SAVE := "user://ironwright_complete_game_state.json"
 const VERTICAL_SLICE_DIRECTOR := preload("res://scripts/presentation/vertical_slice_readable_director_3d.gd")
 const VERTICAL_SLICE_ACTOR_ART := preload("res://scripts/presentation/vertical_slice_actor_art_3d.gd")
+const RUN_VARIATION_SCRIPT := preload("res://scripts/presentation/run_variation_director_3d.gd")
 
 static var pending_launch_mode: StringName = &"title"
 
@@ -26,6 +27,7 @@ var release_save_clock: float = 0.0
 var _last_map_label_mode: bool = false
 var vertical_slice: VerticalSliceDirector3D
 var vertical_slice_actor_art: VerticalSliceActorArt3D
+var run_variation_director: RunVariationDirector3D
 var camera_target_velocity: Vector3 = Vector3.ZERO
 var camera_heading: Vector3 = Vector3(0.0, 0.0, 1.0)
 
@@ -72,6 +74,11 @@ func _setup_vertical_slice_presentation() -> void:
     vertical_slice_actor_art.name = "VerticalSliceActorArt"
     vertical_slice_actor_art.configure(self)
     add_child(vertical_slice_actor_art)
+
+    run_variation_director = RUN_VARIATION_SCRIPT.new() as RunVariationDirector3D
+    run_variation_director.name = "RunVariationDirector"
+    run_variation_director.configure(run_state, vertical_slice, region_atmosphere_director)
+    add_child(run_variation_director)
 
     if hud != null:
         hud.notifications.clear()
@@ -376,6 +383,9 @@ func _start_release_world() -> void:
     _set_tactical_hud_visible(true)
     release_front_end.hide_all()
     settings_service.apply_accessibility_to_tree(self)
+    if run_variation_director != null:
+        run_variation_director.ensure_current_variant()
+        hud.push_notification("WORLD CONDITION · %s" % run_variation_director.current_display_name())
     hud.push_notification("PROJECT IRONWRIGHT 1.0 RELEASE CANDIDATE · %s" % balance_director.current_profile_id.to_upper())
 
 
@@ -705,6 +715,8 @@ func _restore_release_snapshot(snapshot: Dictionary) -> void:
     var base: Dictionary = snapshot.get("base", {})
     _clear_runtime_entities()
     run_state.restore_from_dictionary(base.get("run_state", {}))
+    if run_variation_director != null:
+        run_variation_director.apply_current()
     var player_data: Dictionary = base.get("player", {})
     player.global_position = _array_to_vector(player_data.get("position", [0, 0, 6]))
     player.current_health = clampf(float(player_data.get("health", player.maximum_health)), 0.0, player.maximum_health)
