@@ -1387,6 +1387,16 @@ presentation restore, with release regression coverage for that migration path.
 - added release coverage for the stable carriage, window, service and
   undercarriage detail sockets.
 
+## Focused remote archive-dressing refinement milestone
+
+- replaced six release-dressed archive fragment boxes with bounded beveled
+  shells, records window bays, louvered shutters, roof slabs, service risers
+  and filing rails;
+- preserved the presentation-only archive-dressing contract and existing
+  North Ruins landmark, route, ecology and operation state;
+- added release coverage for the stable archive, records, service and filing
+  detail sockets.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.

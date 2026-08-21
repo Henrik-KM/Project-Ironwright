@@ -101,6 +101,8 @@ The central town's repeated street debris now carries a bounded high-definition 
 
 Remote Tram Graveyard release dressing now carries the same model grammar: six derailed-car shells use beveled massing, broken window bands, service panels, roof vents and bogie/axle hardware instead of isolated boxes. The detail is presentation-only and preserves the existing rail encounter, salvage, routing and operation contracts.
 
+Remote North Ruins release dressing now carries the same model grammar as well: six archive fragments use beveled shells, records window bays, louvered shutters, roof slabs, service risers and filing rails instead of isolated block masses. The detail is presentation-only and preserves the existing archive landmark, route, ecology and operation contracts.
+
 ## Release-readiness rule
 
 No agent may describe Project Ironwright as commercially finished, release-ready, or a release candidate based solely on:
