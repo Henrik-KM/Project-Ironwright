@@ -24,6 +24,10 @@ BLEND_PATH = ASSET_DIR / "source" / "mechromancer.blend"
 GLTF_PATH = ASSET_DIR / "mechromancer.gltf"
 PORTRAIT_PATH = ASSET_DIR / "mechromancer_portrait.png"
 
+HERO_CURVE_VERTICES = 24
+HERO_SPHERE_SEGMENTS = 32
+HERO_SPHERE_RINGS = 16
+
 
 def texture_image(
     filename: str,
@@ -214,7 +218,12 @@ def cylinder(
     vertices: int = 10,
     bevel_amount: float = 0.018,
 ) -> bpy.types.Object:
-    bpy.ops.mesh.primitive_cylinder_add(vertices=vertices, radius=radius, depth=depth, location=(0.0, 0.0, 0.0))
+    bpy.ops.mesh.primitive_cylinder_add(
+        vertices=max(vertices, HERO_CURVE_VERTICES),
+        radius=radius,
+        depth=depth,
+        location=(0.0, 0.0, 0.0),
+    )
     obj = finish_mesh(bpy.context.object, name, parent, mat)
     obj.location = location
     return smooth_shade(apply_bevel(obj, bevel_amount, 2))
@@ -231,7 +240,7 @@ def cone(
     bevel_amount: float = 0.022,
 ) -> bpy.types.Object:
     bpy.ops.mesh.primitive_cone_add(
-        vertices=10,
+        vertices=HERO_CURVE_VERTICES,
         radius1=bottom_radius,
         radius2=top_radius,
         depth=depth,
@@ -249,7 +258,11 @@ def uv_sphere(
     parent: bpy.types.Object,
     mat: bpy.types.Material,
 ) -> bpy.types.Object:
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=24, ring_count=12, location=(0.0, 0.0, 0.0))
+    bpy.ops.mesh.primitive_uv_sphere_add(
+        segments=HERO_SPHERE_SEGMENTS,
+        ring_count=HERO_SPHERE_RINGS,
+        location=(0.0, 0.0, 0.0),
+    )
     obj = finish_mesh(bpy.context.object, name, parent, mat)
     obj.scale = scale
     bpy.context.view_layer.objects.active = obj

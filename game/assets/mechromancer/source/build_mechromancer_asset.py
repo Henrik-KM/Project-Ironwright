@@ -154,6 +154,7 @@ def add_cylinder(builder: BufferBuilder, radius: float, height: float, material:
 
 
 def add_cone(builder: BufferBuilder, bottom_radius: float, top_radius: float, height: float, material: int, sides: int = 10) -> tuple[int, int, int, int]:
+    sides = max(sides, HERO_CURVE_SIDES)
     positions: list[float] = []
     normals: list[float] = []
     indices: list[int] = []
