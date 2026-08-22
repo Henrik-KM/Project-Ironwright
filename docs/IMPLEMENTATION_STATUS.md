@@ -2371,3 +2371,12 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   does not create another dashboard, queue or recurring management task;
 - added complete-game coverage for the condition identity on the restored
   multi-session recap surface.
+## Focused merged-certificate verification milestone
+
+- extended release-certificate verification to recognize the exact
+  certification commit both as a standalone release-candidate head and as
+  the second parent of its normal merge commit;
+- rejected later source changes after certification by requiring the merged
+  certificate to remain directly attached to the certified source parent;
+- preserved the existing artifact, gate and allowed-output checks while making
+  the verifier usable on the actual merged `main` tree.

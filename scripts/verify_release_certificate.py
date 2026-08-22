@@ -34,6 +34,25 @@ def git(*arguments: str) -> str:
     return completed.stdout.strip()
 
 
+def certification_commit_for_head(current_head: str) -> tuple[str, str] | tuple[None, None]:
+    """Return (certification_commit, certified_source) for a release head.
+
+    The certification workflow first creates a standalone commit whose parent
+    is the tested source. The normal repository merge then preserves that
+    exact commit as the second parent of a merge commit. Both shapes must be
+    verifiable; otherwise a correctly merged certificate becomes impossible to
+    audit from main.
+    """
+    parents = git("rev-list", "--parents", "-n", "1", current_head).split()[1:]
+    candidates = [current_head]
+    if len(parents) > 1:
+        candidates.extend(parents[1:])
+    for candidate in candidates:
+        if git("log", "-1", "--pretty=%s", candidate) == "Certify Project Ironwright 1.0.0-rc.1":
+            return candidate, git("rev-parse", f"{candidate}^")
+    return None, None
+
+
 def fail(message: str) -> int:
     print(f"RELEASE CERTIFICATE VERIFICATION FAILED: {message}", file=sys.stderr)
     return 1
@@ -50,16 +69,22 @@ def main() -> int:
         return fail("certificate root must be an object")
 
     current_head = git("rev-parse", "HEAD")
-    parent = git("rev-parse", "HEAD^")
     certified_source = str(certificate.get("certified_source_sha", ""))
-    if certified_source != parent:
+    certification_head, source_parent = certification_commit_for_head(current_head)
+    if certification_head is None or source_parent is None:
+        return fail("current head does not contain the exact certification commit")
+    if certified_source != source_parent:
         return fail(
-            f"certificate names {certified_source or '<empty>'}, but the certification commit parent is {parent}"
+            f"certificate names {certified_source or '<empty>'}, but the certification commit parent is {source_parent}"
         )
 
-    message = git("log", "-1", "--pretty=%s")
-    if message != "Certify Project Ironwright 1.0.0-rc.1":
-        return fail(f"PR head is not the certification commit: {message!r}")
+    # A merged certification must not silently coexist with later source
+    # changes. The first parent of the merge is the exact source revision that
+    # the certification job tested; a standalone certification has the same
+    # relationship through its direct parent.
+    head_parents = git("rev-list", "--parents", "-n", "1", current_head).split()[1:]
+    if certification_head != current_head and (not head_parents or head_parents[0] != certified_source):
+        return fail("merged certificate is not attached directly to its certified source")
 
     changed = [
         line.strip()
