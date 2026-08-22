@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused authored Scrapper salvage-detail refinement milestone
+
+- raised the source Scrapper's close-camera cylindrical hardware to denser
+  radial resolution and added authored hopper-rim, tool-collar, magnet-coil,
+  cutting-guard and intake-tooth surfaces;
+- retained the existing cargo, salvage-tool, salvage-drum, collision, movement
+  and autonomous extraction contracts; this is presentation only and adds no
+  recurring machine workload;
+- extended the Scrapper manifest, geometry floor and native aesthetic coverage,
+  with a fresh exported friendly-roster review required before merge.
+
 ## Focused authored Warden guardian refinement milestone
 
 - raised the source Warden's close-camera cylindrical hardware to denser

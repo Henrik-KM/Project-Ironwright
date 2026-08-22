@@ -797,6 +797,8 @@ func _run_all() -> void:
         if role_names[index] == &"salvager":
             _expect(_find_named(role_samples[index], "ScrapperAuthoredModel") != null, "The salvager must use the authored Scrapper model shell.")
             _expect(_find_named(role_samples[index], "ProductionAssetMarker") != null, "The authored Scrapper model must expose its production asset marker.")
+            _expect(_find_named(role_samples[index], "ScrapperHopperRim") != null and _find_named(role_samples[index], "ScrapperDismantlerCollarLeft") != null, "The authored Scrapper model must expose maintained hopper and tool-collar hardware.")
+            _expect(_find_named(role_samples[index], "ScrapperMagnetCoilRight") != null and _find_named(role_samples[index], "ScrapperCuttingGuard") != null, "The authored Scrapper model must expose close-camera pickup and cutting hardware.")
         elif role_names[index] == &"scout":
             _expect(_find_named(role_samples[index], "PathfinderAuthoredModel") != null, "The scout must use the authored Pathfinder model shell.")
             _expect(_find_named(role_samples[index], "ProductionAssetMarker") != null, "The authored Pathfinder model must expose its production asset marker.")
