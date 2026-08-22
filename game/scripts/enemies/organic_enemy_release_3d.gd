@@ -136,7 +136,21 @@ func _coarse_detail_tick(delta: float) -> void:
 
 
 func set_visual_lod(level_value: int) -> void:
-    visual_lod_level = clampi(level_value, 0, 2)
+    var next_visual_lod := clampi(level_value, 0, 2)
+    var unchanged := visual_lod_level == next_visual_lod
+    visual_lod_level = next_visual_lod
+    if unchanged:
+        # The performance director evaluates the neighborhood repeatedly. Do
+        # not re-walk every authored child when the actor remains in the same
+        # detail band, but still repair deferred materialization if an active
+        # actor has not built its shell yet.
+        if _model_root == null:
+            if visual_lod_level == 0:
+                ensure_authored_visuals()
+            else:
+                _ensure_reduced_proxy()
+                _reduced_proxy.visible = true
+        return
     set_damage_presentation_enabled(visual_lod_level == 0)
     _sync_presentation_lod()
     if _model_root == null:
