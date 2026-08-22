@@ -172,6 +172,26 @@
       "description": "The old bell tower was not calling survivors. It was measuring the response beneath the nave, turning every resonance into a map of the brood colony growing below."
     },
     {
+      "id": "story.site.cathedral_bell_yard",
+      "arc": "machine_witness",
+      "trigger": "site_discovered",
+      "trigger_id": "site.cathedral_bell_yard",
+      "sequence": 73,
+      "display_name": "The Listening Foundation",
+      "source_name": "Cathedral Bell Yard",
+      "description": "The bell-yard foundation was built as a listening post, not a shelter. Its empty machine sockets show where the town expected a convoy to stand watch beneath the brood chamber."
+    },
+    {
+      "id": "story.cathedral.silence",
+      "arc": "ecological_convergence",
+      "trigger": "operation_state",
+      "trigger_id": "operation.cathedral_brood_suppression:complete",
+      "sequence": 75,
+      "display_name": "The Silence Between Bells",
+      "source_name": "Cathedral Quarter",
+      "description": "When the brood signal fell quiet, the bell tower did not become safe. It became legible: the machines could finally distinguish the town's own warning tones from the colony's map beneath the nave."
+    },
+    {
       "id": "story.buried_labs.protocol",
       "arc": "ecological_convergence",
       "trigger": "region_discovered",
