@@ -1597,6 +1597,15 @@ environmentally distinct without changing ecology, routing or player workload.
 
 ## Commercial work still remaining
 
+## Focused first-run title clarity milestone
+
+- made the title panel responsive to the current viewport so its no-save
+  guidance cannot fall below the window at the supported compact frame;
+- gave the unavailable Continue action a visibly subdued disabled treatment
+  and focused New World automatically on a first run;
+- added release regression coverage for the first-run focus, explanatory
+  no-save label and viewport-safe panel bounds.
+
 ## Focused opening workshop interior milestone
 
 - added a bounded workshop cutaway to the opening district, with recessed room

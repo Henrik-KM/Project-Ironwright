@@ -5,6 +5,11 @@
 
 The opening must feel frightening because the Mechromancer is weak and exposed, not because the interface withholds the next interaction or renders critical information unreadable.
 
+On a first run with no valid save, the title screen focuses `NEW WORLD`,
+visibly subdues the unavailable `CONTINUE` action, and keeps the no-save
+explanation inside the current viewport. The first actionable step must not
+depend on a mouse hover or an unexplained disabled menu item.
+
 ## 1. First objective clarity
 
 The first objective must identify a real physical wreck rather than merely instructing the player to “leave the light.”
