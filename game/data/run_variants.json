@@ -64,6 +64,22 @@
       "fog_energy_bias": 0.07,
       "brightness_bias": -0.004,
       "glow_bias": 0.16
+    },
+    {
+      "id": "weather.ashfall_drift",
+      "display_name": "Ashfall Drift",
+      "description": "A dry ash front drifts through the broken district; orange practicals burn through a dirty sky.",
+      "rain_amount": 80,
+      "rain_velocity_min": 4.0,
+      "rain_velocity_max": 7.0,
+      "rain_color": "#b28d82",
+      "ambient_tint": "#aa9a94",
+      "fog_tint": "#776866",
+      "fog_density_bias": 0.0008,
+      "ambient_energy_bias": 0.02,
+      "fog_energy_bias": 0.02,
+      "brightness_bias": -0.012,
+      "glow_bias": 0.055
     }
   ]
 }

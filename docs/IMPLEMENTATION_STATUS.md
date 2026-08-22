@@ -2248,6 +2248,18 @@ presentation restore, with release regression coverage for that migration path.
 - added aesthetic coverage for the diagonal cast-separation contract and
   confirmed the result in the exported Windows opening.
 
+## Focused authored run-variation breadth milestone
+
+- added the authored Ashfall Drift condition to the deterministic run-identity
+  catalog, giving the opening a dry, warm-gray atmospheric treatment alongside
+  the existing storm, mist, cold-break and signal-bloom profiles;
+- kept the condition presentation-only: it changes weather particles, ambient
+  tint, fog tint, energy bias and practical glow emphasis without changing
+  combat, ecology, navigation, saves beyond the existing stable profile ID or
+  player workload;
+- extended release coverage for the fifth profile, its distinct particle and
+  colour signature, and the existing deterministic save/load contract.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.
