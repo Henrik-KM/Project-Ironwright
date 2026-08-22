@@ -8,6 +8,7 @@ const LEGACY_COMPLETE_SAVE := "user://ironwright_complete_game_state.json"
 const VERTICAL_SLICE_DIRECTOR := preload("res://scripts/presentation/vertical_slice_readable_director_3d.gd")
 const VERTICAL_SLICE_ACTOR_ART := preload("res://scripts/presentation/vertical_slice_actor_art_3d.gd")
 const RUN_VARIATION_SCRIPT := preload("res://scripts/presentation/run_variation_director_3d.gd")
+const SESSION_DIAGNOSTICS_SCRIPT := preload("res://scripts/release/release_session_diagnostics_service_3d.gd")
 const REMOTE_CAMERA_HEIGHT_EXPANSION := 5.5
 const REMOTE_CAMERA_DISTANCE_EXPANSION := 6.5
 
@@ -23,6 +24,7 @@ var release_world_art: ReleaseWorldArtDirector3D
 var release_animation: ReleaseAnimationDirector3D
 var release_audio: ReleaseAudioDirector3D
 var release_front_end: ReleaseFrontEnd3D
+var session_diagnostics: ReleaseSessionDiagnostics3D
 var release_started: bool = false
 var controller_action_cooldown: float = 0.0
 var release_save_clock: float = 0.0
@@ -55,6 +57,12 @@ func _process(delta: float) -> void:
 		_handle_controller_actions()
 	if release_front_end != null and release_front_end.is_modal_open():
 		_ensure_modal_focus()
+
+
+func _on_player_died() -> void:
+	if session_diagnostics != null:
+		session_diagnostics.record_event(&"player_defeat", "The Mechromancer was lost.")
+	super._on_player_died()
 
 
 func _setup_vertical_slice_presentation() -> void:
@@ -288,6 +296,12 @@ func _setup_release_services() -> void:
 	transactional_save_service.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(transactional_save_service)
 
+	session_diagnostics = SESSION_DIAGNOSTICS_SCRIPT.new() as ReleaseSessionDiagnostics3D
+	session_diagnostics.name = "SessionDiagnostics"
+	session_diagnostics.process_mode = Node.PROCESS_MODE_ALWAYS
+	session_diagnostics.configure(str(ProjectSettings.get_setting("application/config/version", "unknown")))
+	add_child(session_diagnostics)
+
 	spatial_index = SpatialIndex3D.new()
 	spatial_index.name = "SpatialIndex"
 	spatial_index.process_mode = Node.PROCESS_MODE_PAUSABLE
@@ -334,7 +348,11 @@ func _connect_release_services() -> void:
 	release_front_end.save_requested.connect(_save_release_game)
 	release_front_end.load_requested.connect(_load_release_game)
 	release_front_end.return_title_requested.connect(_return_to_title)
-	release_front_end.quit_requested.connect(func() -> void: get_tree().quit())
+	release_front_end.quit_requested.connect(func() -> void:
+		if session_diagnostics != null:
+			session_diagnostics.mark_clean_shutdown("menu_quit")
+		get_tree().quit()
+	)
 	release_front_end.settings_applied.connect(_on_front_end_settings_applied)
 
 	settings_service.settings_changed.connect(func(next_settings: Dictionary) -> void:
@@ -342,15 +360,18 @@ func _connect_release_services() -> void:
 	)
 	settings_service.controller_connection_changed.connect(_on_controller_connection_changed)
 	transactional_save_service.save_completed.connect(func(slot_id: StringName, path: String) -> void:
+		session_diagnostics.record_event(&"save_completed", "Transactional run snapshot committed.", {"slot": String(slot_id)})
 		hud.push_notification(localization_service.text("save.saved"))
 	)
 	transactional_save_service.save_failed.connect(func(slot_id: StringName, reason: String) -> void:
+		session_diagnostics.record_event(&"save_failed", reason, {"slot": String(slot_id)})
 		hud.push_notification("%s · %s" % [localization_service.text("save.failed"), reason.to_upper()])
 	)
 	transactional_save_service.load_completed.connect(func(slot_id: StringName, source_path: String, recovered_backup: bool) -> void:
 		hud.push_notification(localization_service.text("save.invalid") if recovered_backup else localization_service.text("save.loaded"))
 	)
 	transactional_save_service.load_failed.connect(func(slot_id: StringName, report: Dictionary) -> void:
+		session_diagnostics.record_event(&"load_failed", "Transactional load failed.", {"slot": String(slot_id), "attempts": report.get("attempts", []).size()})
 		var attempts: Array = report.get("attempts", [])
 		run_state.log_event("Save recovery failed: %s" % JSON.stringify(report))
 		hud.push_notification("%s · %d ATTEMPTS" % [localization_service.text("save.recovery_failed"), attempts.size()])
@@ -626,6 +647,8 @@ func _spawn_salvage(position: Vector3, amount: int, display_name: String) -> Sal
 
 
 func _on_heartforge_destroyed() -> void:
+	if session_diagnostics != null:
+		session_diagnostics.record_event(&"heartforge_failure", "The Heartforge was destroyed.")
 	if progression != null and progression.has_effect(&"single_continuity_recovery") and not continuity_used:
 		continuity_used = true
 		heartforge.current_health = heartforge.maximum_health * 0.48

@@ -444,7 +444,9 @@ Alpha requirements:
 - first-pass balance for all major paths;
 - keyboard/mouse and controller support;
 - accessibility baseline;
-- crash reporting and diagnostics;
+- crash reporting and diagnostics; the release shell now writes bounded local
+  session diagnostics and detects unclean prior shutdowns, while external crash
+  collection remains a launch gate;
 - performance budgets enforced;
 - no known save-corruption path.
 
