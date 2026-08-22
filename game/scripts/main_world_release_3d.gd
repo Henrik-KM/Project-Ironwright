@@ -15,6 +15,16 @@ const REMOTE_CAMERA_DISTANCE_EXPANSION := 6.5
 
 static var pending_launch_mode: StringName = &"title"
 
+const PRESENTATION_REVIEW_FRIENDLIES: Array[StringName] = [
+	&"companion", &"guardian", &"salvager", &"scout", &"engineer", &"relay",
+]
+const PRESENTATION_REVIEW_EARLY_ORGANICS: Array[StringName] = [
+	&"skitterling", &"razorhound", &"roofleaper", &"glassmoth", &"veilstalker", &"burrower", &"sporecaster",
+]
+const PRESENTATION_REVIEW_LATE_ORGANICS: Array[StringName] = [
+	&"broodmass", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle", &"apex",
+]
+
 var localization_service: LocalizationService3D
 var settings_service: ReleaseSettingsService3D
 var transactional_save_service: ReleaseTransactionalSaveService3D
@@ -36,6 +46,11 @@ var vertical_slice_actor_art: VerticalSliceActorArt3D
 var run_variation_director: RunVariationDirector3D
 var camera_target_velocity: Vector3 = Vector3.ZERO
 var camera_heading: Vector3 = Vector3(0.0, 0.0, 1.0)
+var presentation_review_active: bool = false
+var presentation_review_page: int = 0
+var presentation_review_pages: Array = []
+var presentation_review_label: Label
+var presentation_review_stage: Node3D
 
 
 func _ready() -> void:
@@ -49,6 +64,9 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if presentation_review_active:
+		_update_presentation_review_camera(delta)
+		return
 	super._process(delta)
 	if map_mode != _last_map_label_mode:
 		_last_map_label_mode = map_mode
@@ -270,6 +288,22 @@ func _discovered_region_centroid() -> Vector3:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if presentation_review_active:
+		if event is InputEventKey and event.pressed and not event.echo:
+			var review_key := (event as InputEventKey).keycode
+			if review_key == 0:
+				review_key = (event as InputEventKey).physical_keycode
+			match review_key:
+				KEY_1:
+					_show_presentation_review_page(0)
+				KEY_2:
+					_show_presentation_review_page(1)
+				KEY_3:
+					_show_presentation_review_page(2)
+				KEY_ESCAPE:
+					get_tree().quit()
+			get_viewport().set_input_as_handled()
+		return
 	if release_front_end != null and release_front_end.is_modal_open():
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -355,6 +389,10 @@ func _connect_release_services() -> void:
 	release_front_end.save_requested.connect(_save_release_game)
 	release_front_end.load_requested.connect(_load_release_game)
 	release_front_end.return_title_requested.connect(_return_to_title)
+	release_front_end.presentation_review_requested.connect(func() -> void:
+		_start_release_world()
+		call_deferred("_start_presentation_review")
+	)
 	release_front_end.quit_requested.connect(func() -> void:
 		if session_diagnostics != null:
 			session_diagnostics.mark_clean_shutdown("menu_quit")
@@ -408,6 +446,9 @@ func _finish_release_boot() -> void:
 	pending_launch_mode = &"title"
 	if _is_headless_release():
 		_start_release_world()
+	elif _has_presentation_review_flag():
+		_start_release_world()
+		call_deferred("_start_presentation_review")
 	elif mode == &"new":
 		_start_release_world()
 	elif mode == &"continue":
@@ -415,6 +456,165 @@ func _finish_release_boot() -> void:
 		_load_release_game()
 	else:
 		_show_title_screen()
+
+
+func _has_presentation_review_flag() -> bool:
+	for argument in OS.get_cmdline_args():
+		if str(argument) == "--presentation-review":
+			return true
+	for argument in OS.get_cmdline_user_args():
+		if str(argument) == "--presentation-review":
+			return true
+	return false
+
+
+func _start_presentation_review() -> void:
+	presentation_review_active = true
+	presentation_review_page = 0
+	player.input_enabled = false
+	player.set_physics_process(false)
+	player.set_process(false)
+	if hud != null:
+		hud.visible = false
+	if strategic_hud != null:
+		strategic_hud.visible = false
+	if operations_hud != null:
+		operations_hud.visible = false
+	if release_front_end != null:
+		release_front_end.hide_all()
+
+	var review_layer := CanvasLayer.new()
+	review_layer.name = "PresentationReviewLayer"
+	review_layer.layer = 120
+	add_child(review_layer)
+	presentation_review_label = Label.new()
+	presentation_review_label.name = "PresentationReviewLabel"
+	presentation_review_label.position = Vector2(34.0, 26.0)
+	presentation_review_label.add_theme_font_size_override("font_size", 22)
+	presentation_review_label.add_theme_color_override("font_color", Color("f1dfb8"))
+	presentation_review_label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.86))
+	presentation_review_label.add_theme_constant_override("shadow_offset_x", 2)
+	presentation_review_label.add_theme_constant_override("shadow_offset_y", 2)
+	review_layer.add_child(presentation_review_label)
+
+	presentation_review_pages = [[], [], []]
+	presentation_review_pages[0].append(player)
+	var companion := get_node_or_null("Bulwark_01") as Node3D
+	if companion != null:
+		presentation_review_pages[0].append(companion)
+	for archetype in PRESENTATION_REVIEW_FRIENDLIES:
+		if archetype == &"companion":
+			continue
+		var robot := _spawn_robot(archetype, Vector3.ZERO, 1) as Node3D
+		if robot != null:
+			robot.set_physics_process(false)
+			robot.set_process(false)
+			presentation_review_pages[0].append(robot)
+	for species in PRESENTATION_REVIEW_EARLY_ORGANICS:
+		var enemy := _spawn_enemy(Vector3.ZERO, species) as Node3D
+		if enemy != null:
+			enemy.set_physics_process(false)
+			enemy.set_process(false)
+			presentation_review_pages[1].append(enemy)
+	for species in PRESENTATION_REVIEW_LATE_ORGANICS:
+		var enemy := _spawn_enemy(Vector3.ZERO, species) as Node3D
+		if enemy != null:
+			enemy.set_physics_process(false)
+			enemy.set_process(false)
+			presentation_review_pages[2].append(enemy)
+	_create_presentation_review_stage()
+	_show_presentation_review_page(0)
+	get_tree().paused = true
+	run_state.log_event("Presentation review mode: 1 friendly roster, 2 early organic families, 3 late organic families. Escape exits review.")
+
+
+func _create_presentation_review_stage() -> void:
+	var preserved_nodes: Array[Node] = [camera]
+	for page_actors in presentation_review_pages:
+		for actor in page_actors:
+			if is_instance_valid(actor):
+				preserved_nodes.append(actor)
+	for child in get_children():
+		if child is Node3D and not preserved_nodes.has(child) and not (child is Camera3D) and not (child is DirectionalLight3D):
+			(child as Node3D).visible = false
+
+	presentation_review_stage = Node3D.new()
+	presentation_review_stage.name = "PresentationReviewStage"
+	add_child(presentation_review_stage)
+	_add_presentation_review_box("ReviewFloor", Vector3(30.0, 0.35, 13.0), Vector3(0.0, -0.25, 0.0), Color("172733"), 0.68, 0.32)
+	_add_presentation_review_box("ReviewBackdrop", Vector3(30.0, 11.0, 0.3), Vector3(0.0, 5.0, -3.8), Color("0b1822"), 0.2, 0.52)
+	_add_presentation_review_box("ReviewAmberBand", Vector3(28.0, 0.12, 0.12), Vector3(0.0, 3.1, -3.58), Color("d88a43"), 0.15, 0.3, Color("d88a43"))
+	_add_presentation_review_box("ReviewTealBand", Vector3(28.0, 0.08, 0.08), Vector3(0.0, 2.65, -3.54), Color("52b4b7"), 0.12, 0.28, Color("52b4b7"))
+	var warm_light := OmniLight3D.new()
+	warm_light.name = "ReviewWarmLight"
+	warm_light.position = Vector3(-7.0, 6.0, 6.0)
+	warm_light.omni_range = 24.0
+	warm_light.light_energy = 5.0
+	warm_light.light_color = Color("ffbd78")
+	presentation_review_stage.add_child(warm_light)
+	var cool_light := OmniLight3D.new()
+	cool_light.name = "ReviewCoolLight"
+	cool_light.position = Vector3(8.0, 5.0, 3.0)
+	cool_light.omni_range = 22.0
+	cool_light.light_energy = 4.0
+	cool_light.light_color = Color("7ac7e8")
+	presentation_review_stage.add_child(cool_light)
+
+
+func _add_presentation_review_box(node_name: String, size: Vector3, position: Vector3, color: Color, metallic: float, roughness: float, emission: Color = Color.BLACK) -> void:
+	var mesh_instance := MeshInstance3D.new()
+	mesh_instance.name = node_name
+	var box := BoxMesh.new()
+	box.size = size
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.metallic = metallic
+	material.roughness = roughness
+	if emission != Color.BLACK:
+		material.emission_enabled = true
+		material.emission = emission
+		material.emission_energy_multiplier = 1.8
+	box.material = material
+	mesh_instance.mesh = box
+	mesh_instance.position = position
+	presentation_review_stage.add_child(mesh_instance)
+
+
+func _show_presentation_review_page(page: int) -> void:
+	if presentation_review_pages.size() != 3:
+		return
+	presentation_review_page = clampi(page, 0, 2)
+	for page_actors in presentation_review_pages:
+		for actor in page_actors:
+			if is_instance_valid(actor):
+				actor.visible = false
+	var actors: Array = presentation_review_pages[presentation_review_page]
+	for index in actors.size():
+		var actor := actors[index] as Node3D
+		if actor == null or not is_instance_valid(actor):
+			continue
+		actor.visible = true
+		actor.rotation.y = PI
+		var row_start := -8.4
+		var row_z := 0.0
+		if presentation_review_page == 0:
+			row_z = 1.0
+		actor.position = Vector3(row_start + float(index) * 2.8, 0.0, row_z)
+		if actor.has_method("set_visual_lod"):
+			actor.call("set_visual_lod", 0)
+	var page_title: String = str(["PLAYER + FRIENDLY MACHINE SOCIETY", "EARLY ORGANIC FAMILIES", "LATE ORGANIC FAMILIES"][presentation_review_page])
+	presentation_review_label.text = "PRESENTATION REVIEW  ·  %s  ·  %d/3\n1 FRIENDLIES   2 EARLY ORGANICS   3 LATE ORGANICS   ESC EXIT" % [page_title, presentation_review_page + 1]
+	_update_presentation_review_camera(1.0)
+
+
+func _update_presentation_review_camera(delta: float) -> void:
+	if camera == null:
+		return
+	var target := Vector3(0.0, 1.0, 0.0)
+	var desired := Vector3(0.0, 4.8, 18.0)
+	camera.global_position = camera.global_position.lerp(desired, 1.0 - exp(-delta * 5.0))
+	camera.fov = 46.0
+	camera.look_at(target + Vector3.UP * 0.9, Vector3.UP)
 
 
 func _show_title_screen() -> void:

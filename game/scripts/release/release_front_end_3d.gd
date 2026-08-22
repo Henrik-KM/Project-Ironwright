@@ -9,6 +9,7 @@ signal load_requested
 signal return_title_requested
 signal quit_requested
 signal settings_applied(settings: Dictionary)
+signal presentation_review_requested
 
 var localization: LocalizationService3D
 var settings_service: ReleaseSettingsService3D
@@ -51,6 +52,10 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
     if not visible or not (event is InputEventKey or event is InputEventJoypadButton):
+        return
+    if active_screen == &"title" and event is InputEventKey and (event as InputEventKey).pressed and not (event as InputEventKey).echo and ((event as InputEventKey).keycode == KEY_F10 or (event as InputEventKey).physical_keycode == KEY_F10):
+        presentation_review_requested.emit()
+        get_viewport().set_input_as_handled()
         return
     if active_screen == &"settings" and remap_capture_action != &"":
         if event is InputEventKey and (event as InputEventKey).pressed and not (event as InputEventKey).echo:
