@@ -25,6 +25,11 @@ func _run_all() -> void:
     var archive := world.story_archive_director
     _expect(archive.has_record(&"story.heartforge.last_light"), "The opening archive record must unlock automatically.")
 
+    world.run_state.observe_organic_species(&"razorhound", &"hunt", &"region.west_grid")
+    world.run_state.observe_organic_species(&"razorhound", &"track_last_known", &"region.west_grid")
+    var ecology_records := archive.archive_records().filter(func(record: Dictionary) -> bool: return str(record.get("id", "")) == "bestiary.razorhound")
+    _expect(ecology_records.size() == 1 and str(ecology_records[0].get("description", "")).contains("track last known"), "The Town Archive must expose persistent bestiary behaviour evidence without adding a management surface.")
+
     _expect(world.outpost_director.discover_site(&"site.north_archive_sublevel"), "The archive sublevel site must be discoverable through the real outpost director.")
     _expect(world.outpost_director.discover_site(&"site.east_roof_reservoir"), "The roof reservoir site must be discoverable through the real outpost director.")
     _expect(world.outpost_director.discover_site(&"site.west_cooling_station"), "The cooling station site must be discoverable through the real outpost director.")

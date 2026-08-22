@@ -108,6 +108,12 @@
 - Added a bounded Scrap high-water and decline record to the run state, including the first sustained downturn and its spending cause; this survives the unified save path without introducing a resource dashboard or maintenance task.
 - Extended complete-game coverage for species/behaviour evidence and first-decline reporting, and live-checked the left-aligned report in the compact exported viewport.
 
+## Focused bestiary archive milestone
+
+- Exposed the persisted species and behaviour evidence through the existing on-demand Town Archive, with stable bounded `bestiary.*` records derived from the run state.
+- Kept the archive read-only and optional: it explains ecological patterns without adding per-species assignments, alerts, queues or a recurring management surface.
+- Added story-archive coverage for remembered hunt and route-tracking behaviour.
+
 ## Focused machine identity and relationship milestone
 
 - Friendly machines now receive deterministic player-facing callsigns by role while preserving their existing node names as stable save and autonomy identifiers.
