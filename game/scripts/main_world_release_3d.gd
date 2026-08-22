@@ -8,6 +8,8 @@ const LEGACY_COMPLETE_SAVE := "user://ironwright_complete_game_state.json"
 const VERTICAL_SLICE_DIRECTOR := preload("res://scripts/presentation/vertical_slice_readable_director_3d.gd")
 const VERTICAL_SLICE_ACTOR_ART := preload("res://scripts/presentation/vertical_slice_actor_art_3d.gd")
 const RUN_VARIATION_SCRIPT := preload("res://scripts/presentation/run_variation_director_3d.gd")
+const REMOTE_CAMERA_HEIGHT_EXPANSION := 5.5
+const REMOTE_CAMERA_DISTANCE_EXPANSION := 6.5
 
 static var pending_launch_mode: StringName = &"title"
 
@@ -126,8 +128,11 @@ func _update_camera(delta: float) -> void:
 	var dynamic_height := camera_height + threat_bias.y
 	var dynamic_distance := camera_distance + threat_bias.z
 	if _is_remote_camera_context(target):
-		dynamic_height += 9.0
-		dynamic_distance += 10.0
+		# Remote landmarks need enough breadth to establish their identity, but
+		# the expedition cast must remain readable as the player enters them.
+		var remote_expansion := _remote_camera_expansion()
+		dynamic_height += remote_expansion.x
+		dynamic_distance += remote_expansion.y
 	var desired := target + Vector3(0.0, dynamic_height, 0.0) + _camera_horizontal_offset(dynamic_distance)
 	var resolved := _resolve_camera_occlusion(target, desired, dynamic_height, dynamic_distance)
 	camera.global_position = camera.global_position.lerp(resolved, 1.0 - exp(-delta * 7.2))
@@ -154,6 +159,10 @@ func _is_remote_camera_context(position: Vector3) -> bool:
 	if region_director == null:
 		return false
 	return region_director.region_for_position(position) != &"region.heartforge_district"
+
+
+func _remote_camera_expansion() -> Vector2:
+	return Vector2(REMOTE_CAMERA_HEIGHT_EXPANSION, REMOTE_CAMERA_DISTANCE_EXPANSION)
 
 
 func _nearby_threat_camera_bias(target: Vector3) -> Vector3:
