@@ -343,6 +343,13 @@ beveled forms, while a compact tool-control face and battery-service pod add
 readable machine-maintenance identity. This layer remains presentation-only and
 does not create a player-managed production queue or camp resource obligation.
 
+The shared actor-feedback layer now follows that bar as well: common robot
+armor, protection brows and salvage baskets use bounded beveled forms, so the
+short-lived combat/readability attachments do not fall back to flat prototype
+geometry when a role shell is viewed at tactical distance. This remains a
+presentation-only layer and does not change actor sockets, collision, AI or
+machine workload.
+
 Automated presence tests only prove the slice exists technically. Actual screenshot/gameplay review decides whether it clears the visual bar.
 
 ## Art production sequence

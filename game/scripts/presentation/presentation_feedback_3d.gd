@@ -181,19 +181,19 @@ func _add_player_details(details: Node3D) -> void:
 
 func _add_robot_details(actor: Node3D, details: Node3D) -> void:
     var archetype := StringName(actor.get(&"archetype")) if _property_exists(actor, &"archetype") else &"salvager"
-    ModelKit3D.add_box(details, Vector3(1.1, 0.09, 1.3), Vector3(0.0, 1.47, 0.0), rust_material, Vector3.ZERO, "RaisedArmorPanel")
+    ModelKit3D.add_beveled_box(details, Vector3(1.1, 0.09, 1.3), Vector3(0.0, 1.47, 0.0), rust_material, Vector3.ZERO, "RaisedArmorPanel", 0.18)
     for side in [-1.0, 1.0]:
         ModelKit3D.add_cylinder(details, 0.045, 1.05, Vector3(side * 0.62, 1.0, 0.1), cyan_material, Vector3(0.0, 0.0, side * 0.46), "ExposedCable")
     match archetype:
         &"companion", &"guardian":
-            ModelKit3D.add_box(details, Vector3(1.75, 0.52, 0.12), Vector3(0.0, 1.05, -0.94), rust_material, Vector3.ZERO, "ProtectiveBrow")
+            ModelKit3D.add_beveled_box(details, Vector3(1.75, 0.52, 0.12), Vector3(0.0, 1.05, -0.94), rust_material, Vector3.ZERO, "ProtectiveBrow", 0.16)
             ModelKit3D.add_sphere(details, 0.11, Vector3(-0.42, 1.34, -0.94), warm_material, Vector3.ONE, "GuardLampLeft")
             ModelKit3D.add_sphere(details, 0.11, Vector3(0.42, 1.34, -0.94), warm_material, Vector3.ONE, "GuardLampRight")
         &"scout":
             ModelKit3D.add_sphere(details, 0.17, Vector3(-0.45, 1.42, -0.68), cyan_material, Vector3(1.2, 0.6, 1.2), "ScoutOptic")
             ModelKit3D.add_sphere(details, 0.17, Vector3(0.45, 1.42, -0.68), cyan_material, Vector3(1.2, 0.6, 1.2), "ScoutOptic")
         _:
-            ModelKit3D.add_box(details, Vector3(1.08, 0.58, 0.86), Vector3(0.0, 1.62, 0.35), dark_material, Vector3.ZERO, "ScrapBasket")
+            ModelKit3D.add_beveled_box(details, Vector3(1.08, 0.58, 0.86), Vector3(0.0, 1.62, 0.35), dark_material, Vector3.ZERO, "ScrapBasket", 0.16)
 
 
 func _add_enemy_details(actor: Node3D, details: Node3D) -> void:
