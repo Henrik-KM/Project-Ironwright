@@ -3,8 +3,8 @@
   "product": "Project Ironwright",
   "version": "1.0.0-rc.1",
   "release_channel": "release_candidate",
-  "certified_source_sha": "3f1b04bd94fb7f4c19977c6fbbdc3e389d587d4e",
-  "certified_at_utc": "2026-08-22T16:05:36+00:00",
+  "certified_source_sha": "d0b76b5811c5a01542646a0d9a6a460f3ff935f5",
+  "certified_at_utc": "2026-08-22T16:22:19+00:00",
   "runner": "Windows-10-10.0.26200-SP0",
   "godot": "4.7.2",
   "platform_packages": [
@@ -26,16 +26,16 @@
   ],
   "artifacts": {
     "ProjectIronwright-1.0.0-rc.1-Windows.zip": {
-      "bytes": 46602615,
-      "sha256": "abfc37b7436ddfb1dbea2a13c5808ba694dea83b4c28543451523878ee2a906c"
+      "bytes": 46609378,
+      "sha256": "d87b6dd8cd773845e4c23bb28b25b1349583e4b476af717647d8e6e0912435b1"
     },
     "ProjectIronwright-1.0.0-rc.1-Linux.tar.gz": {
-      "bytes": 35752820,
-      "sha256": "84a8cd5fd0156cbf97af4e2d876f3612470ad8890535749fc9942adc37edbd96"
+      "bytes": 35757877,
+      "sha256": "d612272acd5bb3f835528900e03824446551adceca692613faf913b0edae6c48"
     },
     "SHA256SUMS.txt": {
       "bytes": 217,
-      "sha256": "0397e4c427ef9edf55d2b043fa1ad47d5aa1f81e93c2265a00323d862838eee5"
+      "sha256": "84dfdf40e560c90b8e019abda40b8490219d3c2a1d1d17fcccdb58751217ef42"
     }
   },
   "external_gates_remaining": [
