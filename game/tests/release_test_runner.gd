@@ -110,6 +110,7 @@ func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
     if variation.profiles.has(&"weather.ashfall_drift"):
         var ashfall_drift: Dictionary = variation.profiles[&"weather.ashfall_drift"]
         _expect(int(ashfall_drift.get("rain_amount", 0)) == 80 and float(ashfall_drift.get("rain_velocity_max", 0.0)) <= 7.0, "Ashfall Drift must use a restrained dry-front particle signature.")
+        _expect(str(ashfall_drift.get("particle_style", "")) == "ash" and str(ashfall_drift.get("rain_color", "")) == "#b28d8270", "Ashfall Drift must use a distinct drifting ash particle style and translucent particulate colour.")
         _expect(str(ashfall_drift.get("ambient_tint", "")) == "#aa9a94" and str(ashfall_drift.get("fog_tint", "")) == "#776866", "Ashfall Drift must carry its distinct warm ash atmospheric signature.")
         _expect(float(ashfall_drift.get("glow_bias", 0.0)) > 0.0 and float(ashfall_drift.get("glow_bias", 0.0)) < 0.1, "Ashfall Drift must preserve restrained practical-light emphasis.")
     for profile_id in variation.profile_ids():
@@ -119,6 +120,17 @@ func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.run_state.world_variant_id != &"", "A new run must record a stable world-condition ID.")
     _expect(not variation.current_display_name().is_empty(), "The active world condition must expose a player-readable name.")
     _expect(world.vertical_slice.weather_emitter != null and world.vertical_slice.weather_emitter.amount >= 80, "The active world condition must configure the opening weather emitter.")
+    var active_profile: Dictionary = variation.current_profile()
+    if str(active_profile.get("particle_style", "rain")) == "ash" and world.vertical_slice.weather_emitter != null:
+        var ash_mesh := world.vertical_slice.weather_emitter.mesh as QuadMesh
+        _expect(ash_mesh != null and ash_mesh.size.x <= 0.1 and ash_mesh.size.y <= 0.1, "Ashfall Drift must materialize as small drifting flecks instead of rain streaks.")
+    var original_variant := world.run_state.world_variant_id
+    world.run_state.set_world_variant(&"weather.ashfall_drift", world.run_state.world_seed)
+    variation.apply_current()
+    var ash_mesh := world.vertical_slice.weather_emitter.mesh as QuadMesh if world.vertical_slice.weather_emitter != null else null
+    _expect(ash_mesh != null and ash_mesh.size.x <= 0.1 and ash_mesh.size.y <= 0.1, "Ashfall Drift must apply a fleck-sized particle mesh at runtime.")
+    world.run_state.set_world_variant(original_variant, world.run_state.world_seed)
+    variation.apply_current()
 
     var saved_state := world.run_state.to_dictionary()
     var restored_state := RunState3D.new()

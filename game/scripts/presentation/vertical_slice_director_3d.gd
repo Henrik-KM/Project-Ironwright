@@ -780,9 +780,35 @@ func apply_weather_profile(profile: Dictionary) -> void:
     weather_profile = profile.duplicate(true)
     if weather_emitter == null:
         return
+    var particle_style := StringName(str(profile.get("particle_style", "rain")))
     weather_emitter.amount = maxi(80, int(profile.get("rain_amount", 520)))
     weather_emitter.initial_velocity_min = maxf(1.0, float(profile.get("rain_velocity_min", 9.0)))
     weather_emitter.initial_velocity_max = maxf(weather_emitter.initial_velocity_min, float(profile.get("rain_velocity_max", 14.0)))
+    if particle_style == &"ash":
+        # Ashfall is a dry, drifting particulate front rather than a recoloured
+        # rain streak. It remains a bounded presentation layer and never feeds
+        # noise, ecology, navigation or simulation state.
+        weather_emitter.lifetime = 3.8
+        weather_emitter.preprocess = 3.8
+        weather_emitter.direction = Vector3(0.24, -0.22, 0.12)
+        weather_emitter.spread = 34.0
+        weather_emitter.gravity = Vector3(0.12, -0.72, 0.05)
+        weather_emitter.scale_amount_min = 0.55
+        weather_emitter.scale_amount_max = 1.35
+        var ash_mesh := weather_emitter.mesh as QuadMesh
+        if ash_mesh != null:
+            ash_mesh.size = Vector2(0.065, 0.065)
+    else:
+        weather_emitter.lifetime = 1.4
+        weather_emitter.preprocess = 1.4
+        weather_emitter.direction = Vector3(0.18, -1.0, 0.08)
+        weather_emitter.spread = 5.0
+        weather_emitter.gravity = Vector3(0.0, -12.0, 0.0)
+        weather_emitter.scale_amount_min = 0.42
+        weather_emitter.scale_amount_max = 0.9
+        var rain_mesh := weather_emitter.mesh as QuadMesh
+        if rain_mesh != null:
+            rain_mesh.size = Vector2(0.018, 0.42)
     if weather_material != null:
         var color_variant: Variant = profile.get("rain_color", Color(0.7, 0.82, 0.88, 0.28))
         if color_variant is Color:
