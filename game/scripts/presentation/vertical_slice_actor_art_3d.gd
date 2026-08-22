@@ -96,9 +96,11 @@ func _polish_player(player: Mechromancer3D) -> void:
     # Layered scavenger rig gives the body asymmetry and identifies the
     # Mechromancer as a field mechanic, not a generic mobile-game hero.
     ModelKit3D.add_beveled_box(detail, Vector3(0.7, 0.88, 0.34), Vector3(0.0, 1.08, 0.34), leather, Vector3(-0.05, 0.0, 0.02), "FieldPack", 0.16)
-    ModelKit3D.add_box(detail, Vector3(0.82, 0.1, 0.08), Vector3(0.0, 1.4, -0.28), rust, Vector3(0.0, 0.0, -0.05), "ChestHarness")
-    ModelKit3D.add_box(detail, Vector3(0.1, 0.8, 0.08), Vector3(-0.28, 1.05, -0.24), leather, Vector3(0.0, 0.0, 0.08), "HarnessStrap")
-    ModelKit3D.add_box(detail, Vector3(0.1, 0.8, 0.08), Vector3(0.28, 1.05, -0.24), leather, Vector3(0.0, 0.0, -0.08), "HarnessStrap")
+    ModelKit3D.add_beveled_box(detail, Vector3(0.82, 0.1, 0.08), Vector3(0.0, 1.4, -0.28), rust, Vector3(0.0, 0.0, -0.05), "ChestHarness", 0.2)
+    ModelKit3D.add_beveled_box(detail, Vector3(0.1, 0.8, 0.08), Vector3(-0.28, 1.05, -0.24), leather, Vector3(0.0, 0.0, 0.08), "HarnessStrap", 0.28)
+    ModelKit3D.add_beveled_box(detail, Vector3(0.1, 0.8, 0.08), Vector3(0.28, 1.05, -0.24), leather, Vector3(0.0, 0.0, -0.08), "HarnessStrap", 0.28)
+    ModelKit3D.add_sphere(detail, 0.055, Vector3(-0.28, 1.39, -0.3), warm, Vector3(1.0, 0.72, 0.72), "HarnessFastener")
+    ModelKit3D.add_sphere(detail, 0.055, Vector3(0.28, 1.39, -0.3), warm, Vector3(1.0, 0.72, 0.72), "HarnessFastener")
     ModelKit3D.add_cylinder(detail, 0.18, 0.46, Vector3(-0.43, 1.06, 0.38), rust, Vector3(1.5708, 0.0, 0.0), "CableSpool")
     ModelKit3D.add_cylinder(detail, 0.045, 0.5, Vector3(-0.43, 1.06, 0.12), dark_steel, Vector3(1.5708, 0.0, 0.0), "CableSpoolAxle")
     ModelKit3D.add_beveled_box(detail, Vector3(0.24, 0.5, 0.18), Vector3(0.48, 0.92, 0.3), rust, Vector3(0.0, 0.0, -0.08), "ToolRoll", 0.2)
@@ -106,7 +108,7 @@ func _polish_player(player: Mechromancer3D) -> void:
     # Weak pistol is visibly improvised and small relative to the machines.
     ModelKit3D.add_beveled_box(detail, Vector3(0.13, 0.15, 0.65), Vector3(0.48, 1.06, -0.42), dark_steel, Vector3(0.0, 0.0, 0.01), "PistolSlide", 0.2)
     ModelKit3D.add_cylinder(detail, 0.045, 0.62, Vector3(0.48, 1.08, -0.72), steel, Vector3(1.5708, 0.0, 0.0), "PistolBarrel")
-    ModelKit3D.add_box(detail, Vector3(0.14, 0.38, 0.16), Vector3(0.48, 0.83, -0.27), leather, Vector3(0.1, 0.0, 0.0), "PistolGrip")
+    ModelKit3D.add_beveled_box(detail, Vector3(0.14, 0.38, 0.16), Vector3(0.48, 0.83, -0.27), leather, Vector3(0.1, 0.0, 0.0), "PistolGrip", 0.24)
 
     # Final field-kit pass: asymmetric protection and communications hardware
     # reinforce the Mechromancer as a vulnerable technician who survives by
@@ -134,7 +136,7 @@ func _polish_player(player: Mechromancer3D) -> void:
     ModelKit3D.add_sphere(detail, 0.05, Vector3(0.53, 2.06, 0.07), cyan, Vector3.ONE, "FieldCommsBeacon")
     ModelKit3D.add_beveled_box(detail, Vector3(0.18, 0.12, 0.32), Vector3(-0.34, 0.28, -0.34), rust, Vector3(0.0, 0.0, 0.08), "FieldBootCuff", 0.2)
     ModelKit3D.add_beveled_box(detail, Vector3(0.18, 0.12, 0.32), Vector3(0.34, 0.28, -0.34), rust, Vector3(0.0, 0.0, -0.08), "FieldBootCuff", 0.2)
-    ModelKit3D.add_box(detail, Vector3(0.1, 0.34, 0.14), Vector3(-0.52, 0.86, -0.38), leather, Vector3(0.0, 0.0, 0.12), "WristToolLoop")
+    ModelKit3D.add_beveled_box(detail, Vector3(0.1, 0.34, 0.14), Vector3(-0.52, 0.86, -0.38), leather, Vector3(0.0, 0.0, 0.12), "WristToolLoop", 0.24)
 
     # Second-pass focal details make the technician read as a maintained field
     # instrument at tactical distance: protected shoulder hardware, a service
@@ -154,7 +156,7 @@ func _polish_player(player: Mechromancer3D) -> void:
     ModelKit3D.add_cylinder(detail, 0.13, 0.3, Vector3(-0.62, 0.78, 0.04), rust, Vector3(1.5708, 0.0, 0.0), "FieldUtilityCanister")
     ModelKit3D.add_cylinder(detail, 0.042, 0.34, Vector3(-0.62, 0.78, -0.13), dark_steel, Vector3(1.5708, 0.0, 0.0), "FieldUtilityCanisterClamp")
     ModelKit3D.add_beveled_box(detail, Vector3(0.38, 0.12, 0.22), Vector3(0.62, 0.72, 0.22), steel, Vector3(0.0, 0.0, -0.08), "FieldToolDeck", 0.18)
-    ModelKit3D.add_box(detail, Vector3(0.06, 0.2, 0.26), Vector3(0.53, 0.86, 0.22), warm, Vector3(0.0, 0.0, -0.08), "FieldToolClamp")
+    ModelKit3D.add_beveled_box(detail, Vector3(0.06, 0.2, 0.26), Vector3(0.53, 0.86, 0.22), warm, Vector3(0.0, 0.0, -0.08), "FieldToolClamp", 0.28)
 
     # Hero micro-detail pass: a readable forearm diagnostic and protected knee
     # hardware sharpen the technician silhouette at close tactical distance.
