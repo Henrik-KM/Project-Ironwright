@@ -10,6 +10,15 @@
 - added aesthetic regression coverage for the upgraded civic sign and street
   furniture sockets, with fresh exported live review required before merge.
 
+## Focused actor-feedback hardware depth milestone
+
+- replaced the shared robot feedback layer's remaining flat armor brow and
+  salvage-basket inserts with bounded beveled manufactured forms;
+- preserved actor sockets, authored role silhouettes, animation, collision,
+  autonomous behaviour and transient feedback contracts;
+- added aesthetic coverage for the shared armor and role-specific utility
+  hardware, with fresh exported live review required before merge.
+
 ## Focused robot-role hardware depth milestone
 
 - replaced the remaining flat Warden counterweight, Scrapper claws, Pathfinder
