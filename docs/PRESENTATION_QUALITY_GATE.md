@@ -6,6 +6,11 @@ The current build is not release-ready merely because its systemic gameplay path
 
 The current visual state is explicitly classified as **pre-alpha production prototype** until the following gates are met.
 
+The remaining friendly source builders now use dense radial tessellation for
+Bulwark defensive hardware and Relay communications hardware, with the Relay
+export floor protecting future rebuilds. Stable sockets and runtime contracts
+remain unchanged.
+
 The ordinary ruined-building kit now also gives each collapsed roof a bounded
 beveled rubble core, fractured secondary chunks and restrained exposed
 reinforcement. This is presentation-only and remains inside the existing roof

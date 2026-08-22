@@ -163,6 +163,7 @@ AUTHORED_ORGANIC_ASSETS = {
 ACTOR_GEOMETRY_FLOORS = {
     "mechromancer": 600,
     "bulwark": 1500,
+    "relay": 1800,
     "warden": 1500,
     "scrapper": 1500,
     "pathfinder": 1600,

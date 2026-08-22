@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused friendly-source tessellation safeguard milestone
+
+- raised the remaining coarse Bulwark defensive and Signal Relay
+  communications primitives to dense source radial resolution;
+- added an exported Relay geometry floor and source documentation so future
+  rebuilds cannot silently restore faceted legs, mast, dish or weapon hardware;
+- preserved all friendly sockets, animation clips, collision, autonomy and
+  save-state contracts; this is presentation-only with no new recurring work.
+
 ## Focused authored Engineer construction-detail refinement milestone
 
 - raised the source Engineer's close-camera arm, forge-coil and leg hardware

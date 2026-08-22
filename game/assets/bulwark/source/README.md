@@ -4,6 +4,9 @@
 scene. The builder is dependency-free so the named-node and animation contract
 can be rebuilt on machines without Blender.
 
+Curved defensive hardware uses dense source tessellation so a rebuild does not
+reintroduce faceted legs, weapons or emitter spines.
+
 The asset is original Project Ironwright art: layered weathered steel, copper
 oxide service plates, protected cyan optics, twin defensive weapons, a rear
 shield assembly and a raised protection emitter. It uses no third-party runtime
