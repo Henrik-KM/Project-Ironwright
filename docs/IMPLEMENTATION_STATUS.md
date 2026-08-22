@@ -1597,6 +1597,19 @@ environmentally distinct without changing ecology, routing or player workload.
 
 ## Commercial work still remaining
 
+## Focused release session diagnostics milestone
+
+- added a bounded local session report that records build, engine, platform,
+  session identity and the last 64 consequential release events;
+- writes the report through a temporary-file promotion with one rotating backup
+  and detects an unclean prior `started` marker on the next boot, without
+  sending telemetry or adding a player-facing maintenance surface;
+- records save failures, load failures, defeat and Heartforge failure causes
+  while preserving the existing save, ending and autonomy contracts;
+- added release coverage for unclean-session detection, atomic clean shutdown
+  state and bounded event history; external crash collection and target-hardware
+  validation remain release gates.
+
 ## Focused Mechromancer death presentation milestone
 
 - added a bounded high-definition collapse assembly for the authored field

@@ -3,6 +3,7 @@ extends SceneTree
 const MAIN_SCENE := preload("res://scenes/main_3d.tscn")
 const TEST_SAVE_ROOT := "user://release_test_saves"
 const TEST_SLOT: StringName = &"release_regression"
+const DIAGNOSTICS_TEST_PATH := "user://ironwright_release_diagnostics_test/session.json"
 
 var failures: Array[String] = []
 
@@ -62,8 +63,36 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.release_world_art is ReleaseWorldArtDirector3D, "Release runtime must install production environment dressing.")
     _expect(world.release_animation is ReleaseAnimationDirector3D, "Release runtime must install secondary animation.")
     _expect(world.release_front_end is ReleaseFrontEnd3D, "Release runtime must install title, pause and settings screens.")
+    _expect(world.session_diagnostics is ReleaseSessionDiagnostics3D, "Release runtime must install bounded local session diagnostics.")
+    if world.session_diagnostics is ReleaseSessionDiagnostics3D:
+        _expect(world.session_diagnostics.session_state == &"started", "A release boot must write a started diagnostics marker.")
+        _expect(world.session_diagnostics.to_dictionary().get("events", []).size() <= ReleaseSessionDiagnostics3D.MAX_EVENTS, "Session diagnostics must remain bounded.")
+    _test_session_diagnostics()
     _expect(world.run_variation_director is RunVariationDirector3D, "Release runtime must install deterministic authored run variation.")
     _expect(world.release_started, "Headless release tests must enter the playable world automatically.")
+
+
+func _test_session_diagnostics() -> void:
+    for path in [DIAGNOSTICS_TEST_PATH, DIAGNOSTICS_TEST_PATH + ".tmp", DIAGNOSTICS_TEST_PATH + ".bak"]:
+        if FileAccess.file_exists(path):
+            DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+    var first := ReleaseSessionDiagnostics3D.new()
+    first.configure("diagnostics-test", DIAGNOSTICS_TEST_PATH)
+    first.record_event(&"test_marker", "The first diagnostic session was intentionally left unclean.")
+    var first_id := first.active_session_id
+    first.free()
+    var second := ReleaseSessionDiagnostics3D.new()
+    second.configure("diagnostics-test", DIAGNOSTICS_TEST_PATH)
+    _expect(second.has_unclean_previous_session(), "A new session must detect a prior started marker as an unclean shutdown.")
+    _expect(str(second.previous_session.get("active_session_id", "")) == first_id, "Unclean recovery must retain the prior session identifier.")
+    second.mark_clean_shutdown("test_complete")
+    var report_file := FileAccess.open(DIAGNOSTICS_TEST_PATH, FileAccess.READ)
+    var parsed_report: Variant = JSON.parse_string(report_file.get_as_text()) if report_file != null else null
+    _expect(parsed_report is Dictionary and str((parsed_report as Dictionary).get("state", "")) == "clean", "A clean shutdown must atomically persist a clean diagnostics state.")
+    second.free()
+    for path in [DIAGNOSTICS_TEST_PATH, DIAGNOSTICS_TEST_PATH + ".tmp", DIAGNOSTICS_TEST_PATH + ".bak"]:
+        if FileAccess.file_exists(path):
+            DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 
 
 func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:

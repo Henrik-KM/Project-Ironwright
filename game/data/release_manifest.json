@@ -13,6 +13,7 @@
     "transactional_save_service",
     "release_settings_service",
     "localization_service",
+    "session_diagnostics",
     "adaptive_audio_director",
     "release_world_art_director",
     "release_animation_director",
