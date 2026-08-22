@@ -2263,6 +2263,13 @@ presentation restore, with release regression coverage for that migration path.
   drift, low gravity and a bounded lifetime, so the authored condition reads as
   dry particulate weather rather than recoloured rain streaks.
 
+## Focused authored district-motion stability milestone
+
+- hardened the East Tenements organic-creep pulse against neutral sine
+  zero-crossings, preserving its restrained residential movement while making
+  the presentation contract deterministic for both live frames and aesthetic
+  acceptance sampling.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.
