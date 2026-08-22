@@ -102,6 +102,10 @@ func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
     if variation.profiles.has(&"weather.signal_bloom"):
         var signal_bloom: Dictionary = variation.profiles[&"weather.signal_bloom"]
         _expect(float(signal_bloom.get("glow_bias", 0.0)) > 0.1 and str(signal_bloom.get("rain_color", "")) == "#76bfc8", "Signal Bloom must carry its distinct cyan organic atmospheric signature.")
+        _expect(str(signal_bloom.get("ambient_tint", "")) == "#84aab8" and str(signal_bloom.get("fog_tint", "")) == "#4c7681", "Signal Bloom must carry its distinct restrained run-identity color grade.")
+    for profile_id in variation.profile_ids():
+        var profile: Dictionary = variation.profiles[profile_id]
+        _expect(str(profile.get("ambient_tint", "")) != "" and str(profile.get("fog_tint", "")) != "", "Every authored world condition must define deterministic ambient and fog identity tints.")
     _expect(world.run_state.world_seed != 0, "A new run must record a non-zero world seed.")
     _expect(world.run_state.world_variant_id != &"", "A new run must record a stable world-condition ID.")
     _expect(not variation.current_display_name().is_empty(), "The active world condition must expose a player-readable name.")

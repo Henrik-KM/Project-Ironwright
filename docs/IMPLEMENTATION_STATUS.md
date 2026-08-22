@@ -2353,3 +2353,13 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - Friendly authored machine actors now expose bounded persistent scar and leak overlays when their health is reduced.
 - The overlays are cleared by repair and hidden automatically outside close-detail presentation, keeping remote simulation lightweight while preserving readable local consequences.
 - Release regression coverage verifies creation, damage, LOD suppression, restoration, and repair clearing.
+## Focused world-condition lighting identity milestone
+
+- extended all four deterministic run conditions with restrained ambient and
+  fog color grades, so Storm Front, Mist Lull, Cold Break and Signal Bloom
+  carry distinct emotional lighting language across every authored district;
+- layered those grades beneath the existing region palettes and rain profiles,
+  keeping the variation presentation-only with no changes to navigation,
+  ecology, pressure, visibility rules or player maintenance;
+- added release coverage for the authored tint contract and preserved the
+  existing stable world-condition/save identity path.
