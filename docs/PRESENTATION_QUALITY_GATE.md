@@ -73,6 +73,12 @@ resolve distinct generated signatures from their existing archetype IDs. The
 profiles remain spatial, bounded and presentation-only; they do not create a
 robot status dashboard or new player task.
 
+The four newest fixed operation sites now also carry a small identity kit at
+the discovered marker: archive shelving, a roof reservoir, a cooling-station
+tank, or root-signal spines. These details keep the physical operation route
+legible before autonomous construction begins without changing collision,
+discovery rules, outpost roles or navigation.
+
 The Mechromancer now uses the same export-breadth contract. Its authored Idle,
 Walk, Fire, Work, Upgrade and Hit clips retain multiple body, equipment, recoil
 or interaction channels in the canonical Blender-to-glTF path. This improves

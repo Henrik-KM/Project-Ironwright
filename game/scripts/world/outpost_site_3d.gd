@@ -14,6 +14,7 @@ var outpost: Outpost3D
 var _visual_root: Node3D
 var _beacon_light: OmniLight3D
 var _beacon_lens: Node3D
+var _identity_pulse: Node3D
 var _visual_clock: float = 0.0
 
 
@@ -43,6 +44,8 @@ func _process(delta: float) -> void:
         _beacon_lens.scale = Vector3.ONE * pulse
     if _beacon_light != null:
         _beacon_light.light_energy = 0.62 + sin(_visual_clock * 1.8) * 0.12
+    if _identity_pulse != null:
+        _identity_pulse.scale = Vector3.ONE * (1.0 + sin(_visual_clock * 2.2 + 0.4) * 0.08)
 
 
 func discover() -> bool:
@@ -137,3 +140,38 @@ func _build_visuals() -> void:
     ModelKit3D.add_louvered_panel(_visual_root, Vector3(0.92, 0.62, 0.16), Vector3(0.72, 1.05, 0.0), dark_steel, beacon_edge, Vector3(0.0, 0.0, -0.08), "SurveyServicePanel", 3)
     ModelKit3D.add_surface_panel(_visual_root, Vector3(0.7, 0.22, 0.12), Vector3(-0.72, 0.9, 0.0), rust, amber, Vector3(0.0, 0.0, 0.08), "SurveyIdentityPanel")
     _beacon_light = ModelKit3D.add_glow_light(_visual_root, Vector3(0.0, 3.42, 0.0), Color("6ce1e7"), 0.7, 6.5)
+    _build_site_identity_kit()
+
+
+func _build_site_identity_kit() -> void:
+    var identity_root := Node3D.new()
+    identity_root.name = "SiteIdentityKit"
+    _visual_root.add_child(identity_root)
+    var dark := ModelKit3D.material(Color("1b2426"), 0.68, 0.42)
+    var steel := ModelKit3D.material(Color("637271"), 0.72, 0.34)
+    var rust := ModelKit3D.material(Color("814b35"), 0.36, 0.64)
+    var amber := ModelKit3D.material(Color("a8663d"), 0.3, 0.46, Color("e8a05d"), 1.4)
+    var cyan := ModelKit3D.material(Color("244a4d"), 0.24, 0.38, Color("63d9dd"), 1.8)
+    var root_mat := ModelKit3D.material(Color("26352d"), 0.08, 0.84, Color("4a9a68"), 0.36)
+
+    match site_id:
+        &"site.north_archive_sublevel":
+            ModelKit3D.add_beveled_box(identity_root, Vector3(1.25, 1.55, 0.16), Vector3(-1.12, 1.02, 0.18), dark, Vector3.ZERO, "ArchiveShelfLeft", 0.08)
+            ModelKit3D.add_beveled_box(identity_root, Vector3(1.25, 1.55, 0.16), Vector3(1.12, 1.02, 0.18), dark, Vector3.ZERO, "ArchiveShelfRight", 0.08)
+            ModelKit3D.add_beveled_box(identity_root, Vector3(2.7, 0.16, 0.5), Vector3(0.0, 1.72, 0.18), steel, Vector3.ZERO, "ArchiveRecordHeader", 0.08)
+            _identity_pulse = ModelKit3D.add_sphere(identity_root, 0.13, Vector3(0.0, 2.0, 0.0), amber, Vector3.ONE, "ArchiveRecordLamp")
+        &"site.east_roof_reservoir":
+            ModelKit3D.add_cylinder(identity_root, 0.72, 0.72, Vector3(-0.85, 0.72, 0.12), steel, Vector3.ZERO, "RoofReservoirTank")
+            ModelKit3D.add_cylinder(identity_root, 0.78, 0.08, Vector3(-0.85, 1.1, 0.12), dark, Vector3.ZERO, "RoofReservoirLid")
+            ModelKit3D.add_beveled_box(identity_root, Vector3(0.12, 1.6, 0.12), Vector3(0.92, 1.05, 0.12), rust, Vector3.ZERO, "RoofBeaconFrame", 0.06)
+            _identity_pulse = ModelKit3D.add_sphere(identity_root, 0.16, Vector3(0.92, 1.92, 0.12), cyan, Vector3.ONE, "RoofBeaconLamp")
+        &"site.west_cooling_station":
+            ModelKit3D.add_cylinder(identity_root, 0.62, 1.18, Vector3(-1.0, 0.72, 0.12), dark, Vector3.ZERO, "CoolingStationTank")
+            ModelKit3D.add_cylinder(identity_root, 0.68, 0.1, Vector3(-1.0, 1.34, 0.12), steel, Vector3.ZERO, "CoolingStationCap")
+            ModelKit3D.add_beveled_box(identity_root, Vector3(2.1, 0.12, 0.12), Vector3(0.05, 1.05, 0.12), steel, Vector3(0.0, 0.0, 0.0), "CoolingStationPipe", 0.05)
+            _identity_pulse = ModelKit3D.add_sphere(identity_root, 0.14, Vector3(1.05, 1.1, 0.12), amber, Vector3.ONE, "CoolingStationWarning")
+        &"site.root_signal_ledge":
+            ModelKit3D.add_tapered_cylinder(identity_root, 0.16, 0.07, 1.8, Vector3(-0.74, 0.96, 0.12), root_mat, Vector3(0.0, 0.0, -0.34), "RootSignalSpineA")
+            ModelKit3D.add_tapered_cylinder(identity_root, 0.16, 0.07, 1.6, Vector3(0.74, 0.88, 0.12), root_mat, Vector3(0.0, 0.0, 0.38), "RootSignalSpineB")
+            ModelKit3D.add_beveled_box(identity_root, Vector3(1.15, 0.12, 0.18), Vector3(0.0, 0.84, 0.12), dark, Vector3.ZERO, "RootSignalRelayBar", 0.06)
+            _identity_pulse = ModelKit3D.add_sphere(identity_root, 0.15, Vector3(0.0, 1.03, 0.12), cyan, Vector3.ONE, "RootSignalPulse")
