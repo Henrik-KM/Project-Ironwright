@@ -54,9 +54,9 @@ jobs:
       - name: Write checksums and package archives
         run: |
           cd dist
-          sha256sum windows/ProjectIronwright.exe windows/ProjectIronwright.pck linux/ProjectIronwright.x86_64 linux/ProjectIronwright.pck > SHA256SUMS.txt
           (cd windows && zip -9 -r ../ProjectIronwright-1.0.0-rc.1-Windows.zip .)
           (cd linux && tar -czf ../ProjectIronwright-1.0.0-rc.1-Linux.tar.gz .)
+          sha256sum windows/ProjectIronwright.exe windows/ProjectIronwright.pck linux/ProjectIronwright.x86_64 linux/ProjectIronwright.pck ProjectIronwright-1.0.0-rc.1-Windows.zip ProjectIronwright-1.0.0-rc.1-Linux.tar.gz > SHA256SUMS.txt
 
       - name: Upload Windows release candidate
         uses: actions/upload-artifact@v4

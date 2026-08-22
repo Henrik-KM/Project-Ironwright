@@ -46,6 +46,11 @@
 - Extended release material classification through the Thornback and Ashmantle authored shells, including Ashmantle mantle surfaces that must retain the membrane treatment rather than falling through to generic chitin.
 - Added late-spawn commercial regression coverage for both expanded families and their authored mantle detail; no gameplay, collision or lighting budget changes.
 
+## Focused release-package checksum milestone
+
+- Corrected the tagged release workflow so Windows and Linux archives are created before `SHA256SUMS.txt` is written, and the checksum file now covers both raw platform outputs and packaged archives.
+- Raised the commercial release content gate to the currently merged fourteen-family organic roster and twenty-four fixed-site pool, keeping the release contract from silently validating an older breadth baseline.
+
 ## Focused organic-roster breadth and authored-shell milestone
 
 - Expanded the authored organic roster from 12 to 14 families with Thornback territorial guardians and Ashmantle route predators.

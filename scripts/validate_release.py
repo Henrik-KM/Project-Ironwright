@@ -220,10 +220,10 @@ def validate_release_content_breadth() -> None:
         raise legacy.ValidationError("Commercial release needs at least twelve persistent regions")
     if len(operations) < 16:
         raise legacy.ValidationError("Commercial release needs at least sixteen physical operations")
-    if len(enemies) < 12:
-        raise legacy.ValidationError("Commercial release needs at least twelve organic enemy families")
-    if len(sites) < 8:
-        raise legacy.ValidationError("Commercial release needs at least eight bounded outpost foundations")
+    if len(enemies) < 14:
+        raise legacy.ValidationError("Commercial release needs at least fourteen organic enemy families")
+    if len(sites) < 24:
+        raise legacy.ValidationError("Commercial release needs at least twenty-four bounded outpost foundations")
     if set(profiles) != {"story", "survival", "brutal"}:
         raise legacy.ValidationError("Release balance profiles must be story, survival and brutal")
     for archetype in enemies:
@@ -301,6 +301,13 @@ def validate_release_packaging() -> None:
     for token in ["include-templates: true", "godot --headless --path game --export-release", "upload-artifact"]:
         if token not in workflow:
             raise legacy.ValidationError(f"Release workflow is missing {token!r}")
+    windows_archive = "(cd windows && zip -9 -r ../ProjectIronwright-1.0.0-rc.1-Windows.zip .)"
+    linux_archive = "(cd linux && tar -czf ../ProjectIronwright-1.0.0-rc.1-Linux.tar.gz .)"
+    checksum_line = "sha256sum windows/ProjectIronwright.exe windows/ProjectIronwright.pck linux/ProjectIronwright.x86_64 linux/ProjectIronwright.pck ProjectIronwright-1.0.0-rc.1-Windows.zip ProjectIronwright-1.0.0-rc.1-Linux.tar.gz > SHA256SUMS.txt"
+    if windows_archive not in workflow or linux_archive not in workflow or checksum_line not in workflow:
+        raise legacy.ValidationError("Release workflow must package both desktop archives and checksum every raw and packaged output")
+    if workflow.index(checksum_line) < max(workflow.index(windows_archive), workflow.index(linux_archive)):
+        raise legacy.ValidationError("Release checksums must be written after both desktop archives are created")
 
 
 def validate_release_documents() -> None:
