@@ -977,6 +977,7 @@ func _run_all() -> void:
 
     var opening_slice := world.get_node_or_null("HeartforgeVerticalSlice") as Node3D
     _expect(opening_slice != null, "The opening lighting pass must remain attached to the Heartforge vertical slice.")
+    _expect(world.camera_heading.x > 0.5 and world.camera_heading.z > 0.6, "The opening camera must preserve a diagonal cast-separation heading so the Mechromancer and Bulwark do not collapse into one silhouette.")
     if opening_slice != null:
         var opening_roles: Dictionary = {}
         var strongest_opening_light := 0.0

@@ -1887,6 +1887,16 @@ presentation restore, with release regression coverage for that migration path.
 - added release regression coverage for the service, pump and root-anchor
   sockets, with live exported review required before merge.
 
+## Focused opening cast-separation milestone
+
+- gave the representative Heartforge camera a restrained diagonal heading so
+  the vulnerable Mechromancer and indispensable Bulwark read as two distinct
+  focal silhouettes instead of stacking on the camera-to-player line;
+- preserved the Heartforge service surface, amber escape lane, movement,
+  formation and protection contracts while changing presentation framing only;
+- added aesthetic coverage for the diagonal cast-separation contract and
+  confirmed the result in the exported Windows opening.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.

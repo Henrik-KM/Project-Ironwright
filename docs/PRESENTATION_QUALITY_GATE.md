@@ -16,6 +16,12 @@ damage memory and lights remain runtime-owned around that source-authored core;
 the presentation layer preserves the existing collision, interaction and
 progression contracts.
 
+The representative opening camera now uses a restrained diagonal cast heading
+so the Mechromancer's field-engineer silhouette and the Bulwark's protection
+silhouette remain separately readable against the Heartforge. This is a
+presentation-only framing adjustment; the escape lane, movement, formation and
+protection contracts remain unchanged.
+
 The current actor rebuild also raises the shared source-builder tessellation floor: curved authored parts use at least 24 radial segments and spherical parts at least 16 rings before export. The Mechromancer, six friendly robot frames and every current organic family have been regenerated from those builders, and `scripts/validate_aesthetic.py` checks their exported POSITION density. This protects close tactical silhouettes from silent coarse-geometry regressions while preserving stable names, sockets, animation clips and presentation-only scope.
 
 The optional Town Archive now also records the run's machine-witness moments:
