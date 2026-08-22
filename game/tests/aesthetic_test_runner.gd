@@ -43,6 +43,15 @@ func _run_all() -> void:
     _expect(camp != null, "The Heartforge must receive an inhabited cozy camp layer.")
     _expect(camp != null and camp.get_node_or_null("HeartforgeCampHighDefinitionService") != null, "The inhabited Heartforge camp must carry a bounded high-definition service layer.")
     _expect(camp != null and camp.find_child("CampToolControlFace", true, false) != null and camp.find_child("CampServiceBatteryPod", true, false) != null and camp.find_child("CampBatteryStatusLens", true, false) != null, "The Heartforge camp service layer must retain readable tool and battery hardware.")
+    _expect(camp != null and camp.get_node_or_null("MemoryWitnessRelay") != null, "The sanctuary must carry a physical memory relay for machine-society history.")
+    _expect(camp != null and camp.find_child("WitnessFrameTop", true, false) != null and camp.find_child("WitnessRecordPlate00", true, false) != null and camp.find_child("WitnessSignalLens00", true, false) != null, "The memory relay must expose a layered frame, record plate and readable signal lens.")
+    var witness_relay := camp.get_node_or_null("MemoryWitnessRelay") as Node3D
+    var witness_lens := camp.find_child("WitnessSignalLens00", true, false) as Node3D
+    _expect(witness_relay != null and witness_lens != null and witness_lens.visible, "The opening archive record must light the first physical memory relay lens.")
+    if witness_relay != null and witness_lens != null:
+        var witness_scale_before := witness_lens.scale
+        camp.get_parent().get_node_or_null("AestheticDirector/SanctuaryDecorator").call("_process", 0.7)
+        _expect(not witness_lens.scale.is_equal_approx(witness_scale_before), "The active memory relay lens must carry restrained environmental motion.")
     _expect(world.get_node_or_null("UrbanAestheticPass") != null, "The ruined city must receive the urban storytelling pass.")
     var urban_pass := world.get_node_or_null("UrbanAestheticPass") as Node3D
     _expect(urban_pass != null and urban_pass.find_child("ClinicSign", true, false) != null and urban_pass.find_child("WorkshopSign", true, false) != null, "The urban pass must retain layered civic sign hardware.")
@@ -230,6 +239,8 @@ func _run_all() -> void:
             for raw_region_id in expected_regional_records:
                 var expected_record: StringName = expected_regional_records[raw_region_id]
                 _expect(story_archive.has_record(expected_record), "Discovering %s must unlock its persistent Town Archive record." % raw_region_id)
+            var witness_lens_02 := camp.find_child("WitnessSignalLens02", true, false) as Node3D
+            _expect(witness_lens_02 != null and witness_lens_02.visible, "A sustained discovery run must progressively light the sanctuary's later memory relay lens.")
         for raw_region_id in region_director.region_data.keys():
             var landmark := region_director.get_landmark(StringName(raw_region_id))
             if landmark == null or landmark.region_kind == &"sanctuary":
