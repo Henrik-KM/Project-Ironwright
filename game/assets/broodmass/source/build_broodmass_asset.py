@@ -36,21 +36,25 @@ def main() -> None:
 
     flesh, shell, membrane, bone, eye, tendon = range(6)
     mesh_ids = {
-        "Core": mesh("Core", add_uv_sphere(builder, 0.74, flesh, 22, 34)),
-        "Segment": mesh("Segment", add_uv_sphere(builder, 0.58, shell, 20, 30)),
-        "Lobe": mesh("Lobe", add_uv_sphere(builder, 0.42, flesh, 20, 32)),
+        # Broodmass is a late-family close-camera specimen. Keep the smooth
+        # flesh and shell surfaces at the same density as the final Apex so
+        # the nest organism does not read as a visibly coarser cousin.
+        "Core": mesh("Core", add_uv_sphere(builder, 0.74, flesh, 24, 36)),
+        "Segment": mesh("Segment", add_uv_sphere(builder, 0.58, shell, 24, 32)),
+        "Lobe": mesh("Lobe", add_uv_sphere(builder, 0.42, flesh, 24, 36)),
         "Rib": mesh("Rib", add_box(builder, (1.5, 0.15, 0.24), shell)),
         "Fan": mesh("Fan", add_box(builder, (0.18, 1.4, 0.8), membrane)),
-        "Maw": mesh("Maw", add_uv_sphere(builder, 0.44, membrane, 20, 32)),
+        "Maw": mesh("Maw", add_uv_sphere(builder, 0.44, membrane, 24, 36)),
         "Spine": mesh("Spine", add_cylinder(builder, 0.13, 1.15, bone, 24)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.12, 1.72, tendon, 24)),
         "Hook": mesh("Hook", add_cylinder(builder, 0.075, 0.78, bone, 24)),
-        "Eye": mesh("Eye", add_uv_sphere(builder, 0.105, eye, 16, 24)),
-        "Tendon": mesh("Tendon", add_cylinder(builder, 0.065, 0.82, tendon, 24)),
-        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.055, bone, 16, 24)),
+        "Eye": mesh("Eye", add_uv_sphere(builder, 0.105, eye, 20, 28)),
+        "Tendon": mesh("Tendon", add_cylinder(builder, 0.065, 0.82, tendon, 28)),
+        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.055, bone, 20, 28)),
         "LobeRidge": mesh("LobeRidge", add_box(builder, (0.5, 0.08, 0.16), bone)),
         "MawRidge": mesh("MawRidge", add_box(builder, (0.62, 0.09, 0.14), bone)),
         "CrownFastener": mesh("CrownFastener", add_uv_sphere(builder, 0.065, bone, 16, 24)),
+        "CrownCap": mesh("CrownCap", add_uv_sphere(builder, 0.28, shell, 24, 36)),
     }
 
     nodes: list[dict] = [{
@@ -114,6 +118,25 @@ def main() -> None:
         x = -1.1 + index * 0.367
         add_node("CrownSpine%d" % index, mesh_ids["Spine"], (x, 2.0 + (index % 2) * 0.1, 0.18), rotation=(0.0, 0.0, -0.25 + index * 0.08), extras={"surface": "bone_ridge"})
         add_node("CrownFastener%d" % index, mesh_ids["CrownFastener"], (x, 1.9 + (index % 2) * 0.1, 0.14), extras={"surface": "crown_socket"})
+
+    # A compact elevated crown cap unifies the spine row into a single nest
+    # silhouette. It is deliberately presentation-only and does not change
+    # collision, health or the broodmass's ecology contract.
+    crown_cap = add_node(
+        "BroodmassCrownCap",
+        mesh_ids["CrownCap"],
+        (0.0, 2.12, 0.16),
+        scale=(1.55, 0.72, 1.2),
+        extras={"socket_type": "brood_crown_cap"},
+    )
+    add_node(
+        "BroodmassCrownCapPlate",
+        mesh_ids["LobeRidge"],
+        (0.0, 0.16, 0.02),
+        scale=(0.88, 0.86, 0.72),
+        parent=crown_cap,
+        extras={"surface": "crown_cap_plate"},
+    )
 
     for side in (-1.0, 1.0):
         suffix = "L" if side < 0 else "R"
@@ -186,7 +209,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "broodmass.nest.v1",
-            "required_nodes": ["BroodmassModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BroodmassLobeL", "BroodmassLobeRidgeL", "BroodmassMaw", "BroodmassMawRidge", "CrownSpine0", "CrownFastener0", "BroodmassFanL", "ProductionAssetMarker"],
+            "required_nodes": ["BroodmassModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BroodmassLobeL", "BroodmassLobeRidgeL", "BroodmassMaw", "BroodmassMawRidge", "CrownSpine0", "CrownFastener0", "BroodmassCrownCap", "BroodmassCrownCapPlate", "BroodmassFanL", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
         },
     }
