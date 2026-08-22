@@ -24,6 +24,7 @@ const DEFAULT_CONTROLLER_BINDINGS: Dictionary = {
     "iw_move_right": JOY_BUTTON_DPAD_RIGHT,
     "iw_interact": JOY_BUTTON_A,
 }
+const SUPPORTED_COLORBLIND_MODES: Array[StringName] = [&"off", &"deuteranopia", &"protanopia", &"tritanopia"]
 
 var settings: Dictionary = {}
 var defaults: Dictionary = {}
@@ -348,7 +349,8 @@ func _sanitize() -> void:
     settings["game_speed"] = clampf(float(settings.get("game_speed", defaults.get("game_speed", 1.0))), 0.75, 1.25)
     for key in ["high_contrast_ui", "reduced_motion", "reduced_flashes", "hold_interactions", "controller_vibration", "subtitles", "show_world_guidance"]:
         settings[key] = bool(settings.get(key, defaults.get(key, false)))
-    settings["colorblind_mode"] = str(settings.get("colorblind_mode", "off"))
+    var colorblind_mode := StringName(str(settings.get("colorblind_mode", "off")))
+    settings["colorblind_mode"] = String(colorblind_mode if SUPPORTED_COLORBLIND_MODES.has(colorblind_mode) else &"off")
     var input_bindings: Dictionary = settings.get("input_bindings", {}).duplicate(true)
     for action in REMAPPABLE_ACTIONS:
         var keycode := int(input_bindings.get(String(action), DEFAULT_INPUT_BINDINGS.get(String(action), KEY_NONE)))

@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused live colour-vision accessibility milestone
+
+- connected the existing deuteranopia, protanopia and tritanopia settings to
+  a live screen-space correction layer in the release world, while keeping the
+  localized title, pause and settings panels above that presentation filter;
+- sanitized unknown persisted modes back to `off` so old or hand-edited
+  settings cannot leave a stale visual correction active;
+- added release regression coverage for default-off behavior, live activation,
+  selected-mode reporting and fail-closed recovery. This is a presentation
+  and accessibility improvement only; it does not recolor simulation state,
+  alter authored material sources or add a recurring gameplay task.
+
 ## Focused remote-presentation tick suspension milestone
 
 - suspended procedural animation, authored clip selection and release
