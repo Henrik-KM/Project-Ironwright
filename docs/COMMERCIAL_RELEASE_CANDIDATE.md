@@ -97,19 +97,21 @@ The persistent town expands from seven to twelve authored regions:
 11. Buried Laboratories;
 12. Root Cistern.
 
-The operation catalogue expands to twelve physical objectives. The required start-to-victory chain remains intact, while optional operations add route knowledge, rare components, regional suppression and additional outpost foundations. These include tracing the East Roofline, recovering the Tram Servo Bank, harvesting luminous Glasshouse mycelium, restarting a Riverworks pump, calibrating the Observatory array and a post-victory archive recovery.
+The operation catalogue now contains sixteen physical objectives. The required start-to-victory chain remains intact, while optional operations add route knowledge, rare components, regional suppression, additional outpost foundations, civic archive recovery, residential rescue, transformer repair and the Root Signal purge. These include tracing the East Roofline, recovering the Tram Servo Bank, harvesting luminous Glasshouse mycelium, restarting a Riverworks pump, calibrating the Observatory array and a post-victory archive recovery.
 
-The organic roster expands to twelve families. Five release families join the existing seven:
+The organic roster now contains fourteen families. Seven release families join the existing seven:
 
 - Roofleapers use vertical ambush movement;
 - Glassmoths form luminous spore swarms;
 - Miremaws are heavy amphibious predators;
 - Carrion Bells broadcast machine positions and support nearby organisms;
-- Rootweavers control late-game routes and respond to remote infrastructure.
+- Rootweavers control late-game routes and respond to remote infrastructure;
+- Thornbacks hold narrow approaches as territorial broodline guardians;
+- Ashmantles track forge heat and hunt machine routes.
 
 These are organic additions, not a hostile machine faction. Regional ecology chooses species according to district identity and continues to respond to noise, pressure, suppression and migration.
 
-The bounded outpost-site pool now contains twenty fixed foundations distributed
+The bounded outpost-site pool now contains twenty-four fixed foundations distributed
 across the discovered regions. Optional exploration therefore creates a broad
 set of meaningful strategic choices without introducing free placement,
 territory painting or a logistics spreadsheet.
