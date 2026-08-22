@@ -1066,6 +1066,12 @@ func _run_all() -> void:
         _expect(pharmacy_interior.find_child("PharmacyInteriorBackWall", true, false) != null and pharmacy_interior.find_child("PharmacyInteriorCounter", true, false) != null, "The pharmacy interior must expose room depth and a readable service counter.")
         _expect(pharmacy_interior.find_child("PharmacyInteriorShelf0", true, false) != null and pharmacy_interior.find_child("PharmacyInteriorVial0_0", true, false) != null, "The pharmacy interior must expose high-definition shelving and stored medical detail.")
         _expect(pharmacy_interior.find_child("PharmacyInteriorEmergencyLamp", true, false) != null and pharmacy_interior.find_child("PharmacyInteriorDroppedSign", true, false) != null, "The pharmacy interior must expose an interrupted-life light and service trace.")
+    var workshop_interior := world.get_node_or_null("ProceduralUrbanDistrict/RuinedBuilding02/VerticalSliceFacade/WorkshopInteriorVignette") as Node3D
+    _expect(workshop_interior != null, "The opening district must expose a bounded failed-workshop interior vignette.")
+    if workshop_interior != null:
+        _expect(workshop_interior.find_child("WorkshopInteriorBackWall", true, false) != null and workshop_interior.find_child("WorkshopInteriorBench", true, false) != null, "The workshop interior must expose room depth and a readable workbench.")
+        _expect(workshop_interior.find_child("WorkshopInteriorToolHandle00", true, false) != null and workshop_interior.find_child("WorkshopInteriorPegboard", true, false) != null, "The workshop interior must expose tool storage and pegboard anatomy.")
+        _expect(workshop_interior.find_child("WorkshopInteriorBatteryCabinet", true, false) != null and workshop_interior.find_child("WorkshopInteriorWorkLamp", true, false) != null, "The workshop interior must expose service power and interrupted task lighting.")
     _expect(world.camera_heading.x > 0.5 and world.camera_heading.z > 0.6, "The opening camera must preserve a diagonal cast-separation heading so the Mechromancer and Bulwark do not collapse into one silhouette.")
     if opening_slice != null:
         var opening_roles: Dictionary = {}

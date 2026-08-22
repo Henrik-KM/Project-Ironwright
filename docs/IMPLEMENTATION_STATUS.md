@@ -1597,6 +1597,16 @@ environmentally distinct without changing ecology, routing or player workload.
 
 ## Commercial work still remaining
 
+## Focused opening workshop interior milestone
+
+- added a bounded workshop cutaway to the opening district, with recessed room
+  depth, a service bench, pegboard tools, battery cabinet, work lamp and
+  dropped tool so the town's making identity survives beyond the fascia;
+- kept the vignette presentation-only: fabrication, collision, salvage,
+  interaction and player workload remain unchanged;
+- added aesthetic regression coverage for the room, tool-storage and service
+  power sockets; live opening-route review remains required.
+
 ## Focused central vehicle-wreck anatomy milestone
 
 - upgraded the six surrounding city vehicle wrecks with bounded manufactured

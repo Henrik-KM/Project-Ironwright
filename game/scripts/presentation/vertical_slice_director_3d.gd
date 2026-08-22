@@ -212,6 +212,9 @@ func _add_facade_identity(parent: Node3D, identity: StringName, width: float, de
             _add_pharmacy_interior_vignette(parent, pharmacy_window_position)
         &"workshop":
             ModelKit3D.add_beveled_box(parent, Vector3(5.0, 0.52, 0.13), Vector3(0.5, 2.4, -depth * 0.52), warning_paint, Vector3(0.0, 0.0, 0.04), "WorkshopFascia", 0.16)
+            var workshop_window_position := Vector3(-2.0, 1.25, -depth * 0.52)
+            ModelKit3D.add_beveled_box(parent, Vector3(3.4, 1.78, 0.12), workshop_window_position, interior_dark, Vector3.ZERO, "WorkshopInteriorRecess", 0.14)
+            _add_workshop_interior_vignette(parent, workshop_window_position)
             for index in range(4):
                 ModelKit3D.add_box(parent, Vector3(0.16, 2.1, 0.15), Vector3(-3.0 + float(index) * 2.0, 1.05, -depth * 0.53), black_metal, Vector3.ZERO, "ShutterRib")
         &"municipal":
@@ -321,6 +324,35 @@ func _add_pharmacy_interior_vignette(parent: Node3D, window_position: Vector3) -
         "PharmacyInteriorDroppedSign",
         0.08
     )
+
+
+func _add_workshop_interior_vignette(parent: Node3D, window_position: Vector3) -> void:
+    # A second open room makes the workshop identity read as a failed place of
+    # making rather than a sign over a shutter. It remains presentation-only:
+    # fabrication, collision, salvage and interaction stay runtime-owned.
+    var interior := Node3D.new()
+    interior.name = "WorkshopInteriorVignette"
+    interior.position = window_position + Vector3(0.0, 0.0, -0.075)
+    parent.add_child(interior)
+
+    ModelKit3D.add_beveled_box(interior, Vector3(3.08, 1.58, 0.08), Vector3(0.0, 0.0, 0.12), interior_dark, Vector3.ZERO, "WorkshopInteriorBackWall", 0.08)
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(interior, Vector3(0.12, 1.62, 0.18), Vector3(side * 1.58, 0.0, 0.0), masonry, Vector3.ZERO, "WorkshopInteriorJamb", 0.08)
+
+    ModelKit3D.add_beveled_box(interior, Vector3(2.56, 0.2, 0.56), Vector3(-0.12, -0.56, -0.12), rust_metal, Vector3.ZERO, "WorkshopInteriorBench", 0.12)
+    ModelKit3D.add_beveled_box(interior, Vector3(2.36, 0.72, 0.1), Vector3(-0.12, -0.08, 0.18), painted_metal, Vector3.ZERO, "WorkshopInteriorPegboard", 0.08)
+    for tool_index in range(4):
+        var tool_x := -0.94 + float(tool_index) * 0.56
+        ModelKit3D.add_cylinder(interior, 0.045, 0.42 + float(tool_index % 2) * 0.12, Vector3(tool_x, 0.18, 0.08), rust_metal if tool_index % 2 == 0 else black_metal, Vector3(0.0, 0.0, 0.08 * float(tool_index % 2)), "WorkshopInteriorToolHandle%02d" % tool_index)
+        ModelKit3D.add_beveled_box(interior, Vector3(0.16, 0.16, 0.1), Vector3(tool_x, 0.43 + float(tool_index % 2) * 0.06, 0.08), black_metal, Vector3.ZERO, "WorkshopInteriorToolHead%02d" % tool_index, 0.05)
+
+    ModelKit3D.add_beveled_box(interior, Vector3(0.72, 0.78, 0.54), Vector3(1.0, -0.04, -0.04), black_metal, Vector3.ZERO, "WorkshopInteriorBatteryCabinet", 0.12)
+    ModelKit3D.add_surface_panel(interior, Vector3(0.38, 0.28, 0.08), Vector3(1.0, 0.04, -0.33), black_metal, cold_glass, Vector3.ZERO, "WorkshopInteriorBatteryPanel")
+    ModelKit3D.add_sphere(interior, 0.07, Vector3(1.0, 0.16, -0.37), cold_glass, Vector3.ONE, "WorkshopInteriorBatteryLens")
+
+    ModelKit3D.add_cylinder(interior, 0.05, 0.58, Vector3(0.72, 0.52, -0.12), black_metal, Vector3.ZERO, "WorkshopInteriorLampStem")
+    ModelKit3D.add_sphere(interior, 0.14, Vector3(0.72, 0.25, -0.12), warm_glass, Vector3(1.0, 0.72, 1.0), "WorkshopInteriorWorkLamp")
+    ModelKit3D.add_beveled_box(interior, Vector3(0.5, 0.12, 0.26), Vector3(-1.0, -0.38, -0.38), warning_paint, Vector3(0.0, 0.0, -0.12), "WorkshopInteriorDroppedTool", 0.08)
 
 
 func _add_roof_damage(parent: Node3D, width: float, depth: float, height: float) -> void:

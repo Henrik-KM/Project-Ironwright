@@ -167,6 +167,12 @@ dropped service sign sit behind the stable occupied-window identity. This gives
 the first urban block a readable trace of interrupted human life without adding
 collision, interaction, inventory, salvage state or recurring player work.
 
+The opening workshop cutaway now carries a matching failed-making interior: a
+recessed room volume, service bench, pegboard tools, battery cabinet, work lamp
+and dropped tool sit behind the stable workshop fascia. This broadens the first
+route's civic history without changing fabrication, collision, salvage,
+interaction or player workload.
+
 The central approach now also carries a bounded civic-infrastructure layer: storm-drain junctions, service-riser faces, signal masts and sagging overhead utility spans continue the municipal scale language between the focal plaza and the wider street grid. These details are presentation-only and do not add collision, routing, utility simulation or player maintenance.
 
 The ordinary ruined blocks now also carry a bounded high-definition facade grammar: layered window bays, floor plates, roof parapets, service shutters, rain downpipes and restrained damage braces break the remaining broad shells into readable lived-in structures. The facade layer is presentation-only and does not alter building collision, navigation or simulation state.
