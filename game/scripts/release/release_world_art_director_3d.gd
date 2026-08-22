@@ -451,6 +451,71 @@ func _dress_greenhouse(root: Node3D) -> void:
         )
         ModelKit3D.add_sphere(greenhouse_detail, 0.16, Vector3(x + 0.8, 1.2, -3.0 + float(index % 4) * 2.2), glow, Vector3.ONE, "MyceliumGlow%02d" % index)
 
+    var service_layer := Node3D.new()
+    service_layer.name = "HighDefinitionGreenhouseServiceLayer"
+    greenhouse_detail.add_child(service_layer)
+    var service_metal := _textured_material(&"metal", Color("2f3b3c"), 0.62, 0.5)
+    var service_rust := _textured_material(&"rust", Color("754936"), 0.38, 0.7)
+    var service_concrete := _textured_material(&"concrete", Color("59605d"), 0.0, 0.72)
+    var service_cyan := _emissive_material(Color("6fe5dd"), 2.2)
+    # A restrained service court gives the Glasshouse a legible civic-climate
+    # identity while remaining presentation-only. It is not an operation queue,
+    # inventory surface or player-managed production system.
+    ModelKit3D.add_beveled_box(
+        service_layer,
+        Vector3(23.0, 0.18, 1.05),
+        Vector3(0.0, 0.18, 5.3),
+        service_concrete,
+        Vector3.ZERO,
+        "GlasshouseServiceWalkway",
+        0.18
+    )
+    for bed_index in range(4):
+        var bed_x := -9.0 + float(bed_index) * 6.0
+        ModelKit3D.add_beveled_box(
+            service_layer,
+            Vector3(4.7, 0.24, 0.22),
+            Vector3(bed_x, 0.3, -4.05),
+            service_rust,
+            Vector3.ZERO,
+            "GlasshouseServiceBedEdge%02d" % bed_index,
+            0.2
+        )
+        ModelKit3D.add_beveled_box(
+            service_layer,
+            Vector3(0.22, 0.24, 2.2),
+            Vector3(bed_x - 2.15, 0.3, -2.95),
+            service_rust,
+            Vector3.ZERO,
+            "GlasshouseServiceBedBrace%02d" % bed_index,
+            0.2
+        )
+    var tank := Node3D.new()
+    tank.name = "GlasshouseIrrigationManifold"
+    tank.position = Vector3(10.2, 0.0, 4.0)
+    service_layer.add_child(tank)
+    ModelKit3D.add_tapered_cylinder(tank, 0.72, 0.86, 2.3, Vector3(0.0, 1.25, 0.0), service_metal, Vector3.ZERO, "GlasshouseServiceTank")
+    ModelKit3D.add_tapered_cylinder(tank, 0.48, 0.62, 0.22, Vector3(0.0, 2.52, 0.0), service_rust, Vector3.ZERO, "GlasshouseTankCollar")
+    ModelKit3D.add_sphere(tank, 0.13, Vector3(0.0, 1.55, -0.78), service_cyan, Vector3.ONE, "GlasshouseTankSignal")
+    ModelKit3D.add_louvered_panel(
+        service_layer,
+        Vector3(1.75, 1.35, 0.22),
+        Vector3(8.35, 1.02, 4.0),
+        service_metal,
+        service_cyan,
+        Vector3.ZERO,
+        "GlasshouseClimateConsole",
+        4
+    )
+    ModelKit3D.add_cylinder(service_layer, 0.08, 18.0, Vector3(0.0, 4.35, 2.2), service_metal, Vector3(0.0, 0.0, PI * 0.5), "GlasshouseIrrigationHeader")
+    for drop_index in range(5):
+        var drop_x := -8.0 + float(drop_index) * 4.0
+        ModelKit3D.add_cylinder(service_layer, 0.045, 2.1, Vector3(drop_x, 3.35, 2.2), service_cyan, Vector3.ZERO, "GlasshouseIrrigationDrop%02d" % drop_index)
+        ModelKit3D.add_sphere(service_layer, 0.075, Vector3(drop_x, 2.25, 2.2), service_cyan, Vector3.ONE, "GlasshouseIrrigationValve%02d" % drop_index)
+    for brace_index in range(3):
+        var brace_x := -7.5 + float(brace_index) * 7.5
+        ModelKit3D.add_cylinder(service_layer, 0.06, 4.8, Vector3(brace_x, 2.7, -2.6), service_rust, Vector3(0.0, 0.0, 0.34 if brace_index % 2 == 0 else -0.28), "GlasshouseBrokenGlazingBrace%02d" % brace_index)
+
 
 func _dress_market(root: Node3D) -> void:
     var concrete := _textured_material(&"concrete", Color("4b4e4d"), 0.0, 0.74)

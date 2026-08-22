@@ -22,6 +22,13 @@ silhouette remain separately readable against the Heartforge. This is a
 presentation-only framing adjustment; the escape lane, movement, formation and
 protection contracts remain unchanged.
 
+Municipal Glasshouse now carries a bounded high-definition service court with
+raised bed edges, an irrigation manifold, climate console, overhead header and
+broken glazing braces. The layer establishes a maintained civic-climate identity
+in representative remote-region captures while remaining presentation-only;
+it does not add a greenhouse queue, inventory, player assignment or recurring
+maintenance obligation.
+
 The current actor rebuild also raises the shared source-builder tessellation floor: curved authored parts use at least 24 radial segments and spherical parts at least 16 rings before export. The Mechromancer, six friendly robot frames and every current organic family have been regenerated from those builders, and `scripts/validate_aesthetic.py` checks their exported POSITION density. This protects close tactical silhouettes from silent coarse-geometry regressions while preserving stable names, sockets, animation clips and presentation-only scope.
 
 The optional Town Archive now also records the run's machine-witness moments:
