@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "product": "Project Ironwright",
+  "version": "1.0.0-rc.1",
+  "release_channel": "release_candidate",
+  "certified_source_sha": "1ee19f5b80269245ff6b60d9265ccb157ab56f58",
+  "certified_at_utc": "2026-08-22T11:43:46.308261+00:00",
+  "runner": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+  "godot": "4.7.1",
+  "platform_packages": [
+    "Windows x86-64",
+    "Linux x86-64"
+  ],
+  "passed_gates": [
+    "browser_reference_and_contracts",
+    "release_assets",
+    "godot_import",
+    "core_gameplay",
+    "aesthetic_acceptance",
+    "progression_and_outposts",
+    "first_session_accessibility",
+    "complete_start_to_victory",
+    "commercial_release_regression",
+    "windows_export",
+    "linux_export"
+  ],
+  "artifacts": {
+    "ProjectIronwright-1.0.0-rc.1-Windows.zip": {
+      "bytes": 45114487,
+      "sha256": "f1b02c1ff9665fd59b8f717ce36a255768c47c71afc5c3aec488656edf2a6654"
+    },
+    "ProjectIronwright-1.0.0-rc.1-Linux.tar.gz": {
+      "bytes": 35640675,
+      "sha256": "685a9af6566f6599b997f32117b42227b9f845e881a6362324823b2f7904c1a3"
+    },
+    "SHA256SUMS.txt": {
+      "bytes": 598,
+      "sha256": "b084cd9950566d7d320d9d625bd4a7f2cfac5e7b09233d29a33c3fb3a853b145"
+    }
+  },
+  "external_gates_remaining": [
+    "representative_hardware_testing",
+    "multi_day_endurance_playtesting",
+    "professional_translation_review",
+    "accessibility_user_review",
+    "store_signing_and_submission",
+    "age_rating_and_legal_review"
+  ]
+}
