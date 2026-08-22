@@ -541,24 +541,44 @@ func _create_presentation_review_stage() -> void:
 	presentation_review_stage = Node3D.new()
 	presentation_review_stage.name = "PresentationReviewStage"
 	add_child(presentation_review_stage)
-	_add_presentation_review_box("ReviewFloor", Vector3(30.0, 0.35, 13.0), Vector3(0.0, -0.25, 0.0), Color("172733"), 0.68, 0.32)
-	_add_presentation_review_box("ReviewBackdrop", Vector3(30.0, 11.0, 0.3), Vector3(0.0, 5.0, -3.8), Color("0b1822"), 0.2, 0.52)
+	# Keep the gallery neutral enough for material inspection. The earlier nearly
+	# black backdrop made the darker organic shells collapse into one value band.
+	_add_presentation_review_box("ReviewFloor", Vector3(30.0, 0.35, 13.0), Vector3(0.0, -0.25, 0.0), Color("243744"), 0.44, 0.46)
+	_add_presentation_review_box("ReviewBackdrop", Vector3(30.0, 11.0, 0.3), Vector3(0.0, 5.0, -3.8), Color("162936"), 0.05, 0.78)
 	_add_presentation_review_box("ReviewAmberBand", Vector3(28.0, 0.12, 0.12), Vector3(0.0, 3.1, -3.58), Color("d88a43"), 0.15, 0.3, Color("d88a43"))
 	_add_presentation_review_box("ReviewTealBand", Vector3(28.0, 0.08, 0.08), Vector3(0.0, 2.65, -3.54), Color("52b4b7"), 0.12, 0.28, Color("52b4b7"))
+	var front_fill := OmniLight3D.new()
+	front_fill.name = "ReviewFrontFill"
+	front_fill.position = Vector3(0.0, 6.2, 8.0)
+	front_fill.omni_range = 28.0
+	front_fill.light_energy = 3.4
+	front_fill.light_color = Color("ffe1c1")
+	front_fill.shadow_enabled = true
+	presentation_review_stage.add_child(front_fill)
 	var warm_light := OmniLight3D.new()
 	warm_light.name = "ReviewWarmLight"
 	warm_light.position = Vector3(-7.0, 6.0, 6.0)
 	warm_light.omni_range = 24.0
-	warm_light.light_energy = 5.0
+	warm_light.light_energy = 3.6
 	warm_light.light_color = Color("ffbd78")
+	warm_light.shadow_enabled = true
 	presentation_review_stage.add_child(warm_light)
 	var cool_light := OmniLight3D.new()
 	cool_light.name = "ReviewCoolLight"
 	cool_light.position = Vector3(8.0, 5.0, 3.0)
 	cool_light.omni_range = 22.0
-	cool_light.light_energy = 4.0
+	cool_light.light_energy = 2.8
 	cool_light.light_color = Color("7ac7e8")
+	cool_light.shadow_enabled = true
 	presentation_review_stage.add_child(cool_light)
+	var rim_light := OmniLight3D.new()
+	rim_light.name = "ReviewRimLight"
+	rim_light.position = Vector3(0.0, 4.8, -1.8)
+	rim_light.omni_range = 25.0
+	rim_light.light_energy = 4.2
+	rim_light.light_color = Color("72c2ca")
+	rim_light.shadow_enabled = true
+	presentation_review_stage.add_child(rim_light)
 
 
 func _add_presentation_review_box(node_name: String, size: Vector3, position: Vector3, color: Color, metallic: float, roughness: float, emission: Color = Color.BLACK) -> void:
