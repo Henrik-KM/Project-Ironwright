@@ -14,11 +14,13 @@ var endgame_escalation: float = 1.0
 var pressure_multiplier: float = 1.0
 var reports_cooldown: float = 0.0
 var population_states: Dictionary = {}
+var run_state: RunState3D
 
 
-func configure(next_region_director: WorldRegionDirector3D, next_spawn_enemy_callback: Callable) -> void:
+func configure(next_region_director: WorldRegionDirector3D, next_spawn_enemy_callback: Callable, next_run_state: RunState3D = null) -> void:
     region_director = next_region_director
     spawn_enemy_callback = next_spawn_enemy_callback
+    run_state = next_run_state
 
 
 func _process(delta: float) -> void:
@@ -237,8 +239,19 @@ func _spawn_species(position: Vector3, species: StringName, region_id: StringNam
         enemy.configure_ecology(home, radius, resolved_directive)
         enemy.set_meta(&"ecology_region", String(resolved_region))
         enemy.set_meta(&"ecology_origin", "regional")
+        var behaviour_callback := Callable(self, "_on_enemy_behaviour_changed")
+        if enemy.has_signal(&"behaviour_changed") and not enemy.is_connected(&"behaviour_changed", behaviour_callback):
+            enemy.behaviour_changed.connect(behaviour_callback)
+        _on_enemy_behaviour_changed(enemy, enemy.ecology_directive)
         return enemy
     return spawned as Node if spawned is Node else null
+
+
+func _on_enemy_behaviour_changed(enemy: OrganicEnemy3D, behaviour: StringName) -> void:
+    if run_state == null or enemy == null:
+        return
+    var region_id := StringName(str(enemy.get_meta("ecology_region", "")))
+    run_state.observe_organic_species(enemy.species, behaviour, region_id)
 
 
 func _directive_for_region(region_id: StringName, species: StringName, selector: int) -> StringName:

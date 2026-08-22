@@ -168,7 +168,7 @@ func _setup_complete_game_services() -> void:
     strategic_ecology_director = StrategicEcologyDirector3D.new()
     strategic_ecology_director.name = "StrategicEcologyDirector"
     strategic_ecology_director.process_mode = Node.PROCESS_MODE_PAUSABLE
-    strategic_ecology_director.configure(region_director, Callable(self, "_spawn_enemy"))
+    strategic_ecology_director.configure(region_director, Callable(self, "_spawn_enemy"), run_state)
     add_child(strategic_ecology_director)
 
     endgame_director = EndgameDirector3D.new()
@@ -350,6 +350,7 @@ func _on_heartforge_destroyed() -> void:
         heartforge.current_health = heartforge.maximum_health * 0.48
         heartforge.health_changed.emit(heartforge.current_health, heartforge.maximum_health)
         run_state.scrap = maxi(0, run_state.scrap - 180)
+        run_state.record_scrap_spend(180, "continuity recovery")
         run_state.scrap_changed.emit(run_state.scrap)
         run_state.log_event("Distributed Continuity rebuilt the Heartforge after catastrophic failure. The one-use reserve is gone.")
         hud.push_notification("DISTRIBUTED CONTINUITY CONSUMED · HEARTFORGE RECOVERED AT 48% · 180 SCRAP LOST")
@@ -375,16 +376,7 @@ func _build_collapse_report() -> String:
     if evolution_names.size() > 5:
         evolution_text += " · +%d more" % (evolution_names.size() - 5)
 
-    var species: Array[String] = []
-    for enemy in get_tree().get_nodes_in_group(&"organic_enemies"):
-        if enemy is OrganicEnemy3D:
-            var species_name := String((enemy as OrganicEnemy3D).species)
-            if species_name not in species:
-                species.append(species_name)
-    species.sort()
-    var species_text := ", ".join(species.slice(0, 6)) if not species.is_empty() else "No active specimens remained in the immediate collapse frame."
-    if species.size() > 6:
-        species_text += " · +%d more" % (species.size() - 6)
+    var species_text := run_state.observed_species_report() if run_state != null else "Persistent species observations were unavailable."
 
     var machine_losses := 0
     var loss_archetypes: Array[String] = []
@@ -416,6 +408,7 @@ func _build_collapse_report() -> String:
 
     var pressure_text := strategic_ecology_director.pressure_summary() if strategic_ecology_director != null else "Regional pressure was unavailable."
     var resource_text := "SCRAP %d · CORES %d · MANUAL RECOVERED %d · AUTONOMOUS RECOVERED %d" % [run_state.scrap, run_state.rare_cores, run_state.manual_scrap_recovered, run_state.autonomous_scrap_recovered]
+    var resource_decline_text := run_state.resource_decline_report() if run_state != null else "Resource history was unavailable."
     var alternatives := "No unspent response was recorded."
     if progression != null:
         var available := progression.available_technologies()
@@ -424,7 +417,7 @@ func _build_collapse_report() -> String:
             names.append(str(entry.get("display_name", "Unnamed response")))
         if not names.is_empty():
             alternatives = ", ".join(names)
-    return "WORLD DURATION · %s\nMAJOR EVOLUTIONS · %s\nECOLOGY OBSERVATIONS · %s\nDECISIVE TIMELINE\n%s\nRESOURCE POSITION · %s\nMACHINE-LOSS PATTERN · %s\nUNRESOLVED THREAT · %s\nALTERNATIVE RESPONSES OBSERVED OR UNLOCKED · %s" % [duration_text, evolution_text, species_text, events_text, resource_text, loss_text, pressure_text, alternatives]
+    return "WORLD DURATION · %s\nMAJOR EVOLUTIONS · %s\nECOLOGY OBSERVATIONS · %s\nDECISIVE TIMELINE\n%s\nRESOURCE POSITION · %s\nFIRST SUSTAINED RESOURCE DECLINE · %s\nMACHINE-LOSS PATTERN · %s\nUNRESOLVED THREAT · %s\nALTERNATIVE RESPONSES OBSERVED OR UNLOCKED · %s" % [duration_text, evolution_text, species_text, events_text, resource_text, resource_decline_text, loss_text, pressure_text, alternatives]
 
 
 func _update_complete_game_objective() -> void:

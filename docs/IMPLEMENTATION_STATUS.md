@@ -102,6 +102,12 @@
 - Kept the report at the existing defeat boundary with a viewport-safe expanded reading surface and no restart-loop maintenance or meta-progression grind.
 - Added complete-game coverage for report content and expanded-panel layout safety.
 
+## Focused persistent-collapse-evidence milestone
+
+- Persisted species and observed ecological behaviours from the real regional ecology spawns, so collapse analysis no longer depends on which organisms happened to remain alive in the final frame.
+- Added a bounded Scrap high-water and decline record to the run state, including the first sustained downturn and its spending cause; this survives the unified save path without introducing a resource dashboard or maintenance task.
+- Extended complete-game coverage for species/behaviour evidence and first-decline reporting, and live-checked the left-aligned report in the compact exported viewport.
+
 ## Focused machine identity and relationship milestone
 
 - Friendly machines now receive deterministic player-facing callsigns by role while preserving their existing node names as stable save and autonomy identifiers.

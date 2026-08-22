@@ -619,6 +619,7 @@ func _on_heartforge_destroyed() -> void:
 		heartforge.health_changed.emit(heartforge.current_health, heartforge.maximum_health)
 		var loss := balance_director.continuity_scrap_loss() if balance_director != null else 180
 		run_state.scrap = maxi(0, run_state.scrap - loss)
+		run_state.record_scrap_spend(loss, "continuity recovery")
 		run_state.scrap_changed.emit(run_state.scrap)
 		run_state.log_event("Distributed Continuity rebuilt the Heartforge after catastrophic failure. The one-use reserve is gone.")
 		hud.push_notification("DISTRIBUTED CONTINUITY CONSUMED · HEARTFORGE RECOVERED AT 48% · %d SCRAP LOST" % loss)
