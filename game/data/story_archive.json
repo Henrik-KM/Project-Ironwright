@@ -42,6 +42,16 @@
       "description": "The sealed catalogue records repairs by machine designation, not by department. Whoever wrote the final pages trusted the frames to know which shelves mattered when the lights failed."
     },
     {
+      "id": "story.site.north_archive_sublevel",
+      "arc": "civic_afterimage",
+      "trigger": "site_discovered",
+      "trigger_id": "site.north_archive_sublevel",
+      "sequence": 33,
+      "display_name": "The Sealed Stair",
+      "source_name": "North Archive Sublevel",
+      "description": "The first machine survey found shelves sealed below the archive floor, their record lamps still waiting for a convoy that knew the way down."
+    },
+    {
       "id": "story.east_tenements.bridge",
       "arc": "machine_witness",
       "trigger": "region_discovered",
@@ -62,6 +72,16 @@
       "description": "The recovered beacon was programmed to flash only when a machine convoy crossed the roofs. It was a warning for residents, but also a promise that the route would be remembered."
     },
     {
+      "id": "story.site.east_roof_reservoir",
+      "arc": "machine_witness",
+      "trigger": "site_discovered",
+      "trigger_id": "site.east_roof_reservoir",
+      "sequence": 43,
+      "display_name": "The Roofline Cistern",
+      "source_name": "East Roof Reservoir",
+      "description": "A small reservoir survives above the tenements, marked with a beacon frame and a maintenance path too narrow for a human crew but wide enough for a patient machine convoy."
+    },
+    {
       "id": "story.flood_market.inventory",
       "arc": "civic_afterimage",
       "trigger": "region_discovered",
@@ -80,6 +100,16 @@
       "display_name": "The Cooling Shift",
       "source_name": "West Cooling Station",
       "description": "The transformer repair log contains no victory line. It lists heat, pressure and the order in which the machines moved the work away from the flooded wall until the grid could breathe again."
+    },
+    {
+      "id": "story.site.west_cooling_station",
+      "arc": "machine_witness",
+      "trigger": "site_discovered",
+      "trigger_id": "site.west_cooling_station",
+      "sequence": 48,
+      "display_name": "The Warm Pipe",
+      "source_name": "West Cooling Station",
+      "description": "The survey team found one service pipe warm beneath the flooded concrete. It was not enough to restore the grid, but it proved that something inside still remembered circulation."
     },
     {
       "id": "story.glasshouse.cultivation",
@@ -160,6 +190,16 @@
       "display_name": "The Broken Branch",
       "source_name": "Root Signal Ledge",
       "description": "The relay group did not silence the root. It removed one branch from the conversation, leaving a gap that the remaining signal tried to cross. The machines recorded the gap as a place, not a theory."
+    },
+    {
+      "id": "story.site.root_signal_ledge",
+      "arc": "ecological_convergence",
+      "trigger": "site_discovered",
+      "trigger_id": "site.root_signal_ledge",
+      "sequence": 79,
+      "display_name": "The Listening Ledge",
+      "source_name": "Root Signal Ledge",
+      "description": "The ledge is not a ruin but a listening instrument: two living spines hold a relay bar above the basin, waiting for a machine signal to answer the root."
     },
     {
       "id": "story.town_archive.continuation",

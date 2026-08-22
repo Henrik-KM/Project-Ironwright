@@ -11,6 +11,7 @@ const DATA_PATH := "res://data/story_archive.json"
 
 var run_state: RunState3D
 var region_director: WorldRegionDirector3D
+var site_source: Node
 var records: Dictionary = {}
 var unlocked_records: Dictionary = {}
 var load_errors: Array[String] = []
@@ -43,6 +44,11 @@ func connect_event_source(source: Node) -> void:
         var operation_callback := Callable(self, "_on_operation_changed")
         if not source.is_connected(&"operation_changed", operation_callback):
             source.connect(&"operation_changed", operation_callback)
+    if source.has_signal(&"site_discovered"):
+        site_source = source
+        var site_callback := Callable(self, "_on_site_discovered")
+        if not source.is_connected(&"site_discovered", site_callback):
+            source.connect(&"site_discovered", site_callback)
     if source.has_signal(&"endgame_completed"):
         var endgame_callback := Callable(self, "_on_endgame_completed")
         if not source.is_connected(&"endgame_completed", endgame_callback):
@@ -59,6 +65,10 @@ func reconcile_discovered_state() -> void:
         return
     for region in region_director.discovered_regions():
         _unlock_trigger(&"region_discovered", StringName(str(region.get("id", ""))))
+    if site_source != null and site_source.has_method(&"discovered_sites"):
+        for site in site_source.discovered_sites():
+            if site != null and is_instance_valid(site):
+                _unlock_trigger(&"site_discovered", StringName(str(site.get("site_id"))))
 
 
 func has_record(record_id: StringName) -> bool:
@@ -101,6 +111,12 @@ func restore_from_dictionary(data: Dictionary) -> void:
 
 func _on_region_discovered(region_id: StringName, _display_name: String) -> void:
     _unlock_trigger(&"region_discovered", region_id)
+
+
+func _on_site_discovered(site: Node) -> void:
+    if site == null or not is_instance_valid(site):
+        return
+    _unlock_trigger(&"site_discovered", StringName(str(site.get("site_id"))))
 
 
 func _on_component_recovered(component_id: StringName) -> void:
