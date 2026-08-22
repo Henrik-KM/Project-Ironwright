@@ -39,18 +39,25 @@ def main() -> None:
     wet, shell, flesh, bone, membrane, eye, tendon = range(7)
     mesh_ids = {
         "Core": mesh("Core", add_uv_sphere(builder, 0.88, wet, 24, 36)),
-        "Segment": mesh("Segment", add_uv_sphere(builder, 0.68, shell, 16, 26)),
-        "Crown": mesh("Crown", add_uv_sphere(builder, 0.62, shell, 20, 32)),
-        "Jaw": mesh("Jaw", add_cylinder(builder, 0.13, 1.35, bone, 24)),
+        # The late-game threat is inspected at the same close tactical scale
+        # as the other authored families. Spend the extra geometry on the
+        # wet segment silhouette, crown and jaw hardware instead of leaving
+        # the final creature visibly faceted beside the shared family kit.
+        "Segment": mesh("Segment", add_uv_sphere(builder, 0.68, shell, 24, 32)),
+        "Crown": mesh("Crown", add_uv_sphere(builder, 0.62, shell, 24, 36)),
+        "Jaw": mesh("Jaw", add_cylinder(builder, 0.13, 1.35, bone, 32)),
         "JawPlate": mesh("JawPlate", add_box(builder, (0.32, 0.18, 0.92), bone)),
         "Rib": mesh("Rib", add_box(builder, (1.52, 0.14, 0.24), shell)),
-        "Leg": mesh("Leg", add_cylinder(builder, 0.12, 1.72, tendon, 24)),
-        "Talon": mesh("Talon", add_cylinder(builder, 0.075, 0.82, bone, 24)),
-        "Spine": mesh("Spine", add_cylinder(builder, 0.13, 1.2, bone, 24)),
-        "Membrane": mesh("Membrane", add_uv_sphere(builder, 0.58, membrane, 16, 28)),
-        "Root": mesh("Root", add_cylinder(builder, 0.2, 1.3, tendon, 24)),
-        "Eye": mesh("Eye", add_uv_sphere(builder, 0.11, eye, 16, 24)),
-        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.055, bone, 16, 24)),
+        "Leg": mesh("Leg", add_cylinder(builder, 0.12, 1.72, tendon, 32)),
+        "Talon": mesh("Talon", add_cylinder(builder, 0.075, 0.82, bone, 32)),
+        "Spine": mesh("Spine", add_cylinder(builder, 0.13, 1.2, bone, 32)),
+        "Membrane": mesh("Membrane", add_uv_sphere(builder, 0.58, membrane, 24, 32)),
+        "Root": mesh("Root", add_cylinder(builder, 0.2, 1.3, tendon, 32)),
+        "Eye": mesh("Eye", add_uv_sphere(builder, 0.11, eye, 24, 32)),
+        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.055, bone, 24, 32)),
+        "CrownRidge": mesh("CrownRidge", add_cylinder(builder, 0.06, 1.08, bone, 32)),
+        "JawLatch": mesh("JawLatch", add_box(builder, (0.20, 0.10, 0.44), bone)),
+        "MembraneRib": mesh("MembraneRib", add_cylinder(builder, 0.035, 0.82, bone, 32)),
     }
 
     nodes: list[dict] = [{
@@ -98,11 +105,36 @@ def main() -> None:
     # The plate is authored under the crown; keep its offset local so the
     # layered threat silhouette stays attached to the moving head assembly.
     add_node("ApexCrownPlate", mesh_ids["Rib"], (0.0, 0.3, 0.16), scale=(1.2, 1.0, 0.8), parent=crown)
+    for side in (-1.0, 1.0):
+        suffix = "L" if side < 0 else "R"
+        add_node(
+            "ApexCrownRidge%s" % suffix,
+            mesh_ids["CrownRidge"],
+            (side * 0.34, 0.34, 0.18),
+            rotation=(0.0, side * 0.18, side * 0.26),
+            scale=(0.72, 1.0, 0.82),
+            parent=crown,
+            extras={"surface": "crown_ridge"},
+        )
+        add_node(
+            "ApexCrownFastener%s" % suffix,
+            mesh_ids["Fastener"],
+            (side * 0.48, 0.20, 0.12),
+            parent=crown,
+            extras={"surface": "crown_socket"},
+        )
     add_node("OrganicDorsalPlate", mesh_ids["Rib"], (0.0, 1.74, 0.18), scale=(1.25, 0.9, 1.1), extras={"surface": "layered_shell_break"})
     for side in (-1.0, 1.0):
         add_node("ApexEye%s" % ("L" if side < 0 else "R"), mesh_ids["Eye"], (side * 0.34, 2.16, -1.62), extras={"socket_type": "threat_eye"})
         add_node("ApexCheek%s" % ("L" if side < 0 else "R"), mesh_ids["JawPlate"], (side * 0.64, 1.72, -1.15), rotation=(0.0, 0.0, side * 0.18))
         add_node("ApexJaw%s" % ("L" if side < 0 else "R"), mesh_ids["Jaw"], (side * 0.42, 1.15, -1.78), rotation=(0.82, 0.0, side * 0.12), extras={"socket_type": "jaw"})
+        add_node(
+            "ApexJawLatch%s" % ("L" if side < 0 else "R"),
+            mesh_ids["JawLatch"],
+            (side * 0.56, 1.16, -1.95),
+            rotation=(0.82, 0.0, side * 0.12),
+            extras={"surface": "jaw_hardware"},
+        )
 
     for index in range(9):
         x = -1.35 + index * 0.3375
@@ -115,6 +147,15 @@ def main() -> None:
             add_node("ApexTalon%s%d" % ("L" if side < 0 else "R", index), mesh_ids["Talon"], (side * (1.23 + index * 0.04), 0.18, z - 0.04), rotation=(0.0, 0.0, side * 0.36))
         add_node("ApexFlankRoot%s" % ("L" if side < 0 else "R"), mesh_ids["Root"], (side * 1.08, 1.18, 0.28), rotation=(0.0, 0.0, side * 0.46), extras={"socket_type": "flank_root"})
         add_node("ApexMembrane%s" % ("L" if side < 0 else "R"), mesh_ids["Membrane"], (side * 1.36, 1.86, 0.34), rotation=(0.0, side * 0.18, side * 0.06), scale=(0.18, 1.48, 0.78), extras={"surface": "dorsal_membrane"})
+        for rib_index in range(3):
+            add_node(
+                "ApexMembraneRib%s%d" % ("L" if side < 0 else "R", rib_index),
+                mesh_ids["MembraneRib"],
+                (side * (1.30 + rib_index * 0.03), 1.52 + rib_index * 0.28, 0.04 + rib_index * 0.28),
+                rotation=(0.0, side * 0.18, side * (0.42 - rib_index * 0.08)),
+                scale=(0.76, 1.0, 0.7),
+                extras={"surface": "dorsal_membrane_rib"},
+            )
 
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "apex.cistern.v1", "source": "original_shared_mesh_builder"})
 

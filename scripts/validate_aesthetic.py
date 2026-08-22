@@ -187,7 +187,7 @@ ACTOR_GEOMETRY_FLOORS = {
 # Keep their source-level primitive floors explicit so a generated glTF can
 # remain dense while a later rebuild quietly reintroduces coarse components.
 LEGACY_ORGANIC_SOURCE_TESSELLATION_FLOORS = {
-    "apex": ("game/assets/apex/source/build_apex_asset.py", 16, 24),
+    "apex": ("game/assets/apex/source/build_apex_asset.py", 24, 32),
     "broodmass": ("game/assets/broodmass/source/build_broodmass_asset.py", 16, 24),
     "burrower": ("game/assets/burrower/source/build_burrower_asset.py", 16, 24),
     "razorhound": ("game/assets/razorhound/source/build_razorhound_asset.py", 16, 24),

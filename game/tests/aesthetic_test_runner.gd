@@ -980,6 +980,10 @@ func _run_all() -> void:
             var apex_crown := _find_named(enemy_samples[index], "ApexCrown") as Node3D
             var apex_plate := _find_named(enemy_samples[index], "ApexCrownPlate") as Node3D
             _expect(apex_crown != null and apex_plate != null and apex_plate.position.distance_to(Vector3(0.0, 0.3, 0.16)) < 0.01, "Cistern Apex crown plating must remain attached through a local authored socket.")
+            _expect(_find_named(enemy_samples[index], "ApexCrownRidgeL") != null and _find_named(enemy_samples[index], "ApexCrownFastenerR") != null, "Cistern Apex crown must expose paired ridge and socket hardware for close-camera readability.")
+            var apex_jaw_latch := _find_named(enemy_samples[index], "ApexJawLatchR") as Node3D
+            var apex_membrane_rib := _find_named(enemy_samples[index], "ApexMembraneRibL0") as Node3D
+            _expect(apex_jaw_latch != null and apex_membrane_rib != null, "Cistern Apex jaw and membrane assemblies must expose stable authored detail sockets.")
         if species_names[index] == &"broodmass":
             var brood_maw := _find_named(enemy_samples[index], "BroodmassMaw") as Node3D
             var brood_plate := _find_named(enemy_samples[index], "BroodmassMawPlate") as Node3D
