@@ -30,6 +30,9 @@ func _run_all() -> void:
         _expect(complete_world.operations_hud.is_open() and complete_world.operations_hud.mode == &"archive", "The Town Archive must be readable through an on-demand archive panel.")
         complete_world._close_operations_hud()
 
+    var opening_companion := world.autonomy_director.living_robots(&"companion")[0]
+    _expect(opening_companion.display_identity() == "Bulwark", "The indispensable opening companion must have a stable player-facing callsign.")
+
     world.ecology_director.set_process(false)
     world.strategic_ecology_director.set_process(false)
     world.long_operation_director.spawn_enemy_callback = Callable()
@@ -127,6 +130,7 @@ func _run_all() -> void:
     _cleanup_save_files()
 
     _expect(world.long_operation_director.has_completed(&"operation.west_grid_survey"), "The West Grid survey must remain completed after return.")
+    _expect(_event_contains(world, "MACHINE WITNESS"), "The first physically returned operation must create a sparse machine-witness relationship moment.")
     _expect(world.region_director.is_discovered(&"region.west_grid"), "The West Grid must be physically discovered by the returned operation.")
     _expect(world.run_state.rare_cores == cores_before_west + 1, "Operation rewards must be delivered only after physical return.")
     _expect(world.outpost_director.get_site(&"site.west_substation").discovered, "The West Grid survey must reveal its fixed support site.")
@@ -167,6 +171,8 @@ func _run_all() -> void:
     world._save_game()
     world._load_game()
     _expect(world.autonomy_director.count_robots(&"relay") >= 1, "The Signal Relay chassis must survive the unified release save/load path.")
+    var restored_companion := world.autonomy_director.living_robots(&"companion")[0]
+    _expect(restored_companion.display_identity() == "Bulwark", "Robot callsigns must survive the unified save/load path, with the older-save default retaining Bulwark.")
     world.heartforge.current_health = world.heartforge.maximum_health * 0.72
     world.heartforge.health_changed.emit(world.heartforge.current_health, world.heartforge.maximum_health)
     world.adaptive_defense_director.evaluate_now()
@@ -349,6 +355,13 @@ func _functioning_outposts(world: IronwrightCompleteGameWorld3D) -> int:
         if site.has_functioning_outpost():
             count += 1
     return count
+
+
+func _event_contains(world: IronwrightCompleteGameWorld3D, needle: String) -> bool:
+    for event in world.run_state.event_log:
+        if str(event).contains(needle):
+            return true
+    return false
 
 
 func _clear_enemies() -> void:

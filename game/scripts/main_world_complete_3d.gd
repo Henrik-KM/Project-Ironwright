@@ -24,6 +24,7 @@ var continuity_used: bool = false
 var first_victory_achieved: bool = false
 var sanctuary_continuation: bool = false
 var spawned_region_salvage: Dictionary = {}
+var machine_relationship_moments: Dictionary = {}
 
 
 func _ready() -> void:
@@ -34,6 +35,7 @@ func _ready() -> void:
     hud.help_label.text = "WASD MOVE · E INTERACT · T EVOLVE · O OUTPOSTS · P OPERATIONS · L ARCHIVE · V ENDGAME · F FOLLOW · M MAP · F5/F9 SAVE/LOAD"
     run_state.log_event("The complete systemic run is active. Survive, expand autonomy, recover the root components, and choose how the town ends.")
     hud.push_notification("TOWN NETWORKS OPEN · P LONG-RANGE OPERATIONS · V FINAL PROTOCOLS")
+    hud.push_notification("BULWARK ONLINE · THE HEARTFORGE HAS A PERSONAL GUARD")
 
 
 func _process(delta: float) -> void:
@@ -460,6 +462,12 @@ func _on_adaptation_completed(_adaptation_id: StringName, display_name: String) 
 
 func _on_long_operation_returned(operation_id: StringName, display_name: String, rewards: Dictionary) -> void:
     hud.push_notification("OPERATION COMPLETE · %s · REWARDS DELIVERED PHYSICALLY" % display_name.to_upper())
+    if not bool(machine_relationship_moments.get("first_return", false)):
+        machine_relationship_moments["first_return"] = true
+        var witness := _machine_witness_identity()
+        var moment := "%s brought the group home through the same streets it learned on; the Heartforge answers with a warmer signal." % witness
+        run_state.log_event("MACHINE WITNESS · %s" % moment)
+        hud.push_notification("MACHINE WITNESS · %s" % moment.to_upper())
     progression._evaluate_automatic_technologies()
 
 
@@ -472,7 +480,30 @@ func _on_site_discovery_requested(site_id: StringName) -> void:
 
 
 func _on_autonomous_machine_built(archetype: StringName, level: int, reason: String) -> void:
-    hud.push_notification("AUTONOMOUS REPLACEMENT · LEVEL %d %s" % [level, String(archetype).to_upper()])
+    var identity := _machine_identity_for_archetype(archetype)
+    hud.push_notification("AUTONOMOUS REPLACEMENT · LEVEL %d %s · %s" % [level, identity.to_upper(), String(archetype).to_upper()])
+    if not bool(machine_relationship_moments.get("first_replacement", false)):
+        machine_relationship_moments["first_replacement"] = true
+        var moment := "%s took its place without a queue or command; the machine society is beginning to remember what the town needs." % identity
+        run_state.log_event("MACHINE WITNESS · %s" % moment)
+        hud.push_notification("MACHINE WITNESS · %s" % moment.to_upper())
+
+
+func _machine_identity_for_archetype(archetype: StringName) -> String:
+    var members := autonomy_director.living_robots(archetype)
+    if not members.is_empty():
+        return members[members.size() - 1].display_identity()
+    return String(archetype).capitalize()
+
+
+func _machine_witness_identity() -> String:
+    var companions := autonomy_director.living_robots(&"companion")
+    if not companions.is_empty():
+        return companions[0].display_identity()
+    var members := autonomy_director.living_robots()
+    if not members.is_empty():
+        return members[0].display_identity()
+    return "The machine group"
 
 
 func _on_ecology_report(message: String) -> void:
@@ -535,6 +566,7 @@ func _save_extension_data() -> Dictionary:
         "first_victory_achieved": first_victory_achieved,
         "sanctuary_continuation": sanctuary_continuation,
         "spawned_region_salvage": _serialize_stringname_dictionary(spawned_region_salvage),
+        "machine_relationship_moments": machine_relationship_moments.duplicate(true),
     }, true)
     extensions["full_game"] = full_game_data
     return extensions
@@ -567,6 +599,7 @@ func _restore_extension_data(extensions: Variant) -> void:
     continuity_used = bool(data.get("continuity_used", false))
     first_victory_achieved = bool(data.get("first_victory_achieved", false))
     sanctuary_continuation = bool(data.get("sanctuary_continuation", first_victory_achieved))
+    machine_relationship_moments = data.get("machine_relationship_moments", {}).duplicate(true)
     spawned_region_salvage.clear()
     var saved_salvage: Dictionary = data.get("spawned_region_salvage", {})
     for raw_key in saved_salvage:

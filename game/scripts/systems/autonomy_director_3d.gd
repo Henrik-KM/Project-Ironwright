@@ -46,6 +46,11 @@ func register_robot(robot: RobotUnit3D) -> void:
         return
     _robot_serial += 1
     robot.name = "%s_%02d" % [String(robot.archetype).capitalize(), _robot_serial]
+    var family_serial := 1
+    for existing in robots:
+        if is_instance_valid(existing) and existing.archetype == robot.archetype and existing.is_alive():
+            family_serial += 1
+    robot.assign_callsign(family_serial)
     robot.player_reference = player_reference
     robot.heartforge_reference = heartforge_reference
     robot.destroyed.connect(_on_robot_destroyed)
