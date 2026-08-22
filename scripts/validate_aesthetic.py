@@ -184,6 +184,13 @@ ACTOR_GEOMETRY_FLOORS = {
     "ashmantle": 4300,
 }
 
+# The shared late-organic builder is inspected at close tactical distance. Keep
+# its curved shells and small anatomy hardware on the same smooth floor as the
+# separately authored Apex and Broodmass specimens.
+SHARED_ORGANIC_SOURCE_TESSELLATION = {
+    "game/assets/organic_families/source/build_authored_organic_assets.py": (24, 36, 24),
+}
+
 # These seven production builders predate the shared authored-family builder.
 # Keep their source-level primitive floors explicit so a generated glTF can
 # remain dense while a later rebuild quietly reintroduces coarse components.
@@ -558,6 +565,44 @@ def validate_legacy_organic_source_tessellation() -> None:
                     )
 
 
+def validate_shared_organic_source_tessellation() -> None:
+    """Require the shared organic-family builder to retain its close-camera floor."""
+    for relative, (ring_floor, side_floor, cylinder_floor) in SHARED_ORGANIC_SOURCE_TESSELLATION.items():
+        source_path = ROOT / relative
+        tree = ast.parse(source_path.read_text(encoding="utf-8"), filename=str(source_path))
+        mesh_assignment = next(
+            (
+                node
+                for node in ast.walk(tree)
+                if isinstance(node, ast.Assign)
+                and any(isinstance(target, ast.Name) and target.id == "mesh_ids" for target in node.targets)
+            ),
+            None,
+        )
+        if mesh_assignment is None:
+            fail("shared organic source builder is missing its mesh_ids contract.")
+        for call in ast.walk(mesh_assignment.value):
+            if not isinstance(call, ast.Call) or not isinstance(call.func, ast.Name):
+                continue
+            if call.func.id == "add_uv_sphere":
+                if len(call.args) <= 4 or not all(isinstance(call.args[index], ast.Constant) for index in (3, 4)):
+                    fail("shared organic source sphere tessellation must use literal ring and side counts.")
+                rings = int(call.args[3].value)
+                sides = int(call.args[4].value)
+                if rings < ring_floor or sides < side_floor:
+                    fail(
+                        "shared organic source sphere tessellation is below the close-camera floor: "
+                        f"{rings} rings/{sides} sides < {ring_floor}/{side_floor}."
+                    )
+            elif call.func.id == "add_cylinder":
+                if len(call.args) <= 4 or not isinstance(call.args[4], ast.Constant):
+                    fail("shared organic source cylinder tessellation must use a literal side count.")
+                sides = int(call.args[4].value)
+                if sides < cylinder_floor:
+                    fail(
+                        "shared organic source cylinder tessellation is below the close-camera floor: "
+                        f"{sides} sides < {cylinder_floor}."
+                    )
 def validate_mechromancer_source_tessellation() -> None:
     """Require dense helper floors in the canonical Blender source builder."""
     source_path = ROOT / "game/assets/mechromancer/source/build_mechromancer_blend.py"
@@ -715,6 +760,7 @@ def main() -> int:
 
         validate_mechromancer_asset()
         validate_legacy_organic_source_tessellation()
+        validate_shared_organic_source_tessellation()
         validate_mechromancer_source_tessellation()
         validate_actor_geometry_density()
         validate_actor_animation_breadth()
