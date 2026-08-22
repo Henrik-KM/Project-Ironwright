@@ -67,6 +67,12 @@ distinct spatial sound language for Mechromancer, machine and organic
 non-lethal hits. This reinforces the authored `Hit` beat without adding combat
 HUD clutter or changing health, damage, ecology or actor workload contracts.
 
+Friendly machine weapon and shutdown events now also carry deterministic family
+identity: the Bulwark, Warden, Scrapper, Pathfinder, Engineer and Signal Relay
+resolve distinct generated signatures from their existing archetype IDs. The
+profiles remain spatial, bounded and presentation-only; they do not create a
+robot status dashboard or new player task.
+
 The Mechromancer now uses the same export-breadth contract. Its authored Idle,
 Walk, Fire, Work, Upgrade and Hit clips retain multiple body, equipment, recoil
 or interaction channels in the canonical Blender-to-glTF path. This improves

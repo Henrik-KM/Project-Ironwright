@@ -16,6 +16,7 @@ const ORGANIC_SPECIES := [
     &"veilstalker", &"razorhound", &"apex", &"sporecaster", &"broodmass", &"burrower",
     &"skitterling", &"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle",
 ]
+const ROBOT_AUDIO_ARCHETYPES := [&"companion", &"guardian", &"salvager", &"scout", &"engineer", &"relay"]
 
 var world: Node3D
 var player: Node3D
@@ -45,6 +46,9 @@ func _ready() -> void:
     for species in ORGANIC_SPECIES:
         profiles[_organic_profile_id(species, false)] = _build_profile(_organic_profile_id(species, false))
         profiles[_organic_profile_id(species, true)] = _build_profile(_organic_profile_id(species, true))
+    for archetype in ROBOT_AUDIO_ARCHETYPES:
+        profiles[_robot_profile_id(archetype, false)] = _build_profile(_robot_profile_id(archetype, false))
+        profiles[_robot_profile_id(archetype, true)] = _build_profile(_robot_profile_id(archetype, true))
     _register_existing_actors()
     get_tree().node_added.connect(_on_node_added)
     if player != null and player.has_signal(&"channel_started"):
@@ -78,6 +82,10 @@ func has_profile(profile: StringName) -> bool:
 
 func organic_profile_id(species: StringName, death: bool = false) -> StringName:
     return _organic_profile_id(species, death)
+
+
+func robot_profile_id(archetype: StringName, shutdown: bool = false) -> StringName:
+    return _robot_profile_id(archetype, shutdown)
 
 
 func play_profile(profile: StringName, position: Vector3, volume_db: float = -7.0, pitch_scale: float = 1.0) -> void:
@@ -159,7 +167,10 @@ func _register_actor(actor: Node) -> void:
     if actor.has_signal(&"pistol_fired"):
         _connect_once(actor, &"pistol_fired", Callable(self, "_on_pistol_fired"))
     if actor.has_signal(&"weapon_fired"):
-        _connect_once(actor, &"weapon_fired", Callable(self, "_on_weapon_fired"))
+        if actor.is_in_group(&"friendly_robots"):
+            _connect_once(actor, &"weapon_fired", Callable(self, "_on_robot_weapon_fired").bind(actor))
+        else:
+            _connect_once(actor, &"weapon_fired", Callable(self, "_on_weapon_fired"))
     if actor.has_signal(&"attack_landed"):
         _connect_once(actor, &"attack_landed", Callable(self, "_on_attack_landed"))
     if actor.has_signal(&"killed"):
@@ -168,6 +179,8 @@ func _register_actor(actor: Node) -> void:
         _connect_once(actor, &"health_changed", Callable(self, "_on_actor_health_changed"))
         if actor.get(&"current_health") != null:
             last_actor_health[actor.get_instance_id()] = float(actor.get(&"current_health"))
+    if actor.is_in_group(&"friendly_robots") and actor.has_signal(&"destroyed"):
+        _connect_once(actor, &"destroyed", Callable(self, "_on_robot_destroyed"))
 
 
 func _connect_once(source: Object, signal_name: StringName, callback: Callable) -> void:
@@ -184,6 +197,21 @@ func _on_weapon_fired(origin: Vector3, _target: Vector3, target_node: Node) -> v
     if target_node != null and target_node.is_in_group(&"organic_enemies"):
         profile = &"machine_weapon"
     play_profile(profile, origin, -8.0)
+
+
+func _on_robot_weapon_fired(origin: Vector3, _target: Vector3, _target_node: Node, actor: Node) -> void:
+    if actor == null:
+        play_profile(&"machine_weapon", origin, -8.0)
+        return
+    var archetype := StringName(str(actor.get("archetype")))
+    play_profile(_robot_profile_id(archetype, false), origin, -8.0, _robot_pitch(archetype, false))
+
+
+func _on_robot_destroyed(robot: Node) -> void:
+    if robot == null or not robot is Node3D:
+        return
+    var archetype := StringName(str(robot.get("archetype")))
+    play_profile(_robot_profile_id(archetype, true), (robot as Node3D).global_position + Vector3.UP * 0.7, -7.5, _robot_pitch(archetype, true))
 
 
 func _on_attack_landed(enemy: Node, target: Node) -> void:
@@ -299,6 +327,10 @@ func _build_profile(profile: StringName) -> AudioStreamWAV:
         duration = 0.44
     elif profile_text.begins_with("organic_death_"):
         duration = 0.62
+    elif profile_text.begins_with("robot_weapon_"):
+        duration = 0.24
+    elif profile_text.begins_with("robot_shutdown_"):
+        duration = 0.52
     else:
         match profile:
             &"machine_weapon":
@@ -362,6 +394,11 @@ func _sample_profile(profile: StringName, normalized: float, time: float, durati
         var prefix := "organic_death_" if death else "organic_attack_"
         var species := StringName(profile_text.trim_prefix(prefix))
         return _sample_organic_signature(species, death, normalized, time, duration, envelope, noise)
+    if profile_text.begins_with("robot_weapon_") or profile_text.begins_with("robot_shutdown_"):
+        var shutdown := profile_text.begins_with("robot_shutdown_")
+        var prefix := "robot_shutdown_" if shutdown else "robot_weapon_"
+        var family := StringName(profile_text.trim_prefix(prefix))
+        return _sample_robot_signature(family, shutdown, normalized, time, duration, envelope, noise)
     match profile:
         &"pistol":
             return (sin(TAU * (650.0 * time - 380.0 * time * time / duration)) * 0.46 + noise * 0.38) * envelope
@@ -404,6 +441,77 @@ func _sample_profile(profile: StringName, normalized: float, time: float, durati
         &"endgame_failure":
             return (sin(TAU * (54.0 * time - 36.0 * time * time / duration)) * 0.48 + noise * 0.2) * envelope
     return 0.0
+
+
+func _sample_robot_signature(family: StringName, shutdown: bool, normalized: float, time: float, duration: float, envelope: float, noise: float) -> float:
+    var parameters := _robot_signature_parameters(family)
+    var base := float(parameters.get("base", 150.0))
+    var overtone := float(parameters.get("overtone", 360.0))
+    var texture := float(parameters.get("texture", 0.24))
+    var sweep := float(parameters.get("sweep", 80.0))
+    if shutdown:
+        var descending := sin(TAU * (base * 0.62 * time - sweep * 0.35 * time * time / duration)) * 0.44
+        return (descending + sin(TAU * overtone * 0.55 * time) * 0.12 + noise * (0.16 + texture * 0.22)) * envelope
+    var carrier := sin(TAU * (base * time + sweep * time * time / duration)) * 0.46
+    var edge := sin(TAU * overtone * time) * 0.18
+    return (carrier + edge + noise * texture) * envelope
+
+
+func _robot_profile_id(archetype: StringName, shutdown: bool) -> StringName:
+    var family := _robot_audio_family(archetype)
+    return StringName("robot_shutdown_%s" % family if shutdown else "robot_weapon_%s" % family)
+
+
+func _robot_audio_family(archetype: StringName) -> StringName:
+    match archetype:
+        &"companion":
+            return &"bulwark"
+        &"guardian":
+            return &"warden"
+        &"salvager":
+            return &"scrapper"
+        &"scout":
+            return &"pathfinder"
+        &"engineer":
+            return &"engineer"
+        &"relay":
+            return &"relay"
+    return &"bulwark"
+
+
+func _robot_pitch(archetype: StringName, shutdown: bool) -> float:
+    var pitch := 1.0
+    match _robot_audio_family(archetype):
+        &"bulwark":
+            pitch = 0.86
+        &"warden":
+            pitch = 0.94
+        &"scrapper":
+            pitch = 0.82
+        &"pathfinder":
+            pitch = 1.18
+        &"engineer":
+            pitch = 0.98
+        &"relay":
+            pitch = 1.24
+    return clampf(pitch * (0.9 if shutdown else 1.0), 0.68, 1.34)
+
+
+func _robot_signature_parameters(family: StringName) -> Dictionary:
+    match family:
+        &"bulwark":
+            return {"base": 112.0, "overtone": 260.0, "texture": 0.16, "sweep": 42.0}
+        &"warden":
+            return {"base": 178.0, "overtone": 420.0, "texture": 0.24, "sweep": 88.0}
+        &"scrapper":
+            return {"base": 94.0, "overtone": 228.0, "texture": 0.48, "sweep": 36.0}
+        &"pathfinder":
+            return {"base": 262.0, "overtone": 620.0, "texture": 0.18, "sweep": 126.0}
+        &"engineer":
+            return {"base": 142.0, "overtone": 356.0, "texture": 0.30, "sweep": 62.0}
+        &"relay":
+            return {"base": 326.0, "overtone": 760.0, "texture": 0.12, "sweep": 174.0}
+    return {"base": 150.0, "overtone": 360.0, "texture": 0.24, "sweep": 80.0}
 
 
 func _organic_profile_id(species: StringName, death: bool) -> StringName:
