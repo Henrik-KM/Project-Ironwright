@@ -2604,3 +2604,14 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   than waiting for a later presentation tick;
 - added release regression coverage for keyboard remapping, active-device
   hints, objective-marker text and restoration of the default controls.
+
+## Focused staged-presentation gallery milestone
+
+- tightened the three core development-only presentation pages into centered,
+  depth-separated two-row compositions so the authored roster remains large
+  enough to judge in the exact exported review build;
+- kept review-only actors out of the runtime spatial index while hidden, so
+  presentation fixtures cannot become invisible combat targets during release
+  playtests or live targeting;
+- added release regression coverage for staged depth, closer camera framing,
+  and review-scene cleanup before spatial and performance checks.
