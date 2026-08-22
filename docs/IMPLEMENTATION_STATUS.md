@@ -307,6 +307,18 @@
 - Preserved the outpost's role signatures, tier frames, damage-memory overlays, repair, hauling and autonomous operation as runtime behavior around the authored shell.
 - Added a source builder, production asset manifest, marker coverage and exact-export live review for the Tier 3 resource outpost.
 
+## Focused outpost shelter hardware-depth milestone
+
+- Extended the shared authored shelter with cold-glass window bays, mullions,
+  a service door and latch, maintenance bands, roof service ribs and braces,
+  a vent cap, service rails and anchored foundation hardware.
+- Preserved fixed-site anchors, role signatures, tier frames, damage/rebuild,
+  autonomy and collision contracts; the pass is presentation-only and adds no
+  recurring outpost management work.
+- Expanded the stable socket/manifest contract and aesthetic coverage, then
+  verified the packed model in an exported Windows build with three live
+  autonomous outposts restored at Heartforge Tier 5.
+
 ## Focused authored Heartforge core milestone
 
 - Replaced the permanent Heartforge primary shell with an original high-definition glTF asset containing the reactor housing, thermal core, octagonal cladding, powered service face, focal control bank, fabrication bench and external support hardware.
