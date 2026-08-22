@@ -7,6 +7,7 @@ const AUTHORED_SCRAPPER_MODEL_SCENE: PackedScene = preload("res://assets/scrappe
 const AUTHORED_PATHFINDER_MODEL_SCENE: PackedScene = preload("res://assets/pathfinder/pathfinder.gltf")
 const AUTHORED_ENGINEER_MODEL_SCENE: PackedScene = preload("res://assets/engineer/engineer.gltf")
 const AUTHORED_RELAY_MODEL_SCENE: PackedScene = preload("res://assets/relay/relay.gltf")
+const DISABLED_PRESENTATION_SECONDS := 0.86
 
 const CALLSIGN_PREFIXES: Dictionary = {
     &"companion": "Bulwark",
@@ -52,6 +53,7 @@ var player_reference: Node3D
 var heartforge_reference: Node3D
 var progression: ProgressionDirector3D
 var alive: bool = true
+var disabled_presentation_remaining: float = 0.0
 var obstacle_recovery_remaining: float = 0.0
 var obstacle_recovery_direction: Vector3 = Vector3.ZERO
 
@@ -59,6 +61,8 @@ var _model_root: Node3D
 var _sensor_light: OmniLight3D
 var _damage_visual_root: Node3D
 var _damage_signal_material: StandardMaterial3D
+var _disabled_visual_root: Node3D
+var _disabled_signal_material: StandardMaterial3D
 var _damage_presentation_enabled: bool = true
 var defer_authored_visuals: bool = false
 var _deferred_proxy_root: Node3D
@@ -86,6 +90,7 @@ func configure(next_archetype: StringName, next_level: int) -> void:
     _apply_level_stats()
     if is_inside_tree():
         _refresh_visual_identity()
+        _build_disabled_presentation()
 
 
 func assign_callsign(serial: int = 1) -> void:
@@ -117,6 +122,10 @@ func set_progression(next_progression: ProgressionDirector3D) -> void:
 
 func _physics_process(delta: float) -> void:
     if not alive:
+        disabled_presentation_remaining = maxf(0.0, disabled_presentation_remaining - delta)
+        _refresh_disabled_presentation()
+        if disabled_presentation_remaining <= 0.0:
+            queue_free()
         return
     attack_cooldown = maxf(0.0, attack_cooldown - delta)
     if archetype == &"companion" and player_reference != null and is_instance_valid(player_reference):
@@ -268,8 +277,9 @@ func apply_damage(amount: float, source: Node = null) -> void:
         alive = false
         state_name = &"disabled"
         decision_reason = "Disabled at this physical location; recovery requires the surviving machines."
+        disabled_presentation_remaining = DISABLED_PRESENTATION_SECONDS
+        _refresh_disabled_presentation()
         destroyed.emit(self)
-        queue_free()
 
 
 func repair(amount: float) -> void:
@@ -374,6 +384,7 @@ func _build_visuals() -> void:
     add_child(_model_root)
     _refresh_visual_identity()
     _build_damage_presentation()
+    _build_disabled_presentation()
 
 
 func ensure_authored_visuals() -> void:
@@ -388,6 +399,106 @@ func ensure_authored_visuals() -> void:
 func set_damage_presentation_enabled(value: bool) -> void:
     _damage_presentation_enabled = value
     _refresh_damage_presentation()
+
+
+func _build_disabled_presentation() -> void:
+    if _disabled_visual_root != null and is_instance_valid(_disabled_visual_root):
+        _disabled_visual_root.free()
+    _disabled_visual_root = Node3D.new()
+    _disabled_visual_root.name = "RobotDisabledPresentation"
+    add_child(_disabled_visual_root)
+
+    var body_scale := 1.0
+    var signal_color := Color("e07a43")
+    match archetype:
+        &"companion":
+            body_scale = 1.08
+            signal_color = Color("e08c4d")
+        &"guardian":
+            body_scale = 1.18
+            signal_color = Color("dc6541")
+        &"salvager":
+            body_scale = 1.0
+            signal_color = Color("d17a43")
+        &"scout":
+            body_scale = 0.9
+            signal_color = Color("59c4c7")
+        &"engineer":
+            body_scale = 1.04
+            signal_color = Color("e0a052")
+        &"relay":
+            body_scale = 1.22
+            signal_color = Color("6ed6da")
+
+    var dead_steel := ModelKit3D.material(Color("252c2d"), 0.72, 0.62)
+    var dead_edge := ModelKit3D.material(Color("60402f"), 0.34, 0.78)
+    var dead_core := ModelKit3D.material(signal_color.darkened(0.58), 0.16, 0.44, signal_color, 1.4)
+    var cable := ModelKit3D.material(Color("4d2528"), 0.28, 0.68, Color("c94d43"), 0.48)
+    var shard := ModelKit3D.material(Color("745044"), 0.28, 0.72)
+
+    ModelKit3D.add_beveled_box(
+        _disabled_visual_root,
+        Vector3(0.82, 0.14, 0.56) * body_scale,
+        Vector3(0.0, 0.72, -0.04),
+        dead_steel,
+        Vector3(0.0, 0.0, -0.12),
+        "RobotDisabledCarapace",
+        0.08
+    )
+    ModelKit3D.add_organic_plate(
+        _disabled_visual_root,
+        0.12 * body_scale,
+        Vector3(0.0, 0.91, -0.32),
+        dead_edge,
+        shard,
+        Vector3(0.52, 0.18, 0.22) * body_scale,
+        "RobotDisabledRootCollar"
+    )
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_capsule(
+            _disabled_visual_root,
+            0.045 * body_scale,
+            0.62 * body_scale,
+            Vector3(side * 0.34, 0.82, 0.18),
+            cable,
+            Vector3(0.12, 0.0, side * 0.48),
+            "RobotDisabledCable%s" % ("Left" if side < 0.0 else "Right")
+        )
+    for index in range(3):
+        var angle := -0.55 + float(index) * 0.55
+        ModelKit3D.add_beveled_box(
+            _disabled_visual_root,
+            Vector3(0.12, 0.08, 0.28) * body_scale,
+            Vector3(sin(angle) * 0.48, 0.78 + float(index % 2) * 0.08, -0.18 + cos(angle) * 0.06),
+            shard,
+            Vector3(0.0, angle, -0.24),
+            "RobotDisabledShard%02d" % index,
+            0.035
+        )
+    ModelKit3D.add_sphere(
+        _disabled_visual_root,
+        0.11 * body_scale,
+        Vector3(0.0, 0.94, -0.4),
+        dead_core,
+        Vector3(1.15, 0.72, 0.72),
+        "RobotDisabledSignal"
+    )
+    _disabled_signal_material = dead_core
+    _refresh_disabled_presentation()
+
+
+func _refresh_disabled_presentation() -> void:
+    if _disabled_visual_root == null or not is_instance_valid(_disabled_visual_root):
+        return
+    var active := not alive and disabled_presentation_remaining > 0.0
+    _disabled_visual_root.visible = active
+    if not active:
+        return
+    var progress := clampf(disabled_presentation_remaining / DISABLED_PRESENTATION_SECONDS, 0.0, 1.0)
+    _disabled_visual_root.scale = Vector3(1.0, 0.72 + progress * 0.28, 1.0)
+    _disabled_visual_root.rotation.z = (1.0 - progress) * 0.18
+    if _disabled_signal_material != null:
+        _disabled_signal_material.emission_energy_multiplier = lerpf(0.18, 1.6, progress)
 
 
 func _build_damage_presentation() -> void:
