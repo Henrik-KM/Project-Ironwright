@@ -28,6 +28,8 @@ func _run_all() -> void:
     var civic_thread := opening_threads.filter(func(thread: Dictionary) -> bool: return str(thread.get("id", "")) == "thread.civic_afterimage")
     _expect(civic_thread.size() == 1 and int(civic_thread[0].get("progress", 0)) == 1 and int(civic_thread[0].get("total", 0)) == 5, "The archive must expose a derived civic story thread from the opening record without creating a quest task.")
     _expect(archive.archive_records().any(func(record: Dictionary) -> bool: return str(record.get("kind", "")) == "story_thread"), "The on-demand archive must present story threads alongside physical records.")
+    var thread_advances: Array[StringName] = []
+    archive.thread_advanced.connect(func(thread_id: StringName, _display_name: String, _stage_count: int, _description: String) -> void: thread_advances.append(thread_id))
 
     world.run_state.observe_organic_species(&"razorhound", &"hunt", &"region.west_grid")
     world.run_state.observe_organic_species(&"razorhound", &"track_last_known", &"region.west_grid")
@@ -62,6 +64,10 @@ func _run_all() -> void:
 
     world.outpost_director.operation_changed.emit(&"outpost_rebuild", &"complete", "")
     _expect(archive.has_record(&"story.outpost.returned_signal"), "An automatic rebuild must unlock the returned-signal record.")
+
+    _expect(world.region_director.discover_region(&"region.west_grid"), "The West Grid discovery must be available for machine-thread feedback coverage.")
+    _expect(world.region_director.discover_region(&"region.east_tenements"), "The East Tenements discovery must be available for machine-thread feedback coverage.")
+    _expect(thread_advances.any(func(thread_id: StringName) -> bool: return thread_id == &"machine_witness"), "Crossing a real machine-witness chapter must emit bounded live story feedback.")
 
     _expect(world.region_director.discover_region(&"region.glasshouse"), "The Glasshouse discovery must be available for ecological thread coverage.")
     _expect(world.region_director.discover_region(&"region.observatory_ridge"), "The Observatory discovery must be available for ecological thread coverage.")

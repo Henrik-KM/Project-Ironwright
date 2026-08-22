@@ -111,6 +111,7 @@ func _setup_complete_game_services() -> void:
     story_archive_director.process_mode = Node.PROCESS_MODE_ALWAYS
     story_archive_director.configure(run_state, region_director)
     story_archive_director.record_unlocked.connect(_on_story_record_unlocked)
+    story_archive_director.thread_advanced.connect(_on_story_thread_advanced)
     add_child(story_archive_director)
     var aesthetic := get_node_or_null("AestheticDirector") as AestheticDirector3D
     if aesthetic != null:
@@ -483,6 +484,10 @@ func _on_region_discovered(region_id: StringName, display_name: String) -> void:
 
 func _on_story_record_unlocked(_record_id: StringName, display_name: String, description: String) -> void:
     hud.push_notification("TOWN RECORD · %s\n%s" % [display_name.to_upper(), description])
+
+
+func _on_story_thread_advanced(_thread_id: StringName, display_name: String, stage_count: int, description: String) -> void:
+    hud.push_notification("STORY THREAD ADVANCED · %s · %d CLUES\n%s" % [display_name.to_upper(), stage_count, description])
 
 
 func _open_story_archive() -> void:
