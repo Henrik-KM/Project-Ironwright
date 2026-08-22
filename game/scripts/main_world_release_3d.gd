@@ -676,9 +676,13 @@ func _show_presentation_review_page(page: int) -> void:
 				region_geometry.visible = true
 		else:
 			actor.rotation.y = PI
-			var row_start := -8.4
-			var row_z := 1.0 if presentation_review_page == 0 else 0.0
-			actor.position = Vector3(row_start + float(index) * 2.8, 0.0, row_z)
+			var row_index := 0 if index < mini(4, actors.size()) else 1
+			var row_count := mini(4, actors.size()) if row_index == 0 else actors.size() - mini(4, actors.size())
+			var row_position := index if row_index == 0 else index - mini(4, actors.size())
+			var spacing := 4.2
+			var centered_x := (float(row_position) - float(row_count - 1) * 0.5) * spacing
+			var row_z := 0.7 if row_index == 0 else -2.5
+			actor.position = Vector3(centered_x, 0.0, row_z)
 			if actor.has_method("set_visual_lod"):
 				actor.call("set_visual_lod", 0)
 	var page_titles: Array[String] = [
@@ -697,8 +701,8 @@ func _show_presentation_review_page(page: int) -> void:
 		presentation_review_camera_target = region_director.center(region_id) + Vector3.UP * 2.0
 		presentation_review_camera_desired = presentation_review_camera_target + Vector3(0.0, 18.0, 27.0)
 	else:
-		presentation_review_camera_target = Vector3(0.0, 1.0, 0.0)
-		presentation_review_camera_desired = Vector3(0.0, 4.8, 18.0)
+		presentation_review_camera_target = Vector3(0.0, 1.45, -0.7)
+		presentation_review_camera_desired = Vector3(0.0, 5.9, 16.8)
 	_set_presentation_review_stage_for_page(is_region_page)
 	_update_presentation_review_camera(1.0)
 

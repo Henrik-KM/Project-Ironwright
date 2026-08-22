@@ -39,6 +39,8 @@ func rebuild() -> void:
             if not is_instance_valid(candidate) or not (candidate is Node3D):
                 continue
             var node := candidate as Node3D
+            if not node.visible:
+                continue
             var cell := _cell_for(node.global_position)
             if not grid.has(cell):
                 grid[cell] = []

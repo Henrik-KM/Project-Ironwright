@@ -438,6 +438,17 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         var actor := page[0] as Node3D
         _expect(actor != null and actor.visible, "Root Cistern presentation review actor must be visible on the final remote page.")
         _expect(actor != null and actor.find_children("*", "MeshInstance3D", true, false).size() > 20, "Root Cistern presentation review actor must retain its authored high-definition mesh hierarchy.")
+    for core_page in range(3):
+        world._show_presentation_review_page(core_page)
+        await process_frame
+        var core_actors: Array = world.presentation_review_pages[core_page]
+        _expect(core_actors.size() >= 3, "Each core presentation page must expose enough actors for a readable staged composition.")
+        if core_actors.size() >= 3:
+            var first_core_actor := core_actors[0] as Node3D
+            var last_core_actor := core_actors[core_actors.size() - 1] as Node3D
+            _expect(first_core_actor != null and last_core_actor != null and absf(first_core_actor.position.z - last_core_actor.position.z) > 1.0, "Core presentation pages must use depth-separated rows so authored actors remain judgeable.")
+        _expect(world.presentation_review_camera_desired.z < 18.0, "Core presentation pages must use the closer review camera framing.")
+    world._show_presentation_review_page(13)
     world.presentation_review_active = false
     world.get_tree().paused = false
     world._set_tactical_hud_visible(true)
