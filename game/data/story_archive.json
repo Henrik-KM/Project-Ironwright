@@ -12,6 +12,16 @@
       "description": "The town's final service ledger names the Heartforge as a shelter, not a weapon. Someone kept its warm circuit alive long after the evacuation routes went dark."
     },
     {
+      "id": "story.machine.bulwark",
+      "arc": "machine_witness",
+      "trigger": "opening",
+      "trigger_id": "",
+      "sequence": 15,
+      "display_name": "The First Guardian",
+      "source_name": "Heartforge District",
+      "description": "The frame beside the forge was built to intercept danger before it reached the human operator. Its designation became a name because the machine kept choosing the same promise: stay close, hold the line, bring the light home."
+    },
+    {
       "id": "story.north_ruins.ledger",
       "arc": "civic_afterimage",
       "trigger": "region_discovered",
@@ -240,6 +250,26 @@
       "display_name": "The Returned Signal",
       "source_name": "Rebuilt autonomous outpost",
       "description": "When the relay came back online, its first transmission was not a request for orders. It was a route report: the machines had remembered how to continue."
+    },
+    {
+      "id": "story.machine.first_replacement",
+      "arc": "machine_witness",
+      "trigger": "machine_witness",
+      "trigger_id": "machine.first_replacement",
+      "sequence": 89,
+      "display_name": "The Remembered Shape",
+      "source_name": "Autonomous Heartforge",
+      "description": "When the first ordinary frame was lost, the society did not open a queue or wait for a command. It chose the missing role, paid the cost and made room for a new name."
+    },
+    {
+      "id": "story.machine.first_return",
+      "arc": "machine_witness",
+      "trigger": "machine_witness",
+      "trigger_id": "machine.first_return",
+      "sequence": 90,
+      "display_name": "The Warm Return",
+      "source_name": "Heartforge District",
+      "description": "The first long-range group returned through streets it had learned without human supervision. The Heartforge answered with a warmer signal, as if the route itself had become part of the society."
     },
     {
       "id": "story.endgame.severance",

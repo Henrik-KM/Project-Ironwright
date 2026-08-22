@@ -59,6 +59,10 @@ func unlock_opening_record() -> void:
     _unlock_trigger(&"opening", &"")
 
 
+func record_machine_witness(witness_id: StringName) -> void:
+    _unlock_trigger(&"machine_witness", witness_id)
+
+
 func reconcile_discovered_state() -> void:
     unlock_opening_record()
     if region_director == null:

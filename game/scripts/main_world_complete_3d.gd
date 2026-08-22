@@ -468,6 +468,8 @@ func _on_long_operation_returned(operation_id: StringName, display_name: String,
         var moment := "%s brought the group home through the same streets it learned on; the Heartforge answers with a warmer signal." % witness
         run_state.log_event("MACHINE WITNESS · %s" % moment)
         hud.push_notification("MACHINE WITNESS · %s" % moment.to_upper())
+        if story_archive_director != null:
+            story_archive_director.record_machine_witness(&"machine.first_return")
     progression._evaluate_automatic_technologies()
 
 
@@ -487,6 +489,8 @@ func _on_autonomous_machine_built(archetype: StringName, level: int, reason: Str
         var moment := "%s took its place without a queue or command; the machine society is beginning to remember what the town needs." % identity
         run_state.log_event("MACHINE WITNESS · %s" % moment)
         hud.push_notification("MACHINE WITNESS · %s" % moment.to_upper())
+        if story_archive_director != null:
+            story_archive_director.record_machine_witness(&"machine.first_replacement")
 
 
 func _machine_identity_for_archetype(archetype: StringName) -> String:
