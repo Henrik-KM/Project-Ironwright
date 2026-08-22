@@ -26,6 +26,11 @@
 - Added deterministic weapon and shutdown signatures for Bulwark, Warden, Scrapper, Pathfinder, Engineer and Signal Relay archetypes, using the existing bounded runtime audio vocabulary.
 - Routed real robot weapon and destruction signals through the family profiles and added native coverage for profile availability and event selection; audio remains spatial feedback only and does not add alerts or recurring management work.
 
+## Focused operation-site identity milestone
+
+- Added four bounded presentation-only kits to the new fixed sites: archive shelving and record lamp, roof reservoir and beacon frame, cooling tank and service pipe, and root-signal spines with relay pulse.
+- Kept discovery, collision, outpost role, operation rewards and autonomous construction unchanged; native aesthetic coverage proves each kit appears only on its stable site identifier.
+
 ## Focused organic-roster breadth and authored-shell milestone
 
 - Expanded the authored organic roster from 12 to 14 families with Thornback territorial guardians and Ashmantle route predators.

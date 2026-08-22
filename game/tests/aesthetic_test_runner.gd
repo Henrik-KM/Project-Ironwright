@@ -103,6 +103,21 @@ func _run_all() -> void:
         site_sample._process(0.7)
         _expect(site_lens.scale != site_lens_before, "Discovered outpost beacons must carry a restrained readable pulse.")
     site_sample.queue_free()
+    var site_identity_cases := {
+        "site.north_archive_sublevel": "ArchiveShelfLeft",
+        "site.east_roof_reservoir": "RoofReservoirTank",
+        "site.west_cooling_station": "CoolingStationTank",
+        "site.root_signal_ledge": "RootSignalSpineA",
+    }
+    for raw_identity_id in site_identity_cases:
+        var identity_site := OutpostSite3D.new()
+        identity_site.configure({"id": raw_identity_id, "display_name": raw_identity_id, "recommended_outpost_role": "scout", "position": [64.0, 0.0, 64.0]})
+        root.add_child(identity_site)
+        await process_frame
+        identity_site.discover()
+        await process_frame
+        _expect(identity_site.find_child(str(site_identity_cases[raw_identity_id]), true, false) != null, "%s must expose its stable presentation identity kit." % raw_identity_id)
+        identity_site.queue_free()
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgeMaintenanceDetail") != null, "The Heartforge must expose a dedicated presentation-only maintenance detail layer.")
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgePlazaDetail/HeartforgeServiceRing/ForgeRecessedServiceRing") != null, "The Heartforge plaza must expose a readable recessed service ring around its focal machine.")
     _expect(_find_named(world, "RouteThresholdAmberBand") != null, "The opening service lane must expose a far amber threshold landmark for the first objective.")
