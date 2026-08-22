@@ -69,30 +69,49 @@ func _build_camp() -> void:
     camp.name = "CozyHeartforgeCamp"
     world.add_child(camp)
     camp.position = heartforge.global_position
+    var camp_service := Node3D.new()
+    camp_service.name = "HeartforgeCampHighDefinitionService"
+    camp.add_child(camp_service)
 
     _add_puddle(camp, Vector3(-5.2, 0.035, 2.4), Vector2(3.3, 1.25), 0.22)
     _add_puddle(camp, Vector3(5.0, 0.035, -2.1), Vector2(2.5, 1.0), -0.34)
 
-    ModelKit3D.add_box(camp, Vector3(5.8, 0.12, 3.2), Vector3(-4.8, 3.45, 2.9), rust_material, Vector3(0.03, -0.08, -0.08), "WorkshopCanopy")
+    ModelKit3D.add_beveled_box(camp, Vector3(5.8, 0.18, 3.2), Vector3(-4.8, 3.45, 2.9), rust_material, Vector3(0.03, -0.08, -0.08), "WorkshopCanopy", 0.18)
     for position in [Vector3(-7.2, 1.7, 1.6), Vector3(-2.45, 1.7, 1.6), Vector3(-7.2, 1.7, 4.2), Vector3(-2.45, 1.7, 4.2)]:
         ModelKit3D.add_cylinder(camp, 0.08, 3.4, position, dark_material, Vector3.ZERO, "CanopyPost")
 
-    ModelKit3D.add_box(camp, Vector3(3.6, 0.24, 1.25), Vector3(-4.9, 0.85, 2.7), dark_material, Vector3.ZERO, "Workbench")
-    ModelKit3D.add_box(camp, Vector3(3.2, 0.65, 0.18), Vector3(-4.9, 1.35, 3.2), rust_material, Vector3.ZERO, "ToolWall")
+    ModelKit3D.add_beveled_box(camp, Vector3(3.6, 0.3, 1.25), Vector3(-4.9, 0.85, 2.7), dark_material, Vector3.ZERO, "Workbench", 0.18)
+    ModelKit3D.add_beveled_box(camp, Vector3(3.2, 0.65, 0.18), Vector3(-4.9, 1.35, 3.2), rust_material, Vector3.ZERO, "ToolWall", 0.16)
+    ModelKit3D.add_beveled_box(camp_service, Vector3(3.25, 0.12, 0.84), Vector3(-4.9, 1.08, 2.7), rust_material, Vector3.ZERO, "CampServiceWorkbenchTop", 0.18)
+    ModelKit3D.add_louvered_panel(camp_service, Vector3(1.05, 0.58, 0.1), Vector3(-4.9, 1.48, 3.31), dark_material, cyan_material, Vector3.ZERO, "CampToolControlFace", 4)
+    ModelKit3D.add_cylinder(camp_service, 0.045, 2.8, Vector3(-4.9, 1.53, 3.08), cyan_material, Vector3(PI * 0.5, 0.0, 0.0), "CampToolRail")
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(camp_service, Vector3(0.14, 0.48, 0.14), Vector3(-4.9 + side * 1.45, 1.3, 2.7), rust_material, Vector3(0.0, 0.0, side * 0.18), "CampWorkbenchBrace", 0.22)
     for index in range(6):
         var x := -6.1 + float(index) * 0.48
         var material := cyan_material if index == 4 else dark_material
         ModelKit3D.add_cylinder(camp, 0.055, 0.72 + float(index % 3) * 0.16, Vector3(x, 1.36, 3.02), material, Vector3(0.0, 0.0, 0.18 * float(index % 2)), "HangingTool")
+
+    var battery_pod := Node3D.new()
+    battery_pod.name = "CampServiceBatteryPod"
+    battery_pod.position = Vector3(2.15, 0.0, 2.25)
+    camp_service.add_child(battery_pod)
+    ModelKit3D.add_beveled_box(battery_pod, Vector3(1.35, 1.1, 0.92), Vector3.ZERO + Vector3(0.0, 0.72, 0.0), dark_material, Vector3.ZERO, "CampBatteryHousing", 0.2)
+    ModelKit3D.add_louvered_panel(battery_pod, Vector3(0.78, 0.48, 0.1), Vector3(0.0, 0.75, 0.48), rust_material, cyan_material, Vector3.ZERO, "CampBatteryServiceFace", 3)
+    ModelKit3D.add_sphere(battery_pod, 0.095, Vector3(0.0, 1.12, 0.53), cyan_material, Vector3.ONE, "CampBatteryStatusLens")
+    ModelKit3D.add_cylinder(battery_pod, 0.06, 1.5, Vector3(0.0, 1.52, -0.18), rust_material, Vector3(0.0, 0.0, PI * 0.5), "CampBatteryCableSpine")
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_cylinder(camp_service, 0.035, 2.4, Vector3(2.15 + side * 0.48, 1.25, 2.95), cyan_material, Vector3(PI * 0.5, 0.0, 0.0), "CampServiceCableBranch")
 
     _add_crate_stack(camp, Vector3(5.3, 0.0, 3.2), 3)
     _add_crate_stack(camp, Vector3(-6.5, 0.0, -2.5), 2)
     _add_barrel(camp, Vector3(4.8, 0.0, 4.7), Color("6e4c34"))
     _add_barrel(camp, Vector3(5.8, 0.0, 4.45), Color("38545b"))
 
-    ModelKit3D.add_box(camp, Vector3(1.4, 0.16, 0.55), Vector3(-2.7, 0.62, -4.45), rust_material, Vector3.ZERO, "BenchSeat")
+    ModelKit3D.add_beveled_box(camp, Vector3(1.4, 0.2, 0.55), Vector3(-2.7, 0.62, -4.45), rust_material, Vector3.ZERO, "BenchSeat", 0.2)
     for side in [-1.0, 1.0]:
-        ModelKit3D.add_box(camp, Vector3(0.12, 0.62, 0.12), Vector3(-2.7 + side * 0.52, 0.31, -4.45), dark_material, Vector3.ZERO, "BenchLeg")
-    ModelKit3D.add_box(camp, Vector3(1.25, 0.04, 0.5), Vector3(-2.7, 0.72, -4.42), ModelKit3D.material(Color("66594f"), 0.0, 0.96), Vector3(0.03, 0.0, -0.03), "FoldedBlanket")
+        ModelKit3D.add_beveled_box(camp, Vector3(0.12, 0.62, 0.12), Vector3(-2.7 + side * 0.52, 0.31, -4.45), dark_material, Vector3.ZERO, "BenchLeg", 0.2)
+    ModelKit3D.add_beveled_box(camp, Vector3(1.25, 0.04, 0.5), Vector3(-2.7, 0.72, -4.42), ModelKit3D.material(Color("66594f"), 0.0, 0.96), Vector3(0.03, 0.0, -0.03), "FoldedBlanket", 0.2)
     ModelKit3D.add_cylinder(camp, 0.16, 0.28, Vector3(-1.95, 0.16, -4.05), dark_material, Vector3.ZERO, "Kettle")
 
     _build_string_lights(camp)
@@ -204,8 +223,8 @@ func _add_puddle(parent: Node3D, position: Vector3, size: Vector2, rotation_y: f
 func _add_crate_stack(parent: Node3D, position: Vector3, count: int) -> void:
     for index in range(count):
         var offset := Vector3(float(index % 2) * 0.75, 0.42 + float(index / 2) * 0.78, float(index % 3) * 0.18)
-        ModelKit3D.add_box(parent, Vector3(0.72, 0.72, 0.72), position + offset, rust_material, Vector3(0.02 * index, 0.18 * index, 0.03), "WorkshopCrate")
-        ModelKit3D.add_box(parent, Vector3(0.76, 0.07, 0.76), position + offset + Vector3(0.0, 0.37, 0.0), dark_material, Vector3.ZERO, "CrateBand")
+        ModelKit3D.add_beveled_box(parent, Vector3(0.72, 0.72, 0.72), position + offset, rust_material, Vector3(0.02 * index, 0.18 * index, 0.03), "WorkshopCrate", 0.16)
+        ModelKit3D.add_beveled_box(parent, Vector3(0.76, 0.07, 0.76), position + offset + Vector3(0.0, 0.37, 0.0), dark_material, Vector3.ZERO, "CrateBand", 0.2)
 
 
 func _add_barrel(parent: Node3D, position: Vector3, color: Color) -> void:

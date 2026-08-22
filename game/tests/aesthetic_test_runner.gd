@@ -38,7 +38,10 @@ func _run_all() -> void:
             _expect(audio_director.event_count > construction_audio_before, "Outpost construction noise must produce spatial audio feedback.")
             _expect(audio_director.last_profile == &"noise_pulse", "Outpost construction noise must use the bounded noise-pulse audio language.")
             audio_director.stop_all()
-    _expect(world.get_node_or_null("CozyHeartforgeCamp") != null, "The Heartforge must receive an inhabited cozy camp layer.")
+    var camp := world.get_node_or_null("CozyHeartforgeCamp") as Node3D
+    _expect(camp != null, "The Heartforge must receive an inhabited cozy camp layer.")
+    _expect(camp != null and camp.get_node_or_null("HeartforgeCampHighDefinitionService") != null, "The inhabited Heartforge camp must carry a bounded high-definition service layer.")
+    _expect(camp != null and camp.find_child("CampToolControlFace", true, false) != null and camp.find_child("CampServiceBatteryPod", true, false) != null and camp.find_child("CampBatteryStatusLens", true, false) != null, "The Heartforge camp service layer must retain readable tool and battery hardware.")
     _expect(world.get_node_or_null("UrbanAestheticPass") != null, "The ruined city must receive the urban storytelling pass.")
     var city := world.get_node_or_null("ProceduralUrbanDistrict") as ProceduralCity3D
     _expect(city != null and city.get_node_or_null("HighDefinitionStreetDetails") != null, "The central town must carry a bounded high-definition street-detail layer.")
