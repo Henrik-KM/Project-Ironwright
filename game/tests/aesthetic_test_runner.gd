@@ -840,6 +840,8 @@ func _run_all() -> void:
     await process_frame
     _expect(_find_named(authored_warden, "WardenAuthoredModel") != null, "The guardian must use the authored Warden model shell.")
     _expect(_find_named(authored_warden, "ProductionAssetMarker") != null, "The authored Warden model must expose its production asset marker.")
+    _expect(_find_named(authored_warden, "WardenTargetingFace") != null and _find_named(authored_warden, "WardenOpticShroud") != null, "The authored Warden model must expose maintained targeting and optic-shroud hardware.")
+    _expect(_find_named(authored_warden, "WardenRecoilCollarLeft") != null and _find_named(authored_warden, "WardenThermalFinRight") != null and _find_named(authored_warden, "WardenBreechClamp") != null, "The authored Warden model must expose close-camera recoil, thermal and breech hardware.")
     _expect(_find_named(authored_warden, "RearShieldCore") != null and _find_named(authored_warden, "RearShieldCornerCap") != null, "The Warden must expose beveled rear protection hardware.")
     _expect(_find_named(authored_warden, "ShieldRibCore") != null and _find_named(authored_warden, "ShieldRibCornerCap") != null, "The Warden must expose a beveled protection-rib assembly.")
     authored_warden.queue_free()

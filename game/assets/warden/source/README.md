@@ -6,11 +6,12 @@ presentation-only guardian shell: broad field-steel armour, a protected
 autocannon breech, heat-exchanger louvers, counterweight, sensor mast and
 warm/cyan status hardware.
 
-Stable presentation nodes include `Chassis`, `ChassisCore`,
-`ChassisCornerCap`, `Sensor`, `OpticLens`, `WardenAutocannon`,
-`WeaponMuzzle`, `WardenHeatExchanger`, and `ProductionAssetMarker`. The asset
-exposes `Idle`, `Walk`, and `Fire` clips for tooling; deterministic runtime gait
-and recoil remain owned by the existing procedural animator.
+Stable presentation nodes include Chassis, ChassisCore, ChassisCornerCap,
+Sensor, OpticLens, WardenAutocannon, WeaponMuzzle, WardenHeatExchanger,
+WardenTargetingFace, WardenOpticShroud, WardenRecoilCollarLeft,
+WardenThermalFinRight, WardenBreechClamp, and ProductionAssetMarker. The asset
+exposes Idle, Walk, and Fire clips for tooling; deterministic runtime gait and
+recoil remain owned by the existing procedural animator.
 
 No third-party runtime asset is used. The guardian's collision, health, damage,
 autonomy focus, formation behavior, and save state remain unchanged.

@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused authored Warden guardian refinement milestone
+
+- raised the source Warden's close-camera cylindrical hardware to denser
+  radial resolution and added authored targeting-face, optic-shroud,
+  recoil-collar, thermal-fin and breech-clamp surfaces;
+- retained the existing guardian sockets, authored animation clips, collision,
+  escort formation and autonomous protection contracts; this is presentation
+  only and adds no recurring machine workload;
+- extended the Warden manifest, geometry floor and native aesthetic coverage,
+  with a fresh exported friendly-roster review required before merge.
+
 ## Focused live colour-vision accessibility milestone
 
 - connected the existing deuteranopia, protanopia and tritanopia settings to
