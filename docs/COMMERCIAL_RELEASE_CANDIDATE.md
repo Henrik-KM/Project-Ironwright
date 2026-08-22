@@ -134,6 +134,8 @@ The active and medium radii, actor budgets and distant update intervals adapt co
 
 Collections, effect pools, reports, save histories and telemetry remain bounded. The release tests verify that a distant organism enters reduced-detail simulation and continues moving causally.
 
+The repository also carries a deterministic release-population benchmark. It boots the real release scene, adds 192 actors across active, medium and distant bands, warms the simulation, and emits a machine-readable report containing wall-clock simulation cost, actor-band counts, budget headroom and the candidate/sort population. CI requires that report to be emitted and that its structural invariants pass; it intentionally does not invent a universal FPS threshold for unknown target hardware. A signed target-hardware run can therefore compare the same report fields without changing the gameplay contract.
+
 ## Persistence and migration
 
 The release candidate replaces the transitional multi-file save path with a unified schema-versioned snapshot.

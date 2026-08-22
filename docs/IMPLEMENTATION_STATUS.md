@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused release-population benchmark milestone
+
+- added a deterministic benchmark that boots the real release scene, exercises
+  192 physical actors across active, medium and reduced-detail bands, and emits
+  machine-readable simulation-cost and population metrics;
+- enforced the benchmark in both validation and release workflows without
+  inventing a universal FPS threshold for unknown target hardware;
+- hardened compact spatial audio feedback against freed sound-player references
+  revealed by the benchmark, preserving bounded event playback during combat
+  pressure.
+
 ## Focused pressure-chronicle archive milestone
 
 - persisted bounded high-pressure regional observations in the run state;
