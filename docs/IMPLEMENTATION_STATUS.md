@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Heartforge camp high-definition milestone
+
+- replaced the inhabited sanctuary workshop's broad canopy, workbench, tool
+  wall, seating and crate bodies with bounded beveled manufactured forms;
+- added a presentation-only tool-control and battery-service assembly so the
+  camp reads as a maintained machine refuge rather than a cluster of boxes;
+- preserved sanctuary lighting, collision, interaction, autonomy and resource
+  contracts, with aesthetic regression coverage and live exported review.
+
 ## Focused Municipal Glasshouse service-depth milestone
 
 - added a bounded release-only service court with raised bed edges, a civic

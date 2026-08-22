@@ -316,6 +316,12 @@ remain runtime-authored around that shell, so the outpost still communicates
 purpose, progression and damage without reintroducing manual construction
 geometry or recurring management work.
 
+The inhabited Heartforge camp now carries the same manufactured-depth bar:
+the workshop canopy, bench, tool wall, seating and crate stacks use bounded
+beveled forms, while a compact tool-control face and battery-service pod add
+readable machine-maintenance identity. This layer remains presentation-only and
+does not create a player-managed production queue or camp resource obligation.
+
 Automated presence tests only prove the slice exists technically. Actual screenshot/gameplay review decides whether it clears the visual bar.
 
 ## Art production sequence
