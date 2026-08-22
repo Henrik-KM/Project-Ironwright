@@ -358,6 +358,12 @@ geometry when a role shell is viewed at tactical distance. This remains a
 presentation-only layer and does not change actor sockets, collision, AI or
 machine workload.
 
+The authored Warden now carries the same manufactured-depth treatment on its
+rear protection: the broad shield and its raised rib use bounded beveled forms
+instead of flat runtime inserts. This strengthens the guardian read in escort
+and remote-salvage views while preserving formation, weapon sockets, collision,
+animation and autonomous protection behaviour.
+
 Automated presence tests only prove the slice exists technically. Actual screenshot/gameplay review decides whether it clears the visual bar.
 
 ## Art production sequence

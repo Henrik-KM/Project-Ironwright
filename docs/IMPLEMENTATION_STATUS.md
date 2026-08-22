@@ -29,6 +29,15 @@
 - preserved building collision, camera clearance, navigation and simulation
   state while adding aesthetic coverage for each identity socket.
 
+## Focused Warden protection hardware depth milestone
+
+- replaced the authored Warden's remaining flat rear shield and protection-rib
+  inserts with bounded beveled manufactured forms in the live robot runtime;
+- preserved escort formation, weapon sockets, animation, collision and
+  autonomous protection behaviour while strengthening the guardian silhouette;
+- added aesthetic coverage for the stable rear-protection subparts, with a
+  fresh exported Warden review required before merge.
+
 ## Focused robot-role hardware depth milestone
 
 - replaced the remaining flat Warden counterweight, Scrapper claws, Pathfinder

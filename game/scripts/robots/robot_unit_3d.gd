@@ -607,8 +607,8 @@ func _refresh_visual_identity() -> void:
             ModelKit3D.add_cylinder(_model_root, 0.11, 0.18, Vector3(0.0, 1.46, 0.2), rust, Vector3(1.5708, 0.0, 0.0), "SalvageDrum")
             ModelKit3D.add_box(_model_root, Vector3(0.18, 0.34, 0.56), Vector3(-0.66, 1.08, 0.15), steel, Vector3(0.0, 0.0, -0.18), "SalvageClamp")
         &"guardian", &"companion":
-            ModelKit3D.add_box(_model_root, Vector3(1.72, 0.82, 0.14), Vector3(0.0, 0.78, 0.7), steel, Vector3.ZERO, "RearShield")
-            ModelKit3D.add_box(_model_root, Vector3(1.38, 0.52, 0.12), Vector3(0.0, 1.02, 0.84), rust, Vector3.ZERO, "ShieldRib")
+            ModelKit3D.add_beveled_box(_model_root, Vector3(1.72, 0.82, 0.14), Vector3(0.0, 0.78, 0.7), steel, Vector3.ZERO, "RearShield", 0.18)
+            ModelKit3D.add_beveled_box(_model_root, Vector3(1.38, 0.52, 0.12), Vector3(0.0, 1.02, 0.84), rust, Vector3.ZERO, "ShieldRib", 0.16)
             ModelKit3D.add_cylinder(_model_root, 0.12, 1.1, Vector3(-0.25, 1.35, -0.65), dark_steel, Vector3(1.5708, 0.0, 0.0), "Weapon")
             ModelKit3D.add_cylinder(_model_root, 0.12, 1.1, Vector3(0.25, 1.35, -0.65), dark_steel, Vector3(1.5708, 0.0, 0.0), "WeaponBarrel")
             ModelKit3D.add_cylinder(_model_root, 0.16, 0.12, Vector3(-0.25, 1.35, -1.18), glow, Vector3(1.5708, 0.0, 0.0), "WeaponMuzzle")
@@ -725,8 +725,8 @@ func _build_authored_warden_visuals() -> void:
     # Keep the guardian's original escort read explicit in the authored shell:
     # rear protection remains a stable role cue and is also used by the
     # presentation animator for a restrained rib motion.
-    ModelKit3D.add_box(_model_root, Vector3(1.78, 0.74, 0.14), Vector3(0.0, 0.8, 0.86), steel, Vector3.ZERO, "RearShield")
-    ModelKit3D.add_box(_model_root, Vector3(1.44, 0.12, 0.12), Vector3(0.0, 1.05, 0.96), dark_steel, Vector3.ZERO, "ShieldRib")
+    ModelKit3D.add_beveled_box(_model_root, Vector3(1.78, 0.74, 0.14), Vector3(0.0, 0.8, 0.86), steel, Vector3.ZERO, "RearShield", 0.18)
+    ModelKit3D.add_beveled_box(_model_root, Vector3(1.44, 0.12, 0.12), Vector3(0.0, 1.05, 0.96), dark_steel, Vector3.ZERO, "ShieldRib", 0.16)
 
     if level >= 2:
         for side in [-1.0, 1.0]:
