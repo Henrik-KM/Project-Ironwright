@@ -43,6 +43,9 @@ func _run_all() -> void:
     _expect(camp != null and camp.get_node_or_null("HeartforgeCampHighDefinitionService") != null, "The inhabited Heartforge camp must carry a bounded high-definition service layer.")
     _expect(camp != null and camp.find_child("CampToolControlFace", true, false) != null and camp.find_child("CampServiceBatteryPod", true, false) != null and camp.find_child("CampBatteryStatusLens", true, false) != null, "The Heartforge camp service layer must retain readable tool and battery hardware.")
     _expect(world.get_node_or_null("UrbanAestheticPass") != null, "The ruined city must receive the urban storytelling pass.")
+    var urban_pass := world.get_node_or_null("UrbanAestheticPass") as Node3D
+    _expect(urban_pass != null and urban_pass.find_child("ClinicSign", true, false) != null and urban_pass.find_child("WorkshopSign", true, false) != null, "The urban pass must retain layered civic sign hardware.")
+    _expect(urban_pass != null and urban_pass.find_child("StreetBench", true, false) != null and urban_pass.find_child("MunicipalBin", true, false) != null and urban_pass.find_child("BinLid", true, false) != null, "The urban pass must retain beveled street furniture and service props.")
     var city := world.get_node_or_null("ProceduralUrbanDistrict") as ProceduralCity3D
     _expect(city != null and city.get_node_or_null("HighDefinitionStreetDetails") != null, "The central town must carry a bounded high-definition street-detail layer.")
     if city != null:

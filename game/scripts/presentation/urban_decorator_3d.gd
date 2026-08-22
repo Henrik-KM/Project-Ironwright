@@ -87,7 +87,7 @@ func _build_warm_windows(root: Node3D) -> void:
         var size := Vector3(1.25, 1.05, 0.08)
         if absf(position.x) > 20.0 and absf(position.z) < 25.0:
             size = Vector3(0.08, 1.05, 1.25)
-        ModelKit3D.add_box(root, size, position, glass, Vector3.ZERO, "SurvivorWindow")
+        ModelKit3D.add_beveled_box(root, size, position, glass, Vector3.ZERO, "SurvivorWindow", 0.18)
         if index % 3 == 0:
             flicker_lights.append(_add_light(root, position + Vector3(0.0, 0.0, 0.25), Color("ffad62"), 0.6, 5.0))
 
@@ -95,8 +95,8 @@ func _build_warm_windows(root: Node3D) -> void:
 func _build_shopfronts(root: Node3D) -> void:
     var cyan_sign := ModelKit3D.material(Color("284d52"), 0.18, 0.32, Color("6de0e4"), 3.0)
     var warm_sign := ModelKit3D.material(Color("6d3f28"), 0.18, 0.36, Color("ff8b46"), 2.7)
-    ModelKit3D.add_box(root, Vector3(3.4, 0.55, 0.12), Vector3(-12.0, 2.6, 21.15), cyan_sign, Vector3.ZERO, "ClinicSign")
-    ModelKit3D.add_box(root, Vector3(0.12, 0.65, 3.0), Vector3(21.15, 2.8, -12.0), warm_sign, Vector3.ZERO, "WorkshopSign")
+    ModelKit3D.add_beveled_box(root, Vector3(3.4, 0.55, 0.12), Vector3(-12.0, 2.6, 21.15), cyan_sign, Vector3.ZERO, "ClinicSign", 0.16)
+    ModelKit3D.add_beveled_box(root, Vector3(0.12, 0.65, 3.0), Vector3(21.15, 2.8, -12.0), warm_sign, Vector3.ZERO, "WorkshopSign", 0.16)
     flicker_lights.append(_add_light(root, Vector3(-12.0, 2.4, 20.5), Color("78e5e8"), 0.9, 6.5))
     flicker_lights.append(_add_light(root, Vector3(20.5, 2.5, -12.0), Color("ff9450"), 0.85, 6.0))
 
@@ -105,12 +105,12 @@ func _build_street_props(root: Node3D) -> void:
     var positions := [Vector3(-5.6, 0.0, -24.0), Vector3(5.5, 0.0, 24.0), Vector3(-24.0, 0.0, 5.6), Vector3(24.0, 0.0, -5.6)]
     for index in range(positions.size()):
         var position: Vector3 = positions[index]
-        ModelKit3D.add_box(root, Vector3(1.35, 0.12, 0.45), position + Vector3(0.0, 0.65, 0.0), rust_material, Vector3(0.0, float(index) * 0.42, 0.0), "StreetBench")
+        ModelKit3D.add_beveled_box(root, Vector3(1.35, 0.12, 0.45), position + Vector3(0.0, 0.65, 0.0), rust_material, Vector3(0.0, float(index) * 0.42, 0.0), "StreetBench", 0.24)
         ModelKit3D.add_cylinder(root, 0.07, 0.65, position + Vector3(-0.48, 0.32, 0.0), dark_material, Vector3.ZERO, "BenchLeg")
         ModelKit3D.add_cylinder(root, 0.07, 0.65, position + Vector3(0.48, 0.32, 0.0), dark_material, Vector3.ZERO, "BenchLeg")
     for position in [Vector3(-6.2, 0.0, 13.0), Vector3(6.0, 0.0, -13.0), Vector3(-30.0, 0.0, -5.5), Vector3(30.0, 0.0, 5.5)]:
-        ModelKit3D.add_box(root, Vector3(0.75, 1.1, 0.75), position + Vector3(0.0, 0.55, 0.0), dark_material, Vector3.ZERO, "MunicipalBin")
-        ModelKit3D.add_box(root, Vector3(0.82, 0.12, 0.82), position + Vector3(0.0, 1.15, 0.0), rust_material, Vector3(0.05, 0.0, 0.08), "BinLid")
+        ModelKit3D.add_beveled_box(root, Vector3(0.75, 1.1, 0.75), position + Vector3(0.0, 0.55, 0.0), dark_material, Vector3.ZERO, "MunicipalBin", 0.18)
+        ModelKit3D.add_beveled_box(root, Vector3(0.82, 0.12, 0.82), position + Vector3(0.0, 1.15, 0.0), rust_material, Vector3(0.05, 0.0, 0.08), "BinLid", 0.22)
 
 
 func _build_overgrowth(root: Node3D) -> void:
