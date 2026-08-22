@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused civic street hardware depth milestone
+
+- replaced the remaining flat civic sign, survivor-window, bench, bin, transit
+  shelter, barricade, gate-sensor and workshop-gantry inserts with beveled
+  manufactured forms across the opening route and central town dressing;
+- preserved route clearance, collision ownership, lighting, navigation, ecology
+  and player workload contracts;
+- added aesthetic regression coverage for the upgraded civic sign and street
+  furniture sockets, with fresh exported live review required before merge.
+
 ## Focused robot-role hardware depth milestone
 
 - replaced the remaining flat Warden counterweight, Scrapper claws, Pathfinder

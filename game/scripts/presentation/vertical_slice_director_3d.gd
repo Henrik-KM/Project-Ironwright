@@ -402,7 +402,7 @@ func _build_street_encounter_dressing() -> void:
         ModelKit3D.add_cylinder(shelter, 0.075, 2.65, Vector3(side * 1.45, 1.33, 0.0), black_metal, Vector3.ZERO, "ShelterFrame")
         ModelKit3D.add_cylinder(shelter, 0.06, 2.25, Vector3(side * 1.45, 1.12, -1.15), rust_metal, Vector3(0.08 * side, 0.0, 0.05), "ShelterRearFrame")
     ModelKit3D.add_beveled_box(shelter, Vector3(3.0, 0.12, 1.7), Vector3(0.0, 2.62, 0.08), rust_metal, Vector3(0.05, 0.0, -0.08), "ShelterCanopy", 0.22)
-    ModelKit3D.add_box(shelter, Vector3(2.65, 1.55, 0.045), Vector3(0.0, 1.25, 0.03), cold_glass, Vector3(0.0, 0.0, 0.08), "ShelterGlass")
+    ModelKit3D.add_beveled_box(shelter, Vector3(2.65, 1.55, 0.045), Vector3(0.0, 1.25, 0.03), cold_glass, Vector3(0.0, 0.0, 0.08), "ShelterGlass", 0.2)
     ModelKit3D.add_beveled_box(shelter, Vector3(2.1, 0.16, 0.48), Vector3(0.0, 0.72, -0.6), painted_metal, Vector3(0.0, 0.0, 0.04), "ShelterBench", 0.2)
     for side in [-1.0, 1.0]:
         ModelKit3D.add_cylinder(shelter, 0.055, 0.68, Vector3(side * 0.78, 0.36, -0.6), black_metal, Vector3.ZERO, "BenchSupport")
@@ -461,15 +461,15 @@ func _build_sanctuary_perimeter() -> void:
     for index in range(positions.size()):
         var position: Vector3 = positions[index][0]
         var yaw := float(positions[index][1])
-        ModelKit3D.add_box(perimeter, Vector3(3.2, 1.05, 0.38), position + Vector3.UP * 0.53, rust_metal if index % 2 == 0 else painted_metal, Vector3(0.0, yaw, 0.0), "WeldedBarricade")
-        ModelKit3D.add_box(perimeter, Vector3(2.8, 0.1, 0.08), position + Vector3(0.0, 1.2, 0.0), warning_paint, Vector3(0.0, yaw, 0.0), "BarricadeStripe")
+        ModelKit3D.add_beveled_box(perimeter, Vector3(3.2, 1.05, 0.38), position + Vector3.UP * 0.53, rust_metal if index % 2 == 0 else painted_metal, Vector3(0.0, yaw, 0.0), "WeldedBarricade", 0.18)
+        ModelKit3D.add_beveled_box(perimeter, Vector3(2.8, 0.1, 0.08), position + Vector3(0.0, 1.2, 0.0), warning_paint, Vector3(0.0, yaw, 0.0), "BarricadeStripe", 0.18)
         for leg in [-1.0, 1.0]:
-            ModelKit3D.add_box(perimeter, Vector3(0.16, 0.72, 0.6), position + Vector3(leg * 1.25, 0.34, 0.0), black_metal, Vector3(0.0, yaw, 0.1 * leg), "BarricadeFoot")
+            ModelKit3D.add_beveled_box(perimeter, Vector3(0.16, 0.72, 0.6), position + Vector3(leg * 1.25, 0.34, 0.0), black_metal, Vector3(0.0, yaw, 0.1 * leg), "BarricadeFoot", 0.2)
 
     # Open northern throat: the base is a refuge, not a sealed RTS compound.
     for x in [-4.4, 4.4]:
         ModelKit3D.add_cylinder(perimeter, 0.12, 4.2, Vector3(x, 2.1, -9.4), black_metal, Vector3.ZERO, "GatePost")
-        ModelKit3D.add_box(perimeter, Vector3(0.45, 0.45, 0.25), Vector3(x, 3.65, -9.5), cold_glass, Vector3.ZERO, "GateSensor")
+        ModelKit3D.add_beveled_box(perimeter, Vector3(0.45, 0.45, 0.25), Vector3(x, 3.65, -9.5), cold_glass, Vector3.ZERO, "GateSensor", 0.22)
 
 
 func _build_workshop_gantry() -> void:
@@ -482,9 +482,9 @@ func _build_workshop_gantry() -> void:
         ModelKit3D.add_cylinder(gantry, 0.14, 5.1, Vector3(x, 2.55, 1.8), painted_metal, Vector3.ZERO, "GantryColumn")
     _add_beam(gantry, Vector3(-3.7, 5.0, 1.8), Vector3(3.7, 5.0, 1.8), 0.12, black_metal, "GantryBeam")
     _add_beam(gantry, Vector3(0.0, 4.9, 1.8), Vector3(0.0, 4.2, -1.8), 0.08, rust_metal, "ServiceBoom")
-    ModelKit3D.add_box(gantry, Vector3(0.8, 0.55, 0.62), Vector3(0.0, 4.5, -1.5), black_metal, Vector3(0.0, 0.0, -0.08), "ChainHoist")
+    ModelKit3D.add_beveled_box(gantry, Vector3(0.8, 0.55, 0.62), Vector3(0.0, 4.5, -1.5), black_metal, Vector3(0.0, 0.0, -0.08), "ChainHoist", 0.2)
     _add_beam(gantry, Vector3(0.0, 4.25, -1.5), Vector3(0.0, 2.6, -1.5), 0.028, black_metal, "HoistChain")
-    ModelKit3D.add_box(gantry, Vector3(0.62, 0.25, 0.22), Vector3(0.0, 2.45, -1.5), rust_metal, Vector3(0.0, 0.0, 0.18), "HoistHook")
+    ModelKit3D.add_beveled_box(gantry, Vector3(0.62, 0.25, 0.22), Vector3(0.0, 2.45, -1.5), rust_metal, Vector3(0.0, 0.0, 0.18), "HoistHook", 0.2)
 
     # Thick routed power lines connect the inhabited workshop to the forge.
     _add_beam(gantry, Vector3(-3.6, 3.7, 1.8), Vector3(-2.0, 2.4, 0.7), 0.055, black_metal, "PowerUmbilical")
