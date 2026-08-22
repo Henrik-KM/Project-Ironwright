@@ -259,6 +259,12 @@
 - The overlays are cleared by repair and hidden automatically outside close-detail presentation, keeping remote simulation lightweight while preserving readable local consequences.
 - Release regression coverage verifies creation, damage, LOD suppression, restoration, and repair clearing.
 
+## Focused physical-route briefing milestone
+
+- Long-range operation choices now expose the actual authored route selected by the autonomous director, including route memory alternates after disruption.
+- The existing operation surface communicates the route label, bounded waypoint count and approximate travel distance alongside cost, team, work exposure and threat.
+- Added complete-run coverage for remembered alternate-route previews without introducing manual route planning or another recurring management task.
+
 ## Focused multi-session world recap milestone
 
 - Added a post-load strategic recap to the existing operations surface, summarising Heartforge condition, the current unresolved objective, active or proposed expedition state, recent organic pressure signals and the next major choice.

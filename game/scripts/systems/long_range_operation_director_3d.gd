@@ -115,11 +115,42 @@ func available_operations() -> Array[Dictionary]:
             continue
         var entry := operation(operation_id)
         if requirements_met(entry):
-            result.append(entry)
+            result.append(_with_route_preview(entry))
     result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
         return str(a.get("display_name", "")) < str(b.get("display_name", ""))
     )
     return result
+
+
+func route_preview(operation_id: StringName) -> Dictionary:
+    var entry := operation(operation_id)
+    return _with_route_preview(entry) if not entry.is_empty() else {}
+
+
+func _with_route_preview(entry: Dictionary) -> Dictionary:
+    var preview := entry.duplicate(true)
+    if region_director == null or heartforge == null:
+        preview["route_brief"] = "Route: physical route preview unavailable"
+        return preview
+    var region_id := StringName(str(preview.get("region_id", "region.heartforge_district")))
+    var route_variant := _preferred_route_variant(region_id)
+    var route := region_director.route_from_heartforge_variant(region_id, heartforge.global_position, route_variant)
+    var route_distance := 0.0
+    for index in range(1, route.size()):
+        route_distance += route[index - 1].distance_to(route[index])
+    var waypoint_count := maxi(0, route.size() - 1)
+    var route_label := region_director.route_variant_label(region_id, route_variant)
+    preview["route_variant"] = route_variant
+    preview["route_label"] = route_label
+    preview["route_waypoints"] = waypoint_count
+    preview["route_distance"] = route_distance
+    preview["route_brief"] = "Route: %s · %d waypoint%s · %d m" % [
+        route_label,
+        waypoint_count,
+        "" if waypoint_count == 1 else "s",
+        int(round(route_distance)),
+    ]
+    return preview
 
 
 func requirements_met(entry: Dictionary) -> bool:

@@ -341,7 +341,8 @@ func _refresh() -> void:
         ]
     else:
         authorize_button.text = "AUTHORIZE PHYSICAL OPERATION"
-        requirements_label.text = "Cost: %d Scrap · Team: %s · Work exposure: %d s · Threat %.1f" % [
+        requirements_label.text = "%s\nCost: %d Scrap · Team: %s · Work exposure: %d s · Threat %.1f" % [
+            str(item.get("route_brief", "Route: physical route preview unavailable")),
             int(item.get("scrap_cost", 0)),
             ", ".join(item.get("team_roles", [])),
             int(round(float(item.get("work_seconds", 0.0)))),
