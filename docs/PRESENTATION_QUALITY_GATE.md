@@ -153,6 +153,15 @@ The same surface exposes bounded 0.75x, 1.0x and 1.25x game speed for players
 who need more time to read a threat or want a faster repeat run; it changes
 clock pacing only and does not alter ecology or combat rules.
 
+The development-only presentation review entrypoint now also exposes the real
+persistent Municipal Glasshouse, Riverworks and Root Cistern landmarks as
+separate review pages (keys 4, 5 and 6). Each page keeps the actual region
+geometry, release dressing, atmosphere context and high-definition authored
+landmark in place while hiding unrelated world actors. This makes the early,
+mid and late remote-region gate inspectable in the exact exported build without
+adding a player-facing gallery, save state, collision, navigation or gameplay
+authority.
+
 ## Immediate failures identified from the first full-game screenshot review
 
 - Giant screen-fixed world labels can obscure most of the playfield.

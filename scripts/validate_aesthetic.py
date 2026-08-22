@@ -796,7 +796,7 @@ def main() -> int:
             for token in ["extends IronwrightProductionWorld3D", "_setup_vertical_slice_presentation", "VerticalSliceDirector3D", "VerticalSliceActorArt3D"]:
                 if token not in release:
                     fail(f"Release entrypoint is missing merged presentation behaviour: {token}")
-            for token in ["ReviewFloor", "ReviewBackdrop", "ReviewFrontFill", "ReviewRimLight", "PRESENTATION_REVIEW_EARLY_ORGANICS"]:
+            for token in ["ReviewFloor", "ReviewBackdrop", "ReviewFrontFill", "ReviewRimLight", "PRESENTATION_REVIEW_EARLY_ORGANICS", "PRESENTATION_REVIEW_REGIONS", "REMOTE · ROOT CISTERN"]:
                 if token not in release:
                     fail(f"Presentation review gallery is missing material-inspection behaviour: {token}")
         if "main_world_tiered_3d.gd" in main_scene:
