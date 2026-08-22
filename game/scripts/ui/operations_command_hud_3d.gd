@@ -144,6 +144,21 @@ func open_archive(next_records: Array[Dictionary]) -> void:
     _refresh()
 
 
+func open_recap(condition: String, unresolved_problem: String, expedition: String, threats: String, next_choices: String) -> void:
+    mode = &"recap"
+    selected_index = 0
+    current_operation_status = condition
+    archive_records = [{
+        "display_name": "RETURNING TO THE HEARTFORGE",
+        "description": "CURRENT UNRESOLVED PROBLEM\n%s\n\nACTIVE OR PROPOSED EXPEDITION\n%s\n\nUNFAMILIAR THREATS RECENTLY OBSERVED\n%s" % [unresolved_problem, expedition, threats],
+        "recap_choices": next_choices,
+    }]
+    backdrop.visible = true
+    panel.visible = true
+    apply_safe_layout(Vector2(get_viewport().get_visible_rect().size))
+    _refresh()
+
+
 func close() -> void:
     backdrop.visible = false
     panel.visible = false
@@ -155,14 +170,16 @@ func is_open() -> bool:
 
 func update_operations(next_operations: Array[Dictionary], status: String) -> void:
     operations = next_operations
-    current_operation_status = status
+    if mode != &"recap":
+        current_operation_status = status
     _clamp_selection()
     _refresh()
 
 
 func update_protocols(next_protocols: Array[Dictionary], status: String) -> void:
     protocols = next_protocols
-    endgame_status = status
+    if mode != &"recap":
+        endgame_status = status
     _clamp_selection()
     _refresh()
 
@@ -184,7 +201,7 @@ func select_next() -> void:
 
 
 func _authorize_selected() -> void:
-    if mode == &"archive":
+    if mode == &"archive" or mode == &"recap":
         return
     if mode == &"endgame":
         var protocol_id := selected_protocol_id()
@@ -229,6 +246,8 @@ func _current_items() -> Array[Dictionary]:
         return protocols
     if mode == &"archive":
         return archive_records
+    if mode == &"recap":
+        return archive_records
     return operations
 
 
@@ -251,6 +270,17 @@ func _refresh() -> void:
     next_button.visible = has_navigation
     previous_button.disabled = not has_navigation
     next_button.disabled = not has_navigation
+
+    if mode == &"recap":
+        title_label.text = "WORLD RECAP"
+        status_label.text = "%s\nA short strategic readout for returning to a persistent world." % current_operation_status
+        selection_label.text = "RETURNING TO THE HEARTFORGE"
+        description_label.text = str(items[0].get("description", ""))
+        requirements_label.text = "NEXT AVAILABLE MAJOR CHOICES\n%s\n\nPress ESC, P, L or V to close." % str(items[0].get("recap_choices", "Continue the current objective."))
+        previous_button.visible = false
+        next_button.visible = false
+        authorize_button.visible = false
+        return
 
     if mode == &"endgame":
         title_label.text = "FINAL PROTOCOLS"

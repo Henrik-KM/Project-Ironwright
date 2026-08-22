@@ -70,6 +70,8 @@ func _unhandled_input(event: InputEvent) -> void:
                 KEY_RIGHT:
                     operations_hud.select_next()
                 KEY_ENTER, KEY_SPACE:
+                    if operations_hud.mode == &"recap":
+                        return
                     if operations_hud.mode == &"endgame":
                         _initiate_protocol(operations_hud.selected_protocol_id())
                     else:
@@ -424,6 +426,41 @@ func _open_story_archive() -> void:
         return
     operations_hud.open_archive(story_archive_director.archive_records())
     player.input_enabled = false
+
+
+func _show_session_recap() -> void:
+    if operations_hud == null or hud == null or heartforge == null or run_state == null:
+        return
+    _update_complete_game_objective()
+    var integrity := int(round(100.0 * heartforge.current_health / maxf(1.0, heartforge.maximum_health)))
+    var condition := "HEARTFORGE %d%% INTEGRITY · TIER %d · SCRAP %d · CORES %d" % [integrity, progression.heartforge_tier, run_state.scrap, run_state.rare_cores]
+    var objective_parts := hud.objective_label.text.split("\n", false, 1)
+    var unresolved_problem := hud.objective_label.text if objective_parts.is_empty() else "%s\n%s" % [objective_parts[0], objective_parts[1] if objective_parts.size() > 1 else ""]
+    var expedition := "No long-range operation is in motion. Press P to review the next physical route."
+    if long_operation_director != null and not long_operation_director.active_operation.is_empty():
+        expedition = long_operation_director.operation_summary()
+    var threats := strategic_ecology_director.pressure_summary() if strategic_ecology_director != null else "Regional pressure is not currently resolved."
+    var recent_threats := _recent_threat_recap()
+    if not recent_threats.is_empty():
+        threats = "%s\n%s" % [threats, recent_threats]
+    var next_choices := "Review the current objective on the tactical HUD."
+    if not hud.prompt_label.text.strip_edges().is_empty():
+        next_choices = hud.prompt_label.text
+    if adaptive_defense_director != null and adaptive_defense_director.has_pending_proposal():
+        next_choices = "PRESS T · REVIEW THE HEARTFORGE'S PROPOSED ADAPTATION"
+    operations_hud.open_recap(condition, unresolved_problem, expedition, threats, next_choices)
+    player.input_enabled = false
+
+
+func _recent_threat_recap() -> String:
+    var observations: Array[String] = []
+    for event in run_state.event_log:
+        var lower := event.to_lower()
+        if lower.contains("organic") or lower.contains("pressure") or lower.contains("brood") or lower.contains("destroyed") or lower.contains("protocol"):
+            observations.append("• " + event)
+        if observations.size() >= 2:
+            break
+    return "\n".join(observations)
 
 
 func _ensure_region_salvage(region_id: StringName) -> void:
