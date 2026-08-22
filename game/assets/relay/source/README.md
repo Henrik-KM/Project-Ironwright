@@ -1,9 +1,11 @@
 # Signal Relay authored asset source
 
 `build_relay_asset.py` generates the original `../relay.gltf` runtime shell
-from the shared high-definition machine mesh helpers. The Relay is a
+from the shared high-definition machine mesh helpers. Curved mast, dish, leg
+and service hardware uses dense source tessellation so the communications
+silhouette remains smooth after a rebuild. The Relay is a
 presentation-only communications chassis with a protected mast, directional
-dish, signal beacon, heat sink and service face.
+dish, signal beacon, heat sink, service latch and signal cable.
 
 Stable nodes include `RelayModel`, `Sensor`, `OpticLens`, `RelayMast`,
 `RelayDirectionalDish`, `RelayBeacon`, `RelayDishRim`, and

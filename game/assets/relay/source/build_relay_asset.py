@@ -43,19 +43,24 @@ def main() -> None:
         "Core": mesh("Core", add_box(builder, (0.9, 0.28, 1.08), amber)),
         "Face": mesh("Face", add_box(builder, (0.76, 0.28, 0.08), ceramic)),
         "HeatSink": mesh("HeatSink", add_box(builder, (0.8, 0.3, 0.14), ceramic)),
-        "Corner": mesh("Corner", add_cylinder(builder, 0.1, 0.14, ceramic, 10)),
-        "Leg": mesh("Leg", add_cylinder(builder, 0.095, 0.58, rubber, 12)),
+        "Corner": mesh("Corner", add_cylinder(builder, 0.1, 0.14, ceramic, 20)),
+        "Leg": mesh("Leg", add_cylinder(builder, 0.095, 0.58, rubber, 20)),
         "Foot": mesh("Foot", add_box(builder, (0.25, 0.12, 0.42), ceramic)),
         "OpticHousing": mesh("OpticHousing", add_box(builder, (0.38, 0.2, 0.12), chassis)),
         "Optic": mesh("Optic", add_uv_sphere(builder, 0.085, cyan)),
-        "Mast": mesh("Mast", add_cylinder(builder, 0.07, 1.18, rubber, 12)),
-        "Collar": mesh("Collar", add_cylinder(builder, 0.115, 0.08, amber, 12)),
-        "Dish": mesh("Dish", add_cylinder(builder, 0.34, 0.12, ceramic, 16)),
-        "DishRim": mesh("DishRim", add_cylinder(builder, 0.39, 0.04, cyan, 16)),
+        "Mast": mesh("Mast", add_cylinder(builder, 0.07, 1.18, rubber, 20)),
+        "Collar": mesh("Collar", add_cylinder(builder, 0.115, 0.08, amber, 20)),
+        "Dish": mesh("Dish", add_cylinder(builder, 0.34, 0.12, ceramic, 24)),
+        "DishRim": mesh("DishRim", add_cylinder(builder, 0.39, 0.04, cyan, 24)),
         "Beacon": mesh("Beacon", add_uv_sphere(builder, 0.095, cyan)),
         "Brace": mesh("Brace", add_box(builder, (0.08, 0.12, 0.58), chassis)),
         "Panel": mesh("Panel", add_box(builder, (0.24, 0.3, 0.08), cyan)),
-        "Fastener": mesh("Fastener", add_cylinder(builder, 0.04, 0.04, amber, 10)),
+        "Fastener": mesh("Fastener", add_cylinder(builder, 0.04, 0.04, amber, 20)),
+        "MastBraceDetail": mesh("MastBraceDetail", add_box(builder, (0.10, 0.14, 0.72), rubber)),
+        "DishHub": mesh("DishHub", add_cylinder(builder, 0.14, 0.13, amber, 24)),
+        "SignalCable": mesh("SignalCable", add_cylinder(builder, 0.035, 0.72, rubber, 24)),
+        "ServiceLatch": mesh("ServiceLatch", add_box(builder, (0.14, 0.08, 0.06), ceramic)),
+        "BeaconCap": mesh("BeaconCap", add_uv_sphere(builder, 0.12, cyan, rings=20, sides=32)),
     }
 
     nodes: list[dict] = [{
@@ -103,13 +108,19 @@ def main() -> None:
     add_node("OpticLens", mesh_ids["Optic"], (0.0, 1.36, -0.98), extras={"socket_type": "optic"})
     add_node("RelayMast", mesh_ids["Mast"], (0.0, 1.68, 0.08), extras={"socket_type": "signal_mast"})
     add_node("RelayMastCollar", mesh_ids["Collar"], (0.0, 1.58, 0.08))
+    for side in (-1.0, 1.0):
+        add_node("RelayMastBrace%s" % ("Left" if side < 0 else "Right"), mesh_ids["MastBraceDetail"], (side * 0.16, 1.75, 0.08), rotation=(0.0, 0.0, side * 0.34))
     add_node("RelayDirectionalDish", mesh_ids["Dish"], (0.0, 2.12, 0.0), rotation=(0.55, 0.0, 0.0), extras={"socket_type": "directional_dish"})
     add_node("RelayDishRim", mesh_ids["DishRim"], (0.0, 2.19, 0.02), rotation=(0.55, 0.0, 0.0))
+    add_node("RelayDishHub", mesh_ids["DishHub"], (0.0, 2.12, -0.12), rotation=(0.55, 0.0, 0.0))
     add_node("RelayBeacon", mesh_ids["Beacon"], (0.0, 2.3, -0.04), extras={"socket_type": "signal_beacon"})
+    add_node("RelayBeaconCap", mesh_ids["BeaconCap"], (0.0, 2.34, -0.04))
     for side in (-1.0, 1.0):
         add_node("RelayDishRib%s" % ("Left" if side < 0 else "Right"), mesh_ids["Brace"], (side * 0.18, 2.38, 0.0), rotation=(0.0, 0.0, side * 0.2))
     add_node("RelayFastenerLeft", mesh_ids["Fastener"], (-0.39, 1.19, -0.79), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("RelayFastenerRight", mesh_ids["Fastener"], (0.39, 1.19, -0.79), rotation=(math.pi * 0.5, 0.0, 0.0))
+    add_node("RelayServiceLatch", mesh_ids["ServiceLatch"], (0.0, 1.18, -0.8))
+    add_node("RelaySignalCable", mesh_ids["SignalCable"], (0.0, 1.42, 0.74), rotation=(0.0, 0.0, 0.12))
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "relay.signal.v1", "source": "original_shared_mesh_builder"})
 
     node_index = {node["name"]: index for index, node in enumerate(nodes)}
