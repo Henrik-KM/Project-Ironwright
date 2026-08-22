@@ -65,6 +65,10 @@ func _setup_vertical_slice_presentation() -> void:
 	# amber escape lane as readable context.
 	camera_height = 13.8
 	camera_distance = 7.8
+	# A slight opening-only yaw separates the vulnerable Mechromancer from the
+	# Bulwark's close protection slot without changing movement, formation or
+	# the Heartforge escape lane.
+	camera_heading = Vector3(0.62, 0.0, 0.78).normalized()
 	if camera != null:
 		camera.fov = 43.75
 		camera.near = 0.35
