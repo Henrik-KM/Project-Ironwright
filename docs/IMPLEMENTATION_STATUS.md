@@ -1597,6 +1597,17 @@ environmentally distinct without changing ecology, routing or player workload.
 
 ## Commercial work still remaining
 
+## Focused Mechromancer death presentation milestone
+
+- added a bounded high-definition collapse assembly for the authored field
+  engineer, including collapsed torso, respirator collar, pack, exposed legs,
+  spent signal and fractured equipment fragments;
+- preserved the existing lethal-health and `died` signal path while keeping
+  the failure read underneath the existing game-over ending surface;
+- added native coverage for visible death, stable anatomy sockets and clearing
+  on recovery in the standalone actor; exported live review remains required
+  for the next representative loss capture.
+
 ## Focused friendly-machine disabled presentation milestone
 
 - added a bounded high-definition failure assembly to every friendly machine

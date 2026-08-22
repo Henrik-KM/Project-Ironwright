@@ -3,6 +3,7 @@ extends SceneTree
 const MAIN_SCENE := preload("res://scenes/main_3d.tscn")
 const ROBOT_SCENE := preload("res://scenes/actors/robot_unit_3d.tscn")
 const ENEMY_SCENE := preload("res://scenes/actors/organic_enemy_3d.tscn")
+const MECHROMANCER_SCENE := preload("res://scenes/actors/mechromancer_3d.tscn")
 const OUTPOST_SCENE := preload("res://scenes/world/outpost_3d.tscn")
 
 var failures: Array[String] = []
@@ -664,8 +665,23 @@ func _run_all() -> void:
         if audio_director != null:
             var event_count_before := audio_director.event_count
             audio_director.play_profile(&"pistol", player.global_position)
+
             _expect(audio_director.event_count == event_count_before + 1, "The spatial audio director must emit a pistol event at runtime.")
             audio_director.stop_all()
+
+    var disabled_mechromancer := MECHROMANCER_SCENE.instantiate() as Mechromancer3D
+    disabled_mechromancer.position = Vector3(36.0, 0.0, 28.0)
+    root.add_child(disabled_mechromancer)
+    await process_frame
+    disabled_mechromancer.apply_damage(disabled_mechromancer.maximum_health * 2.0)
+    _expect(disabled_mechromancer.current_health <= 0.0, "A lethal Mechromancer hit must preserve the game-over health state.")
+    _expect(disabled_mechromancer.death_presentation_remaining > 0.0, "The Mechromancer must retain a bounded presentation window after death.")
+    _expect(_find_named(disabled_mechromancer, "MechromancerDeathPresentation") != null and bool(_find_named(disabled_mechromancer, "MechromancerDeathPresentation").visible), "The Mechromancer must expose a visible collapse presentation before the ending overlay resolves.")
+    _expect(_find_named(disabled_mechromancer, "MechromancerDeathCollapsedTorso") != null and _find_named(disabled_mechromancer, "MechromancerDeathRespiratorCollar") != null, "The Mechromancer death presentation must retain readable field-kit failure anatomy.")
+    _expect(_find_named(disabled_mechromancer, "MechromancerDeathSignal") != null and _find_named(disabled_mechromancer, "MechromancerDeathShard00") != null, "The Mechromancer death presentation must expose a spent signal and fractured equipment fragments.")
+    disabled_mechromancer.heal_full()
+    _expect(not bool(_find_named(disabled_mechromancer, "MechromancerDeathPresentation").visible), "Healing a test Mechromancer must clear the death presentation state.")
+    disabled_mechromancer.queue_free()
 
     var robots := get_nodes_in_group("friendly_robots")
     _expect(not robots.is_empty(), "The opening companion must exist.")
