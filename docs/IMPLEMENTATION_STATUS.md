@@ -90,6 +90,12 @@
 - The overlays are cleared by repair and hidden automatically outside close-detail presentation, keeping remote simulation lightweight while preserving readable local consequences.
 - Release regression coverage verifies creation, damage, LOD suppression, restoration, and repair clearing.
 
+## Focused machine identity and relationship milestone
+
+- Friendly machines now receive deterministic player-facing callsigns by role while preserving their existing node names as stable save and autonomy identifiers.
+- Callsigns are included in the transactional actor snapshot with a legacy-save fallback, so an older save still restores the Bulwark identity and other role names safely.
+- The complete run now surfaces two bounded machine-witness moments: the first autonomous replacement and the first physically returned long-range group. Both are driven by real signals, persisted, and do not add per-unit management.
+
 ## Focused authored outpost shelter milestone
 
 - Replaced the shared autonomous outpost's procedural primary shelter shell with an original high-definition glTF asset containing a layered foundation, service body, roof plate, vent louvers, status beacon and cable/service details.

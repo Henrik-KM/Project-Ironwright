@@ -8,6 +8,15 @@ const AUTHORED_PATHFINDER_MODEL_SCENE: PackedScene = preload("res://assets/pathf
 const AUTHORED_ENGINEER_MODEL_SCENE: PackedScene = preload("res://assets/engineer/engineer.gltf")
 const AUTHORED_RELAY_MODEL_SCENE: PackedScene = preload("res://assets/relay/relay.gltf")
 
+const CALLSIGN_PREFIXES: Dictionary = {
+    &"companion": "Bulwark",
+    &"guardian": "Ward",
+    &"salvager": "Mender",
+    &"scout": "Lantern",
+    &"engineer": "Forgehand",
+    &"relay": "Chorus",
+}
+
 signal destroyed(robot: RobotUnit3D)
 signal health_changed(robot: RobotUnit3D, current: float, maximum: float)
 signal weapon_fired(origin: Vector3, target: Vector3, target_node: Node)
@@ -15,6 +24,8 @@ signal salvage_completed(robot: RobotUnit3D, pile: Node, amount: int)
 
 var archetype: StringName = &"salvager"
 var level: int = 1
+var callsign: String = ""
+var callsign_serial: int = 1
 var maximum_health: float = 90.0
 var current_health: float = 90.0
 var move_speed: float = 4.4
@@ -57,6 +68,8 @@ func _ready() -> void:
     add_to_group("friendly_robots")
     collision_layer = 2
     collision_mask = 1 | 2 | 4
+    if callsign.is_empty():
+        assign_callsign(callsign_serial)
     _apply_level_stats()
     if defer_authored_visuals:
         _build_collision()
@@ -68,9 +81,29 @@ func _ready() -> void:
 func configure(next_archetype: StringName, next_level: int) -> void:
     archetype = next_archetype
     level = clampi(next_level, 1, 3)
+    if callsign.is_empty():
+        assign_callsign(1)
     _apply_level_stats()
     if is_inside_tree():
         _refresh_visual_identity()
+
+
+func assign_callsign(serial: int = 1) -> void:
+    callsign_serial = maxi(1, serial)
+    var prefix := str(CALLSIGN_PREFIXES.get(archetype, String(archetype).capitalize()))
+    callsign = prefix if callsign_serial == 1 else "%s-%02d" % [prefix, callsign_serial]
+
+
+func restore_callsign(saved_callsign: Variant) -> void:
+    var restored := str(saved_callsign).strip_edges()
+    if restored.is_empty():
+        assign_callsign(callsign_serial)
+        return
+    callsign = restored
+
+
+func display_identity() -> String:
+    return callsign if not callsign.is_empty() else String(archetype).capitalize()
 
 
 func set_progression(next_progression: ProgressionDirector3D) -> void:

@@ -604,6 +604,7 @@ func _save_game() -> void:
             "name": String(robot.name),
             "archetype": String(robot.archetype),
             "level": robot.level,
+            "callsign": robot.callsign,
             "position": _vector_to_array(robot.global_position),
             "health": robot.current_health,
         })
@@ -655,6 +656,7 @@ func _load_game() -> void:
         var saved_name := str(robot_data.get("name", ""))
         if not saved_name.is_empty():
             robot.name = saved_name
+        robot.restore_callsign(robot_data.get("callsign", ""))
         robot.current_health = float(robot_data.get("health", robot.maximum_health))
         if archetype == &"companion":
             companion = robot
