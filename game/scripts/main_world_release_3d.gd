@@ -25,7 +25,10 @@ const PRESENTATION_REVIEW_LATE_ORGANICS: Array[StringName] = [
 	&"broodmass", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle", &"apex",
 ]
 const PRESENTATION_REVIEW_REGIONS: Array[StringName] = [
-	&"region.glasshouse", &"region.riverworks", &"region.root_cistern",
+	&"region.north_ruins", &"region.west_grid", &"region.east_tenements",
+	&"region.glasshouse", &"region.flood_market", &"region.riverworks",
+	&"region.tram_graveyard", &"region.cathedral_quarter", &"region.observatory_ridge",
+	&"region.buried_labs", &"region.root_cistern",
 ]
 const ROOT_CISTERN_PRESENTATION_REVIEW_SCENE: PackedScene = preload("res://assets/root_cistern/root_cistern.gltf")
 
@@ -312,6 +315,18 @@ func _unhandled_input(event: InputEvent) -> void:
 					_show_presentation_review_page(4)
 				KEY_6:
 					_show_presentation_review_page(5)
+				KEY_7:
+					_show_presentation_review_page(6)
+				KEY_8:
+					_show_presentation_review_page(7)
+				KEY_9:
+					_show_presentation_review_page(8)
+				KEY_0:
+					_show_presentation_review_page(9)
+				KEY_LEFT, KEY_UP:
+					_show_presentation_review_page(presentation_review_page - 1)
+				KEY_RIGHT, KEY_DOWN:
+					_show_presentation_review_page(presentation_review_page + 1)
 				KEY_ESCAPE:
 					get_tree().quit()
 			get_viewport().set_input_as_handled()
@@ -512,7 +527,9 @@ func _start_presentation_review() -> void:
 	presentation_review_label.add_theme_constant_override("shadow_offset_y", 2)
 	review_layer.add_child(presentation_review_label)
 
-	presentation_review_pages = [[], [], [], [], [], []]
+	presentation_review_pages = [[], [], []]
+	for _region_id in PRESENTATION_REVIEW_REGIONS:
+		presentation_review_pages.append([])
 	presentation_review_pages[0].append(player)
 	var companion := get_node_or_null("Bulwark_01") as Node3D
 	if companion != null:
@@ -549,7 +566,7 @@ func _start_presentation_review() -> void:
 	_create_presentation_review_stage()
 	_show_presentation_review_page(0)
 	get_tree().paused = true
-	run_state.log_event("Presentation review mode: 1 friendly roster, 2 early organic families, 3 late organic families, 4 Glasshouse, 5 Riverworks, 6 Root Cistern. Escape exits review.")
+	run_state.log_event("Presentation review mode: 1 friendly roster, 2 early organics, 3 late organics, 4-14 all remote regions. Arrow keys browse; Escape exits review.")
 
 
 func _create_presentation_review_stage() -> void:
@@ -627,9 +644,9 @@ func _add_presentation_review_box(node_name: String, size: Vector3, position: Ve
 
 
 func _show_presentation_review_page(page: int) -> void:
-	if presentation_review_pages.size() != 6:
+	if presentation_review_pages.size() != 3 + PRESENTATION_REVIEW_REGIONS.size():
 		return
-	presentation_review_page = clampi(page, 0, 5)
+	presentation_review_page = clampi(page, 0, presentation_review_pages.size() - 1)
 	for page_actors in presentation_review_pages:
 		for actor in page_actors:
 			if is_instance_valid(actor):
@@ -666,10 +683,13 @@ func _show_presentation_review_page(page: int) -> void:
 				actor.call("set_visual_lod", 0)
 	var page_titles: Array[String] = [
 		"PLAYER + FRIENDLY MACHINE SOCIETY", "EARLY ORGANIC FAMILIES", "LATE ORGANIC FAMILIES",
-		"REMOTE · MUNICIPAL GLASSHOUSE", "REMOTE · RIVERWORKS", "REMOTE · ROOT CISTERN",
+		"REMOTE · NORTH RUINS", "REMOTE · WEST GRID", "REMOTE · EAST TENEMENTS",
+		"REMOTE · MUNICIPAL GLASSHOUSE", "REMOTE · FLOOD MARKET", "REMOTE · RIVERWORKS",
+		"REMOTE · TRAM GRAVEYARD", "REMOTE · CATHEDRAL QUARTER", "REMOTE · OBSERVATORY RIDGE",
+		"REMOTE · BURIED LABORATORIES", "REMOTE · ROOT CISTERN",
 	]
 	var page_title: String = page_titles[presentation_review_page]
-	presentation_review_label.text = "PRESENTATION REVIEW  ·  %s  ·  %d/6\n1 FRIENDLIES   2 EARLY ORGANICS   3 LATE ORGANICS   4 GLASSHOUSE   5 RIVERWORKS   6 ROOT CISTERN   ESC EXIT" % [page_title, presentation_review_page + 1]
+	presentation_review_label.text = "PRESENTATION REVIEW  ·  %s  ·  %d/%d\n1-9 / 0 DIRECT PAGE   ←/→ BROWSE   ESC EXIT" % [page_title, presentation_review_page + 1, presentation_review_pages.size()]
 	if is_region_page and not actors.is_empty():
 		presentation_review_camera_target = (actors[0] as Node3D).global_position + Vector3.UP * 2.0
 		presentation_review_camera_desired = presentation_review_camera_target + Vector3(0.0, 18.0, 27.0)
