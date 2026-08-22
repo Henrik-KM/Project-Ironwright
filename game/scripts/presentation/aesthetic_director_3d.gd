@@ -61,6 +61,11 @@ func _ready() -> void:
             heartforge.connect(&"health_changed", callback)
 
 
+func connect_story_archive(source: Node) -> void:
+    if sanctuary != null and sanctuary.has_method(&"connect_story_archive"):
+        sanctuary.call(&"connect_story_archive", source)
+
+
 func _polish_environment() -> void:
     if world == null:
         return

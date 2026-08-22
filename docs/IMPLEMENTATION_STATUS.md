@@ -1607,6 +1607,19 @@ environmentally distinct without changing ecology, routing or player workload.
 
 ## Commercial work still remaining
 
+## Focused sanctuary memory-relay storytelling milestone
+
+- added a bounded high-definition Memory Witness Relay to the Heartforge camp,
+  with framed record plates, service rails, signal lenses and restrained pulse
+  motion that makes machine-society history visible in the inhabited sanctuary;
+- connected the relay to the persistent Town Archive so the opening record and
+  later recovered records illuminate the relay progressively after real
+  discoveries, without adding a dashboard, interaction, queue or recurring
+  player task;
+- added native coverage for the relay's authored hardware, opening-state lens
+  and environmental motion; exported live review remains required for the next
+  representative sanctuary capture.
+
 ## Focused first-run title clarity milestone
 
 - made the title panel responsive to the current viewport so its no-save

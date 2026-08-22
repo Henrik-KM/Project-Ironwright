@@ -14,6 +14,10 @@ var cyan_material: StandardMaterial3D
 var rust_material: StandardMaterial3D
 var dark_material: StandardMaterial3D
 var puddle_material: StandardMaterial3D
+var story_archive_source: Node
+var witness_lenses: Array[Node3D] = []
+var witness_panel_frames: Array[Node3D] = []
+const WITNESS_THRESHOLDS: Array[int] = [1, 4, 8]
 
 
 func configure(next_world: Node3D, next_heartforge: Node3D) -> void:
@@ -44,10 +48,30 @@ func _process(delta: float) -> void:
         if not is_instance_valid(light) or light in flicker_lights:
             continue
         light.light_energy = float(light.get_meta(&"base_energy", light.light_energy)) * health_multiplier
+    for index in range(witness_lenses.size()):
+        var lens := witness_lenses[index]
+        if not is_instance_valid(lens) or not lens.visible:
+            continue
+        var phase := float(index) * 0.82
+        var pulse := 1.0 + sin(elapsed * 2.6 + phase) * 0.07
+        lens.scale = Vector3.ONE * pulse
 
 
 func set_integrity(value: float) -> void:
     integrity = clampf(value, 0.0, 1.0)
+
+
+func connect_story_archive(source: Node) -> void:
+    if story_archive_source != null and is_instance_valid(story_archive_source) and story_archive_source.has_signal(&"record_unlocked"):
+        var old_callback := Callable(self, "_on_story_record_unlocked")
+        if story_archive_source.is_connected(&"record_unlocked", old_callback):
+            story_archive_source.disconnect(&"record_unlocked", old_callback)
+    story_archive_source = source
+    if story_archive_source != null and story_archive_source.has_signal(&"record_unlocked"):
+        var callback := Callable(self, "_on_story_record_unlocked")
+        if not story_archive_source.is_connected(&"record_unlocked", callback):
+            story_archive_source.connect(&"record_unlocked", callback)
+    _refresh_witness_relay()
 
 
 func _create_materials() -> void:
@@ -103,6 +127,8 @@ func _build_camp() -> void:
     for side in [-1.0, 1.0]:
         ModelKit3D.add_cylinder(camp_service, 0.035, 2.4, Vector3(2.15 + side * 0.48, 1.25, 2.95), cyan_material, Vector3(PI * 0.5, 0.0, 0.0), "CampServiceCableBranch")
 
+    _build_memory_witness_relay(camp)
+
     _add_crate_stack(camp, Vector3(5.3, 0.0, 3.2), 3)
     _add_crate_stack(camp, Vector3(-6.5, 0.0, -2.5), 2)
     _add_barrel(camp, Vector3(4.8, 0.0, 4.7), Color("6e4c34"))
@@ -118,6 +144,48 @@ func _build_camp() -> void:
     _build_embers(camp)
     _build_smoke(camp)
     _add_camp_lights(camp)
+
+
+func _build_memory_witness_relay(camp: Node3D) -> void:
+    var relay := Node3D.new()
+    relay.name = "MemoryWitnessRelay"
+    relay.position = Vector3(4.75, 0.0, -2.85)
+    camp.add_child(relay)
+    ModelKit3D.add_beveled_box(relay, Vector3(2.7, 3.35, 0.22), Vector3.ZERO + Vector3(0.0, 1.7, 0.0), dark_material, Vector3(0.0, 0.04, 0.0), "WitnessRelayBackplate", 0.18)
+    ModelKit3D.add_beveled_box(relay, Vector3(3.05, 0.16, 0.34), Vector3(0.0, 3.45, -0.03), rust_material, Vector3(0.0, 0.0, 0.02), "WitnessFrameTop", 0.12)
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(relay, Vector3(0.16, 3.35, 0.34), Vector3(side * 1.42, 1.7, -0.03), rust_material, Vector3(0.0, 0.0, side * 0.015), "WitnessFramePost", 0.12)
+    ModelKit3D.add_beveled_box(relay, Vector3(2.62, 0.12, 0.4), Vector3(0.0, 0.12, -0.05), rust_material, Vector3.ZERO, "WitnessRelayFoot", 0.1)
+    for index in range(3):
+        var x := -0.84 + float(index) * 0.84
+        var plate := ModelKit3D.add_beveled_box(relay, Vector3(0.62, 1.65, 0.1), Vector3(x, 1.72, -0.2), rust_material, Vector3(0.0, 0.0, (float(index) - 1.0) * 0.025), "WitnessRecordPlate%02d" % index, 0.08)
+        witness_panel_frames.append(plate)
+        var lens := ModelKit3D.add_sphere(relay, 0.14, Vector3(x, 2.35, -0.29), cyan_material, Vector3.ONE, "WitnessSignalLens%02d" % index)
+        witness_lenses.append(lens)
+        ModelKit3D.add_beveled_box(relay, Vector3(0.32, 0.06, 0.04), Vector3(x, 1.12, -0.3), dark_material, Vector3.ZERO, "WitnessRecordSlot%02d" % index, 0.03)
+    _add_beam(relay, Vector3(-1.08, 0.62, -0.22), Vector3(-1.08, 2.86, -0.22), 0.025, cyan_material)
+    _add_beam(relay, Vector3(1.08, 0.62, -0.22), Vector3(1.08, 2.86, -0.22), 0.025, cyan_material)
+    var relay_light := _add_light(relay, Vector3(0.0, 2.2, -0.75), Color("73dfe5"), 0.32, 3.8, false)
+    warm_lights.append(relay_light)
+    _refresh_witness_relay()
+
+
+func _on_story_record_unlocked(_record_id: StringName, _display_name: String, _description: String) -> void:
+    _refresh_witness_relay()
+
+
+func _refresh_witness_relay() -> void:
+    var count := 0
+    if story_archive_source != null and is_instance_valid(story_archive_source) and story_archive_source.has_method(&"record_count"):
+        count = int(story_archive_source.call(&"record_count"))
+    for index in range(witness_lenses.size()):
+        var active := index < WITNESS_THRESHOLDS.size() and count >= WITNESS_THRESHOLDS[index]
+        witness_lenses[index].visible = active
+        if active:
+            witness_lenses[index].scale = Vector3.ONE
+        if index < witness_panel_frames.size():
+            var panel := witness_panel_frames[index]
+            panel.scale = Vector3.ONE if active else Vector3(0.92, 0.92, 0.92)
 
 
 func _add_camp_lights(camp: Node3D) -> void:
