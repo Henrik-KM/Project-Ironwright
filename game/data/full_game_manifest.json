@@ -115,6 +115,7 @@
     "release_cast_material_continuity",
     "complete_organic_cast_material_continuity",
     "release_archive_checksum_integrity",
+    "title_screen_world_presence",
     "adaptive_heartforge_proposal_and_retrofit",
     "organic_migration",
     "severance_protocol",

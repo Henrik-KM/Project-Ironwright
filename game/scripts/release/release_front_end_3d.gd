@@ -80,7 +80,10 @@ func _build_ui() -> void:
     backdrop = ColorRect.new()
     backdrop.name = "ReleaseBackdrop"
     backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-    backdrop.color = Color(0.008, 0.018, 0.024, 0.88)
+    # Keep the authored Heartforge scene legible behind the title so the first
+    # frame carries the same warm/cool material language as the playable
+    # opening. The panel and vignette still protect text contrast.
+    backdrop.color = Color(0.008, 0.018, 0.024, 0.74)
     backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
     add_child(backdrop)
 
