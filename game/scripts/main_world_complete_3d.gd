@@ -357,6 +357,74 @@ func _on_heartforge_destroyed() -> void:
     if endgame_director != null and not endgame_director.active_protocol.is_empty():
         endgame_director.fail_active_protocol("The Heartforge failed before the final protocol completed.")
     super._on_heartforge_destroyed()
+    if hud != null:
+        hud.show_failure_report(_build_collapse_report())
+
+
+func _build_collapse_report() -> String:
+    var duration_seconds := int(round(run_state.elapsed_seconds)) if run_state != null else 0
+    var duration_minutes := duration_seconds / 60
+    var duration_hours := duration_minutes / 60
+    var duration_text := "%dh %02dm" % [duration_hours, duration_minutes % 60] if duration_hours > 0 else "%dm" % duration_minutes
+
+    var evolution_names: Array[String] = []
+    if progression != null:
+        for technology_id in progression.unlocked_technologies:
+            evolution_names.append(str(progression.technology(technology_id).get("display_name", String(technology_id))))
+    var evolution_text := ", ".join(evolution_names.slice(0, 5)) if not evolution_names.is_empty() else "No major evolution had been recorded."
+    if evolution_names.size() > 5:
+        evolution_text += " · +%d more" % (evolution_names.size() - 5)
+
+    var species: Array[String] = []
+    for enemy in get_tree().get_nodes_in_group(&"organic_enemies"):
+        if enemy is OrganicEnemy3D:
+            var species_name := String((enemy as OrganicEnemy3D).species)
+            if species_name not in species:
+                species.append(species_name)
+    species.sort()
+    var species_text := ", ".join(species.slice(0, 6)) if not species.is_empty() else "No active specimens remained in the immediate collapse frame."
+    if species.size() > 6:
+        species_text += " · +%d more" % (species.size() - 6)
+
+    var machine_losses := 0
+    var loss_archetypes: Array[String] = []
+    var balance_node := get_tree().get_first_node_in_group(&"balance_director")
+    var balance_samples: Variant = balance_node.get("pressure_samples") if balance_node != null else []
+    if balance_samples is Array:
+        for sample in balance_samples:
+            if not (sample is Dictionary):
+                continue
+            if str(sample.get("kind", "")) != "machine_loss":
+                continue
+            machine_losses += 1
+            var archetype := str(sample.get("archetype", "unknown"))
+            if archetype not in loss_archetypes:
+                loss_archetypes.append(archetype)
+    var loss_text := "%d recorded machine loss%s" % [machine_losses, "" if machine_losses == 1 else "es"]
+    if not loss_archetypes.is_empty():
+        loss_text += " (%s)" % ", ".join(loss_archetypes)
+
+    var decisive_events: Array[String] = []
+    if run_state != null:
+        for event in run_state.event_log:
+            var lower := event.to_lower()
+            if lower.contains("technology") or lower.contains("operation") or lower.contains("adaptive") or lower.contains("machine witness") or lower.contains("protocol"):
+                decisive_events.append(event)
+            if decisive_events.size() >= 3:
+                break
+    var events_text := "\n".join(decisive_events) if not decisive_events.is_empty() else "No decisive event was recorded before collapse."
+
+    var pressure_text := strategic_ecology_director.pressure_summary() if strategic_ecology_director != null else "Regional pressure was unavailable."
+    var resource_text := "SCRAP %d · CORES %d · MANUAL RECOVERED %d · AUTONOMOUS RECOVERED %d" % [run_state.scrap, run_state.rare_cores, run_state.manual_scrap_recovered, run_state.autonomous_scrap_recovered]
+    var alternatives := "No unspent response was recorded."
+    if progression != null:
+        var available := progression.available_technologies()
+        var names: Array[String] = []
+        for entry in available.slice(0, 3):
+            names.append(str(entry.get("display_name", "Unnamed response")))
+        if not names.is_empty():
+            alternatives = ", ".join(names)
+    return "WORLD DURATION · %s\nMAJOR EVOLUTIONS · %s\nECOLOGY OBSERVATIONS · %s\nDECISIVE TIMELINE\n%s\nRESOURCE POSITION · %s\nMACHINE-LOSS PATTERN · %s\nUNRESOLVED THREAT · %s\nALTERNATIVE RESPONSES OBSERVED OR UNLOCKED · %s" % [duration_text, evolution_text, species_text, events_text, resource_text, loss_text, pressure_text, alternatives]
 
 
 func _update_complete_game_objective() -> void:

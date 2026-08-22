@@ -255,6 +255,13 @@ func _run_all() -> void:
     _expect(ending_panel.offset_left < 0.0 and ending_panel.offset_right > 0.0 and ending_panel.offset_top < 0.0 and ending_panel.offset_bottom > 0.0, "The victory overlay must stay centered inside the viewport-safe offsets.")
     world.hud.dismiss_ending()
 
+    world.hud.show_failure_report(world._build_collapse_report())
+    var collapse_panel := world.hud.ending_panel
+    var collapse_label := collapse_panel.get_node("PanelContent").get_child(0) as Label
+    _expect(collapse_label != null and collapse_label.text.contains("POST-COLLAPSE REPORT") and collapse_label.text.contains("UNRESOLVED THREAT"), "The defeat boundary must expose a readable causal post-collapse report.")
+    _expect(bool(collapse_panel.get_meta("expanded_report", false)), "The causal report must use an expanded, viewport-safe reading surface rather than clipping the timeline.")
+    world.hud.dismiss_ending()
+
     var continue_event := InputEventKey.new()
     continue_event.keycode = KEY_ENTER
     continue_event.pressed = true

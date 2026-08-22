@@ -96,6 +96,12 @@
 - Kept the recap exception-based and read-only: it does not introduce worker lists, queues, route throughput or recurring maintenance.
 - Added complete-game save/load coverage proving the recap appears after restoring a release snapshot and carries all required long-run context.
 
+## Focused post-collapse causal report milestone
+
+- Replaced the generic defeat copy with a bounded post-collapse report covering world duration, major evolutions, ecology observations, decisive timeline entries, resource position, machine-loss pattern, unresolved regional pressure and available alternative responses.
+- Kept the report at the existing defeat boundary with a viewport-safe expanded reading surface and no restart-loop maintenance or meta-progression grind.
+- Added complete-game coverage for report content and expanded-panel layout safety.
+
 ## Focused machine identity and relationship milestone
 
 - Friendly machines now receive deterministic player-facing callsigns by role while preserving their existing node names as stable save and autonomy identifiers.

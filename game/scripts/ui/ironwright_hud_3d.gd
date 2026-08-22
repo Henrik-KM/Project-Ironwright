@@ -485,11 +485,39 @@ func show_ending(victory: bool, detail: String, allow_continuation: bool = false
     _layout_ending_panel(Vector2(get_viewport().get_visible_rect().size))
 
 
+func show_failure_report(detail: String) -> void:
+    dismiss_ending()
+    ending_panel = _panel(Vector2.ZERO, Vector2.ZERO, false, false)
+    ending_panel.name = "EndingPanel"
+    ending_panel.set_anchors_preset(Control.PRESET_CENTER)
+    ending_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+    ending_panel.set_meta("expanded_report", true)
+    var report_style := StyleBoxFlat.new()
+    report_style.bg_color = Color(0.018, 0.032, 0.04, 0.98)
+    report_style.border_color = Color(0.74, 0.38, 0.28, 0.72)
+    report_style.set_border_width_all(1)
+    report_style.set_corner_radius_all(12)
+    report_style.shadow_color = Color(0.0, 0.0, 0.0, 0.7)
+    report_style.shadow_size = 18
+    report_style.content_margin_left = 22.0
+    report_style.content_margin_right = 22.0
+    report_style.content_margin_top = 18.0
+    report_style.content_margin_bottom = 18.0
+    ending_panel.add_theme_stylebox_override("panel", report_style)
+    var readable_detail := _wrap_multiline_detail(detail, 76)
+    var label := _label(ending_panel, "THE HEARTFORGE FELL\n\nPOST-COLLAPSE REPORT\n\n" + readable_detail + "\n\nPress ENTER to restart.", 15, Color("e8b0a5"))
+    label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+    label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    _layout_ending_panel(Vector2(get_viewport().get_visible_rect().size))
+
+
 func _layout_ending_panel(viewport_size: Vector2) -> void:
     if ending_panel == null or not is_instance_valid(ending_panel):
         return
     var panel_width := minf(820.0, maxf(420.0, viewport_size.x - 40.0))
-    var panel_height := minf(360.0, maxf(260.0, viewport_size.y - 40.0))
+    var expanded_report := bool(ending_panel.get_meta("expanded_report", false))
+    var panel_height := minf(620.0 if expanded_report else 360.0, maxf(260.0, viewport_size.y - 40.0))
     ending_panel.set_anchors_preset(Control.PRESET_CENTER)
     ending_panel.offset_left = -panel_width * 0.5
     ending_panel.offset_right = panel_width * 0.5
@@ -518,6 +546,13 @@ func _wrap_ending_detail(detail: String, max_chars: int) -> String:
     if not current.is_empty():
         lines.append(current)
     return "\n".join(lines)
+
+
+func _wrap_multiline_detail(detail: String, max_chars: int) -> String:
+    var paragraphs: Array[String] = []
+    for line in detail.split("\n", true):
+        paragraphs.append(_wrap_ending_detail(str(line), max_chars))
+    return "\n".join(paragraphs)
 
 
 func dismiss_ending() -> void:
