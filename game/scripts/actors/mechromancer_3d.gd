@@ -2,6 +2,7 @@ class_name Mechromancer3D
 extends CharacterBody3D
 
 const AUTHORED_MODEL_SCENE: PackedScene = preload("res://assets/mechromancer/mechromancer.gltf")
+const DEATH_PRESENTATION_SECONDS := 0.9
 
 signal health_changed(current: float, maximum: float)
 signal died
@@ -19,6 +20,7 @@ signal noise_requested(position: Vector3, radius: float, intensity: float, sourc
 @export var pistol_interval: float = 0.82
 
 var current_health: float = 100.0
+var death_presentation_remaining: float = 0.0
 var current_target: Node3D
 var input_enabled: bool = true
 var invulnerability_seconds: float = 0.0
@@ -37,6 +39,8 @@ var channel_noise_interval: float = 0.72
 
 var _body_root: Node3D
 var _pistol_muzzle: Node3D
+var _death_visual_root: Node3D
+var _death_signal_material: StandardMaterial3D
 
 
 func _ready() -> void:
@@ -49,6 +53,10 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+    if current_health <= 0.0:
+        death_presentation_remaining = maxf(0.0, death_presentation_remaining - delta)
+        _refresh_death_presentation()
+        return
     pistol_cooldown = maxf(0.0, pistol_cooldown - delta)
     invulnerability_seconds = maxf(0.0, invulnerability_seconds - delta)
 
@@ -243,11 +251,15 @@ func apply_damage(amount: float, source: Node = null) -> void:
         cancel_channel()
     health_changed.emit(current_health, maximum_health)
     if current_health <= 0.0:
+        death_presentation_remaining = DEATH_PRESENTATION_SECONDS
+        _refresh_death_presentation()
         died.emit()
 
 
 func heal_full() -> void:
     current_health = maximum_health
+    death_presentation_remaining = 0.0
+    _refresh_death_presentation()
     health_changed.emit(current_health, maximum_health)
 
 
@@ -273,6 +285,92 @@ func _build_visuals() -> void:
         _body_root.scale = Vector3(1.28, 1.28, 1.28)
 
     _pistol_muzzle = _find_visual_node(_body_root, &"PistolMuzzle")
+    _build_death_presentation()
+
+
+func _build_death_presentation() -> void:
+    if _death_visual_root != null and is_instance_valid(_death_visual_root):
+        _death_visual_root.free()
+    _death_visual_root = Node3D.new()
+    _death_visual_root.name = "MechromancerDeathPresentation"
+    add_child(_death_visual_root)
+
+    var dead_coat := ModelKit3D.material(Color("20282d"), 0.08, 0.9)
+    var dead_leather := ModelKit3D.material(Color("3d2b2a"), 0.18, 0.82)
+    var dead_metal := ModelKit3D.material(Color("4b5354"), 0.58, 0.58)
+    _death_signal_material = ModelKit3D.material(Color("4e2025"), 0.1, 0.46, Color("e05248"), 1.6)
+    var spent_glow := _death_signal_material
+
+    ModelKit3D.add_beveled_box(
+        _death_visual_root,
+        Vector3(0.62, 0.14, 0.32),
+        Vector3(0.0, 0.9, -0.12),
+        dead_coat,
+        Vector3(0.12, 0.0, -0.16),
+        "MechromancerDeathCollapsedTorso",
+        0.1
+    )
+    ModelKit3D.add_organic_plate(
+        _death_visual_root,
+        0.11,
+        Vector3(0.0, 1.08, -0.26),
+        dead_leather,
+        dead_metal,
+        Vector3(0.42, 0.16, 0.18),
+        "MechromancerDeathRespiratorCollar"
+    )
+    ModelKit3D.add_beveled_box(
+        _death_visual_root,
+        Vector3(0.42, 0.1, 0.24),
+        Vector3(-0.34, 0.66, 0.12),
+        dead_leather,
+        Vector3(0.08, 0.0, -0.3),
+        "MechromancerDeathFieldPack",
+        0.08
+    )
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_capsule(
+            _death_visual_root,
+            0.035,
+            0.52,
+            Vector3(side * 0.26, 0.52, -0.02),
+            dead_metal,
+            Vector3(0.32, 0.0, side * 0.24),
+            "MechromancerDeathLeg%s" % ("Left" if side < 0.0 else "Right")
+        )
+    ModelKit3D.add_sphere(
+        _death_visual_root,
+        0.08,
+        Vector3(0.0, 1.08, -0.42),
+        spent_glow,
+        Vector3(1.15, 0.72, 0.72),
+        "MechromancerDeathSignal"
+    )
+    for index in range(2):
+        ModelKit3D.add_beveled_box(
+            _death_visual_root,
+            Vector3(0.1, 0.06, 0.24),
+            Vector3(-0.34 + float(index) * 0.68, 0.84, -0.34),
+            dead_metal,
+            Vector3(0.0, 0.0, -0.32 + float(index) * 0.64),
+            "MechromancerDeathShard%02d" % index,
+            0.03
+        )
+    _refresh_death_presentation()
+
+
+func _refresh_death_presentation() -> void:
+    if _death_visual_root == null or not is_instance_valid(_death_visual_root):
+        return
+    var active := current_health <= 0.0 and death_presentation_remaining > 0.0
+    _death_visual_root.visible = active
+    if not active:
+        return
+    var progress := clampf(death_presentation_remaining / DEATH_PRESENTATION_SECONDS, 0.0, 1.0)
+    _death_visual_root.scale = Vector3(1.0, 0.68 + progress * 0.32, 1.0)
+    _death_visual_root.rotation.z = (1.0 - progress) * -0.2
+    if _death_signal_material != null:
+        _death_signal_material.emission_energy_multiplier = lerpf(0.16, 1.8, progress)
     if _pistol_muzzle == null:
         push_error("Mechromancer authored glTF is missing the PistolMuzzle socket.")
         _pistol_muzzle = Marker3D.new()
