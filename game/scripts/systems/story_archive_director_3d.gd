@@ -90,6 +90,35 @@ func archive_records() -> Array[Dictionary]:
         if not has_record(record_id):
             continue
         result.append(record.duplicate(true))
+    result.append_array(_observed_ecology_records())
+    return result
+
+
+func _observed_ecology_records() -> Array[Dictionary]:
+    var result: Array[Dictionary] = []
+    if run_state == null or run_state.observed_species.is_empty():
+        return result
+    var species_keys: Array[String] = []
+    for raw_key in run_state.observed_species:
+        species_keys.append(str(raw_key))
+    species_keys.sort()
+    var sequence := 800
+    for species_key in species_keys:
+        var entry: Dictionary = run_state.observed_species.get(species_key, {})
+        var behaviour_names: Array[String] = []
+        for raw_behaviour in entry.get("behaviours", []):
+            behaviour_names.append(str(raw_behaviour).replace("_", " "))
+        var display_name: String = species_key.replace("_", " ").capitalize()
+        var behaviour_text := ", ".join(behaviour_names) if not behaviour_names.is_empty() else "unclassified movement"
+        result.append({
+            "id": "bestiary.%s" % species_key,
+            "display_name": "Bestiary · %s" % display_name,
+            "description": "Field evidence identifies %s. Observed behaviour: %s. This is a remembered ecological pattern, not a command or recurring task." % [display_name, behaviour_text],
+            "source_name": "Regional ecology",
+            "arc": "bestiary",
+            "sequence": sequence,
+        })
+        sequence += 1
     return result
 
 
