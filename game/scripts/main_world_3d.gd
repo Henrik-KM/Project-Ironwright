@@ -338,9 +338,9 @@ func _update_interaction_context() -> void:
     elif hud.forge_open:
         hud.set_prompt("Choose one manual fabrication or class upgrade. ESC closes the forge.")
     elif nearest_salvage != null:
-        hud.set_prompt("HOLD E · salvage %s · loud, slow, pistol disabled" % nearest_salvage.display_name)
+        hud.set_prompt("HOLD %s · salvage %s · loud, slow, pistol disabled" % [_input_binding_hint(&"iw_interact", "E"), nearest_salvage.display_name])
     elif forge_in_range:
-        hud.set_prompt("E · operate Heartforge manually")
+        hud.set_prompt("%s · operate Heartforge manually" % _input_binding_hint(&"iw_interact", "E"))
     else:
         hud.set_prompt("The pistol buys seconds. Stay close enough for the Bulwark to intercept.")
 
@@ -561,12 +561,13 @@ func _update_hud_from_state() -> void:
 
 
 func _update_objective() -> void:
+    var interact_hint := _input_binding_hint(&"iw_interact", "E")
     if run_state.manual_scrap_recovered < 20:
         objective_stage = 0
-        hud.set_objective("LEAVE THE LIGHT", "Hold E at a nearby wreck. Salvaging takes time, disables the pistol, and alerts the ecology.")
+        hud.set_objective("LEAVE THE LIGHT", "Hold %s at a nearby wreck. Salvaging takes time, disables the pistol, and alerts the ecology." % interact_hint)
     elif autonomy_director.count_robots(&"salvager") < 1:
         objective_stage = 1
-        hud.set_objective("FORGE A SCRAPPER", "Return to the Heartforge, press E, and build it manually while the Bulwark protects you.")
+        hud.set_objective("FORGE A SCRAPPER", "Return to the Heartforge, press %s, and build it manually while the Bulwark protects you." % interact_hint)
     elif run_state.autonomous_scrap_recovered < 30:
         objective_stage = 2
         hud.set_objective("LET THE MACHINES WORK", "Press 2. The Scrapper will leave in a coordinated group, salvage, and physically return with Scrap.")
@@ -579,6 +580,33 @@ func _update_objective() -> void:
     elif not run_state.expedition_core_recovered:
         objective_stage = 5
         hud.set_objective("KEEP THE HEARTFORGE ALIVE", "The expedition exists physically elsewhere. The home remains exposed while the group travels and returns.")
+
+
+func _input_binding_hint(action: StringName, fallback: String) -> String:
+    var settings := get_tree().get_first_node_in_group(&"release_settings_service") as Node
+    if settings != null and settings.has_method(&"input_binding_display_name"):
+        var display := str(settings.call(&"input_binding_display_name", action)).strip_edges()
+        if not display.is_empty():
+            return display
+    return fallback
+
+
+func _movement_binding_hint() -> String:
+    var settings := get_tree().get_first_node_in_group(&"release_settings_service") as Node
+    if settings != null and settings.has_method(&"movement_binding_display_name"):
+        var display := str(settings.call(&"movement_binding_display_name")).strip_edges()
+        if not display.is_empty():
+            return display
+    return "WASD"
+
+
+func refresh_input_legend() -> void:
+    if hud == null or hud.help_label == null:
+        return
+    hud.help_label.text = "%s MOVE · %s INTERACT · T EVOLVE · O OUTPOSTS · P OPERATIONS · L ARCHIVE · V ENDGAME · F FOLLOW · M MAP · F5/F9 SAVE/LOAD" % [
+        _movement_binding_hint(),
+        _input_binding_hint(&"iw_interact", "E"),
+    ]
 
 
 func _save_game() -> void:

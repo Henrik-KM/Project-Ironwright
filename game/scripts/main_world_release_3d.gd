@@ -414,6 +414,9 @@ func _connect_release_services() -> void:
 	settings_service.settings_changed.connect(func(next_settings: Dictionary) -> void:
 		_apply_release_settings()
 	)
+	settings_service.input_device_changed.connect(func(_device_kind: StringName) -> void:
+		refresh_input_legend()
+	)
 	settings_service.controller_connection_changed.connect(_on_controller_connection_changed)
 	transactional_save_service.save_completed.connect(func(slot_id: StringName, path: String) -> void:
 		session_diagnostics.record_event(&"save_completed", "Transactional run snapshot committed.", {"slot": String(slot_id)})
@@ -810,6 +813,7 @@ func _apply_release_settings() -> void:
 		performance_director.target_fps = int(settings_service.get_value(&"target_fps", 60))
 	if objective_guidance != null:
 		objective_guidance.visible = bool(settings_service.get_value(&"show_world_guidance", true))
+	refresh_input_legend()
 
 
 func _apply_balance_profile() -> void:

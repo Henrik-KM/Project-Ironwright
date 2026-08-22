@@ -2512,3 +2512,17 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - kept gameplay simulation, collision, targeting, formation movement and
   presentation-controller transitions unchanged while the deterministic
   population benchmark records the resulting wall-clock cost.
+
+## Focused live-input guidance milestone
+
+- connected the opening world marker, objective copy, contextual prompts and
+  tactical control legend to the active release keyboard/controller bindings;
+  remapping interact or movement now changes the guidance the player actually
+  sees instead of leaving stale `E`/`WASD` instructions on screen;
+- kept the default keyboard language concise (`WASD`, `E`) while exposing the
+  selected controller or custom key binding when the active device changes;
+- updated the physical objective marker immediately when guidance changes, so
+  a remapped action is readable in the same frame as the new objective rather
+  than waiting for a later presentation tick;
+- added release regression coverage for keyboard remapping, active-device
+  hints, objective-marker text and restoration of the default controls.

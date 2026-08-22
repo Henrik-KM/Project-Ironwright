@@ -19,7 +19,8 @@ During the initial salvage step, the game provides:
 - a pulsing amber marker attached to a real salvage wreck;
 - an amber ground route made from restrained world-space lights;
 - an approximate distance and cardinal direction in the objective text;
-- a world label that states `HOLD E · LOUD`;
+- a world label that states the active interact binding (default `HOLD E ·
+  LOUD`, or the remapped keyboard/controller equivalent);
 - a bottom-centre immediate-interaction prompt;
 - explicit warning that salvaging disables the pistol and attracts organisms.
 

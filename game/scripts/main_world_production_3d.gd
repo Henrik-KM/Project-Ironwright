@@ -58,6 +58,8 @@ func _update_first_session_guidance() -> void:
     if objective_guidance == null or run_state == null or autonomy_director == null:
         return
 
+    var interact_hint := _input_binding_hint(&"iw_interact", "E")
+
     if run_state.manual_scrap_recovered < 20:
         var wreck := _opening_salvage_target()
         if wreck == null:
@@ -66,32 +68,32 @@ func _update_first_session_guidance() -> void:
         objective_guidance.set_guidance(
             wreck,
             "SALVAGE WRECK",
-            "HOLD E · LOUD",
+            "HOLD %s · LOUD" % interact_hint,
             Color("f2b365")
         )
         hud.set_objective(
             "RECOVER YOUR FIRST SCRAP",
-            "Follow the amber ground lights to the highlighted municipal wreck (%s). Hold E to dismantle it; the pistol goes offline and the noise attracts organisms." % objective_guidance.route_summary()
+            "Follow the amber ground lights to the highlighted municipal wreck (%s). Hold %s to dismantle it; the pistol goes offline and the noise attracts organisms." % [objective_guidance.route_summary(), interact_hint]
         )
         if nearest_salvage == null:
             hud.set_prompt("FOLLOW THE AMBER ROUTE · STAY WITHIN THE BULWARK'S PROTECTION")
         else:
-            hud.set_prompt("HOLD E · DISMANTLE THE HIGHLIGHTED WRECK · PISTOL OFFLINE · NOISE ATTRACTS ORGANISMS")
+            hud.set_prompt("HOLD %s · DISMANTLE THE HIGHLIGHTED WRECK · PISTOL OFFLINE · NOISE ATTRACTS ORGANISMS" % interact_hint)
         return
 
     if autonomy_director.count_robots(&"salvager") < 1:
         objective_guidance.set_guidance(
             heartforge,
             "HEARTFORGE",
-            "PRESS E · BUILD SCRAPPER",
+            "PRESS %s · BUILD SCRAPPER" % interact_hint,
             Color("72dce1")
         )
         hud.set_objective(
             "BUILD YOUR FIRST SCRAPPER",
-            "Return along the cyan route to the Heartforge (%s). Press E at the assembly plate and choose Build Scrapper. Fabrication is loud and leaves you dependent on the Bulwark." % objective_guidance.route_summary()
+            "Return along the cyan route to the Heartforge (%s). Press %s at the assembly plate and choose Build Scrapper. Fabrication is loud and leaves you dependent on the Bulwark." % [objective_guidance.route_summary(), interact_hint]
         )
         if forge_in_range:
-            hud.set_prompt("PRESS E · OPEN THE HEARTFORGE · BUILD SCRAPPER")
+            hud.set_prompt("PRESS %s · OPEN THE HEARTFORGE · BUILD SCRAPPER" % interact_hint)
         else:
             hud.set_prompt("FOLLOW THE CYAN ROUTE BACK TO THE HEARTFORGE")
         return
@@ -110,7 +112,7 @@ func _update_first_session_guidance() -> void:
         objective_guidance.set_guidance(
             heartforge,
             "HEARTFORGE",
-            "PRESS E · BUILD ESCORT GROUP",
+            "PRESS %s · BUILD ESCORT GROUP" % interact_hint,
             Color("72dce1")
         )
         hud.set_objective(
@@ -118,7 +120,7 @@ func _update_first_session_guidance() -> void:
             "Return to the forge and manually fabricate one Warden and one Pathfinder. The Warden protects vulnerable machines; the Pathfinder keeps the expedition coherent."
         )
         if forge_in_range:
-            hud.set_prompt("PRESS E · BUILD THE MISSING WARDEN OR PATHFINDER")
+            hud.set_prompt("PRESS %s · BUILD THE MISSING WARDEN OR PATHFINDER" % interact_hint)
         else:
             hud.set_prompt("FOLLOW THE CYAN ROUTE TO THE HEARTFORGE")
         return
