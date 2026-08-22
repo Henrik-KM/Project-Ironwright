@@ -67,6 +67,8 @@ var defer_authored_visuals: bool = false
 var _deferred_proxy_root: Node3D
 var _damage_visual_root: Node3D
 var _damage_signal_material: StandardMaterial3D
+var _death_visual_root: Node3D
+var _death_signal_material: StandardMaterial3D
 var _damage_presentation_enabled: bool = true
 
 
@@ -92,7 +94,9 @@ func configure(next_species: StringName, player: Node3D, heartforge: Node3D) -> 
     _apply_species_stats()
     if is_inside_tree():
         _refresh_visuals()
+        _build_death_presentation()
         _refresh_damage_presentation()
+        _refresh_death_presentation()
         _choose_next_ecological_behaviour(true)
 
 
@@ -137,6 +141,7 @@ func receive_pack_alert(position: Vector3, intensity: float) -> void:
 func _physics_process(delta: float) -> void:
     if not alive:
         death_presentation_remaining = maxf(0.0, death_presentation_remaining - delta)
+        _refresh_death_presentation()
         if death_presentation_remaining <= 0.0:
             queue_free()
         return
@@ -543,6 +548,7 @@ func apply_damage(amount: float, source: Node = null) -> void:
     collision_layer = 0
     collision_mask = 0
     death_presentation_remaining = DEATH_PRESENTATION_SECONDS
+    _refresh_death_presentation()
     killed.emit(self, source)
 
 
@@ -642,6 +648,7 @@ func _build_visuals() -> void:
     add_child(_model_root)
     _refresh_visuals()
     _build_damage_presentation()
+    _build_death_presentation()
 
 
 func ensure_authored_visuals() -> void:
@@ -735,6 +742,116 @@ func _refresh_damage_presentation() -> void:
             scar.scale = Vector3(1.0, 0.7 + visibility * 0.3, 1.0)
         if leak != null:
             leak.visible = active and visibility > 0.25
+
+
+func _build_death_presentation() -> void:
+    if _death_visual_root != null and is_instance_valid(_death_visual_root):
+        _death_visual_root.free()
+    _death_visual_root = Node3D.new()
+    _death_visual_root.name = "OrganicDeathPresentation"
+    _death_visual_root.visible = false
+    add_child(_death_visual_root)
+
+    var size_scale := 1.0
+    var signal_color := Color("d83e5c")
+    match species:
+        &"glassmoth":
+            size_scale = 0.78
+            signal_color = Color("6ce4dd")
+        &"miremaw", &"rootweaver":
+            size_scale = 1.35
+            signal_color = Color("b52e59")
+        &"carrionbell", &"ashmantle":
+            size_scale = 1.12
+            signal_color = Color("f06b32")
+        &"broodmass":
+            size_scale = 1.58
+            signal_color = Color("9f2947")
+        &"apex":
+            size_scale = 1.92
+            signal_color = Color("f04426")
+
+    var shell_mat := ModelKit3D.material(Color("251b23"), 0.08, 0.78)
+    var edge_mat := ModelKit3D.material(Color("5d4a4b"), 0.0, 0.9)
+    var root_mat := ModelKit3D.material(Color("321626"), 0.0, 0.72)
+    _death_signal_material = ModelKit3D.material(Color("2b101d"), 0.0, 0.5, signal_color, 1.8)
+
+    ModelKit3D.add_segmented_carapace(
+        _death_visual_root,
+        0.42 * size_scale,
+        Vector3(0.0, 0.78 * size_scale, 0.12),
+        shell_mat,
+        edge_mat,
+        Vector3(1.42, 0.62, 1.6),
+        3,
+        "OrganicDeathCarapace"
+    )
+    ModelKit3D.add_organic_plate(
+        _death_visual_root,
+        0.31 * size_scale,
+        Vector3(0.0, 0.98 * size_scale, -0.52 * size_scale),
+        root_mat,
+        edge_mat,
+        Vector3(1.28, 0.32, 1.0),
+        "OrganicDeathRootCollar"
+    )
+    for index in range(5):
+        var angle := TAU * float(index) / 5.0 + 0.3
+        var shard_position := Vector3(cos(angle) * 0.5, 0.78 + float(index % 2) * 0.16, sin(angle) * 0.48) * size_scale
+        ModelKit3D.add_beveled_box(
+            _death_visual_root,
+            Vector3(0.16, 0.34 + float(index % 2) * 0.08, 0.08) * size_scale,
+            shard_position,
+            edge_mat,
+            Vector3(0.18, angle, -0.24 + float(index) * 0.12),
+            "OrganicDeathShard%02d" % index,
+            0.22
+        )
+    for index in range(3):
+        var vein_side := -1.0 if index % 2 == 0 else 1.0
+        ModelKit3D.add_tapered_cylinder(
+            _death_visual_root,
+            0.025 * size_scale,
+            0.045 * size_scale,
+            0.68 * size_scale,
+            Vector3(vein_side * (0.23 + float(index) * 0.08), 0.84 * size_scale, -0.08 * size_scale),
+            root_mat,
+            Vector3(0.0, 0.0, vein_side * (0.45 + float(index) * 0.1)),
+            "OrganicDeathVein%02d" % index
+        )
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_capsule(
+            _death_visual_root,
+            0.035 * size_scale,
+            0.72 * size_scale,
+            Vector3(side * 0.52 * size_scale, 0.62 * size_scale, 0.18 * size_scale),
+            edge_mat,
+            Vector3(0.0, 0.0, side * 0.72),
+            "OrganicDeathSpine%s" % ("L" if side < 0.0 else "R")
+        )
+    ModelKit3D.add_sphere(
+        _death_visual_root,
+        0.12 * size_scale,
+        Vector3(0.0, 1.28 * size_scale, -0.48 * size_scale),
+        _death_signal_material,
+        Vector3(1.0, 0.72, 0.86),
+        "OrganicDeathSignal"
+    )
+    _refresh_death_presentation()
+
+
+func _refresh_death_presentation() -> void:
+    if _death_visual_root == null or not is_instance_valid(_death_visual_root):
+        return
+    var remaining_ratio := clampf(death_presentation_remaining / DEATH_PRESENTATION_SECONDS, 0.0, 1.0)
+    var active := not alive and remaining_ratio > 0.0
+    _death_visual_root.visible = active
+    if not active:
+        return
+    _death_visual_root.scale = Vector3(1.0 + (1.0 - remaining_ratio) * 0.08, 0.76 + remaining_ratio * 0.24, 1.0 + (1.0 - remaining_ratio) * 0.08)
+    _death_visual_root.rotation.z = (1.0 - remaining_ratio) * 0.18
+    if _death_signal_material != null:
+        _death_signal_material.emission_energy_multiplier = lerpf(0.25, 1.8, remaining_ratio)
 
 
 func _ensure_deferred_proxy_root() -> Node3D:

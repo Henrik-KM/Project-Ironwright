@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused organic-death high-definition milestone
+
+- replaced the generic dying-enemy read with a bounded fractured shell, exposed
+  root collar, dead vascular channels, shell shards, perimeter spines and a
+  species-aware spent signal core;
+- preserved the existing death timer, collision removal, ecology, combat and
+  cleanup contracts while making organic losses readable as physical failures;
+- added aesthetic regression coverage for every implemented organic family and
+  the existing cleanup-window transition, with a fresh exported live review
+  required before merge.
+
 ## Focused tiered-nest collapse high-definition milestone
 
 - replaced the tiered nest's scaled healthy-shell destruction fallback with a
