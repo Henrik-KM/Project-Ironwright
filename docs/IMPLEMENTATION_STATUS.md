@@ -1770,6 +1770,19 @@ environmentally distinct without changing ecology, routing or player workload.
 
 ## Commercial work still remaining
 
+## Focused full-remote presentation-review breadth milestone
+
+- expanded the development-only exported presentation gallery from the three
+  previously exposed remote landmarks to all eleven remote regions, so every
+  authored district identity can be inspected through the exact release-world
+  stack;
+- added bounded arrow-key browsing and retained direct numeric shortcuts for
+  the first ten pages, without adding a player-facing gallery, save state,
+  collision, navigation rule or recurring management task;
+- added release coverage that selects every remote page, confirms one visible
+  landmark actor, and retains the dedicated Root Cistern authored-model check;
+  formal human acceptance of the broader region family remains outstanding.
+
 ## Focused town-wide route-recovery breadth milestone
 
 - expanded authored alternate street routes to North Ruins, East Tenements,

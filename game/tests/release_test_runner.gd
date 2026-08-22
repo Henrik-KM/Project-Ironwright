@@ -418,13 +418,21 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
 func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     world._start_presentation_review()
     await process_frame
-    world._show_presentation_review_page(5)
+    _expect(world.presentation_review_pages.size() == 14, "Presentation review must expose the three core pages plus all eleven remote regions.")
+    for page_index in range(3, world.presentation_review_pages.size()):
+        world._show_presentation_review_page(page_index)
+        await process_frame
+        var region_page: Array = world.presentation_review_pages[page_index]
+        _expect(region_page.size() == 1, "Every remote presentation-review page must expose one landmark actor.")
+        if region_page.size() == 1:
+            _expect((region_page[0] as Node3D).visible, "Every remote presentation-review landmark must be visible when selected.")
+    world._show_presentation_review_page(13)
     await process_frame
-    var page: Array = world.presentation_review_pages[5] if world.presentation_review_pages.size() > 5 else []
+    var page: Array = world.presentation_review_pages[13] if world.presentation_review_pages.size() > 13 else []
     _expect(page.size() == 1, "Root Cistern presentation review must expose one dedicated review actor.")
     if page.size() == 1:
         var actor := page[0] as Node3D
-        _expect(actor != null and actor.visible, "Root Cistern presentation review actor must be visible on page six.")
+        _expect(actor != null and actor.visible, "Root Cistern presentation review actor must be visible on the final remote page.")
         _expect(actor != null and actor.find_children("*", "MeshInstance3D", true, false).size() > 20, "Root Cistern presentation review actor must retain its authored high-definition mesh hierarchy.")
     world.presentation_review_active = false
     world.get_tree().paused = false
