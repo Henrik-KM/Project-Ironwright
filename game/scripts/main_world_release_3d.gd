@@ -685,7 +685,7 @@ func _release_save_is_safe() -> bool:
 func _collect_release_snapshot() -> Dictionary:
 	var robots: Array[Dictionary] = []
 	for robot in autonomy_director.living_robots():
-		robots.append({"name": String(robot.name), "archetype": String(robot.archetype), "level": robot.level, "position": _vector_to_array(robot.global_position), "health": robot.current_health})
+		robots.append({"name": String(robot.name), "archetype": String(robot.archetype), "level": robot.level, "callsign": robot.callsign, "position": _vector_to_array(robot.global_position), "health": robot.current_health})
 	var salvage: Array[Dictionary] = []
 	for pile in get_tree().get_nodes_in_group(&"salvage_piles"):
 		if pile is SalvagePile3D:
@@ -713,6 +713,7 @@ func _collect_release_snapshot() -> Dictionary:
 		},
 		"complete": {
 			"regions": region_director.to_dictionary(),
+			"story_archive": story_archive_director.to_dictionary(),
 			"long_operations": long_operation_director.to_dictionary(),
 			"machine_society": machine_society_director.to_dictionary(),
 			"strategic_ecology": strategic_ecology_director.to_dictionary(),
@@ -720,6 +721,7 @@ func _collect_release_snapshot() -> Dictionary:
 			"continuity_used": continuity_used,
 			"first_victory_achieved": first_victory_achieved,
 			"spawned_region_salvage": _serialize_stringname_dictionary(spawned_region_salvage),
+			"machine_relationship_moments": machine_relationship_moments.duplicate(true),
 		},
 		"release": {
 			"balance": balance_director.to_dictionary(),
@@ -751,6 +753,7 @@ func _restore_release_snapshot(snapshot: Dictionary) -> void:
 		var saved_name := str(robot_data.get("name", ""))
 		if not saved_name.is_empty():
 			robot.name = saved_name
+		robot.restore_callsign(robot_data.get("callsign", ""))
 		robot.current_health = clampf(float(robot_data.get("health", robot.maximum_health)), 0.0, robot.maximum_health)
 		if archetype == &"companion":
 			companion = robot
@@ -776,6 +779,9 @@ func _restore_release_snapshot(snapshot: Dictionary) -> void:
 
 	var complete: Dictionary = snapshot.get("complete", {})
 	region_director.restore_from_dictionary(complete.get("regions", {}))
+	var saved_story_archive: Variant = complete.get("story_archive", {})
+	if saved_story_archive is Dictionary and not (saved_story_archive as Dictionary).is_empty():
+		story_archive_director.restore_from_dictionary(saved_story_archive)
 	long_operation_director.restore_from_dictionary(complete.get("long_operations", {}))
 	machine_society_director.restore_from_dictionary(complete.get("machine_society", {}))
 	strategic_ecology_director.restore_from_dictionary(complete.get("strategic_ecology", {}))
@@ -784,12 +790,15 @@ func _restore_release_snapshot(snapshot: Dictionary) -> void:
 		endgame_escalation_director.sync_from_endgame_state()
 	continuity_used = bool(complete.get("continuity_used", false))
 	first_victory_achieved = bool(complete.get("first_victory_achieved", false))
+	var saved_relationship_moments: Variant = complete.get("machine_relationship_moments", {})
+	machine_relationship_moments = saved_relationship_moments.duplicate(true) if saved_relationship_moments is Dictionary else {}
 	spawned_region_salvage.clear()
 	var saved_salvage: Dictionary = complete.get("spawned_region_salvage", {})
 	for raw_key in saved_salvage:
 		spawned_region_salvage[StringName(str(raw_key))] = bool(saved_salvage[raw_key])
 	for region_data in region_director.discovered_regions():
 		_ensure_region_salvage(StringName(str(region_data.get("id", ""))))
+	story_archive_director.reconcile_discovered_state()
 
 	var release: Dictionary = snapshot.get("release", {})
 	balance_director.restore_from_dictionary(release.get("balance", {}))

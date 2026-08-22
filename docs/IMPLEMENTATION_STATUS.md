@@ -102,6 +102,12 @@
 - The first autonomous replacement and first physically returned long-range group now unlock stable archive entries through the existing machine-witness signal path.
 - Archive unlocks remain bounded, persisted and on-demand; they do not become a per-unit roster, task queue or recurring notification burden.
 
+## Focused release-snapshot continuity milestone
+
+- Extended the release save envelope to retain actor callsigns, Town Archive unlocks and machine-relationship moment flags rather than relying on the older base-world save hook.
+- Added safe defaults and archive reconciliation for older release snapshots that do not contain the new fields.
+- Strengthened complete-game coverage with a deliberately changed callsign and machine-witness archive records across a release save/load cycle.
+
 ## Focused authored outpost shelter milestone
 
 - Replaced the shared autonomous outpost's procedural primary shelter shell with an original high-definition glTF asset containing a layered foundation, service body, roof plate, vent louvers, status beacon and cable/service details.

@@ -171,11 +171,16 @@ func _run_all() -> void:
         world.machine_society_director.fabrication_clock = 0.0
         world.machine_society_director._evaluate_society()
     _expect(world.autonomy_director.count_robots(&"relay") >= 1, "Signal Relay research must let the machine society fabricate one relay automatically without a production queue.")
+    var companion_before_release_save := world.autonomy_director.living_robots(&"companion")[0]
+    companion_before_release_save.callsign = "Bulwark-Archive"
+    var archive_records_before_release_save := complete_world.story_archive_director.record_count()
     world._save_game()
     world._load_game()
     _expect(world.autonomy_director.count_robots(&"relay") >= 1, "The Signal Relay chassis must survive the unified release save/load path.")
     var restored_companion := world.autonomy_director.living_robots(&"companion")[0]
-    _expect(restored_companion.display_identity() == "Bulwark", "Robot callsigns must survive the unified save/load path, with the older-save default retaining Bulwark.")
+    _expect(restored_companion.display_identity() == "Bulwark-Archive", "Robot callsigns must survive the release save/load path instead of being masked by the default Bulwark fallback.")
+    _expect(complete_world.story_archive_director.record_count() >= archive_records_before_release_save, "Town Archive records must survive the release save/load path.")
+    _expect(complete_world.story_archive_director.has_record(&"story.machine.first_return") and complete_world.story_archive_director.has_record(&"story.machine.first_replacement"), "Machine-witness archive records must survive the release save/load path.")
     world.heartforge.current_health = world.heartforge.maximum_health * 0.72
     world.heartforge.health_changed.emit(world.heartforge.current_health, world.heartforge.maximum_health)
     world.adaptive_defense_director.evaluate_now()
