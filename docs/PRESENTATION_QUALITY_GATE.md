@@ -79,6 +79,12 @@ tank, or root-signal spines. These details keep the physical operation route
 legible before autonomous construction begins without changing collision,
 discovery rules, outpost roles or navigation.
 
+The release material pass now recognizes the authored Mechromancer and Signal
+Relay shells as machine surfaces too. Their close tactical meshes therefore
+receive the same triplanar metal texture and generated normal-relief companion
+as the other production machine families, including when a Relay is fabricated
+after the initial world boot.
+
 The Mechromancer now uses the same export-breadth contract. Its authored Idle,
 Walk, Fire, Work, Upgrade and Hit clips retain multiple body, equipment, recoil
 or interaction channels in the canonical Blender-to-glTF path. This improves

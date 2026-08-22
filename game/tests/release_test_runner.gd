@@ -366,6 +366,12 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     _expect(opening_authored_mesh != null and opening_authored_mesh.get_meta(&"release_material_family", &"") == &"metal", "Authored Bulwark shell meshes must receive the release metal material pass.")
     var opening_material := opening_authored_mesh.material_override as StandardMaterial3D if opening_authored_mesh != null else null
     _expect(opening_material != null and opening_material.normal_enabled and opening_material.normal_texture != null, "Authored Bulwark shell materials must carry the generated normal-relief companion.")
+    var player_authored_mesh := _find_first_mesh(world.player.get_node_or_null("MechromancerModel") if world.player != null else null)
+    _expect(player_authored_mesh != null and player_authored_mesh.get_meta(&"release_material_family", &"") == &"metal", "The authored Mechromancer shell must receive the release metal material pass.")
+    var relay := world._spawn_robot(&"relay", world.player.global_position + Vector3(5.0, 0.0, -2.0), 1)
+    await process_frame
+    var relay_authored_mesh := _find_first_mesh(relay.get_node_or_null("RobotModel/RelayAuthoredModel") if relay != null else null)
+    _expect(relay_authored_mesh != null and relay_authored_mesh.get_meta(&"release_material_family", &"") == &"metal", "The authored Signal Relay shell must receive the release metal material pass.")
     var opening_damage_root := opening_robot.get_node_or_null("RobotDamagePresentation") as Node3D if opening_robot != null else null
     _expect(opening_damage_root != null, "Authored machine actors must carry a bounded persistent damage presentation root.")
     if opening_robot != null and opening_damage_root != null:
@@ -411,6 +417,7 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.release_world_art.meshes_textured > textured_before, "Runtime release art must texture meshes added after initial boot.")
 
     late_robot.queue_free()
+    relay.queue_free()
     late_enemy.queue_free()
     late_authored_family.queue_free()
     for family in later_families:

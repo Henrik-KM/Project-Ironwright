@@ -27,11 +27,13 @@ const NORMAL_TEXTURE_PATHS: Dictionary = {
     &"rust": TEXTURE_ROOT + "/rust_panel_normal.png",
 }
 const AUTHORED_MACHINE_TOKENS: Array[String] = [
+    "mechromancer",
     "bulwark",
     "warden",
     "scrapper",
     "pathfinder",
     "engineer",
+    "relay",
 ]
 const AUTHORED_ORGANIC_TOKENS: Array[String] = [
     "veilstalker",
