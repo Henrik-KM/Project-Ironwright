@@ -27,6 +27,7 @@ const PRESENTATION_REVIEW_LATE_ORGANICS: Array[StringName] = [
 const PRESENTATION_REVIEW_REGIONS: Array[StringName] = [
 	&"region.glasshouse", &"region.riverworks", &"region.root_cistern",
 ]
+const ROOT_CISTERN_PRESENTATION_REVIEW_SCENE: PackedScene = preload("res://assets/root_cistern/root_cistern.gltf")
 
 var localization_service: LocalizationService3D
 var settings_service: ReleaseSettingsService3D
@@ -538,10 +539,13 @@ func _start_presentation_review() -> void:
 			presentation_review_pages[2].append(enemy)
 	for index in PRESENTATION_REVIEW_REGIONS.size():
 		var landmark := _presentation_review_landmark(PRESENTATION_REVIEW_REGIONS[index])
-		if landmark != null:
+		var review_actor: Node3D = landmark
+		if PRESENTATION_REVIEW_REGIONS[index] == &"region.root_cistern" and landmark != null:
+			review_actor = _create_root_cistern_presentation_review_actor(landmark)
+		if review_actor != null:
 			landmark.set_presentation_detail_level(0)
 			landmark.set_map_emphasis(false)
-			presentation_review_pages[3 + index].append(landmark)
+			presentation_review_pages[3 + index].append(review_actor)
 	_create_presentation_review_stage()
 	_show_presentation_review_page(0)
 	get_tree().paused = true
@@ -690,6 +694,17 @@ func _presentation_review_landmark(region_id: StringName) -> RegionLandmark3D:
 		if landmark != null and landmark.region_id == region_id:
 			return landmark
 	return null
+
+
+func _create_root_cistern_presentation_review_actor(landmark: RegionLandmark3D) -> Node3D:
+	var review_actor := Node3D.new()
+	review_actor.name = "RootCisternPresentationReviewActor"
+	add_child(review_actor)
+	review_actor.global_position = landmark.global_position
+	var authored_scene := ROOT_CISTERN_PRESENTATION_REVIEW_SCENE.instantiate()
+	authored_scene.name = "RootCisternPresentationReviewModel"
+	review_actor.add_child(authored_scene)
+	return review_actor
 
 
 func _update_presentation_review_camera(delta: float) -> void:

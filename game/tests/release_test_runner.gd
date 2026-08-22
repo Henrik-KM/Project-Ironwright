@@ -29,6 +29,7 @@ func _run_all() -> void:
     _test_localization(world)
     await _test_controller_and_accessibility(world)
     _test_release_assets_and_art(world)
+    await _test_presentation_review(world)
     _test_content_breadth(world)
     await _test_runtime_material_continuity(world)
     await _test_spatial_and_performance(world)
@@ -412,6 +413,22 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         _expect(cistern_dressing.find_child("CisternControlDeck", true, false) != null and cistern_dressing.find_child("CisternDeckGrate00", true, false) != null and cistern_dressing.find_child("CisternProtocolPanel", true, false) != null, "Release Root Cistern dressing must expose an approach-facing control deck.")
         _expect(cistern_dressing.find_child("CisternPumpHousing", true, false) != null and cistern_dressing.find_child("CisternPumpLouver", true, false) != null and cistern_dressing.find_child("CisternHeaderPipe00", true, false) != null, "Release Root Cistern dressing must expose buried pump hardware and header pipes.")
         _expect(cistern_dressing.find_child("CisternRootAnchor00", true, false) != null and cistern_dressing.find_child("CisternAnchorPulse00", true, false) != null, "Release Root Cistern dressing must expose bounded living-root anchor detail.")
+
+
+func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
+    world._start_presentation_review()
+    await process_frame
+    world._show_presentation_review_page(5)
+    await process_frame
+    var page: Array = world.presentation_review_pages[5] if world.presentation_review_pages.size() > 5 else []
+    _expect(page.size() == 1, "Root Cistern presentation review must expose one dedicated review actor.")
+    if page.size() == 1:
+        var actor := page[0] as Node3D
+        _expect(actor != null and actor.visible, "Root Cistern presentation review actor must be visible on page six.")
+        _expect(actor != null and actor.find_children("*", "MeshInstance3D", true, false).size() > 20, "Root Cistern presentation review actor must retain its authored high-definition mesh hierarchy.")
+    world.presentation_review_active = false
+    world.get_tree().paused = false
+    world._set_tactical_hud_visible(true)
 
 
 func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:

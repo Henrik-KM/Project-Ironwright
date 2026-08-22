@@ -2419,6 +2419,18 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - added a regression covering ordinary-nest registration and verified the
   release boot no longer emits the tier-director conversion diagnostic.
 
+## Focused Root Cistern presentation-review fix
+
+- fixed the exact exported presentation gallery's page 6, which previously
+  rendered a blank slate because the undiscovered in-world landmark was still
+  held at reduced presentation detail when the review stage was assembled;
+- added a detached review-only instance of the authored Root Cistern glTF at
+  the real landmark position, preserving the live undiscovered-region state
+  while making the capstone model inspectable in the human review path;
+- added commercial release coverage for the visible page-six actor and its
+  authored mesh hierarchy; the fresh Windows export now shows the basin, core,
+  signal pylons and root hardware in the exact review build.
+
 ## Focused discovered-site presentation milestone
 
 - replaced the discovered outpost-site placeholder cross and sphere with a
