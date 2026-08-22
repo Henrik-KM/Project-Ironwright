@@ -59,6 +59,7 @@ The forge is a full-screen modal interaction with a centred, responsive panel.
 - the panel is sized from the current viewport with safe margins;
 - tall content is scrollable;
 - no fabrication option may be clipped off-screen at supported resolutions;
+- the close action is a fixed, clearly labelled footer outside the scroll region;
 - the dark modal backdrop separates the exposed strategic commitment from normal play;
 - adding future robot families must not require manually increasing a hard-coded panel height.
 
