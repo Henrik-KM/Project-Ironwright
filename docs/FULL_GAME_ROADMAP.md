@@ -423,6 +423,8 @@ Narrative:
 - discoveries that explain technologies and ecology;
 - sparse run-level story arcs compatible with systemic replay, including the
   persisted Town Archive recovered through real region and component discoveries;
+  the current build also assembles three read-only authored threads from those
+  records, with chapter text and progress derived from actual run consequences;
 - endings linked to strategic choices.
 
 Exit gate:

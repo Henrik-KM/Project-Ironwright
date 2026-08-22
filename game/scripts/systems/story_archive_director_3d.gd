@@ -13,6 +13,7 @@ var run_state: RunState3D
 var region_director: WorldRegionDirector3D
 var site_source: Node
 var records: Dictionary = {}
+var arcs: Array[Dictionary] = []
 var unlocked_records: Dictionary = {}
 var load_errors: Array[String] = []
 
@@ -85,6 +86,7 @@ func record_count() -> int:
 
 func archive_records() -> Array[Dictionary]:
     var result: Array[Dictionary] = []
+    result.append_array(story_arc_summaries())
     for record in _sorted_records():
         var record_id := StringName(str(record.get("id", "")))
         if not has_record(record_id):
@@ -92,6 +94,55 @@ func archive_records() -> Array[Dictionary]:
         result.append(record.duplicate(true))
     result.append_array(_observed_ecology_records())
     result.append_array(_pressure_chronicle_records())
+    return result
+
+
+## Returns the current run-level narrative threads as read-only archive entries.
+## Progress is derived from already-unlocked physical records, so it remains
+## correct across save/load without creating a second quest or task system.
+func story_arc_summaries() -> Array[Dictionary]:
+    var result: Array[Dictionary] = []
+    for arc in arcs:
+        var required_ids: Array = arc.get("record_ids", [])
+        var recovered := 0
+        var missing_names: Array[String] = []
+        for raw_id in required_ids:
+            var record_id := StringName(str(raw_id))
+            if has_record(record_id):
+                recovered += 1
+            else:
+                var missing: Variant = records.get(record_id, {})
+                if missing is Dictionary:
+                    missing_names.append(str((missing as Dictionary).get("display_name", String(record_id))))
+        var total := required_ids.size()
+        var stage_description := str(arc.get("description", "The thread has not yet found its shape."))
+        var selected_stage := -1
+        for raw_stage in arc.get("stages", []):
+            if not (raw_stage is Dictionary):
+                continue
+            var stage := raw_stage as Dictionary
+            var stage_count := int(stage.get("count", 0))
+            if recovered >= stage_count and stage_count >= selected_stage:
+                selected_stage = stage_count
+                stage_description = str(stage.get("description", stage_description))
+        var status_line := "THREAD PROGRESS · %d/%d PHYSICAL CLUES RECOVERED" % [recovered, total]
+        var continuation := ""
+        if recovered >= total:
+            continuation = "The thread is complete. Its meaning now belongs to the run's ending."
+        elif not missing_names.is_empty():
+            var visible_missing := missing_names.slice(0, mini(2, missing_names.size()))
+            continuation = "NEXT TRACE · %s" % ", ".join(visible_missing)
+        result.append({
+            "id": "thread.%s" % str(arc.get("id", "unknown")),
+            "kind": "story_thread",
+            "display_name": "THREAD · %s · %d/%d" % [str(arc.get("display_name", "Unknown")), recovered, total],
+            "description": "%s\n\n%s\n%s" % [status_line, stage_description, continuation],
+            "source_name": str(arc.get("source_name", "Run-level story")),
+            "arc": str(arc.get("id", "story")),
+            "sequence": int(arc.get("sequence", 0)),
+            "progress": recovered,
+            "total": total,
+        })
     return result
 
 
@@ -232,6 +283,7 @@ func _sorted_records() -> Array[Dictionary]:
 
 func _load_records() -> void:
     records.clear()
+    arcs.clear()
     load_errors.clear()
     var file := FileAccess.open(DATA_PATH, FileAccess.READ)
     if file == null:
@@ -256,3 +308,15 @@ func _load_records() -> void:
         if record_id == &"":
             continue
         records[record_id] = record
+    var arc_entries: Variant = (parsed as Dictionary).get("arcs", [])
+    if arc_entries is Array:
+        for entry in arc_entries:
+            if entry is Dictionary and not str((entry as Dictionary).get("id", "")).is_empty():
+                arcs.append((entry as Dictionary).duplicate(true))
+        arcs.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+            var a_sequence := int(a.get("sequence", 0))
+            var b_sequence := int(b.get("sequence", 0))
+            if a_sequence == b_sequence:
+                return str(a.get("id", "")) < str(b.get("id", ""))
+            return a_sequence < b_sequence
+        )

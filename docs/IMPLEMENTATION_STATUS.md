@@ -2419,6 +2419,20 @@ Remaining production work includes:
 - professional localization review of all remaining gameplay prose;
 - external alpha, beta, packaging, store assets, signing and release QA.
 
+## Focused run-level story-thread milestone
+
+- added three authored, data-driven narrative threads—The Town That Stayed,
+  The Machines Remember, and The Signal Beneath—whose chapters assemble from
+  physical region discoveries, machine-witness moments, outpost consequences,
+  completed operations and ecological evidence already recorded by the run;
+- exposed each thread as a read-only `recovered/total` entry in the existing Town
+  Archive, with the current chapter and the next trace remaining explanatory
+  rather than becoming a checklist, quest queue or recurring maintenance task;
+- kept thread progress derived from durable archive records, so save/load and
+  older snapshots cannot drift into a second narrative state machine, and added
+  native coverage for opening progress, chapter advancement, archive presentation
+  and restoration.
+
 The roadmap now refines and expands an actual complete game loop rather than extrapolating from a disconnected prototype.
 
 ## Focused keyboard-remapping accessibility milestone
