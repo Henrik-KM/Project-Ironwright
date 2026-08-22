@@ -819,8 +819,9 @@ def main() -> int:
                 fail(f"Procedural animator is missing {token}")
 
         guidance = (ROOT / "game/scripts/presentation/objective_guidance_3d.gd").read_text(encoding="utf-8")
-        if "marker_label.fixed_size = false" not in guidance:
-            fail("Objective labels may not return to giant fixed-size screen billboards.")
+        for token in ["marker_label.fixed_size = false", "BeaconStem", "BeaconCrown", "BeaconSignalRing"]:
+            if token not in guidance:
+                fail(f"Objective guidance is missing the bounded physical cue {token}")
 
         landmark = (ROOT / "game/scripts/world/region_landmark_3d.gd").read_text(encoding="utf-8")
         for token in ["_label.fixed_size = false", "set_map_emphasis", "_label.visible = false"]:
