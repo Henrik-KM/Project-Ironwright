@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused organic attack-audio telegraph milestone
+
+- connected the existing organic attack wind-up signal to the release audio
+  director so a player-targeting strike has an audible pre-impact danger cue;
+- kept the cue species-pitched, silent in the subtitle layer, and rate-limited
+  across overlapping pack wind-ups so threat clarity improves without alert
+  fatigue or a new HUD task;
+- added release regression coverage for the real signal connection, cue
+  emission and bounded overlap behaviour.
+
 ## Focused hero-surface bevel pass
 
 - added a dependency-free chamfered-surface helper to the Bulwark source

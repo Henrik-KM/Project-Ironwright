@@ -63,6 +63,23 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
         world.release_audio.notify_operation(&"salvage", &"working", "Repeated work report", Vector3(0.0, 0.0, -18.0))
         world.release_audio.notify_operation(&"salvage", &"working", "Repeated work report", Vector3(0.0, 0.0, -18.0))
         _expect(world.release_audio.operation_report_count == report_count_before + 2, "Repeated autonomous work must be rate-limited instead of flooding the audio layer.")
+        # Headless release boot does not materialize combat actors, so use a
+        # real OrganicEnemy3D fixture through the same connection path rather
+        # than weakening the test to a mock signal.
+        var warning_enemy := OrganicEnemy3D.new()
+        world.release_audio._connect_actor(warning_enemy)
+        var warning_callback := Callable(world.release_audio, "_on_organic_attack_started")
+        _expect(warning_enemy.attack_started.is_connected(warning_callback), "Organic attack wind-ups must connect to the release danger cue.")
+        world.release_audio.attack_warning_clock = 0.0
+        var warning_count_before := world.release_audio.attack_warning_count
+        world.release_audio._on_organic_attack_started(warning_enemy, world.player)
+        _expect(world.release_audio.attack_warning_count == warning_count_before + 1, "An organic attack wind-up must emit a pre-impact danger cue.")
+        world.release_audio._on_organic_attack_started(warning_enemy, world.player)
+        _expect(world.release_audio.attack_warning_count == warning_count_before + 1, "Overlapping organic wind-ups must be rate-limited in the audio layer.")
+        world.release_audio.attack_warning_clock = 0.0
+        world.release_audio._on_organic_attack_started(warning_enemy, world.player)
+        _expect(world.release_audio.attack_warning_count == warning_count_before + 2, "The danger cue must become available again after its short overlap window.")
+        warning_enemy.free()
     _expect(world.release_world_art is ReleaseWorldArtDirector3D, "Release runtime must install production environment dressing.")
     _expect(world.release_animation is ReleaseAnimationDirector3D, "Release runtime must install secondary animation.")
     _expect(world.release_front_end is ReleaseFrontEnd3D, "Release runtime must install title, pause and settings screens.")
