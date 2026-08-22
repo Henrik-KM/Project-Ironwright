@@ -313,6 +313,13 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         _expect(tenement_dressing.find_child("TenementBalcony00", true, false) != null and tenement_dressing.find_child("TenementBalconyRail00", true, false) != null, "Release tenement dressing must expose layered balcony and railing detail.")
         _expect(tenement_dressing.find_child("TenementBalconyPost00_00", true, false) != null and tenement_dressing.find_child("TenementBalconyService00", true, false) != null, "Release tenement dressing must expose balcony support and service hardware.")
         _expect(tenement_dressing.find_child("TenementClothesline00", true, false) != null and tenement_dressing.find_child("TenementHangingCloth00_00", true, false) != null, "Release tenement dressing must expose readable residential clothing detail.")
+    var cistern_dressing := world.release_world_art.dressing_root.find_child("HighDefinitionCisternDressing", true, false) if world.release_world_art.dressing_root != null else null
+    _expect(cistern_dressing != null, "Release Root Cistern dressing must expose a bounded high-definition service layer.")
+    if cistern_dressing != null:
+        _expect(cistern_dressing.find_child("CisternServiceRing", true, false) != null and cistern_dressing.find_child("CisternSignalRing", true, false) != null, "Release Root Cistern dressing must expose layered service and signal rings.")
+        _expect(cistern_dressing.find_child("CisternControlDeck", true, false) != null and cistern_dressing.find_child("CisternDeckGrate00", true, false) != null and cistern_dressing.find_child("CisternProtocolPanel", true, false) != null, "Release Root Cistern dressing must expose an approach-facing control deck.")
+        _expect(cistern_dressing.find_child("CisternPumpHousing", true, false) != null and cistern_dressing.find_child("CisternPumpLouver", true, false) != null and cistern_dressing.find_child("CisternHeaderPipe00", true, false) != null, "Release Root Cistern dressing must expose buried pump hardware and header pipes.")
+        _expect(cistern_dressing.find_child("CisternRootAnchor00", true, false) != null and cistern_dressing.find_child("CisternAnchorPulse00", true, false) != null, "Release Root Cistern dressing must expose bounded living-root anchor detail.")
 
 
 func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
