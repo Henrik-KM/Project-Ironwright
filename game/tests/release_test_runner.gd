@@ -100,12 +100,18 @@ func _test_session_diagnostics() -> void:
 
 func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
     var variation := world.run_variation_director
-    _expect(variation.profile_ids().size() == 4, "Release must load the four authored world-condition profiles.")
+    _expect(variation.profile_ids().size() == 5, "Release must load the five authored world-condition profiles.")
     _expect(variation.profiles.has(&"weather.signal_bloom"), "Release must retain the authored Signal Bloom world-condition profile.")
     if variation.profiles.has(&"weather.signal_bloom"):
         var signal_bloom: Dictionary = variation.profiles[&"weather.signal_bloom"]
         _expect(float(signal_bloom.get("glow_bias", 0.0)) > 0.1 and str(signal_bloom.get("rain_color", "")) == "#76bfc8", "Signal Bloom must carry its distinct cyan organic atmospheric signature.")
         _expect(str(signal_bloom.get("ambient_tint", "")) == "#84aab8" and str(signal_bloom.get("fog_tint", "")) == "#4c7681", "Signal Bloom must carry its distinct restrained run-identity color grade.")
+    _expect(variation.profiles.has(&"weather.ashfall_drift"), "Release must retain the authored Ashfall Drift world-condition profile.")
+    if variation.profiles.has(&"weather.ashfall_drift"):
+        var ashfall_drift: Dictionary = variation.profiles[&"weather.ashfall_drift"]
+        _expect(int(ashfall_drift.get("rain_amount", 0)) == 80 and float(ashfall_drift.get("rain_velocity_max", 0.0)) <= 7.0, "Ashfall Drift must use a restrained dry-front particle signature.")
+        _expect(str(ashfall_drift.get("ambient_tint", "")) == "#aa9a94" and str(ashfall_drift.get("fog_tint", "")) == "#776866", "Ashfall Drift must carry its distinct warm ash atmospheric signature.")
+        _expect(float(ashfall_drift.get("glow_bias", 0.0)) > 0.0 and float(ashfall_drift.get("glow_bias", 0.0)) < 0.1, "Ashfall Drift must preserve restrained practical-light emphasis.")
     for profile_id in variation.profile_ids():
         var profile: Dictionary = variation.profiles[profile_id]
         _expect(str(profile.get("ambient_tint", "")) != "" and str(profile.get("fog_tint", "")) != "", "Every authored world condition must define deterministic ambient and fog identity tints.")
