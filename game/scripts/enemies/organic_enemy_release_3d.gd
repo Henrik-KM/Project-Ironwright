@@ -64,6 +64,9 @@ func set_reduced_detail(value: bool) -> void:
     reduced_detail = value
     coarse_simulation = false
     set_physics_process(not reduced_detail)
+    var tier_brain := get_node_or_null("EnemyTierBrain")
+    if tier_brain != null and tier_brain.has_method(&"set_simulation_lod"):
+        tier_brain.call(&"set_simulation_lod", 2 if reduced_detail else 0)
     if reduced_detail:
         velocity = Vector3.ZERO
         state_name = &"remote_simulation"
@@ -74,16 +77,27 @@ func set_coarse_simulation(value: bool) -> void:
         return
     coarse_simulation = value
     set_physics_process(not coarse_simulation)
+    var tier_brain := get_node_or_null("EnemyTierBrain")
+    if tier_brain != null and tier_brain.has_method(&"set_simulation_lod"):
+        tier_brain.call(&"set_simulation_lod", 1 if coarse_simulation else 0)
 
 
 func reduced_detail_tick(delta: float) -> void:
     if not reduced_detail:
+        return
+    var tier_brain := get_node_or_null("EnemyTierBrain")
+    if tier_brain != null and tier_brain.has_method(&"reduced_detail_tick"):
+        tier_brain.call(&"reduced_detail_tick", delta)
         return
     _coarse_detail_tick(delta)
 
 
 func coarse_detail_tick(delta: float) -> void:
     if not coarse_simulation:
+        return
+    var tier_brain := get_node_or_null("EnemyTierBrain")
+    if tier_brain != null and tier_brain.has_method(&"coarse_detail_tick"):
+        tier_brain.call(&"coarse_detail_tick", delta)
         return
     _coarse_detail_tick(delta)
 

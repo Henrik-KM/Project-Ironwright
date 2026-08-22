@@ -28,6 +28,7 @@ var spatial_index: Node
 var world: Node
 var remote_update_interval: float = 0.45
 var active_distance: float = 115.0
+var simulation_lod: int = 0
 var initialized: bool = false
 
 
@@ -57,6 +58,27 @@ func _process(delta: float) -> void:
         enemy.set_physics_process(false)
 
 
+func set_simulation_lod(level_value: int) -> void:
+    simulation_lod = clampi(level_value, 0, 2)
+    set_physics_process(simulation_lod == 0)
+    if enemy != null and is_instance_valid(enemy):
+        # The tier brain is the sole movement authority for authored release
+        # enemies, regardless of the parent's legacy physics callback state.
+        enemy.set_physics_process(false)
+
+
+func reduced_detail_tick(delta: float) -> void:
+    if not initialized or simulation_lod != 2:
+        return
+    _simulation_tick(delta)
+
+
+func coarse_detail_tick(delta: float) -> void:
+    if not initialized or simulation_lod != 1:
+        return
+    _simulation_tick(delta)
+
+
 func _initialize() -> void:
     if initialized or enemy == null or not is_instance_valid(enemy):
         return
@@ -78,17 +100,22 @@ func _initialize() -> void:
     enemy.set_meta(&"enemy_pack_id", String(pack_id))
     enemy.set_physics_process(false)
     _choose_next_behaviour(true)
+    set_process(false)
 
 
 func _physics_process(delta: float) -> void:
+    if simulation_lod != 0:
+        return
+    _simulation_tick(delta)
+
+
+func _simulation_tick(delta: float) -> void:
     if not initialized or enemy == null or not is_instance_valid(enemy):
         return
     if enemy.has_method(&"is_alive") and not bool(enemy.call(&"is_alive")):
         return
     decision_clock += delta
     state_elapsed += delta
-    enemy.set("attack_cooldown", maxf(0.0, float(enemy.get("attack_cooldown")) - delta))
-    enemy.set("attack_cooldown", maxf(0.0, float(enemy.get("attack_cooldown")) - delta))
     enemy.set("attack_cooldown", maxf(0.0, float(enemy.get("attack_cooldown")) - delta))
     last_known_target_seconds = maxf(0.0, last_known_target_seconds - delta)
     var focus := _simulation_focus_position()
