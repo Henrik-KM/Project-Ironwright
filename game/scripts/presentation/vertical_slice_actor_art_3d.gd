@@ -561,7 +561,7 @@ func _build_warden_detail(parent: Node3D) -> void:
         ModelKit3D.add_beveled_box(parent, Vector3(0.46, 0.8, 1.3), Vector3(side * 0.78, 0.85, 0.05), steel, Vector3(0.0, 0.0, side * 0.08), "WardenSidePlate", 0.16)
     ModelKit3D.add_cylinder(parent, 0.12, 1.45, Vector3(0.0, 1.42, -0.78), dark_steel, Vector3(1.5708, 0.0, 0.0), "WardenAutocannon")
     ModelKit3D.add_beveled_box(parent, Vector3(0.54, 0.38, 0.56), Vector3(0.0, 1.42, -0.55), rust, Vector3.ZERO, "WardenBreech", 0.18)
-    ModelKit3D.add_box(parent, Vector3(1.6, 0.15, 0.46), Vector3(0.0, 0.46, 0.84), dark_steel, Vector3(0.0, 0.0, -0.08), "WardenCounterweight")
+    ModelKit3D.add_beveled_box(parent, Vector3(1.6, 0.15, 0.46), Vector3(0.0, 0.46, 0.84), dark_steel, Vector3(0.0, 0.0, -0.08), "WardenCounterweight", 0.2)
     ModelKit3D.add_louvered_panel(parent, Vector3(0.72, 0.32, 0.18), Vector3(-0.52, 1.34, -0.87), dark_steel, rust, Vector3(-0.04, 0.0, 0.0), "WardenHeatExchanger", 5)
     ModelKit3D.add_louvered_panel(parent, Vector3(0.54, 0.26, 0.16), Vector3(0.52, 1.3, -0.84), dark_steel, steel, Vector3(-0.06, 0.0, 0.0), "WardenAmmunitionPanel", 4)
     for side in [-1.0, 1.0]:
@@ -574,7 +574,7 @@ func _build_scrapper_detail(parent: Node3D) -> void:
     ModelKit3D.add_beveled_box(parent, Vector3(1.18, 0.72, 1.0), Vector3(0.0, 1.5, 0.28), dark_steel, Vector3(0.06, 0.0, 0.0), "DeepScrapHopper", 0.16)
     for side in [-1.0, 1.0]:
         ModelKit3D.add_cylinder(parent, 0.095, 1.25, Vector3(side * 0.72, 0.92, -0.18), rust, Vector3(0.0, 0.0, side * 1.0), "ScrapManipulator")
-        ModelKit3D.add_box(parent, Vector3(0.32, 0.18, 0.52), Vector3(side * 1.15, 0.6, -0.2), steel, Vector3(0.0, 0.0, side * 0.16), "ScrapClaw")
+        ModelKit3D.add_beveled_box(parent, Vector3(0.32, 0.18, 0.52), Vector3(side * 1.15, 0.6, -0.2), steel, Vector3(0.0, 0.0, side * 0.16), "ScrapClaw", 0.22)
     ModelKit3D.add_cylinder(parent, 0.18, 0.34, Vector3(0.0, 1.12, -0.92), dark_steel, Vector3(1.5708, 0.0, 0.0), "CuttingHead")
     ModelKit3D.add_louvered_panel(parent, Vector3(0.78, 0.34, 0.18), Vector3(0.0, 1.48, -0.38), dark_steel, rust, Vector3(-0.08, 0.0, 0.0), "ScrapperIntake", 4)
     for side in [-1.0, 1.0]:
@@ -599,7 +599,7 @@ func _build_pathfinder_detail(parent: Node3D) -> void:
     ModelKit3D.add_cylinder(parent, 0.11, 0.16, Vector3(0.0, 2.72, -0.05), cyan, Vector3(1.5708, 0.0, 0.0), "PathfinderDishHub")
     ModelKit3D.add_louvered_panel(parent, Vector3(0.62, 0.24, 0.16), Vector3(0.0, 1.34, -0.48), dark_steel, cyan, Vector3(-0.05, 0.0, 0.0), "PathfinderSensorPod", 3)
     for side in [-1.0, 1.0]:
-        ModelKit3D.add_box(parent, Vector3(0.72, 0.08, 0.42), Vector3(side * 0.72, 1.42, 0.08), dark_steel, Vector3(0.0, 0.0, side * 0.12), "PathfinderSensorWing")
+        ModelKit3D.add_beveled_box(parent, Vector3(0.72, 0.08, 0.42), Vector3(side * 0.72, 1.42, 0.08), dark_steel, Vector3(0.0, 0.0, side * 0.12), "PathfinderSensorWing", 0.22)
         ModelKit3D.add_sphere(parent, 0.075, Vector3(side * 0.3, 1.38, -0.56), cyan, Vector3(1.0, 0.72, 0.6), "PathfinderRangeLens")
         _add_machine_lamp(parent, Vector3(side * 0.65, 1.42, -0.3), Color("82d68a"), 0.24)
 
@@ -608,7 +608,7 @@ func _build_engineer_detail(parent: Node3D) -> void:
     ModelKit3D.add_beveled_box(parent, Vector3(1.22, 0.5, 0.86), Vector3(0.0, 1.56, 0.26), dark_steel, Vector3.ZERO, "EngineerToolCradle", 0.16)
     ModelKit3D.add_cylinder(parent, 0.09, 1.35, Vector3(-0.78, 1.12, -0.1), rust, Vector3(0.0, 0.0, 1.08), "EngineerWelderBoom")
     ModelKit3D.add_cylinder(parent, 0.1, 1.42, Vector3(0.78, 1.12, 0.0), steel, Vector3(0.0, 0.0, -1.04), "EngineerClampBoom")
-    ModelKit3D.add_box(parent, Vector3(0.32, 0.22, 0.46), Vector3(1.28, 0.78, -0.02), steel, Vector3.ZERO, "EngineerClamp")
+    ModelKit3D.add_beveled_box(parent, Vector3(0.32, 0.22, 0.46), Vector3(1.28, 0.78, -0.02), steel, Vector3.ZERO, "EngineerClamp", 0.22)
     _add_machine_lamp(parent, Vector3(-1.25, 0.76, -0.12), Color("f0ad68"), 0.3)
 
 
@@ -625,12 +625,12 @@ func _polish_heartforge(forge: Heartforge3D) -> void:
     for side in [-1.0, 1.0]:
         ModelKit3D.add_cylinder(detail, 0.18, 3.0, Vector3(side * 2.15, 1.6, 0.9), steel, Vector3(0.0, 0.0, side * 0.12), "ForgeCoolantStack")
         ModelKit3D.add_cylinder(detail, 0.12, 2.3, Vector3(side * 1.7, 2.2, -1.55), rust, Vector3(1.1, 0.0, side * 0.2), "ForgePressurePipe")
-        ModelKit3D.add_box(detail, Vector3(0.72, 0.6, 0.52), Vector3(side * 2.15, 0.72, 1.2), dark_steel, Vector3.ZERO, "ForgePump")
+        ModelKit3D.add_beveled_box(detail, Vector3(0.72, 0.6, 0.52), Vector3(side * 2.15, 0.72, 1.2), dark_steel, Vector3.ZERO, "ForgePump", 0.2)
     for index in range(5):
         var angle := -1.1 + float(index) * 0.55
-        ModelKit3D.add_box(detail, Vector3(0.36, 0.18, 0.52), Vector3(cos(angle) * 1.9, 3.45, sin(angle) * 1.9), rust, Vector3(0.0, -angle, 0.08), "ForgeTopClamp")
-    ModelKit3D.add_box(detail, Vector3(1.4, 0.24, 0.9), Vector3(-2.65, 1.1, -0.2), dark_steel, Vector3.ZERO, "ForgeControlCabinet")
-    ModelKit3D.add_box(detail, Vector3(1.0, 0.08, 0.55), Vector3(-2.65, 1.28, -0.47), cyan, Vector3.ZERO, "ForgeDiagnosticPanel")
+        ModelKit3D.add_beveled_box(detail, Vector3(0.36, 0.18, 0.52), Vector3(cos(angle) * 1.9, 3.45, sin(angle) * 1.9), rust, Vector3(0.0, -angle, 0.08), "ForgeTopClamp", 0.22)
+    ModelKit3D.add_beveled_box(detail, Vector3(1.4, 0.24, 0.9), Vector3(-2.65, 1.1, -0.2), dark_steel, Vector3.ZERO, "ForgeControlCabinet", 0.18)
+    ModelKit3D.add_beveled_box(detail, Vector3(1.0, 0.08, 0.55), Vector3(-2.65, 1.28, -0.47), cyan, Vector3.ZERO, "ForgeDiagnosticPanel", 0.2)
 
 
 func _add_machine_lamp(parent: Node3D, position: Vector3, color: Color, energy: float) -> void:

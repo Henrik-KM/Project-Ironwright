@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused robot-role hardware depth milestone
+
+- replaced the remaining flat Warden counterweight, Scrapper claws, Pathfinder
+  sensor wings and Engineer clamp with beveled role-specific geometry, while
+  tightening the small forge pump/control inserts around the opening cast;
+- preserved role sockets, imported animation, autonomous behaviour, collision
+  and machine workload contracts;
+- added role-specific aesthetic coverage and live exported showcase review
+  before merge.
+
 ## Focused Mechromancer focal-harness depth milestone
 
 - replaced the remaining flat harness straps, chest bar, pistol grip, wrist

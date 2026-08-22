@@ -748,15 +748,19 @@ func _run_all() -> void:
         if role_names[index] == &"guardian":
             _expect(_find_named(role_samples[index], "WardenTargetingFace") != null and _find_named(role_samples[index], "WardenRecoilCollarLeft") != null, "The Warden must expose its maintained targeting and recoil hardware.")
             _expect(_find_named(role_samples[index], "WardenThermalFinLeft") != null and _find_named(role_samples[index], "WardenOpticShroud") != null and _find_named(role_samples[index], "WardenBreechClamp") != null, "The Warden must expose its third-pass thermal, optic and breech hardware.")
+            _expect(_find_named(role_samples[index], "WardenCounterweight") != null, "The Warden must retain a layered counterweight silhouette.")
         elif role_names[index] == &"salvager":
             _expect(_find_named(role_samples[index], "ScrapperHopperLatch") != null and _find_named(role_samples[index], "ScrapperCargoFastenerLeft") != null, "The Scrapper must expose its maintained hopper hardware.")
             _expect(_find_named(role_samples[index], "ScrapperHopperLip") != null and _find_named(role_samples[index], "ScrapperDrumLeft") != null and _find_named(role_samples[index], "ScrapperCuttingGuard") != null, "The Scrapper must expose its third-pass hopper, drum and cutting hardware.")
+            _expect(_find_named(role_samples[index], "ScrapClaw") != null, "The Scrapper must retain layered dismantler claw hardware.")
         elif role_names[index] == &"scout":
             _expect(_find_named(role_samples[index], "PathfinderMastBraceLeft") != null and _find_named(role_samples[index], "PathfinderSurveyBeacon") != null, "The Pathfinder must expose its braced mast and survey beacon hardware.")
             _expect(_find_named(role_samples[index], "PathfinderMastCollar") != null and _find_named(role_samples[index], "PathfinderDishRibLeft") != null and _find_named(role_samples[index], "PathfinderSignalCanister") != null, "The Pathfinder must expose its third-pass mast, dish and signal hardware.")
+            _expect(_find_named(role_samples[index], "PathfinderSensorWing") != null, "The Pathfinder must retain layered survey-wing hardware.")
         elif role_names[index] == &"engineer":
             _expect(_find_named(role_samples[index], "EngineerToolControl") != null and _find_named(role_samples[index], "EngineerForgeGuard") != null, "The Engineer must expose its tool-control and forge-guard hardware.")
             _expect(_find_named(role_samples[index], "EngineerCableSpool") != null and _find_named(role_samples[index], "EngineerWeldingShield") != null and _find_named(role_samples[index], "EngineerClampJaw") != null, "The Engineer must expose its third-pass cable, welding and clamp hardware.")
+            _expect(_find_named(role_samples[index], "EngineerClamp") != null, "The Engineer must retain layered clamp hardware.")
         elif role_names[index] == &"relay":
             _expect(_find_named(role_samples[index], "RelayMastCollar") != null and _find_named(role_samples[index], "RelayDishRibLeft") != null and _find_named(role_samples[index], "RelaySignalFace") != null, "The Signal Relay must expose maintained mast, dish-rib and signal-face hardware.")
         role_samples[index].queue_free()

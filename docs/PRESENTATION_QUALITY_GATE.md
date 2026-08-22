@@ -309,6 +309,13 @@ and paired fasteners. The weak pistol remains deliberately small and the
 field-engineer silhouette remains asymmetric; this is a visual refinement only
 and does not alter weapon sockets, input, collision or damage.
 
+The six-role machine kit now also removes the remaining flat role inserts:
+Warden counterweight, Scrapper dismantler claws, Pathfinder survey wings and
+Engineer clamp hardware use beveled forms, with the nearby forge pump/control
+inserts receiving the same treatment. The role silhouettes remain distinct and
+the pass is presentation-only; it does not alter robot sockets, animation,
+collision, routing or autonomous workload.
+
 The foreground route markers now use the same amber language promised by the
 opening objective, keeping them distinct from cyan Heartforge service hardware.
 Discovered outpost sites now use a compact high-definition survey marker with a
