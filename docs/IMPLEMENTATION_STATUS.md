@@ -21,6 +21,11 @@
 - Added an authored `Upgrade` clip to the canonical Blender source and fallback asset, with a stronger two-hand tool posture and shoulder-lamp inspection beat for Heartforge upgrades.
 - Routed the real `forge_upgrade` channel through that clip while preserving generic Work motion for salvage, fabrication and other channels; no gameplay timing or resource rule changed.
 
+## Focused friendly-machine audio identity milestone
+
+- Added deterministic weapon and shutdown signatures for Bulwark, Warden, Scrapper, Pathfinder, Engineer and Signal Relay archetypes, using the existing bounded runtime audio vocabulary.
+- Routed real robot weapon and destruction signals through the family profiles and added native coverage for profile availability and event selection; audio remains spatial feedback only and does not add alerts or recurring management work.
+
 ## Focused organic-roster breadth and authored-shell milestone
 
 - Expanded the authored organic roster from 12 to 14 families with Thornback territorial guardians and Ashmantle route predators.

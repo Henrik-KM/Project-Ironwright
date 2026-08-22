@@ -29,6 +29,9 @@ func _run_all() -> void:
         for species in [&"veilstalker", &"razorhound", &"apex", &"sporecaster", &"broodmass", &"burrower", &"skitterling", &"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle"]:
             _expect(audio_director.has_profile(audio_director.organic_profile_id(species)), "Each organic species must provide a distinct attack vocal signature.")
             _expect(audio_director.has_profile(audio_director.organic_profile_id(species, true)), "Each organic species must provide a distinct death vocal signature.")
+        for archetype in [&"companion", &"guardian", &"salvager", &"scout", &"engineer", &"relay"]:
+            _expect(audio_director.has_profile(audio_director.robot_profile_id(archetype)), "Each friendly robot archetype must provide a distinct weapon signature.")
+            _expect(audio_director.has_profile(audio_director.robot_profile_id(archetype, true)), "Each friendly robot archetype must provide a distinct shutdown signature.")
         if world.noise_system != null:
             var construction_audio_before := audio_director.event_count
             world.noise_system.emit_noise(Vector3(0.0, 0.0, -12.0), 27.0, 0.72, &"outpost_construction")
@@ -128,6 +131,10 @@ func _run_all() -> void:
             _expect(world.find_children("ActorImpactResponse", "CPUParticles3D", true, false).size() > 0, "Non-lethal machine damage must create a bounded world-space impact response.")
             audio_director.call("_on_actor_health_changed", friendly_sample, friendly_sample.current_health - 1.0, friendly_sample.maximum_health)
             _expect(audio_director.last_profile == &"machine_impact", "Non-lethal machine damage must use the machine impact audio profile.")
+            audio_director.call("_on_robot_weapon_fired", Vector3.ZERO, Vector3.FORWARD, null, friendly_sample)
+            _expect(audio_director.last_profile == audio_director.robot_profile_id(friendly_sample.archetype), "Friendly robot weapon events must use the archetype-specific audio profile.")
+            audio_director.call("_on_robot_destroyed", friendly_sample)
+            _expect(audio_director.last_profile == audio_director.robot_profile_id(friendly_sample.archetype, true), "Friendly robot losses must use the archetype-specific shutdown profile.")
         var labor_pile := get_first_node_in_group(&"salvage_piles") as SalvagePile3D
         var labor_robot := get_first_node_in_group(&"friendly_robots") as RobotUnit3D
         if labor_pile != null and labor_robot != null:
