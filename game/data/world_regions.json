@@ -23,6 +23,9 @@
       "base_pressure": 0.72,
       "spawn_budget": 8,
       "route_from_heartforge": [[0.0, 0.0, -24.0], [0.0, 0.0, -46.0], [0.0, 0.0, -66.0]],
+      "route_variants": [
+        {"label": "archive service alley", "points": [[-10.0, 0.0, -20.0], [-18.0, 0.0, -48.0], [0.0, 0.0, -66.0]]}
+      ],
       "description": "Collapsed administrative blocks surrounding the archive recovered by the first expedition."
     },
     {
@@ -50,6 +53,9 @@
       "base_pressure": 0.92,
       "spawn_budget": 11,
       "route_from_heartforge": [[28.0, 0.0, 0.0], [58.0, 0.0, 8.0], [92.0, 0.0, 18.0], [124.0, 0.0, 24.0]],
+      "route_variants": [
+        {"label": "roofline service street", "points": [[24.0, 0.0, -4.0], [48.0, 0.0, -18.0], [88.0, 0.0, 0.0], [124.0, 0.0, 24.0]]}
+      ],
       "description": "Tight residential courtyards, hanging walkways and rooflines used by fast pack organisms."
     },
     {
@@ -62,6 +68,9 @@
       "base_pressure": 1.02,
       "spawn_budget": 12,
       "route_from_heartforge": [[28.0, 0.0, -8.0], [52.0, 0.0, -24.0], [72.0, 0.0, -38.0], [88.0, 0.0, -48.0]],
+      "route_variants": [
+        {"label": "canal greenhouse edge", "points": [[18.0, 0.0, -14.0], [38.0, 0.0, -42.0], [68.0, 0.0, -62.0], [88.0, 0.0, -48.0]]}
+      ],
       "description": "A shattered botanical complex where luminous membrane growth and glass-wing organisms compete for light."
     },
     {
@@ -119,6 +128,9 @@
       "base_pressure": 1.32,
       "spawn_budget": 16,
       "route_from_heartforge": [[0.0, 0.0, -34.0], [8.0, 0.0, -68.0], [24.0, 0.0, -98.0], [42.0, 0.0, -124.0]],
+      "route_variants": [
+        {"label": "choir yard route", "points": [[-12.0, 0.0, -28.0], [-26.0, 0.0, -62.0], [4.0, 0.0, -100.0], [42.0, 0.0, -124.0]]}
+      ],
       "description": "A vertical district wrapped around a resonant brood colony beneath the old cathedral."
     },
     {
@@ -131,6 +143,9 @@
       "base_pressure": 1.38,
       "spawn_budget": 16,
       "route_from_heartforge": [[8.0, 0.0, 30.0], [18.0, 0.0, 68.0], [26.0, 0.0, 108.0], [34.0, 0.0, 148.0]],
+      "route_variants": [
+        {"label": "eastern embankment", "points": [[-2.0, 0.0, 22.0], [-18.0, 0.0, 62.0], [-4.0, 0.0, 114.0], [34.0, 0.0, 148.0]]}
+      ],
       "description": "A hilltop observatory whose surviving optics can map migration patterns across the entire town."
     },
     {

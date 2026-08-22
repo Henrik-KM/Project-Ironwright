@@ -1642,6 +1642,18 @@ environmentally distinct without changing ecology, routing or player workload.
 
 ## Commercial work still remaining
 
+## Focused town-wide route-recovery breadth milestone
+
+- expanded authored alternate street routes to North Ruins, East Tenements,
+  Municipal Glasshouse, Cathedral Quarter and Observatory Ridge so every
+  discovered mid/late region can retain bounded physical route-memory;
+- reused the existing route selection, disruption memory, side-route, retreat,
+  formation-cohesion and save/load contracts without adding player route
+  management;
+- added complete-game contract coverage for route existence and waypoint
+  divergence; live operation execution remains part of the broader commercial
+  region-review gate.
+
 ## Focused sanctuary memory-relay storytelling milestone
 
 - added a bounded high-definition Memory Witness Relay to the Heartforge camp,
