@@ -72,6 +72,7 @@ var settings_service: ReleaseSettingsService3D
 var textures: Dictionary = {}
 var normal_textures: Dictionary = {}
 var dressing_root: Node3D
+var region_dressing_roots: Dictionary = {}
 var meshes_textured: int = 0
 var regions_dressed: int = 0
 var load_errors: Array[String] = []
@@ -93,6 +94,7 @@ func _ready() -> void:
         world = get_parent() as Node3D
     world.add_child.call_deferred(dressing_root)
     call_deferred("_apply_release_art")
+    call_deferred("_connect_region_lod")
 
 
 func _on_node_added(node: Node) -> void:
@@ -133,12 +135,45 @@ func _apply_release_art() -> void:
         return
     meshes_textured = 0
     regions_dressed = 0
+    region_dressing_roots.clear()
     _texture_recursive(world)
     _dress_heartforge_district()
     if region_director != null:
         for raw_region_id in region_director.region_data:
             _dress_region(raw_region_id as StringName)
+    _connect_region_lod()
     art_pass_completed.emit(meshes_textured, regions_dressed)
+
+
+func _connect_region_lod() -> void:
+    if world == null or not is_instance_valid(world):
+        return
+    var region_lod := world.get_node_or_null("RegionPresentationLodDirector")
+    if region_lod == null or not region_lod.has_signal(&"detail_changed"):
+        return
+    var callback := Callable(self, "_on_region_detail_changed")
+    if not region_lod.is_connected(&"detail_changed", callback):
+        region_lod.connect(&"detail_changed", callback)
+    for raw_region_id in region_dressing_roots:
+        var region_id := raw_region_id as StringName
+        var detail_level := 0
+        if region_lod.has_method(&"detail_mode_for"):
+            detail_level = int(region_lod.call(&"detail_mode_for", region_id))
+        _on_region_detail_changed(region_id, detail_level)
+
+
+func _on_region_detail_changed(region_id: StringName, detail_level: int) -> void:
+    var root := region_dressing_roots.get(region_id) as Node3D
+    if root == null or not is_instance_valid(root):
+        return
+    # PersistentRegionGeometry owns the reduced landmark proxy. The release
+    # dressing is the close-range authored layer, so it must disappear outside
+    # the full-detail radius instead of silently keeping every remote mesh live.
+    root.visible = detail_level <= 0
+
+
+func region_dressing_root(region_id: StringName) -> Node3D:
+    return region_dressing_roots.get(region_id) as Node3D
 
 
 func _texture_recursive(node: Node) -> void:
@@ -323,6 +358,7 @@ func _dress_region(region_id: StringName) -> void:
     var center := region_director.center(region_id)
     var kind := StringName(str(data.get("kind", "urban")))
     var root := _region_root("Release_%s" % String(region_id).replace("region.", "").to_pascal_case(), center)
+    region_dressing_roots[region_id] = root
     match kind:
         &"industrial":
             _dress_industrial(root)
