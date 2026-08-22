@@ -42,6 +42,20 @@ func _ready() -> void:
     else:
         _capture_base_transforms(model_root)
     _connect_feedback_signals()
+    _sync_presentation_lod()
+
+
+func set_presentation_lod(level: int) -> void:
+    # Remote release actors keep their gameplay simulation, but their
+    # presentation-only transform traversal is fully suspended until they
+    # return to the active visual neighborhood.
+    set_process(level <= 0)
+
+
+func _sync_presentation_lod() -> void:
+    if subject == null or not _has_visual_lod_level:
+        return
+    set_presentation_lod(int(subject.get(&"visual_lod_level")))
 
 
 func _resolve_and_capture() -> void:

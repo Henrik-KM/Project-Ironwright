@@ -44,7 +44,21 @@ func _ready() -> void:
         set_process(false)
         return
     _configure_animation_loops()
+    _sync_presentation_lod()
     call_deferred("_select_loop_clip")
+
+
+func set_presentation_lod(level: int) -> void:
+    # Authored clips are a close-range readability layer. Do not keep one
+    # process callback per remote actor merely to discover that its proxy LOD
+    # should be left untouched.
+    set_process(level <= 0)
+
+
+func _sync_presentation_lod() -> void:
+    if subject == null or not _has_visual_lod_level:
+        return
+    set_presentation_lod(int(subject.get(&"visual_lod_level")))
 
 
 func _process(delta: float) -> void:

@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused remote-presentation tick suspension milestone
+
+- suspended procedural animation, authored clip selection and release
+  secondary-motion callbacks for medium and reduced actors while their
+  lightweight visual proxies are active;
+- kept the active-detail promotion path responsible for re-enabling all
+  presentation controllers, so close-range silhouettes and authored motion
+  return automatically without changing gameplay simulation, collision,
+  targeting, or formation movement;
+- added large-population regression coverage for both the suspension and
+  promotion contracts, with the deterministic benchmark recording the resulting
+  wall-clock change.
+
 ## Focused remote-region release-art LOD milestone
 
 - connected the separate high-definition release dressing for every persistent

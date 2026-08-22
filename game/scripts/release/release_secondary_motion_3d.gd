@@ -35,6 +35,20 @@ func _capture_nodes() -> void:
     _capture_recursive(subject)
     if animated_nodes.is_empty():
         set_process(false)
+    _sync_presentation_lod()
+
+
+func set_presentation_lod(level: int) -> void:
+    if not has_visual_lod_level:
+        return
+    set_process(level <= 0 and not animated_nodes.is_empty())
+
+
+func _sync_presentation_lod() -> void:
+    if not has_visual_lod_level or subject == null:
+        return
+    var level := int(subject.get(&"visual_lod_level"))
+    set_presentation_lod(level)
 
 
 func _capture_recursive(node: Node) -> void:
