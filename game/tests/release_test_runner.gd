@@ -283,6 +283,9 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         _expect(market_dressing.find_child("MarketStall00", true, false) != null and market_dressing.find_child("MarketCanopy00", true, false) != null, "Release market dressing must expose layered stall shells and canopy detail.")
         _expect(market_dressing.find_child("MarketCounter00", true, false) != null and market_dressing.find_child("MarketDisplayCrate00_00", true, false) != null, "Release market dressing must expose counter and display hardware.")
         _expect(market_dressing.find_child("MarketMembraneAwning00", true, false) != null and market_dressing.find_child("MarketCanopyPost00_-1_-1", true, false) != null, "Release market dressing must expose organic awning and canopy supports.")
+        var market_canopy := market_dressing.find_child("MarketCanopy00Core", true, false) as MeshInstance3D
+        var market_canopy_material := market_canopy.material_override as StandardMaterial3D if market_canopy != null else null
+        _expect(market_canopy_material != null and market_canopy_material.albedo_texture != null, "Flood Market canopies must use the textured membrane material family instead of a flat color-only surface.")
     var research_dressing := world.release_world_art.dressing_root.find_child("HighDefinitionResearchDressing", true, false) if world.release_world_art.dressing_root != null else null
     _expect(research_dressing != null, "Release research dressing must expose a bounded high-definition containment layer.")
     if research_dressing != null:

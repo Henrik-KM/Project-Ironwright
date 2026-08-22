@@ -429,6 +429,14 @@ identities. Manual channels remain finish-before-save.
 - kept the change presentation-only: opening camera values, gameplay reach,
   region geometry, collision and autonomy contracts are unchanged.
 
+## Focused Flood Market canopy material milestone
+
+- moved the release market canopy field onto the existing textured membrane
+  family with normal relief, replacing the flat color-only canopy surface;
+- kept the commercial dressing presentation-only while preserving stall,
+  counter, salvage, route and ecology contracts;
+- added release coverage that rejects a regression to an untextured canopy.
+
 ## Focused tactical framing milestone
 
 - tightened the release opening camera to a 16.8 height and 10.0 distance
