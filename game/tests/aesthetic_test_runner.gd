@@ -77,6 +77,12 @@ func _run_all() -> void:
     _expect(nest_sample.find_child("NestHighDefinitionDetail", true, false) != null, "Tiered organic nests must carry a bounded high-definition anatomy layer.")
     _expect(nest_sample.find_child("NestDorsalCarapace", true, false) != null and nest_sample.find_child("NestRootCollar", true, false) != null, "Tiered organic nests must expose layered carapace and root-collar detail.")
     _expect(nest_sample.find_child("NestMembranePlate00", true, false) != null and nest_sample.find_child("NestVeinChannel00", true, false) != null and nest_sample.find_child("NestFineSpine00", true, false) != null, "Tiered organic nests must expose membrane, vascular and fine-spine sockets.")
+    nest_sample.apply_damage(9999.0)
+    await process_frame
+    _expect(not nest_sample.is_alive() and nest_sample.visible, "Destroyed tiered nests must remain visible as persistent ecological landmarks.")
+    _expect(nest_sample.find_child("DestroyedTierNestPresentation", true, false) != null, "Destroyed tiered nests must expose a dedicated failure presentation root.")
+    _expect(nest_sample.find_child("DestroyedNestCarapace", true, false) != null and nest_sample.find_child("DestroyedNestRootCollar", true, false) != null, "Destroyed tiered nests must expose fractured carapace and an exposed root collar.")
+    _expect(nest_sample.find_child("DestroyedNestShard00", true, false) != null and nest_sample.find_child("DestroyedNestVein00", true, false) != null and nest_sample.find_child("DestroyedNestSignal", true, false) != null, "Destroyed tiered nests must expose shell fragments, dead vascular channels and a spent signal core.")
     nest_sample.queue_free()
     var ordinary_nest_sample := OrganicNest3D.new()
     ordinary_nest_sample.configure({"id": "aesthetic.ordinary_high_definition_nest", "maturity": 0.7, "supported_tiers": [1]})
