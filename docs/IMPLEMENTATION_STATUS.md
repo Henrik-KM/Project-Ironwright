@@ -2380,3 +2380,13 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   certificate to remain directly attached to the certified source parent;
 - preserved the existing artifact, gate and allowed-output checks while making
   the verifier usable on the actual merged `main` tree.
+## Focused stable-LOD handoff optimization milestone
+
+- stopped repeated large-population LOD evaluations from re-walking every
+  authored actor child tree when the actor remains in the same detail band;
+- preserved deferred-shell materialization for active promotion and proxy
+  creation for actors that remain remote, so the fast path cannot strand an
+  actor without its required presentation representation;
+- kept gameplay simulation, collision, targeting, formation movement and
+  presentation-controller transitions unchanged while the deterministic
+  population benchmark records the resulting wall-clock cost.
