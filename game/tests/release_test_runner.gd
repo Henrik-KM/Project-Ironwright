@@ -414,6 +414,12 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     for family in later_families:
         var family_mesh := _find_first_mesh(family.get_node_or_null("OrganicModel") if family != null else null)
         _expect(family_mesh != null and family_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Every later organic family shell must receive the release chitin material pass.")
+    var thornback_mesh := _find_first_mesh_with_token(later_families[4].get_node_or_null("OrganicModel") if later_families[4] != null else null, "thornback")
+    var ashmantle_mesh := _find_first_mesh_with_token(later_families[5].get_node_or_null("OrganicModel") if later_families[5] != null else null, "ashmantle")
+    _expect(thornback_mesh != null and thornback_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Thornback authored shell meshes must retain release chitin material continuity.")
+    _expect(ashmantle_mesh != null and ashmantle_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Ashmantle authored shell meshes must retain release chitin material continuity.")
+    var ashmantle_mantle_mesh := _find_first_mesh_with_token(later_families[5].get_node_or_null("OrganicModel") if later_families[5] != null else null, "ashmantlemantle")
+    _expect(ashmantle_mantle_mesh != null and ashmantle_mantle_mesh.get_meta(&"release_material_family", &"") == &"membrane", "Ashmantle mantle surfaces must retain release membrane material continuity.")
     _expect(world.release_world_art.meshes_textured > textured_before, "Runtime release art must texture meshes added after initial boot.")
 
     late_robot.queue_free()
