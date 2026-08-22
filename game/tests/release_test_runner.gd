@@ -436,10 +436,13 @@ func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
 func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     var textured_before := world.release_world_art.meshes_textured
     var opening_robot := get_first_node_in_group(&"friendly_robots") as Node
-    var opening_authored_mesh := _find_first_mesh(opening_robot.get_node_or_null("RobotModel/BulwarkAuthoredModel") if opening_robot != null else null)
+    var opening_bulwark := opening_robot.get_node_or_null("RobotModel/BulwarkAuthoredModel") if opening_robot != null else null
+    var opening_authored_mesh := _find_first_mesh(opening_bulwark)
     _expect(opening_authored_mesh != null and opening_authored_mesh.get_meta(&"release_material_family", &"") == &"metal", "Authored Bulwark shell meshes must receive the release metal material pass.")
     var opening_material := opening_authored_mesh.material_override as StandardMaterial3D if opening_authored_mesh != null else null
     _expect(opening_material != null and opening_material.normal_enabled and opening_material.normal_texture != null, "Authored Bulwark shell materials must carry the generated normal-relief companion.")
+    _expect(opening_bulwark != null and opening_bulwark.find_child("BulwarkEmitterGuardL", true, false) != null and opening_bulwark.find_child("BulwarkEmitterGuardR", true, false) != null, "The Bulwark protection emitter must retain its authored paired guard rails.")
+    _expect(opening_bulwark != null and opening_bulwark.find_child("BulwarkServiceFace", true, false) != null and opening_bulwark.find_child("BulwarkServiceWindow", true, false) != null, "The Bulwark companion must expose an authored front service face and diagnostic window.")
     var player_authored_mesh := _find_first_mesh(world.player.get_node_or_null("MechromancerModel") if world.player != null else null)
     _expect(player_authored_mesh != null and player_authored_mesh.get_meta(&"release_material_family", &"") == &"metal", "The authored Mechromancer shell must receive the release metal material pass.")
     var relay := world._spawn_robot(&"relay", world.player.global_position + Vector3(5.0, 0.0, -2.0), 1)

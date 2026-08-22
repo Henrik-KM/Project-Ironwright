@@ -15,6 +15,10 @@
     "WeaponMuzzle",
     "BulwarkShieldEmitterSpine",
     "BulwarkShieldEmitter",
+    "BulwarkEmitterGuardL",
+    "BulwarkEmitterGuardR",
+    "BulwarkServiceFace",
+    "BulwarkServiceWindow",
     "ProductionAssetMarker"
   ],
   "animation_clips": [

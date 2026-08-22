@@ -2270,6 +2270,16 @@ presentation restore, with release regression coverage for that migration path.
   the presentation contract deterministic for both live frames and aesthetic
   acceptance sampling.
 
+## Focused Bulwark protection-hardware depth milestone
+
+- added an authored asymmetric guard cage, lens cap and paired service-face
+  diagnostic window to the indispensable Bulwark glTF companion shell;
+- retained the existing protection-emitter socket, animation clips, collision,
+  autonomous escort behaviour and presentation-only scope while giving the
+  opening companion a stronger manufactured silhouette at tactical distance;
+- added commercial release coverage for the new stable hardware nodes and
+  requires a fresh exported opening review before merge.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.

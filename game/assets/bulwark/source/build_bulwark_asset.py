@@ -231,6 +231,12 @@ def main() -> None:
         "Muzzle": mesh("Muzzle", add_cylinder(builder, 0.15, 0.12, cyan, 14)),
         "EmitterSpine": mesh("EmitterSpine", add_cylinder(builder, 0.10, 0.64, oxide, 12)),
         "Emitter": mesh("Emitter", add_uv_sphere(builder, 0.14, cyan)),
+        "EmitterGuardRail": mesh("EmitterGuardRail", add_cylinder(builder, 0.045, 0.74, steel, 18)),
+        "EmitterGuardBrace": mesh("EmitterGuardBrace", add_box(builder, (0.12, 0.12, 0.46), oxide)),
+        "EmitterLensCap": mesh("EmitterLensCap", add_uv_sphere(builder, 0.17, cyan)),
+        "ServiceFace": mesh("ServiceFace", add_box(builder, (0.56, 0.14, 0.38), chassis)),
+        "ServiceWindow": mesh("ServiceWindow", add_box(builder, (0.34, 0.035, 0.13), cyan)),
+        "ServiceFastener": mesh("ServiceFastener", add_cylinder(builder, 0.028, 0.035, warm, 12)),
         "Crown": mesh("Crown", add_box(builder, (0.76, 0.12, 0.2), oxide)),
         "Fin": mesh("Fin", add_box(builder, (0.14, 0.42, 0.64), steel)),
         "Lamp": mesh("Lamp", add_uv_sphere(builder, 0.07, warm)),
@@ -298,6 +304,19 @@ def main() -> None:
     add_node("BulwarkRadiator", mesh_ids["Panel"], (0.0, 1.64, 0.45))
     add_node("BulwarkShieldEmitterSpine", mesh_ids["EmitterSpine"], (0.0, 1.95, 0.5), extras={"socket_type": "protection_emitter"})
     add_node("BulwarkShieldEmitter", mesh_ids["Emitter"], (0.0, 2.3, 0.5), extras={"socket_type": "protection_emitter"})
+    # The emitter is the companion's defining protection instrument. A
+    # guarded, asymmetric cage and a small service face give that instrument
+    # manufactured depth at close tactical distance without changing the
+    # existing protection socket or gameplay collision.
+    add_node("BulwarkEmitterGuardL", mesh_ids["EmitterGuardRail"], (-0.32, 2.18, 0.5), rotation=(0.0, 0.0, -0.22))
+    add_node("BulwarkEmitterGuardR", mesh_ids["EmitterGuardRail"], (0.32, 2.18, 0.5), rotation=(0.0, 0.0, 0.28))
+    add_node("BulwarkEmitterGuardBraceL", mesh_ids["EmitterGuardBrace"], (-0.32, 2.03, 0.5), rotation=(0.0, 0.0, 0.18))
+    add_node("BulwarkEmitterGuardBraceR", mesh_ids["EmitterGuardBrace"], (0.32, 2.03, 0.5), rotation=(0.0, 0.0, -0.24))
+    add_node("BulwarkEmitterLensCap", mesh_ids["EmitterLensCap"], (0.0, 2.48, 0.5), extras={"presentation": "protected_emitter_lens"})
+    add_node("BulwarkServiceFace", mesh_ids["ServiceFace"], (0.0, 1.03, -1.08), rotation=(0.0, 0.0, -0.04), extras={"surface": "front_service_face"})
+    add_node("BulwarkServiceWindow", mesh_ids["ServiceWindow"], (0.0, 1.06, -1.16), rotation=(0.0, 0.0, -0.04))
+    for side in (-1.0, 1.0):
+        add_node("BulwarkServiceFastener", mesh_ids["ServiceFastener"], (side * 0.2, 1.17, -1.16), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("CompanionCrown", mesh_ids["Crown"], (0.0, 1.52, 0.18))
     add_node("CompanionCrownMast", mesh_ids["EmitterSpine"], (0.0, 1.88, 0.18))
     for side in (-1.0, 1.0):
@@ -363,7 +382,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "bulwark.companion.v1",
-            "required_nodes": ["BulwarkModel", "Sensor", "OpticLens", "WeaponMuzzle", "BulwarkShieldEmitter", "ProductionAssetMarker"],
+            "required_nodes": ["BulwarkModel", "Sensor", "OpticLens", "WeaponMuzzle", "BulwarkShieldEmitter", "BulwarkEmitterGuardL", "BulwarkEmitterGuardR", "BulwarkServiceFace", "BulwarkServiceWindow", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Fire", "Hit", "Retreat", "Death"],
         },
     }
