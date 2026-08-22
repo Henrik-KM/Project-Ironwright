@@ -265,6 +265,12 @@
 - The existing operation surface communicates the route label, bounded waypoint count and approximate travel distance alongside cost, team, work exposure and threat.
 - Added complete-run coverage for remembered alternate-route previews without introducing manual route planning or another recurring management task.
 
+## Focused tier-intelligence LOD milestone
+
+- Authored enemy tier brains now share the release active/medium/reduced-detail schedule instead of retaining a separate per-frame callback while the parent actor is remote.
+- Reduced and coarse ticks preserve the same tier movement authority, while active promotion restores the live physics callback; duplicate attack-cooldown decay was removed.
+- Stress and progression coverage now verifies the LOD handoff and one-decrement cooldown contract. The deterministic population benchmark still records sub-target-hardware frame cost for later profiling and optimization.
+
 ## Focused multi-session world recap milestone
 
 - Added a post-load strategic recap to the existing operations surface, summarising Heartforge condition, the current unresolved objective, active or proposed expedition state, recent organic pressure signals and the next major choice.

@@ -274,6 +274,18 @@ func _test_tier_behaviour_progression() -> void:
     target.global_position = Vector3(80.0, 0.0, 0.0)
     tier_one.get_node("EnemyTierBrain").call(&"_choose_next_behaviour", true)
     _expect(StringName(str(tier_one.get_meta(&"enemy_behaviour", ""))) == &"roam", "Tier I without visible prey must wander randomly, not defend nests or scout.")
+    var tier_one_brain := tier_one.get_node("EnemyTierBrain") as EnemyTierBrain3D
+    tier_one.attack_cooldown = 0.9
+    tier_one_brain._physics_process(0.1)
+    _expect(is_equal_approx(tier_one.attack_cooldown, 0.8), "Tier intelligence must decrement attack cooldown once per simulation tick.")
+    tier_one_brain.set_simulation_lod(2)
+    _expect(not tier_one_brain.is_physics_processing(), "Reduced tier intelligence must suspend its per-frame physics callback.")
+    tier_one_brain.reduced_detail_tick(0.45)
+    tier_one_brain.set_simulation_lod(1)
+    _expect(not tier_one_brain.is_physics_processing(), "Coarse tier intelligence must remain scheduled instead of per-frame.")
+    tier_one_brain.coarse_detail_tick(0.22)
+    tier_one_brain.set_simulation_lod(0)
+    _expect(tier_one_brain.is_physics_processing(), "Active tier intelligence must restore its live physics callback.")
 
     var nest := EnemyTierNest3D.new()
     nest.configure({"id": "nest.behaviour", "position": [20.0, 0.0, 0.0], "supported_tiers": [1, 2, 3, 4, 5], "replenishment_per_minute": {"1": 0.1}, "maximum_health": 100.0})
