@@ -2363,3 +2363,11 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   ecology, pressure, visibility rules or player maintenance;
 - added release coverage for the authored tint contract and preserved the
   existing stable world-condition/save identity path.
+## Focused world-recap identity milestone
+
+- retained the stable authored world-condition name in the returning-player
+  recap beside Heartforge integrity, tier, Scrap and Core state;
+- kept the recap read-only and transiently explanatory, so the added context
+  does not create another dashboard, queue or recurring management task;
+- added complete-game coverage for the condition identity on the restored
+  multi-session recap surface.

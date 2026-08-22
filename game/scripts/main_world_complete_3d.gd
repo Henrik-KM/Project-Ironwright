@@ -497,7 +497,13 @@ func _show_session_recap() -> void:
         return
     _update_complete_game_objective()
     var integrity := int(round(100.0 * heartforge.current_health / maxf(1.0, heartforge.maximum_health)))
-    var condition := "HEARTFORGE %d%% INTEGRITY · TIER %d · SCRAP %d · CORES %d" % [integrity, progression.heartforge_tier, run_state.scrap, run_state.rare_cores]
+    var world_condition := String(run_state.world_variant_id)
+    var variation_director := get_node_or_null("RunVariationDirector")
+    if variation_director != null and variation_director.has_method(&"current_display_name"):
+        var display_name := str(variation_director.call(&"current_display_name"))
+        if not display_name.is_empty():
+            world_condition = display_name
+    var condition := "WORLD CONDITION · %s\nHEARTFORGE %d%% INTEGRITY · TIER %d · SCRAP %d · CORES %d" % [world_condition, integrity, progression.heartforge_tier, run_state.scrap, run_state.rare_cores]
     var objective_parts := hud.objective_label.text.split("\n", false, 1)
     var unresolved_problem := hud.objective_label.text if objective_parts.is_empty() else "%s\n%s" % [objective_parts[0], objective_parts[1] if objective_parts.size() > 1 else ""]
     var expedition := "No long-range operation is in motion. Press P to review the next physical route."

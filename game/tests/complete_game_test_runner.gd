@@ -204,6 +204,7 @@ func _run_all() -> void:
     _expect(complete_world.story_archive_director.record_count() >= archive_records_before_release_save, "Town Archive records must survive the release save/load path.")
     _expect(complete_world.story_archive_director.has_record(&"story.machine.first_return") and complete_world.story_archive_director.has_record(&"story.machine.first_replacement"), "Machine-witness archive records must survive the release save/load path.")
     _expect(world.operations_hud.is_open() and world.operations_hud.mode == &"recap", "Loading a complete release snapshot must present the multi-session world recap.")
+    _expect(world.operations_hud.current_operation_status.contains("WORLD CONDITION"), "The world recap must retain the stable run condition alongside the Heartforge status.")
     _expect(world.operations_hud.description_label.text.contains("CURRENT UNRESOLVED PROBLEM") and world.operations_hud.description_label.text.contains("ACTIVE OR PROPOSED EXPEDITION"), "The world recap must restore the strategic problem and expedition context in one readable surface.")
     _expect(world.operations_hud.requirements_label.text.contains("NEXT AVAILABLE MAJOR CHOICES"), "The world recap must expose the next major choices without opening a management dashboard.")
     _expect(not world.operations_hud.authorize_button.visible, "The world recap must remain read-only and cannot authorize an operation accidentally.")
