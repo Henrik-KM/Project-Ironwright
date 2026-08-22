@@ -6,6 +6,7 @@ extends Node
 ## on-demand Town Archive instead of becoming another recurring task.
 
 signal record_unlocked(record_id: StringName, display_name: String, description: String)
+signal thread_advanced(thread_id: StringName, display_name: String, stage_count: int, description: String)
 
 const DATA_PATH := "res://data/story_archive.json"
 
@@ -15,6 +16,7 @@ var site_source: Node
 var records: Dictionary = {}
 var arcs: Array[Dictionary] = []
 var unlocked_records: Dictionary = {}
+var announced_thread_stages: Dictionary = {}
 var load_errors: Array[String] = []
 
 
@@ -25,6 +27,7 @@ func configure(next_run_state: RunState3D, next_region_director: WorldRegionDire
 
 func _ready() -> void:
     _load_records()
+    _prime_thread_announcement_state()
     if region_director != null and not region_director.is_connected(&"region_discovered", Callable(self, "_on_region_discovered")):
         region_director.region_discovered.connect(_on_region_discovered)
     call_deferred("unlock_opening_record")
@@ -115,16 +118,8 @@ func story_arc_summaries() -> Array[Dictionary]:
                 if missing is Dictionary:
                     missing_names.append(str((missing as Dictionary).get("display_name", String(record_id))))
         var total := required_ids.size()
-        var stage_description := str(arc.get("description", "The thread has not yet found its shape."))
-        var selected_stage := -1
-        for raw_stage in arc.get("stages", []):
-            if not (raw_stage is Dictionary):
-                continue
-            var stage := raw_stage as Dictionary
-            var stage_count := int(stage.get("count", 0))
-            if recovered >= stage_count and stage_count >= selected_stage:
-                selected_stage = stage_count
-                stage_description = str(stage.get("description", stage_description))
+        var selected_stage := _thread_stage_for(arc, recovered)
+        var stage_description := str(selected_stage.get("description", arc.get("description", "The thread has not yet found its shape.")))
         var status_line := "THREAD PROGRESS · %d/%d PHYSICAL CLUES RECOVERED" % [recovered, total]
         var continuation := ""
         if recovered >= total:
@@ -217,6 +212,7 @@ func restore_from_dictionary(data: Dictionary) -> void:
         var record_id := StringName(str(raw_id))
         if records.has(record_id):
             unlocked_records[record_id] = true
+    _prime_thread_announcement_state()
 
 
 func _on_region_discovered(region_id: StringName, _display_name: String) -> void:
@@ -264,6 +260,56 @@ func _unlock_record(record_id: StringName) -> void:
     if run_state != null:
         run_state.log_event("Town record recovered: %s" % display_name)
     record_unlocked.emit(record_id, display_name, description)
+    _emit_thread_advances()
+
+
+func _prime_thread_announcement_state() -> void:
+    announced_thread_stages.clear()
+    for arc in arcs:
+        var arc_id := StringName(str(arc.get("id", "")))
+        if arc_id == &"":
+            continue
+        announced_thread_stages[arc_id] = _thread_stage_count(arc, _thread_recovered_count(arc))
+
+
+func _emit_thread_advances() -> void:
+    for arc in arcs:
+        var arc_id := StringName(str(arc.get("id", "")))
+        if arc_id == &"":
+            continue
+        var stage := _thread_stage_for(arc, _thread_recovered_count(arc))
+        var stage_count := int(stage.get("count", 0))
+        var previous_count := int(announced_thread_stages.get(arc_id, 0))
+        if stage_count <= previous_count or stage_count <= 0:
+            continue
+        announced_thread_stages[arc_id] = stage_count
+        thread_advanced.emit(arc_id, str(arc.get("display_name", String(arc_id))), stage_count, str(stage.get("description", "")))
+
+
+func _thread_recovered_count(arc: Dictionary) -> int:
+    var recovered := 0
+    for raw_id in arc.get("record_ids", []):
+        if has_record(StringName(str(raw_id))):
+            recovered += 1
+    return recovered
+
+
+func _thread_stage_count(arc: Dictionary, recovered: int) -> int:
+    return int(_thread_stage_for(arc, recovered).get("count", 0))
+
+
+func _thread_stage_for(arc: Dictionary, recovered: int) -> Dictionary:
+    var selected: Dictionary = {}
+    var selected_count := -1
+    for raw_stage in arc.get("stages", []):
+        if not (raw_stage is Dictionary):
+            continue
+        var stage := raw_stage as Dictionary
+        var stage_count := int(stage.get("count", 0))
+        if recovered >= stage_count and stage_count >= selected_count:
+            selected_count = stage_count
+            selected = stage
+    return selected
 
 
 func _sorted_records() -> Array[Dictionary]:

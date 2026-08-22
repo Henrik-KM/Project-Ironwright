@@ -2432,6 +2432,10 @@ Remaining production work includes:
   older snapshots cannot drift into a second narrative state machine, and added
   native coverage for opening progress, chapter advancement, archive presentation
   and restoration.
+- connected chapter crossings to one bounded in-world notification path, so a
+  newly assembled narrative thread is acknowledged during play before the
+  optional archive is opened; the notification is derived from the same saved
+  records and cannot create a recurring objective or task queue.
 
 The roadmap now refines and expands an actual complete game loop rather than extrapolating from a disconnected prototype.
 
