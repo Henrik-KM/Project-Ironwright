@@ -81,9 +81,12 @@ The organic action pass now layers distinct physical poses onto the imported
 Feed, Nest, Retreat and Death clips: feeding lowers the sensory head and opens
 the mouth rhythmically, nest guards brace and scan, retreating creatures
 protect their core while withdrawing, and dying bodies lose height and balance
-through the short presentation window. These details remain presentation-only;
-ecology state, AI decisions, collision, damage and queue-free timing remain
-owned by the existing enemy actor.
+through the short presentation window. Defeated organisms now also expose a
+bounded fractured shell, root collar, dead vascular channels, shell shards and
+a species-aware spent signal core before the existing cleanup timer removes
+them. These details remain presentation-only; ecology state, AI decisions,
+collision, damage and queue-free timing remain owned by the existing enemy
+actor.
 
 Autonomous outposts now use the same readable-state principle: their existing
 role mechanisms and status beacons stay restrained while idle and pulse when

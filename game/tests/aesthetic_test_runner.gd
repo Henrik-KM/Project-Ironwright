@@ -862,6 +862,9 @@ func _run_all() -> void:
         _expect(_enemy_model_has_details(enemy_samples[index], species_names[index]), "The %s organic family must expose a role-readable silhouette." % species_names[index])
         _expect(_find_named(enemy_samples[index], "OrganicDorsalPlate") != null, "The %s organic family must expose a layered shell material break." % species_names[index])
         _expect(_find_named(enemy_samples[index], "TorsoCore") != null and _find_named(enemy_samples[index], "TorsoSegment0") != null, "The %s organic family must expose segmented high-definition torso anatomy." % species_names[index])
+        _expect(_find_named(enemy_samples[index], "OrganicDeathPresentation") != null, "The %s organic family must expose a dedicated high-definition death presentation root." % species_names[index])
+        _expect(_find_named(enemy_samples[index], "OrganicDeathCarapace") != null and _find_named(enemy_samples[index], "OrganicDeathRootCollar") != null, "The %s death presentation must expose fractured shell and exposed root anatomy." % species_names[index])
+        _expect(_find_named(enemy_samples[index], "OrganicDeathShard00") != null and _find_named(enemy_samples[index], "OrganicDeathVein00") != null and _find_named(enemy_samples[index], "OrganicDeathSignal") != null, "The %s death presentation must expose shell shards, dead vascular channels and a spent signal core." % species_names[index])
         var tiered_sample := enemy_samples[index] as OrganicEnemyTiered3D
         _expect(tiered_sample != null and _find_named(enemy_samples[index], "TierHighDefinitionDetail") != null, "The %s must expose the shared high-definition tier anatomy layer." % species_names[index])
         if tiered_sample != null:
@@ -979,6 +982,11 @@ func _run_all() -> void:
             _expect(not enemy_samples[index].is_alive(), "%s death must mark gameplay state dead immediately." % species_names[index])
             _expect(enemy_samples[index].death_presentation_remaining > 0.0, "%s death must retain a short presentation window." % species_names[index])
             _expect(_animation_clip_matches(authored_animation.active_clip, &"Death"), "%s death must select the authored Death clip." % species_names[index])
+            var death_presentation := _find_named(enemy_samples[index], "OrganicDeathPresentation") as Node3D
+            _expect(death_presentation != null and death_presentation.visible, "%s death must reveal its bounded failure presentation before cleanup." % species_names[index])
+            enemy_samples[index].death_presentation_remaining = 0.0
+            enemy_samples[index]._refresh_death_presentation()
+            _expect(death_presentation != null and not death_presentation.visible, "%s death presentation must hide when its existing cleanup window expires." % species_names[index])
         enemy_samples[index].queue_free()
 
     var veilstalker: Node3D
