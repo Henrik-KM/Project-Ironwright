@@ -7,6 +7,7 @@ signal close_requested
 
 var backdrop: ColorRect
 var panel: PanelContainer
+var scroll: ScrollContainer
 var title_label: Label
 var status_label: Label
 var selection_label: Label
@@ -15,6 +16,7 @@ var requirements_label: Label
 var previous_button: Button
 var next_button: Button
 var authorize_button: Button
+var close_button: Button
 var mode: StringName = &"operations"
 var operations: Array[Dictionary] = []
 var protocols: Array[Dictionary] = []
@@ -55,12 +57,15 @@ func _build_ui() -> void:
     shell.name = "OperationsViewportShell"
     panel.add_child(shell)
 
-    var scroll := ScrollContainer.new()
+    scroll = ScrollContainer.new()
+    scroll.name = "OperationsScroll"
     scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     scroll.offset_left = 12.0
     scroll.offset_top = 12.0
     scroll.offset_right = -12.0
-    scroll.offset_bottom = -12.0
+    # Keep the close action available while long descriptions remain scrollable
+    # on short release windows.
+    scroll.offset_bottom = -70.0
     shell.add_child(scroll)
 
     var content := VBoxContainer.new()
@@ -111,9 +116,21 @@ func _build_ui() -> void:
     authorize_button.custom_minimum_size = Vector2(0, 54)
     content.add_child(authorize_button)
 
-    var close_button := _button("CLOSE · ESC", func() -> void: close_requested.emit())
+    var footer := HBoxContainer.new()
+    footer.name = "OperationsFooter"
+    footer.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+    footer.offset_left = 12.0
+    footer.offset_right = -12.0
+    footer.offset_top = -58.0
+    footer.offset_bottom = -12.0
+    footer.mouse_filter = Control.MOUSE_FILTER_STOP
+    shell.add_child(footer)
+
+    close_button = _button("CLOSE · ESC", func() -> void: close_requested.emit())
+    close_button.name = "OperationsCloseButton"
     close_button.custom_minimum_size = Vector2(0, 44)
-    content.add_child(close_button)
+    close_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    footer.add_child(close_button)
 
 
 func open_operations() -> void:
@@ -121,6 +138,7 @@ func open_operations() -> void:
     selected_index = 0
     backdrop.visible = true
     panel.visible = true
+    scroll.scroll_vertical = 0
     apply_safe_layout(Vector2(get_viewport().get_visible_rect().size))
     _refresh()
 
@@ -130,6 +148,7 @@ func open_endgame() -> void:
     selected_index = 0
     backdrop.visible = true
     panel.visible = true
+    scroll.scroll_vertical = 0
     apply_safe_layout(Vector2(get_viewport().get_visible_rect().size))
     _refresh()
 
@@ -140,6 +159,7 @@ func open_archive(next_records: Array[Dictionary]) -> void:
     selected_index = 0
     backdrop.visible = true
     panel.visible = true
+    scroll.scroll_vertical = 0
     apply_safe_layout(Vector2(get_viewport().get_visible_rect().size))
     _refresh()
 
@@ -155,6 +175,7 @@ func open_recap(condition: String, unresolved_problem: String, expedition: Strin
     }]
     backdrop.visible = true
     panel.visible = true
+    scroll.scroll_vertical = 0
     apply_safe_layout(Vector2(get_viewport().get_visible_rect().size))
     _refresh()
 

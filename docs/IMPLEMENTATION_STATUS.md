@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused strategic-command fixed-footer milestone
+
+- moved the shared operations, Town Archive, recap and final-protocol close
+  action into a fixed footer outside the scroll region;
+- reset command-surface scroll position on every open so returning to a screen
+  begins at its title and current selection rather than a stale offset;
+- added constrained 800×520 regression coverage and exported Windows live
+  review for empty operations, recovered archive records and locked final
+  protocols.
+
 ## Focused organic-death high-definition milestone
 
 - replaced the generic dying-enemy read with a bounded fractured shell, exposed
