@@ -46,6 +46,11 @@
 - Extended release material classification through the Thornback and Ashmantle authored shells, including Ashmantle mantle surfaces that must retain the membrane treatment rather than falling through to generic chitin.
 - Added late-spawn commercial regression coverage for both expanded families and their authored mantle detail; no gameplay, collision or lighting budget changes.
 
+## Focused title-screen world-presence milestone
+
+- Reduced the release front-end veil enough for the authored Heartforge world, rain and warm/cool material lighting to remain visible behind the title panel.
+- Preserved the existing panel, vignette and focus treatment so title text and menu controls remain readable; added commercial regression coverage for the presentation contract.
+
 ## Focused release-package checksum milestone
 
 - Corrected the tagged release workflow so Windows and Linux archives are created before `SHA256SUMS.txt` is written, and the checksum file now covers both raw platform outputs and packaged archives.
