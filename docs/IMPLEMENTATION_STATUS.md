@@ -486,6 +486,8 @@ The default scene is `game/scenes/main_3d.tscn`. It boots `IronwrightCompleteGam
 - world-space wreck marker and route guidance;
 - raised amber route threshold, near guide beacons and repeated lane chevrons
   keep the first salvage objective legible from the starting tactical frame;
+- the opening wreck beacon now adds a taller physical mast, crown and restrained
+  pulse ring so local Heartforge props cannot swallow the first interaction cue;
 - timed manual salvage that disables attack and emits ecological noise;
 - timed manual early robot fabrication;
 - Scrapper, Warden, Pathfinder, Engineer and Bulwark frames;
