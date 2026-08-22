@@ -90,6 +90,12 @@
 - The overlays are cleared by repair and hidden automatically outside close-detail presentation, keeping remote simulation lightweight while preserving readable local consequences.
 - Release regression coverage verifies creation, damage, LOD suppression, restoration, and repair clearing.
 
+## Focused multi-session world recap milestone
+
+- Added a post-load strategic recap to the existing operations surface, summarising Heartforge condition, the current unresolved objective, active or proposed expedition state, recent organic pressure signals and the next major choice.
+- Kept the recap exception-based and read-only: it does not introduce worker lists, queues, route throughput or recurring maintenance.
+- Added complete-game save/load coverage proving the recap appears after restoring a release snapshot and carries all required long-run context.
+
 ## Focused machine identity and relationship milestone
 
 - Friendly machines now receive deterministic player-facing callsigns by role while preserving their existing node names as stable save and autonomy identifiers.

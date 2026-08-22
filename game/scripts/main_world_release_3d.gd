@@ -673,6 +673,8 @@ func _load_release_game() -> bool:
 		return false
 	_restore_release_snapshot(snapshot)
 	_start_release_world()
+	if has_method(&"_show_session_recap"):
+		call(&"_show_session_recap")
 	return true
 
 
