@@ -14,7 +14,12 @@
     "CoreVent",
     "CoreServicePanel",
     "StatusBeacon",
+    "ShelterWindowFrame00",
+    "ShelterWindowMullion00",
+    "ShelterServiceDoor",
+    "RoofServiceRib01",
+    "FoundationAnchor00",
     "ProductionAssetMarker"
   ],
-  "socket_contract": ["fixed_site_anchor", "shared_shelter_shell", "service_vent", "status_beacon"]
+  "socket_contract": ["fixed_site_anchor", "shared_shelter_shell", "service_vent", "status_beacon", "maintenance_hardware"]
 }
