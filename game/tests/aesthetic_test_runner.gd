@@ -85,6 +85,12 @@ func _run_all() -> void:
     _expect(ordinary_nest_sample.find_child("NestHighDefinitionDetail", true, false) != null, "Ordinary organic nests must carry the same bounded close-range anatomy quality bar as tiered nests.")
     _expect(ordinary_nest_sample.find_child("NestDorsalCarapace", true, false) != null and ordinary_nest_sample.find_child("NestRootCollar", true, false) != null, "Ordinary organic nests must expose layered carapace and root-collar detail.")
     _expect(ordinary_nest_sample.find_child("NestMembranePlate00", true, false) != null and ordinary_nest_sample.find_child("NestVeinChannel00", true, false) != null and ordinary_nest_sample.find_child("NestFineSpine00", true, false) != null, "Ordinary organic nests must expose membrane, vascular and fine-spine sockets.")
+    ordinary_nest_sample.apply_damage(9999.0)
+    await process_frame
+    _expect(not ordinary_nest_sample.is_alive(), "Destroying an ordinary organic nest must preserve its hostile-structure state transition.")
+    _expect(ordinary_nest_sample.find_child("DestroyedNestPresentation", true, false) != null, "Destroyed ordinary nests must expose a dedicated failure presentation root.")
+    _expect(ordinary_nest_sample.find_child("DestroyedNestCarapace", true, false) != null and ordinary_nest_sample.find_child("DestroyedNestRootCollar", true, false) != null, "Destroyed ordinary nests must expose fractured carapace and an exposed root collar.")
+    _expect(ordinary_nest_sample.find_child("DestroyedNestShard00", true, false) != null and ordinary_nest_sample.find_child("DestroyedNestVein00", true, false) != null and ordinary_nest_sample.find_child("DestroyedNestSignal", true, false) != null, "Destroyed ordinary nests must expose shell fragments, dead vascular channels and a spent signal core.")
     ordinary_nest_sample.queue_free()
     var salvage_sample := SalvagePile3D.new()
     salvage_sample.remaining_scrap = 56

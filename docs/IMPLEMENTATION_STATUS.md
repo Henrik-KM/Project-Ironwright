@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused organic-nest collapse high-definition milestone
+
+- replaced the ordinary destroyed nest's generic flattened sphere and spike
+  fallback with a bounded fractured carapace, exposed root collar, shell
+  fragments, dead vascular channels and a spent signal core;
+- kept the failure assembly inside the existing visual footprint and preserved
+  nest health, spawning, collision, persistence and regrowth contracts;
+- added aesthetic regression coverage for the destroyed-state sockets, with a
+  fresh exported live review required before merge.
+
 ## Focused outpost-collapse high-definition milestone
 
 - replaced the destroyed autonomous outpost's flat foundation and rubble

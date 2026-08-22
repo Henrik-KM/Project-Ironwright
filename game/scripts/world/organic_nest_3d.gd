@@ -159,10 +159,80 @@ func _refresh_visuals() -> void:
     var signal_material := ModelKit3D.material(signal_color.darkened(0.62), 0.0, 0.55, signal_color, 2.8 if active else 0.15)
 
     if not active:
-        ModelKit3D.add_sphere(_model_root, 1.4, Vector3(0.0, 0.55, 0.0), chitin, Vector3(1.8, 0.48, 1.6), "CollapsedNest")
-        for index in range(7):
-            var angle := TAU * float(index) / 7.0
-            ModelKit3D.add_capsule(_model_root, 0.1, 1.9, Vector3(cos(angle) * 1.25, 0.35, sin(angle) * 1.25), bone, Vector3(0.0, -angle, 1.18), "BrokenSpine")
+        # Destruction is a persistent world event, so the nest needs a
+        # readable biological failure state rather than a scaled-down copy of
+        # its healthy shell. This assembly is presentation-only and stays
+        # inside the existing collision footprint.
+        var destroyed_root := Node3D.new()
+        destroyed_root.name = "DestroyedNestPresentation"
+        _model_root.add_child(destroyed_root)
+        var dead_chitin := ModelKit3D.material(Color("21181f"), 0.08, 0.82)
+        var dead_flesh := ModelKit3D.material(Color("351320"), 0.0, 0.88)
+        var dead_bone := ModelKit3D.material(Color("665d51"), 0.0, 0.9)
+        var dead_vein := ModelKit3D.material(Color("24101a"), 0.0, 0.74, Color("713043"), 0.45)
+        ModelKit3D.add_segmented_carapace(
+            destroyed_root,
+            0.78,
+            Vector3(0.0, 0.52, 0.0),
+            dead_chitin,
+            dead_bone,
+            Vector3(1.52, 0.34, 1.18),
+            4,
+            "DestroyedNestCarapace"
+        )
+        ModelKit3D.add_tapered_cylinder(
+            destroyed_root,
+            0.92,
+            1.24,
+            0.07,
+            Vector3(0.0, 0.2, 0.0),
+            dead_chitin,
+            Vector3.ZERO,
+            "DestroyedNestRootCollar"
+        )
+        for index in range(5):
+            var angle := TAU * float(index) / 5.0 + 0.24
+            var direction := Vector3(cos(angle), 0.0, sin(angle))
+            var shard_position := direction * (0.76 + float(index % 2) * 0.16) + Vector3(0.0, 0.58 + float(index % 2) * 0.08, 0.0)
+            ModelKit3D.add_organic_plate(
+                destroyed_root,
+                0.18 + float(index % 2) * 0.025,
+                shard_position,
+                dead_flesh,
+                dead_bone,
+                Vector3(0.72, 0.34, 0.54),
+                "DestroyedNestShard%02d" % index
+            )
+            ModelKit3D.add_tapered_cylinder(
+                destroyed_root,
+                0.022,
+                0.045,
+                0.72,
+                direction * 0.42 + Vector3(0.0, 0.78, 0.0),
+                dead_vein,
+                Vector3(0.0, -angle, 0.46),
+                "DestroyedNestVein%02d" % index
+            )
+        for index in range(6):
+            var angle := TAU * float(index) / 6.0 + 0.12
+            var direction := Vector3(cos(angle), 0.0, sin(angle))
+            ModelKit3D.add_capsule(
+                destroyed_root,
+                0.065,
+                1.24 + float(index % 3) * 0.16,
+                direction * 1.16 + Vector3(0.0, 0.28 + float(index % 2) * 0.06, 0.0),
+                dead_bone,
+                Vector3(0.0, -angle, 0.94),
+                "DestroyedNestSpine%02d" % index
+            )
+        ModelKit3D.add_sphere(
+            destroyed_root,
+            0.2,
+            Vector3(0.0, 0.78, -0.18),
+            dead_vein,
+            Vector3(1.0, 0.58, 0.9),
+            "DestroyedNestSignal"
+        )
         return
 
     var scale_factor := 0.82 + maturity * 0.52
