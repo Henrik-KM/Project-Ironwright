@@ -1876,6 +1876,17 @@ presentation restore, with release regression coverage for that migration path.
   and outpost role contracts, with aesthetic coverage for quiet, active and
   decaying presentation states.
 
+## Focused Root Cistern encounter-depth milestone
+
+- added a bounded presentation-only municipal service layer around the late
+  Root Cistern basin, including a layered service ring, signal ring, approach
+  control deck, pump housing, header pipes and living-root anchor hardware;
+- preserved the authored landmark shell, collision, ecology, endgame
+  operations and reduced-detail region proxy while giving the final approach
+  a readable industrial-versus-organic depth cue;
+- added release regression coverage for the service, pump and root-anchor
+  sockets, with live exported review required before merge.
+
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
 release.

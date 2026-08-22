@@ -773,13 +773,48 @@ func _dress_research(root: Node3D) -> void:
 func _dress_cistern(root: Node3D) -> void:
     var concrete := _textured_material(&"concrete", Color("30383a"), 0.0, 0.68)
     var membrane := _textured_material(&"membrane", Color("631431"), 0.0, 0.58)
+    var metal := _textured_material(&"metal", Color("263437"), 0.74, 0.4)
+    var rust := _textured_material(&"rust", Color("72432f"), 0.42, 0.7)
     var glow := _emissive_material(Color("d33f67"), 3.2)
+    var cool_signal := ModelKit3D.material(Color("17464b"), 0.28, 0.3, Color("61dfe0"), 1.5)
     ModelKit3D.add_cylinder(root, 18.0, 0.8, Vector3(0.0, 0.4, 0.0), concrete, Vector3.ZERO, "CisternBasin")
     for index in range(14):
         var angle := TAU * float(index) / 14.0
         var radius := 8.0 + float(index % 3) * 3.4
         ModelKit3D.add_capsule(root, 0.28, 6.0 + float(index % 4), Vector3(cos(angle) * radius, 2.5, sin(angle) * radius), membrane, Vector3(0.0, -angle, 0.55), "RootPylon")
         ModelKit3D.add_sphere(root, 0.12, Vector3(cos(angle) * radius * 0.72, 3.1, sin(angle) * radius * 0.72), glow, Vector3.ONE, "RootSignal")
+
+    # The basin is the late-game approach landmark. Add one bounded municipal
+    # service layer so it reads as a buried pumping installation overtaken by
+    # the living relay, rather than a circular arena with repeated pylons.
+    var depth_detail := Node3D.new()
+    depth_detail.name = "HighDefinitionCisternDressing"
+    root.add_child(depth_detail)
+    ModelKit3D.add_cylinder(depth_detail, 12.8, 0.18, Vector3(0.0, 0.86, 0.0), metal, Vector3.ZERO, "CisternServiceRing")
+    ModelKit3D.add_cylinder(depth_detail, 10.6, 0.1, Vector3(0.0, 0.97, 0.0), cool_signal, Vector3.ZERO, "CisternSignalRing")
+    var control := Node3D.new()
+    control.name = "CisternControlWalkway"
+    depth_detail.add_child(control)
+    ModelKit3D.add_beveled_box(control, Vector3(7.8, 0.22, 1.5), Vector3(0.0, 1.22, -8.6), concrete, Vector3.ZERO, "CisternControlDeck", 0.16)
+    for index in range(5):
+        ModelKit3D.add_beveled_box(control, Vector3(1.12, 0.06, 1.1), Vector3(-2.8 + float(index) * 1.4, 1.37, -8.6), metal, Vector3.ZERO, "CisternDeckGrate%02d" % index, 0.08)
+    ModelKit3D.add_surface_panel(control, Vector3(1.8, 0.9, 0.1), Vector3(0.0, 1.86, -8.02), metal, cool_signal, Vector3.ZERO, "CisternProtocolPanel")
+    ModelKit3D.add_beveled_box(control, Vector3(2.6, 0.12, 0.12), Vector3(0.0, 2.34, -8.0), rust, Vector3.ZERO, "CisternPanelHeader", 0.06)
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_cylinder(control, 0.08, 1.8, Vector3(side * 3.3, 2.0, -8.0), rust, Vector3.ZERO, "CisternPanelBrace%s" % ("L" if side < 0.0 else "R"))
+    var pump_housing := ModelKit3D.add_beveled_box(depth_detail, Vector3(4.6, 2.2, 2.8), Vector3(0.0, 1.45, 8.4), concrete, Vector3.ZERO, "CisternPumpHousing", 0.22)
+    ModelKit3D.add_louvered_panel(pump_housing, Vector3(2.3, 0.92, 0.1), Vector3(0.0, 0.6, -1.46), metal, rust, Vector3.ZERO, "CisternPumpLouver", 5)
+    ModelKit3D.add_surface_panel(pump_housing, Vector3(0.95, 0.62, 0.1), Vector3(1.25, 1.05, -1.48), metal, cool_signal, Vector3.ZERO, "CisternPumpReadout")
+    for index in range(3):
+        var pipe_x := -1.35 + float(index) * 1.35
+        ModelKit3D.add_cylinder(depth_detail, 0.16, 4.6, Vector3(pipe_x, 3.05, 5.7), metal, Vector3(PI * 0.5, 0.0, 0.0), "CisternHeaderPipe%02d" % index)
+        ModelKit3D.add_cylinder(depth_detail, 0.22, 0.12, Vector3(pipe_x, 3.05, 3.38), rust, Vector3(PI * 0.5, 0.0, 0.0), "CisternHeaderFlange%02d" % index)
+    for index in range(6):
+        var angle := TAU * float(index) / 6.0 + PI / 6.0
+        var radius := 9.5
+        var position := Vector3(cos(angle) * radius, 1.4, sin(angle) * radius)
+        ModelKit3D.add_beveled_box(depth_detail, Vector3(1.8, 0.16, 0.72), position, rust, Vector3(0.0, -angle, 0.0), "CisternRootAnchor%02d" % index, 0.1)
+        ModelKit3D.add_sphere(depth_detail, 0.14, position + Vector3.UP * 0.18, glow, Vector3.ONE, "CisternAnchorPulse%02d" % index)
 
 
 func _dress_archive(root: Node3D) -> void:
