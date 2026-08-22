@@ -419,6 +419,16 @@ identities. Manual channels remain finish-before-save.
 - added native coverage for copy wrapping and centered overlay bounds;
 - live-reviewed the completed victory frame with the full conclusion text visible.
 
+## Focused remote-region cast framing milestone
+
+- bounded the remote tactical camera expansion to +5.5 height and +6.5
+  distance, preserving authored district breadth while keeping the Mechromancer
+  and companion readable during a remote approach;
+- added a presentation regression contract for the expansion range and live-
+  reviewed the exported Flood Market frame;
+- kept the change presentation-only: opening camera values, gameplay reach,
+  region geometry, collision and autonomy contracts are unchanged.
+
 ## Focused tactical framing milestone
 
 - tightened the release opening camera to a 16.8 height and 10.0 distance

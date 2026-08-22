@@ -58,6 +58,8 @@ func _test_directional_camera_reframe() -> void:
     _expect(world.camera_heading.x < -0.5, "The tactical camera must move behind the player's travel direction so east/west routes stay in view.")
     _expect(world._is_remote_camera_context(Vector3(-92.0, 0.0, 18.0)), "A remote district must opt into the wider tactical composition.")
     _expect(not world._is_remote_camera_context(Vector3.ZERO), "The Heartforge opening must retain its close tactical composition.")
+    var remote_expansion := world._remote_camera_expansion()
+    _expect(remote_expansion.x >= 4.0 and remote_expansion.x <= 6.0 and remote_expansion.y >= 5.0 and remote_expansion.y <= 7.0, "Remote camera widening must preserve district breadth without dropping the expedition cast out of the tactical frame.")
     var heading_after_motion := world.camera_heading
     world.player.velocity = Vector3.ZERO
     world._update_camera(0.65)
