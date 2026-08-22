@@ -91,6 +91,7 @@ func _coarse_detail_tick(delta: float) -> void:
 func set_visual_lod(level_value: int) -> void:
     visual_lod_level = clampi(level_value, 0, 2)
     set_damage_presentation_enabled(visual_lod_level == 0)
+    _sync_presentation_lod()
     if _model_root == null:
         if visual_lod_level == 0:
             ensure_authored_visuals()
@@ -110,6 +111,13 @@ func set_visual_lod(level_value: int) -> void:
             child.visible = visual_lod_level < 1
         if child is GeometryInstance3D:
             (child as GeometryInstance3D).cast_shadow = cast_mode
+
+
+func _sync_presentation_lod() -> void:
+    for child_name in [&"ProceduralAnimator3D", &"AuthoredActorAnimation3D", &"ReleaseSecondaryMotion3D"]:
+        var controller := get_node_or_null(NodePath(String(child_name)))
+        if controller != null and controller.has_method(&"set_presentation_lod"):
+            controller.call(&"set_presentation_lod", visual_lod_level)
 
 
 func _ensure_reduced_proxy() -> void:

@@ -58,6 +58,8 @@ func _run_all() -> void:
     _expect(near_robot != null and near_robot.get_node_or_null("RobotModel") != null, "A nearby machine actor must retain its authored presentation shell.")
     _expect(medium_enemy != null and medium_enemy.get_node_or_null("OrganicModel") == null and medium_enemy.get_node_or_null("DeferredVisualProxy") != null, "A medium-distance organic actor must remain on a lightweight proxy until active promotion.")
     _expect(medium_robot != null and medium_robot.get_node_or_null("RobotModel") == null and medium_robot.get_node_or_null("DeferredVisualProxy") != null, "A medium-distance machine actor must remain on a lightweight proxy until active promotion.")
+    _expect(medium_enemy != null and not _presentation_controller_processing(medium_enemy), "A medium-distance organic actor must suspend presentation-only controller ticks while its proxy is active.")
+    _expect(medium_robot != null and not _presentation_controller_processing(medium_robot), "A medium-distance machine actor must suspend presentation-only controller ticks while its proxy is active.")
     _expect(far_enemy != null and far_enemy.get_node_or_null("OrganicModel") == null and far_enemy.get_node_or_null("DeferredVisualProxy") != null, "A distant organic actor must begin with only a lightweight deferred proxy.")
     _expect(far_robot != null and far_robot.get_node_or_null("RobotModel") == null and far_robot.get_node_or_null("DeferredVisualProxy") != null, "A distant machine actor must begin with only a lightweight deferred proxy.")
     var medium_enemy_proxy := medium_enemy.get_node_or_null("DeferredVisualProxy/ReducedDetailProxy") as MeshInstance3D if medium_enemy != null else null
@@ -79,6 +81,8 @@ func _run_all() -> void:
         world.performance_director.force_evaluate_for_test()
         _expect(far_enemy.get_node_or_null("OrganicModel") != null, "Promoting a deferred organic actor to active detail must materialize its authored presentation shell.")
         _expect(far_robot.get_node_or_null("RobotModel") != null, "Promoting a deferred machine actor to active detail must materialize its authored presentation shell.")
+        _expect(_presentation_controller_processing(far_enemy), "Promoting an organic actor to active detail must resume presentation-only controller ticks.")
+        _expect(_presentation_controller_processing(far_robot), "Promoting a machine actor to active detail must resume presentation-only controller ticks.")
         far_enemy.global_position = far_enemy_position
         far_robot.global_position = far_robot_position
         world.spatial_index.rebuild()
@@ -112,6 +116,14 @@ func _expect(condition: bool, message: String) -> void:
     if not condition:
         failures.append(message)
         push_error(message)
+
+
+func _presentation_controller_processing(actor: Node) -> bool:
+    for child_name in [&"ProceduralAnimator3D", &"AuthoredActorAnimation3D", &"ReleaseSecondaryMotion3D"]:
+        var controller := actor.get_node_or_null(NodePath(String(child_name)))
+        if controller != null and controller.has_method(&"is_processing") and bool(controller.call(&"is_processing")):
+            return true
+    return false
 
 
 func _finish() -> void:
