@@ -61,8 +61,8 @@ func _setup_vertical_slice_presentation() -> void:
 	# Bring the vulnerable technician and indispensable companion into the
 	# opening's visual foreground while retaining the forge, weather and
 	# amber escape lane as readable context.
-	camera_height = 14.8
-	camera_distance = 8.4
+	camera_height = 13.8
+	camera_distance = 7.8
 	if camera != null:
 		camera.fov = 43.75
 		camera.near = 0.35

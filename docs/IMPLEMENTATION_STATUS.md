@@ -452,6 +452,17 @@ identities. Manual channels remain finish-before-save.
 - strengthened the native framing assertion so the opening cannot regress to a
   forge-dominant composition while losing the amber escape route.
 
+## Focused opening cast-presence milestone
+
+- tightened the release opening frame to a bounded 13.8 height and 7.8
+  distance so the Mechromancer and Bulwark read as the immediate visual
+  subjects rather than small figures inside a large environment frame;
+- preserved the Heartforge focal light, objective card, rain readability and
+  amber escape lane in a fresh exported opening review;
+- narrowed the native camera contract to a safe 13.0–14.0 height and 7.2–8.0
+  distance band so later presentation changes cannot either shrink the cast
+  back into the interface chrome or crop the route context away.
+
 ## Focused Mechromancer asset milestone
 
 - replaced the procedural player mannequin with the original
