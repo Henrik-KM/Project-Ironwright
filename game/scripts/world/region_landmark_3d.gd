@@ -785,7 +785,10 @@ func _animate_region_details() -> void:
             node.rotation.z += sin(local_phase * 1.0) * 0.11
         elif node_name.begins_with("TenementOrganicCreep"):
             node.rotation.y += sin(local_phase * 0.8) * 0.06
-            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.15) * 0.07)
+            # Keep the residential organic creep visibly alive even when a
+            # sampled presentation phase lands on a sine zero-crossing.
+            var creep_pulse := 1.0 + 0.006 + absf(sin(local_phase * 1.15)) * 0.064
+            node.scale = _motion_base_transforms[node].basis.get_scale() * creep_pulse
         elif node_name.begins_with("FloodMarketGrowthLight") or node_name.begins_with("FloodMarketWaterline"):
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.85) * 0.08)
         elif node_name.begins_with("FloodMarketOrganicGrowth"):
