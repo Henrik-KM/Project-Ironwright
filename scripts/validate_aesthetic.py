@@ -164,7 +164,7 @@ ACTOR_GEOMETRY_FLOORS = {
     "mechromancer": 600,
     "bulwark": 1500,
     "warden": 1500,
-    "scrapper": 1200,
+    "scrapper": 1500,
     "pathfinder": 1400,
     "engineer": 1400,
     "veilstalker": 3000,

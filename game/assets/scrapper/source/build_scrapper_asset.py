@@ -43,22 +43,31 @@ def main() -> None:
         "Chassis": mesh("Chassis", add_box(builder, (1.28, 0.64, 1.5), chassis)),
         "Core": mesh("Core", add_box(builder, (1.04, 0.3, 1.22), oxide)),
         "Plate": mesh("Plate", add_box(builder, (1.16, 0.16, 0.14), steel)),
-        "Corner": mesh("Corner", add_cylinder(builder, 0.11, 0.15, steel, 10)),
-        "Leg": mesh("Leg", add_cylinder(builder, 0.105, 0.7, rubber, 12)),
+        "Corner": mesh("Corner", add_cylinder(builder, 0.11, 0.15, steel, 20)),
+        "Leg": mesh("Leg", add_cylinder(builder, 0.105, 0.7, rubber, 20)),
         "Foot": mesh("Foot", add_box(builder, (0.26, 0.12, 0.38), oxide)),
         "OpticHousing": mesh("OpticHousing", add_box(builder, (0.44, 0.24, 0.12), chassis)),
         "Optic": mesh("Optic", add_uv_sphere(builder, 0.08, cyan)),
         "Cargo": mesh("Cargo", add_box(builder, (1.0, 0.58, 0.86), chassis)),
         "CargoLip": mesh("CargoLip", add_box(builder, (1.12, 0.08, 0.92), oxide)),
         "Strap": mesh("Strap", add_box(builder, (0.12, 0.48, 0.92), oxide)),
-        "Arm": mesh("Arm", add_cylinder(builder, 0.09, 1.2, oxide, 12)),
+        "Arm": mesh("Arm", add_cylinder(builder, 0.09, 1.2, oxide, 20)),
         "Joint": mesh("Joint", add_uv_sphere(builder, 0.14, chassis)),
         "Claw": mesh("Claw", add_box(builder, (0.32, 0.18, 0.48), steel)),
-        "CutHead": mesh("CutHead", add_cylinder(builder, 0.18, 0.32, chassis, 14)),
-        "Drum": mesh("Drum", add_cylinder(builder, 0.13, 0.22, oxide, 12)),
-        "Magnet": mesh("Magnet", add_cylinder(builder, 0.12, 0.16, cyan, 12)),
-        "Fastener": mesh("Fastener", add_cylinder(builder, 0.04, 0.04, warm, 10)),
-        "Cable": mesh("Cable", add_cylinder(builder, 0.03, 0.7, rubber, 8)),
+        "CutHead": mesh("CutHead", add_cylinder(builder, 0.18, 0.32, chassis, 24)),
+        "Drum": mesh("Drum", add_cylinder(builder, 0.13, 0.22, oxide, 24)),
+        "Magnet": mesh("Magnet", add_cylinder(builder, 0.12, 0.16, cyan, 24)),
+        "Fastener": mesh("Fastener", add_cylinder(builder, 0.04, 0.04, warm, 20)),
+        "Cable": mesh("Cable", add_cylinder(builder, 0.03, 0.7, rubber, 12)),
+        # Salvage-machine close-camera hardware: the hopper rim, tool collars,
+        # cutter guard and magnetic pickup details make the work identity read
+        # as maintained industrial machinery rather than a cargo box with arms.
+        "HopperRim": mesh("HopperRim", add_box(builder, (1.18, 0.08, 0.98), steel)),
+        "HopperLatch": mesh("HopperLatch", add_cylinder(builder, 0.06, 0.12, warm, 20)),
+        "DismantlerCollar": mesh("DismantlerCollar", add_cylinder(builder, 0.12, 0.08, cyan, 24)),
+        "CuttingGuard": mesh("CuttingGuard", add_box(builder, (0.46, 0.1, 0.14), steel)),
+        "MagnetCoil": mesh("MagnetCoil", add_cylinder(builder, 0.15, 0.06, cyan, 24)),
+        "IntakeTooth": mesh("IntakeTooth", add_box(builder, (0.08, 0.12, 0.18), warm)),
     }
 
     nodes: list[dict] = [{
@@ -107,18 +116,25 @@ def main() -> None:
     add_node("OpticLens", mesh_ids["Optic"], (0.0, 1.08, -1.0), extras={"socket_type": "optic"})
     add_node("CargoBin", mesh_ids["Cargo"], (0.0, 1.45, 0.25), extras={"socket_type": "cargo_mount"})
     add_node("CargoLip", mesh_ids["CargoLip"], (0.0, 1.78, 0.25))
+    add_node("ScrapperHopperRim", mesh_ids["HopperRim"], (0.0, 1.84, 0.25))
+    add_node("ScrapperHopperLatch", mesh_ids["HopperLatch"], (0.0, 1.86, -0.24), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("CargoStrap", mesh_ids["Strap"], (0.0, 1.47, 0.25))
     add_node("DeepScrapHopper", mesh_ids["Cargo"], (0.0, 1.45, 0.38))
     for side in (-1.0, 1.0):
         add_node("DismantlerJoint", mesh_ids["Joint"], (side * 0.7, 0.96, -0.34))
+        add_node("ScrapperDismantlerCollar%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["DismantlerCollar"], (side * 0.7, 0.96, -0.34), extras={"socket_type": "salvage_tool_collar"})
         add_node("Dismantler", mesh_ids["Arm"], (side * 0.7, 0.96, -0.38), rotation=(0.0, 0.0, side * 1.05), extras={"socket_type": "salvage_tool"})
         add_node("DismantlerTool", mesh_ids["Claw"], (side * 1.12, 0.61, -0.48), rotation=(0.0, 0.0, side * 0.14))
         add_node("ScrapMagnet", mesh_ids["Magnet"], (side * 1.12, 0.62, -0.72), rotation=(math.pi * 0.5, 0.0, 0.0))
+        add_node("ScrapperMagnetCoil%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["MagnetCoil"], (side * 1.12, 0.62, -0.82), rotation=(math.pi * 0.5, 0.0, 0.0))
         add_node("ScrapManipulatorCable", mesh_ids["Cable"], (side * 0.65, 0.92, -0.04), rotation=(0.0, 0.0, side * 0.2))
         add_node("ScrapperFastener", mesh_ids["Fastener"], (side * 0.45, 1.2, -0.8), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("CuttingHead", mesh_ids["CutHead"], (0.0, 1.13, -0.92), rotation=(math.pi * 0.5, 0.0, 0.0))
+    add_node("ScrapperCuttingGuard", mesh_ids["CuttingGuard"], (0.0, 1.13, -1.1), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("SalvageDrum", mesh_ids["Drum"], (0.0, 1.36, 0.25), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "salvage_drum"})
     add_node("ScrapperIntake", mesh_ids["Plate"], (0.0, 1.43, -0.82))
+    for side in (-1.0, 1.0):
+        add_node("ScrapperIntakeTooth%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["IntakeTooth"], (side * 0.22, 1.43, -0.93), rotation=(0.0, 0.0, side * 0.12))
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "scrapper.salvager.v1", "source": "original_shared_mesh_builder"})
 
     node_index = {node["name"]: index for index, node in enumerate(nodes)}
@@ -179,7 +195,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "scrapper.salvager.v1",
-            "required_nodes": ["ScrapperModel", "Sensor", "OpticLens", "CargoBin", "DismantlerTool", "SalvageDrum", "ScrapperIntake", "ProductionAssetMarker"],
+            "required_nodes": ["ScrapperModel", "Sensor", "OpticLens", "CargoBin", "DismantlerTool", "SalvageDrum", "ScrapperIntake", "ScrapperHopperRim", "ScrapperDismantlerCollarLeft", "ScrapperMagnetCoilRight", "ScrapperCuttingGuard", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Work", "Hit", "Retreat", "Death"],
         },
     }

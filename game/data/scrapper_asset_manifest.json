@@ -16,6 +16,10 @@
     "DismantlerTool",
     "SalvageDrum",
     "ScrapperIntake",
+    "ScrapperHopperRim",
+    "ScrapperDismantlerCollarLeft",
+    "ScrapperMagnetCoilRight",
+    "ScrapperCuttingGuard",
     "ProductionAssetMarker"
   ],
   "animation_clips": [
