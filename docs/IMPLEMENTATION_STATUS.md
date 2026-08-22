@@ -270,6 +270,7 @@
 - Authored enemy tier brains now share the release active/medium/reduced-detail schedule instead of retaining a separate per-frame callback while the parent actor is remote.
 - Reduced and coarse ticks preserve the same tier movement authority, while active promotion restores the live physics callback; duplicate attack-cooldown decay was removed.
 - Stress and progression coverage now verifies the LOD handoff and one-decrement cooldown contract. The deterministic population benchmark still records sub-target-hardware frame cost for later profiling and optimization.
+- Remote organic actors now retain a bounded short-lived target between reduced ticks, avoiding repeated spatial searches while preserving refresh on expiry, invalidation, or active/medium promotion.
 
 ## Focused multi-session world recap milestone
 
