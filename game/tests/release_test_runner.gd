@@ -50,6 +50,9 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.balance_director is BalanceDirector3D, "Release runtime must install long-run balance profiles.")
     _expect(world.performance_director is PerformanceDirector3D, "Release runtime must install active/reduced-detail simulation.")
     _expect(world.release_audio is ReleaseAudioDirector3D, "Release runtime must install adaptive audio.")
+    _expect(world.release_color_filter is ReleaseColorFilter3D, "Release runtime must install the live colour-vision correction layer.")
+    if world.release_color_filter is ReleaseColorFilter3D:
+        _expect(not world.release_color_filter.is_active(), "Colour-vision correction must default to off.")
     if world.release_audio is ReleaseAudioDirector3D:
         _expect(is_equal_approx(world.release_audio._organic_signature_pitch(&"glassmoth", false), 1.28), "Release audio must preserve the high signature of Glassmoth.")
         _expect(world.release_audio._organic_signature_pitch(&"apex", true) < world.release_audio._organic_signature_pitch(&"apex", false), "Release audio must lower a species signature on death.")
@@ -200,6 +203,14 @@ func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void
     _expect(world.hud.resource_label.get_theme_constant("outline_size") >= 4, "High contrast must strengthen text outlines.")
     settings.set_value(&"text_scale", 1.0, false)
     settings.set_value(&"high_contrast_ui", false, false)
+    settings.set_value(&"colorblind_mode", "deuteranopia", false)
+    if world.release_color_filter is ReleaseColorFilter3D:
+        _expect(world.release_color_filter.is_active(), "A selected colour-vision mode must activate the live world filter.")
+        _expect(world.release_color_filter.current_mode() == &"deuteranopia", "The live filter must expose the selected colour-vision mode.")
+    settings.set_value(&"colorblind_mode", "unsupported-mode", false)
+    _expect(str(settings.get_value(&"colorblind_mode", "")) == "off", "Unsupported colour-vision modes must fail closed to the neutral rendering.")
+    _expect(not world.release_color_filter.is_active(), "An unsupported colour-vision mode must not leave a stale filter active.")
+    settings.set_value(&"colorblind_mode", "off", false)
     var presentation_feedback := world.aesthetic_director.feedback
     _expect(presentation_feedback != null, "Release presentation must install the live feedback layer.")
     if presentation_feedback != null and presentation_feedback.has_method(&"accessibility_snapshot"):

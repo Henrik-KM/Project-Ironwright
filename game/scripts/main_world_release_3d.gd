@@ -9,6 +9,7 @@ const VERTICAL_SLICE_DIRECTOR := preload("res://scripts/presentation/vertical_sl
 const VERTICAL_SLICE_ACTOR_ART := preload("res://scripts/presentation/vertical_slice_actor_art_3d.gd")
 const RUN_VARIATION_SCRIPT := preload("res://scripts/presentation/run_variation_director_3d.gd")
 const SESSION_DIAGNOSTICS_SCRIPT := preload("res://scripts/release/release_session_diagnostics_service_3d.gd")
+const COLOR_FILTER_SCRIPT := preload("res://scripts/release/release_color_filter_3d.gd")
 const REMOTE_CAMERA_HEIGHT_EXPANSION := 5.5
 const REMOTE_CAMERA_DISTANCE_EXPANSION := 6.5
 
@@ -24,6 +25,7 @@ var release_world_art: ReleaseWorldArtDirector3D
 var release_animation: ReleaseAnimationDirector3D
 var release_audio: ReleaseAudioDirector3D
 var release_front_end: ReleaseFrontEnd3D
+var release_color_filter: ReleaseColorFilter3D
 var session_diagnostics: ReleaseSessionDiagnostics3D
 var release_started: bool = false
 var controller_action_cooldown: float = 0.0
@@ -323,6 +325,11 @@ func _setup_release_services() -> void:
 	release_world_art.name = "ReleaseWorldArtDirector"
 	release_world_art.configure(self, region_director, settings_service)
 	add_child(release_world_art)
+
+	release_color_filter = COLOR_FILTER_SCRIPT.new() as ReleaseColorFilter3D
+	release_color_filter.name = "ReleaseColorFilter"
+	release_color_filter.configure(settings_service)
+	add_child(release_color_filter)
 
 	release_animation = ReleaseAnimationDirector3D.new()
 	release_animation.name = "ReleaseAnimationDirector"
