@@ -115,6 +115,11 @@ distinct spatial sound language for Mechromancer, machine and organic
 non-lethal hits. This reinforces the authored `Hit` beat without adding combat
 HUD clutter or changing health, damage, ecology or actor workload contracts.
 
+Organic attacks now also carry a short, species-pitched danger cue at the start
+of the existing visible wind-up, before damage resolves. The cue is shared and
+rate-limited across overlapping pack attacks, so the player gets a readable
+audio warning without a constant alarm or a new combat-management interface.
+
 Friendly machine weapon and shutdown events now also carry deterministic family
 identity: the Bulwark, Warden, Scrapper, Pathfinder, Engineer and Signal Relay
 resolve distinct generated signatures from their existing archetype IDs. The

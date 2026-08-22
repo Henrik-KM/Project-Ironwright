@@ -46,6 +46,8 @@ var operation_report_clock: float = 0.0
 var operation_report_count: int = 0
 var last_operation_signature: StringName = &""
 var spatial_operation_reports: Array[AudioStreamPlayer3D] = []
+var attack_warning_clock: float = 0.0
+var attack_warning_count: int = 0
 
 
 func configure(
@@ -80,6 +82,7 @@ func _process(delta: float) -> void:
     evaluation_clock += delta
     caption_clock = maxf(0.0, caption_clock - delta)
     operation_report_clock = maxf(0.0, operation_report_clock - delta)
+    attack_warning_clock = maxf(0.0, attack_warning_clock - delta)
     if caption_panel != null and caption_clock <= 0.0:
         caption_panel.visible = false
     _update_ambience(delta)
@@ -289,6 +292,9 @@ func _connect_actor(node: Variant) -> void:
             mech.channel_started.connect(channel_callback)
     elif node is OrganicEnemy3D:
         var enemy := node as OrganicEnemy3D
+        var warning_callback := Callable(self, "_on_organic_attack_started")
+        if not enemy.attack_started.is_connected(warning_callback):
+            enemy.attack_started.connect(warning_callback)
         var attack_callback := Callable(self, "_on_organic_attack")
         if not enemy.attack_landed.is_connected(attack_callback):
             enemy.attack_landed.connect(attack_callback)
@@ -311,6 +317,18 @@ func _on_channel_started(kind: StringName, duration: float, description: String)
 func _on_organic_attack(enemy: OrganicEnemy3D, target: Node) -> void:
     if player != null and is_instance_valid(player) and target == player:
         play_effect(&"organic_hit", "audio.caption.organic", 0.05, -2.0, _organic_signature_pitch(enemy.species, false))
+
+
+func _on_organic_attack_started(enemy: OrganicEnemy3D, target: Node) -> void:
+    if player == null or not is_instance_valid(player) or target != player:
+        return
+    # A pack can begin several wind-ups in the same frame. Keep the warning
+    # audible without turning a crowded defence into a constant alarm.
+    if attack_warning_clock > 0.0:
+        return
+    attack_warning_clock = 0.18
+    attack_warning_count += 1
+    play_effect(&"danger", "", 0.04, -8.0, _organic_signature_pitch(enemy.species, false))
 
 
 func _on_organic_killed(enemy: OrganicEnemy3D, killer: Node) -> void:
