@@ -1770,6 +1770,18 @@ environmentally distinct without changing ecology, routing or player workload.
 
 ## Commercial work still remaining
 
+## Focused title-screen atmosphere milestone
+
+- added a restrained procedural forge-and-service atmosphere behind the title
+  panel, with a warm Heartforge core, cool service rings, horizon haze and a
+  low-contrast scan texture so the first frame shares the playable opening's
+  material language;
+- kept the layer presentation-only and behind existing title, settings and
+  pause surfaces, with no input, save, simulation or player-workload change;
+- added release coverage for the atmosphere shader layer; exact exported live
+  visual review remains required for final human acceptance of the opening
+  composition.
+
 ## Focused full-remote presentation-review breadth milestone
 
 - expanded the development-only exported presentation gallery from the three

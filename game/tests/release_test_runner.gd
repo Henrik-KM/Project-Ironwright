@@ -719,6 +719,8 @@ func _test_front_end(world: IronwrightReleaseWorld3D) -> void:
     front_end.show_title(false)
     _expect(front_end.active_screen == &"title" and front_end.visible, "Localized release title screen must open.")
     _expect(front_end.backdrop != null and front_end.backdrop.color.a <= 0.80, "The title screen must retain enough authored world presence behind the menu to establish the Heartforge visual identity.")
+    var title_atmosphere_material := front_end.title_atmosphere.material as ShaderMaterial if front_end.title_atmosphere != null else null
+    _expect(front_end.title_atmosphere != null and title_atmosphere_material != null and title_atmosphere_material.shader != null, "The title screen must retain its restrained forge-and-service atmosphere layer.")
     _expect("RELEASE CANDIDATE" not in front_end.version_label.text.to_upper(), "The title screen must present diegetic version language instead of internal release-status text.")
     _expect(front_end.continue_button.disabled, "Continue must be disabled without a valid save.")
     _expect(front_end.new_world_button != null and front_end.new_world_button.has_focus(), "A first-run title screen must focus the actionable New World entry when Continue is unavailable.")
