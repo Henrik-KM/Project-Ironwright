@@ -506,7 +506,7 @@ func show_failure_report(detail: String) -> void:
     ending_panel.add_theme_stylebox_override("panel", report_style)
     var readable_detail := _wrap_multiline_detail(detail, 76)
     var label := _label(ending_panel, "THE HEARTFORGE FELL\n\nPOST-COLLAPSE REPORT\n\n" + readable_detail + "\n\nPress ENTER to restart.", 15, Color("e8b0a5"))
-    label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
     label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
     label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     _layout_ending_panel(Vector2(get_viewport().get_visible_rect().size))

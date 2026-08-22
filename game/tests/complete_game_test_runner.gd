@@ -255,12 +255,35 @@ func _run_all() -> void:
     _expect(ending_panel.offset_left < 0.0 and ending_panel.offset_right > 0.0 and ending_panel.offset_top < 0.0 and ending_panel.offset_bottom > 0.0, "The victory overlay must stay centered inside the viewport-safe offsets.")
     world.hud.dismiss_ending()
 
-    world.hud.show_failure_report(world._build_collapse_report())
+    var report_scrap := world.run_state.scrap
+    var report_high_water_mark := world.run_state.scrap_high_water_mark
+    var report_last_scrap_total := world.run_state.last_scrap_total
+    var report_decline_steps := world.run_state.scrap_decline_steps
+    var report_decline := world.run_state.first_sustained_resource_decline.duplicate(true)
+    world.run_state.observe_organic_species(&"razorhound", &"hunt", &"region.west_grid")
+    world.run_state.observe_organic_species(&"razorhound", &"track_last_known", &"region.west_grid")
+    world.run_state.scrap = 300
+    world.run_state.scrap_high_water_mark = 300
+    world.run_state.last_scrap_total = 300
+    world.run_state.scrap_decline_steps = 0
+    world.run_state.spend_scrap(80)
+    world.run_state.spend_scrap(80)
+    world.run_state.spend_scrap(80)
+    var collapse_report := world._build_collapse_report()
+    _expect(collapse_report.contains("Razorhound") and collapse_report.contains("hunt") and collapse_report.contains("track last known"), "The collapse report must use persistent species and behaviour observations rather than only live enemies.")
+    _expect(collapse_report.contains("FIRST SUSTAINED RESOURCE DECLINE") and not world.run_state.first_sustained_resource_decline.is_empty(), "The collapse report must identify the first sustained resource decline.")
+    world.hud.show_failure_report(collapse_report)
     var collapse_panel := world.hud.ending_panel
     var collapse_label := collapse_panel.get_node("PanelContent").get_child(0) as Label
     _expect(collapse_label != null and collapse_label.text.contains("POST-COLLAPSE REPORT") and collapse_label.text.contains("UNRESOLVED THREAT"), "The defeat boundary must expose a readable causal post-collapse report.")
     _expect(bool(collapse_panel.get_meta("expanded_report", false)), "The causal report must use an expanded, viewport-safe reading surface rather than clipping the timeline.")
     world.hud.dismiss_ending()
+    world.run_state.scrap = report_scrap
+    world.run_state.scrap_high_water_mark = report_high_water_mark
+    world.run_state.last_scrap_total = report_last_scrap_total
+    world.run_state.scrap_decline_steps = report_decline_steps
+    world.run_state.first_sustained_resource_decline = report_decline
+    world.run_state.scrap_changed.emit(world.run_state.scrap)
 
     var continue_event := InputEventKey.new()
     continue_event.keycode = KEY_ENTER
