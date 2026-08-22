@@ -357,6 +357,13 @@ func _run_all() -> void:
                 var cathedral_vein_knuckle := landmark.find_child("CathedralOrganicVeinKnuckle17", true, false) as Node3D
                 _expect(cathedral_choir_signal != null and cathedral_bell != null, "Cathedral Quarter must expose named choir and bell motion sockets.")
                 _expect(cathedral_choir_ring != null and cathedral_door_post != null and cathedral_tower_slit != null and cathedral_rose_latch != null and cathedral_choir_rib != null and cathedral_clapper != null and cathedral_vein_knuckle != null, "Cathedral Quarter must expose secondary entry, tower, window, choir and bell hardware detail.")
+                var cathedral_yard_plinth := landmark.find_child("CathedralChoirYardPlinth", true, false) as Node3D
+                var cathedral_yard_louver := landmark.find_child("CathedralChoirYardServiceLouver0", true, false) as Node3D
+                var cathedral_yard_crossbeam := landmark.find_child("CathedralChoirYardCrossbeam", true, false) as Node3D
+                var cathedral_yard_resonator := landmark.find_child("CathedralChoirYardResonator", true, false) as Node3D
+                var cathedral_yard_root := landmark.find_child("CathedralChoirYardRootPlate", true, false) as Node3D
+                _expect(cathedral_yard_plinth != null and cathedral_yard_louver != null and cathedral_yard_crossbeam != null, "Cathedral Quarter must expose a bounded choir-yard service edge around the authored landmark.")
+                _expect(cathedral_yard_resonator != null and cathedral_yard_root != null, "Cathedral Quarter choir-yard hardware must retain resonator and organic anchor detail.")
                 if cathedral_choir_signal != null and cathedral_bell != null and cathedral_choir_ring != null and cathedral_vein_knuckle != null:
                     var choir_signal_before := cathedral_choir_signal.scale
                     var choir_ring_before := cathedral_choir_ring.scale
