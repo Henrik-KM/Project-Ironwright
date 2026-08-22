@@ -99,6 +99,24 @@ func _run_all() -> void:
     var primary_west_route := world.region_director.route_from_heartforge(&"region.west_grid", world.heartforge.global_position)
     var alternate_west_route := world.region_director.route_from_heartforge_variant(&"region.west_grid", world.heartforge.global_position, 1)
     _expect(primary_west_route.size() == alternate_west_route.size() and primary_west_route[1] != alternate_west_route[1], "The alternate route must change the physical street waypoints rather than only renaming the report.")
+    var route_contract_regions: Array[StringName] = [
+        &"region.north_ruins",
+        &"region.west_grid",
+        &"region.east_tenements",
+        &"region.glasshouse",
+        &"region.flood_market",
+        &"region.riverworks",
+        &"region.tram_graveyard",
+        &"region.cathedral_quarter",
+        &"region.observatory_ridge",
+        &"region.buried_labs",
+        &"region.root_cistern",
+    ]
+    for route_contract_region in route_contract_regions:
+        _expect(world.region_director.route_variant_count(route_contract_region) >= 1, "Every discovered town route must expose one bounded alternate route for %s." % String(route_contract_region))
+        var primary_contract_route := world.region_director.route_from_heartforge(route_contract_region, world.heartforge.global_position)
+        var alternate_contract_route := world.region_director.route_from_heartforge_variant(route_contract_region, world.heartforge.global_position, 1)
+        _expect(primary_contract_route.size() == alternate_contract_route.size() and primary_contract_route.size() >= 3 and primary_contract_route[1] != alternate_contract_route[1], "The alternate route for %s must change authored physical waypoints." % String(route_contract_region))
     var recovery_anchor: Vector3 = world.long_operation_director.active_operation.get("anchor", world.heartforge.global_position)
     route_blocker.remove_from_group(&"organic_enemies")
     route_blocker.queue_free()
