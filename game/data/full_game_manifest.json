@@ -122,6 +122,7 @@
     "flood_market_canopy_material",
     "root_cistern_encounter_depth",
     "opening_cast_separation",
+    "greenhouse_service_depth",
     "machine_callsigns_and_relationship_moments",
     "machine_witness_archive_records",
     "release_snapshot_archive_and_callsign_persistence",

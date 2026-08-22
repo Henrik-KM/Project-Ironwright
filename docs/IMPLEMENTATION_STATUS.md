@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Municipal Glasshouse service-depth milestone
+
+- added a bounded release-only service court with raised bed edges, a civic
+  irrigation manifold, climate console, overhead header and damaged glazing
+  braces so the Glasshouse reads as a maintained municipal climate complex;
+- preserved the existing landmark, collision, route, ecology and operation
+  contracts, with no player-managed greenhouse queue, inventory or recurring
+  maintenance task;
+- added aesthetic and commercial-release coverage for the new stable identity
+  sockets, with live exported review required before merge.
+
 ## Focused release-population benchmark milestone
 
 - added a deterministic benchmark that boots the real release scene, exercises

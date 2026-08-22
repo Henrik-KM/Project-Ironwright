@@ -383,6 +383,10 @@ func _run_all() -> void:
                 _expect(landmark.find_child("GreenhouseBrokenSkylight", true, false) != null, "Municipal Glasshouse must expose a broken skylight silhouette.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/GlasshouseAuthoredModel") != null, "Municipal Glasshouse must expose its authored climate-frame landmark shell.")
                 _expect(landmark.find_child("GlasshouseBedEdge0", true, false) != null and landmark.find_child("GlasshouseGrowthTendril0_0", true, false) != null and landmark.find_child("GlasshouseLightHousing0", true, false) != null, "Municipal Glasshouse growth beds must expose secondary service and organic detail.")
+                var release_art := world.get_node_or_null("ReleaseWorldArtDirector") as ReleaseWorldArtDirector3D
+                var release_greenhouse_layer := release_art.dressing_root.find_child("HighDefinitionGreenhouseServiceLayer", true, false) if release_art != null and release_art.dressing_root != null else null
+                _expect(release_greenhouse_layer != null and release_greenhouse_layer.find_child("GlasshouseServiceWalkway", true, false) != null and release_greenhouse_layer.find_child("GlasshouseIrrigationManifold", true, false) != null, "Municipal Glasshouse must expose a bounded service walkway and irrigation manifold in its release dressing.")
+                _expect(release_greenhouse_layer != null and release_greenhouse_layer.find_child("GlasshouseClimateConsole", true, false) != null and release_greenhouse_layer.find_child("GlasshouseIrrigationHeader", true, false) != null and release_greenhouse_layer.find_child("GlasshouseBrokenGlazingBrace00", true, false) != null, "Municipal Glasshouse service depth must preserve climate, irrigation and damaged-glazing identity hardware.")
                 var glasshouse_canopy := landmark.find_child("GlasshouseCanopyPulse", true, false) as Node3D
                 var glasshouse_growth := landmark.find_child("GlasshouseGrowthPulse0_0", true, false) as Node3D
                 var glasshouse_tendril := landmark.find_child("GlasshouseGrowthTendril0_0", true, false) as Node3D
