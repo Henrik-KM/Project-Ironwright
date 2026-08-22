@@ -30,6 +30,7 @@ var forge_backdrop: ColorRect
 var forge_panel: PanelContainer
 var forge_scroll: ScrollContainer
 var forge_content_box: VBoxContainer
+var forge_close_button: Button
 var notification_label: Label
 var map_banner: Label
 var help_label: Label
@@ -214,7 +215,9 @@ func _build_forge_panel() -> PanelContainer:
     forge_scroll.offset_left = 10.0
     forge_scroll.offset_top = 10.0
     forge_scroll.offset_right = -10.0
-    forge_scroll.offset_bottom = -10.0
+    # Reserve a fixed footer so the close action and the last visible row never
+    # compete for the same pixels on short release windows.
+    forge_scroll.offset_bottom = -70.0
     forge_scroll.mouse_filter = Control.MOUSE_FILTER_STOP
     shell.add_child(forge_scroll)
 
@@ -245,7 +248,25 @@ func _build_forge_panel() -> PanelContainer:
     _forge_button(forge_content_box, "4  UPGRADE ALL SCRAPPERS", func() -> void: forge_upgrade_selected.emit(&"salvager"))
     _forge_button(forge_content_box, "5  UPGRADE ALL WARDENS", func() -> void: forge_upgrade_selected.emit(&"guardian"))
     _forge_button(forge_content_box, "6  UPGRADE ALL PATHFINDERS", func() -> void: forge_upgrade_selected.emit(&"scout"))
-    _forge_button(forge_content_box, "ESC  CLOSE", func() -> void: forge_closed.emit())
+
+    var footer := HBoxContainer.new()
+    footer.name = "ForgeFooter"
+    footer.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+    footer.offset_left = 10.0
+    footer.offset_right = -10.0
+    footer.offset_top = -60.0
+    footer.offset_bottom = -10.0
+    footer.mouse_filter = Control.MOUSE_FILTER_STOP
+    shell.add_child(footer)
+
+    forge_close_button = Button.new()
+    forge_close_button.name = "ForgeCloseButton"
+    forge_close_button.text = "ESC  CLOSE FORGE"
+    forge_close_button.custom_minimum_size = Vector2(0, 48)
+    forge_close_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    forge_close_button.focus_mode = Control.FOCUS_NONE
+    forge_close_button.pressed.connect(func() -> void: forge_closed.emit())
+    footer.add_child(forge_close_button)
     return panel
 
 
@@ -430,6 +451,7 @@ func show_forge_menu() -> void:
     forge_open = true
     forge_backdrop.visible = true
     forge_panel.visible = true
+    forge_scroll.scroll_vertical = 0
     apply_safe_layout(Vector2(get_viewport().get_visible_rect().size))
 
 

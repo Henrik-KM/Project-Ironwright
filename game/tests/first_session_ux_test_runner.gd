@@ -57,6 +57,12 @@ func _run_all() -> void:
     _expect(_rect_fits_viewport(forge_rect, Vector2(TEST_VIEWPORT_SIZE)), "The forge menu must remain fully inside an 800×520 viewport.")
     _expect(hud.forge_scroll != null, "The forge menu must scroll instead of clipping tall fabrication content.")
     _expect(hud.forge_content_box != null and hud.forge_content_box.get_child_count() >= 12, "The responsive forge must expose all base and full-game fabrication actions.")
+    _expect(hud.forge_close_button != null and hud.forge_close_button.text == "ESC  CLOSE FORGE", "The forge must keep a clearly labelled close action in a fixed footer.")
+    if hud.forge_close_button != null:
+        var forge_close_rect := hud.forge_close_button.get_global_rect()
+        var forge_scroll_rect := hud.forge_scroll.get_global_rect()
+        _expect(_rect_fits_viewport(forge_close_rect, Vector2(TEST_VIEWPORT_SIZE)), "The fixed forge close action must remain fully inside the viewport.")
+        _expect(forge_scroll_rect.end.y <= forge_close_rect.position.y, "The forge scroll region must stop above the fixed close footer.")
     hud.hide_forge_menu()
 
     var objective_rect := hud.objective_panel.get_global_rect()
