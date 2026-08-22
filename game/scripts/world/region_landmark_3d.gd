@@ -344,17 +344,12 @@ func _build_authored_root_cistern_visuals() -> void:
     # The late landmark receives a production shell while region state, LOD
     # and endgame ownership remain on this node and its existing services.
     var authored_scene_instance := AUTHORED_ROOT_CISTERN_MODEL_SCENE.instantiate()
-    var imported_root := authored_scene_instance.get_node_or_null("RootCisternModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _visual_root.add_child(child)
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
+    # Keep the imported scene hierarchy intact. RootCisternModel carries the
+    # authored parent transform for the nested basin/core/pylon assembly; moving
+    # only its children into the landmark root loses that hierarchy in the
+    # runtime import and can make the entire late landmark disappear.
+    authored_scene_instance.name = "RootCisternAuthoredScene"
+    _visual_root.add_child(authored_scene_instance)
     var authored_marker := Node3D.new()
     authored_marker.name = "RootCisternAuthoredModel"
     _visual_root.add_child(authored_marker)

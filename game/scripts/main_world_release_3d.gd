@@ -24,6 +24,9 @@ const PRESENTATION_REVIEW_EARLY_ORGANICS: Array[StringName] = [
 const PRESENTATION_REVIEW_LATE_ORGANICS: Array[StringName] = [
 	&"broodmass", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle", &"apex",
 ]
+const PRESENTATION_REVIEW_REGIONS: Array[StringName] = [
+	&"region.glasshouse", &"region.riverworks", &"region.root_cistern",
+]
 
 var localization_service: LocalizationService3D
 var settings_service: ReleaseSettingsService3D
@@ -51,6 +54,8 @@ var presentation_review_page: int = 0
 var presentation_review_pages: Array = []
 var presentation_review_label: Label
 var presentation_review_stage: Node3D
+var presentation_review_camera_target: Vector3 = Vector3.ZERO
+var presentation_review_camera_desired: Vector3 = Vector3(0.0, 4.8, 18.0)
 
 
 func _ready() -> void:
@@ -300,6 +305,12 @@ func _unhandled_input(event: InputEvent) -> void:
 					_show_presentation_review_page(1)
 				KEY_3:
 					_show_presentation_review_page(2)
+				KEY_4:
+					_show_presentation_review_page(3)
+				KEY_5:
+					_show_presentation_review_page(4)
+				KEY_6:
+					_show_presentation_review_page(5)
 				KEY_ESCAPE:
 					get_tree().quit()
 			get_viewport().set_input_as_handled()
@@ -497,7 +508,7 @@ func _start_presentation_review() -> void:
 	presentation_review_label.add_theme_constant_override("shadow_offset_y", 2)
 	review_layer.add_child(presentation_review_label)
 
-	presentation_review_pages = [[], [], []]
+	presentation_review_pages = [[], [], [], [], [], []]
 	presentation_review_pages[0].append(player)
 	var companion := get_node_or_null("Bulwark_01") as Node3D
 	if companion != null:
@@ -522,14 +533,22 @@ func _start_presentation_review() -> void:
 			enemy.set_physics_process(false)
 			enemy.set_process(false)
 			presentation_review_pages[2].append(enemy)
+	for index in PRESENTATION_REVIEW_REGIONS.size():
+		var landmark := _presentation_review_landmark(PRESENTATION_REVIEW_REGIONS[index])
+		if landmark != null:
+			landmark.set_presentation_detail_level(0)
+			landmark.set_map_emphasis(false)
+			presentation_review_pages[3 + index].append(landmark)
 	_create_presentation_review_stage()
 	_show_presentation_review_page(0)
 	get_tree().paused = true
-	run_state.log_event("Presentation review mode: 1 friendly roster, 2 early organic families, 3 late organic families. Escape exits review.")
+	run_state.log_event("Presentation review mode: 1 friendly roster, 2 early organic families, 3 late organic families, 4 Glasshouse, 5 Riverworks, 6 Root Cistern. Escape exits review.")
 
 
 func _create_presentation_review_stage() -> void:
 	var preserved_nodes: Array[Node] = [camera]
+	if release_world_art != null:
+		preserved_nodes.append(release_world_art)
 	for page_actors in presentation_review_pages:
 		for actor in page_actors:
 			if is_instance_valid(actor):
@@ -601,40 +620,108 @@ func _add_presentation_review_box(node_name: String, size: Vector3, position: Ve
 
 
 func _show_presentation_review_page(page: int) -> void:
-	if presentation_review_pages.size() != 3:
+	if presentation_review_pages.size() != 6:
 		return
-	presentation_review_page = clampi(page, 0, 2)
+	presentation_review_page = clampi(page, 0, 5)
 	for page_actors in presentation_review_pages:
 		for actor in page_actors:
 			if is_instance_valid(actor):
 				actor.visible = false
+	if release_world_art != null:
+		for raw_region_id in release_world_art.region_dressing_roots:
+			var dressing_root := release_world_art.region_dressing_root(raw_region_id as StringName)
+			if dressing_root != null:
+				dressing_root.visible = false
 	var actors: Array = presentation_review_pages[presentation_review_page]
+	var is_region_page := presentation_review_page >= 3
+	var region_id := PRESENTATION_REVIEW_REGIONS[presentation_review_page - 3] if is_region_page else &""
+	if is_region_page and release_world_art != null:
+		var selected_region_dressing := release_world_art.region_dressing_root(region_id)
+		if selected_region_dressing != null:
+			selected_region_dressing.visible = true
 	for index in actors.size():
 		var actor := actors[index] as Node3D
 		if actor == null or not is_instance_valid(actor):
 			continue
 		actor.visible = true
-		actor.rotation.y = PI
-		var row_start := -8.4
-		var row_z := 0.0
-		if presentation_review_page == 0:
-			row_z = 1.0
-		actor.position = Vector3(row_start + float(index) * 2.8, 0.0, row_z)
-		if actor.has_method("set_visual_lod"):
-			actor.call("set_visual_lod", 0)
-	var page_title: String = str(["PLAYER + FRIENDLY MACHINE SOCIETY", "EARLY ORGANIC FAMILIES", "LATE ORGANIC FAMILIES"][presentation_review_page])
-	presentation_review_label.text = "PRESENTATION REVIEW  ·  %s  ·  %d/3\n1 FRIENDLIES   2 EARLY ORGANICS   3 LATE ORGANICS   ESC EXIT" % [page_title, presentation_review_page + 1]
+		if is_region_page:
+			if actor.has_method("set_presentation_detail_level"):
+				actor.call("set_presentation_detail_level", 0)
+			var region_geometry := actor.get_node_or_null("PersistentRegionGeometry") as Node3D
+			if region_geometry != null:
+				region_geometry.visible = true
+		else:
+			actor.rotation.y = PI
+			var row_start := -8.4
+			var row_z := 1.0 if presentation_review_page == 0 else 0.0
+			actor.position = Vector3(row_start + float(index) * 2.8, 0.0, row_z)
+			if actor.has_method("set_visual_lod"):
+				actor.call("set_visual_lod", 0)
+	var page_titles: Array[String] = [
+		"PLAYER + FRIENDLY MACHINE SOCIETY", "EARLY ORGANIC FAMILIES", "LATE ORGANIC FAMILIES",
+		"REMOTE · MUNICIPAL GLASSHOUSE", "REMOTE · RIVERWORKS", "REMOTE · ROOT CISTERN",
+	]
+	var page_title: String = page_titles[presentation_review_page]
+	presentation_review_label.text = "PRESENTATION REVIEW  ·  %s  ·  %d/6\n1 FRIENDLIES   2 EARLY ORGANICS   3 LATE ORGANICS   4 GLASSHOUSE   5 RIVERWORKS   6 ROOT CISTERN   ESC EXIT" % [page_title, presentation_review_page + 1]
+	if is_region_page and not actors.is_empty():
+		presentation_review_camera_target = (actors[0] as Node3D).global_position + Vector3.UP * 2.0
+		presentation_review_camera_desired = presentation_review_camera_target + Vector3(0.0, 18.0, 27.0)
+	elif is_region_page and region_director != null:
+		presentation_review_camera_target = region_director.center(region_id) + Vector3.UP * 2.0
+		presentation_review_camera_desired = presentation_review_camera_target + Vector3(0.0, 18.0, 27.0)
+	else:
+		presentation_review_camera_target = Vector3(0.0, 1.0, 0.0)
+		presentation_review_camera_desired = Vector3(0.0, 4.8, 18.0)
+	_set_presentation_review_stage_for_page(is_region_page)
 	_update_presentation_review_camera(1.0)
+
+
+func _presentation_review_landmark(region_id: StringName) -> RegionLandmark3D:
+	if region_director == null:
+		return null
+	var direct := region_director.get_landmark(region_id)
+	if direct != null:
+		return direct
+	for raw_landmark in region_director.landmarks.values():
+		var landmark := raw_landmark as RegionLandmark3D
+		if landmark != null and landmark.region_id == region_id:
+			return landmark
+	return null
 
 
 func _update_presentation_review_camera(delta: float) -> void:
 	if camera == null:
 		return
-	var target := Vector3(0.0, 1.0, 0.0)
-	var desired := Vector3(0.0, 4.8, 18.0)
+	var target := presentation_review_camera_target
+	var desired := presentation_review_camera_desired
 	camera.global_position = camera.global_position.lerp(desired, 1.0 - exp(-delta * 5.0))
-	camera.fov = 46.0
-	camera.look_at(target + Vector3.UP * 0.9, Vector3.UP)
+	camera.fov = 52.0 if presentation_review_page >= 3 else 46.0
+	camera.look_at(target, Vector3.UP)
+
+
+func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
+	if presentation_review_stage == null:
+		return
+	var target := presentation_review_camera_target if is_region_page else Vector3.ZERO
+	var floor := presentation_review_stage.get_node_or_null("ReviewFloor") as Node3D
+	var backdrop := presentation_review_stage.get_node_or_null("ReviewBackdrop") as Node3D
+	var amber_band := presentation_review_stage.get_node_or_null("ReviewAmberBand") as Node3D
+	var teal_band := presentation_review_stage.get_node_or_null("ReviewTealBand") as Node3D
+	for node in [floor, backdrop, amber_band, teal_band]:
+		if node != null:
+			node.visible = not is_region_page
+	var front_fill := presentation_review_stage.get_node_or_null("ReviewFrontFill") as OmniLight3D
+	var warm_light := presentation_review_stage.get_node_or_null("ReviewWarmLight") as OmniLight3D
+	var cool_light := presentation_review_stage.get_node_or_null("ReviewCoolLight") as OmniLight3D
+	var rim_light := presentation_review_stage.get_node_or_null("ReviewRimLight") as OmniLight3D
+	if front_fill != null:
+		front_fill.position = target + Vector3(0.0, 9.0, 16.0)
+	if warm_light != null:
+		warm_light.position = target + Vector3(-12.0, 8.0, 10.0)
+	if cool_light != null:
+		cool_light.position = target + Vector3(12.0, 7.0, 6.0)
+	if rim_light != null:
+		rim_light.position = target + Vector3(0.0, 7.0, -8.0)
 
 
 func _show_title_screen() -> void:
