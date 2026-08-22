@@ -41,6 +41,11 @@
 - Extended the release material classifier to the authored Mechromancer and Signal Relay shells so both late-created and opening cast meshes receive the same triplanar metal texture and generated normal-relief companion as the other production machines.
 - Added commercial release regression coverage for the Mechromancer and Signal Relay material metadata; no gameplay, collision or lighting budget changes.
 
+## Focused complete-organic-cast material continuity milestone
+
+- Extended release material classification through the Thornback and Ashmantle authored shells, including Ashmantle mantle surfaces that must retain the membrane treatment rather than falling through to generic chitin.
+- Added late-spawn commercial regression coverage for both expanded families and their authored mantle detail; no gameplay, collision or lighting budget changes.
+
 ## Focused organic-roster breadth and authored-shell milestone
 
 - Expanded the authored organic roster from 12 to 14 families with Thornback territorial guardians and Ashmantle route predators.

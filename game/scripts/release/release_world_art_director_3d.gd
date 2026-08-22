@@ -48,6 +48,8 @@ const AUTHORED_ORGANIC_TOKENS: Array[String] = [
     "miremaw",
     "carrionbell",
     "rootweaver",
+    "thornback",
+    "ashmantle",
 ]
 const ORGANIC_MEMBRANE_TOKENS: Array[String] = [
     "membrane",
