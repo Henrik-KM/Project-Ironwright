@@ -996,7 +996,10 @@ func _run_all() -> void:
             var brood_maw := _find_named(enemy_samples[index], "BroodmassMaw") as Node3D
             var brood_plate := _find_named(enemy_samples[index], "BroodmassMawPlate") as Node3D
             var brood_hook := _find_named(enemy_samples[index], "BroodmassMawHookL") as Node3D
+            var brood_crown_cap := _find_named(enemy_samples[index], "BroodmassCrownCap") as Node3D
+            var brood_crown_plate := _find_named(enemy_samples[index], "BroodmassCrownCapPlate") as Node3D
             _expect(brood_maw != null and brood_plate != null and brood_hook != null and brood_plate.position.distance_to(Vector3(0.0, 0.24, -0.02)) < 0.01 and brood_hook.position.distance_to(Vector3(-0.34, -0.42, -0.24)) < 0.01, "Broodmass maw hardware must remain attached through local authored sockets.")
+            _expect(brood_crown_cap != null and brood_crown_plate != null and brood_crown_plate.position.distance_to(Vector3(0.0, 0.16, 0.02)) < 0.01, "Broodmass crown cap must retain its local plate socket for a unified late-family silhouette.")
         if species_names[index] == &"sporecaster":
             var spore_cowl := _find_named(enemy_samples[index], "SporecasterCowl") as Node3D
             var spore_oculus := _find_named(enemy_samples[index], "SporecasterOculusL") as Node3D

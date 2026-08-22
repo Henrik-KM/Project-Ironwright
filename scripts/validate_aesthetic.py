@@ -117,7 +117,7 @@ AUTHORED_ORGANIC_ASSETS = {
     "broodmass": {
         "asset_id": "broodmass.nest.v1",
         "root": "BroodmassModel",
-        "required": ["BroodmassModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BroodmassLobeL", "BroodmassLobeRidgeL", "BroodmassMaw", "BroodmassMawRidge", "CrownSpine0", "CrownFastener0", "BroodmassFanL", "ProductionAssetMarker"],
+        "required": ["BroodmassModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BroodmassLobeL", "BroodmassLobeRidgeL", "BroodmassMaw", "BroodmassMawRidge", "CrownSpine0", "CrownFastener0", "BroodmassCrownCap", "BroodmassCrownCapPlate", "BroodmassFanL", "ProductionAssetMarker"],
     },
     "roofleaper": {
         "asset_id": "roofleaper.ambusher.v1",
