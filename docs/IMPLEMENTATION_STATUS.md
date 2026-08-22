@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused tiered-nest collapse high-definition milestone
+
+- replaced the tiered nest's scaled healthy-shell destruction fallback with a
+  dedicated fractured carapace, exposed root collar, shell fragments, dead
+  vascular channels, spent brood sacs and signal core;
+- kept destroyed nests visible across save/load while preserving the existing
+  replenishment, collision, maturity and regrowth state machine;
+- added aesthetic coverage for the destroyed tiered-nest state and its stable
+  failure sockets.
+
 ## Focused organic-nest collapse high-definition milestone
 
 - replaced the ordinary destroyed nest's generic flattened sphere and spike

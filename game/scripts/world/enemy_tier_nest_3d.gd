@@ -23,6 +23,8 @@ var spawn_serial: int = 0
 var state_name: StringName = &"active"
 var _model_root: Node3D
 var _pulse_light: OmniLight3D
+var _destroyed_light: OmniLight3D
+var _destroyed_root: Node3D
 var _region_director: Node
 var _visual_clock: float = 0.0
 var _base_scale: Vector3 = Vector3.ONE
@@ -221,7 +223,10 @@ func restore_from_dictionary(data: Dictionary) -> void:
     state_name = StringName(str(data.get("state_name", "active" if alive else "destroyed")))
     spawn_serial = maxi(0, int(data.get("spawn_serial", 0)))
     collision_layer = 4 if alive else 0
-    visible = alive or state_name == &"regrowing"
+    # A destroyed nest remains a visible ecological scar. Regrowth controls
+    # the presentation state, but a save/load round trip must not erase the
+    # world landmark while its replenishment is paused.
+    visible = true
     if is_inside_tree():
         _refresh_visual_state()
         health_changed.emit(self, current_health, maximum_health)
@@ -318,7 +323,94 @@ func _build_visuals() -> void:
             "NestFineSpine%02d" % index
         )
     _pulse_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.8, 0.0), Color("d84b69"), 1.3, 7.5)
+    _build_destroyed_presentation()
     _refresh_visual_state()
+
+
+func _build_destroyed_presentation() -> void:
+    _destroyed_root = Node3D.new()
+    _destroyed_root.name = "DestroyedTierNestPresentation"
+    _model_root.add_child(_destroyed_root)
+
+    var dead_chitin := ModelKit3D.material(Color("21181f"), 0.08, 0.82)
+    var dead_flesh := ModelKit3D.material(Color("351320"), 0.0, 0.88)
+    var dead_bone := ModelKit3D.material(Color("665d51"), 0.0, 0.9)
+    var dead_vein := ModelKit3D.material(Color("24101a"), 0.0, 0.74, Color("713043"), 0.45)
+
+    ModelKit3D.add_segmented_carapace(
+        _destroyed_root,
+        1.08,
+        Vector3(0.0, 0.56, 0.0),
+        dead_chitin,
+        dead_bone,
+        Vector3(2.0, 0.36, 1.56),
+        5,
+        "DestroyedNestCarapace"
+    )
+    ModelKit3D.add_tapered_cylinder(
+        _destroyed_root,
+        1.42,
+        1.78,
+        0.08,
+        Vector3(0.0, 0.2, 0.0),
+        dead_chitin,
+        Vector3.ZERO,
+        "DestroyedNestRootCollar"
+    )
+    for index in range(6):
+        var angle := TAU * float(index) / 6.0 + 0.33
+        var direction := Vector3(cos(angle), 0.0, sin(angle))
+        var shard_position := direction * (1.0 + float(index % 2) * 0.2) + Vector3(0.0, 0.66 + float(index % 2) * 0.1, 0.0)
+        ModelKit3D.add_organic_plate(
+            _destroyed_root,
+            0.28 + float(index % 2) * 0.04,
+            shard_position,
+            dead_flesh,
+            dead_bone,
+            Vector3(1.0, 0.48, 0.76),
+            "DestroyedNestShard%02d" % index
+        )
+        ModelKit3D.add_tapered_cylinder(
+            _destroyed_root,
+            0.028,
+            0.055,
+            1.1,
+            direction * 0.56 + Vector3(0.0, 0.9, 0.0),
+            dead_vein,
+            Vector3(0.0, -angle, 0.5),
+            "DestroyedNestVein%02d" % index
+        )
+    for index in range(8):
+        var angle := TAU * float(index) / 8.0 + 0.18
+        var direction := Vector3(cos(angle), 0.0, sin(angle))
+        ModelKit3D.add_capsule(
+            _destroyed_root,
+            0.072 + float(index % 2) * 0.018,
+            1.5 + float(index % 3) * 0.2,
+            direction * 1.84 + Vector3(0.0, 0.3 + float(index % 2) * 0.08, 0.0),
+            dead_bone,
+            Vector3(0.0, -angle, 0.94),
+            "DestroyedNestSpine%02d" % index
+        )
+    for index in range(3):
+        var angle := TAU * float(index) / 3.0 + 0.5
+        ModelKit3D.add_sphere(
+            _destroyed_root,
+            0.34 + float(index) * 0.04,
+            Vector3(cos(angle) * 0.64, 0.62 + float(index % 2) * 0.18, sin(angle) * 0.64),
+            dead_flesh,
+            Vector3(1.1, 0.58, 1.0),
+            "DestroyedNestSac%02d" % index
+        )
+    ModelKit3D.add_sphere(
+        _destroyed_root,
+        0.26,
+        Vector3(0.0, 0.92, -0.22),
+        dead_vein,
+        Vector3(1.0, 0.58, 0.9),
+        "DestroyedNestSignal"
+    )
+    _destroyed_light = ModelKit3D.add_glow_light(_destroyed_root, Vector3(0.0, 0.9, 0.0), Color("6f2a36"), 0.16, 3.8)
 
 
 func _animate_visuals() -> void:
@@ -330,15 +422,31 @@ func _animate_visuals() -> void:
         pulse_node.scale = Vector3.ONE * pulse
     if _pulse_light != null:
         _pulse_light.light_energy = (0.25 if not alive else 0.9 + maturity * 0.8) * (0.88 + sin(_visual_clock * 2.4) * 0.12)
+    if _destroyed_light != null:
+        _destroyed_light.light_energy = 0.12 + sin(_visual_clock * 1.6) * 0.025
 
 
 func _refresh_visual_state() -> void:
     if _model_root == null:
         return
     var state_scale := maxf(0.08, maturity)
-    if not alive:
-        state_scale = maxf(0.08, regrowth_progress * 0.72)
-    _model_root.scale = _base_scale * Vector3(0.82 + state_scale * 0.28, 0.55 + state_scale * 0.48, 0.82 + state_scale * 0.28)
-    _model_root.rotation.z = 0.0 if alive else 0.22
+    var active_shell_visible := alive or (state_name == &"regrowing" and regrowth_progress >= 0.72)
+    if alive:
+        _model_root.scale = _base_scale * Vector3(0.82 + state_scale * 0.28, 0.55 + state_scale * 0.48, 0.82 + state_scale * 0.28)
+        _model_root.rotation.z = 0.0
+    else:
+        _model_root.scale = _base_scale
+        _model_root.rotation.z = 0.0
+    for child in _model_root.get_children():
+        if child == _destroyed_root:
+            continue
+        if child is Node3D:
+            (child as Node3D).visible = active_shell_visible
+    if _destroyed_root != null:
+        _destroyed_root.visible = not alive
+        _destroyed_root.scale = Vector3.ONE * (0.72 + regrowth_progress * 0.28)
+        _destroyed_root.rotation.z = 0.22 if not alive else 0.0
     if _pulse_light != null:
-        _pulse_light.light_color = Color("d84b69") if alive else Color("6f2a36")
+        _pulse_light.light_color = Color("d84b69")
+    if _destroyed_light != null:
+        _destroyed_light.visible = not alive
