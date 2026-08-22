@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused authored Pathfinder survey-detail refinement milestone
+
+- raised the source Pathfinder's close-camera mast, dish and leg hardware to
+  denser radial/ring resolution and added authored mast braces, mast collar,
+  dish ribs, survey beacon, signal canister and survey-lens surfaces;
+- retained the existing survey sockets, route-selection, formation-screening,
+  collision, movement and save-state contracts; this is presentation only and
+  adds no recurring machine workload;
+- extended the Pathfinder manifest, geometry floor and native aesthetic
+  coverage, with a fresh exported friendly-roster review required before merge.
+
 ## Focused authored Scrapper salvage-detail refinement milestone
 
 - raised the source Scrapper's close-camera cylindrical hardware to denser

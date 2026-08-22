@@ -6,10 +6,11 @@ is a survey instrument: asymmetric fins, twin scout optics, protected sensor
 pod, tall mast, dish, hub and beacon ring.
 
 Stable nodes include `Chassis`, `ChassisCore`, `ChassisCornerCap`, `Sensor`,
-`OpticLens`, `ScoutFin`, `BeaconRing`, `ScoutOptic`, `PathfinderSensorPod`, and
-`ProductionAssetMarker`. The asset exposes `Idle`, `Walk`, and `Survey` clips
-for tooling while deterministic runtime motion remains owned by the procedural
-animator.
+`OpticLens`, `ScoutFin`, `BeaconRing`, `ScoutOptic`, `PathfinderSensorPod`,
+`PathfinderMastBraceLeft`, `PathfinderMastCollar`, `PathfinderDishRibLeft`,
+`PathfinderSignalCanister`, and `ProductionAssetMarker`. The asset exposes
+`Idle`, `Walk`, and `Survey` clips for tooling while deterministic runtime
+motion remains owned by the procedural animator.
 
 No third-party runtime asset is used. Route selection, formation screening,
 physical travel, reduced-detail simulation, collision and save state remain

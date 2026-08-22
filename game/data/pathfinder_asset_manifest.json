@@ -16,6 +16,10 @@
     "BeaconRing",
     "ScoutOptic",
     "PathfinderSensorPod",
+    "PathfinderMastBraceLeft",
+    "PathfinderMastCollar",
+    "PathfinderDishRibLeft",
+    "PathfinderSignalCanister",
     "ProductionAssetMarker"
   ],
   "animation_clips": [

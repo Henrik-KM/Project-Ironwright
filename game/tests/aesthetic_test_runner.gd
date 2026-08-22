@@ -802,6 +802,8 @@ func _run_all() -> void:
         elif role_names[index] == &"scout":
             _expect(_find_named(role_samples[index], "PathfinderAuthoredModel") != null, "The scout must use the authored Pathfinder model shell.")
             _expect(_find_named(role_samples[index], "ProductionAssetMarker") != null, "The authored Pathfinder model must expose its production asset marker.")
+            _expect(_find_named(role_samples[index], "PathfinderMastBraceLeft") != null and _find_named(role_samples[index], "PathfinderMastCollar") != null, "The authored Pathfinder model must expose braced mast hardware.")
+            _expect(_find_named(role_samples[index], "PathfinderDishRibLeft") != null and _find_named(role_samples[index], "PathfinderSignalCanister") != null, "The authored Pathfinder model must expose dish-rib and signal-service hardware.")
         elif role_names[index] == &"engineer":
             _expect(_find_named(role_samples[index], "EngineerAuthoredModel") != null, "The engineer must use the authored Engineer model shell.")
             _expect(_find_named(role_samples[index], "ProductionAssetMarker") != null, "The authored Engineer model must expose its production asset marker.")
