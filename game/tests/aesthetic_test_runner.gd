@@ -1058,6 +1058,12 @@ func _run_all() -> void:
 
     var opening_slice := world.get_node_or_null("HeartforgeVerticalSlice") as Node3D
     _expect(opening_slice != null, "The opening lighting pass must remain attached to the Heartforge vertical slice.")
+    var pharmacy_interior := world.get_node_or_null("ProceduralUrbanDistrict/RuinedBuilding00/VerticalSliceFacade/PharmacyInteriorVignette") as Node3D
+    _expect(pharmacy_interior != null, "The opening district must expose a bounded inhabited pharmacy interior vignette.")
+    if pharmacy_interior != null:
+        _expect(pharmacy_interior.find_child("PharmacyInteriorBackWall", true, false) != null and pharmacy_interior.find_child("PharmacyInteriorCounter", true, false) != null, "The pharmacy interior must expose room depth and a readable service counter.")
+        _expect(pharmacy_interior.find_child("PharmacyInteriorShelf0", true, false) != null and pharmacy_interior.find_child("PharmacyInteriorVial0_0", true, false) != null, "The pharmacy interior must expose high-definition shelving and stored medical detail.")
+        _expect(pharmacy_interior.find_child("PharmacyInteriorEmergencyLamp", true, false) != null and pharmacy_interior.find_child("PharmacyInteriorDroppedSign", true, false) != null, "The pharmacy interior must expose an interrupted-life light and service trace.")
     _expect(world.camera_heading.x > 0.5 and world.camera_heading.z > 0.6, "The opening camera must preserve a diagonal cast-separation heading so the Mechromancer and Bulwark do not collapse into one silhouette.")
     if opening_slice != null:
         var opening_roles: Dictionary = {}

@@ -204,7 +204,12 @@ func _add_facade_identity(parent: Node3D, identity: StringName, width: float, de
     match identity:
         &"pharmacy":
             ModelKit3D.add_beveled_box(parent, Vector3(3.8, 0.48, 0.13), Vector3(-1.8, 2.7, -depth * 0.52), cold_glass, Vector3(0.0, 0.0, -0.03), "PharmacySign", 0.16)
-            ModelKit3D.add_beveled_box(parent, Vector3(2.8, 1.8, 0.12), Vector3(2.6, 1.25, -depth * 0.52), warm_glass, Vector3.ZERO, "OccupiedWindow", 0.14)
+            var pharmacy_window_position := Vector3(2.6, 1.25, -depth * 0.52)
+            ModelKit3D.add_beveled_box(parent, Vector3(2.8, 1.8, 0.12), pharmacy_window_position, interior_dark, Vector3.ZERO, "PharmacyInteriorRecess", 0.14)
+            # Preserve the stable occupied-window identity socket as a warm
+            # upper band without covering the cutaway room beneath it.
+            ModelKit3D.add_beveled_box(parent, Vector3(2.8, 0.08, 0.08), pharmacy_window_position + Vector3(0.0, 0.82, -0.08), warm_glass, Vector3.ZERO, "OccupiedWindow", 0.08)
+            _add_pharmacy_interior_vignette(parent, pharmacy_window_position)
         &"workshop":
             ModelKit3D.add_beveled_box(parent, Vector3(5.0, 0.52, 0.13), Vector3(0.5, 2.4, -depth * 0.52), warning_paint, Vector3(0.0, 0.0, 0.04), "WorkshopFascia", 0.16)
             for index in range(4):
@@ -217,6 +222,105 @@ func _add_facade_identity(parent: Node3D, identity: StringName, width: float, de
             for index in range(3):
                 ModelKit3D.add_beveled_box(parent, Vector3(2.2, 0.1, 0.62), Vector3(-3.2 + float(index) * 3.2, 3.0 + float(index % 2) * 2.15, -depth * 0.56), black_metal, Vector3.ZERO, "FireEscape", 0.18)
                 _add_hanging_cloth(parent, Vector3(-3.2 + float(index) * 3.2, 3.1 + float(index % 2) * 2.15, -depth * 0.67), index)
+
+
+func _add_pharmacy_interior_vignette(parent: Node3D, window_position: Vector3) -> void:
+    # A single open room gives the first town block a human scale and a trace
+    # of interrupted life. It is presentation-only: the city collision body,
+    # route graph, salvage state and interaction rules remain unchanged.
+    var interior := Node3D.new()
+    interior.name = "PharmacyInteriorVignette"
+    interior.position = window_position + Vector3(0.0, 0.0, -0.075)
+    parent.add_child(interior)
+
+    ModelKit3D.add_beveled_box(
+        interior,
+        Vector3(2.48, 1.58, 0.08),
+        Vector3(0.0, 0.0, 0.12),
+        interior_dark,
+        Vector3.ZERO,
+        "PharmacyInteriorBackWall",
+        0.08
+    )
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(
+            interior,
+            Vector3(0.12, 1.62, 0.18),
+            Vector3(side * 1.25, 0.0, 0.0),
+            masonry,
+            Vector3.ZERO,
+            "PharmacyInteriorJamb",
+            0.08
+        )
+
+    ModelKit3D.add_beveled_box(
+        interior,
+        Vector3(2.22, 0.2, 0.48),
+        Vector3(0.0, -0.58, -0.12),
+        rust_metal,
+        Vector3.ZERO,
+        "PharmacyInteriorCounter",
+        0.12
+    )
+    ModelKit3D.add_surface_panel(
+        interior,
+        Vector3(1.48, 0.42, 0.07),
+        Vector3(0.0, -0.42, -0.38),
+        black_metal,
+        cold_glass,
+        Vector3.ZERO,
+        "PharmacyInteriorCounterPanel"
+    )
+
+    for shelf_index in range(2):
+        var shelf_y := -0.16 + float(shelf_index) * 0.34
+        ModelKit3D.add_beveled_box(
+            interior,
+            Vector3(1.62, 0.08, 0.24),
+            Vector3(-0.28, shelf_y, -0.2),
+            painted_metal,
+            Vector3.ZERO,
+            "PharmacyInteriorShelf%d" % shelf_index,
+            0.08
+        )
+        for vial_index in range(4):
+            var vial_material := warm_glass if (vial_index + shelf_index) % 2 == 0 else cold_glass
+            ModelKit3D.add_cylinder(
+                interior,
+                0.045,
+                0.18,
+                Vector3(-0.86 + float(vial_index) * 0.38, shelf_y + 0.12, -0.22),
+                vial_material,
+                Vector3.ZERO,
+                "PharmacyInteriorVial%d_%d" % [shelf_index, vial_index]
+            )
+
+    ModelKit3D.add_cylinder(
+        interior,
+        0.055,
+        0.54,
+        Vector3(0.84, 0.48, -0.18),
+        black_metal,
+        Vector3.ZERO,
+        "PharmacyInteriorLampStem"
+    )
+    ModelKit3D.add_sphere(
+        interior,
+        0.13,
+        Vector3(0.84, 0.23, -0.18),
+        warm_glass,
+        Vector3(1.0, 0.72, 1.0),
+        "PharmacyInteriorEmergencyLamp"
+    )
+    ModelKit3D.add_beveled_box(
+        interior,
+        Vector3(0.46, 0.22, 0.12),
+        Vector3(-0.94, 0.5, -0.16),
+        rust_metal,
+        Vector3(0.0, 0.0, -0.12),
+        "PharmacyInteriorDroppedSign",
+        0.08
+    )
 
 
 func _add_roof_damage(parent: Node3D, width: float, depth: float, height: float) -> void:

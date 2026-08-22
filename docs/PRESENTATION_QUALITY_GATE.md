@@ -161,6 +161,12 @@ The opening environmental story props now carry a second bounded detail pass: th
 
 The central urban district now also carries a bounded high-definition street-detail layer: civic benches, service cabinets, planters, route signs and small weed clusters break up the procedural paving with readable human-scale maintenance evidence. The layer is presentation-only, uses the existing original model kit, and remains bounded so environmental richness does not become a new simulation or maintenance burden.
 
+The opening pharmacy cutaway now carries one bounded inhabited interior: a
+recessed room volume, stocked shelves, service counter, emergency lamp and
+dropped service sign sit behind the stable occupied-window identity. This gives
+the first urban block a readable trace of interrupted human life without adding
+collision, interaction, inventory, salvage state or recurring player work.
+
 The central approach now also carries a bounded civic-infrastructure layer: storm-drain junctions, service-riser faces, signal masts and sagging overhead utility spans continue the municipal scale language between the focal plaza and the wider street grid. These details are presentation-only and do not add collision, routing, utility simulation or player maintenance.
 
 The ordinary ruined blocks now also carry a bounded high-definition facade grammar: layered window bays, floor plates, roof parapets, service shutters, rain downpipes and restrained damage braces break the remaining broad shells into readable lived-in structures. The facade layer is presentation-only and does not alter building collision, navigation or simulation state.
