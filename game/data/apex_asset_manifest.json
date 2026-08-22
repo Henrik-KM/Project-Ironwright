@@ -5,6 +5,6 @@
   "runtime_path": "res://assets/apex/apex.gltf",
   "quality": "authored_high_definition",
   "license": "Original Project Ironwright asset",
-  "required_nodes": ["ApexModel", "Torso", "TorsoCore", "ApexCrown", "ApexJawL", "ApexMembraneL", "ApexFlankRootL", "ProductionAssetMarker"],
+  "required_nodes": ["ApexModel", "Torso", "TorsoCore", "ApexCrown", "ApexCrownRidgeL", "ApexCrownFastenerR", "ApexJawL", "ApexJawLatchR", "ApexMembraneL", "ApexMembraneRibL0", "ApexFlankRootL", "ProductionAssetMarker"],
   "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]
 }
