@@ -78,6 +78,8 @@ func set_guidance(
     _apply_color()
     if marker_root != null:
         marker_root.visible = target != null
+    if marker_label != null:
+        marker_label.text = "%s\n%s" % [target_title, interaction_text]
 
 
 func clear_guidance() -> void:

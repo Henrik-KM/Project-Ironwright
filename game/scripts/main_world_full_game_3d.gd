@@ -308,10 +308,10 @@ func _update_objective() -> void:
         hud.set_objective("UNDERSTAND THE FORMATION", "Press T and authorize Group Coordination. Major Heartforge evolution requires a proven coordinated machine doctrine.")
         return
     if progression.heartforge_tier < 2:
-        hud.set_objective("EVOLVE THE HEARTFORGE", "Recover enough Scrap, return to the forge, press E, then choose 9. The rebuild is loud and disables the pistol.")
+        hud.set_objective("EVOLVE THE HEARTFORGE", "Recover enough Scrap, return to the forge, press %s, then choose 9. The rebuild is loud and disables the pistol." % _input_binding_hint(&"iw_interact", "E"))
         return
     if autonomy_director.count_robots(&"engineer") < 1:
-        hud.set_objective("FORGE AN ENGINEER", "At the Heartforge, press E and choose 7. Outposts are never placed manually; this machine constructs them under escort.")
+        hud.set_objective("FORGE AN ENGINEER", "At the Heartforge, press %s and choose 7. Outposts are never placed manually; this machine constructs them under escort." % _input_binding_hint(&"iw_interact", "E"))
         return
     var functioning := 0
     var highest_tier := 0

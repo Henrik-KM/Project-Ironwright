@@ -32,7 +32,7 @@ func _ready() -> void:
     _setup_complete_game_services()
     _connect_complete_game_services()
     progression.set_context_provider(Callable(self, "_progression_context"))
-    hud.help_label.text = "WASD MOVE · E INTERACT · T EVOLVE · O OUTPOSTS · P OPERATIONS · L ARCHIVE · V ENDGAME · F FOLLOW · M MAP · F5/F9 SAVE/LOAD"
+    refresh_input_legend()
     run_state.log_event("The complete systemic run is active. Survive, expand autonomy, recover the root components, and choose how the town ends.")
     hud.push_notification("TOWN NETWORKS OPEN · P LONG-RANGE OPERATIONS · V FINAL PROTOCOLS")
     hud.push_notification("BULWARK ONLINE · THE HEARTFORGE HAS A PERSONAL GUARD")
@@ -434,7 +434,7 @@ func _update_complete_game_objective() -> void:
         hud.set_prompt("PRESS P · REVIEW AVAILABLE LONG-RANGE OPERATIONS")
         return
     if progression.heartforge_tier < 3:
-        hud.set_objective("EVOLVE THE HEARTFORGE TO TIER III", "Return to the forge, press E, and choose 9. The West Grid archive now permits deeper autonomy and ordinary machine replacement research.")
+        hud.set_objective("EVOLVE THE HEARTFORGE TO TIER III", "Return to the forge, press %s, and choose 9. The West Grid archive now permits deeper autonomy and ordinary machine replacement research." % _input_binding_hint(&"iw_interact", "E"))
         return
     if not progression.has_technology(&"tech.machine.forge_assistance"):
         hud.set_objective("REMOVE ORDINARY REPLACEMENT WORK", "Press T and authorize Forge Assistance. The machine society will then replace missing ordinary frames without a maintained production queue.")

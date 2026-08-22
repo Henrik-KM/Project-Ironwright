@@ -222,6 +222,24 @@ func controller_binding_display_name(action: StringName) -> String:
     return str(names.get(get_controller_binding(action), "BUTTON %d" % get_controller_binding(action)))
 
 
+func input_binding_display_name(action: StringName) -> String:
+    if last_input_device == &"controller":
+        return controller_binding_display_name(action)
+    return key_binding_display_name(action)
+
+
+func movement_binding_display_name() -> String:
+    if last_input_device == &"controller":
+        return "LEFT STICK"
+    var up := key_binding_display_name(&"iw_move_up")
+    var down := key_binding_display_name(&"iw_move_down")
+    var left := key_binding_display_name(&"iw_move_left")
+    var right := key_binding_display_name(&"iw_move_right")
+    if up == "W" and down == "S" and left == "A" and right == "D":
+        return "WASD"
+    return "%s/%s/%s/%s" % [up, down, left, right]
+
+
 func apply_accessibility_to_tree(root: Node) -> void:
     if root == null:
         return

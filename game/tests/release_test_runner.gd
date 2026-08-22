@@ -285,6 +285,19 @@ func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void
     _expect(settings.set_key_binding(&"iw_move_up", original_up, false), "Release settings must restore a remapped keyboard action.")
     _expect(settings.get_key_binding(&"iw_move_up") == original_up and settings.get_key_binding(&"iw_move_down") == original_down, "Restoring a keyboard action must leave the other movement bindings intact.")
 
+    var original_interact := settings.get_key_binding(&"iw_interact")
+    settings.last_input_device = &"keyboard_mouse"
+    _expect(settings.input_binding_display_name(&"iw_interact") == OS.get_keycode_string(int(original_interact)), "The active input hint must expose the current keyboard binding.")
+    _expect(settings.set_key_binding(&"iw_interact", KEY_I, false), "Release settings must accept a remapped interact action for live guidance.")
+    _expect(settings.input_binding_display_name(&"iw_interact") == "I", "The active input hint must update after an interact remap.")
+    _expect(world._input_binding_hint(&"iw_interact", "E") == "I", "World guidance must consume the live interact binding.")
+    _expect("I INTERACT" in world.hud.help_label.text, "The tactical control legend must refresh after an interact remap.")
+    world._update_first_session_guidance()
+    _expect(world.objective_guidance != null and "HOLD I" in world.objective_guidance.marker_label.text, "The opening world marker must use the remapped interact binding.")
+    _expect("Hold I" in world.hud.objective_label.text, "The opening objective copy must use the remapped interact binding.")
+    _expect(settings.set_key_binding(&"iw_interact", original_interact, false), "Release settings must restore the original interact binding.")
+    _expect("E INTERACT" in world.hud.help_label.text, "Restoring the interact binding must refresh the control legend.")
+
     var original_controller_up := settings.get_controller_binding(&"iw_move_up")
     var original_controller_down := settings.get_controller_binding(&"iw_move_down")
     _expect(original_controller_up >= 0 and original_controller_down >= 0, "Release settings must expose valid controller bindings.")
