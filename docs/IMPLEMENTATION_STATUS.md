@@ -1666,6 +1666,16 @@ environmentally distinct without changing ecology, routing or player workload.
   organic-anchor sockets; exported live regional review remains part of the
   broader commercial encounter-space gate.
 
+## Focused Cathedral archive-continuity milestone
+
+- added durable Town Archive records for the discovered Cathedral Bell Yard
+  and the completed Cathedral brood-suppression consequence;
+- kept both records driven by real site-discovery and operation-state signals,
+  so the optional archive explains what the machines found and changed without
+  becoming a checklist, quest chain or recurring management task;
+- added story-archive coverage for trigger unlocks and save-compatible record
+  identity.
+
 ## Focused sanctuary memory-relay storytelling milestone
 
 - added a bounded high-definition Memory Witness Relay to the Heartforge camp,
