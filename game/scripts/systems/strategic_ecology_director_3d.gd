@@ -12,6 +12,7 @@ var spawn_serial: int = 0
 var active_enemy_cap: int = 96
 var endgame_escalation: float = 1.0
 var pressure_multiplier: float = 1.0
+var run_variation_pressure_multiplier: float = 1.0
 var reports_cooldown: float = 0.0
 var population_states: Dictionary = {}
 var run_state: RunState3D
@@ -43,6 +44,14 @@ func set_release_balance(next_enemy_cap: int, next_pressure_multiplier: float) -
     pressure_multiplier = clampf(next_pressure_multiplier, 0.5, 1.8)
 
 
+func set_run_variation_pressure_multiplier(value: float) -> void:
+    run_variation_pressure_multiplier = clampf(value, 0.75, 1.35)
+
+
+func effective_pressure_multiplier() -> float:
+    return pressure_multiplier * run_variation_pressure_multiplier
+
+
 func _update_regions() -> void:
     _ensure_population_states()
     var active_total := get_tree().get_nodes_in_group(&"organic_enemies").size()
@@ -56,7 +65,7 @@ func _update_regions() -> void:
             continue
 
         var local_count := _enemy_count_in_region(region_id)
-        var pressure := landmark.effective_pressure() * pressure_multiplier
+        var pressure := landmark.effective_pressure() * effective_pressure_multiplier()
         var state: Dictionary = population_states[region_id]
         _advance_population_state(state, pressure, float(data.get("spawn_budget", 5)))
         var target_count := int(round(float(state.get("population", 4.0)) * 0.42 * minf(endgame_escalation, 2.4)))
@@ -69,15 +78,15 @@ func _update_regions() -> void:
         var drift := -0.0025 if local_count <= target_count else 0.001
         if region_id == &"region.heartforge_district":
             drift += 0.0012
-        landmark.set_pressure(maxf(float(data.get("base_pressure", 0.4)) * 0.72, landmark.pressure + drift * pressure_multiplier))
+        landmark.set_pressure(maxf(float(data.get("base_pressure", 0.4)) * 0.72, landmark.pressure + drift * effective_pressure_multiplier()))
         if run_state != null:
-            run_state.observe_region_pressure(region_id, landmark.effective_pressure() * pressure_multiplier, landmark.display_name)
+            run_state.observe_region_pressure(region_id, landmark.effective_pressure() * effective_pressure_multiplier(), landmark.display_name)
         regional_pressure_changed.emit(region_id, landmark.effective_pressure())
 
 
 func record_disturbance(position: Vector3, intensity: float, source_kind: StringName) -> void:
     var region_id := region_director.region_for_position(position)
-    var amount := clampf(intensity * 0.035 * pressure_multiplier, 0.005, 0.16)
+    var amount := clampf(intensity * 0.035 * effective_pressure_multiplier(), 0.005, 0.16)
     region_director.add_pressure(region_id, amount)
     _ensure_population_states()
     if population_states.has(region_id):
@@ -135,7 +144,7 @@ func _attempt_migration() -> void:
         var region_id := raw_region_id as StringName
         if region_id == &"region.heartforge_district":
             continue
-        var pressure := region_director.effective_pressure(region_id) * pressure_multiplier
+        var pressure := region_director.effective_pressure(region_id) * effective_pressure_multiplier()
         var state: Dictionary = population_states.get(region_id, {})
         var migration_score := pressure * float(state.get("migration_tendency", 0.0))
         if migration_score > source_pressure:
@@ -323,7 +332,7 @@ func pressure_summary() -> String:
     var highest_pressure := 0.0
     for raw_region_id in region_director.region_data:
         var region_id := raw_region_id as StringName
-        var pressure := region_director.effective_pressure(region_id) * pressure_multiplier
+        var pressure := region_director.effective_pressure(region_id) * effective_pressure_multiplier()
         if pressure > highest_pressure:
             highest_pressure = pressure
             var landmark := region_director.get_landmark(region_id)
