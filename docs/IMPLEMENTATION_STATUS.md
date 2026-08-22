@@ -1654,6 +1654,18 @@ environmentally distinct without changing ecology, routing or player workload.
   divergence; live operation execution remains part of the broader commercial
   region-review gate.
 
+## Focused Cathedral choir-yard encounter-depth milestone
+
+- added a bounded presentation-only choir-yard service edge around the
+  authored Cathedral Quarter landmark, with service boxes, louvers, status
+  lenses, a suspended resonator, anchor hardware and restrained root growth;
+- kept the detail attached to the existing discovered-region vignette so it
+  adds no collision, route ownership, ecology state, operation rule or player
+  maintenance task;
+- added aesthetic regression coverage for the named service, resonator and
+  organic-anchor sockets; exported live regional review remains part of the
+  broader commercial encounter-space gate.
+
 ## Focused sanctuary memory-relay storytelling milestone
 
 - added a bounded high-definition Memory Witness Relay to the Heartforge camp,

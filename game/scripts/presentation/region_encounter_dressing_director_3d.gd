@@ -519,6 +519,63 @@ func _build_nest_vignette(parent: Node3D) -> void:
     ModelKit3D.add_membrane_fan(parent, 1.6, Vector3(0.0, 2.4, -5.7), _organic, 7, "NestWarningFan")
     _add_light(parent, Vector3(0.0, 2.2, -5.4), Color("b83a60"), 1.0, 7.5)
 
+    var choir_yard := Node3D.new()
+    choir_yard.name = "CathedralChoirYardHardware"
+    parent.add_child(choir_yard)
+    var yard_metal := ModelKit3D.material(Color("3d4748"), 0.68, 0.42)
+    var yard_dark := ModelKit3D.material(Color("172327"), 0.8, 0.34)
+    var yard_brass := ModelKit3D.material(Color("765537"), 0.38, 0.58)
+    var yard_signal := ModelKit3D.material(Color("4b2b45"), 0.22, 0.36, Color("d25c9a"), 1.25)
+
+    ModelKit3D.add_beveled_box(
+        choir_yard,
+        Vector3(7.4, 0.18, 2.5),
+        Vector3(0.0, 0.24, 4.85),
+        yard_dark,
+        Vector3.ZERO,
+        "CathedralChoirYardPlinth",
+        0.2
+    )
+    for index in range(2):
+        var x := -2.55 + float(index) * 5.1
+        ModelKit3D.add_beveled_box(
+            choir_yard,
+            Vector3(1.45, 1.32, 0.9),
+            Vector3(x, 1.0, 4.72),
+            yard_metal,
+            Vector3.ZERO,
+            "CathedralChoirYardServiceBox%d" % index,
+            0.16
+        )
+        ModelKit3D.add_louvered_panel(
+            choir_yard,
+            Vector3(0.82, 0.58, 0.1),
+            Vector3(x, 0.96, 4.24),
+            yard_dark,
+            yard_signal,
+            Vector3.ZERO,
+            "CathedralChoirYardServiceLouver%d" % index,
+            4
+        )
+        ModelKit3D.add_surface_panel(
+            choir_yard,
+            Vector3(0.42, 0.34, 0.08),
+            Vector3(x, 1.58, 4.24),
+            yard_dark,
+            yard_signal,
+            Vector3.ZERO,
+            "CathedralChoirYardStatusLens%d" % index
+        )
+
+    _add_beam(choir_yard, Vector3(-3.85, 2.12, 4.76), Vector3(3.85, 2.12, 4.76), 0.055, yard_brass, "CathedralChoirYardCrossbeam")
+    for index in range(3):
+        var x := -2.6 + float(index) * 2.6
+        _add_beam(choir_yard, Vector3(x, 2.12, 4.76), Vector3(x + 0.38, 0.72, 4.76), 0.032, yard_signal, "CathedralChoirYardHangingCable%d" % index)
+        ModelKit3D.add_tapered_cylinder(choir_yard, 0.12, 0.2, 0.62, Vector3(x, 0.66, 4.76), yard_brass, Vector3.ZERO, "CathedralChoirYardAnchor%d" % index)
+    ModelKit3D.add_cylinder(choir_yard, 0.42, 0.12, Vector3(0.0, 2.18, 4.76), yard_signal, Vector3(PI * 0.5, 0.0, 0.0), "CathedralChoirYardResonator")
+    ModelKit3D.add_organic_plate(choir_yard, 0.72, Vector3(0.0, 0.72, 5.78), _membrane, _organic, Vector3(1.6, 0.42, 0.82), "CathedralChoirYardRootPlate")
+    _add_light(choir_yard, Vector3(0.0, 1.65, 4.35), Color("d25c9a"), 0.62, 5.5)
+
 
 func _build_observatory_vignette(parent: Node3D) -> void:
     var optics_station := Node3D.new()
