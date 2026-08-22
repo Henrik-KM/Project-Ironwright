@@ -30,6 +30,15 @@ func _run_all() -> void:
     var ecology_records := archive.archive_records().filter(func(record: Dictionary) -> bool: return str(record.get("id", "")) == "bestiary.razorhound")
     _expect(ecology_records.size() == 1 and str(ecology_records[0].get("description", "")).contains("track last known"), "The Town Archive must expose persistent bestiary behaviour evidence without adding a management surface.")
 
+    world.run_state.observe_region_pressure(&"region.west_grid", 0.91, "West Grid")
+    var pressure_records := archive.archive_records().filter(func(record: Dictionary) -> bool: return str(record.get("id", "")) == "pressure.region.west_grid")
+    _expect(pressure_records.size() == 1 and str(pressure_records[0].get("description", "")).contains("91% ecological pressure"), "The Town Archive must expose a persistent regional pressure chronicle without adding a management surface.")
+    var run_state_snapshot := world.run_state.to_dictionary()
+    var restored_run_state := RunState3D.new()
+    restored_run_state.restore_from_dictionary(run_state_snapshot)
+    _expect(restored_run_state.observed_region_pressure.has("region.west_grid"), "Regional pressure chronicle evidence must survive run-state serialization.")
+    restored_run_state.free()
+
     _expect(world.outpost_director.discover_site(&"site.north_archive_sublevel"), "The archive sublevel site must be discoverable through the real outpost director.")
     _expect(world.outpost_director.discover_site(&"site.east_roof_reservoir"), "The roof reservoir site must be discoverable through the real outpost director.")
     _expect(world.outpost_director.discover_site(&"site.west_cooling_station"), "The cooling station site must be discoverable through the real outpost director.")

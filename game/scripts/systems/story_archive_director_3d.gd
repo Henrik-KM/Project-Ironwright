@@ -91,6 +91,7 @@ func archive_records() -> Array[Dictionary]:
             continue
         result.append(record.duplicate(true))
     result.append_array(_observed_ecology_records())
+    result.append_array(_pressure_chronicle_records())
     return result
 
 
@@ -116,6 +117,31 @@ func _observed_ecology_records() -> Array[Dictionary]:
             "description": "Field evidence identifies %s. Observed behaviour: %s. This is a remembered ecological pattern, not a command or recurring task." % [display_name, behaviour_text],
             "source_name": "Regional ecology",
             "arc": "bestiary",
+            "sequence": sequence,
+        })
+        sequence += 1
+    return result
+
+
+func _pressure_chronicle_records() -> Array[Dictionary]:
+    var result: Array[Dictionary] = []
+    if run_state == null or run_state.observed_region_pressure.is_empty():
+        return result
+    var region_keys: Array[String] = []
+    for raw_key in run_state.observed_region_pressure:
+        region_keys.append(str(raw_key))
+    region_keys.sort()
+    var sequence := 900
+    for region_key in region_keys:
+        var entry: Dictionary = run_state.observed_region_pressure.get(region_key, {})
+        var display_name := str(entry.get("display_name", region_key))
+        var peak := int(round(float(entry.get("peak_pressure", 0.0)) * 100.0))
+        result.append({
+            "id": "pressure.%s" % region_key,
+            "display_name": "Pressure Chronicle · %s" % display_name,
+            "description": "%s reached %d%% ecological pressure during the run. The trace remains a remembered regional consequence, not a command or recurring task." % [display_name, peak],
+            "source_name": "Regional ecology",
+            "arc": "pressure",
             "sequence": sequence,
         })
         sequence += 1

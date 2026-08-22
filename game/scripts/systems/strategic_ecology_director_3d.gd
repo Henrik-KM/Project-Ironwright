@@ -70,6 +70,8 @@ func _update_regions() -> void:
         if region_id == &"region.heartforge_district":
             drift += 0.0012
         landmark.set_pressure(maxf(float(data.get("base_pressure", 0.4)) * 0.72, landmark.pressure + drift * pressure_multiplier))
+        if run_state != null:
+            run_state.observe_region_pressure(region_id, landmark.effective_pressure() * pressure_multiplier, landmark.display_name)
         regional_pressure_changed.emit(region_id, landmark.effective_pressure())
 
 
