@@ -274,7 +274,7 @@ New controls:
 - `F`: follow the active physical machine group;
 - `M`: command-map camera.
 
-Both new screens are responsive, centred, scrollable, and explicit when no action is available. They show only consequential choices, costs, required team roles, exposure, and threat.
+Both new screens are responsive, centred, scrollable, and explicit when no action is available. Their close action remains fixed outside the scroll region, so the player can always leave an archive, recap, operation or final-protocol readout at constrained resolutions. They show only consequential choices, costs, required team roles, exposure, and threat.
 
 They do not expose per-unit commands, queues, logistics throughput, workers, power, ammunition, or route editing.
 

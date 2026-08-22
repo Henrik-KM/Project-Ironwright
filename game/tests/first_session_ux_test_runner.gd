@@ -103,6 +103,19 @@ func _run_all() -> void:
     _expect(strategic.scroll.horizontal_scroll_mode == ScrollContainer.SCROLL_MODE_DISABLED, "Strategic copy must wrap inside the release panel instead of exposing a horizontal scrollbar.")
     strategic.close()
 
+    var operations := world.operations_hud
+    operations.update_operations([], "No long-range operation is active.")
+    operations.open_operations()
+    await process_frame
+    _expect(operations.close_button != null and operations.close_button.text == "CLOSE · ESC", "Strategic command surfaces must keep a clearly labelled close action in a fixed footer.")
+    if operations.close_button != null:
+        var operations_close_rect := operations.close_button.get_global_rect()
+        var operations_scroll_rect := operations.scroll.get_global_rect()
+        _expect(_rect_fits_viewport(operations.panel.get_global_rect(), Vector2(TEST_VIEWPORT_SIZE)), "The operations command surface must remain fully inside the constrained viewport.")
+        _expect(_rect_fits_viewport(operations_close_rect, Vector2(TEST_VIEWPORT_SIZE)), "The fixed operations close action must remain fully inside the viewport.")
+        _expect(operations_scroll_rect.end.y <= operations_close_rect.position.y, "The operations scroll region must stop above the fixed close footer.")
+    operations.close()
+
     world._process(0.1)
     await process_frame
     _expect(world.objective_guidance != null and world.objective_guidance.is_guiding(), "The opening must immediately guide the player to a physical objective.")

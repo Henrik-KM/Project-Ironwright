@@ -85,6 +85,6 @@ Scrap remains the only ordinary stockpiled construction resource. Improving read
 
 ## 7. Responsive acceptance targets
 
-Automated native tests cover an 800×520 viewport as a constrained regression case. The forge and strategic panels must fit inside that viewport using scrollable content.
+Automated native tests cover an 800×520 viewport as a constrained regression case. The forge and strategic command panels must fit inside that viewport using scrollable content with fixed close footers.
 
 This is a regression floor, not the final supported-resolution list. The production accessibility milestone must later add text scaling, controller navigation, input remapping, contrast options, and formal resolution coverage.
