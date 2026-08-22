@@ -155,7 +155,7 @@ Remote Tram Graveyard release dressing now carries the same model grammar: six d
 
 Remote North Ruins release dressing now carries the same model grammar as well: six archive fragments use beveled shells, records window bays, louvered shutters, roof slabs, service risers and filing rails instead of isolated block masses. The detail is presentation-only and preserves the existing archive landmark, route, ecology and operation contracts.
 
-Remote Flood Market release dressing now carries the same model grammar as well: nine stall shells use beveled counters, membrane canopies, canopy posts, display crates and layered organic awnings instead of isolated concrete boxes and spheres. The detail is presentation-only and preserves the existing market landmark, salvage, route, ecology and operation contracts.
+Remote Flood Market release dressing now carries the same model grammar as well: nine stall shells use beveled counters, textured membrane canopies with normal relief, canopy posts, display crates and layered organic awnings instead of isolated concrete boxes and spheres. The detail is presentation-only and preserves the existing market landmark, salvage, route, ecology and operation contracts.
 
 Remote Buried Laboratories release dressing now carries the same model grammar as well: eight research consoles use beveled housings, instrument displays, cooling louvers, sample ports and layered containment vessels instead of isolated console boxes, flat displays and cylinders. The detail is presentation-only and preserves the existing laboratory landmark, operation, ecology and progression contracts.
 

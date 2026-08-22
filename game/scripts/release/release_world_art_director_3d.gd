@@ -460,7 +460,7 @@ func _dress_market(root: Node3D) -> void:
     root.add_child(market_detail)
     var market_metal := _textured_material(&"metal", Color("3a4546"), 0.64, 0.48)
     var market_rust := _textured_material(&"rust", Color("795039"), 0.38, 0.72)
-    var canopy := ModelKit3D.material(Color("542138"), 0.02, 0.62, Color("c84f79"), 0.46)
+    var canopy := _textured_material(&"membrane", Color("542138"), 0.02, 0.68)
     for index in range(9):
         var x := -12.0 + float(index % 3) * 12.0
         var z := -10.0 + float(index / 3) * 9.0
