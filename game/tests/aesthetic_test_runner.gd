@@ -799,6 +799,22 @@ func _run_all() -> void:
     _expect(_find_named(authored_warden, "ShieldRibCore") != null and _find_named(authored_warden, "ShieldRibCornerCap") != null, "The Warden must expose a beveled protection-rib assembly.")
     authored_warden.queue_free()
 
+    var disabled_robot := ROBOT_SCENE.instantiate() as RobotUnit3D
+    disabled_robot.configure(&"guardian", 2)
+    disabled_robot.position = Vector3(34.0, 0.0, 28.0)
+    root.add_child(disabled_robot)
+    await process_frame
+    disabled_robot.apply_damage(disabled_robot.maximum_health * 2.0)
+    _expect(not disabled_robot.is_alive(), "A lethal robot hit must enter the disabled state before cleanup.")
+    _expect(disabled_robot.disabled_presentation_remaining > 0.0, "Disabled robots must retain a bounded presentation window before cleanup.")
+    _expect(_find_named(disabled_robot, "RobotDisabledPresentation") != null and bool(_find_named(disabled_robot, "RobotDisabledPresentation").visible), "Disabled robots must expose a visible fractured failure assembly.")
+    _expect(_find_named(disabled_robot, "RobotDisabledCarapace") != null and _find_named(disabled_robot, "RobotDisabledRootCollar") != null, "Disabled robots must expose collapsed shell and service-root anatomy.")
+    _expect(_find_named(disabled_robot, "RobotDisabledSignal") != null and _find_named(disabled_robot, "RobotDisabledShard00") != null, "Disabled robots must expose a spent signal core and bounded shell fragments.")
+    disabled_robot.disabled_presentation_remaining = 0.0
+    disabled_robot._refresh_disabled_presentation()
+    _expect(not bool(_find_named(disabled_robot, "RobotDisabledPresentation").visible), "Expired disabled presentation must hide before the robot is freed.")
+    disabled_robot.queue_free()
+
     var evolved_robot := ROBOT_SCENE.instantiate() as RobotUnit3D
     evolved_robot.configure(&"guardian", 3)
     evolved_robot.position = Vector3(20.0, 0.0, 28.0)

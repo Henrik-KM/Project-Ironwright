@@ -1597,6 +1597,18 @@ environmentally distinct without changing ecology, routing or player workload.
 
 ## Commercial work still remaining
 
+## Focused friendly-machine disabled presentation milestone
+
+- added a bounded high-definition failure assembly to every friendly machine
+  frame, with collapsed shell, service-root anatomy, cable exposure, shell
+  fragments and a spent signal core;
+- preserved the existing `destroyed` signal, disabled state, autonomy loss
+  accounting, collision semantics and recovery responsibilities while giving
+  the player 0.86 seconds to read where a machine was lost;
+- added native aesthetic coverage for visible disabled state and the hide-on-
+  expiry transition; live exported review remains required for the next
+  shipped combat-loss capture.
+
 ## Focused machine-role signature presentation milestone
 
 - added a third bounded high-definition detail pass to the Warden, Scrapper,
