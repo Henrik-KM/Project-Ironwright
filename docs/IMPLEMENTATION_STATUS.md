@@ -19,6 +19,16 @@
 - added aesthetic coverage for the shared armor and role-specific utility
   hardware, with fresh exported live review required before merge.
 
+## Focused facade-identity hardware depth milestone
+
+- replaced the remaining flat pharmacy sign, occupied window, workshop fascia,
+  municipal lintel and apartment fire-escape plates in the opening cutaway
+  facades with bounded beveled manufactured forms;
+- deliberately retained planar window voids, hanging cloth, hazard markings and
+  ground decals where their material language is correctly flat;
+- preserved building collision, camera clearance, navigation and simulation
+  state while adding aesthetic coverage for each identity socket.
+
 ## Focused robot-role hardware depth milestone
 
 - replaced the remaining flat Warden counterweight, Scrapper claws, Pathfinder
