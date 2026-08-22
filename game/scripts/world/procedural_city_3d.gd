@@ -420,13 +420,56 @@ func _create_ruined_building(position: Vector3, size: Vector3, index: int) -> vo
 
     var frame_material := ModelKit3D.material(Color("1f2526"), 0.42, 0.58)
     var roof_metal := ModelKit3D.material(Color("343b3b"), 0.62, 0.52)
+    var rubble_edge := ModelKit3D.material(Color("5a5048"), 0.0, 0.86)
     for side in [-1.0, 1.0]:
         ModelKit3D.add_beveled_box(body, Vector3(0.24, size.y * 0.84, 0.28), Vector3(side * size.x * 0.41, size.y * 0.43, -size.z * 0.53), frame_material, Vector3.ZERO, "BuildingCornerFrame", 0.24)
     ModelKit3D.add_beveled_box(body, Vector3(size.x * 0.88, 0.18, 0.32), Vector3(0.0, size.y + 0.12, -size.z * 0.12), frame_material, Vector3(0.0, 0.02, 0.0), "BuildingFacadeCrown", 0.22)
     ModelKit3D.add_beveled_box(body, Vector3(size.x * 0.92, 0.16, size.z * 0.86), Vector3(0.0, size.y + 0.08, 0.05), roof_metal, Vector3.ZERO, "BuildingRoofSlab", 0.18)
 
     var roof_damage_side := -1.0 if index % 2 == 0 else 1.0
-    ModelKit3D.add_box(body, Vector3(size.x * 0.42, 1.0, size.z * 0.5), Vector3(roof_damage_side * size.x * 0.26, size.y + 0.35, -size.z * 0.15), rubble_material, Vector3(0.12, 0.16, roof_damage_side * 0.18), "CollapsedRoof")
+    var collapsed_roof := ModelKit3D.add_beveled_box(
+        body,
+        Vector3(size.x * 0.42, 1.0, size.z * 0.5),
+        Vector3(roof_damage_side * size.x * 0.26, size.y + 0.35, -size.z * 0.15),
+        rubble_material,
+        Vector3(0.12, 0.16, roof_damage_side * 0.18),
+        "CollapsedRoof",
+        0.2
+    )
+    # A collapsed roof should read as a fractured structural event rather
+    # than one unlit primitive. These small, presentation-only fragments and
+    # exposed rebars stay inside the existing roof footprint and do not alter
+    # the building collision body or navigation contract.
+    for fragment_index in range(3):
+        var fragment_side := -1.0 if fragment_index % 2 == 0 else 1.0
+        var fragment_position := Vector3(
+            fragment_side * size.x * (0.08 + float(fragment_index) * 0.07),
+            0.34 + float(fragment_index % 2) * 0.12,
+            -size.z * 0.18 + float(fragment_index) * 0.18
+        )
+        ModelKit3D.add_beveled_box(
+            collapsed_roof,
+            Vector3(size.x * 0.16, 0.42 + float(fragment_index % 2) * 0.16, size.z * 0.18),
+            fragment_position,
+            rubble_edge,
+            Vector3(0.18 * fragment_side, 0.11 * float(fragment_index - 1), -0.14 * fragment_side),
+            "CollapsedRoofFragment%02d" % fragment_index,
+            0.24
+        )
+    for rebar_index in range(2):
+        var rebar_start := Vector3(-size.x * 0.18 + float(rebar_index) * size.x * 0.22, 0.08, -size.z * 0.18)
+        var rebar_end := rebar_start + Vector3(roof_damage_side * size.x * 0.18, 0.44, size.z * (0.18 if rebar_index == 0 else -0.16))
+        var rebar_direction := rebar_end - rebar_start
+        var rebar := ModelKit3D.add_cylinder(
+            collapsed_roof,
+            0.035,
+            rebar_direction.length(),
+            (rebar_start + rebar_end) * 0.5,
+            frame_material,
+            Vector3.ZERO,
+            "CollapsedRoofRebar%02d" % rebar_index
+        )
+        rebar.quaternion = Quaternion(Vector3.UP, rebar_direction.normalized())
     var roof_detail := Node3D.new()
     roof_detail.name = "BuildingRoofUtilityDetail"
     roof_detail.position = Vector3(-roof_damage_side * size.x * 0.2, size.y + 0.18, size.z * 0.16)

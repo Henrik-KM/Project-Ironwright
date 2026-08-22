@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused ruined-roof high-definition milestone
+
+- replaced the ordinary ruined-building collapse mass's remaining flat roof
+  primitive with a bounded beveled rubble assembly, three fractured fragments
+  and two exposed reinforcement rods across the central-town skyline;
+- kept the rubble inside the existing roof footprint and preserved collision,
+  navigation, building identity, camera clearance and simulation state;
+- added aesthetic regression coverage for the stable collapse core, fragments
+  and reinforcement sockets, with fresh exported live review required before
+  merge.
+
 ## Focused civic street hardware depth milestone
 
 - replaced the remaining flat civic sign, survivor-window, bench, bin, transit

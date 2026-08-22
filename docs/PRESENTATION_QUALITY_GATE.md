@@ -6,6 +6,11 @@ The current build is not release-ready merely because its systemic gameplay path
 
 The current visual state is explicitly classified as **pre-alpha production prototype** until the following gates are met.
 
+The ordinary ruined-building kit now also gives each collapsed roof a bounded
+beveled rubble core, fractured secondary chunks and restrained exposed
+reinforcement. This is presentation-only and remains inside the existing roof
+footprint; it does not change collision, navigation or simulation ownership.
+
 The shared model kit now has a high-detail baseline: curved primitives use denser radial/ring resolution, machine chassis and representative cutaway facades use original beveled core/rail/cap geometry, and organic shells receive layered surface panels, fasteners and material-break ridges. The release material pass now also gives every authored texture family a generated normal-relief companion, so close tactical light breaks across wet metal, brick, chitin and membrane rather than reading as flat albedo. The opening Mechromancer equipment and all six friendly machine frames now use authored shells, including the Signal Relay's protected mast, directional dish and beacon. Veilstalker, the common Razorhound, Sporecaster, Broodmass, Burrower, Skitterling and the late Cistern Apex now have authored hostile shells. The later organic families now add a second anatomy layer of wing spars, jaw/gill hardware, resonator ribs, root-route spines, Thornback dorsal thorns and Ashmantle thermal louvers, with family-specific motion; the common Skitterling, Burrower, Sporecaster and Broodmass shells now add close-camera caps, flutes, ribs and socket hardware as well. Cathedral Quarter now also carries a secondary landmark layer of entry, tower, rose-window, choir and bell hardware. These are presentation-only details and do not change gameplay collision or introduce a per-unit maintenance burden. It is a production-facing pass, not a claim that final authored meshes have replaced the remaining procedural families.
 
 The current Heartforge focal-model refinement uses an original high-definition

@@ -130,6 +130,7 @@
     "actor_feedback_hardware_depth",
     "facade_identity_hardware_depth",
     "warden_protection_hardware_depth",
+    "ruined_roof_high_definition",
     "machine_callsigns_and_relationship_moments",
     "machine_witness_archive_records",
     "release_snapshot_archive_and_callsign_persistence",
