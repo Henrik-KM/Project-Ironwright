@@ -3,8 +3,8 @@
   "product": "Project Ironwright",
   "version": "1.0.0-rc.1",
   "release_channel": "release_candidate",
-  "certified_source_sha": "c5277cc1999a3594b6487b0a3b0c197abfa5bd4b",
-  "certified_at_utc": "2026-08-22T16:44:00+00:00",
+  "certified_source_sha": "977c713daa41e47bb0c4ef4492f103eab343c6e0",
+  "certified_at_utc": "2026-08-22T16:47:19+00:00",
   "runner": "Windows-10-10.0.26200-SP0",
   "godot": "4.7.2",
   "platform_packages": [
