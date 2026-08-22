@@ -308,7 +308,9 @@ func _refresh() -> void:
         status_label.text = "%s\nThe final crisis is player-triggered and causal. No recurring wave schedule exists." % endgame_status
     elif mode == &"archive":
         title_label.text = "TOWN ARCHIVE"
-        status_label.text = "%d record%s recovered from physical discoveries.\nThis history is persistent and optional; it never creates another maintenance task." % [items.size(), "" if items.size() == 1 else "s"]
+        var thread_count := items.filter(func(item: Dictionary) -> bool: return str(item.get("kind", "")) == "story_thread").size()
+        var record_count := items.size() - thread_count
+        status_label.text = "%d story thread%s · %d record%s recovered from physical discoveries.\nThreads assemble from what the machines actually found; this history is optional and never creates another maintenance task." % [thread_count, "" if thread_count == 1 else "s", record_count, "" if record_count == 1 else "s"]
     else:
         title_label.text = "LONG-RANGE OPERATIONS"
         status_label.text = "%s\nEvery group travels through the same persistent world and delivers rewards only after returning." % current_operation_status
@@ -327,7 +329,8 @@ func _refresh() -> void:
     description_label.text = str(item.get("description", ""))
     if mode == &"archive":
         authorize_button.visible = false
-        requirements_label.text = "SOURCE: %s\nARC: %s · Press L or ESC to close." % [str(item.get("source_name", "Unknown")).to_upper(), str(item.get("arc", "town_history")).replace("_", " ").to_upper()]
+        var kind_label := "STORY THREAD" if str(item.get("kind", "")) == "story_thread" else "PHYSICAL RECORD"
+        requirements_label.text = "%s · SOURCE: %s\nARC: %s · Press L or ESC to close." % [kind_label, str(item.get("source_name", "Unknown")).to_upper(), str(item.get("arc", "town_history")).replace("_", " ").to_upper()]
         return
     authorize_button.visible = true
     authorize_button.disabled = false

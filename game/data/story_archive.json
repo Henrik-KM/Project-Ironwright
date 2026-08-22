@@ -1,5 +1,91 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
+  "arcs": [
+    {
+      "id": "civic_afterimage",
+      "display_name": "The Town That Stayed",
+      "source_name": "Run-level civic thread",
+      "sequence": 5,
+      "record_ids": [
+        "story.heartforge.last_light",
+        "story.north_ruins.ledger",
+        "story.north_archive.sublevel",
+        "story.flood_market.inventory",
+        "story.riverworks.pumpwatch"
+      ],
+      "stages": [
+        {
+          "count": 1,
+          "description": "The first ledger is not a mission. It is a surviving voice: the town kept one warm circuit alive and left a place for someone to continue it."
+        },
+        {
+          "count": 3,
+          "description": "Across archive floors and drowned markets, the same pattern returns: civic work was handed to machines before the people disappeared."
+        },
+        {
+          "count": 5,
+          "description": "The town was not abandoned all at once. Its last caretakers taught the machine society to inherit routes, repairs and the responsibility to keep a light on."
+        }
+      ]
+    },
+    {
+      "id": "machine_witness",
+      "display_name": "The Machines Remember",
+      "source_name": "Run-level machine thread",
+      "sequence": 6,
+      "record_ids": [
+        "story.machine.bulwark",
+        "story.west_grid.reroute",
+        "story.east_tenements.bridge",
+        "story.tram_graveyard.last_route",
+        "story.outpost.first_relay",
+        "story.machine.first_return"
+      ],
+      "stages": [
+        {
+          "count": 1,
+          "description": "One guardian stays close enough to become a name. The machine society begins with a promise repeated under pressure."
+        },
+        {
+          "count": 3,
+          "description": "Power, rooftops and rails reveal the same instinct: machines preserve routes and protection patterns even when no human remains to assign them."
+        },
+        {
+          "count": 6,
+          "description": "The society has become more than a set of frames. It carries burdens outward, learns the way home and chooses what the Heartforge must remember."
+        }
+      ]
+    },
+    {
+      "id": "ecological_convergence",
+      "display_name": "The Signal Beneath",
+      "source_name": "Run-level ecological thread",
+      "sequence": 7,
+      "record_ids": [
+        "story.glasshouse.cultivation",
+        "story.observatory.migration",
+        "story.cathedral.choir",
+        "story.cathedral.silence",
+        "story.buried_labs.protocol",
+        "story.root_cistern.signal",
+        "story.root_cistern.ledge"
+      ],
+      "stages": [
+        {
+          "count": 1,
+          "description": "The organisms are not a random disaster. Their growth carries a history, and the town's own systems helped it take root."
+        },
+        {
+          "count": 3,
+          "description": "Migration, resonance and cultivation converge on a buried intelligence. Every answer makes the final choice more consequential, not more certain."
+        },
+        {
+          "count": 7,
+          "description": "The wound beneath the town is finally legible. The machine society can sever it, contain it, or decide what kind of neighbour the living ecology will become."
+        }
+      ]
+    }
+  ],
   "records": [
     {
       "id": "story.heartforge.last_light",

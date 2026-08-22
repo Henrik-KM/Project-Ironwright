@@ -24,6 +24,10 @@ func _run_all() -> void:
 
     var archive := world.story_archive_director
     _expect(archive.has_record(&"story.heartforge.last_light"), "The opening archive record must unlock automatically.")
+    var opening_threads := archive.story_arc_summaries()
+    var civic_thread := opening_threads.filter(func(thread: Dictionary) -> bool: return str(thread.get("id", "")) == "thread.civic_afterimage")
+    _expect(civic_thread.size() == 1 and int(civic_thread[0].get("progress", 0)) == 1 and int(civic_thread[0].get("total", 0)) == 5, "The archive must expose a derived civic story thread from the opening record without creating a quest task.")
+    _expect(archive.archive_records().any(func(record: Dictionary) -> bool: return str(record.get("kind", "")) == "story_thread"), "The on-demand archive must present story threads alongside physical records.")
 
     world.run_state.observe_organic_species(&"razorhound", &"hunt", &"region.west_grid")
     world.run_state.observe_organic_species(&"razorhound", &"track_last_known", &"region.west_grid")
@@ -59,6 +63,10 @@ func _run_all() -> void:
     world.outpost_director.operation_changed.emit(&"outpost_rebuild", &"complete", "")
     _expect(archive.has_record(&"story.outpost.returned_signal"), "An automatic rebuild must unlock the returned-signal record.")
 
+    _expect(world.region_director.discover_region(&"region.glasshouse"), "The Glasshouse discovery must be available for ecological thread coverage.")
+    _expect(world.region_director.discover_region(&"region.observatory_ridge"), "The Observatory discovery must be available for ecological thread coverage.")
+    _expect(world.region_director.discover_region(&"region.cathedral_quarter"), "The Cathedral discovery must be available for ecological thread coverage.")
+
     world.long_operation_director.operation_changed.emit(&"operation.north_archive_sublevel", &"complete", "")
     world.long_operation_director.operation_changed.emit(&"operation.east_residential_rescue", &"complete", "")
     world.long_operation_director.operation_changed.emit(&"operation.west_transformer_repair", &"complete", "")
@@ -69,6 +77,8 @@ func _run_all() -> void:
     _expect(archive.has_record(&"story.west_grid.transformer"), "The transformer repair must leave a durable industrial record.")
     _expect(archive.has_record(&"story.root_cistern.ledge"), "The root signal purge must leave a durable endgame record.")
     _expect(archive.has_record(&"story.cathedral.silence"), "The Cathedral brood suppression must leave a durable ecological record.")
+    var converged_threads := archive.story_arc_summaries().filter(func(thread: Dictionary) -> bool: return str(thread.get("id", "")) == "thread.ecological_convergence")
+    _expect(converged_threads.size() == 1 and int(converged_threads[0].get("progress", 0)) == 5 and str(converged_threads[0].get("description", "")).contains("Migration, resonance"), "Ecological evidence must advance the authored run-level thread and its current chapter.")
 
     world.endgame_director.endgame_completed.emit(&"protocol.containment", "Containment", "")
     _expect(archive.has_record(&"story.endgame.containment"), "The chosen final protocol must unlock its matching archive record.")
@@ -82,6 +92,8 @@ func _run_all() -> void:
     archive.restore_from_dictionary(saved)
     _expect(archive.has_record(&"story.outpost.first_relay"), "Archive save/load must preserve event records.")
     _expect(archive.has_record(&"story.endgame.containment"), "Archive save/load must preserve the chosen ending record.")
+    var restored_threads := archive.story_arc_summaries()
+    _expect(restored_threads.size() == 3 and restored_threads.any(func(thread: Dictionary) -> bool: return int(thread.get("progress", 0)) == 5), "Derived story thread progress must remain correct after archive save/load restoration.")
 
     _finish()
 
