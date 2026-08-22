@@ -39,18 +39,18 @@ def main() -> None:
     mesh_ids = {
         "Core": mesh("Core", add_uv_sphere(builder, 0.58, flesh, 20, 32)),
         "Segment": mesh("Segment", add_uv_sphere(builder, 0.44, shell, 18, 28)),
-        "Cowl": mesh("Cowl", add_uv_sphere(builder, 0.38, shell, 18, 28)),
+        "Cowl": mesh("Cowl", add_uv_sphere(builder, 0.38, shell, 20, 32)),
         "Rib": mesh("Rib", add_box(builder, (1.04, 0.12, 0.22), shell)),
         "Gill": mesh("Gill", add_box(builder, (0.16, 1.25, 0.74), membrane)),
-        "Sac": mesh("Sac", add_uv_sphere(builder, 0.30, membrane, 18, 28)),
-        "Eye": mesh("Eye", add_uv_sphere(builder, 0.085, eye, 14, 22)),
-        "Stem": mesh("Stem", add_cylinder(builder, 0.045, 0.54, tendon, 16)),
-        "Leg": mesh("Leg", add_cylinder(builder, 0.09, 1.25, tendon, 18)),
-        "Talon": mesh("Talon", add_cylinder(builder, 0.055, 0.62, bone, 16)),
-        "Spine": mesh("Spine", add_cylinder(builder, 0.075, 0.84, bone, 18)),
-        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 10, 16)),
-        "GillRib": mesh("GillRib", add_cylinder(builder, 0.026, 0.86, bone, 16)),
-        "SacCap": mesh("SacCap", add_uv_sphere(builder, 0.12, bone, 14, 20)),
+        "Sac": mesh("Sac", add_uv_sphere(builder, 0.30, membrane, 20, 32)),
+        "Eye": mesh("Eye", add_uv_sphere(builder, 0.085, eye, 16, 24)),
+        "Stem": mesh("Stem", add_cylinder(builder, 0.045, 0.54, tendon, 24)),
+        "Leg": mesh("Leg", add_cylinder(builder, 0.09, 1.25, tendon, 24)),
+        "Talon": mesh("Talon", add_cylinder(builder, 0.055, 0.62, bone, 24)),
+        "Spine": mesh("Spine", add_cylinder(builder, 0.075, 0.84, bone, 24)),
+        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 16, 24)),
+        "GillRib": mesh("GillRib", add_cylinder(builder, 0.026, 0.86, bone, 24)),
+        "SacCap": mesh("SacCap", add_uv_sphere(builder, 0.12, bone, 16, 24)),
     }
 
     nodes: list[dict] = [{

@@ -38,19 +38,19 @@ def main() -> None:
     mesh_ids = {
         "Core": mesh("Core", add_uv_sphere(builder, 0.74, flesh, 22, 34)),
         "Segment": mesh("Segment", add_uv_sphere(builder, 0.58, shell, 20, 30)),
-        "Lobe": mesh("Lobe", add_uv_sphere(builder, 0.42, flesh, 18, 28)),
+        "Lobe": mesh("Lobe", add_uv_sphere(builder, 0.42, flesh, 20, 32)),
         "Rib": mesh("Rib", add_box(builder, (1.5, 0.15, 0.24), shell)),
         "Fan": mesh("Fan", add_box(builder, (0.18, 1.4, 0.8), membrane)),
-        "Maw": mesh("Maw", add_uv_sphere(builder, 0.44, membrane, 18, 28)),
-        "Spine": mesh("Spine", add_cylinder(builder, 0.13, 1.15, bone, 18)),
-        "Leg": mesh("Leg", add_cylinder(builder, 0.12, 1.72, tendon, 18)),
-        "Hook": mesh("Hook", add_cylinder(builder, 0.075, 0.78, bone, 18)),
-        "Eye": mesh("Eye", add_uv_sphere(builder, 0.105, eye, 14, 22)),
-        "Tendon": mesh("Tendon", add_cylinder(builder, 0.065, 0.82, tendon, 16)),
-        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.055, bone, 10, 16)),
+        "Maw": mesh("Maw", add_uv_sphere(builder, 0.44, membrane, 20, 32)),
+        "Spine": mesh("Spine", add_cylinder(builder, 0.13, 1.15, bone, 24)),
+        "Leg": mesh("Leg", add_cylinder(builder, 0.12, 1.72, tendon, 24)),
+        "Hook": mesh("Hook", add_cylinder(builder, 0.075, 0.78, bone, 24)),
+        "Eye": mesh("Eye", add_uv_sphere(builder, 0.105, eye, 16, 24)),
+        "Tendon": mesh("Tendon", add_cylinder(builder, 0.065, 0.82, tendon, 24)),
+        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.055, bone, 16, 24)),
         "LobeRidge": mesh("LobeRidge", add_box(builder, (0.5, 0.08, 0.16), bone)),
         "MawRidge": mesh("MawRidge", add_box(builder, (0.62, 0.09, 0.14), bone)),
-        "CrownFastener": mesh("CrownFastener", add_uv_sphere(builder, 0.065, bone, 12, 18)),
+        "CrownFastener": mesh("CrownFastener", add_uv_sphere(builder, 0.065, bone, 16, 24)),
     }
 
     nodes: list[dict] = [{
