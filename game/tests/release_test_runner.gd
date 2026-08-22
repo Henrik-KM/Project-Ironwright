@@ -124,6 +124,7 @@ func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
         var signal_bloom: Dictionary = variation.profiles[&"weather.signal_bloom"]
         _expect(float(signal_bloom.get("glow_bias", 0.0)) > 0.1 and str(signal_bloom.get("rain_color", "")) == "#76bfc8", "Signal Bloom must carry its distinct cyan organic atmospheric signature.")
         _expect(str(signal_bloom.get("ambient_tint", "")) == "#84aab8" and str(signal_bloom.get("fog_tint", "")) == "#4c7681", "Signal Bloom must carry its distinct restrained run-identity color grade.")
+        _expect(float(signal_bloom.get("ecology_pressure_multiplier", 0.0)) > 1.2, "Signal Bloom must carry a stronger authored ecology-pressure identity beyond weather presentation.")
     _expect(variation.profiles.has(&"weather.ashfall_drift"), "Release must retain the authored Ashfall Drift world-condition profile.")
     if variation.profiles.has(&"weather.ashfall_drift"):
         var ashfall_drift: Dictionary = variation.profiles[&"weather.ashfall_drift"]
@@ -134,17 +135,20 @@ func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
     for profile_id in variation.profile_ids():
         var profile: Dictionary = variation.profiles[profile_id]
         _expect(str(profile.get("ambient_tint", "")) != "" and str(profile.get("fog_tint", "")) != "", "Every authored world condition must define deterministic ambient and fog identity tints.")
+        _expect(float(profile.get("ecology_pressure_multiplier", 0.0)) >= 0.75 and float(profile.get("ecology_pressure_multiplier", 0.0)) <= 1.35, "Every authored world condition must define a bounded ecology-pressure identity.")
     _expect(world.run_state.world_seed != 0, "A new run must record a non-zero world seed.")
     _expect(world.run_state.world_variant_id != &"", "A new run must record a stable world-condition ID.")
     _expect(not variation.current_display_name().is_empty(), "The active world condition must expose a player-readable name.")
     _expect(world.vertical_slice.weather_emitter != null and world.vertical_slice.weather_emitter.amount >= 80, "The active world condition must configure the opening weather emitter.")
     var active_profile: Dictionary = variation.current_profile()
+    _expect(is_equal_approx(world.strategic_ecology_director.run_variation_pressure_multiplier, float(active_profile.get("ecology_pressure_multiplier", 1.0))), "The active world condition must apply its authored ecology-pressure identity to the live ecology director.")
     if str(active_profile.get("particle_style", "rain")) == "ash" and world.vertical_slice.weather_emitter != null:
         var ash_mesh := world.vertical_slice.weather_emitter.mesh as QuadMesh
         _expect(ash_mesh != null and ash_mesh.size.x <= 0.1 and ash_mesh.size.y <= 0.1, "Ashfall Drift must materialize as small drifting flecks instead of rain streaks.")
     var original_variant := world.run_state.world_variant_id
     world.run_state.set_world_variant(&"weather.ashfall_drift", world.run_state.world_seed)
     variation.apply_current()
+    _expect(is_equal_approx(world.strategic_ecology_director.run_variation_pressure_multiplier, 1.02), "Switching to Ashfall Drift must update the live ecology-pressure identity without changing the saved run seed.")
     var ash_mesh := world.vertical_slice.weather_emitter.mesh as QuadMesh if world.vertical_slice.weather_emitter != null else null
     _expect(ash_mesh != null and ash_mesh.size.x <= 0.1 and ash_mesh.size.y <= 0.1, "Ashfall Drift must apply a fleck-sized particle mesh at runtime.")
     world.run_state.set_world_variant(original_variant, world.run_state.world_seed)

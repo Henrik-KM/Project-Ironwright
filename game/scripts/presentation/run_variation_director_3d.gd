@@ -10,6 +10,7 @@ const DATA_PATH := "res://data/run_variants.json"
 var run_state: RunState3D
 var vertical_slice: VerticalSliceDirector3D
 var region_atmosphere: RegionAtmosphereDirector3D
+var strategic_ecology: Variant
 var profiles: Dictionary = {}
 var _applied_variant_id: StringName = &""
 
@@ -17,11 +18,13 @@ var _applied_variant_id: StringName = &""
 func configure(
         next_run_state: RunState3D,
         next_vertical_slice: VerticalSliceDirector3D,
-        next_region_atmosphere: RegionAtmosphereDirector3D
+        next_region_atmosphere: RegionAtmosphereDirector3D,
+        next_strategic_ecology: Variant = null
     ) -> void:
     run_state = next_run_state
     vertical_slice = next_vertical_slice
     region_atmosphere = next_region_atmosphere
+    strategic_ecology = next_strategic_ecology
 
 
 func _ready() -> void:
@@ -66,6 +69,8 @@ func apply_current() -> void:
         vertical_slice.apply_weather_profile(normalized)
     if region_atmosphere != null:
         region_atmosphere.apply_run_variation(normalized)
+    if strategic_ecology != null and strategic_ecology.has_method("set_run_variation_pressure_multiplier"):
+        strategic_ecology.set_run_variation_pressure_multiplier(float(profile.get("ecology_pressure_multiplier", 1.0)))
     if _applied_variant_id != variant_id:
         _applied_variant_id = variant_id
         run_state.log_event("World condition: %s — %s" % [str(profile.get("display_name", String(variant_id))), str(profile.get("description", ""))])

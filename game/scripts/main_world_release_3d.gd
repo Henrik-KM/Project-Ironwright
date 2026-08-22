@@ -123,7 +123,7 @@ func _setup_vertical_slice_presentation() -> void:
 
 	run_variation_director = RUN_VARIATION_SCRIPT.new() as RunVariationDirector3D
 	run_variation_director.name = "RunVariationDirector"
-	run_variation_director.configure(run_state, vertical_slice, region_atmosphere_director)
+	run_variation_director.configure(run_state, vertical_slice, region_atmosphere_director, strategic_ecology_director)
 	add_child(run_variation_director)
 
 	if hud != null:

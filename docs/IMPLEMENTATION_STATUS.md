@@ -2451,6 +2451,17 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   and clearing, so route recovery remains one visible autonomous decision rather
   than a new player-managed route task.
 
+## Focused systemic run-variation milestone
+
+- extended each persisted world-condition profile beyond weather and lighting
+  with a bounded ecology-pressure identity;
+- applied that identity to regional pressure, disturbance and migration through
+  the existing strategic ecology director, so replay variation changes the
+  town's causal organic tempo without adding a recurring player meter or task;
+- kept the value derived from the stable saved world-condition ID and covered
+  profile bounds, live application, switching, and legacy fallback in release
+  tests.
+
 ## Focused keyboard-remapping accessibility milestone
 
 - added migration-safe persisted keyboard bindings for movement and exposed
