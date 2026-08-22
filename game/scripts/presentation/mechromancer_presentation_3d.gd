@@ -69,7 +69,7 @@ func _connect_once(source: Object, signal_name: StringName, callback: Callable) 
 
 
 func _configure_animation_loops() -> void:
-    for clip_name in [&"Idle", &"Walk", &"Work"]:
+    for clip_name in [&"Idle", &"Walk", &"Work", &"Upgrade"]:
         var resolved := _resolve_clip(clip_name)
         if resolved == &"":
             continue
@@ -83,7 +83,9 @@ func _select_loop_clip() -> void:
         return
     var selected := &"Idle"
     var channel := StringName(str(subject.get("channel_kind")))
-    if channel != &"":
+    if channel == &"forge_upgrade":
+        selected = &"Upgrade"
+    elif channel != &"":
         selected = &"Work"
     elif subject is CharacterBody3D:
         var body := subject as CharacterBody3D
@@ -130,7 +132,7 @@ func _on_health_changed(current: Variant, _maximum: Variant = null) -> void:
 
 
 func _on_channel_started(_kind: StringName, _duration: float, _description: String) -> void:
-    _play_clip(&"Work", true)
+    _play_clip(&"Upgrade" if _kind == &"forge_upgrade" else &"Work", true)
 
 
 func _on_channel_finished(_kind: StringName, _target: Node, _metadata: Dictionary) -> void:

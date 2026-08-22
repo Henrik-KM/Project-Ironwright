@@ -33,9 +33,11 @@ current sparse prototype clips are the final production rig library.
 
 The current source-authored actor clip pass now carries multiple channels per
 robot and organic clip: body weight, role or signature motion, and the primary
-tool or attack beat. This improves live readability while remaining a
-prototype clip library; final production rigs and broader feeding, nesting,
-retreat and death animation still remain on the commercial gate. Incoming
+tool or attack beat. Friendly robot shells now also carry authored Retreat and
+Death beats, while the Mechromancer has a dedicated Upgrade posture for the
+Heartforge channel. This improves live readability while remaining a
+prototype clip library; final production rigs and broader progression-state
+animation still remain on the commercial gate. Incoming
 non-lethal damage now selects a shared authored `Hit` clip across all six
 friendly robot families and all twelve organic families, so combat readability
 does not depend only on health bars or transient text.
@@ -66,10 +68,10 @@ non-lethal hits. This reinforces the authored `Hit` beat without adding combat
 HUD clutter or changing health, damage, ecology or actor workload contracts.
 
 The Mechromancer now uses the same export-breadth contract. Its authored Idle,
-Walk, Fire, Work and Hit clips retain multiple body, equipment, recoil or
-interaction channels in the canonical Blender-to-glTF path. This improves the
-primary player silhouette without claiming that final authored hit libraries,
-upgrade cinematics or full progression-state rigs are complete.
+Walk, Fire, Work, Upgrade and Hit clips retain multiple body, equipment, recoil
+or interaction channels in the canonical Blender-to-glTF path. This improves
+the primary player silhouette without claiming that final authored hit
+libraries, upgrade cinematics or full progression-state rigs are complete.
 
 The release settings surface now also carries localized keyboard remapping for
 movement and exposed interactions. A captured key updates the live action map,

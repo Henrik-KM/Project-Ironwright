@@ -31,5 +31,5 @@
     "CoatTailLeft",
     "CoatTailRight"
   ],
-  "animation_clips": ["Idle", "Walk", "Fire", "Work", "Hit"]
+  "animation_clips": ["Idle", "Walk", "Fire", "Work", "Upgrade", "Hit"]
 }

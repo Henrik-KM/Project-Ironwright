@@ -787,6 +787,12 @@ def main() -> None:
         (coat_left, [("rotation_euler", 1, [(1.0, -0.02), (12.0, 0.08), (24.0, -0.02)])]),
         (coat_right, [("rotation_euler", 1, [(1.0, 0.02), (12.0, -0.08), (24.0, 0.02)])]),
     ])
+    multi_action("Upgrade", [
+        (left_arm, [("rotation_euler", 0, [(1.0, 0.0), (12.0, -0.42), (24.0, 0.0)])]),
+        (right_arm, [("rotation_euler", 0, [(1.0, 0.0), (12.0, -0.62), (24.0, 0.0)])]),
+        (field_tool, [("rotation_euler", 1, [(1.0, -0.18), (12.0, -0.42), (24.0, -0.18)])]),
+        (shoulder_lamp, [("rotation_euler", 1, [(1.0, 0.0), (12.0, 0.14), (24.0, 0.0)])]),
+    ])
     multi_action("Hit", [
         (root, [("rotation_euler", 1, [(1.0, 0.0), (3.0, 0.10), (7.0, 0.0)])]),
         (pack, [("rotation_euler", 1, [(1.0, 0.0), (3.0, -0.08), (7.0, 0.0)])]),
@@ -798,7 +804,7 @@ def main() -> None:
     bpy.context.view_layer.objects.active = root
     scene["ironwright_asset_id"] = "mechromancer.player.v1"
     scene["required_nodes"] = "MechromancerModel,PistolMuzzle,ShoulderLamp,FaceAnchor,FieldPack,CoatTailLeft,CoatTailRight"
-    scene["animation_clips"] = "Idle,Walk,Fire,Work,Hit"
+    scene["animation_clips"] = "Idle,Walk,Fire,Work,Upgrade,Hit"
     bpy.ops.wm.save_as_mainfile(filepath=str(BLEND_PATH))
     bpy.ops.export_scene.gltf(
         filepath=str(GLTF_PATH),
