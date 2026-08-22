@@ -1597,6 +1597,18 @@ environmentally distinct without changing ecology, routing or player workload.
 
 ## Commercial work still remaining
 
+## Focused opening pharmacy interior milestone
+
+- added one bounded cutaway pharmacy interior to the opening district, with a
+  recessed room volume, service counter, stocked shelves, emergency lamp and
+  dropped service sign so the first urban block communicates interrupted human
+  life rather than only exterior massing;
+- kept the vignette presentation-only: no collision, interaction, inventory,
+  salvage state, route change or recurring player task was introduced;
+- added aesthetic regression coverage for the room-depth, shelf, stored-detail
+  and failure-trace sockets; the exported Windows title-to-New-World opening
+  review passed, while formal human visual acceptance remains a separate gate.
+
 ## Focused release session diagnostics milestone
 
 - added a bounded local session report that records build, engine, platform,
