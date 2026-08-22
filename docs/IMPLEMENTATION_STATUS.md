@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused hero-surface bevel pass
+
+- added a dependency-free chamfered-surface helper to the Bulwark source
+  builder and regenerated the runtime glTF so the close tactical frame catches
+  readable manufactured highlights across the chassis, shield, service face,
+  feet and emitter guards;
+- kept the Mechromancer fallback builder aligned with the canonical Blender
+  export's bounded bevel language without replacing the textured Blender glTF;
+- preserved stable sockets, animation clips, materials, collision dimensions
+  and all gameplay/autonomy contracts; this is presentation-only geometry;
+- the exact exported opening build still requires live visual review before
+  this pass is considered merged.
+
 ## Focused friendly-source tessellation safeguard milestone
 
 - raised the remaining coarse Bulwark defensive and Signal Relay

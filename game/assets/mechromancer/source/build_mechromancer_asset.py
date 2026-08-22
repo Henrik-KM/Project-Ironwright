@@ -128,6 +128,86 @@ def add_box(builder: BufferBuilder, size: Sequence[float], material: int) -> int
     return position_accessor, normal_accessor, index_accessor, material
 
 
+def add_beveled_box(
+    builder: BufferBuilder,
+    size: Sequence[float],
+    material: int,
+    bevel: float = 0.04,
+) -> tuple[int, int, int, int]:
+    """Build a compact chamfered block for hero-scale field equipment."""
+    extents = [max(0.001, value * 0.5) for value in size]
+    bevel = min(bevel, min(extents) * 0.42)
+    inset = [extent - bevel for extent in extents]
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+
+    def add_vertex(point: Sequence[float], normal: Sequence[float]) -> int:
+        index = len(positions) // 3
+        positions.extend(point)
+        normals.extend(normal)
+        return index
+
+    def add_quad(points: Sequence[Sequence[float]], normal: Sequence[float]) -> None:
+        start = [add_vertex(point, normal) for point in points]
+        indices.extend([start[0], start[1], start[2], start[0], start[2], start[3]])
+
+    axis_data = ((0, 1, 2), (1, 2, 0), (2, 0, 1))
+    for axis, first, second in axis_data:
+        for sign in (-1.0, 1.0):
+            face_normal = [0.0, 0.0, 0.0]
+            face_normal[axis] = sign
+            points: list[list[float]] = []
+            for first_sign, second_sign in ((-1.0, -1.0), (1.0, -1.0), (1.0, 1.0), (-1.0, 1.0)):
+                point = [0.0, 0.0, 0.0]
+                point[axis] = sign * extents[axis]
+                point[first] = first_sign * inset[first]
+                point[second] = second_sign * inset[second]
+                points.append(point)
+            add_quad(points, face_normal)
+
+    for axis, first, second in axis_data:
+        for first_sign in (-1.0, 1.0):
+            for second_sign in (-1.0, 1.0):
+                normal = [0.0, 0.0, 0.0]
+                normal[axis] = first_sign * 0.70710678
+                normal[first] = second_sign * 0.70710678
+                points = []
+                for remaining_sign in (-1.0, 1.0):
+                    point = [0.0, 0.0, 0.0]
+                    point[axis] = first_sign * extents[axis]
+                    point[first] = second_sign * inset[first]
+                    point[second] = remaining_sign * inset[second]
+                    points.append(point)
+                for remaining_sign in (1.0, -1.0):
+                    point = [0.0, 0.0, 0.0]
+                    point[axis] = first_sign * inset[axis]
+                    point[first] = second_sign * extents[first]
+                    point[second] = remaining_sign * inset[second]
+                    points.append(point)
+                add_quad(points, normal)
+
+    for first_sign in (-1.0, 1.0):
+        for second_sign in (-1.0, 1.0):
+            for third_sign in (-1.0, 1.0):
+                normal = [first_sign * 0.57735027, second_sign * 0.57735027, third_sign * 0.57735027]
+                points = [
+                    [first_sign * extents[0], second_sign * inset[1], third_sign * inset[2]],
+                    [first_sign * inset[0], second_sign * extents[1], third_sign * inset[2]],
+                    [first_sign * inset[0], second_sign * inset[1], third_sign * extents[2]],
+                ]
+                start = [add_vertex(point, normal) for point in points]
+                indices.extend([start[0], start[1], start[2]])
+
+    position_min, position_max = vec_min_max(zip(*[iter(positions)] * 3))
+    position_accessor = builder.accessor(
+        positions, 5126, "VEC3", len(positions) // 3, 34962, position_min, position_max
+    )
+    normal_accessor = builder.accessor(normals, 5126, "VEC3", len(normals) // 3, 34962)
+    index_accessor = builder.accessor(indices, 5123, "SCALAR", len(indices), 34963)
+    return position_accessor, normal_accessor, index_accessor, material
+
+
 HERO_CURVE_SIDES = 24
 
 
@@ -216,26 +296,26 @@ def main() -> None:
     gun = 6
 
     mesh_ids = {
-        "Torso": mesh("Torso", add_box(builder, (0.62, 0.72, 0.38), coat)),
-        "ChestPlate": mesh("ChestPlate", add_box(builder, (0.48, 0.36, 0.10), metal)),
+        "Torso": mesh("Torso", add_beveled_box(builder, (0.62, 0.72, 0.38), coat, 0.055)),
+        "ChestPlate": mesh("ChestPlate", add_beveled_box(builder, (0.48, 0.36, 0.10), metal, 0.025)),
         "Scarf": mesh("Scarf", add_cylinder(builder, 0.22, 0.14, leather, 10)),
         "Hood": mesh("Hood", add_cone(builder, 0.35, 0.22, 0.40, coat, 10)),
-        "Face": mesh("Face", add_box(builder, (0.27, 0.20, 0.12), skin)),
-        "Visor": mesh("Visor", add_box(builder, (0.25, 0.045, 0.035), cyan)),
-        "Shoulder": mesh("Shoulder", add_box(builder, (0.24, 0.16, 0.34), metal)),
-        "Pack": mesh("Pack", add_box(builder, (0.42, 0.52, 0.20), leather)),
-        "PackPlate": mesh("PackPlate", add_box(builder, (0.28, 0.20, 0.045), metal)),
-        "Belt": mesh("Belt", add_box(builder, (0.58, 0.13, 0.40), leather)),
-        "Arm": mesh("Arm", add_box(builder, (0.14, 0.52, 0.16), coat)),
+        "Face": mesh("Face", add_beveled_box(builder, (0.27, 0.20, 0.12), skin, 0.025)),
+        "Visor": mesh("Visor", add_beveled_box(builder, (0.25, 0.045, 0.035), cyan, 0.012)),
+        "Shoulder": mesh("Shoulder", add_beveled_box(builder, (0.24, 0.16, 0.34), metal, 0.025)),
+        "Pack": mesh("Pack", add_beveled_box(builder, (0.42, 0.52, 0.20), leather, 0.035)),
+        "PackPlate": mesh("PackPlate", add_beveled_box(builder, (0.28, 0.20, 0.045), metal, 0.012)),
+        "Belt": mesh("Belt", add_beveled_box(builder, (0.58, 0.13, 0.40), leather, 0.025)),
+        "Arm": mesh("Arm", add_beveled_box(builder, (0.14, 0.52, 0.16), coat, 0.025)),
         "Glove": mesh("Glove", add_cylinder(builder, 0.095, 0.18, metal, 8)),
-        "Leg": mesh("Leg", add_box(builder, (0.17, 0.64, 0.18), leather)),
-        "Boot": mesh("Boot", add_box(builder, (0.22, 0.13, 0.34), metal)),
-        "CoatTail": mesh("CoatTail", add_box(builder, (0.27, 0.72, 0.07), coat)),
+        "Leg": mesh("Leg", add_beveled_box(builder, (0.17, 0.64, 0.18), leather, 0.025)),
+        "Boot": mesh("Boot", add_beveled_box(builder, (0.22, 0.13, 0.34), metal, 0.025)),
+        "CoatTail": mesh("CoatTail", add_beveled_box(builder, (0.27, 0.72, 0.07), coat, 0.018)),
         "Lamp": mesh("Lamp", add_cylinder(builder, 0.085, 0.13, cyan, 8)),
-        "LampHousing": mesh("LampHousing", add_box(builder, (0.16, 0.13, 0.15), metal)),
-        "Pistol": mesh("Pistol", add_box(builder, (0.18, 0.12, 0.36), gun)),
+        "LampHousing": mesh("LampHousing", add_beveled_box(builder, (0.16, 0.13, 0.15), metal, 0.02)),
+        "Pistol": mesh("Pistol", add_beveled_box(builder, (0.18, 0.12, 0.36), gun, 0.02)),
         "Barrel": mesh("Barrel", add_cylinder(builder, 0.035, 0.26, gun, 8)),
-        "Tool": mesh("Tool", add_box(builder, (0.07, 0.28, 0.07), metal)),
+        "Tool": mesh("Tool", add_beveled_box(builder, (0.07, 0.28, 0.07), metal, 0.012)),
         "WarmLamp": mesh("WarmLamp", add_cylinder(builder, 0.045, 0.10, warm, 8)),
     }
 

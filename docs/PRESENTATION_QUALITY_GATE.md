@@ -61,7 +61,7 @@ in representative remote-region captures while remaining presentation-only;
 it does not add a greenhouse queue, inventory, player assignment or recurring
 maintenance obligation.
 
-The current actor rebuild also raises the shared source-builder tessellation floor: curved authored parts use at least 24 radial segments and spherical parts at least 16 rings before export. The Mechromancer, six friendly robot frames and every current organic family have been regenerated from those builders, and `scripts/validate_aesthetic.py` checks their exported POSITION density. This protects close tactical silhouettes from silent coarse-geometry regressions while preserving stable names, sockets, animation clips and presentation-only scope.
+The current actor rebuild also raises the shared source-builder tessellation floor: curved authored parts use at least 24 radial segments and spherical parts at least 16 rings before export. The Mechromancer, six friendly robot frames and every current organic family have been regenerated from those builders, and `scripts/validate_aesthetic.py` checks their exported POSITION density. The Bulwark hero builder now also bevels its chassis, shield, service and foot blocks, while the Mechromancer fallback keeps the same bounded chamfer language as its canonical Blender export. This protects close tactical silhouettes from silent coarse-geometry regressions while preserving stable names, sockets, animation clips and presentation-only scope.
 
 The optional Town Archive now also records the run's machine-witness moments:
 the first outpost construction, a remote loss, an automatic rebuild and the
