@@ -49,21 +49,29 @@ def main() -> None:
         "Core": mesh("Core", add_box(builder, (1.48, 0.44, 1.42), oxide)),
         "Plate": mesh("Plate", add_box(builder, (1.55, 0.2, 0.16), steel)),
         "SidePlate": mesh("SidePlate", add_box(builder, (0.22, 0.72, 1.34), steel)),
-        "Corner": mesh("Corner", add_cylinder(builder, 0.13, 0.18, oxide, 10)),
-        "Leg": mesh("Leg", add_cylinder(builder, 0.13, 0.74, rubber, 12)),
+        "Corner": mesh("Corner", add_cylinder(builder, 0.13, 0.18, oxide, 20)),
+        "Leg": mesh("Leg", add_cylinder(builder, 0.13, 0.74, rubber, 20)),
         "Foot": mesh("Foot", add_box(builder, (0.3, 0.13, 0.44), oxide)),
         "OpticHousing": mesh("OpticHousing", add_box(builder, (0.58, 0.3, 0.14), chassis)),
         "Optic": mesh("Optic", add_uv_sphere(builder, 0.095, warm)),
         "Breech": mesh("Breech", add_box(builder, (0.66, 0.42, 0.62), oxide)),
-        "Cannon": mesh("Cannon", add_cylinder(builder, 0.14, 1.52, chassis, 16)),
-        "Muzzle": mesh("Muzzle", add_cylinder(builder, 0.18, 0.15, warm, 16)),
-        "RecoilRing": mesh("RecoilRing", add_cylinder(builder, 0.18, 0.09, cyan, 16)),
+        "Cannon": mesh("Cannon", add_cylinder(builder, 0.14, 1.52, chassis, 24)),
+        "Muzzle": mesh("Muzzle", add_cylinder(builder, 0.18, 0.15, warm, 24)),
+        "RecoilRing": mesh("RecoilRing", add_cylinder(builder, 0.18, 0.09, cyan, 24)),
         "HeatPanel": mesh("HeatPanel", add_box(builder, (0.92, 0.24, 0.16), chassis)),
         "Louver": mesh("Louver", add_box(builder, (0.7, 0.045, 0.08), steel)),
         "Counterweight": mesh("Counterweight", add_box(builder, (1.68, 0.16, 0.5), chassis)),
-        "Antenna": mesh("Antenna", add_cylinder(builder, 0.045, 0.72, rubber, 10)),
+        "Antenna": mesh("Antenna", add_cylinder(builder, 0.045, 0.72, rubber, 20)),
         "Beacon": mesh("Beacon", add_uv_sphere(builder, 0.1, cyan)),
-        "Fastener": mesh("Fastener", add_cylinder(builder, 0.045, 0.045, warm, 10)),
+        "Fastener": mesh("Fastener", add_cylinder(builder, 0.045, 0.045, warm, 20)),
+        # Close-camera guardian hardware: these restrained service surfaces
+        # make the targeting and recoil language read as maintained machinery
+        # rather than a single barrel laid over a box chassis.
+        "TargetingFace": mesh("TargetingFace", add_box(builder, (0.88, 0.16, 0.08), steel)),
+        "OpticShroud": mesh("OpticShroud", add_box(builder, (0.72, 0.16, 0.18), oxide)),
+        "RecoilCollar": mesh("RecoilCollar", add_cylinder(builder, 0.14, 0.08, cyan, 24)),
+        "ThermalFin": mesh("ThermalFin", add_box(builder, (0.09, 0.34, 0.42), steel)),
+        "BreechClamp": mesh("BreechClamp", add_cylinder(builder, 0.17, 0.08, warm, 24)),
     }
 
     nodes: list[dict] = [{
@@ -110,13 +118,17 @@ def main() -> None:
     add_node("OpticHousing", mesh_ids["OpticHousing"], (0.0, 1.18, -0.96))
     add_node("Sensor", mesh_ids["Optic"], (0.0, 1.18, -1.07), extras={"socket_type": "sensor"})
     add_node("OpticLens", mesh_ids["Optic"], (0.0, 1.18, -1.13), extras={"socket_type": "optic"})
+    add_node("WardenTargetingFace", mesh_ids["TargetingFace"], (0.0, 1.2, -1.16))
+    add_node("WardenOpticShroud", mesh_ids["OpticShroud"], (0.0, 1.2, -1.19))
     add_node("WardenBreech", mesh_ids["Breech"], (0.0, 1.48, -0.58))
+    add_node("WardenBreechClamp", mesh_ids["BreechClamp"], (0.0, 1.72, -0.72), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("WardenAutocannon", mesh_ids["Cannon"], (0.0, 1.48, -1.18), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "weapon_mount"})
     add_node("Weapon", mesh_ids["Cannon"], (0.0, 1.48, -1.36), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("WeaponBarrel", mesh_ids["Cannon"], (0.0, 1.48, -1.62), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("WeaponMuzzle", mesh_ids["Muzzle"], (0.0, 1.48, -2.18), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "weapon_muzzle"})
     for side in (-1.0, 1.0):
         add_node("WardenRecoilRing", mesh_ids["RecoilRing"], (side * 0.24, 1.48, -1.9), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "recoil_ring"})
+        add_node("WardenRecoilCollar%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["RecoilCollar"], (side * 0.24, 1.48, -1.82), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "recoil_collar"})
     add_node("WardenCounterweight", mesh_ids["Counterweight"], (0.0, 0.55, 0.82), rotation=(0.0, 0.0, -0.04))
     add_node("WardenHeatExchanger", mesh_ids["HeatPanel"], (-0.5, 1.42, -0.92))
     add_node("WardenAmmunitionPanel", mesh_ids["HeatPanel"], (0.5, 1.38, -0.9))
@@ -124,6 +136,7 @@ def main() -> None:
         for index in range(4):
             add_node("WardenHeatLouver", mesh_ids["Louver"], (side * 0.5, 1.3 + index * 0.09, -1.02))
         add_node("WardenLamp", mesh_ids["Beacon"], (side * 0.34, 1.4, -1.02), extras={"socket_type": "status_light"})
+        add_node("WardenThermalFin%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["ThermalFin"], (side * 0.86, 1.34, -0.76), rotation=(0.0, 0.0, side * 0.12), extras={"socket_type": "thermal_fin"})
     add_node("WardenSensorMast", mesh_ids["Antenna"], (0.0, 1.84, 0.18), extras={"socket_type": "sensor_mast"})
     add_node("WardenSensorBeacon", mesh_ids["Beacon"], (0.0, 2.22, 0.18))
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "warden.guardian.v1", "source": "original_shared_mesh_builder"})
@@ -185,7 +198,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "warden.guardian.v1",
-            "required_nodes": ["WardenModel", "Sensor", "OpticLens", "WardenAutocannon", "WeaponMuzzle", "WardenHeatExchanger", "ProductionAssetMarker"],
+            "required_nodes": ["WardenModel", "Sensor", "OpticLens", "WardenAutocannon", "WeaponMuzzle", "WardenHeatExchanger", "WardenTargetingFace", "WardenOpticShroud", "WardenRecoilCollarLeft", "WardenThermalFinRight", "WardenBreechClamp", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Fire", "Hit", "Retreat", "Death"],
         },
     }

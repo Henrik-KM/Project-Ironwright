@@ -15,6 +15,11 @@
     "WardenAutocannon",
     "WeaponMuzzle",
     "WardenHeatExchanger",
+    "WardenTargetingFace",
+    "WardenOpticShroud",
+    "WardenRecoilCollarLeft",
+    "WardenThermalFinRight",
+    "WardenBreechClamp",
     "ProductionAssetMarker"
   ],
   "animation_clips": [
