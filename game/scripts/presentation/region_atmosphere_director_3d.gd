@@ -24,6 +24,8 @@ var _target_brightness: float = 1.04
 var _target_glow_intensity: float = 0.72
 var _refresh_clock: float = 0.0
 var _run_variation_profile: Dictionary = {}
+var _run_ambient_tint := Color.WHITE
+var _run_fog_tint := Color.WHITE
 
 
 func configure(next_world: Node3D, next_region_director: WorldRegionDirector3D, next_player: Node3D) -> void:
@@ -59,6 +61,8 @@ func refresh_now() -> void:
 
 func apply_run_variation(profile: Dictionary) -> void:
     _run_variation_profile = profile.duplicate(true)
+    _run_ambient_tint = _profile_color(profile.get("ambient_tint", "#ffffff"), Color.WHITE)
+    _run_fog_tint = _profile_color(profile.get("fog_tint", "#ffffff"), Color.WHITE)
     refresh_now()
 
 
@@ -114,6 +118,12 @@ func _refresh_region(force: bool) -> void:
     _target_contrast = float(palette["contrast"])
     _target_brightness = float(palette["brightness"])
     _target_glow_intensity = float(palette["glow"])
+    # Run identity is a restrained color grade layered under each authored
+    # district palette. It changes the town's emotional read without changing
+    # visibility, navigation, ecology, pressure or any player-maintained
+    # system.
+    _target_ambient_color = _target_ambient_color.lerp(_run_ambient_tint, 0.16)
+    _target_fog_color = _target_fog_color.lerp(_run_fog_tint, 0.16)
     _target_ambient_energy += float(_run_variation_profile.get("ambient_energy_bias", 0.0))
     _target_fog_energy += float(_run_variation_profile.get("fog_energy_bias", 0.0))
     _target_fog_density = maxf(0.001, _target_fog_density + float(_run_variation_profile.get("fog_density_bias", 0.0)))
@@ -160,3 +170,12 @@ func _find_environment(node: Node) -> Environment:
         if found != null:
             return found
     return null
+
+
+func _profile_color(value: Variant, fallback: Color) -> Color:
+    if value is Color:
+        return value as Color
+    var raw := str(value)
+    if raw.is_empty():
+        return fallback
+    return Color(raw)
