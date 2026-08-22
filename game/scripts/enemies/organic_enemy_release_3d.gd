@@ -2,11 +2,13 @@ class_name OrganicEnemyRelease3D
 extends OrganicEnemyFullGame3D
 
 const REDUCED_PROXY_MESH: CapsuleMesh = preload("res://assets/release/proxies/organic_proxy_mesh.tres")
+const REDUCED_TARGET_REFRESH_SECONDS := 0.9
 
 var _spatial_index: SpatialIndex3D
 var reduced_detail: bool = false
 var coarse_simulation: bool = false
 var visual_lod_level: int = 0
+var reduced_target_refresh_clock: float = 0.0
 var _reduced_proxy: MeshInstance3D
 
 
@@ -70,6 +72,7 @@ func set_reduced_detail(value: bool) -> void:
     if reduced_detail:
         velocity = Vector3.ZERO
         state_name = &"remote_simulation"
+        reduced_target_refresh_clock = 0.0
 
 
 func set_coarse_simulation(value: bool) -> void:
@@ -107,7 +110,11 @@ func _coarse_detail_tick(delta: float) -> void:
         return
     attack_cooldown = maxf(0.0, attack_cooldown - delta)
     investigate_seconds = maxf(0.0, investigate_seconds - delta)
-    _target = _choose_target()
+    reduced_target_refresh_clock -= delta
+    var refresh_target := not reduced_detail or _target == null or not is_instance_valid(_target) or reduced_target_refresh_clock <= 0.0
+    if refresh_target:
+        _target = _choose_target()
+        reduced_target_refresh_clock = REDUCED_TARGET_REFRESH_SECONDS if reduced_detail else 0.0
     var destination := investigate_position
     var speed := move_speed * 0.72
     if _target != null:
