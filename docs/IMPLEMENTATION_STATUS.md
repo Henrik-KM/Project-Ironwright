@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused outpost-collapse high-definition milestone
+
+- replaced the destroyed autonomous outpost's flat foundation and rubble
+  placeholders with a beveled failure assembly, inset slab, six fractured
+  chunks, exposed reinforcement and a broken service rail;
+- preserved destruction, collision-layer removal, rebuild, health, role and
+  autonomous-operation contracts while making loss legible as a world event;
+- added aesthetic coverage for destroyed and rebuilt outpost states, with a
+  fresh exported live review required before merge.
+
 ## Focused ruined-roof high-definition milestone
 
 - replaced the ordinary ruined-building collapse mass's remaining flat roof

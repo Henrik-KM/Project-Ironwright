@@ -825,6 +825,10 @@ func _run_all() -> void:
         _expect(bool(_find_named(sample, "OutpostDamagePresentation").visible) and bool(_find_named(sample, "OutpostDamageLeak00").visible), "Damaged outposts must reveal scar and leak presentation at meaningful integrity loss.")
         sample.repair(sample.maximum_health)
         _expect(not bool(_find_named(sample, "OutpostDamagePresentation").visible), "Repair must clear outpost damage-memory presentation when integrity is restored.")
+        sample.apply_damage(sample.maximum_health)
+        _expect(_find_named(sample, "DestroyedFoundationCore") != null and _find_named(sample, "DestroyedFoundationInsetCore") != null and _find_named(sample, "RubbleRebar00") != null and _find_named(sample, "DestroyedServiceRailCore") != null, "Destroyed outposts must expose a fractured high-definition foundation, reinforcement and service-rail failure read.")
+        sample.rebuild()
+        _expect(_find_named(sample, "OutpostAuthoredModel") != null and sample.is_alive(), "Rebuilding an outpost must restore the authored shelter presentation and alive state.")
         sample.queue_free()
 
     var enemy_samples: Array[OrganicEnemy3D] = []

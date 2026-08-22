@@ -315,6 +315,8 @@ func _refresh_visuals() -> void:
     var rust := ModelKit3D.material(Color("82573c"), 0.42, 0.7)
     var panel := ModelKit3D.material(Color("596568"), 0.76, 0.38)
     var panel_accent := ModelKit3D.material(Color("a6b5b3"), 0.64, 0.32)
+    var destroyed_edge := ModelKit3D.material(Color("2a3435"), 0.72, 0.56)
+    var destroyed_rubble := ModelKit3D.material(Color("744b36"), 0.42, 0.78)
     var role_color := Color("6bd8dd")
     if role == &"defence":
         role_color = Color("e1a159")
@@ -325,16 +327,61 @@ func _refresh_visuals() -> void:
     var glow := ModelKit3D.material(role_color.darkened(0.62), 0.25, 0.38, role_color, 3.0)
 
     if not alive:
-        ModelKit3D.add_box(_model_root, Vector3(4.5, 0.45, 4.5), Vector3(0.0, 0.25, 0.0), dark, Vector3.ZERO, "DestroyedFoundation")
+        var destroyed_foundation := ModelKit3D.add_beveled_box(
+            _model_root,
+            Vector3(4.5, 0.45, 4.5),
+            Vector3(0.0, 0.25, 0.0),
+            dark,
+            Vector3.ZERO,
+            "DestroyedFoundation",
+            0.2
+        )
+        ModelKit3D.add_beveled_box(
+            destroyed_foundation,
+            Vector3(3.82, 0.1, 3.82),
+            Vector3(0.0, 0.26, 0.0),
+            destroyed_edge,
+            Vector3.ZERO,
+            "DestroyedFoundationInset",
+            0.16
+        )
         for index in range(6):
-            ModelKit3D.add_box(
-                _model_root,
-                Vector3(0.7 + float(index % 3) * 0.35, 0.35, 0.55),
-                Vector3(-1.5 + float(index % 3) * 1.4, 0.35 + float(index / 3) * 0.18, -0.8 + float(index / 3) * 1.5),
-                rust,
-                Vector3(0.15 * index, 0.35 * index, 0.12),
-                "Rubble"
+            var rubble_position := Vector3(
+                -1.5 + float(index % 3) * 1.4,
+                0.35 + float(index / 3) * 0.18,
+                -0.8 + float(index / 3) * 1.5
             )
+            var rubble_chunk := ModelKit3D.add_beveled_box(
+                destroyed_foundation,
+                Vector3(0.7 + float(index % 3) * 0.35, 0.35, 0.55),
+                rubble_position,
+                destroyed_rubble,
+                Vector3(0.15 * index, 0.35 * index, 0.12),
+                "Rubble%02d" % index,
+                0.22
+            )
+            var rebar_start := Vector3(-0.22, 0.04, -0.16)
+            var rebar_end := rebar_start + Vector3(0.32 + float(index % 2) * 0.12, 0.22, 0.24 * (-1.0 if index % 2 == 0 else 1.0))
+            var rebar_direction := rebar_end - rebar_start
+            var rebar := ModelKit3D.add_cylinder(
+                rubble_chunk,
+                0.025,
+                rebar_direction.length(),
+                (rebar_start + rebar_end) * 0.5,
+                panel_accent,
+                Vector3.ZERO,
+                "RubbleRebar%02d" % index
+            )
+            rebar.quaternion = Quaternion(Vector3.UP, rebar_direction.normalized())
+        ModelKit3D.add_beveled_box(
+            destroyed_foundation,
+            Vector3(1.4, 0.18, 0.18),
+            Vector3(0.82, 0.52, -1.34),
+            destroyed_edge,
+            Vector3(0.0, 0.0, -0.18),
+            "DestroyedServiceRail",
+            0.18
+        )
         _status_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 0.6, 0.0), Color("8b241b"), 0.3, 3.0)
         return
 
