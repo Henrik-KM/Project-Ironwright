@@ -2259,6 +2259,9 @@ presentation restore, with release regression coverage for that migration path.
   player workload;
 - extended release coverage for the fifth profile, its distinct particle and
   colour signature, and the existing deterministic save/load contract.
+- refined Ashfall Drift's live emitter into small translucent flecks with slow
+  drift, low gravity and a bounded lifetime, so the authored condition reads as
+  dry particulate weather rather than recoloured rain streaks.
 
 Version 1.0.0-rc.1 is game-complete in systemic structure and has a
 commercial-release candidate shell, but it is not an unqualified final retail
