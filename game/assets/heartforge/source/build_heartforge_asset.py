@@ -60,6 +60,13 @@ def build() -> None:
         "plate_glow": mesh("AssemblyPlateGlow", add_box(builder, (1.68, 0.06, 0.72), cyan)),
         "slot": mesh("AssemblyPlateSlot", add_box(builder, (0.1, 0.025, 0.42), dark)),
         "rib": mesh("Rib", add_box(builder, (0.24, 2.1, 0.42), rust)),
+        "coolant_pipe": mesh("HeartforgeCoolantPipe", add_cylinder(builder, 0.065, 1.25, cyan, 20)),
+        "service_latch": mesh("HeartforgeServiceLatch", add_box(builder, (0.12, 0.18, 0.38), cyan)),
+        "conduit_clip": mesh("HeartforgeConduitClip", add_box(builder, (0.18, 0.12, 0.24), cladding)),
+        "thermal_shroud": mesh("HeartforgeThermalShroud", add_box(builder, (0.18, 0.46, 0.54), iron)),
+        "thermal_shroud_cap": mesh("HeartforgeThermalShroudCap", add_box(builder, (0.22, 0.08, 0.6), rust)),
+        "bench_brace": mesh("ForgeBenchBrace", add_box(builder, (0.18, 0.34, 0.52), rust)),
+        "foundation_bolt": mesh("HeartforgeFoundationBolt", add_cylinder(builder, 0.12, 0.14, cladding, 20)),
     }
 
     nodes: list[dict] = []
@@ -79,6 +86,14 @@ def build() -> None:
 
     foundation = node("Foundation", mesh_ids["foundation"], (0.0, 0.35, 0.0), extras={"socket_type": "heartforge_anchor"})
     housing_children = [node("CoreHousingShell", mesh_ids["housing"]), node("FurnaceCore", mesh_ids["furnace"])]
+    housing_children.extend([
+        node("HeartforgeCoolantPipeLeft", mesh_ids["coolant_pipe"], (-1.72, 0.0, -0.52)),
+        node("HeartforgeCoolantPipeRight", mesh_ids["coolant_pipe"], (1.72, 0.0, -0.52)),
+        node("HeartforgeServiceLatchLeft", mesh_ids["service_latch"], (-1.74, -0.5, -0.52)),
+        node("HeartforgeServiceLatchRight", mesh_ids["service_latch"], (1.74, -0.5, -0.52)),
+        node("HeartforgeConduitClipLeft", mesh_ids["conduit_clip"], (-1.74, 0.32, -0.52)),
+        node("HeartforgeConduitClipRight", mesh_ids["conduit_clip"], (1.74, 0.32, -0.52)),
+    ])
     housing = node("CoreHousing", None, (0.0, 2.0, 0.0), housing_children, {"socket_type": "primary_reactor_shell"})
     node("LowerRing", mesh_ids["ring_lower"], (0.0, 1.0, 0.0))
     node("UpperRing", mesh_ids["ring_upper"], (0.0, 2.9, 0.0))
@@ -108,11 +123,21 @@ def build() -> None:
         focal_children.append(node("HeartforgeFocalSignalLens%02d" % index, mesh_ids["lens"], (-0.34 + index * 0.34, 2.73, 2.01), extras={"socket_type": "service_signal"}))
     focal_children.append(node("HeartforgeFocalCableBranchLeft", mesh_ids["cable"], (-1.26, 2.66, 1.88)))
     focal_children.append(node("HeartforgeFocalCableBranchRight", mesh_ids["cable"], (1.26, 2.66, 1.88)))
+    focal_children.extend([
+        node("HeartforgeThermalShroud00", mesh_ids["thermal_shroud"], (-0.86, 3.25, 0.0)),
+        node("HeartforgeThermalShroud01", mesh_ids["thermal_shroud"], (0.86, 3.25, 0.0)),
+        node("HeartforgeThermalShroudCap00", mesh_ids["thermal_shroud_cap"], (-0.86, 3.52, 0.0)),
+        node("HeartforgeThermalShroudCap01", mesh_ids["thermal_shroud_cap"], (0.86, 3.52, 0.0)),
+    ])
     focal = node("HeartforgeFocalDetail", None, children=focal_children, extras={"socket_type": "reactor_control_layer"})
 
     west_stack = node("WestStack", mesh_ids["stack"], (-1.85, 1.7, 0.0))
     east_stack = node("EastStack", mesh_ids["stack"], (1.85, 1.7, 0.0))
     bench_children = [node("AssemblyPlate", mesh_ids["plate"], (0.0, 0.24, 0.0)), node("AssemblyPlateGlow", mesh_ids["plate_glow"], (0.0, 0.36, 0.0))]
+    bench_children.extend([
+        node("ForgeBenchBraceLeft", mesh_ids["bench_brace"], (-1.18, 0.0, 0.0)),
+        node("ForgeBenchBraceRight", mesh_ids["bench_brace"], (1.18, 0.0, 0.0)),
+    ])
     for slot in range(3):
         bench_children.append(node("AssemblyPlateSlot%02d" % slot, mesh_ids["slot"], (-0.48 + slot * 0.48, 0.4, 0.0)))
     bench = node("ForgeBench", mesh_ids["bench"], (0.0, 0.48, 3.25), bench_children, {"socket_type": "manual_fabrication_surface"})
@@ -121,8 +146,11 @@ def build() -> None:
     for index in range(8):
         angle = 2.0 * math.pi * index / 8.0
         ribs.append(node("Rib%02d" % index, mesh_ids["rib"], (math.cos(angle) * 2.35, 1.75, math.sin(angle) * 2.35)))
+    foundation_hardware: list[int] = []
+    for index, position in enumerate(((-1.92, 0.83, -1.55), (1.92, 0.83, -1.55), (-1.92, 0.83, 1.55), (1.92, 0.83, 1.55))):
+        foundation_hardware.append(node("HeartforgeFoundationBolt%02d" % index, mesh_ids["foundation_bolt"], position))
     marker = node("ProductionAssetMarker", None, extras={"asset_id": "heartforge.core.v1", "presentation_only": True})
-    root = node("HeartforgeModel", None, children=[foundation, housing, cladding, focal, west_stack, east_stack, bench, *ribs, marker], extras={"ironwright_asset_id": "heartforge.core.v1", "asset_quality": "authored_high_definition", "socket_contract": "heartforge_anchor, primary_reactor_shell, player_facing_control, manual_fabrication_surface"})
+    root = node("HeartforgeModel", None, children=[foundation, housing, cladding, focal, west_stack, east_stack, bench, *ribs, *foundation_hardware, marker], extras={"ironwright_asset_id": "heartforge.core.v1", "asset_quality": "authored_high_definition", "socket_contract": "heartforge_anchor, primary_reactor_shell, player_facing_control, manual_fabrication_surface, service_hardware"})
 
     document = {
         "asset": {"version": "2.0", "generator": "Project Ironwright original Heartforge asset builder"},
@@ -134,7 +162,7 @@ def build() -> None:
         "accessors": builder.accessors,
         "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
-        "extras": {"ironwright_asset_id": "heartforge.core.v1", "required_nodes": ["HeartforgeModel", "Foundation", "CoreHousing", "FurnaceCore", "LowerRing", "UpperRing", "CoreCladdingDetail", "CoreServiceLouverCore", "CoreInspectionPort", "HeartforgeFocalDetail", "HeartforgeUpperCollar", "HeartforgeFocalControlFace", "HeartforgeFocalRadialFin00", "HeartforgeFocalSignalLens01", "ForgeBench", "AssemblyPlate", "ProductionAssetMarker"]},
+        "extras": {"ironwright_asset_id": "heartforge.core.v1", "required_nodes": ["HeartforgeModel", "Foundation", "CoreHousing", "FurnaceCore", "LowerRing", "UpperRing", "CoreCladdingDetail", "CoreServiceLouverCore", "CoreInspectionPort", "HeartforgeFocalDetail", "HeartforgeUpperCollar", "HeartforgeFocalControlFace", "HeartforgeFocalRadialFin00", "HeartforgeFocalSignalLens01", "ForgeBench", "AssemblyPlate", "HeartforgeCoolantPipeLeft", "HeartforgeThermalShroud00", "ForgeBenchBraceLeft", "HeartforgeFoundationBolt00", "ProductionAssetMarker"]},
     }
     output_path = ASSET_ROOT / "heartforge" / "heartforge.gltf"
     output_path.parent.mkdir(parents=True, exist_ok=True)

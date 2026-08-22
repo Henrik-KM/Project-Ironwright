@@ -325,6 +325,17 @@
 - Kept adaptive tier geometry, selected retrofit details, damage-memory, warm/cyan lighting, collision, interaction and progression runtime-owned around the imported shell.
 - Added a source builder, production asset manifest, stable socket coverage and exact-export opening-scene playtest for the run-critical home.
 
+## Focused Heartforge service-hardware depth milestone
+
+- Extended the authored Heartforge shell with paired coolant pipes, service
+  latches, conduit clips, thermal shrouds, fabrication-bench braces and four
+  anchored foundation bolts around the permanent reactor silhouette.
+- Preserved progression tiers, adaptive geometry, damage memory, interaction,
+  collision, save state and the manual fabrication commitment; the pass is
+  presentation-only and adds no maintenance task.
+- Expanded the stable manifest/socket contract and native aesthetic coverage;
+  exported live review is required before merge.
+
 ## Focused Signal Relay authored-asset milestone
 
 - Replaced the Signal Relay's procedural primary shell with an original high-definition glTF asset containing a protected chassis, heat sink, mast, directional dish, beacon and stable presentation sockets.

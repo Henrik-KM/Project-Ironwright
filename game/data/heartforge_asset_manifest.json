@@ -17,12 +17,17 @@
     "HeartforgeUpperCollar",
     "HeartforgeFocalControlFace",
     "ForgeBench",
+    "HeartforgeCoolantPipeLeft",
+    "HeartforgeThermalShroud00",
+    "ForgeBenchBraceLeft",
+    "HeartforgeFoundationBolt00",
     "ProductionAssetMarker"
   ],
   "socket_contract": [
     "heartforge_anchor",
     "primary_reactor_shell",
     "player_facing_control",
-    "manual_fabrication_surface"
+    "manual_fabrication_surface",
+    "service_hardware"
   ]
 }
