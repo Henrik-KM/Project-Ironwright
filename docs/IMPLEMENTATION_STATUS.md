@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused remote-region release-art LOD milestone
+
+- connected the separate high-definition release dressing for every persistent
+  region to the existing region presentation LOD director;
+- kept the authored release kit visible only in the player’s full-detail
+  neighborhood while distant regions retain their bounded landmark proxy,
+  preventing remote meshes from staying rendered after their landmark shell is
+  reduced;
+- added aesthetic regression coverage for hiding and restoring the Root
+  Cistern release dressing across a real proximity transition, without changing
+  region identity, discovery, pressure, collision or save state.
+
 ## Focused strategic-command fixed-footer milestone
 
 - moved the shared operations, Town Archive, recap and final-protocol close
