@@ -20,6 +20,7 @@ var title_label: Label
 var subtitle_label: Label
 var version_label: Label
 var continue_button: Button
+var new_world_button: Button
 var no_save_label: Label
 var settings_title: Label
 var settings_controls: Dictionary = {}
@@ -108,23 +109,32 @@ void fragment() {
     vignette.material = vignette_material
     backdrop.add_child(vignette)
 
-    title_panel = _panel(Vector2(660, 630))
-    var title_box := _vertical_content(title_panel, 16)
+    var viewport_height := get_viewport().get_visible_rect().size.y
+    var title_height := 560.0 if viewport_height <= 0.0 else minf(560.0, maxf(440.0, viewport_height - 28.0))
+    title_panel = _panel(Vector2(660, title_height))
+    var title_box := _vertical_content(title_panel, 10)
     title_label = _heading("PROJECT IRONWRIGHT", 42, Color("f2eadc"))
     title_box.add_child(title_label)
-    subtitle_label = _body_label("", 17, Color("b8c7c4"), 72)
+    subtitle_label = _body_label("", 17, Color("b8c7c4"), 48)
+    subtitle_label.custom_minimum_size.x = 600.0
+    subtitle_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     title_box.add_child(subtitle_label)
-    version_label = _body_label("", 13, Color("d4a86b"), 24)
+    version_label = _body_label("", 13, Color("d4a86b"), 20)
+    version_label.custom_minimum_size.x = 600.0
+    version_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     version_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     title_box.add_child(version_label)
     title_box.add_child(HSeparator.new())
     continue_button = _menu_button("CONTINUE", func() -> void: continue_requested.emit())
     title_box.add_child(continue_button)
-    title_box.add_child(_menu_button("NEW WORLD", func() -> void: new_world_requested.emit()))
+    new_world_button = _menu_button("NEW WORLD", func() -> void: new_world_requested.emit())
+    title_box.add_child(new_world_button)
     title_box.add_child(_menu_button("SETTINGS", show_settings_from_title))
     title_box.add_child(_menu_button("QUIT", func() -> void: quit_requested.emit()))
     no_save_label = _body_label("", 13, Color("b96d63"), 32)
+    no_save_label.custom_minimum_size.x = 600.0
+    no_save_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     no_save_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     title_box.add_child(no_save_label)
 
@@ -283,6 +293,10 @@ func show_title(has_save: bool) -> void:
     _refresh_text()
     _populate_settings_controls()
     _focus_first_button(title_panel)
+    if not has_save and new_world_button != null:
+        # A first-run player should land on the only actionable entry point,
+        # while Continue remains visibly unavailable.
+        new_world_button.grab_focus()
 
 
 func show_pause() -> void:
@@ -561,6 +575,11 @@ func _menu_button(value: String, callback: Callable) -> Button:
     hover.bg_color = Color(0.15, 0.12, 0.08, 0.98)
     hover.border_color = Color(0.98, 0.65, 0.34, 0.76)
     button.add_theme_stylebox_override("normal", normal)
+    var disabled := normal.duplicate() as StyleBoxFlat
+    disabled.bg_color = Color(0.025, 0.045, 0.048, 0.78)
+    disabled.border_color = Color(0.28, 0.38, 0.38, 0.24)
+    button.add_theme_stylebox_override("disabled", disabled)
+    button.add_theme_color_override("font_disabled_color", Color("667774"))
     button.add_theme_stylebox_override("hover", hover)
     button.add_theme_stylebox_override("focus", hover)
     button.add_theme_stylebox_override("pressed", hover)
