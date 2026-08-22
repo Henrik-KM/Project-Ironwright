@@ -197,6 +197,12 @@ LEGACY_ORGANIC_SOURCE_TESSELLATION_FLOORS = {
     "veilstalker": ("game/assets/veilstalker/source/build_veilstalker_asset.py", 16, 24),
 }
 
+MECHROMANCER_SOURCE_TESSELLATION_FLOORS = {
+    "HERO_CURVE_VERTICES": 24,
+    "HERO_SPHERE_SEGMENTS": 32,
+    "HERO_SPHERE_RINGS": 16,
+}
+
 ACTOR_ANIMATION_CHANNEL_FLOORS = {
     "mechromancer": 2,
     "bulwark": 2,
@@ -552,6 +558,23 @@ def validate_legacy_organic_source_tessellation() -> None:
                     )
 
 
+def validate_mechromancer_source_tessellation() -> None:
+    """Require dense helper floors in the canonical Blender source builder."""
+    source_path = ROOT / "game/assets/mechromancer/source/build_mechromancer_blend.py"
+    tree = ast.parse(source_path.read_text(encoding="utf-8"), filename=str(source_path))
+    constants: dict[str, int] = {}
+    for node in tree.body:
+        if not isinstance(node, ast.Assign) or len(node.targets) != 1:
+            continue
+        target = node.targets[0]
+        if isinstance(target, ast.Name) and isinstance(node.value, ast.Constant) and isinstance(node.value.value, int):
+            constants[target.id] = int(node.value.value)
+    for name, floor in MECHROMANCER_SOURCE_TESSELLATION_FLOORS.items():
+        if constants.get(name, 0) < floor:
+            fail(
+                f"Mechromancer source helper {name} is below the high-definition floor: "
+                f"{constants.get(name, 0)} < {floor}."
+            )
 def validate_actor_animation_breadth() -> None:
     """Require every imported production actor clip to carry multiple channels."""
     for family, floor in ACTOR_ANIMATION_CHANNEL_FLOORS.items():
@@ -692,6 +715,7 @@ def main() -> int:
 
         validate_mechromancer_asset()
         validate_legacy_organic_source_tessellation()
+        validate_mechromancer_source_tessellation()
         validate_actor_geometry_density()
         validate_actor_animation_breadth()
         validate_authored_robot_assets()
