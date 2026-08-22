@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused authored Engineer construction-detail refinement milestone
+
+- raised the source Engineer's close-camera arm, forge-coil and leg hardware
+  to denser radial resolution and added authored cradle latch, forge guard,
+  tool collar, cable spool, welding shield and clamp-jaw surfaces;
+- retained the existing construction sockets, authorization, physical travel,
+  assembly behavior, collision and save-state contracts; this is presentation
+  only and adds no recurring machine workload;
+- extended the Engineer manifest, geometry floor and native aesthetic coverage,
+  with a fresh exported friendly-roster review required before merge.
+
 ## Focused authored Pathfinder survey-detail refinement milestone
 
 - raised the source Pathfinder's close-camera mast, dish and leg hardware to

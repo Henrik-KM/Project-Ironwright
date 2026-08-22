@@ -166,7 +166,7 @@ ACTOR_GEOMETRY_FLOORS = {
     "warden": 1500,
     "scrapper": 1500,
     "pathfinder": 1600,
-    "engineer": 1400,
+    "engineer": 1600,
     "veilstalker": 3000,
     "razorhound": 2800,
     "apex": 2600,

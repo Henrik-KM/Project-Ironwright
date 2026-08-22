@@ -17,6 +17,12 @@
     "WelderArm",
     "ToolHead",
     "ForgeCoil",
+    "EngineerCradleLatch",
+    "EngineerForgeGuard",
+    "EngineerToolCollarLeft",
+    "EngineerCableSpoolRight",
+    "EngineerWeldingShieldLeft",
+    "EngineerClampJawRight",
     "ProductionAssetMarker"
   ],
   "animation_clips": [

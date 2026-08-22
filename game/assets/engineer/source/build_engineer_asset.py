@@ -43,20 +43,29 @@ def main() -> None:
         "Chassis": mesh("Chassis", add_box(builder, (1.42, 0.7, 1.58), chassis)),
         "Core": mesh("Core", add_box(builder, (1.16, 0.34, 1.28), oxide)),
         "Plate": mesh("Plate", add_box(builder, (1.3, 0.18, 0.14), steel)),
-        "Corner": mesh("Corner", add_cylinder(builder, 0.11, 0.15, steel, 10)),
-        "Leg": mesh("Leg", add_cylinder(builder, 0.11, 0.7, rubber, 12)),
+        "Corner": mesh("Corner", add_cylinder(builder, 0.11, 0.15, steel, 20)),
+        "Leg": mesh("Leg", add_cylinder(builder, 0.11, 0.7, rubber, 20)),
         "Foot": mesh("Foot", add_box(builder, (0.27, 0.12, 0.4), oxide)),
         "OpticHousing": mesh("OpticHousing", add_box(builder, (0.48, 0.25, 0.12), chassis)),
         "Optic": mesh("Optic", add_uv_sphere(builder, 0.085, cyan)),
         "Cradle": mesh("Cradle", add_box(builder, (0.98, 0.46, 0.82), chassis)),
         "CradleLip": mesh("CradleLip", add_box(builder, (1.08, 0.08, 0.9), oxide)),
         "Joint": mesh("Joint", add_uv_sphere(builder, 0.13, chassis)),
-        "Arm": mesh("Arm", add_cylinder(builder, 0.1, 1.18, oxide, 12)),
+        "Arm": mesh("Arm", add_cylinder(builder, 0.1, 1.18, oxide, 20)),
         "ToolHead": mesh("ToolHead", add_box(builder, (0.24, 0.2, 0.34), steel)),
-        "ForgeCoil": mesh("ForgeCoil", add_cylinder(builder, 0.13, 0.17, amber, 14)),
+        "ForgeCoil": mesh("ForgeCoil", add_cylinder(builder, 0.13, 0.17, amber, 24)),
         "Glow": mesh("Glow", add_uv_sphere(builder, 0.08, amber)),
-        "Fastener": mesh("Fastener", add_cylinder(builder, 0.04, 0.04, amber, 10)),
-        "Cable": mesh("Cable", add_cylinder(builder, 0.03, 0.7, rubber, 8)),
+        "Fastener": mesh("Fastener", add_cylinder(builder, 0.04, 0.04, amber, 20)),
+        "Cable": mesh("Cable", add_cylinder(builder, 0.03, 0.7, rubber, 12)),
+        # Construction-machine close-camera hardware: cradle latches, tool
+        # collars, cable spools, welding shields and clamp jaws make the
+        # engineer read as maintained fabrication equipment at approach range.
+        "CradleLatch": mesh("CradleLatch", add_cylinder(builder, 0.06, 0.12, amber, 20)),
+        "ForgeGuard": mesh("ForgeGuard", add_box(builder, (0.4, 0.1, 0.12), steel)),
+        "ToolCollar": mesh("ToolCollar", add_cylinder(builder, 0.13, 0.08, cyan, 24)),
+        "CableSpool": mesh("CableSpool", add_cylinder(builder, 0.13, 0.12, oxide, 24)),
+        "WeldingShield": mesh("WeldingShield", add_box(builder, (0.3, 0.12, 0.16), steel)),
+        "ClampJaw": mesh("ClampJaw", add_box(builder, (0.18, 0.16, 0.28), steel)),
     }
 
     nodes: list[dict] = [{
@@ -104,12 +113,18 @@ def main() -> None:
     add_node("OpticLens", mesh_ids["Optic"], (0.0, 1.1, -1.04), extras={"socket_type": "optic"})
     add_node("MaterialCradle", mesh_ids["Cradle"], (0.0, 1.52, 0.24), extras={"socket_type": "material_cradle"})
     add_node("CradleLip", mesh_ids["CradleLip"], (0.0, 1.77, 0.24))
+    add_node("EngineerCradleLatch", mesh_ids["CradleLatch"], (0.0, 1.86, -0.2), rotation=(math.pi * 0.5, 0.0, 0.0))
+    add_node("EngineerForgeGuard", mesh_ids["ForgeGuard"], (0.0, 1.48, 0.02))
     for side in (-1.0, 1.0):
         add_node("PistonJoint", mesh_ids["Joint"], (side * 0.72, 1.05, -0.1))
+        add_node("EngineerToolCollar%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["ToolCollar"], (side * 0.72, 1.05, -0.1), extras={"socket_type": "construction_tool_collar"})
         add_node("WelderArm", mesh_ids["Arm"], (side * 0.72, 1.05, -0.1), rotation=(0.0, 0.0, side * 1.0), extras={"socket_type": "construction_tool"})
         add_node("AssemblyArm", mesh_ids["Arm"], (side * 0.52, 1.25, 0.1), rotation=(0.0, 0.0, -side * 0.82))
         add_node("ToolHead", mesh_ids["ToolHead"], (side * 1.15, 0.74, -0.1), rotation=(0.0, 0.0, side * 0.2))
         add_node("AssemblyToolHead", mesh_ids["ToolHead"], (side * 0.92, 0.74, 0.02), rotation=(0.0, 0.0, -side * 0.2))
+        add_node("EngineerCableSpool%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["CableSpool"], (side * 0.58, 1.02, 0.02), rotation=(math.pi * 0.5, 0.0, 0.0))
+        add_node("EngineerWeldingShield%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["WeldingShield"], (side * 1.15, 0.74, -0.28), rotation=(0.0, 0.0, side * 0.14))
+        add_node("EngineerClampJaw%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["ClampJaw"], (side * 0.92, 0.74, -0.12), rotation=(0.0, 0.0, -side * 0.2))
         add_node("WelderGlow", mesh_ids["Glow"], (side * 1.15, 0.74, -0.28))
         add_node("EngineerCable", mesh_ids["Cable"], (side * 0.58, 1.02, 0.02), rotation=(0.0, 0.0, side * 0.18))
     add_node("ForgeCoil", mesh_ids["ForgeCoil"], (0.0, 1.48, 0.22), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "forge_coil"})
@@ -173,7 +188,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "engineer.constructor.v1",
-            "required_nodes": ["EngineerModel", "Sensor", "OpticLens", "MaterialCradle", "PistonJoint", "WelderArm", "ToolHead", "ForgeCoil", "ProductionAssetMarker"],
+            "required_nodes": ["EngineerModel", "Sensor", "OpticLens", "MaterialCradle", "PistonJoint", "WelderArm", "ToolHead", "ForgeCoil", "EngineerCradleLatch", "EngineerForgeGuard", "EngineerToolCollarLeft", "EngineerCableSpoolRight", "EngineerWeldingShieldLeft", "EngineerClampJawRight", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Work", "Hit", "Retreat", "Death"],
         },
     }
