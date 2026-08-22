@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused pressure-chronicle archive milestone
+
+- persisted bounded high-pressure regional observations in the run state;
+- exposed those traces through the existing optional Town Archive so sustained
+  ecological pressure becomes part of the remembered world history;
+- kept the record read-only and event-driven, with no pressure dashboard,
+  manual suppression queue or recurring player task.
+
 ## Focused authored skyline presentation milestone
 
 - added a bounded high-definition skyline layer to the central town with four

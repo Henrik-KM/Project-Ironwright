@@ -40,6 +40,7 @@ var event_log: Array[String] = []
 var world_seed: int = 0
 var world_variant_id: StringName = &""
 var observed_species: Dictionary = {}
+var observed_region_pressure: Dictionary = {}
 var first_sustained_resource_decline: Dictionary = {}
 var scrap_high_water_mark: int = 24
 var last_scrap_total: int = 24
@@ -131,6 +132,25 @@ func observed_species_report(limit: int = 6) -> String:
     if keys.size() > limit:
         lines.append("+%d more" % (keys.size() - limit))
     return "; ".join(lines)
+
+
+func observe_region_pressure(region_id: StringName, pressure: float, display_name: String = "") -> void:
+    if region_id == &"":
+        return
+    var intensity := clampf(pressure, 0.0, 1.8)
+    if intensity < 0.78 and not observed_region_pressure.has(String(region_id)):
+        return
+    var key := String(region_id)
+    var entry: Dictionary = observed_region_pressure.get(key, {
+        "region_id": key,
+        "display_name": display_name if not display_name.is_empty() else key.replace("region.", "").replace("_", " ").capitalize(),
+        "first_observed_seconds": elapsed_seconds,
+        "peak_pressure": intensity,
+    })
+    if not display_name.is_empty():
+        entry["display_name"] = display_name
+    entry["peak_pressure"] = maxf(float(entry.get("peak_pressure", 0.0)), intensity)
+    observed_region_pressure[key] = entry
 
 
 func resource_decline_report() -> String:
@@ -307,6 +327,7 @@ func to_dictionary() -> Dictionary:
         "world_variant_id": String(world_variant_id),
         "event_log": event_log.duplicate(),
         "observed_species": observed_species.duplicate(true),
+        "observed_region_pressure": observed_region_pressure.duplicate(true),
         "first_sustained_resource_decline": first_sustained_resource_decline.duplicate(true),
         "scrap_high_water_mark": scrap_high_water_mark,
         "last_scrap_total": last_scrap_total,
@@ -332,6 +353,10 @@ func restore_from_dictionary(data: Dictionary) -> void:
     var saved_observed_species: Variant = data.get("observed_species", {})
     if saved_observed_species is Dictionary:
         observed_species = (saved_observed_species as Dictionary).duplicate(true)
+    observed_region_pressure.clear()
+    var saved_region_pressure: Variant = data.get("observed_region_pressure", {})
+    if saved_region_pressure is Dictionary:
+        observed_region_pressure = (saved_region_pressure as Dictionary).duplicate(true)
     var saved_decline: Variant = data.get("first_sustained_resource_decline", {})
     first_sustained_resource_decline = (saved_decline as Dictionary).duplicate(true) if saved_decline is Dictionary else {}
     scrap_high_water_mark = maxi(scrap, int(data.get("scrap_high_water_mark", scrap)))
