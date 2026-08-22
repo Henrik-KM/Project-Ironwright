@@ -132,6 +132,8 @@ func _run_all() -> void:
     _expect(_find_named(world, "RouteThresholdAmberBand") != null, "The opening service lane must expose a far amber threshold landmark for the first objective.")
     _expect(_find_named(world, "AmberRouteChevron") != null, "The opening service lane must carry repeated amber route chevrons beyond the Heartforge.")
     _expect(_find_named(world, "AmberRouteGuideLamp") != null, "The opening service lane must expose near amber guide lamps at the starting frame.")
+    for facade_socket in ["PharmacySign", "OccupiedWindow", "WorkshopFascia", "MunicipalLintel", "FireEscape"]:
+        _expect(_find_named(world, "%sCore" % facade_socket) != null and _find_named(world, "%sCornerCap" % facade_socket) != null, "The opening facade identity %s must use bounded manufactured depth." % facade_socket)
     var route_marker := _find_named(world, "ThresholdRouteMarkerCore") as MeshInstance3D
     if route_marker != null:
         var route_material := route_marker.material_override as StandardMaterial3D

@@ -203,19 +203,19 @@ func _build_cutaway_facade(body: StaticBody3D, height: float, identity: StringNa
 func _add_facade_identity(parent: Node3D, identity: StringName, width: float, depth: float) -> void:
     match identity:
         &"pharmacy":
-            ModelKit3D.add_box(parent, Vector3(3.8, 0.48, 0.13), Vector3(-1.8, 2.7, -depth * 0.52), cold_glass, Vector3(0.0, 0.0, -0.03), "PharmacySign")
-            ModelKit3D.add_box(parent, Vector3(2.8, 1.8, 0.12), Vector3(2.6, 1.25, -depth * 0.52), warm_glass, Vector3.ZERO, "OccupiedWindow")
+            ModelKit3D.add_beveled_box(parent, Vector3(3.8, 0.48, 0.13), Vector3(-1.8, 2.7, -depth * 0.52), cold_glass, Vector3(0.0, 0.0, -0.03), "PharmacySign", 0.16)
+            ModelKit3D.add_beveled_box(parent, Vector3(2.8, 1.8, 0.12), Vector3(2.6, 1.25, -depth * 0.52), warm_glass, Vector3.ZERO, "OccupiedWindow", 0.14)
         &"workshop":
-            ModelKit3D.add_box(parent, Vector3(5.0, 0.52, 0.13), Vector3(0.5, 2.4, -depth * 0.52), warning_paint, Vector3(0.0, 0.0, 0.04), "WorkshopFascia")
+            ModelKit3D.add_beveled_box(parent, Vector3(5.0, 0.52, 0.13), Vector3(0.5, 2.4, -depth * 0.52), warning_paint, Vector3(0.0, 0.0, 0.04), "WorkshopFascia", 0.16)
             for index in range(4):
                 ModelKit3D.add_box(parent, Vector3(0.16, 2.1, 0.15), Vector3(-3.0 + float(index) * 2.0, 1.05, -depth * 0.53), black_metal, Vector3.ZERO, "ShutterRib")
         &"municipal":
             for index in range(3):
                 ModelKit3D.add_cylinder(parent, 0.16, 2.7, Vector3(-3.0 + float(index) * 3.0, 1.35, -depth * 0.54), masonry, Vector3.ZERO, "MunicipalColumn")
-            ModelKit3D.add_box(parent, Vector3(7.8, 0.42, 0.18), Vector3(0.0, 3.0, -depth * 0.53), masonry, Vector3.ZERO, "MunicipalLintel")
+            ModelKit3D.add_beveled_box(parent, Vector3(7.8, 0.42, 0.18), Vector3(0.0, 3.0, -depth * 0.53), masonry, Vector3.ZERO, "MunicipalLintel", 0.16)
         &"apartments":
             for index in range(3):
-                ModelKit3D.add_box(parent, Vector3(2.2, 0.1, 0.62), Vector3(-3.2 + float(index) * 3.2, 3.0 + float(index % 2) * 2.15, -depth * 0.56), black_metal, Vector3.ZERO, "FireEscape")
+                ModelKit3D.add_beveled_box(parent, Vector3(2.2, 0.1, 0.62), Vector3(-3.2 + float(index) * 3.2, 3.0 + float(index % 2) * 2.15, -depth * 0.56), black_metal, Vector3.ZERO, "FireEscape", 0.18)
                 _add_hanging_cloth(parent, Vector3(-3.2 + float(index) * 3.2, 3.1 + float(index % 2) * 2.15, -depth * 0.67), index)
 
 

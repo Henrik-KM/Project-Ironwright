@@ -147,6 +147,14 @@ beveled forms rather than isolated flat inserts. This is a presentation-only
 refinement; route clearance, collision ownership, navigation, lighting budget,
 ecology and player workload remain unchanged.
 
+The four opening cutaway facades now carry the same treatment on their identity
+anchors: pharmacy signage and occupied glazing, workshop fascia, municipal
+lintel and apartment fire-escape plates use bounded beveled forms. Planar
+window voids, cloth, hazard markings and ground decals remain intentionally
+flat where their material language calls for a surface treatment. The pass is
+presentation-only and preserves building collision, camera clearance and
+navigation.
+
 The deliberate command-map mode now keeps its live-position banner inside an explicit viewport-safe inset and allows wrapping at small capture sizes, so the strategic affordance remains readable without competing with the objective card or ecology intelligence panel.
 
 The ordinary building masses now carry the next bounded depth pass: beveled
