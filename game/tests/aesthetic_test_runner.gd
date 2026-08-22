@@ -60,6 +60,8 @@ func _run_all() -> void:
         _expect(city.get_node_or_null("HighDefinitionDebrisDetail") != null, "The central town must carry a bounded high-definition debris layer.")
         _expect(city.find_child("StreetDebris00", true, false) != null and city.find_child("RubbleChunk00", true, false) != null, "Street debris must expose beveled authored rubble chunks.")
         _expect(city.find_child("RubbleRebar00", true, false) != null and city.find_child("RubbleRebar01", true, false) != null, "Street debris must expose restrained reinforcement detail.")
+        var vehicle_detail := city.get_node_or_null("VehicleWreck00/VehicleHighDefinitionDetail")
+        _expect(vehicle_detail != null and vehicle_detail.get_node_or_null("VehicleCab") != null and vehicle_detail.get_node_or_null("VehicleStatusLens") != null, "Central vehicle wrecks must carry high-definition cab and status detail.")
         _expect(city.get_node_or_null("HighDefinitionFacadeDetails") != null, "The ordinary urban blocks must carry a shared high-definition facade layer beyond their collision shells.")
         _expect(city.find_child("FacadeDetail00", true, false) != null and city.find_child("FacadeWindowBay00_00", true, false) != null, "Facade detail must expose layered window bays and floor-scale structure.")
         _expect(city.find_child("FacadeServiceShutter", true, false) != null and city.find_child("FacadeRainDownpipe", true, false) != null, "Facade detail must expose readable service and weathering hardware.")

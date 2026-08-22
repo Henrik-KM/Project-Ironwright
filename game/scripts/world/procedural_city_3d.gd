@@ -500,6 +500,7 @@ func _build_wrecks_and_debris() -> void:
         ModelKit3D.add_surface_panel(wreck, Vector3(1.1, 0.38, 0.08), Vector3(0.0, 0.82, -0.7), rubble_material, metal_material, Vector3(0.08, 0.0, 0.0), "VehicleBrokenGlass")
         for side in [-1.0, 1.0]:
             ModelKit3D.add_cylinder(wreck, 0.18, 0.12, Vector3(side * 0.92, 0.28, -0.7), metal_material, Vector3(PI * 0.5, 0.0, 0.0), "VehicleWheel")
+        _add_vehicle_wreck_detail(wreck, index)
         ModelKit3D.add_collision_box(wreck, Vector3(2.8, 0.65, 1.45), Vector3(0.0, 0.48, 0.0))
 
     var debris_positions := [
@@ -542,6 +543,54 @@ func _build_wrecks_and_debris() -> void:
                 Vector3(0.72, 0.0, 0.38 + float(bar) * 0.22),
                 "RubbleRebar%02d" % bar
             )
+
+
+func _add_vehicle_wreck_detail(wreck: StaticBody3D, index: int) -> void:
+    # Presentation-only anatomy keeps the systemic wreck body and collision
+    # contract unchanged while giving failed civic machinery a readable scale.
+    var detail := Node3D.new()
+    detail.name = "VehicleHighDefinitionDetail"
+    wreck.add_child(detail)
+
+    var steel := ModelKit3D.material(Color("3b4545"), 0.74, 0.42)
+    var dark_steel := ModelKit3D.material(Color("151c1e"), 0.78, 0.36)
+    var rust := ModelKit3D.material(Color("72452f"), 0.44, 0.7)
+    var glass := ModelKit3D.material(Color("4c6668"), 0.2, 0.18, Color("79c8c8"), 0.26)
+    var wire := ModelKit3D.material(Color("24555b"), 0.36, 0.38, Color("54c8cf"), 0.72)
+    var status_material := ModelKit3D.material(Color("70412b"), 0.18, 0.42, Color("e48e4f"), 0.82)
+
+    var damage_side := -1.0 if index % 2 == 0 else 1.0
+    ModelKit3D.add_beveled_box(detail, Vector3(2.34, 0.16, 1.16), Vector3(0.0, 0.74, 0.0), steel, Vector3(0.0, 0.0, 0.04 * damage_side), "VehicleLowerChassis", 0.12)
+    ModelKit3D.add_beveled_box(detail, Vector3(1.56, 0.58, 1.1), Vector3(-0.42, 1.0, 0.0), dark_steel, Vector3(0.04, 0.0, 0.08 * damage_side), "VehicleCab", 0.16)
+    ModelKit3D.add_beveled_box(detail, Vector3(1.42, 0.12, 1.02), Vector3(-0.42, 1.34, 0.0), rust, Vector3(0.0, 0.0, 0.06 * damage_side), "VehicleCabRoof", 0.1)
+    ModelKit3D.add_surface_panel(detail, Vector3(1.08, 0.32, 0.07), Vector3(-0.42, 1.12, -0.57), glass, rust, Vector3(0.0, 0.0, 0.08 * damage_side), "VehicleWindshield")
+    ModelKit3D.add_surface_panel(detail, Vector3(0.72, 0.28, 0.07), Vector3(-0.42, 1.12, 0.57), glass, rust, Vector3(0.0, 0.0, -0.08 * damage_side), "VehicleRearWindow")
+    ModelKit3D.add_beveled_box(detail, Vector3(0.18, 0.2, 1.32), Vector3(1.32, 0.52, 0.0), rust, Vector3.ZERO, "VehicleFrontBumper", 0.1)
+
+    for wheel_index in range(4):
+        var wheel_x := -0.92 if wheel_index % 2 == 0 else 0.92
+        var wheel_z := -0.7 if wheel_index < 2 else 0.7
+        ModelKit3D.add_cylinder(detail, 0.2, 0.1, Vector3(wheel_x, 0.3, wheel_z), steel, Vector3(PI * 0.5, 0.0, 0.0), "VehicleWheelHub%02d" % wheel_index)
+    for axle_index in range(2):
+        var axle_z := -0.7 if axle_index == 0 else 0.7
+        ModelKit3D.add_cylinder(detail, 0.06, 1.86, Vector3(0.0, 0.34, axle_z), rust, Vector3(0.0, 0.0, PI * 0.5), "VehicleAxle%02d" % axle_index)
+        ModelKit3D.add_tapered_cylinder(detail, 0.045, 0.075, 0.56, Vector3(damage_side * 0.66, 0.6, axle_z), steel, Vector3(0.0, 0.0, damage_side * 0.26), "VehicleSuspension%02d" % axle_index)
+
+    ModelKit3D.add_surface_panel(detail, Vector3(0.62, 0.3, 0.08), Vector3(0.68, 0.82, -0.58), dark_steel, rust, Vector3(0.0, 0.0, -0.08), "VehicleServicePanel")
+    ModelKit3D.add_beveled_box(detail, Vector3(0.64, 0.08, 0.16), Vector3(0.68, 0.99, -0.63), status_material, Vector3.ZERO, "VehicleServiceWarning", 0.08)
+    for cable_index in range(3):
+        var start := Vector3(-0.38 + float(cable_index) * 0.16, 0.74 + float(cable_index % 2) * 0.05, 0.52)
+        var finish := Vector3(0.55 + float(cable_index) * 0.12, 0.88 + float(cable_index % 2) * 0.04, 0.64)
+        _add_vehicle_detail_beam(detail, start, finish, 0.028 + float(cable_index) * 0.006, wire, "VehicleCableBundle%02d" % cable_index)
+    for shard_index in range(3):
+        ModelKit3D.add_beveled_box(detail, Vector3(0.24, 0.045, 0.14), Vector3(-0.92 + float(shard_index) * 0.38, 1.42 + float(shard_index % 2) * 0.06, -0.58), glass, Vector3(-0.16, 0.26 * float(shard_index), 0.34), "VehicleGlassShard%02d" % shard_index, 0.12)
+    ModelKit3D.add_sphere(detail, 0.08, Vector3(1.34, 0.72, -0.62), status_material, Vector3.ONE, "VehicleStatusLens")
+
+
+func _add_vehicle_detail_beam(parent: Node3D, start: Vector3, finish: Vector3, radius: float, material: Material, node_name: String) -> void:
+    var direction := finish - start
+    var beam := ModelKit3D.add_cylinder(parent, radius, direction.length(), (start + finish) * 0.5, material, Vector3.ZERO, node_name)
+    beam.quaternion = Quaternion(Vector3.UP, direction.normalized())
 
 
 func _build_lived_in_street_details() -> void:
