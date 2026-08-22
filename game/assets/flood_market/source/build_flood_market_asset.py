@@ -57,6 +57,13 @@ def main() -> None:
         "CraneWheel": mesh("MarketCraneWheel", add_cylinder(builder, 0.26, 0.12, rust, 20)),
         "GrowthTendril": mesh("MarketGrowthTendril", add_cylinder(builder, 0.045, 0.78, organic, 14)),
         "GlowHousing": mesh("MarketGlowHousing", add_cylinder(builder, 0.11, 0.14, frame, 16)),
+        "ServiceBox": mesh("MarketServiceBox", add_box(builder, (0.72, 0.32, 0.64), frame)),
+        "ServiceLatch": mesh("MarketServiceLatch", add_box(builder, (0.12, 0.16, 0.3), waterline)),
+        "CargoCrate": mesh("MarketCargoCrate", add_box(builder, (0.72, 0.62, 0.72), rust)),
+        "CargoBand": mesh("MarketCargoBand", add_box(builder, (0.8, 0.08, 0.08), sign)),
+        "DrainGrate": mesh("MarketDrainGrate", add_box(builder, (1.1, 0.06, 0.42), frame)),
+        "CanopyAnchor": mesh("MarketCanopyAnchor", add_cylinder(builder, 0.12, 0.14, rust, 16)),
+        "HangingHook": mesh("MarketHangingHook", add_cylinder(builder, 0.05, 0.32, frame, 12)),
     }
 
     nodes: list[dict] = [{
@@ -65,7 +72,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "flood.market.v1",
             "asset_quality": "authored_high_definition",
-            "socket_contract": "market_canopies, stalls, flood_channels, waterline_signals, service_crane, organic_growth",
+            "socket_contract": "market_canopies, stalls, flood_channels, waterline_signals, service_crane, organic_growth, service_hardware",
         },
     }]
 
@@ -102,6 +109,14 @@ def main() -> None:
     for index, x in enumerate((-6.0, 0.0, 6.0)):
         add_node("FloodMarketStall%d" % index, mesh_ids["Stall"], (x, 0.36, 1.2), extras={"socket_type": "market_stall"})
         add_node("FloodMarketStallFrame%d" % index, mesh_ids["StallFrame"], (x, 0.58, 1.2), extras={"surface": "stall_service_frame"})
+        add_node("FloodMarketServiceBox%d" % index, mesh_ids["ServiceBox"], (x + 1.18, 0.72, 0.5), extras={"socket_type": "stall_service_hardware"})
+        add_node("FloodMarketServiceLatch%d" % index, mesh_ids["ServiceLatch"], (x + 1.18, 0.94, 0.15), extras={"surface": "service_latch"})
+        add_node("FloodMarketCargoCrate%d" % index, mesh_ids["CargoCrate"], (x - 1.25, 0.7, 0.45), extras={"socket_type": "market_cargo"})
+        add_node("FloodMarketCargoBand%d" % index, mesh_ids["CargoBand"], (x - 1.25, 1.03, 0.45), extras={"surface": "cargo_binding"})
+        add_node("FloodMarketDrainGrate%d" % index, mesh_ids["DrainGrate"], (x, 0.38, -0.15), extras={"surface": "flood_drainage"})
+        add_node("FloodMarketCanopyAnchor%dL" % index, mesh_ids["CanopyAnchor"], (x - 2.7, 3.56, 1.5), extras={"surface": "canopy_anchor"})
+        add_node("FloodMarketCanopyAnchor%dR" % index, mesh_ids["CanopyAnchor"], (x + 2.7, 3.56, 1.5), extras={"surface": "canopy_anchor"})
+        add_node("FloodMarketHangingHook%d" % index, mesh_ids["HangingHook"], (x, 3.44, 0.74), extras={"surface": "market_hanging_hardware"})
         add_node("FloodMarketWaterChannel%d" % index, mesh_ids["Water"], (x, 0.23, 8.8), extras={"socket_type": "flood_channel"})
         add_node("FloodMarketWaterline%d" % index, mesh_ids["Waterline"], (x, 0.31, 8.0), extras={"socket_type": "waterline_signal"})
         for foam_index, foam_z in enumerate((5.6, -1.2)):
@@ -131,7 +146,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "flood.market.v1",
-            "required_nodes": ["FloodMarketModel", "FloodMarketCanopy0", "FloodMarketCanopyRib0_0", "FloodMarketStall0", "FloodMarketStallFrame0", "FloodMarketWaterChannel0", "FloodMarketWaterline0", "FloodMarketWaterFoam0_0", "FloodMarketServiceCrane", "FloodMarketCraneWheel", "FloodMarketOrganicGrowth0", "FloodMarketOrganicTendril0_0", "ProductionAssetMarker"],
+            "required_nodes": ["FloodMarketModel", "FloodMarketCanopy0", "FloodMarketCanopyRib0_0", "FloodMarketStall0", "FloodMarketStallFrame0", "FloodMarketServiceBox0", "FloodMarketServiceLatch0", "FloodMarketCargoCrate0", "FloodMarketDrainGrate0", "FloodMarketCanopyAnchor0L", "FloodMarketHangingHook0", "FloodMarketWaterChannel0", "FloodMarketWaterline0", "FloodMarketWaterFoam0_0", "FloodMarketServiceCrane", "FloodMarketCraneWheel", "FloodMarketOrganicGrowth0", "FloodMarketOrganicTendril0_0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

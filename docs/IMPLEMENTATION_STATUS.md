@@ -1299,6 +1299,18 @@ identities. Manual channels remain finish-before-save.
   deterministic waterline/growth motion; live district review remains
   required.
 
+## Focused Flood Market service-hardware depth milestone
+
+- Extended the authored market with stall service boxes and latches, bound
+  cargo crates, drainage grates, canopy anchors and hanging hooks so the
+  flooded civic trade space reads as maintained infrastructure interrupted by
+  rising water.
+- Preserved Flood Market encounter dressing, salvage, route, ecology,
+  discovery and operation ownership; all new geometry is presentation-only and
+  adds no interaction, inventory or recurring management task.
+- Expanded the stable landmark manifest and native aesthetic coverage;
+  exported live district review is required before merge.
+
 ## Focused West Grid authored-space milestone
 
 - replaced the occluding generic industrial blocks with the original

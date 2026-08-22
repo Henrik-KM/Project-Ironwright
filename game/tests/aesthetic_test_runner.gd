@@ -374,6 +374,8 @@ func _run_all() -> void:
                 _expect(landmark.find_child("FloodMarketCanopyRib0_0", true, false) != null and landmark.find_child("FloodMarketStallFrame0", true, false) != null, "Flood Market must expose secondary canopy and stall framing detail.")
                 _expect(landmark.find_child("FloodMarketWaterFoam0_0", true, false) != null and landmark.find_child("FloodMarketCraneWheel", true, false) != null, "Flood Market must expose water-edge and service-crane detail.")
                 _expect(landmark.find_child("FloodMarketOrganicTendril0_0", true, false) != null, "Flood Market organic growth must expose secondary tendril anatomy.")
+                _expect(landmark.find_child("FloodMarketServiceBox0", true, false) != null and landmark.find_child("FloodMarketServiceLatch0", true, false) != null and landmark.find_child("FloodMarketCargoCrate0", true, false) != null, "Flood Market must expose authored stall service and cargo hardware.")
+                _expect(landmark.find_child("FloodMarketDrainGrate0", true, false) != null and landmark.find_child("FloodMarketCanopyAnchor0L", true, false) != null and landmark.find_child("FloodMarketHangingHook0", true, false) != null, "Flood Market must expose drainage, canopy-anchor and hanging hardware.")
                 var market_light := landmark.find_child("FloodMarketWaterline0", true, false) as Node3D
                 var market_growth := landmark.find_child("FloodMarketOrganicGrowth0", true, false) as Node3D
                 _expect(market_light != null and market_growth != null, "Flood Market must expose named waterline and organic-growth motion sockets.")
