@@ -89,12 +89,12 @@ func robot_profile_id(archetype: StringName, shutdown: bool = false) -> StringNa
 
 
 func play_profile(profile: StringName, position: Vector3, volume_db: float = -7.0, pitch_scale: float = 1.0) -> void:
-    if not profiles.has(profile) or world == null:
+    if not profiles.has(profile) or not is_instance_valid(world) or world.is_queued_for_deletion():
         return
     while active_players.size() >= MAX_ACTIVE_PLAYERS:
-        var oldest: AudioStreamPlayer3D = active_players.pop_front() as AudioStreamPlayer3D
-        if is_instance_valid(oldest):
-            oldest.queue_free()
+        var oldest: Variant = active_players.pop_front()
+        if is_instance_valid(oldest) and oldest is AudioStreamPlayer3D:
+            (oldest as AudioStreamPlayer3D).queue_free()
     var audio_player := AudioStreamPlayer3D.new()
     audio_player.name = "Sound_%s_%03d" % [String(profile), event_count]
     audio_player.stream = profiles[profile] as AudioStreamWAV

@@ -87,3 +87,14 @@ jobs:
 
       - name: Run large-population performance tests
         run: godot --headless --path game --script res://tests/performance_stress_test_runner.gd
+
+      - name: Capture release population benchmark
+        shell: bash
+        run: |
+          set -o pipefail
+          output="$(godot --headless --path game --script res://tests/performance_benchmark_runner.gd 2>&1)"
+          printf '%s\n' "$output"
+          if ! printf '%s\n' "$output" | grep -q 'PERFORMANCE_BENCHMARK_JSON'; then
+            echo "The release population benchmark did not emit its machine-readable report."
+            exit 1
+          fi
