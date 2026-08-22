@@ -43,20 +43,29 @@ def main() -> None:
         "Chassis": mesh("Chassis", add_box(builder, (1.18, 0.58, 1.38), chassis)),
         "Core": mesh("Core", add_box(builder, (0.94, 0.28, 1.1), oxide)),
         "Plate": mesh("Plate", add_box(builder, (1.04, 0.15, 0.13), steel)),
-        "Corner": mesh("Corner", add_cylinder(builder, 0.1, 0.14, steel, 10)),
-        "Leg": mesh("Leg", add_cylinder(builder, 0.1, 0.68, rubber, 12)),
+        "Corner": mesh("Corner", add_cylinder(builder, 0.1, 0.14, steel, 20)),
+        "Leg": mesh("Leg", add_cylinder(builder, 0.1, 0.68, rubber, 20)),
         "Foot": mesh("Foot", add_box(builder, (0.25, 0.11, 0.36), oxide)),
         "OpticHousing": mesh("OpticHousing", add_box(builder, (0.42, 0.22, 0.12), chassis)),
         "Optic": mesh("Optic", add_uv_sphere(builder, 0.08, cyan)),
         "Fin": mesh("Fin", add_box(builder, (0.16, 0.34, 0.82), steel)),
-        "Mast": mesh("Mast", add_cylinder(builder, 0.055, 1.82, chassis, 12)),
-        "Dish": mesh("Dish", add_uv_sphere(builder, 0.3, steel, 8, 16)),
-        "DishHub": mesh("DishHub", add_cylinder(builder, 0.1, 0.16, cyan, 12)),
-        "BeaconRing": mesh("BeaconRing", add_cylinder(builder, 0.16, 0.08, oxide, 14)),
+        "Mast": mesh("Mast", add_cylinder(builder, 0.055, 1.82, chassis, 20)),
+        "Dish": mesh("Dish", add_uv_sphere(builder, 0.3, steel, 12, 24)),
+        "DishHub": mesh("DishHub", add_cylinder(builder, 0.1, 0.16, cyan, 24)),
+        "BeaconRing": mesh("BeaconRing", add_cylinder(builder, 0.16, 0.08, oxide, 24)),
         "Beacon": mesh("Beacon", add_uv_sphere(builder, 0.11, green)),
         "SensorPod": mesh("SensorPod", add_box(builder, (0.64, 0.25, 0.18), chassis)),
         "SensorRail": mesh("SensorRail", add_box(builder, (0.72, 0.05, 0.06), green)),
-        "Cable": mesh("Cable", add_cylinder(builder, 0.03, 0.7, rubber, 8)),
+        "Cable": mesh("Cable", add_cylinder(builder, 0.03, 0.7, rubber, 12)),
+        # Survey-machine close-camera hardware: restrained mast braces, dish
+        # ribs and signal service surfaces make the scout read as a maintained
+        # instrument instead of a chassis carrying one undifferentiated dish.
+        "MastBrace": mesh("MastBrace", add_box(builder, (0.08, 0.72, 0.12), steel)),
+        "MastCollar": mesh("MastCollar", add_cylinder(builder, 0.09, 0.1, oxide, 24)),
+        "DishRib": mesh("DishRib", add_box(builder, (0.06, 0.08, 0.58), oxide)),
+        "SignalCanister": mesh("SignalCanister", add_cylinder(builder, 0.08, 0.2, green, 24)),
+        "SensorWing": mesh("SensorWing", add_box(builder, (0.12, 0.22, 0.42), steel)),
+        "SurveyLens": mesh("SurveyLens", add_uv_sphere(builder, 0.07, cyan, 12, 16)),
     }
 
     nodes: list[dict] = [{
@@ -107,11 +116,21 @@ def main() -> None:
     add_node("ScoutOptic", mesh_ids["Optic"], (0.2, 1.1, -0.94), extras={"socket_type": "scout_optic"})
     add_node("PathfinderSensorPod", mesh_ids["SensorPod"], (0.0, 1.38, -0.04), extras={"socket_type": "survey_pod"})
     add_node("PathfinderSensorRail", mesh_ids["SensorRail"], (0.0, 1.55, -0.13))
+    add_node("PathfinderSensorWing", mesh_ids["SensorWing"], (-0.34, 1.45, -0.08), rotation=(0.0, 0.0, -0.12))
+    add_node("PathfinderSensorWing", mesh_ids["SensorWing"], (0.34, 1.45, -0.08), rotation=(0.0, 0.0, 0.12))
     add_node("Antenna", mesh_ids["Mast"], (0.0, 1.92, 0.12), extras={"socket_type": "survey_mast"})
+    add_node("PathfinderMastBraceLeft", mesh_ids["MastBrace"], (-0.18, 2.22, 0.12), rotation=(0.0, 0.0, -0.18))
+    add_node("PathfinderMastBraceRight", mesh_ids["MastBrace"], (0.18, 2.22, 0.12), rotation=(0.0, 0.0, 0.18))
+    add_node("PathfinderMastCollar", mesh_ids["MastCollar"], (0.0, 2.5, 0.12), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("PathfinderDish", mesh_ids["Dish"], (0.0, 2.78, 0.12))
     add_node("PathfinderDishHub", mesh_ids["DishHub"], (0.0, 2.78, -0.12))
+    add_node("PathfinderDishRibLeft", mesh_ids["DishRib"], (-0.18, 2.78, 0.1), rotation=(0.0, 0.0, math.pi * 0.5))
+    add_node("PathfinderDishRibRight", mesh_ids["DishRib"], (0.18, 2.78, 0.1), rotation=(0.0, 0.0, math.pi * 0.5))
     add_node("BeaconRing", mesh_ids["BeaconRing"], (0.0, 3.1, 0.12))
     add_node("Beacon", mesh_ids["Beacon"], (0.0, 3.2, 0.12), extras={"socket_type": "beacon"})
+    add_node("PathfinderSurveyBeacon", mesh_ids["SignalCanister"], (0.0, 3.32, 0.12), extras={"socket_type": "survey_beacon"})
+    add_node("PathfinderSignalCanister", mesh_ids["SignalCanister"], (0.0, 1.72, 0.22), extras={"socket_type": "signal_canister"})
+    add_node("PathfinderSurveyLens", mesh_ids["SurveyLens"], (0.0, 1.56, -0.28), extras={"socket_type": "survey_lens"})
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "pathfinder.scout.v1", "source": "original_shared_mesh_builder"})
 
     node_index = {node["name"]: index for index, node in enumerate(nodes)}
@@ -172,7 +191,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "pathfinder.scout.v1",
-            "required_nodes": ["PathfinderModel", "Sensor", "OpticLens", "ScoutFin", "BeaconRing", "ScoutOptic", "PathfinderSensorPod", "ProductionAssetMarker"],
+            "required_nodes": ["PathfinderModel", "Sensor", "OpticLens", "ScoutFin", "BeaconRing", "ScoutOptic", "PathfinderSensorPod", "PathfinderMastBraceLeft", "PathfinderMastCollar", "PathfinderDishRibLeft", "PathfinderSignalCanister", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Survey", "Hit", "Retreat", "Death"],
         },
     }
