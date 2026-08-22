@@ -26,6 +26,7 @@ func _run_all() -> void:
     _expect(complete_world != null and complete_world.story_archive_director != null, "The complete run must install the persisted Town Archive director.")
     if complete_world != null and complete_world.story_archive_director != null:
         _expect(complete_world.story_archive_director.has_record(&"story.heartforge.last_light"), "The opening must preserve the first Town Archive record.")
+        _expect(complete_world.story_archive_director.has_record(&"story.machine.bulwark"), "The opening must preserve the Bulwark identity as a durable Town Archive record.")
         complete_world._open_story_archive()
         _expect(complete_world.operations_hud.is_open() and complete_world.operations_hud.mode == &"archive", "The Town Archive must be readable through an on-demand archive panel.")
         complete_world._close_operations_hud()
@@ -131,6 +132,7 @@ func _run_all() -> void:
 
     _expect(world.long_operation_director.has_completed(&"operation.west_grid_survey"), "The West Grid survey must remain completed after return.")
     _expect(_event_contains(world, "MACHINE WITNESS"), "The first physically returned operation must create a sparse machine-witness relationship moment.")
+    _expect(complete_world.story_archive_director.has_record(&"story.machine.first_return"), "The first returned expedition must preserve its machine-witness moment in the Town Archive.")
     _expect(world.region_director.is_discovered(&"region.west_grid"), "The West Grid must be physically discovered by the returned operation.")
     _expect(world.run_state.rare_cores == cores_before_west + 1, "Operation rewards must be delivered only after physical return.")
     _expect(world.outpost_director.get_site(&"site.west_substation").discovered, "The West Grid survey must reveal its fixed support site.")
@@ -148,6 +150,7 @@ func _run_all() -> void:
     world.machine_society_director.fabrication_clock = 0.0
     world.machine_society_director._evaluate_society()
     _expect(world.run_state.robots_built == robots_before_replacement + 1, "Forge Assistance must replace a missing ordinary frame without a production queue.")
+    _expect(complete_world.story_archive_director.has_record(&"story.machine.first_replacement"), "The first autonomous replacement must preserve its machine-witness moment in the Town Archive.")
 
     _expect(_complete_operation(world, &"operation.flood_market_recovery"), "The Vital Membrane operation must complete physically.")
     _expect(world.long_operation_director.has_component(&"component.vital_membrane"), "The Vital Membrane must become a persistent unique component.")
