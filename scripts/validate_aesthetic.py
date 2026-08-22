@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Validate the native aesthetic, vertical slice and pre-alpha presentation integration."""
+import ast
 from pathlib import Path
 import json
 import sys
@@ -180,6 +181,19 @@ ACTOR_GEOMETRY_FLOORS = {
     "rootweaver": 4300,
     "thornback": 4300,
     "ashmantle": 4300,
+}
+
+# These seven production builders predate the shared authored-family builder.
+# Keep their source-level primitive floors explicit so a generated glTF can
+# remain dense while a later rebuild quietly reintroduces coarse components.
+LEGACY_ORGANIC_SOURCE_TESSELLATION_FLOORS = {
+    "apex": ("game/assets/apex/source/build_apex_asset.py", 16, 24),
+    "broodmass": ("game/assets/broodmass/source/build_broodmass_asset.py", 16, 24),
+    "burrower": ("game/assets/burrower/source/build_burrower_asset.py", 16, 24),
+    "razorhound": ("game/assets/razorhound/source/build_razorhound_asset.py", 16, 24),
+    "skitterling": ("game/assets/skitterling/source/build_skitterling_asset.py", 16, 24),
+    "sporecaster": ("game/assets/sporecaster/source/build_sporecaster_asset.py", 16, 24),
+    "veilstalker": ("game/assets/veilstalker/source/build_veilstalker_asset.py", 16, 24),
 }
 
 ACTOR_ANIMATION_CHANNEL_FLOORS = {
@@ -497,6 +511,46 @@ def validate_actor_geometry_density() -> None:
             )
 
 
+def validate_legacy_organic_source_tessellation() -> None:
+    """Require dense source primitives in the pre-shared organic builders."""
+    for family, (relative, ring_floor, side_floor) in LEGACY_ORGANIC_SOURCE_TESSELLATION_FLOORS.items():
+        source_path = ROOT / relative
+        tree = ast.parse(source_path.read_text(encoding="utf-8"), filename=str(source_path))
+        mesh_assignment = next(
+            (
+                node
+                for node in ast.walk(tree)
+                if isinstance(node, ast.Assign)
+                and any(isinstance(target, ast.Name) and target.id == "mesh_ids" for target in node.targets)
+            ),
+            None,
+        )
+        if mesh_assignment is None:
+            fail(f"{family} source builder is missing its mesh_ids contract.")
+        for call in ast.walk(mesh_assignment.value):
+            if not isinstance(call, ast.Call) or not isinstance(call.func, ast.Name):
+                continue
+            if call.func.id == "add_uv_sphere":
+                if len(call.args) <= 4 or not all(isinstance(call.args[index], ast.Constant) for index in (3, 4)):
+                    fail(f"{family} source sphere tessellation must use literal ring and side counts.")
+                rings = int(call.args[3].value)
+                sides = int(call.args[4].value)
+                if rings < ring_floor or sides < side_floor:
+                    fail(
+                        f"{family} source sphere tessellation is below the high-definition floor: "
+                        f"{rings} rings/{sides} sides < {ring_floor}/{side_floor}."
+                    )
+            elif call.func.id == "add_cylinder":
+                if len(call.args) <= 4 or not isinstance(call.args[4], ast.Constant):
+                    fail(f"{family} source cylinder tessellation must use a literal side count.")
+                sides = int(call.args[4].value)
+                if sides < side_floor:
+                    fail(
+                        f"{family} source cylinder tessellation is below the high-definition floor: "
+                        f"{sides} sides < {side_floor}."
+                    )
+
+
 def validate_actor_animation_breadth() -> None:
     """Require every imported production actor clip to carry multiple channels."""
     for family, floor in ACTOR_ANIMATION_CHANNEL_FLOORS.items():
@@ -636,6 +690,7 @@ def main() -> int:
                 fail(f"Missing or unexpectedly empty aesthetic file: {relative}")
 
         validate_mechromancer_asset()
+        validate_legacy_organic_source_tessellation()
         validate_actor_geometry_density()
         validate_actor_animation_breadth()
         validate_authored_robot_assets()

@@ -356,6 +356,20 @@ identities. Manual channels remain finish-before-save.
 - kept the change presentation-only: stable asset IDs, named sockets,
   animation contracts, collision, AI, simulation and workload are unchanged.
 
+## Focused legacy-organic tessellation milestone
+
+- upgraded the seven older production organic builders (Apex, Broodmass,
+  Burrower, Razorhound, Skitterling, Sporecaster and Veilstalker) so their
+  authored spheres use at least 16 rings and their curved components use at
+  least 24 radial sides;
+- regenerated each checked-in glTF export from its source builder, including
+  the small anatomical pieces that are visible at tactical inspection range;
+- added an AST-backed source contract alongside the exported POSITION-density
+  gate, so both the builder inputs and generated meshes stay above the visual
+  floor on future rebuilds;
+- kept stable asset IDs, named sockets, animation clips, collision, AI,
+  ecology, simulation and reduced-detail ownership unchanged.
+
 ## Focused authored actor animation bridge milestone
 
 - added a shared runtime bridge that resolves imported robot and organic

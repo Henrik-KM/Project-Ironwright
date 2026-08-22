@@ -114,6 +114,7 @@
     "operation_site_identity_kits",
     "release_cast_material_continuity",
     "complete_organic_cast_material_continuity",
+    "legacy_organic_tessellation_floor",
     "release_archive_checksum_integrity",
     "title_screen_world_presence",
     "machine_callsigns_and_relationship_moments",

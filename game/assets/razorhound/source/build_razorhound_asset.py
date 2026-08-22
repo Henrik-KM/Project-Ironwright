@@ -37,20 +37,20 @@ def main() -> None:
 
     wet, shell, flesh, bone, eye, tendon = range(6)
     mesh_ids = {
-        "Core": mesh("Core", add_uv_sphere(builder, 0.5, wet, 12, 22)),
-        "Segment": mesh("Segment", add_uv_sphere(builder, 0.42, shell, 10, 18)),
+        "Core": mesh("Core", add_uv_sphere(builder, 0.5, wet, 20, 32)),
+        "Segment": mesh("Segment", add_uv_sphere(builder, 0.42, shell, 16, 28)),
         "Rib": mesh("Rib", add_box(builder, (1.08, 0.12, 0.18), shell)),
-        "Head": mesh("Head", add_uv_sphere(builder, 0.34, wet, 11, 20)),
-        "Snout": mesh("Snout", add_uv_sphere(builder, 0.33, shell, 10, 18)),
+        "Head": mesh("Head", add_uv_sphere(builder, 0.34, wet, 16, 28)),
+        "Snout": mesh("Snout", add_uv_sphere(builder, 0.33, shell, 16, 28)),
         "Cheek": mesh("Cheek", add_box(builder, (0.18, 0.34, 0.7), shell)),
-        "Ear": mesh("Ear", add_uv_sphere(builder, 0.16, bone, 8, 14)),
-        "Eye": mesh("Eye", add_uv_sphere(builder, 0.07, eye, 8, 12)),
-        "Fang": mesh("Fang", add_cylinder(builder, 0.052, 0.62, bone, 12)),
-        "Spine": mesh("Spine", add_cylinder(builder, 0.06, 0.72, bone, 12)),
-        "Leg": mesh("Leg", add_cylinder(builder, 0.08, 1.12, tendon, 12)),
-        "Talon": mesh("Talon", add_cylinder(builder, 0.055, 0.62, bone, 12)),
-        "Tail": mesh("Tail", add_cylinder(builder, 0.075, 1.2, tendon, 12)),
-        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 6, 10)),
+        "Ear": mesh("Ear", add_uv_sphere(builder, 0.16, bone, 16, 24)),
+        "Eye": mesh("Eye", add_uv_sphere(builder, 0.07, eye, 16, 24)),
+        "Fang": mesh("Fang", add_cylinder(builder, 0.052, 0.62, bone, 24)),
+        "Spine": mesh("Spine", add_cylinder(builder, 0.06, 0.72, bone, 24)),
+        "Leg": mesh("Leg", add_cylinder(builder, 0.08, 1.12, tendon, 24)),
+        "Talon": mesh("Talon", add_cylinder(builder, 0.055, 0.62, bone, 24)),
+        "Tail": mesh("Tail", add_cylinder(builder, 0.075, 1.2, tendon, 24)),
+        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 16, 24)),
     }
 
     nodes: list[dict] = [{"name": "RazorhoundModel", "children": [], "extras": {"ironwright_asset_id": "razorhound.predator.v1", "asset_quality": "authored_high_definition", "socket_contract": "snout, cheek_plates, fangs, spine_tail"}}]

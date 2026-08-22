@@ -46,20 +46,20 @@ def main() -> None:
 
     wet, shell, flesh, bone, membrane, eye, tendon = range(7)
     mesh_ids = {
-        "Core": mesh("ThoraxCore", add_uv_sphere(builder, 0.62, wet, 12, 24)),
-        "Segment": mesh("ThoraxSegment", add_uv_sphere(builder, 0.5, shell, 10, 20)),
+        "Core": mesh("ThoraxCore", add_uv_sphere(builder, 0.62, wet, 20, 32)),
+        "Segment": mesh("ThoraxSegment", add_uv_sphere(builder, 0.5, shell, 16, 28)),
         "Rib": mesh("ThoraxRib", add_box(builder, (1.38, 0.13, 0.18), shell)),
-        "Abdomen": mesh("Abdomen", add_uv_sphere(builder, 0.48, flesh, 10, 20)),
-        "Head": mesh("Cowl", add_uv_sphere(builder, 0.48, shell, 12, 24)),
-        "Eye": mesh("ThreatEye", add_uv_sphere(builder, 0.09, eye, 8, 14)),
+        "Abdomen": mesh("Abdomen", add_uv_sphere(builder, 0.48, flesh, 16, 28)),
+        "Head": mesh("Cowl", add_uv_sphere(builder, 0.48, shell, 16, 28)),
+        "Eye": mesh("ThreatEye", add_uv_sphere(builder, 0.09, eye, 16, 24)),
         "Plate": mesh("DorsalPlate", add_box(builder, (1.25, 0.16, 0.46), shell)),
-        "Spine": mesh("DorsalSpine", add_cylinder(builder, 0.09, 0.58, bone, 12)),
-        "Veil": mesh("VeilMembrane", add_uv_sphere(builder, 0.34, membrane, 10, 18)),
-        "Limb": mesh("Forelimb", add_cylinder(builder, 0.075, 1.35, tendon, 12)),
-        "Hook": mesh("Hook", add_cylinder(builder, 0.06, 0.9, bone, 12)),
-        "Tendril": mesh("Tendril", add_cylinder(builder, 0.035, 0.8, tendon, 10)),
-        "Tail": mesh("Tail", add_uv_sphere(builder, 0.19, flesh, 8, 16)),
-        "Fastener": mesh("ShellFastener", add_uv_sphere(builder, 0.045, eye, 6, 10)),
+        "Spine": mesh("DorsalSpine", add_cylinder(builder, 0.09, 0.58, bone, 24)),
+        "Veil": mesh("VeilMembrane", add_uv_sphere(builder, 0.34, membrane, 16, 28)),
+        "Limb": mesh("Forelimb", add_cylinder(builder, 0.075, 1.35, tendon, 24)),
+        "Hook": mesh("Hook", add_cylinder(builder, 0.06, 0.9, bone, 24)),
+        "Tendril": mesh("Tendril", add_cylinder(builder, 0.035, 0.8, tendon, 24)),
+        "Tail": mesh("Tail", add_uv_sphere(builder, 0.19, flesh, 16, 24)),
+        "Fastener": mesh("ShellFastener", add_uv_sphere(builder, 0.045, eye, 16, 24)),
     }
 
     nodes: list[dict] = [{
