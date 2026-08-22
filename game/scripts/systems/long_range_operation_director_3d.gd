@@ -64,8 +64,11 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
     if active_operation.is_empty():
+        if operation_detail_director != null:
+            operation_detail_director.clear_route_recovery()
         return
     _update_active_operation(delta)
+    _sync_route_recovery_marker()
 
 
 func _load_operations() -> void:
@@ -294,6 +297,7 @@ func _update_active_operation(delta: float) -> void:
             active_operation["route_recovery_active"] = false
             active_operation["route_recovery_target"] = Vector3.ZERO
             active_operation["blocked_clock"] = 0.0
+            _sync_route_recovery_marker()
             operation_changed.emit(
                 StringName(active_operation.get("id", &"")),
                 &"outbound",
@@ -337,6 +341,7 @@ func _update_active_operation(delta: float) -> void:
                 &"rerouting",
                 "Organic pressure blocked the street. The group is taking a bounded side route while preserving formation cohesion."
             )
+            _sync_route_recovery_marker()
         else:
             pace_multiplier = 0.0
     elif not hostile_blocking:
@@ -389,11 +394,27 @@ func _begin_route_retreat(reason: String) -> void:
     active_operation["route_recovery_active"] = false
     active_operation["blocked_clock"] = 0.0
     active_operation["last_forward"] = (retreat_route[1] - retreat_route[0]).normalized()
+    if operation_detail_director != null:
+        operation_detail_director.clear_route_recovery()
     operation_changed.emit(
         StringName(active_operation.get("id", &"")),
         &"retreating",
         "%s The group is returning through the persistent streets without delivering an incomplete objective." % reason
     )
+
+
+func _sync_route_recovery_marker() -> void:
+    if operation_detail_director == null:
+        return
+    if bool(active_operation.get("route_recovery_active", false)):
+        operation_detail_director.show_route_recovery(
+            StringName(active_operation.get("id", &"operation")),
+            active_operation.get("route_recovery_target", Vector3.ZERO),
+            int(active_operation.get("route_recovery_count", 0)),
+            _route_recovery_limit()
+        )
+    else:
+        operation_detail_director.clear_route_recovery()
 
 
 func _apply_reduced_detail(members: Array[RobotUnit3D]) -> void:

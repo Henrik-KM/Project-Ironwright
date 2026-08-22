@@ -2439,6 +2439,18 @@ Remaining production work includes:
 
 The roadmap now refines and expands an actual complete game loop rather than extrapolating from a disconnected prototype.
 
+## Focused autonomous route-recovery presentation milestone
+
+- added a physical, depth-tested `AUTONOMOUS DETOUR` beacon at the exact waypoint
+  inserted by long-range route recovery when organic pressure blocks an authored
+  street;
+- kept the beacon bounded and explanatory: it shows the current side-route
+  attempt, clears when the cohesive group clears the detour, and disappears on
+  retreat or operation completion;
+- added complete-game native coverage for beacon creation, waypoint alignment,
+  and clearing, so route recovery remains one visible autonomous decision rather
+  than a new player-managed route task.
+
 ## Focused keyboard-remapping accessibility milestone
 
 - added migration-safe persisted keyboard bindings for movement and exposed

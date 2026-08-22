@@ -92,6 +92,10 @@ func _run_all() -> void:
     world.long_operation_director._update_active_operation(2.5)
     _expect(int(world.long_operation_director.active_operation.get("route_recovery_count", 0)) == 1, "A sustained organic blockage must trigger one bounded route recovery attempt.")
     _expect(bool(world.long_operation_director.active_operation.get("route_recovery_active", false)), "A route recovery must remain an explicit active formation decision until the side route is cleared.")
+    var recovery_beacon := world.operation_detail_director.get_node_or_null("AutonomousRouteRecoveryBeacon") as Node3D
+    _expect(recovery_beacon != null and recovery_beacon.visible, "An active route recovery must expose a physical autonomous-detour beacon in the world.")
+    var recovery_target: Vector3 = world.long_operation_director.active_operation.get("route_recovery_target", Vector3.ZERO)
+    _expect(recovery_beacon != null and recovery_beacon.global_position.distance_to(recovery_target) < 0.1, "The autonomous-detour beacon must sit on the real inserted recovery waypoint.")
     var learned_west_route: Variant = world.long_operation_director.route_memory.get("region.west_grid", {})
     _expect(learned_west_route is Dictionary and float((learned_west_route as Dictionary).get("risk", 0.0)) >= 1.0, "A route disruption must become bounded persistent route-risk memory.")
     _expect(world.region_director.route_variant_count(&"region.west_grid") == 1, "The West Grid must expose one authored alternate street route for adaptive selection.")
@@ -125,6 +129,9 @@ func _run_all() -> void:
     route_blocker.remove_from_group(&"organic_enemies")
     route_blocker.queue_free()
     await process_frame
+    world.long_operation_director.active_operation["anchor"] = recovery_target
+    world.long_operation_director._update_active_operation(0.1)
+    _expect(recovery_beacon != null and not recovery_beacon.visible, "The autonomous-detour beacon must clear as soon as the group clears the inserted waypoint.")
     world.long_operation_director._update_active_operation(5.0)
     _expect(world.long_operation_director.active_operation.get("anchor", recovery_anchor).distance_to(recovery_anchor) > 0.1, "A recovered group must resume physical movement instead of remaining frozen at the blockage.")
     world._save_game()

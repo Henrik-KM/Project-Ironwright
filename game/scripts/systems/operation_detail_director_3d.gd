@@ -13,10 +13,32 @@ const FORMATION_RULES := preload("res://scripts/systems/formation_rules_3d.gd")
 
 var camera: Camera3D
 var modes: Dictionary = {}
+var route_recovery_beacon: Node3D
+var route_recovery_label: Label3D
+var route_recovery_ring: MeshInstance3D
+var route_recovery_material: StandardMaterial3D
+var route_recovery_elapsed: float = 0.0
 
 
 func configure(next_camera: Camera3D) -> void:
     camera = next_camera
+
+
+func _ready() -> void:
+    _build_route_recovery_beacon()
+
+
+func _process(delta: float) -> void:
+    if route_recovery_beacon == null or not route_recovery_beacon.visible:
+        return
+    route_recovery_elapsed += delta
+    var pulse := 0.92 + sin(route_recovery_elapsed * 3.1) * 0.08
+    route_recovery_beacon.scale = Vector3.ONE * pulse
+    if route_recovery_ring != null:
+        route_recovery_ring.rotation.y = route_recovery_elapsed * 0.72
+        route_recovery_ring.position.y = 2.72 + sin(route_recovery_elapsed * 2.4) * 0.08
+    if route_recovery_label != null:
+        route_recovery_label.position.y = 3.28 + sin(route_recovery_elapsed * 2.1) * 0.07
 
 
 func update_operation(operation_id: StringName, anchor: Vector3) -> StringName:
@@ -38,6 +60,23 @@ func update_operation(operation_id: StringName, anchor: Vector3) -> StringName:
 
 func clear_operation(operation_id: StringName) -> void:
     modes.erase(operation_id)
+
+
+func show_route_recovery(operation_id: StringName, target: Vector3, attempt: int, limit: int) -> void:
+    if route_recovery_beacon == null:
+        _build_route_recovery_beacon()
+    route_recovery_beacon.global_position = target
+    route_recovery_beacon.visible = true
+    route_recovery_label.text = "AUTONOMOUS DETOUR\nSIDE ROUTE %d/%d · %s" % [attempt, limit, String(operation_id).replace("operation.", "")]
+
+
+func clear_route_recovery() -> void:
+    if route_recovery_beacon != null:
+        route_recovery_beacon.visible = false
+
+
+func is_route_recovery_visible() -> bool:
+    return route_recovery_beacon != null and route_recovery_beacon.visible
 
 
 func mode_for(operation_id: StringName) -> StringName:
@@ -75,3 +114,72 @@ func apply_reduced_salvage(assignments: Dictionary, home: Vector3) -> void:
         robot.global_position = destination
         if robot is CharacterBody3D:
             (robot as CharacterBody3D).velocity = Vector3.ZERO
+
+
+func _build_route_recovery_beacon() -> void:
+    if route_recovery_beacon != null:
+        return
+    route_recovery_material = ModelKit3D.material(Color("123d49"), 0.18, 0.3, Color("5ce0d1"), 4.2)
+    route_recovery_beacon = Node3D.new()
+    route_recovery_beacon.name = "AutonomousRouteRecoveryBeacon"
+    route_recovery_beacon.visible = false
+    add_child(route_recovery_beacon)
+    for index in range(8):
+        var angle := TAU * float(index) / 8.0
+        var segment := ModelKit3D.add_box(
+            route_recovery_beacon,
+            Vector3(0.68, 0.06, 0.12),
+            Vector3(cos(angle) * 1.18, 0.08, sin(angle) * 1.18),
+            route_recovery_material,
+            Vector3(0.0, -angle, 0.0),
+            "DetourRingSegment"
+        )
+        segment.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+    var stem := ModelKit3D.add_tapered_cylinder(
+        route_recovery_beacon,
+        0.045,
+        0.09,
+        2.52,
+        Vector3(0.0, 1.28, 0.0),
+        route_recovery_material,
+        Vector3.ZERO,
+        "DetourStem"
+    )
+    stem.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+    var crown := ModelKit3D.add_sphere(
+        route_recovery_beacon,
+        0.17,
+        Vector3(0.0, 2.7, 0.0),
+        route_recovery_material,
+        Vector3(1.0, 0.56, 1.0),
+        "DetourCrown"
+    )
+    crown.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+    route_recovery_ring = MeshInstance3D.new()
+    route_recovery_ring.name = "DetourSignalRing"
+    var ring_mesh := TorusMesh.new()
+    ring_mesh.inner_radius = 0.24
+    ring_mesh.outer_radius = 0.38
+    ring_mesh.rings = 18
+    ring_mesh.ring_segments = 32
+    route_recovery_ring.mesh = ring_mesh
+    route_recovery_ring.material_override = route_recovery_material
+    route_recovery_ring.position = Vector3(0.0, 2.72, 0.0)
+    route_recovery_ring.rotation.x = PI * 0.5
+    route_recovery_ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+    route_recovery_beacon.add_child(route_recovery_ring)
+    route_recovery_label = Label3D.new()
+    route_recovery_label.name = "DetourLabel"
+    route_recovery_label.text = "AUTONOMOUS DETOUR"
+    route_recovery_label.position = Vector3(0.0, 3.28, 0.0)
+    route_recovery_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+    route_recovery_label.fixed_size = false
+    route_recovery_label.font_size = 20
+    route_recovery_label.pixel_size = 0.018
+    route_recovery_label.outline_size = 5
+    route_recovery_label.modulate = Color("d5fff7")
+    route_recovery_label.outline_modulate = Color(0.01, 0.025, 0.03, 0.96)
+    route_recovery_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    route_recovery_label.no_depth_test = false
+    route_recovery_beacon.add_child(route_recovery_label)
+    ModelKit3D.add_glow_light(route_recovery_beacon, Vector3(0.0, 1.35, 0.0), Color("5ce0d1"), 0.42, 3.4)
