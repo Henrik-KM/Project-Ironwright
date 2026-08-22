@@ -231,6 +231,12 @@ func _test_vertical_slice_presentation() -> void:
         _expect(distant != null and distant.get_node_or_null("BuildingFacadeCrown") != null, "Distant city buildings must inherit the high-definition facade kit rather than remain unbroken boxes.")
         _expect(city.get_node_or_null("HighDefinitionStreetEdges") != null, "The city street grid must have authored curb edges at tactical scale.")
         _expect(city.get_node_or_null("VehicleWreck00/VehicleBrokenGlass") != null, "Vehicle wrecks must carry layered presentation detail beyond a single block.")
+        var vehicle_detail := city.get_node_or_null("VehicleWreck00/VehicleHighDefinitionDetail")
+        _expect(vehicle_detail != null, "Vehicle wrecks must carry a bounded high-definition manufactured anatomy layer.")
+        if vehicle_detail != null:
+            _expect(vehicle_detail.get_node_or_null("VehicleCab") != null and vehicle_detail.get_node_or_null("VehicleWindshield") != null, "Vehicle wrecks must retain readable cab and broken-window anatomy.")
+            _expect(vehicle_detail.get_node_or_null("VehicleAxle00") != null and vehicle_detail.get_node_or_null("VehicleSuspension00") != null, "Vehicle wrecks must expose undercarriage axle and suspension anatomy.")
+            _expect(vehicle_detail.get_node_or_null("VehicleServicePanel") != null and vehicle_detail.get_node_or_null("VehicleCableBundle00") != null, "Vehicle wrecks must expose service hardware and cable bundles.")
 
     var player_art := world.player.get_node_or_null("MechromancerModel/VerticalSliceCharacterArt")
     var companion_art := world.companion.get_node_or_null("RobotModel/VerticalSliceMachineArt")

@@ -208,6 +208,12 @@ Ordinary early-game nests now carry the same bounded close-range anatomy bar at 
 
 The first-session salvage target now carries a bounded high-definition wreck layer: beveled chassis construction, a damaged service panel, exposed axles and suspension, bundled live cables, broken-glass shards and a small status lens. These details remain presentation-only and preserve the existing Scrap, channel, noise, collision and autonomous reservation contracts.
 
+The six surrounding city vehicle wrecks now carry the same manufactured-depth
+bar: cab and roof massing, broken window panels, bumper, wheel hubs, exposed
+axles and suspension, a service warning panel, bundled cables, glass shards and
+status lens. This broadens the opening route's failed-civic machinery language
+without changing collision, salvage, route, noise or player workload.
+
 The central town's repeated street debris now carries a bounded high-definition treatment as well: alternating beveled concrete chunks, fractured slab variation and short exposed reinforcement bars replace the previous flat-box pile silhouette. This layer remains presentation-only and collision-free; it does not alter navigation, salvage, resource state or autonomous work.
 
 Remote Tram Graveyard release dressing now carries the same model grammar: six derailed-car shells use beveled massing, broken window bands, service panels, roof vents and bogie/axle hardware instead of isolated boxes. The detail is presentation-only and preserves the existing rail encounter, salvage, routing and operation contracts.

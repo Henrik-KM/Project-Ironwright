@@ -1597,6 +1597,17 @@ environmentally distinct without changing ecology, routing or player workload.
 
 ## Commercial work still remaining
 
+## Focused central vehicle-wreck anatomy milestone
+
+- upgraded the six surrounding city vehicle wrecks with bounded manufactured
+  anatomy: cab and roof, broken windows, front bumper, wheel hubs, axles,
+  suspension, service warning panel, cable bundles, glass shards and a status
+  lens;
+- preserved the existing wreck collision and presentation-only scope, with no
+  new salvage source, interaction, route, noise or player workload;
+- added aesthetic and vertical-slice coverage for the cab, undercarriage,
+  service and damage sockets; live opening-route review remains required.
+
 ## Focused opening pharmacy interior milestone
 
 - added one bounded cutaway pharmacy interior to the opening district, with a
