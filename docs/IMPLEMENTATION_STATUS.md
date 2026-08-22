@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Mechromancer focal-harness depth milestone
+
+- replaced the remaining flat harness straps, chest bar, pistol grip, wrist
+  loop and field-tool clamp with beveled close-range geometry and added paired
+  harness fasteners;
+- preserved the weak-pistol scale, authored sockets, animation, collision,
+  input and opening silhouette contracts while strengthening the field-engineer
+  read at tactical distance;
+- added aesthetic coverage for the layered focal assembly and live exported
+  review before merge.
+
 ## Focused Heartforge camp high-definition milestone
 
 - replaced the inhabited sanctuary workshop's broad canopy, workbench, tool

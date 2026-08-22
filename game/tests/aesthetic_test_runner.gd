@@ -628,6 +628,7 @@ func _run_all() -> void:
         _expect(_find_named(player, "PistolMuzzle") != null, "The authored Mechromancer must expose the pistol muzzle socket.")
         _expect(_model_has_details(player), "The Mechromancer must receive additional authored silhouette detail.")
         _expect(_find_named(player, "FieldShoulderGuard") != null and _find_named(player, "FieldCommsPanel") != null and _find_named(player, "FieldCommsBeacon") != null, "The Mechromancer must carry the finished asymmetrical field-kit silhouette.")
+        _expect(_find_named(player, "ChestHarness") != null and _find_named(player, "PistolGrip") != null and _find_named(player, "HarnessFastener") != null, "The Mechromancer focal harness and weak-pistol assembly must retain layered high-definition hardware.")
         var player_model := player.get_node_or_null("MechromancerModel") as Node3D
         _expect(player_model != null and player_model.scale.x >= 1.2, "The authored Mechromancer must be legible at tactical-camera distance.")
         _expect(_find_named(player, "RespiratorCollarCore") != null and _find_named(player, "FieldPackCornerCap") != null, "The Mechromancer must receive beveled authored equipment surfaces.")

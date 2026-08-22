@@ -302,6 +302,13 @@ small-light hierarchy. A bounded third micro-detail pass adds a forearm
 diagnostic, protected knee hardware, a Bulwark service face, shoulder rails and
 guarded foot plates so the opening pair retains manufactured depth in
 three-quarter views without cluttering the focal frame.
+
+The Mechromancer focal pass now also replaces the remaining flat harness,
+pistol-grip, wrist-loop and field-tool inserts with beveled close-range forms
+and paired fasteners. The weak pistol remains deliberately small and the
+field-engineer silhouette remains asymmetric; this is a visual refinement only
+and does not alter weapon sockets, input, collision or damage.
+
 The foreground route markers now use the same amber language promised by the
 opening objective, keeping them distinct from cyan Heartforge service hardware.
 Discovered outpost sites now use a compact high-definition survey marker with a
