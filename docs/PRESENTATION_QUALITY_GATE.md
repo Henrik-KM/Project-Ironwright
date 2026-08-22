@@ -79,6 +79,11 @@ tank, or root-signal spines. These details keep the physical operation route
 legible before autonomous construction begins without changing collision,
 discovery rules, outpost roles or navigation.
 
+Discovering those physical sites now also leaves one sparse Town Archive record
+about what the survey actually found. The record is emitted by the existing
+site-discovery event and persists with the run; it does not become a separate
+quest, checklist or recurring interface task.
+
 The release material pass now recognizes the authored Mechromancer and Signal
 Relay shells as machine surfaces too. Their close tactical meshes therefore
 receive the same triplanar metal texture and generated normal-relief companion

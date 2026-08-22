@@ -25,6 +25,15 @@ func _run_all() -> void:
     var archive := world.story_archive_director
     _expect(archive.has_record(&"story.heartforge.last_light"), "The opening archive record must unlock automatically.")
 
+    _expect(world.outpost_director.discover_site(&"site.north_archive_sublevel"), "The archive sublevel site must be discoverable through the real outpost director.")
+    _expect(world.outpost_director.discover_site(&"site.east_roof_reservoir"), "The roof reservoir site must be discoverable through the real outpost director.")
+    _expect(world.outpost_director.discover_site(&"site.west_cooling_station"), "The cooling station site must be discoverable through the real outpost director.")
+    _expect(world.outpost_director.discover_site(&"site.root_signal_ledge"), "The root signal ledge site must be discoverable through the real outpost director.")
+    _expect(archive.has_record(&"story.site.north_archive_sublevel"), "Discovering the archive sublevel must unlock its physical story record.")
+    _expect(archive.has_record(&"story.site.east_roof_reservoir"), "Discovering the roof reservoir must unlock its physical story record.")
+    _expect(archive.has_record(&"story.site.west_cooling_station"), "Discovering the cooling station must unlock its physical story record.")
+    _expect(archive.has_record(&"story.site.root_signal_ledge"), "Discovering the root ledge must unlock its physical story record.")
+
     world.outpost_director.operation_changed.emit(&"outpost_build", &"constructed", "")
     _expect(archive.has_record(&"story.outpost.first_relay"), "A constructed outpost must unlock the first relay record.")
 
@@ -50,6 +59,8 @@ func _run_all() -> void:
     var saved := archive.to_dictionary()
     archive.restore_from_dictionary({})
     _expect(archive.record_count() == 0, "Archive restore must clear records absent from the saved payload.")
+    archive.reconcile_discovered_state()
+    _expect(archive.has_record(&"story.site.north_archive_sublevel"), "Archive reconciliation must recover site records from already-discovered site state.")
     archive.restore_from_dictionary(saved)
     _expect(archive.has_record(&"story.outpost.first_relay"), "Archive save/load must preserve event records.")
     _expect(archive.has_record(&"story.endgame.containment"), "Archive save/load must preserve the chosen ending record.")

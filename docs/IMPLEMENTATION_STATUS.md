@@ -11,6 +11,11 @@
 - Added four sparse Town Archive records tied to the new operation completion events, extending the civic, machine-witness and ecological-convergence arcs into the added expedition breadth.
 - Kept records discoverable only after the corresponding physical group returns, with save-safe archive identifiers and no new recurring interface task.
 
+## Focused site-discovery archive milestone
+
+- Added four persistent Town Archive records unlocked by discovering the newest fixed physical sites: the sealed archive stair, roofline reservoir, warm cooling pipe and listening root ledge.
+- Wired the existing outpost-site discovery signal into the archive and its save-state reconciliation, so a real excursion creates one optional story beat without adding a quest log, route task or recurring management work.
+
 ## Focused friendly-machine recovery animation milestone
 
 - Extended all six authored friendly robot shells with imported `Retreat` and `Death` clips carrying body and sensor/equipment channels, so route recovery and machine loss communicate physical weight instead of falling back to a generic walk or silent removal.
