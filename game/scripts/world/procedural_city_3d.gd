@@ -18,6 +18,7 @@ func _ready() -> void:
     _build_street_edges()
     _build_buildings()
     _build_high_definition_facades()
+    _build_skyline_details()
     _build_wrecks_and_debris()
     _build_lived_in_street_details()
     _build_civic_infrastructure()
@@ -317,6 +318,89 @@ func _add_high_definition_facade(
             concrete,
             "FacadeDamageBraceB"
         )
+
+
+func _build_skyline_details() -> void:
+    var skyline := Node3D.new()
+    skyline.name = "HighDefinitionSkylineDetail"
+    add_child(skyline)
+
+    # These distant silhouettes give the town a readable horizon beyond the
+    # close tactical blocks. They are presentation-only: the ground bodies,
+    # navigation and all systemic routes remain owned by the existing city.
+    var tower_shell := ModelKit3D.material(Color("20292b"), 0.38, 0.64)
+    var tower_edge := ModelKit3D.material(Color("4a5655"), 0.58, 0.48)
+    var tower_dark := ModelKit3D.material(Color("11191b"), 0.16, 0.34)
+    var warm_window := ModelKit3D.material(Color("4a3027"), 0.08, 0.42, Color("d98a55"), 0.62)
+    var cyan_window := ModelKit3D.material(Color("1d444a"), 0.28, 0.32, Color("63d5d8"), 1.1)
+    var warning := ModelKit3D.material(Color("5b3527"), 0.2, 0.4, Color("e2784e"), 1.35)
+
+    var tower_specs := [
+        [Vector3(-61.0, 0.0, -57.0), Vector3(8.2, 21.0, 7.2), 0],
+        [Vector3(59.0, 0.0, -54.0), Vector3(7.4, 17.0, 8.0), 1],
+        [Vector3(-58.0, 0.0, 55.0), Vector3(7.8, 18.5, 7.0), 2],
+        [Vector3(61.0, 0.0, 56.0), Vector3(8.6, 23.0, 7.8), 3],
+    ]
+    for spec in tower_specs:
+        _add_skyline_tower(
+            skyline,
+            spec[0] as Vector3,
+            spec[1] as Vector3,
+            int(spec[2]),
+            tower_shell,
+            tower_edge,
+            tower_dark,
+            warm_window,
+            cyan_window,
+            warning
+        )
+
+
+func _add_skyline_tower(
+        parent: Node3D,
+        position: Vector3,
+        size: Vector3,
+        index: int,
+        shell: StandardMaterial3D,
+        edge: StandardMaterial3D,
+        dark: StandardMaterial3D,
+        warm: StandardMaterial3D,
+        cyan: StandardMaterial3D,
+        warning: StandardMaterial3D
+    ) -> void:
+    var tower := Node3D.new()
+    tower.name = "SkylineTower%02d" % index
+    tower.position = position
+    parent.add_child(tower)
+
+    ModelKit3D.add_beveled_box(tower, size, Vector3(0.0, size.y * 0.5, 0.0), shell, Vector3.ZERO, "SkylineTowerCore", 0.3)
+    ModelKit3D.add_beveled_box(tower, Vector3(size.x * 0.78, 0.24, size.z * 0.82), Vector3(0.0, size.y + 0.16, 0.0), edge, Vector3.ZERO, "SkylineTowerRoofCap", 0.18)
+    ModelKit3D.add_beveled_box(tower, Vector3(size.x * 0.68, size.y * 0.72, 0.18), Vector3(0.0, size.y * 0.48, -size.z * 0.515), dark, Vector3.ZERO, "SkylineTowerFrontRecess", 0.12)
+
+    var band_count := maxi(3, int(size.y / 4.4))
+    for band_index in range(band_count):
+        var band_y := 2.2 + float(band_index) * 4.0
+        if band_y > size.y - 0.9:
+            continue
+        var band_material := warm if (band_index + index) % 3 == 0 else cyan
+        ModelKit3D.add_beveled_box(
+            tower,
+            Vector3(size.x * 0.54, 0.46, 0.08),
+            Vector3(0.0, band_y, -size.z * 0.54),
+            band_material,
+            Vector3.ZERO,
+            "SkylineWindowBand%02d" % band_index,
+            0.08
+        )
+
+    var utility := Node3D.new()
+    utility.name = "SkylineRooftopUtility"
+    utility.position = Vector3(size.x * (0.18 if index % 2 == 0 else -0.18), size.y + 0.28, size.z * 0.1)
+    tower.add_child(utility)
+    ModelKit3D.add_louvered_panel(utility, Vector3(1.55, 0.62, 0.42), Vector3.ZERO, dark, edge, Vector3(0.0, 0.12, 0.0), "SkylineUtilityHousing", 4)
+    ModelKit3D.add_cylinder(utility, 0.08, 1.3, Vector3(0.76, 0.68, 0.0), edge, Vector3.ZERO, "SkylineUtilityVent")
+    ModelKit3D.add_cylinder(utility, 0.06, 3.4 + float(index % 2) * 0.8, Vector3(0.0, 1.65, 0.0), edge, Vector3.ZERO, "SkylineAntenna")
+    ModelKit3D.add_sphere(utility, 0.11, Vector3(0.0, 3.42 + float(index % 2) * 0.8, 0.0), warning, Vector3.ONE, "SkylineWarningBeacon")
 
 
 func _add_facade_brace(parent: Node3D, start: Vector3, end: Vector3, material: StandardMaterial3D, name_hint: String) -> void:

@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused authored skyline presentation milestone
+
+- added a bounded high-definition skyline layer to the central town with four
+  distant civic towers, roof utilities, window bands and warning beacons;
+- kept the distant silhouettes presentation-only, so collision, navigation,
+  ecology, routing and player workload remain unchanged;
+- added aesthetic coverage for skyline breadth and stable civic identity
+  sockets, with live exported opening review required before merge.
+
 ## Focused operation-breadth milestone
 
 - Expanded the authored physical operation library from 12 to 16 templates across early, mid and late regions, including North Archive recovery, East residential rescue, West transformer repair and Root Signal purge.
