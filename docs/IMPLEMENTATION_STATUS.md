@@ -1,5 +1,16 @@
 # Implementation status
 
+## Municipal Glasshouse climate-volume pass
+
+- added a bounded cold-glass facade and split roof canopy to the release
+  dressing so the authored frame reads as an enclosed civic climate structure
+  instead of an open wireframe at compact tactical distance;
+- preserved the existing growth beds, climate hardware, service layer, route,
+  collision, ecology and reduced-detail contracts; this is presentation-only
+  and adds no player-managed production or maintenance work;
+- added aesthetic coverage for front/rear facade bays and both roof halves;
+  exact exported Windows review passed on the presentation build.
+
 ## Flood Market review framing pass
 
 - added a bounded diagonal review frame for Flood Market so the authored

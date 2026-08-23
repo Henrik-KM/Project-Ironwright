@@ -225,6 +225,7 @@ func _run_all() -> void:
     var encounter_dressing := world.get_node_or_null("RegionEncounterDressingDirector") as RegionEncounterDressingDirector3D
     var region_director := world.get_node_or_null("WorldRegionDirector") as WorldRegionDirector3D
     var story_archive := world.get_node_or_null("StoryArchiveDirector") as StoryArchiveDirector3D
+    var release_art := world.get_node_or_null("ReleaseWorldArtDirector") as ReleaseWorldArtDirector3D
     _expect(encounter_dressing != null, "The complete world must provide discovery-driven authored region dressing.")
     _expect(story_archive != null, "The complete world must provide the persistent Town Archive director.")
     if encounter_dressing != null and region_director != null:
@@ -452,9 +453,11 @@ func _run_all() -> void:
                 _expect(landmark.find_child("GlasshouseRoofRib0", true, false) != null and landmark.find_child("GlasshousePaneLatch0", true, false) != null, "Municipal Glasshouse must expose secondary roof and glazing hardware.")
                 _expect(landmark.find_child("GlasshouseClimateActuator", true, false) != null, "Municipal Glasshouse must expose climate actuator hardware.")
                 _expect(landmark.find_child("GreenhouseBrokenSkylight", true, false) != null, "Municipal Glasshouse must expose a broken skylight silhouette.")
+                var greenhouse_release_detail := release_art.dressing_root.find_child("HighDefinitionGreenhouseDressing", true, false) if release_art != null and release_art.dressing_root != null else null
+                _expect(greenhouse_release_detail != null and greenhouse_release_detail.find_child("GlasshouseFacadePane00", true, false) != null and greenhouse_release_detail.find_child("GlasshouseFacadePaneRear00", true, false) != null, "Municipal Glasshouse release dressing must expose front and rear cold-glass facade bays.")
+                _expect(greenhouse_release_detail != null and greenhouse_release_detail.find_child("GlasshouseRoofPaneFront00", true, false) != null and greenhouse_release_detail.find_child("GlasshouseRoofPaneRear00", true, false) != null, "Municipal Glasshouse release dressing must expose a split roof canopy for readable climate volume.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/GlasshouseAuthoredModel") != null, "Municipal Glasshouse must expose its authored climate-frame landmark shell.")
                 _expect(landmark.find_child("GlasshouseBedEdge0", true, false) != null and landmark.find_child("GlasshouseGrowthTendril0_0", true, false) != null and landmark.find_child("GlasshouseLightHousing0", true, false) != null, "Municipal Glasshouse growth beds must expose secondary service and organic detail.")
-                var release_art := world.get_node_or_null("ReleaseWorldArtDirector") as ReleaseWorldArtDirector3D
                 var glasshouse_post := landmark.find_child("GlasshouseFrameBay0", true, false) as MeshInstance3D
                 var glasshouse_rib := landmark.find_child("GlasshouseRoofRib0", true, false) as MeshInstance3D
                 _expect(glasshouse_post != null and glasshouse_rib != null and _mesh_vertex_count(glasshouse_post) >= 48 and _mesh_vertex_count(glasshouse_rib) >= 48, "Municipal Glasshouse authored frame must retain beveled high-definition structure.")
@@ -669,7 +672,6 @@ func _run_all() -> void:
         var distant_detail := distant_root.get_node_or_null("PersistentRegionGeometry") as Node3D if distant_root != null else null
         _expect(distant_proxy != null and distant_proxy.visible, "Distant endgame regions must retain a readable coarse authored proxy.")
         _expect(distant_detail != null and not distant_detail.visible, "Distant region detail must be hidden while the coarse proxy is active.")
-        var release_art := world.get_node_or_null("ReleaseWorldArtDirector") as ReleaseWorldArtDirector3D
         var distant_release_detail := release_art.region_dressing_root(&"region.root_cistern") if release_art != null else null
         _expect(distant_release_detail != null and not distant_release_detail.visible, "Distant regions must hide their separate high-definition release dressing while the coarse proxy is active.")
         world.player.global_position = distant_root.global_position if distant_root != null else Vector3(128.0, 0.0, -116.0)
