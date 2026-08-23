@@ -2641,6 +2641,17 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - added release regression coverage for staged depth, closer camera framing,
   and review-scene cleanup before spatial and performance checks.
 
+## Focused core-roster gallery framing milestone
+
+- brought the player/friendly, early-organic and late-organic review pages
+  closer with a narrower field of view so the authored shells occupy a more
+  judgeable portion of the exact exported frame;
+- kept the two-row depth separation and neutral material-inspection stage,
+  changing only review presentation rather than runtime gameplay camera or
+  simulation behavior;
+- added a release regression guard for the closer core-page framing and
+  confirmed all three pages in a fresh exact-export live review.
+
 ## Focused field-casualty recovery milestone
 
 - added bounded persistent casualty records for disabled non-companion frames,

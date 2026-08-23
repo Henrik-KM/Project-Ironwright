@@ -425,6 +425,9 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     world._start_presentation_review()
     await process_frame
     _expect(world.presentation_review_pages.size() == 14, "Presentation review must expose the three core pages plus all eleven remote regions.")
+    world._show_presentation_review_page(0)
+    await process_frame
+    _expect(world.presentation_review_camera_desired.z - world.presentation_review_camera_target.z <= 13.3, "Core presentation pages must use a closer roster framing for authored detail review.")
     for page_index in range(3, world.presentation_review_pages.size()):
         world._show_presentation_review_page(page_index)
         await process_frame
