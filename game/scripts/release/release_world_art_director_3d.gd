@@ -511,6 +511,20 @@ func _dress_greenhouse(root: Node3D) -> void:
     var moss := _textured_material(&"moss", Color("476a49"), 0.0, 0.86)
     var moss_edge := _textured_material(&"moss", Color("6a8b5b"), 0.0, 0.78)
     var glow := _emissive_material(Color("7ce6b2"), 2.8)
+    # The authored Glasshouse shell already has the correct frame, growth beds
+    # and service sockets. Give the release dressing a readable climate volume
+    # as well: thin cold-glass bays and a split roof canopy catch the blue-hour
+    # key without turning the structure into an opaque box. This remains a
+    # bounded presentation layer; it adds no collision, routing or simulation.
+    var cold_glass := StandardMaterial3D.new()
+    cold_glass.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+    cold_glass.albedo_color = Color(0.16, 0.42, 0.45, 0.18)
+    cold_glass.metallic = 0.12
+    cold_glass.roughness = 0.22
+    cold_glass.emission_enabled = true
+    cold_glass.emission = Color("4fa9a6")
+    cold_glass.emission_energy_multiplier = 0.38
+    cold_glass.cull_mode = BaseMaterial3D.CULL_DISABLED
     var greenhouse_detail := Node3D.new()
     greenhouse_detail.name = "HighDefinitionGreenhouseDressing"
     root.add_child(greenhouse_detail)
@@ -534,6 +548,48 @@ func _dress_greenhouse(root: Node3D) -> void:
             "GlasshouseOvergrowth%02d" % index
         )
         ModelKit3D.add_sphere(greenhouse_detail, 0.16, Vector3(x + 0.8, 1.2, -3.0 + float(index % 4) * 2.2), glow, Vector3.ONE, "MyceliumGlow%02d" % index)
+
+    # Restore the missing sense of enclosure at the compact tactical scale.
+    # Alternating front/rear bays preserve sightlines into the living beds,
+    # while the split roof panes give the climate frame a roofline and depth.
+    for bay in range(6):
+        var bay_x := -10.0 + float(bay) * 4.0
+        ModelKit3D.add_beveled_box(
+            greenhouse_detail,
+            Vector3(3.72, 5.2, 0.055),
+            Vector3(bay_x, 3.18, -5.28),
+            cold_glass,
+            Vector3.ZERO,
+            "GlasshouseFacadePane%02d" % bay,
+            0.16
+        )
+        ModelKit3D.add_beveled_box(
+            greenhouse_detail,
+            Vector3(3.72, 5.2, 0.055),
+            Vector3(bay_x, 3.18, 5.28),
+            cold_glass,
+            Vector3(0.0, PI, 0.0),
+            "GlasshouseFacadePaneRear%02d" % bay,
+            0.16
+        )
+        ModelKit3D.add_beveled_box(
+            greenhouse_detail,
+            Vector3(3.72, 0.055, 5.02),
+            Vector3(bay_x, 6.28, -2.55),
+            cold_glass,
+            Vector3(0.10, 0.0, 0.0),
+            "GlasshouseRoofPaneFront%02d" % bay,
+            0.16
+        )
+        ModelKit3D.add_beveled_box(
+            greenhouse_detail,
+            Vector3(3.72, 0.055, 5.02),
+            Vector3(bay_x, 6.28, 2.55),
+            cold_glass,
+            Vector3(-0.10, 0.0, 0.0),
+            "GlasshouseRoofPaneRear%02d" % bay,
+            0.16
+        )
 
     var service_layer := Node3D.new()
     service_layer.name = "HighDefinitionGreenhouseServiceLayer"
