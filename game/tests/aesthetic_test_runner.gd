@@ -1187,6 +1187,15 @@ func _run_all() -> void:
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Nest") >= 5, "Skitterling Nest must carry carapace, fan and antenna-joint motion channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 5, "Skitterling Retreat must carry paired-leg and antenna withdrawal channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Death") >= 4, "Skitterling Death must carry carapace and antenna collapse channels.")
+            if species_names[index] == &"razorhound":
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 6, "Razorhound Idle must carry ear, tail and dorsal-spine breathing channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Walk") >= 6, "Razorhound Walk must carry tail, spine, cheek and fang locomotion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 6, "Razorhound Attack must carry cheek, fang, ear and tail threat channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Hit") >= 5, "Razorhound Hit must carry ear, cheek and tail impact channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 5, "Razorhound Feed must carry snout, fang and ear motion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Nest") >= 5, "Razorhound Nest must carry tail, ear and dorsal-spine watch channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 5, "Razorhound Retreat must carry tail, ear and cheek withdrawal channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Death") >= 4, "Razorhound Death must carry tail and ear collapse channels.")
             if species_names[index] == &"apex":
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 4, "Apex Idle must carry living membrane flex channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 6, "Apex Attack must carry jaw and membrane threat channels.")

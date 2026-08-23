@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Razorhound secondary-animation pass
+
+- extended the common predator's authored clips with ear, tail, cheek-plate,
+  fang and dorsal-spine motion across breathing, locomotion, threat, impact,
+  feeding, nest-watch, retreat and collapse responses;
+- regenerated only the Razorhound runtime asset from its original authored
+  high-definition builder and added native track-count coverage so the early
+  predator cannot silently regress to torso-only motion;
+- regenerated-import validation passed, and exact exported Windows
+  presentation plus normal-flow review passed on 2026-08-23; broader human
+  visual acceptance remains an open commercial gate.
+
 ## Focused Skitterling secondary-animation pass
 
 - extended the scavenger's authored clips with antenna and sensory-fan
