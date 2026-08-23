@@ -9,3 +9,7 @@ The builder is intentionally reproducible and has no external runtime asset
 dependency. Gameplay collision, health, ecology, operations and threat pacing
 remain owned by `OrganicEnemy3D`; this file supplies presentation and stable
 socket names only.
+
+The authored clips carry restrained secondary motion for the Apex jaw pair and
+membrane fins: a slow living flex in `Idle`, a stronger flare in `Attack`, a
+feeding bite, and a folded withdrawal in `Retreat`.

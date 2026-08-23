@@ -1130,6 +1130,11 @@ func _run_all() -> void:
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 6, "Veilstalker Attack must carry mandible and cowl-spine threat channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 4, "Veilstalker Feed must carry mandible motion channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 4, "Veilstalker Retreat must carry cowl-spine response channels.")
+            if species_names[index] == &"apex":
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 4, "Apex Idle must carry living membrane flex channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 6, "Apex Attack must carry jaw and membrane threat channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 4, "Apex Feed must carry jaw motion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 4, "Apex Retreat must carry membrane withdrawal channels.")
             var previous_state: StringName = StringName(enemy_samples[index].get(&"state_name"))
             enemy_samples[index].set(&"state_name", &"feeding")
             enemy_samples[index].set_meta(&"enemy_behaviour", "feed")
