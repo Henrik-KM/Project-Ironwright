@@ -1768,6 +1768,21 @@ environmentally distinct without changing ecology, routing or player workload.
   Heartforge tactical composition after the layer is attached; broader district
   review remains part of the commercial work below.
 
+## Focused world-state operation-proposals milestone
+
+- added bounded dynamic operation templates for regional pressure suppression
+  and remembered route recovery;
+- proposals are generated only from discovered-region state, capped to three
+  deterministic offers, and retain stable template/region provenance in their
+  player-facing descriptions;
+- dynamic proposals reuse the existing physical team route, work, threat,
+  return, reward and route-memory machinery, then become one-time completed
+  records rather than a recurring management queue;
+- added complete-game coverage for trigger thresholds, route previews,
+  physical completion, and operation save/load restoration;
+- added a development-only exact-export review flag (`--dynamic-operation-review`)
+  that opens the existing operations surface with a pressure-generated proposal.
+
 ## Commercial work still remaining
 
 ## Focused title-screen atmosphere milestone

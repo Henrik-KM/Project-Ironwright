@@ -290,6 +290,8 @@ It validates:
 - Heartforge tiers II–V;
 - fixed outpost support requirements;
 - physical outbound, working, returning, and delivery states;
+- bounded world-state suppression and route-recovery proposals with stable
+  provenance, physical execution, one-time completion and save/load retention;
 - region and site discovery;
 - unique components;
 - region suppression;

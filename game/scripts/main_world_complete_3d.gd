@@ -269,6 +269,31 @@ func _open_operations_hud() -> void:
     player.input_enabled = false
 
 
+func _start_dynamic_operation_review() -> void:
+    if progression == null or region_director == null or long_operation_director == null or operations_hud == null:
+        return
+    progression.set_heartforge_tier(2)
+    run_state.scrap = maxi(run_state.scrap, 260)
+    run_state.scrap_changed.emit(run_state.scrap)
+    var required_roles: Array[StringName] = [&"scout", &"guardian", &"engineer"]
+    var spawn_positions: Array[Vector3] = [Vector3(-3.0, 0.0, 4.0), Vector3(0.0, 0.0, 5.0), Vector3(3.0, 0.0, 4.0)]
+    for index in range(required_roles.size()):
+        if world_role_count(required_roles[index]) <= 0:
+            _spawn_robot(required_roles[index], spawn_positions[index], 1)
+    region_director.discover_region(&"region.west_grid")
+    var west_landmark := region_director.get_landmark(&"region.west_grid")
+    if west_landmark != null:
+        west_landmark.set_pressure(1.12)
+    _ensure_region_salvage(&"region.west_grid")
+    operations_hud.open_operations()
+    player.input_enabled = false
+    hud.push_notification("WORLD-STATE RESPONSE OFFER · PRESSURE HAS BECOME A CHOICE")
+
+
+func world_role_count(role: StringName) -> int:
+    return autonomy_director.living_robots(role).size() if autonomy_director != null else 0
+
+
 func _open_evolution_hud() -> void:
     if adaptive_defense_director != null and adaptive_defense_director.has_pending_proposal():
         strategic_hud.open_adaptation(adaptive_defense_director.available_plans(), adaptive_defense_director.proposal_summary())
