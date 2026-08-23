@@ -952,6 +952,14 @@ func _run_all() -> void:
             var engineer_chassis := _find_named(engineer_asset, "Chassis") as MeshInstance3D
             var engineer_cradle := _find_named(engineer_asset, "MaterialCradle") as MeshInstance3D
             _expect(engineer_chassis != null and engineer_cradle != null and _mesh_vertex_count(engineer_chassis) >= 48 and _mesh_vertex_count(engineer_cradle) >= 48, "The authored Engineer chassis and material cradle must retain beveled high-definition manufactured edges.")
+            var engineer_animation := role_samples[index].get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
+            if engineer_animation != null and engineer_animation.animation_player != null:
+                _expect(_animation_player_track_count(engineer_animation.animation_player, &"Idle") >= 7, "Engineer Idle must carry cradle-latch, forge-coil and paired spool channels.")
+                _expect(_animation_player_track_count(engineer_animation.animation_player, &"Walk") >= 7, "Engineer Walk must carry tool-collar and paired spool locomotion channels.")
+                _expect(_animation_player_track_count(engineer_animation.animation_player, &"Work") >= 7, "Engineer Work must carry welding-shield and paired clamp channels.")
+                _expect(_animation_player_track_count(engineer_animation.animation_player, &"Hit") >= 5, "Engineer Hit must carry forge-guard and paired collar impact channels.")
+                _expect(_animation_player_track_count(engineer_animation.animation_player, &"Retreat") >= 5, "Engineer Retreat must carry welding-shield and cradle withdrawal channels.")
+                _expect(_animation_player_track_count(engineer_animation.animation_player, &"Death") >= 4, "Engineer Death must carry forge-coil and cradle collapse channels.")
             engineer_asset.queue_free()
         elif role_names[index] == &"relay":
             _expect(_find_named(role_samples[index], "RelayMastCollar") != null and _find_named(role_samples[index], "RelayDishRibLeft") != null and _find_named(role_samples[index], "RelaySignalFace") != null, "The Signal Relay must expose maintained mast, dish-rib and signal-face hardware.")
