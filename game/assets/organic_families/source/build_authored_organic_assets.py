@@ -573,6 +573,44 @@ def build_family(name: str, spec: dict) -> None:
             ("ThornbackJawPlateL", "rotation", [0.0, 0.22, 0.44], quat((-0.38, 0.0, -0.12)) + quat((-0.22, 0.0, -0.06)) + quat((-0.38, 0.0, -0.12))),
             ("ThornbackJawPlateR", "rotation", [0.0, 0.22, 0.44], quat((0.38, 0.0, 0.12)) + quat((0.22, 0.0, 0.06)) + quat((0.38, 0.0, 0.12))),
         ])
+    elif name == "ashmantle":
+        # Ashmantle's identity is a hot, vented organic shell rather than a
+        # generic blob. Let the paired louvers breathe around the siphon,
+        # with mantle ribs and sensory tendrils carrying its threat response.
+        idle_channels.extend([
+            ("AshmantleHeatLouverL", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.28, -0.12)) + quat((0.05, -0.34, -0.18)) + quat((0.0, -0.28, -0.12))),
+            ("AshmantleHeatLouverR", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.28, 0.12)) + quat((-0.05, 0.34, 0.18)) + quat((0.0, 0.28, 0.12))),
+            ("AshmantleLouverRibL", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.34, -0.22)) + quat((0.04, -0.38, -0.28)) + quat((0.0, -0.34, -0.22))),
+            ("AshmantleLouverRibR", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.34, 0.22)) + quat((-0.04, 0.38, 0.28)) + quat((0.0, 0.34, 0.22))),
+        ])
+        walk_channels.extend([
+            ("AshmantleHeatLouverL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.28, -0.12)) + quat((0.16, -0.38, -0.24)) + quat((0.0, -0.28, -0.12))),
+            ("AshmantleHeatLouverR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.28, 0.12)) + quat((-0.16, 0.38, 0.24)) + quat((0.0, 0.28, 0.12))),
+            ("AshmantleLouverRibL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.34, -0.22)) + quat((0.12, -0.42, -0.3)) + quat((0.0, -0.34, -0.22))),
+            ("AshmantleLouverRibR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.34, 0.22)) + quat((-0.12, 0.42, 0.3)) + quat((0.0, 0.34, 0.22))),
+        ])
+        attack_channels.extend([
+            ("AshmantleSiphon", "rotation", [0.0, 0.24, 0.48], quat((0.5, 0.0, 0.0)) + quat((0.82, 0.0, 0.0)) + quat((0.5, 0.0, 0.0))),
+            ("AshmantleHeatLouverL", "rotation", [0.0, 0.24, 0.48], quat((0.0, -0.28, -0.12)) + quat((-0.2, -0.42, -0.28)) + quat((0.0, -0.28, -0.12))),
+            ("AshmantleHeatLouverR", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.28, 0.12)) + quat((0.2, 0.42, 0.28)) + quat((0.0, 0.28, 0.12))),
+            ("AshmantleLouverRibL", "rotation", [0.0, 0.24, 0.48], quat((0.0, -0.34, -0.22)) + quat((-0.16, -0.5, -0.36)) + quat((0.0, -0.34, -0.22))),
+            ("AshmantleLouverRibR", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.34, 0.22)) + quat((0.16, 0.5, 0.36)) + quat((0.0, 0.34, 0.22))),
+            ("AshmantleTendrilL", "rotation", [0.0, 0.24, 0.48], quat((0.5, 0.0, -0.2)) + quat((0.76, 0.0, -0.34)) + quat((0.5, 0.0, -0.2))),
+            ("AshmantleTendrilR", "rotation", [0.0, 0.24, 0.48], quat((0.5, 0.0, 0.2)) + quat((0.76, 0.0, 0.34)) + quat((0.5, 0.0, 0.2))),
+        ])
+        feed_channels.extend([
+            ("AshmantleSiphon", "rotation", [0.0, 0.3, 0.6], quat((0.5, 0.0, 0.0)) + quat((0.7, 0.0, 0.0)) + quat((0.5, 0.0, 0.0))),
+            ("AshmantleHeatLouverL", "rotation", [0.0, 0.3, 0.6], quat((0.0, -0.28, -0.12)) + quat((0.12, -0.36, -0.2)) + quat((0.0, -0.28, -0.12))),
+            ("AshmantleHeatLouverR", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.28, 0.12)) + quat((-0.12, 0.36, 0.2)) + quat((0.0, 0.28, 0.12))),
+            ("AshmantleTendrilL", "rotation", [0.0, 0.3, 0.6], quat((0.5, 0.0, -0.2)) + quat((0.64, 0.0, -0.28)) + quat((0.5, 0.0, -0.2))),
+            ("AshmantleTendrilR", "rotation", [0.0, 0.3, 0.6], quat((0.5, 0.0, 0.2)) + quat((0.64, 0.0, 0.28)) + quat((0.5, 0.0, 0.2))),
+        ])
+        retreat_channels.extend([
+            ("AshmantleHeatLouverL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.28, -0.12)) + quat((0.28, -0.44, -0.3)) + quat((0.0, -0.28, -0.12))),
+            ("AshmantleHeatLouverR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.28, 0.12)) + quat((-0.28, 0.44, 0.3)) + quat((0.0, 0.28, 0.12))),
+            ("AshmantleLouverRibL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.34, -0.22)) + quat((0.2, -0.46, -0.32)) + quat((0.0, -0.34, -0.22))),
+            ("AshmantleLouverRibR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.34, 0.22)) + quat((-0.2, 0.46, 0.32)) + quat((0.0, 0.34, 0.22))),
+        ])
 
     animations = [
         animation("Idle", idle_channels),
