@@ -2960,3 +2960,16 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - added aesthetic regression coverage for the authored chassis and material
   cradle vertex density; exact exported live review remains required for the
   full friendly-role family acceptance gate.
+
+## Focused common hostile manufactured-edge milestone
+
+- regenerated the source-authored Razorhound, Sporecaster and Skitterling
+  shells with bounded beveled dorsal/cheek plates, gill membranes, scavenger
+  ridges, carapace caps and sensory fans so the common hostile silhouettes
+  catch close-camera light as layered anatomy rather than flat bars;
+- preserved stable species node names, anatomy sockets, animation clips,
+  collision ownership, ecology and attack behaviour; the refinement is
+  presentation-only and adds no player task or recurring simulation work;
+- added direct imported-asset aesthetic regression coverage for the refined
+  anatomy meshes; exact exported early-organic live review remains required
+  for the broader hostile-family acceptance gate.

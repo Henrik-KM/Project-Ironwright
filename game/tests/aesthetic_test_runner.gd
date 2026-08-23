@@ -8,6 +8,9 @@ const OUTPOST_SCENE := preload("res://scenes/world/outpost_3d.tscn")
 const SCRAPPER_ASSET_SCENE := preload("res://assets/scrapper/scrapper.gltf")
 const PATHFINDER_ASSET_SCENE := preload("res://assets/pathfinder/pathfinder.gltf")
 const ENGINEER_ASSET_SCENE := preload("res://assets/engineer/engineer.gltf")
+const RAZORHOUND_ASSET_SCENE := preload("res://assets/razorhound/razorhound.gltf")
+const SPORECASTER_ASSET_SCENE := preload("res://assets/sporecaster/sporecaster.gltf")
+const SKITTERLING_ASSET_SCENE := preload("res://assets/skitterling/skitterling.gltf")
 
 var failures: Array[String] = []
 
@@ -1147,6 +1150,16 @@ func _run_all() -> void:
             enemy_samples[index]._refresh_death_presentation()
             _expect(death_presentation != null and not death_presentation.visible, "%s death presentation must hide when its existing cleanup window expires." % species_names[index])
         enemy_samples[index].queue_free()
+
+    var razorhound_asset := RAZORHOUND_ASSET_SCENE.instantiate()
+    var sporecaster_asset := SPORECASTER_ASSET_SCENE.instantiate()
+    var skitterling_asset := SKITTERLING_ASSET_SCENE.instantiate()
+    _expect(_mesh_vertex_count(_find_named(razorhound_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(razorhound_asset, "RazorhoundCheekPlate") as MeshInstance3D) >= 48, "The authored Razorhound dorsal and cheek plates must retain beveled high-definition anatomy edges.")
+    _expect(_mesh_vertex_count(_find_named(sporecaster_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(sporecaster_asset, "SporecasterGillFan0") as MeshInstance3D) >= 48, "The authored Sporecaster dorsal and gill membranes must retain beveled high-definition anatomy edges.")
+    _expect(_mesh_vertex_count(_find_named(skitterling_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(skitterling_asset, "SkitterlingSensoryFan0") as MeshInstance3D) >= 48, "The authored Skitterling dorsal and sensory membranes must retain beveled high-definition anatomy edges.")
+    razorhound_asset.queue_free()
+    sporecaster_asset.queue_free()
+    skitterling_asset.queue_free()
 
     var veilstalker: Node3D
     for enemy in get_nodes_in_group("organic_enemies"):

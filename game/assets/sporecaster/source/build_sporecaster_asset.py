@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "sporecaster.gltf"
@@ -40,8 +40,8 @@ def main() -> None:
         "Core": mesh("Core", add_uv_sphere(builder, 0.58, flesh, 20, 32)),
         "Segment": mesh("Segment", add_uv_sphere(builder, 0.44, shell, 18, 28)),
         "Cowl": mesh("Cowl", add_uv_sphere(builder, 0.38, shell, 20, 32)),
-        "Rib": mesh("Rib", add_box(builder, (1.04, 0.12, 0.22), shell)),
-        "Gill": mesh("Gill", add_box(builder, (0.16, 1.25, 0.74), membrane)),
+        "Rib": mesh("Rib", add_beveled_box(builder, (1.04, 0.12, 0.22), shell, 0.025)),
+        "Gill": mesh("Gill", add_beveled_box(builder, (0.16, 1.25, 0.74), membrane, 0.025)),
         "Sac": mesh("Sac", add_uv_sphere(builder, 0.30, membrane, 20, 32)),
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.085, eye, 16, 24)),
         "Stem": mesh("Stem", add_cylinder(builder, 0.045, 0.54, tendon, 24)),

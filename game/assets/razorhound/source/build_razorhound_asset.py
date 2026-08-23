@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "razorhound.gltf"
@@ -39,10 +39,10 @@ def main() -> None:
     mesh_ids = {
         "Core": mesh("Core", add_uv_sphere(builder, 0.5, wet, 20, 32)),
         "Segment": mesh("Segment", add_uv_sphere(builder, 0.42, shell, 16, 28)),
-        "Rib": mesh("Rib", add_box(builder, (1.08, 0.12, 0.18), shell)),
+        "Rib": mesh("Rib", add_beveled_box(builder, (1.08, 0.12, 0.18), shell, 0.025)),
         "Head": mesh("Head", add_uv_sphere(builder, 0.34, wet, 16, 28)),
         "Snout": mesh("Snout", add_uv_sphere(builder, 0.33, shell, 16, 28)),
-        "Cheek": mesh("Cheek", add_box(builder, (0.18, 0.34, 0.7), shell)),
+        "Cheek": mesh("Cheek", add_beveled_box(builder, (0.18, 0.34, 0.7), shell, 0.03)),
         "Ear": mesh("Ear", add_uv_sphere(builder, 0.16, bone, 16, 24)),
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.07, eye, 16, 24)),
         "Fang": mesh("Fang", add_cylinder(builder, 0.052, 0.62, bone, 24)),
