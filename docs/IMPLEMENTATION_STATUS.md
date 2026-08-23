@@ -45,6 +45,16 @@
   Windows export; runtime combat, ecology, collision, animation ownership and
   performance LOD contracts remain unchanged.
 
+## Opening composition camera pass
+
+- lowered the representative release camera and widened its stand-off slightly
+  so the Mechromancer and Bulwark carry more foreground presence while the
+  Heartforge, amber escape lane and surrounding service context remain visible;
+- live-reviewed the exact exported Windows build through title, world start,
+  opening objective, forge interaction and command-map states; this is a
+  presentation-only change and leaves movement, formation, protection,
+  collision, interaction and save contracts unchanged.
+
 ## Focused Root Cistern material-hierarchy milestone
 
 - deepened the authored wet-root, layered-bark, bone, buried-alloy, cold-signal

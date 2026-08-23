@@ -104,6 +104,13 @@ through title, new-world initialization, objective presentation and movement
 smoke-test states; the camera, collision, companion protection and route
 geometry remain unchanged.
 
+The representative opening camera now sits lower and slightly farther back,
+giving the Mechromancer and Bulwark more readable foreground presence while
+retaining the Heartforge, service court and amber escape lane in one frame.
+The exact export was live-reviewed through the objective, manual fabrication
+and command-map states after this adjustment. It remains a presentation-only
+composition pass; final human acceptance of the full opening remains a gate.
+
 The optional Town Archive now also records the run's machine-witness moments:
 the first outpost construction, a remote loss, an automatic rebuild and the
 chosen final protocol. These entries are driven by real persistent signals and
