@@ -21,15 +21,15 @@ OUTPUT_PATH = SOURCE_DIR / "buried_labs.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Laboratory ceramic", "pbrMetallicRoughness": {"baseColorFactor": [0.19, 0.24, 0.26, 1.0], "metallicFactor": 0.22, "roughnessFactor": 0.72}},
-        {"name": "Laboratory frame", "pbrMetallicRoughness": {"baseColorFactor": [0.055, 0.085, 0.10, 1.0], "metallicFactor": 0.72, "roughnessFactor": 0.40}},
-        {"name": "Containment glass", "pbrMetallicRoughness": {"baseColorFactor": [0.05, 0.24, 0.28, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.20}, "emissiveFactor": [0.03, 0.22, 0.30]},
-        {"name": "Containment core", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.07, 0.24, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.28}, "emissiveFactor": [0.36, 0.08, 0.60]},
-        {"name": "Laboratory warning", "pbrMetallicRoughness": {"baseColorFactor": [0.64, 0.18, 0.055, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.42}, "emissiveFactor": [0.78, 0.10, 0.025]},
-        {"name": "Laboratory floor", "pbrMetallicRoughness": {"baseColorFactor": [0.10, 0.14, 0.16, 1.0], "metallicFactor": 0.44, "roughnessFactor": 0.78}},
-        {"name": "Organic contamination", "pbrMetallicRoughness": {"baseColorFactor": [0.24, 0.035, 0.12, 1.0], "metallicFactor": 0.02, "roughnessFactor": 0.88}, "emissiveFactor": [0.30, 0.012, 0.08]},
+        {"name": "Laboratory ceramic", "pbrMetallicRoughness": {"baseColorFactor": [0.05, 0.08, 0.09, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.90}},
+        {"name": "Laboratory frame", "pbrMetallicRoughness": {"baseColorFactor": [0.018, 0.045, 0.06, 1.0], "metallicFactor": 0.46, "roughnessFactor": 0.58}},
+        {"name": "Containment glass", "pbrMetallicRoughness": {"baseColorFactor": [0.012, 0.11, 0.16, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.34}, "emissiveFactor": [0.0, 0.10, 0.16]},
+        {"name": "Containment core", "pbrMetallicRoughness": {"baseColorFactor": [0.10, 0.015, 0.18, 1.0], "metallicFactor": 0.10, "roughnessFactor": 0.42}, "emissiveFactor": [0.14, 0.02, 0.30]},
+        {"name": "Laboratory warning", "pbrMetallicRoughness": {"baseColorFactor": [0.42, 0.09, 0.018, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.52}, "emissiveFactor": [0.30, 0.04, 0.006]},
+        {"name": "Laboratory floor", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.06, 0.075, 1.0], "metallicFactor": 0.28, "roughnessFactor": 0.88}},
+        {"name": "Organic contamination", "pbrMetallicRoughness": {"baseColorFactor": [0.10, 0.012, 0.05, 1.0], "metallicFactor": 0.01, "roughnessFactor": 0.92}, "emissiveFactor": [0.10, 0.0, 0.025]},
         {"name": "Genome prism housing", "pbrMetallicRoughness": {"baseColorFactor": [0.035, 0.11, 0.15, 1.0], "metallicFactor": 0.78, "roughnessFactor": 0.34}},
-        {"name": "Genome prism signal", "pbrMetallicRoughness": {"baseColorFactor": [0.10, 0.22, 0.46, 1.0], "metallicFactor": 0.14, "roughnessFactor": 0.24}, "emissiveFactor": [0.16, 0.28, 0.90]},
+        {"name": "Genome prism signal", "pbrMetallicRoughness": {"baseColorFactor": [0.04, 0.12, 0.28, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.38}, "emissiveFactor": [0.06, 0.12, 0.42]},
     ]
     meshes: list[dict] = []
 

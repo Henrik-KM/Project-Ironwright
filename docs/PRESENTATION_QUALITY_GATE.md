@@ -576,6 +576,14 @@ preserves the survey identity, landmark geometry, collision, route, discovery
 and operation ownership; consecutive exact exported Observatory Ridge review is
 complete.
 
+The Buried Laboratories shell now also uses a deeper ceramic, frame,
+containment-glass, core and warning palette with restrained vessel, core and
+genome-prism emission so the containment vessels separate from transfer rails,
+extraction hardware and warning panels under the compact exact-export key. The
+pass preserves the laboratory identity, landmark geometry, collision, route,
+discovery and operation ownership; consecutive exact exported Buried
+Laboratories review is complete.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside
