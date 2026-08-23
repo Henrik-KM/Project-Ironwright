@@ -27,7 +27,6 @@ const NORMAL_TEXTURE_PATHS: Dictionary = {
     &"rust": TEXTURE_ROOT + "/rust_panel_normal.png",
 }
 const AUTHORED_MACHINE_TOKENS: Array[String] = [
-    "mechromancer",
     "bulwark",
     "warden",
     "scrapper",
@@ -256,6 +255,13 @@ func _texture_category(mesh_instance: MeshInstance3D) -> StringName:
     var path_text := str(mesh_instance.get_path()).to_lower()
     var name_text := String(mesh_instance.name).to_lower()
     var combined := "%s %s" % [path_text, name_text]
+    # The Mechromancer is an authored field kit, not a machine chassis. Its
+    # imported materials deliberately separate worn coat, leather, skin,
+    # oxidized hardware, visor glass, utility light and the weak sidearm.
+    # Preserve those source materials instead of letting the broad machine
+    # texture heuristic flatten every player mesh into one metal family.
+    if "mechromancer" in combined:
+        return &""
     # Imported production shells retain their authored family in the node
     # path, while their individual meshes intentionally use neutral names
     # such as TorsoSegment or Fastener. Recognise the family before the
