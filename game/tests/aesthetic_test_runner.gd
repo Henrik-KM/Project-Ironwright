@@ -347,6 +347,9 @@ func _run_all() -> void:
             if landmark.region_kind == &"nest":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/NestOccluderShell") != null, "The nest must isolate its close-range opaque shell for camera-safe presentation.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/CathedralAuthoredModel") != null, "Cathedral Quarter must expose its authored nave and choir landmark shell.")
+                var cathedral_nave := landmark.find_child("CathedralNave", true, false) as MeshInstance3D
+                var cathedral_tower := landmark.find_child("CathedralTower", true, false) as MeshInstance3D
+                _expect(cathedral_nave != null and cathedral_tower != null and _mesh_vertex_count(cathedral_nave) >= 48 and _mesh_vertex_count(cathedral_tower) >= 48, "Cathedral authored nave and tower must retain beveled high-definition geometry.")
                 var cathedral_choir_signal := landmark.find_child("CathedralChoirSignal", true, false) as Node3D
                 var cathedral_choir_ring := landmark.find_child("CathedralChoirSignalRing", true, false) as Node3D
                 var cathedral_door_post := landmark.find_child("CathedralDoorPostL", true, false) as Node3D

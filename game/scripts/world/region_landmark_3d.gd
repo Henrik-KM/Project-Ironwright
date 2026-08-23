@@ -246,7 +246,9 @@ func _build_visuals() -> void:
             _nest_shell = Node3D.new()
             _nest_shell.name = "NestOccluderShell"
             _visual_root.add_child(_nest_shell)
-            _add_ruin_block(Vector3(-8.0, 0.0, 3.0), Vector3(5.5, 6.0, 5.5), brick, _nest_shell)
+            # Keep the biological cover readable without letting the camera
+            # lose the authored cathedral nave and tower behind it.
+            _add_ruin_block(Vector3(-8.2, 0.0, 4.0), Vector3(4.2, 4.8, 4.4), brick, _nest_shell)
             # The authored Cathedral shell replaces the old ring of generic
             # brood spikes and oversized mass so the civic ruin remains the
             # readable subject while its biological takeover stays legible.
