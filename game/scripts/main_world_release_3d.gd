@@ -725,6 +725,11 @@ func _show_presentation_review_page(page: int) -> void:
 			continue
 		actor.visible = true
 		if is_region_page:
+			# Riverworks and Tram Graveyard place their service/focal face toward
+			# the opposite side of the shared review camera. Correct only those two
+			# authored orientations; other families keep their authored front.
+			if region_id == &"region.riverworks" or region_id == &"region.tram_graveyard":
+				actor.rotation.y = PI
 			if actor.has_method("set_presentation_detail_level"):
 				actor.call("set_presentation_detail_level", 0)
 			var region_geometry := actor.get_node_or_null("PersistentRegionGeometry") as Node3D
@@ -774,11 +779,12 @@ func _show_presentation_review_page(page: int) -> void:
 func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3:
 	# Small, vertically focused authored landmarks need a closer review frame;
 	# otherwise the shared remote-region camera makes their detail impossible to
-	# judge against the broader districts.
+	# judge against the broader districts. A bounded diagonal offset also keeps
+	# layered service geometry from collapsing into a flat elevation.
 	if region_id == &"region.riverworks":
-		return Vector3(0.0, 10.2, 16.5)
+		return Vector3(8.2, 9.2, 14.4)
 	if region_id == &"region.tram_graveyard":
-		return Vector3(0.0, 10.2, 16.5)
+		return Vector3(-8.0, 9.2, 14.6)
 	if region_id == &"region.cathedral_quarter":
 		return Vector3(0.0, 10.5, 17.0)
 	if region_id == &"region.observatory_ridge":

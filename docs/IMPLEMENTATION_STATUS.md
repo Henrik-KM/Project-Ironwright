@@ -12,6 +12,18 @@
   objective visible; this remains presentation-only and does not alter runtime
   gameplay, collision, AI, or save contracts.
 
+## Per-family remote presentation framing
+
+- added bounded diagonal close framing for the Riverworks and Tram Graveyard
+  review pages and rotated only those two review actors to expose their
+  authored service/focal faces;
+- restored the authored orientation and established offsets for the other
+  remote families after exact-export comparison, avoiding a global facing rule
+  that would hide their stronger facade or focal side;
+- live-reviewed all eleven remote pages in the fresh Windows export after the
+  selection, with runtime landmark transforms, routes, collision, operations,
+  and persistence unchanged.
+
 ## Focused Root Cistern material-hierarchy milestone
 
 - deepened the authored wet-root, layered-bark, bone, buried-alloy, cold-signal
