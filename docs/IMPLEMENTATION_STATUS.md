@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Flood Market material-hierarchy milestone
+
+- deepened the authored market frame, canopy, oxidized trim, signal ceramic,
+  water, signage and organic-growth palette so the exact-export view separates
+  the flooded trade stalls from cyan waterline signals and amber service trim;
+- reduced compact review lighting for the broad market canopy while preserving
+  its geometry, sockets, collision, route, ecology, discovery and operation
+  contracts; this is presentation-only and adds no recurring player-managed
+  work;
+- completed consecutive exact-export live review of remote page 8 with stable
+  material hierarchy before merge.
+
 ## Focused North Ruins material-hierarchy milestone
 
 - deepened the authored archive stone, civic brick, iron, glass, beacon and

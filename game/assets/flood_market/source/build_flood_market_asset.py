@@ -21,14 +21,14 @@ OUTPUT_PATH = SOURCE_DIR / "flood_market.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Market frame", "pbrMetallicRoughness": {"baseColorFactor": [0.08, 0.14, 0.16, 1.0], "metallicFactor": 0.70, "roughnessFactor": 0.46}},
-        {"name": "Market canopy", "pbrMetallicRoughness": {"baseColorFactor": [0.34, 0.12, 0.10, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.76}},
-        {"name": "Market oxidized trim", "pbrMetallicRoughness": {"baseColorFactor": [0.52, 0.22, 0.07, 1.0], "metallicFactor": 0.42, "roughnessFactor": 0.68}, "emissiveFactor": [0.13, 0.025, 0.005]},
-        {"name": "Market signal ceramic", "pbrMetallicRoughness": {"baseColorFactor": [0.12, 0.42, 0.43, 1.0], "metallicFactor": 0.28, "roughnessFactor": 0.32}, "emissiveFactor": [0.03, 0.28, 0.24]},
-        {"name": "Market dark water", "alphaMode": "BLEND", "doubleSided": True, "pbrMetallicRoughness": {"baseColorFactor": [0.04, 0.22, 0.25, 0.60], "metallicFactor": 0.22, "roughnessFactor": 0.18}, "emissiveFactor": [0.01, 0.12, 0.13]},
-        {"name": "Market waterline", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.55, 0.50, 1.0], "metallicFactor": 0.24, "roughnessFactor": 0.24}, "emissiveFactor": [0.05, 0.32, 0.25]},
-        {"name": "Market sign", "pbrMetallicRoughness": {"baseColorFactor": [0.10, 0.22, 0.22, 1.0], "metallicFactor": 0.35, "roughnessFactor": 0.36}, "emissiveFactor": [0.03, 0.25, 0.22]},
-        {"name": "Market organic growth", "pbrMetallicRoughness": {"baseColorFactor": [0.07, 0.26, 0.16, 1.0], "metallicFactor": 0.02, "roughnessFactor": 0.78}, "emissiveFactor": [0.03, 0.26, 0.11]},
+        {"name": "Market frame", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.07, 0.08, 1.0], "metallicFactor": 0.42, "roughnessFactor": 0.62}},
+        {"name": "Market canopy", "pbrMetallicRoughness": {"baseColorFactor": [0.12, 0.028, 0.022, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.86}},
+        {"name": "Market oxidized trim", "pbrMetallicRoughness": {"baseColorFactor": [0.34, 0.09, 0.025, 1.0], "metallicFactor": 0.28, "roughnessFactor": 0.76}, "emissiveFactor": [0.06, 0.008, 0.002]},
+        {"name": "Market signal ceramic", "pbrMetallicRoughness": {"baseColorFactor": [0.04, 0.18, 0.19, 1.0], "metallicFactor": 0.16, "roughnessFactor": 0.46}, "emissiveFactor": [0.01, 0.10, 0.09]},
+        {"name": "Market dark water", "alphaMode": "BLEND", "doubleSided": True, "pbrMetallicRoughness": {"baseColorFactor": [0.012, 0.12, 0.15, 0.46], "metallicFactor": 0.12, "roughnessFactor": 0.28}, "emissiveFactor": [0.0, 0.04, 0.05]},
+        {"name": "Market waterline", "pbrMetallicRoughness": {"baseColorFactor": [0.08, 0.30, 0.26, 1.0], "metallicFactor": 0.16, "roughnessFactor": 0.34}, "emissiveFactor": [0.02, 0.16, 0.12]},
+        {"name": "Market sign", "pbrMetallicRoughness": {"baseColorFactor": [0.035, 0.12, 0.13, 1.0], "metallicFactor": 0.20, "roughnessFactor": 0.50}, "emissiveFactor": [0.01, 0.10, 0.09]},
+        {"name": "Market organic growth", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.13, 0.06, 1.0], "metallicFactor": 0.01, "roughnessFactor": 0.86}, "emissiveFactor": [0.01, 0.08, 0.02]},
     ]
     meshes: list[dict] = []
 

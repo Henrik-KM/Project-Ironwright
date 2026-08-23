@@ -537,6 +537,14 @@ and amber beacon under the compact exact-export key. The pass preserves the
 archive identity, landmark geometry, collision, route, discovery and operation
 ownership; consecutive exact exported North Ruins review is complete.
 
+The Flood Market shell now also uses a deeper frame, canopy, oxidized-trim,
+signal-ceramic and water palette with restrained waterline, signage and
+organic emission so the flooded stalls separate from cyan channel signals and
+amber service hardware under the compact exact-export key. The pass preserves
+the trade identity, landmark geometry, collision, route, discovery and
+operation ownership; consecutive exact exported Flood Market review is
+complete.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside
