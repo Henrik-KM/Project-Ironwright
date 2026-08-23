@@ -437,6 +437,36 @@ def build_family(name: str, spec: dict) -> None:
             ("RootweaverRootSpineL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.28, -0.4)) + quat((-0.14, -0.34, -0.48)) + quat((0.0, -0.28, -0.4))),
             ("RootweaverRootSpineR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.28, 0.4)) + quat((-0.14, 0.34, 0.48)) + quat((0.0, 0.28, 0.4))),
         ])
+    elif name == "miremaw":
+        # Miremaw's amphibious identity lives in the gill fan, jaw hooks and
+        # water fins. Articulate those surfaces independently so the wet
+        # silhouette does not read as a static shell when it is close enough
+        # for the release camera to judge the family.
+        idle_channels.extend([
+            ("MiremawGillFan", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.0, 1.48)) + quat((0.0, 0.0, 1.66)) + quat((0.0, 0.0, 1.48))),
+            ("MiremawGillRidgeL", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.22, -0.08)) + quat((0.04, -0.24, -0.03)) + quat((0.0, -0.22, -0.08))),
+            ("MiremawGillRidgeR", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.22, 0.08)) + quat((-0.04, 0.24, 0.03)) + quat((0.0, 0.22, 0.08))),
+        ])
+        walk_channels.extend([
+            ("MiremawWaterFinL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.28, -0.08)) + quat((0.12, -0.34, -0.18)) + quat((0.0, -0.28, -0.08))),
+            ("MiremawWaterFinR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.28, 0.08)) + quat((-0.12, 0.34, 0.18)) + quat((0.0, 0.28, 0.08))),
+        ])
+        attack_channels.extend([
+            ("MiremawJawHookL", "rotation", [0.0, 0.24, 0.48], quat((-0.72, 0.0, -0.18)) + quat((-0.98, 0.0, -0.28)) + quat((-0.72, 0.0, -0.18))),
+            ("MiremawJawHookR", "rotation", [0.0, 0.24, 0.48], quat((0.72, 0.0, 0.18)) + quat((0.98, 0.0, 0.28)) + quat((0.72, 0.0, 0.18))),
+            ("MiremawJawPlateL", "rotation", [0.0, 0.24, 0.48], quat((-0.36, 0.0, -0.12)) + quat((-0.58, 0.0, -0.18)) + quat((-0.36, 0.0, -0.12))),
+            ("MiremawJawPlateR", "rotation", [0.0, 0.24, 0.48], quat((0.36, 0.0, 0.12)) + quat((0.58, 0.0, 0.18)) + quat((0.36, 0.0, 0.12))),
+        ])
+        feed_channels.extend([
+            ("MiremawJawHookL", "rotation", [0.0, 0.3, 0.6], quat((-0.72, 0.0, -0.18)) + quat((-0.88, 0.0, -0.24)) + quat((-0.72, 0.0, -0.18))),
+            ("MiremawJawHookR", "rotation", [0.0, 0.3, 0.6], quat((0.72, 0.0, 0.18)) + quat((0.88, 0.0, 0.24)) + quat((0.72, 0.0, 0.18))),
+            ("MiremawGillFan", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.0, 1.57)) + quat((0.0, 0.0, 1.32)) + quat((0.0, 0.0, 1.57))),
+        ])
+        retreat_channels.extend([
+            ("MiremawWaterFinL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.28, -0.08)) + quat((-0.14, -0.36, -0.2)) + quat((0.0, -0.28, -0.08))),
+            ("MiremawWaterFinR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.28, 0.08)) + quat((0.14, 0.36, 0.2)) + quat((0.0, 0.28, 0.08))),
+            ("MiremawGillFan", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, 1.57)) + quat((0.0, 0.0, 1.82)) + quat((0.0, 0.0, 1.57))),
+        ])
 
     animations = [
         animation("Idle", idle_channels),
