@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused release collision-budget pass
+
+- release actors in coarse or reduced simulation now release physics-server
+  collision while retaining their existing direct movement, targeting and
+  causal simulation ticks;
+- fully active actors retain the original release collision layers and masks,
+  with native coverage asserting the active/medium/reduced split explicitly;
+- the 192-actor release benchmark improved from 8.18 to 8.52 measured FPS in
+  the local headless environment and the large-population stress runner still
+  passes; target-hardware profiling remains an open commercial gate.
+
 ## Focused release-population evaluation pass
 
 - classify actors outside the medium-detail radius during the initial pass, so
