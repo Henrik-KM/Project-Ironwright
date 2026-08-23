@@ -34,6 +34,8 @@ var forge_close_button: Button
 var notification_label: Label
 var map_banner: Label
 var help_label: Label
+var operation_badge: PanelContainer
+var operation_badge_label: Label
 var ending_panel: PanelContainer
 var forge_open: bool = false
 var notifications: Array[String] = []
@@ -174,6 +176,21 @@ func _build_ui() -> void:
     map_banner.offset_bottom = 52
     map_banner.visible = false
 
+    operation_badge = PanelContainer.new()
+    operation_badge.name = "ActiveOperationBadge"
+    operation_badge.set_anchors_preset(Control.PRESET_CENTER_TOP)
+    operation_badge.position = Vector2(-240, 66)
+    operation_badge.size = Vector2(480, 42)
+    operation_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    operation_badge.visible = false
+    root_control.add_child(operation_badge)
+    operation_badge_label = _label(operation_badge, "", 14, Color("f0d19b"))
+    operation_badge_label.position = Vector2(12, 7)
+    operation_badge_label.size = Vector2(456, 28)
+    operation_badge_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    operation_badge_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+    operation_badge_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
     help_label = _label(root_control, "WASD MOVE · HOLD E TO SALVAGE · E AT FORGE · ESC CLOSE · F5 SAVE · F9 LOAD", 13, Color("788682"))
     help_label.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
     help_label.offset_top = -22
@@ -310,6 +327,15 @@ func apply_safe_layout(viewport_size: Vector2) -> void:
         map_banner.offset_top = 16.0
         map_banner.offset_bottom = 52.0
 
+    if operation_badge != null:
+        var badge_width := minf(520.0, maxf(320.0, viewport_size.x - 40.0))
+        operation_badge.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+        operation_badge.offset_left = -badge_width * 0.5
+        operation_badge.offset_right = badge_width * 0.5
+        operation_badge.offset_top = -130.0
+        operation_badge.offset_bottom = -88.0
+        operation_badge_label.size.x = badge_width - 24.0
+
     if viewport_size.x < 980.0:
         objective_panel.size.x = 370.0
         objective_label.size.x = 330.0
@@ -425,6 +451,16 @@ func set_focus(focus: StringName) -> void:
 
 func set_operation(text_value: String) -> void:
     operation_label.text = text_value
+
+
+func set_operation_badge(text_value: String, active: bool, prefix: String = "ACTIVE OPERATION") -> void:
+    if operation_badge == null or operation_badge_label == null:
+        return
+    operation_badge.visible = active and not text_value.strip_edges().is_empty()
+    if not operation_badge.visible:
+        operation_badge_label.text = ""
+        return
+    operation_badge_label.text = "%s · %s · F FOLLOW" % [prefix, text_value.to_upper()]
 
 
 func set_player_health(current: float, maximum: float) -> void:

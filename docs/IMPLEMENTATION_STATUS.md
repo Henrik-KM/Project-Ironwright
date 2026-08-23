@@ -2136,6 +2136,18 @@ West Grid detour visibly selected.
 
 ## Commercial work still remaining
 
+## Focused persistent-operation status milestone
+
+- added a compact exception-based tactical badge that appears only while a
+  long-range operation or final protocol is active, naming the current state
+  and retaining the direct follow affordance after the command modal is
+  closed;
+- kept the badge viewport-safe and presentation-only, with no new queue,
+  worker assignment, route management or recurring player task;
+- added first-session regression coverage for appearing on activation and
+  clearing on completion; exact exported live review remains required for the
+  broader operation and final-protocol presentation gate.
+
 ## Focused title-screen atmosphere milestone
 
 - added a restrained procedural forge-and-service atmosphere behind the title

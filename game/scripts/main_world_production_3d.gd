@@ -20,6 +20,11 @@ func _ready() -> void:
 func _process(delta: float) -> void:
     super._process(delta)
     _update_first_session_guidance()
+    # The opening guidance still runs for the release shell, but an active
+    # physical operation is the stronger exception and must replace stale
+    # salvage/forge instructions in the same frame.
+    if long_operation_director != null and not long_operation_director.active_operation.is_empty():
+        _update_complete_game_objective()
 
 
 func _extend_forge_interface() -> void:
