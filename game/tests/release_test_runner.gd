@@ -561,7 +561,13 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     _expect(opening_bulwark != null and opening_bulwark.find_child("BulwarkEmitterGuardL", true, false) != null and opening_bulwark.find_child("BulwarkEmitterGuardR", true, false) != null, "The Bulwark protection emitter must retain its authored paired guard rails.")
     _expect(opening_bulwark != null and opening_bulwark.find_child("BulwarkServiceFace", true, false) != null and opening_bulwark.find_child("BulwarkServiceWindow", true, false) != null, "The Bulwark companion must expose an authored front service face and diagnostic window.")
     var player_authored_mesh := _find_first_mesh(world.player.get_node_or_null("MechromancerModel") if world.player != null else null)
-    _expect(player_authored_mesh != null and player_authored_mesh.get_meta(&"release_material_family", &"") == &"metal", "The authored Mechromancer shell must receive the release metal material pass.")
+    _expect(player_authored_mesh != null and player_authored_mesh.get_meta(&"release_material_family", &"") == &"", "The authored Mechromancer shell must preserve its source material families instead of receiving a flattened release metal override.")
+    var player_model := world.player.get_node_or_null("MechromancerModel") if world.player != null else null
+    var player_leather := _find_mesh_named(player_model, "FieldPack")
+    var player_coat := _find_mesh_named(player_model, "Torso")
+    var player_lamp := _find_mesh_named(player_model, "LampCore")
+    _expect(player_leather != null and player_coat != null and player_lamp != null, "The authored Mechromancer material-break samples must remain present.")
+    _expect(player_leather != null and player_leather.material_override == null and player_coat != null and player_coat.material_override == null and player_lamp != null and player_lamp.material_override == null, "The Mechromancer leather, coat and cognition-light samples must retain their imported material assignments.")
     var relay := world._spawn_robot(&"relay", world.player.global_position + Vector3(5.0, 0.0, -2.0), 1)
     await process_frame
     var relay_authored_mesh := _find_first_mesh(relay.get_node_or_null("RobotModel/RelayAuthoredModel") if relay != null else null)
@@ -646,6 +652,18 @@ func _find_first_mesh_with_token(node: Node, token: String) -> MeshInstance3D:
         return node as MeshInstance3D
     for child in node.get_children():
         var result := _find_first_mesh_with_token(child as Node, token)
+        if result != null:
+            return result
+    return null
+
+
+func _find_mesh_named(node: Node, node_name: String) -> MeshInstance3D:
+    if node == null or not is_instance_valid(node):
+        return null
+    if node is MeshInstance3D and String(node.name) == node_name:
+        return node as MeshInstance3D
+    for child in node.get_children():
+        var result := _find_mesh_named(child as Node, node_name)
         if result != null:
             return result
     return null

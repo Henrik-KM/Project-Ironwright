@@ -193,11 +193,14 @@ about what the survey actually found. The record is emitted by the existing
 site-discovery event and persists with the run; it does not become a separate
 quest, checklist or recurring interface task.
 
-The release material pass now recognizes the authored Mechromancer and Signal
-Relay shells as machine surfaces too. Their close tactical meshes therefore
-receive the same triplanar metal texture and generated normal-relief companion
-as the other production machine families, including when a Relay is fabricated
-after the initial world boot.
+The release material pass recognizes authored Signal Relay shells as machine
+surfaces, including when a Relay is fabricated after the initial world boot.
+The authored Mechromancer is intentionally excluded from that broad machine
+override: its source material assignments preserve the field kit's worn coat,
+leather, skin, oxidized hardware, visor, cognition light and weak sidearm
+breaks. This keeps the player-facing high-definition silhouette from becoming
+one flattened metal family while leaving the release texture continuity for
+friendly machines and late-fabricated robots intact.
 
 The Mechromancer now uses the same export-breadth contract. Its authored Idle,
 Walk, Fire, Work, Upgrade and Hit clips retain multiple body, equipment, recoil
