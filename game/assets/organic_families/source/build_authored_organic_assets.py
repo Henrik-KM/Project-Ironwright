@@ -538,6 +538,41 @@ def build_family(name: str, spec: dict) -> None:
             ("CarrionbellResonatorRing", "rotation", [0.0, 0.22, 0.44], quat((1.5708, 0.0, 0.0)) + quat((1.5708, 0.0, -0.28)) + quat((1.5708, 0.0, 0.0))),
             ("CarrionbellSignalTendril2", "rotation", [0.0, 0.22, 0.44], quat((0.32, 0.0, 0.0)) + quat((0.48, 0.0, 0.18)) + quat((0.32, 0.0, 0.0))),
         ])
+    elif name == "thornback":
+        # Thornback's readable danger is the layered jaw-and-spine profile.
+        # Give the paired plates, dorsal spines and crown ridges their own
+        # restrained response so the armored family does not become a static
+        # shell with only the shared torso beat moving underneath it.
+        idle_channels.extend([
+            ("ThornbackJawPlateL", "rotation", [0.0, 0.8, 1.6], quat((-0.38, 0.0, -0.12)) + quat((-0.44, 0.0, -0.16)) + quat((-0.38, 0.0, -0.12))),
+            ("ThornbackJawPlateR", "rotation", [0.0, 0.8, 1.6], quat((0.38, 0.0, 0.12)) + quat((0.44, 0.0, 0.16)) + quat((0.38, 0.0, 0.12))),
+            ("ThornbackSpineL", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.24, -0.34)) + quat((0.04, -0.28, -0.4)) + quat((0.0, -0.24, -0.34))),
+            ("ThornbackSpineR", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.24, 0.34)) + quat((-0.04, 0.28, 0.4)) + quat((0.0, 0.24, 0.34))),
+        ])
+        walk_channels.extend([
+            ("ThornbackSpineL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.24, -0.34)) + quat((0.16, -0.34, -0.48)) + quat((0.0, -0.24, -0.34))),
+            ("ThornbackSpineR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.24, 0.34)) + quat((-0.16, 0.34, 0.48)) + quat((0.0, 0.24, 0.34))),
+            ("ThornbackDorsalRidge0", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, -0.12)) + quat((0.1, 0.0, -0.2)) + quat((0.0, 0.0, -0.12))),
+        ])
+        attack_channels.extend([
+            ("ThornbackJawPlateL", "rotation", [0.0, 0.24, 0.48], quat((-0.38, 0.0, -0.12)) + quat((-0.72, 0.0, -0.24)) + quat((-0.38, 0.0, -0.12))),
+            ("ThornbackJawPlateR", "rotation", [0.0, 0.24, 0.48], quat((0.38, 0.0, 0.12)) + quat((0.72, 0.0, 0.24)) + quat((0.38, 0.0, 0.12))),
+            ("ThornbackSpineL", "rotation", [0.0, 0.24, 0.48], quat((0.0, -0.24, -0.34)) + quat((-0.12, -0.38, -0.54)) + quat((0.0, -0.24, -0.34))),
+            ("ThornbackSpineR", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.24, 0.34)) + quat((0.12, 0.38, 0.54)) + quat((0.0, 0.24, 0.34))),
+            ("ThornbackCrownPlate", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.0, 0.08)) + quat((-0.18, 0.0, 0.16)) + quat((0.0, 0.0, 0.08))),
+        ])
+        feed_channels.extend([
+            ("ThornbackJawPlateL", "rotation", [0.0, 0.3, 0.6], quat((-0.38, 0.0, -0.12)) + quat((-0.58, 0.0, -0.2)) + quat((-0.38, 0.0, -0.12))),
+            ("ThornbackJawPlateR", "rotation", [0.0, 0.3, 0.6], quat((0.38, 0.0, 0.12)) + quat((0.58, 0.0, 0.2)) + quat((0.38, 0.0, 0.12))),
+            ("ThornbackSpineL", "rotation", [0.0, 0.3, 0.6], quat((0.0, -0.24, -0.34)) + quat((0.12, -0.3, -0.42)) + quat((0.0, -0.24, -0.34))),
+            ("ThornbackSpineR", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.24, 0.34)) + quat((-0.12, 0.3, 0.42)) + quat((0.0, 0.24, 0.34))),
+        ])
+        retreat_channels.extend([
+            ("ThornbackSpineL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.24, -0.34)) + quat((0.28, -0.4, -0.52)) + quat((0.0, -0.24, -0.34))),
+            ("ThornbackSpineR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.24, 0.34)) + quat((-0.28, 0.4, 0.52)) + quat((0.0, 0.24, 0.34))),
+            ("ThornbackJawPlateL", "rotation", [0.0, 0.22, 0.44], quat((-0.38, 0.0, -0.12)) + quat((-0.22, 0.0, -0.06)) + quat((-0.38, 0.0, -0.12))),
+            ("ThornbackJawPlateR", "rotation", [0.0, 0.22, 0.44], quat((0.38, 0.0, 0.12)) + quat((0.22, 0.0, 0.06)) + quat((0.38, 0.0, 0.12))),
+        ])
 
     animations = [
         animation("Idle", idle_channels),
