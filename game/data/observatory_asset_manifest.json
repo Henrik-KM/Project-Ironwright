@@ -23,6 +23,14 @@
     "ObservatorySurveyRail0",
     "ObservatoryCableAnchor0",
     "ObservatorySurveyLightHousing0",
+    "ObservatoryRidgePylonL",
+    "ObservatoryRidgeBeam",
+    "ObservatoryRidgeSignalFrame",
+    "ObservatoryRidgeSignalPanel",
+    "ObservatoryRidgeLadder",
+    "ObservatoryRidgeBraceL",
+    "ObservatoryRidgeBeacon0",
+    "ObservatoryRidgeSensor0",
     "ProductionAssetMarker"
   ],
   "presentation_only": true

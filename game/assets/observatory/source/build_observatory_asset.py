@@ -24,9 +24,10 @@ def main() -> None:
         {"name": "Observatory weathered concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.30, 0.34, 0.36, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.78}},
         {"name": "Observatory dark alloy", "pbrMetallicRoughness": {"baseColorFactor": [0.11, 0.17, 0.20, 1.0], "metallicFactor": 0.74, "roughnessFactor": 0.42}},
         {"name": "Observatory oxidized trim", "pbrMetallicRoughness": {"baseColorFactor": [0.46, 0.22, 0.09, 1.0], "metallicFactor": 0.42, "roughnessFactor": 0.62}},
-        {"name": "Observatory violet dish", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.12, 0.30, 1.0], "metallicFactor": 0.38, "roughnessFactor": 0.42}, "emissiveFactor": [0.18, 0.08, 0.42]},
-        {"name": "Observatory cyan signal", "pbrMetallicRoughness": {"baseColorFactor": [0.04, 0.24, 0.30, 1.0], "metallicFactor": 0.22, "roughnessFactor": 0.26}, "emissiveFactor": [0.08, 0.72, 0.86]},
-        {"name": "Observatory warm console", "pbrMetallicRoughness": {"baseColorFactor": [0.58, 0.24, 0.06, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.38}, "emissiveFactor": [0.90, 0.20, 0.035]},
+        {"name": "Observatory violet dish", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.12, 0.30, 1.0], "metallicFactor": 0.38, "roughnessFactor": 0.42}, "emissiveFactor": [0.08, 0.03, 0.20]},
+        {"name": "Observatory cyan signal", "pbrMetallicRoughness": {"baseColorFactor": [0.04, 0.24, 0.30, 1.0], "metallicFactor": 0.22, "roughnessFactor": 0.26}, "emissiveFactor": [0.03, 0.34, 0.42]},
+        {"name": "Observatory warm console", "pbrMetallicRoughness": {"baseColorFactor": [0.58, 0.24, 0.06, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.38}, "emissiveFactor": [0.45, 0.10, 0.018]},
+        {"name": "Observatory ridge signal", "pbrMetallicRoughness": {"baseColorFactor": [0.06, 0.30, 0.35, 1.0], "metallicFactor": 0.26, "roughnessFactor": 0.30}, "emissiveFactor": [0.01, 0.16, 0.20]},
     ]
     meshes: list[dict] = []
 
@@ -35,7 +36,7 @@ def main() -> None:
         meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
-    concrete, alloy, rust, dish, cyan, warm = range(6)
+    concrete, alloy, rust, dish, cyan, warm, ridge_signal = range(7)
     mesh_ids = {
         "Platform": mesh("Platform", add_box(builder, (11.0, 0.38, 8.0), concrete)),
         "Control": mesh("Control", add_box(builder, (2.8, 2.4, 2.5), alloy)),
@@ -63,6 +64,14 @@ def main() -> None:
         "MastCollar": mesh("ObservatoryMastCollar", add_cylinder(builder, 0.30, 0.16, rust, 24)),
         "CableAnchor": mesh("ObservatoryCableAnchor", add_cylinder(builder, 0.12, 0.14, warm, 16)),
         "SurveyLightHousing": mesh("ObservatorySurveyLightHousing", add_cylinder(builder, 0.12, 0.16, alloy, 16)),
+        "RidgePylon": mesh("ObservatoryRidgePylon", add_cylinder(builder, 0.22, 6.2, alloy, 18)),
+        "RidgeBeam": mesh("ObservatoryRidgeBeam", add_box(builder, (10.0, 0.18, 0.18), rust)),
+        "RidgeSignalPanel": mesh("ObservatoryRidgeSignalPanel", add_box(builder, (2.8, 1.35, 0.10), ridge_signal)),
+        "RidgeSignalFrame": mesh("ObservatoryRidgeSignalFrame", add_box(builder, (3.15, 1.60, 0.12), alloy)),
+        "RidgeLadder": mesh("ObservatoryRidgeLadder", add_box(builder, (0.08, 4.8, 0.08), rust)),
+        "RidgeBrace": mesh("ObservatoryRidgeBrace", add_cylinder(builder, 0.065, 3.8, alloy, 14)),
+        "RidgeBeacon": mesh("ObservatoryRidgeBeacon", add_uv_sphere(builder, 0.18, cyan, 16, 24)),
+        "RidgeSensor": mesh("ObservatoryRidgeSensor", add_cylinder(builder, 0.10, 0.34, warm, 16)),
     }
 
     nodes: list[dict] = [{
@@ -130,6 +139,21 @@ def main() -> None:
     add_node("ObservatoryMastLight", mesh_ids["Light"], (-4.0, 6.1, 2.2))
     add_node("ObservatoryMastCollar", mesh_ids["MastCollar"], (-4.0, 5.85, 2.2), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "mast_service_collar"})
 
+    # A survey station needs a horizon silhouette in addition to its dish.
+    # This collapsed ridge gantry gives the Observatory a readable civic
+    # infrastructure profile while remaining presentation-only.
+    add_node("ObservatoryRidgePylonL", mesh_ids["RidgePylon"], (-4.7, 3.1, -2.55), extras={"socket_type": "ridge_pylon"})
+    add_node("ObservatoryRidgePylonR", mesh_ids["RidgePylon"], (4.7, 3.1, -2.55), extras={"socket_type": "ridge_pylon"})
+    add_node("ObservatoryRidgeBeam", mesh_ids["RidgeBeam"], (0.0, 6.05, -2.55), rotation=(0.0, 0.0, 0.02), extras={"socket_type": "ridge_beam"})
+    add_node("ObservatoryRidgeSignalFrame", mesh_ids["RidgeSignalFrame"], (0.0, 4.95, -2.51), rotation=(0.0, 0.0, -0.03), extras={"surface": "ridge_signal_frame"})
+    add_node("ObservatoryRidgeSignalPanel", mesh_ids["RidgeSignalPanel"], (0.0, 4.95, -2.44), rotation=(0.0, 0.0, -0.03), extras={"socket_type": "ridge_signal_panel"})
+    add_node("ObservatoryRidgeLadder", mesh_ids["RidgeLadder"], (4.25, 3.0, -2.32), extras={"surface": "ridge_service_ladder"})
+    add_node("ObservatoryRidgeBraceL", mesh_ids["RidgeBrace"], (-4.25, 3.65, -2.5), rotation=(0.0, 0.0, 0.22), extras={"surface": "ridge_brace"})
+    add_node("ObservatoryRidgeBraceR", mesh_ids["RidgeBrace"], (4.25, 3.65, -2.5), rotation=(0.0, 0.0, -0.22), extras={"surface": "ridge_brace"})
+    for index, x in enumerate((-3.2, 0.0, 3.2)):
+        add_node("ObservatoryRidgeBeacon%d" % index, mesh_ids["RidgeBeacon"], (x, 6.42, -2.46), extras={"socket_type": "ridge_beacon"})
+        add_node("ObservatoryRidgeSensor%d" % index, mesh_ids["RidgeSensor"], (x, 6.62, -2.46), extras={"surface": "ridge_sensor"})
+
     for index, side in enumerate((-1.0, 1.0)):
         add_node("ObservatoryCable%d" % index, mesh_ids["Cable"], (side * 2.8, 2.65, 2.3), rotation=(0.0, side * 0.28, side * 0.24), extras={"socket_type": "survey_cable"})
         add_node("ObservatoryCableAnchor%d" % index, mesh_ids["CableAnchor"], (side * 2.8, 2.65, 2.3), rotation=(0.0, math.pi * 0.5, 0.0), extras={"surface": "survey_cable_anchor"})
@@ -150,7 +174,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "observatory.ridge.v1",
-            "required_nodes": ["ObservatoryModel", "ObservatoryDish", "ObservatoryDishRib0", "ObservatoryDishActuator", "ObservatoryFeedSignal", "ObservatoryFeedCollar", "ObservatoryMast", "ObservatoryMastCollar", "ObservatoryConsole", "ObservatoryFrontConsole", "ObservatoryFrontConsoleFrame", "ObservatoryServiceDeck", "ObservatoryControlWindow0", "ObservatoryControlWindowFrame0", "ObservatoryControlWindowMullion0", "ObservatorySurveyRail0", "ObservatoryCableAnchor0", "ObservatorySurveyLightHousing0", "ProductionAssetMarker"],
+            "required_nodes": ["ObservatoryModel", "ObservatoryDish", "ObservatoryDishRib0", "ObservatoryDishActuator", "ObservatoryFeedSignal", "ObservatoryFeedCollar", "ObservatoryMast", "ObservatoryMastCollar", "ObservatoryConsole", "ObservatoryFrontConsole", "ObservatoryFrontConsoleFrame", "ObservatoryServiceDeck", "ObservatoryControlWindow0", "ObservatoryControlWindowFrame0", "ObservatoryControlWindowMullion0", "ObservatorySurveyRail0", "ObservatoryCableAnchor0", "ObservatorySurveyLightHousing0", "ObservatoryRidgePylonL", "ObservatoryRidgeBeam", "ObservatoryRidgeSignalPanel", "ObservatoryRidgeLadder", "ObservatoryRidgeBraceL", "ObservatoryRidgeBeacon0", "ObservatoryRidgeSensor0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
