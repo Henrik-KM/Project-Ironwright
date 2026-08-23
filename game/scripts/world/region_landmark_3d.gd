@@ -13,6 +13,20 @@ const AUTHORED_TENEMENT_MODEL_SCENE: PackedScene = preload("res://assets/tenemen
 const AUTHORED_FLOOD_MARKET_MODEL_SCENE: PackedScene = preload("res://assets/flood_market/flood_market.gltf")
 const AUTHORED_WEST_GRID_MODEL_SCENE: PackedScene = preload("res://assets/west_grid/west_grid.gltf")
 
+const STORY_RECORD_BY_REGION: Dictionary = {
+    &"region.north_ruins": &"story.north_ruins.ledger",
+    &"region.west_grid": &"story.west_grid.reroute",
+    &"region.east_tenements": &"story.east_tenements.bridge",
+    &"region.glasshouse": &"story.glasshouse.cultivation",
+    &"region.flood_market": &"story.flood_market.inventory",
+    &"region.riverworks": &"story.riverworks.pumpwatch",
+    &"region.tram_graveyard": &"story.tram_graveyard.last_route",
+    &"region.cathedral_quarter": &"story.cathedral.choir",
+    &"region.observatory_ridge": &"story.observatory.migration",
+    &"region.buried_labs": &"story.buried_labs.protocol",
+    &"region.root_cistern": &"story.root_cistern.signal",
+}
+
 signal landmark_changed(landmark: RegionLandmark3D)
 
 var region_id: StringName = &"region.unknown"
@@ -37,6 +51,12 @@ var _motion_base_transforms: Dictionary = {}
 var _pressure_read_root: Node3D
 var _pressure_signal_material: StandardMaterial3D
 var _reduced_proxy_root: Node3D
+var _story_witness_root: Node3D
+var _story_witness_lens: Node3D
+var _story_witness_material: StandardMaterial3D
+var _story_witness_light: OmniLight3D
+var _story_archive_source: Node
+var _story_record_id: StringName = &""
 
 
 func configure(data: Dictionary) -> void:
@@ -115,6 +135,20 @@ func set_discovered(value: bool) -> void:
     discovered = value
     _refresh_discovery()
     landmark_changed.emit(self)
+
+
+func connect_story_archive(source: Node) -> void:
+    if _story_archive_source != null and is_instance_valid(_story_archive_source) and _story_archive_source.has_signal(&"record_unlocked"):
+        var previous_callback := Callable(self, "_on_story_record_unlocked")
+        if _story_archive_source.is_connected(&"record_unlocked", previous_callback):
+            _story_archive_source.disconnect(&"record_unlocked", previous_callback)
+    _story_archive_source = source
+    _story_record_id = StringName(str(STORY_RECORD_BY_REGION.get(region_id, "")))
+    if _story_archive_source != null and _story_archive_source.has_signal(&"record_unlocked"):
+        var callback := Callable(self, "_on_story_record_unlocked")
+        if not _story_archive_source.is_connected(&"record_unlocked", callback):
+            _story_archive_source.connect(&"record_unlocked", callback)
+    _refresh_story_witness()
 
 
 func set_pressure(value: float) -> void:
@@ -284,6 +318,7 @@ func _build_visuals() -> void:
     _add_region_surface_finish()
     _add_region_practical_lights()
     _build_pressure_read()
+    _build_story_witness()
     _build_reduced_region_proxy()
     _capture_region_motion_nodes()
 
@@ -657,6 +692,90 @@ func _build_pressure_read() -> void:
             "RegionalPressureSignal%02d" % index
         )
     _refresh_pressure_read()
+
+
+func _build_story_witness() -> void:
+    if _visual_root == null or region_kind == &"sanctuary" or not STORY_RECORD_BY_REGION.has(region_id):
+        return
+    _story_witness_root = Node3D.new()
+    _story_witness_root.name = "RegionalStoryWitness"
+    _visual_root.add_child(_story_witness_root)
+
+    var frame_material := ModelKit3D.material(Color("141c22"), 0.68, 0.42)
+    var plate_material := ModelKit3D.material(Color("202c31"), 0.5, 0.48)
+    var accent_color := _region_color().lightened(0.08)
+    _story_witness_material = ModelKit3D.material(
+        accent_color.darkened(0.64),
+        0.26,
+        0.34,
+        accent_color,
+        0.0
+    )
+    ModelKit3D.add_beveled_box(
+        _story_witness_root,
+        Vector3(4.8, 2.35, 0.2),
+        Vector3(0.0, 1.42, 16.72),
+        frame_material,
+        Vector3.ZERO,
+        "RegionalStoryWitnessFrame",
+        0.16
+    )
+    ModelKit3D.add_surface_panel(
+        _story_witness_root,
+        Vector3(3.65, 1.45, 0.12),
+        Vector3(0.0, 1.42, 16.86),
+        plate_material,
+        _story_witness_material,
+        Vector3.ZERO,
+        "RegionalStoryWitnessPlate"
+    )
+    for index in range(3):
+        ModelKit3D.add_beveled_box(
+            _story_witness_root,
+            Vector3(0.58, 0.08, 0.08),
+            Vector3(-0.84 + float(index) * 0.84, 1.44, 16.97),
+            _story_witness_material,
+            Vector3.ZERO,
+            "RegionalStoryWitnessTrace%02d" % index,
+            0.22
+        )
+    _story_witness_lens = ModelKit3D.add_sphere(
+        _story_witness_root,
+        0.22,
+        Vector3(0.0, 2.04, 17.02),
+        _story_witness_material,
+        Vector3(1.2, 0.68, 0.38),
+        "RegionalStoryWitnessLens"
+    )
+    _story_witness_light = ModelKit3D.add_glow_light(
+        _story_witness_root,
+        Vector3(0.0, 2.04, 17.05),
+        accent_color,
+        0.0,
+        3.6
+    )
+    _story_witness_light.name = "RegionalStoryWitnessLight"
+    _refresh_story_witness()
+
+
+func _on_story_record_unlocked(record_id: StringName, _display_name: String, _description: String) -> void:
+    if record_id == _story_record_id:
+        _refresh_story_witness()
+
+
+func _refresh_story_witness() -> void:
+    if _story_witness_root == null:
+        return
+    var unlocked := false
+    if _story_archive_source != null and is_instance_valid(_story_archive_source) and _story_record_id != &"" and _story_archive_source.has_method(&"has_record"):
+        unlocked = bool(_story_archive_source.call(&"has_record", _story_record_id))
+    if _story_witness_lens != null:
+        _story_witness_lens.visible = unlocked
+    if _story_witness_light != null:
+        _story_witness_light.visible = unlocked
+        _story_witness_light.light_energy = 0.72 if unlocked else 0.0
+    if _story_witness_material != null:
+        _story_witness_material.emission_energy_multiplier = 1.28 if unlocked else 0.0
 
 
 func _refresh_pressure_read() -> void:

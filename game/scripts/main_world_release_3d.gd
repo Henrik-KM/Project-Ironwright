@@ -555,6 +555,14 @@ func _has_casualty_recovery_review_flag() -> bool:
 func _start_presentation_review() -> void:
 	presentation_review_active = true
 	presentation_review_page = 0
+	# The gallery is an authored visual fixture, not a normal run. Reveal every
+	# regional story witness here so the exact Windows review can judge the
+	# physical archive connection while ordinary gameplay remains discovery-gated.
+	if region_director != null:
+		for region_id in PRESENTATION_REVIEW_REGIONS:
+			region_director.discover_region(region_id)
+	if story_archive_director != null:
+		story_archive_director.reconcile_discovered_state()
 	player.input_enabled = false
 	player.set_physics_process(false)
 	player.set_process(false)

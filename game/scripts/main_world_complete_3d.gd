@@ -120,6 +120,10 @@ func _setup_complete_game_services() -> void:
     story_archive_director.record_unlocked.connect(_on_story_record_unlocked)
     story_archive_director.thread_advanced.connect(_on_story_thread_advanced)
     add_child(story_archive_director)
+    for raw_landmark in region_director.landmarks.values():
+        var landmark := raw_landmark as RegionLandmark3D
+        if landmark != null:
+            landmark.connect_story_archive(story_archive_director)
     var aesthetic := get_node_or_null("AestheticDirector") as AestheticDirector3D
     if aesthetic != null:
         aesthetic.connect_story_archive(story_archive_director)

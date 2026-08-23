@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused regional witness storytelling pass
+
+- connected each authored remote district landmark to its stable Town Archive
+  record, with a bounded physical witness panel that remains dark until the
+  corresponding region is genuinely discovered and its clue is unlocked;
+- kept the witness presentation-only: it adds no collision, resource,
+  routing, operation, inventory or recurring player-managed work, and it
+  restores from the existing archive state after save/load;
+- added aesthetic coverage for all eleven regional story records and made the
+  exact presentation-review fixture reveal those records only for visual QA;
+  fresh Windows review passed on 2026-08-23 for North Ruins and West Grid.
+
 ## Focused remote-district material hierarchy pass
 
 - restrained the shared non-sanctuary district perimeter markers from bright
