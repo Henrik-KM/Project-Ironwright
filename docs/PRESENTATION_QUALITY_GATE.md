@@ -678,9 +678,12 @@ species-aware perspective and a restrained enlarged Skitterling shell. This
 keeps the common scavenger's authored anatomy judgeable beside the larger
 predators without scaling its actor root or changing runtime collision,
 movement, ecology or attack ownership. The early and late organic pages were
-reviewed in the current Windows export, and the same export was started into a
-new world with the Heartforge objective and opening movement readable. Broader
-human acceptance of the full actor and encounter-space library remains
+reviewed in the current Windows export with a dedicated close-detail frame:
+closer row spacing, a lifted organic target and a shorter review camera now keep
+wet shells, membranes, legs and secondary anatomy readable at the compact
+gallery size without changing gameplay scale. The same export was started into
+a new world with the Heartforge objective and opening movement readable.
+Broader human acceptance of the full actor and encounter-space library remains
 outstanding.
 
 Automated presence tests only prove the slice exists technically. Actual screenshot/gameplay review decides whether it clears the visual bar. The exact exported presentation gallery now exposes all eleven remote-region landmarks, including the undiscovered Root Cistern page populated with its authored basin, core, signal pylons and root hardware instead of presenting a blank slate; formal human acceptance remains outstanding.

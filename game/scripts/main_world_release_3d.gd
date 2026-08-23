@@ -763,9 +763,14 @@ func _show_presentation_review_page(page: int) -> void:
 			var row_index := 0 if index < mini(4, actors.size()) else 1
 			var row_count := mini(4, actors.size()) if row_index == 0 else actors.size() - mini(4, actors.size())
 			var row_position := index if row_index == 0 else index - mini(4, actors.size())
-			var spacing := 3.4 if presentation_review_page >= 1 else 4.2
+			# The organic roster needs a true detail frame. Its authored shells
+			# carry fine veins, membrane ribs, crown plates and threat sockets that
+			# collapse into one silhouette band at the old spacing. Keep the actor
+			# roots and gameplay scale untouched; only the bounded review fixture
+			# gets a closer two-row composition.
+			var spacing := 2.9 if presentation_review_page >= 1 else 4.2
 			var centered_x := (float(row_position) - float(row_count - 1) * 0.5) * spacing
-			var row_z := 0.9 if row_index == 0 else -2.15
+			var row_z := 0.82 if row_index == 0 else -1.72
 			if presentation_review_page == 0:
 				row_z = 0.7 if row_index == 0 else -2.5
 			row_z += _presentation_review_depth_offset(actor)
@@ -792,9 +797,10 @@ func _show_presentation_review_page(page: int) -> void:
 		presentation_review_camera_target = region_director.center(region_id) + Vector3.UP * 2.0
 		presentation_review_camera_desired = presentation_review_camera_target + Vector3(0.0, 12.0, 19.0)
 	else:
-		var core_target_height := 0.95 if presentation_review_page >= 1 else 1.45
-		presentation_review_camera_target = Vector3(0.0, core_target_height, -0.7)
-		presentation_review_camera_desired = Vector3(0.0, 4.8, 12.5)
+		var core_target_height := 1.08 if presentation_review_page >= 1 else 1.45
+		var core_target_depth := -0.38 if presentation_review_page >= 1 else -0.7
+		presentation_review_camera_target = Vector3(0.0, core_target_height, core_target_depth)
+		presentation_review_camera_desired = Vector3(0.0, 4.45, 11.15) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5)
 	_set_presentation_review_stage_for_page(is_region_page)
 	_update_presentation_review_camera(1.0)
 
