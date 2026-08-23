@@ -14,6 +14,25 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 
+GENERATED_PARTS = {
+    ".git",
+    ".godot",
+    ".import",
+    "__pycache__",
+    "build",
+    "dist",
+    "exports",
+    "saves",
+    "user_data",
+}
+GENERATED_FILE_NAMES = {
+    "MANIFEST.sha256",
+    "export.cfg",
+    "export_presets.cfg",
+    "project_ironwight_survival_repo.zip",
+}
+GENERATED_SUFFIXES = {".app", ".exe", ".import", ".log", ".pck", ".uid"}
+
 REQUIRED_PATHS = [
     "README.md",
     "AGENTS.md",
@@ -313,13 +332,15 @@ def validate_local_markdown_links() -> None:
 
 def iter_manifest_files() -> list[Path]:
     files: list[Path] = []
-    excluded_names = {"MANIFEST.sha256", "project_ironwight_survival_repo.zip"}
     for path in ROOT.rglob("*"):
         if not path.is_file():
             continue
-        if path.name in excluded_names:
+        relative = path.relative_to(ROOT)
+        if path.name in GENERATED_FILE_NAMES:
             continue
-        if any(part in {".git", ".godot", "__pycache__"} for part in path.parts):
+        if any(part in GENERATED_PARTS for part in relative.parts):
+            continue
+        if path.suffix.lower() in GENERATED_SUFFIXES:
             continue
         files.append(path)
     return sorted(files, key=lambda item: item.relative_to(ROOT).as_posix())
