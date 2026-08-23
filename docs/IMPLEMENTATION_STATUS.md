@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused release-population index reuse pass
+
+- exposed the spatial index's current flat actor lists alongside its existing
+  cell grids, so active/reduced-detail evaluation reuses the same population
+  snapshot already built for release targeting;
+- retained a scene-group fallback for isolated director tests and preserved
+  the active, medium and reduced-detail budgets, distance bands and target
+  selection contracts;
+- added release assertions that the indexed actor lists remain complete for
+  organic enemies and friendly robots; the 192-actor benchmark and stress
+  runner continue to pass, while target-hardware profiling remains an open
+  commercial gate.
+
 ## Focused title-screen atmosphere readability pass
 
 - lifted the bounded title-only forge-and-service atmosphere so the Heartforge
