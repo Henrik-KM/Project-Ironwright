@@ -250,6 +250,9 @@ func _run_all() -> void:
             for raw_region_id in expected_regional_records:
                 var expected_record: StringName = expected_regional_records[raw_region_id]
                 _expect(story_archive.has_record(expected_record), "Discovering %s must unlock its persistent Town Archive record." % raw_region_id)
+                var discovered_landmark := region_director.get_landmark(StringName(raw_region_id))
+                var discovered_witness_lens := discovered_landmark.find_child("RegionalStoryWitnessLens", true, false) as Node3D if discovered_landmark != null else null
+                _expect(discovered_witness_lens != null and discovered_witness_lens.visible, "The physical witness at %s must light when its Town Archive record is recovered." % raw_region_id)
             var witness_lens_02 := camp.find_child("WitnessSignalLens02", true, false) as Node3D
             _expect(witness_lens_02 != null and witness_lens_02.visible, "A sustained discovery run must progressively light the sanctuary's later memory relay lens.")
         for raw_region_id in region_director.region_data.keys():
@@ -267,6 +270,7 @@ func _run_all() -> void:
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/RegionPracticalLight0") != null and landmark.get_node_or_null("PersistentRegionGeometry/RegionPracticalLight1") != null, "Each non-sanctuary region must receive two bounded palette-aware practical lights.")
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/RegionalPressureRead") != null, "Each discovered non-sanctuary region must expose a bounded pressure-growth presentation layer.")
             _expect(landmark.find_child("RegionalPressurePlate00", true, false) != null and landmark.find_child("RegionalPressureSignal00", true, false) != null, "Regional pressure growth must expose stable plate and signal anatomy sockets.")
+            _expect(landmark.find_child("RegionalStoryWitnessFrame", true, false) != null and landmark.find_child("RegionalStoryWitnessPlate", true, false) != null, "Each non-sanctuary region must expose a bounded physical Town Archive witness panel.")
             _expect(landmark.get_node_or_null("ReducedRegionProxy") != null, "Each non-sanctuary region must expose a bounded coarse proxy for distant presentation LOD.")
             var district_breadth := landmark.get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing/DistrictBreadthLayer") as Node3D
             _expect(district_breadth != null, "Each discovered non-sanctuary region must expose a bounded district-breadth presentation layer.")
