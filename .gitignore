@@ -27,6 +27,7 @@ venv/
 Thumbs.db
 
 # Local diagnostics and saves
+MANIFEST.sha256
 *.log
 game/user_data/
 game/saves/
