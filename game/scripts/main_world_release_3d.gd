@@ -747,7 +747,7 @@ func _show_presentation_review_page(page: int) -> void:
 		presentation_review_camera_desired = presentation_review_camera_target + Vector3(0.0, 12.0, 19.0)
 	else:
 		presentation_review_camera_target = Vector3(0.0, 1.45, -0.7)
-		presentation_review_camera_desired = Vector3(0.0, 5.9, 16.8)
+		presentation_review_camera_desired = Vector3(0.0, 4.8, 12.5)
 	_set_presentation_review_stage_for_page(is_region_page)
 	_update_presentation_review_camera(1.0)
 
@@ -804,7 +804,7 @@ func _update_presentation_review_camera(delta: float) -> void:
 	var target := presentation_review_camera_target
 	var desired := presentation_review_camera_desired
 	camera.global_position = camera.global_position.lerp(desired, 1.0 - exp(-delta * 5.0))
-	camera.fov = 52.0 if presentation_review_page >= 3 else 46.0
+	camera.fov = 52.0 if presentation_review_page >= 3 else 43.0
 	camera.look_at(target, Vector3.UP)
 
 
