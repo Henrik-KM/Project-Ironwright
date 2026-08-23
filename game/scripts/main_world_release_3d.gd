@@ -785,6 +785,8 @@ func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3
 		return Vector3(8.2, 9.2, 14.4)
 	if region_id == &"region.tram_graveyard":
 		return Vector3(-8.0, 9.2, 14.6)
+	if region_id == &"region.flood_market":
+		return Vector3(8.5, 9.4, 15.4)
 	if region_id == &"region.cathedral_quarter":
 		return Vector3(0.0, 10.5, 17.0)
 	if region_id == &"region.observatory_ridge":
