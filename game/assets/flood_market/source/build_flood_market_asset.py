@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "flood_market.gltf"
@@ -39,38 +39,38 @@ def main() -> None:
 
     frame, canopy, rust, signal_ceramic, water, waterline, sign, organic = range(8)
     mesh_ids = {
-        "Floor": mesh("MarketFloor", add_box(builder, (18.0, 0.16, 14.0), frame)),
-        "Post": mesh("MarketPost", add_box(builder, (0.16, 3.2, 0.16), frame)),
-        "Beam": mesh("MarketBeam", add_box(builder, (0.18, 0.18, 6.2), rust)),
-        "Canopy": mesh("MarketCanopy", add_box(builder, (6.8, 0.16, 3.1), canopy)),
-        "Stall": mesh("MarketStall", add_box(builder, (3.8, 0.28, 1.4), rust)),
-        "Water": mesh("MarketWater", add_box(builder, (3.6, 0.04, 1.5), water)),
+        "Floor": mesh("MarketFloor", add_beveled_box(builder, (18.0, 0.16, 14.0), frame, 0.04)),
+        "Post": mesh("MarketPost", add_beveled_box(builder, (0.16, 3.2, 0.16), frame, 0.03)),
+        "Beam": mesh("MarketBeam", add_beveled_box(builder, (0.18, 0.18, 6.2), rust, 0.03)),
+        "Canopy": mesh("MarketCanopy", add_beveled_box(builder, (6.8, 0.16, 3.1), canopy, 0.045)),
+        "Stall": mesh("MarketStall", add_beveled_box(builder, (3.8, 0.28, 1.4), rust, 0.06)),
+        "Water": mesh("MarketWater", add_beveled_box(builder, (3.6, 0.04, 1.5), water, 0.012)),
         "Waterline": mesh("MarketWaterline", add_box(builder, (3.0, 0.035, 0.06), waterline)),
-        "Sign": mesh("MarketSign", add_box(builder, (1.6, 0.72, 0.08), sign)),
+        "Sign": mesh("MarketSign", add_beveled_box(builder, (1.6, 0.72, 0.08), sign, 0.02)),
         "Crane": mesh("MarketCrane", add_cylinder(builder, 0.08, 4.8, frame, 18)),
         "Growth": mesh("MarketGrowth", add_uv_sphere(builder, 0.52, organic, 18, 28)),
         "Glow": mesh("MarketGlow", add_uv_sphere(builder, 0.14, waterline, 16, 24)),
         "Cable": mesh("MarketCable", add_cylinder(builder, 0.04, 4.2, rust, 10)),
-        "Marker": mesh("MarketMarker", add_box(builder, (0.7, 0.08, 0.7), rust)),
-        "CanopyRib": mesh("MarketCanopyRib", add_box(builder, (0.10, 0.12, 2.82), rust)),
-        "StallFrame": mesh("MarketStallFrame", add_box(builder, (3.9, 0.10, 1.55), frame)),
+        "Marker": mesh("MarketMarker", add_beveled_box(builder, (0.7, 0.08, 0.7), rust, 0.025)),
+        "CanopyRib": mesh("MarketCanopyRib", add_beveled_box(builder, (0.10, 0.12, 2.82), rust, 0.02)),
+        "StallFrame": mesh("MarketStallFrame", add_beveled_box(builder, (3.9, 0.10, 1.55), frame, 0.025)),
         "WaterFoam": mesh("MarketWaterFoam", add_box(builder, (2.65, 0.025, 0.10), waterline)),
         "CraneWheel": mesh("MarketCraneWheel", add_cylinder(builder, 0.26, 0.12, rust, 20)),
         "GrowthTendril": mesh("MarketGrowthTendril", add_cylinder(builder, 0.045, 0.78, organic, 14)),
         "GlowHousing": mesh("MarketGlowHousing", add_cylinder(builder, 0.11, 0.14, frame, 16)),
-        "ServiceBox": mesh("MarketServiceBox", add_box(builder, (0.72, 0.32, 0.64), frame)),
+        "ServiceBox": mesh("MarketServiceBox", add_beveled_box(builder, (0.72, 0.32, 0.64), frame, 0.04)),
         "ServiceLatch": mesh("MarketServiceLatch", add_box(builder, (0.12, 0.16, 0.3), waterline)),
-        "CargoCrate": mesh("MarketCargoCrate", add_box(builder, (0.72, 0.62, 0.72), rust)),
+        "CargoCrate": mesh("MarketCargoCrate", add_beveled_box(builder, (0.72, 0.62, 0.72), rust, 0.05)),
         "CargoBand": mesh("MarketCargoBand", add_box(builder, (0.8, 0.08, 0.08), sign)),
-        "DrainGrate": mesh("MarketDrainGrate", add_box(builder, (1.1, 0.06, 0.42), frame)),
+        "DrainGrate": mesh("MarketDrainGrate", add_beveled_box(builder, (1.1, 0.06, 0.42), frame, 0.018)),
         "CanopyAnchor": mesh("MarketCanopyAnchor", add_cylinder(builder, 0.12, 0.14, rust, 16)),
         "HangingHook": mesh("MarketHangingHook", add_cylinder(builder, 0.05, 0.32, frame, 12)),
         "TideGatePost": mesh("MarketTideGatePost", add_cylinder(builder, 0.18, 5.6, frame, 18)),
-        "TideGateBeam": mesh("MarketTideGateBeam", add_box(builder, (15.2, 0.22, 0.22), rust)),
-        "TideGateFin": mesh("MarketTideGateFin", add_box(builder, (0.12, 2.4, 0.72), signal_ceramic)),
-        "FloodDeck": mesh("MarketFloodDeck", add_box(builder, (4.8, 0.16, 1.35), frame)),
-        "FloodDeckRail": mesh("MarketFloodDeckRail", add_box(builder, (0.07, 0.62, 1.28), rust)),
-        "Banner": mesh("MarketBanner", add_box(builder, (1.35, 1.0, 0.06), canopy)),
+        "TideGateBeam": mesh("MarketTideGateBeam", add_beveled_box(builder, (15.2, 0.22, 0.22), rust, 0.04)),
+        "TideGateFin": mesh("MarketTideGateFin", add_beveled_box(builder, (0.12, 2.4, 0.72), signal_ceramic, 0.025)),
+        "FloodDeck": mesh("MarketFloodDeck", add_beveled_box(builder, (4.8, 0.16, 1.35), frame, 0.04)),
+        "FloodDeckRail": mesh("MarketFloodDeckRail", add_beveled_box(builder, (0.07, 0.62, 1.28), rust, 0.02)),
+        "Banner": mesh("MarketBanner", add_beveled_box(builder, (1.35, 1.0, 0.06), canopy, 0.02)),
         "TideBeacon": mesh("MarketTideBeacon", add_uv_sphere(builder, 0.18, signal_ceramic, 16, 24)),
         "TideBeaconStem": mesh("MarketTideBeaconStem", add_cylinder(builder, 0.045, 0.52, frame, 12)),
         "ForegroundWater": mesh("MarketForegroundWater", add_box(builder, (4.2, 0.035, 1.2), water)),

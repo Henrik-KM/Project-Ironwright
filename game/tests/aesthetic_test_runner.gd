@@ -393,6 +393,9 @@ func _run_all() -> void:
                 _expect(landmark.find_child("FloodMarketTideGatePost0", true, false) != null and landmark.find_child("FloodMarketTideGateBeam", true, false) != null and landmark.find_child("FloodMarketTideGateFin0", true, false) != null, "Flood Market must expose a readable tide-control arch and structural fins.")
                 _expect(landmark.find_child("FloodMarketTideBeacon0", true, false) != null and landmark.find_child("FloodMarketFloodDeck0", true, false) != null and landmark.find_child("FloodMarketFloodDeckRail0L", true, false) != null, "Flood Market must expose elevated flood-deck and signal hardware for vertical encounter identity.")
                 _expect(landmark.find_child("FloodMarketBanner0", true, false) != null and landmark.find_child("FloodMarketForegroundWater0", true, false) != null and landmark.find_child("FloodMarketForegroundFoam0", true, false) != null, "Flood Market must carry suspended vendor banners and a readable foreground waterline.")
+                var market_canopy := landmark.find_child("FloodMarketCanopyRoof0", true, false) as MeshInstance3D
+                var market_stall := landmark.find_child("FloodMarketStall0", true, false) as MeshInstance3D
+                _expect(market_canopy != null and market_stall != null and _mesh_vertex_count(market_canopy) >= 48 and _mesh_vertex_count(market_stall) >= 48, "Flood Market authored canopy and stall must retain beveled high-definition geometry.")
                 var market_light := landmark.find_child("FloodMarketWaterline0", true, false) as Node3D
                 var market_growth := landmark.find_child("FloodMarketOrganicGrowth0", true, false) as Node3D
                 _expect(market_light != null and market_growth != null, "Flood Market must expose named waterline and organic-growth motion sockets.")
