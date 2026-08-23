@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Cistern Apex secondary-animation pass
+
+- extended the late-game Apex clips with living membrane flex, jaw flare,
+  feeding bite and retreat-fold beats, preserving its authored sockets,
+  animation names and gameplay ownership;
+- added source documentation and native track-count coverage so the late
+  predator cannot silently regress to body-only motion;
+- this pass is awaiting regenerated-import validation and exact Windows
+  late-organic page 3/14 review before merge.
+
 ## Focused Veilstalker high-definition face pass
 
 - rebuilt the canonical Veilstalker source/glTF with protected threat-eye rims,
