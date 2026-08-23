@@ -80,9 +80,12 @@ jobs:
           sha256sum ProjectIronwright-1.0.0-rc.1-Windows.zip ProjectIronwright-1.0.0-rc.1-Linux.tar.gz >> SHA256SUMS.txt
 
       - name: Write machine-readable release certificate
-        env:
-          CERTIFIED_SHA: ${{ github.sha }}
         run: |
+          CERTIFIED_SHA="$(git rev-parse HEAD)"
+          if git diff --quiet HEAD^ HEAD; then
+            CERTIFIED_SHA="$(git rev-parse HEAD^)"
+          fi
+          export CERTIFIED_SHA
           python3 - <<'PY'
           import hashlib
           import json
