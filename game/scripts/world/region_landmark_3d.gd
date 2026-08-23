@@ -999,7 +999,10 @@ func _add_region_surface_finish() -> void:
     var finish_metal := ModelKit3D.material(Color("3d4b4f"), 0.58, 0.46)
     var finish_dark := ModelKit3D.material(Color("20282b"), 0.76, 0.38)
     var finish_rust := ModelKit3D.material(Color("864a32"), 0.32, 0.7)
-    var finish_glow := ModelKit3D.material(_region_color().darkened(0.5), 0.3, 0.42, _region_color(), 1.25)
+    # District markers should guide the eye without becoming a white perimeter
+    # around the authored landmark. Keep the palette identity, but reserve
+    # strong emission for focal machinery, beacons and pressure signals.
+    var finish_glow := ModelKit3D.material(_region_color().darkened(0.7), 0.3, 0.52, _region_color(), 0.42)
 
     # Remote districts need a readable foreground when the player reaches
     # them physically. This is presentation-only geometry: it creates no

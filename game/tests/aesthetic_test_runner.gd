@@ -259,6 +259,9 @@ func _run_all() -> void:
             _expect(landmark.get_node_or_null("PersistentRegionCollision/PersistentRegionGround") != null, "Each non-sanctuary region must retain a persistent ground collision shape for physical traversal.")
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing") != null, "Each non-sanctuary region must receive stable authored encounter dressing on discovery.")
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/AuthoredDistrictSurfaceFinish") != null, "Each non-sanctuary region must receive a bounded authored surface-finish layer.")
+            var regional_marker := landmark.find_child("RegionalFrontMarkerCore", true, false) as MeshInstance3D
+            var regional_marker_material := regional_marker.get_active_material(0) as StandardMaterial3D if regional_marker != null else null
+            _expect(regional_marker_material != null and regional_marker_material.emission_energy_multiplier <= 0.65, "Remote district perimeter markers must preserve material hierarchy instead of blooming over the authored landmark.")
             _expect(landmark.find_child("DistrictSurfaceSeam00", true, false) != null and landmark.find_child("DistrictSurfaceDebris00", true, false) != null, "Each non-sanctuary region must break its broad apron into authored seams and debris.")
             _expect(landmark.find_child("DistrictSurfaceDrain00", true, false) != null and landmark.find_child("DistrictSurfaceEdgeBraceL", true, false) != null, "Each non-sanctuary region must expose bounded service and edge hardware.")
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/RegionPracticalLight0") != null and landmark.get_node_or_null("PersistentRegionGeometry/RegionPracticalLight1") != null, "Each non-sanctuary region must receive two bounded palette-aware practical lights.")
