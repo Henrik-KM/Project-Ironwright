@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused Burrower secondary-animation pass
+
+- extended the drill predator's authored clips with bore-lamp, paired-fin,
+  jaw, leg and drill-ring motion across breathing, locomotion, threat, impact,
+  feeding, nest-watch, retreat and collapse responses;
+- regenerated only the Burrower runtime asset from its original authored
+  high-definition builder and added native track-count coverage so its
+  readable drill-and-lamp silhouette cannot silently regress to torso-only
+  motion;
+- regenerated-import validation passed, and exact exported Windows
+  presentation plus normal-flow review passed on 2026-08-23; broader human
+  visual acceptance remains an open commercial gate.
+
 ## Focused Razorhound secondary-animation pass
 
 - extended the common predator's authored clips with ear, tail, cheek-plate,
