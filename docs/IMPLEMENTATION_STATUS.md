@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused remote-district material hierarchy pass
+
+- restrained the shared non-sanctuary district perimeter markers from bright
+  white bloom to low-energy region-coded signal hardware, keeping stronger
+  emission reserved for focal machines, beacons and pressure cues;
+- preserved the authored district surface finish, seams, debris, drains,
+  palette identity and traversal contracts while improving landmark
+  separation in the exact release presentation gallery;
+- added aesthetic coverage for the marker emission budget; North Ruins and
+  West Grid exact Windows review remain the representative visual checks.
+
 ## Focused release-population index reuse pass
 
 - exposed the spatial index's current flat actor lists alongside its existing

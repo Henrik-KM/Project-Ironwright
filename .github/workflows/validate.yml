@@ -78,8 +78,15 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
+          set +e
           output="$(godot --headless --path game --verbose --script res://tests/release_test_runner.gd 2>&1)"
+          status=$?
+          set -e
           printf '%s\n' "$output"
+          if [ "$status" -ne 0 ]; then
+            echo "Commercial release tests exited with status $status."
+            exit "$status"
+          fi
           if printf '%s\n' "$output" | grep -Eq 'Leaked instance:|ObjectDB instances were leaked|Resource still in use:|resources still in use at exit|Cannot get path of node'; then
             echo "Release validation emitted a teardown leak or orphan-node diagnostic."
             exit 1
