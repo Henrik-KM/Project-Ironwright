@@ -41,6 +41,8 @@ var _body_root: Node3D
 var _pistol_muzzle: Node3D
 var _death_visual_root: Node3D
 var _death_signal_material: StandardMaterial3D
+var _progression_visual_root: Node3D
+var _progression_visual_signature: String = ""
 
 
 func _ready() -> void:
@@ -286,6 +288,153 @@ func _build_visuals() -> void:
 
     _pistol_muzzle = _find_visual_node(_body_root, &"PistolMuzzle")
     _build_death_presentation()
+
+
+func apply_progression_visuals(unlocked_effects: Dictionary, heartforge_tier: int) -> void:
+    # The Mechromancer is the player's visible measure of the machine society's
+    # growth. Keep this as a small, derived presentation layer: it must survive
+    # save/load through the progression state without changing the gameplay
+    # capsule, targeting silhouette, sockets or routine player workload.
+    if _body_root == null or not is_instance_valid(_body_root):
+        return
+    var active_effect_names := PackedStringArray()
+    for raw_effect in unlocked_effects.keys():
+        if bool(unlocked_effects.get(raw_effect, false)):
+            active_effect_names.append(str(raw_effect))
+    active_effect_names.sort()
+    var signature := "%d|%s" % [clampi(heartforge_tier, 1, 5), ",".join(active_effect_names)]
+    if signature == _progression_visual_signature:
+        return
+    _progression_visual_signature = signature
+    if _progression_visual_root != null and is_instance_valid(_progression_visual_root):
+        # This layer is entirely derived and owns no active gameplay state;
+        # free it synchronously so a rebuild cannot be silently renamed by a
+        # still-queued previous layer.
+        _progression_visual_root.free()
+    _progression_visual_root = Node3D.new()
+    _progression_visual_root.name = "MechromancerProgressionVisuals"
+    # Keep the derived layer on the gameplay actor rather than inside the
+    # imported glTF scene. This avoids import-owned child-name rewriting and
+    # keeps the layer's presentation scale explicit and reviewable.
+    _progression_visual_root.scale = Vector3.ONE * 1.28
+    add_child(_progression_visual_root)
+
+    var tier := clampi(heartforge_tier, 1, 5)
+    if tier < 2:
+        return
+
+    var dark_steel := ModelKit3D.material(Color("27343a"), 0.76, 0.3)
+    var worn_steel := ModelKit3D.material(Color("6b6253"), 0.68, 0.42)
+    var signal_cyan := ModelKit3D.material(Color("6baeb1"), 0.42, 0.3, Color("73e5e3"), 2.1)
+    var forge_amber := ModelKit3D.material(Color("a06a36"), 0.58, 0.34, Color("ffb35b"), 1.7)
+    var bio_violet := ModelKit3D.material(Color("765a72"), 0.34, 0.44, Color("d58cbf"), 1.1)
+
+    # Tier II is a practical field retrofit: a shoulder brace and tool-coupler
+    # make the first Heartforge evolution visible without turning the human
+    # engineer into a robot mannequin.
+    ModelKit3D.add_beveled_box(
+        _progression_visual_root,
+        Vector3(0.3, 0.08, 0.24),
+        Vector3(0.43, -0.26, 1.66),
+        worn_steel,
+        Vector3(0.0, 0.0, -0.08),
+        "MechromancerTierIIShoulderBrace",
+        0.16
+    )
+    ModelKit3D.add_surface_panel(
+        _progression_visual_root,
+        Vector3(0.24, 0.09, 0.22),
+        Vector3(-0.42, -0.31, 1.34),
+        dark_steel,
+        signal_cyan,
+        Vector3(0.0, 0.0, 0.12),
+        "MechromancerTierIIToolCoupler"
+    )
+    ModelKit3D.add_cylinder(
+        _progression_visual_root,
+        0.035,
+        0.28,
+        Vector3(-0.43, -0.24, 1.52),
+        signal_cyan,
+        Vector3(PI * 0.5, 0.0, 0.0),
+        "MechromancerTierIISignalPin"
+    )
+
+    if tier >= 3 or unlocked_effects.has(&"unlock_machine_society"):
+        # Tier III adds a protected cognition rail and paired cable guides. The
+        # asymmetry keeps the field-kit identity readable from the rear camera.
+        ModelKit3D.add_beveled_box(
+            _progression_visual_root,
+            Vector3(0.16, 0.08, 0.48),
+            Vector3(-0.25, 0.55, 1.46),
+            dark_steel,
+            Vector3(0.0, 0.08, 0.0),
+            "MechromancerTierIIICognitionRail",
+            0.18
+        )
+        for side in [-1.0, 1.0]:
+            ModelKit3D.add_tapered_cylinder(
+                _progression_visual_root,
+                0.022,
+                0.032,
+                0.42,
+                Vector3(-0.25 + side * 0.1, 0.5, 1.36),
+                forge_amber if side < 0.0 else signal_cyan,
+                Vector3(0.18, 0.0, side * 0.22),
+                "MechromancerTierIIICableGuide%s" % ("Left" if side < 0.0 else "Right")
+            )
+        ModelKit3D.add_sphere(
+            _progression_visual_root,
+            0.045,
+            Vector3(-0.25, 0.49, 1.74),
+            signal_cyan,
+            Vector3(1.0, 0.72, 0.72),
+            "MechromancerTierIIICognitionNode"
+        )
+
+    if tier >= 4 or unlocked_effects.has(&"unlock_adaptive_defence"):
+        # Tier IV is a small biological-signal reader, not a new weapon: it
+        # communicates the adaptive sensor fantasy at shoulder distance.
+        ModelKit3D.add_beveled_box(
+            _progression_visual_root,
+            Vector3(0.2, 0.07, 0.3),
+            Vector3(0.28, -0.3, 1.8),
+            bio_violet,
+            Vector3(-0.18, 0.0, 0.08),
+            "MechromancerTierIVBioSensorHousing",
+            0.2
+        )
+        ModelKit3D.add_sphere(
+            _progression_visual_root,
+            0.055,
+            Vector3(0.28, -0.35, 1.8),
+            bio_violet,
+            Vector3(1.2, 0.42, 0.8),
+            "MechromancerTierIVBioSensorLens"
+        )
+
+    if tier >= 5 or unlocked_effects.has(&"unlock_final_protocol_research"):
+        # Tier V closes the arc with a restrained protocol clasp and heat vent;
+        # the silhouette remains a vulnerable human carrying more responsibility.
+        ModelKit3D.add_beveled_box(
+            _progression_visual_root,
+            Vector3(0.22, 0.07, 0.2),
+            Vector3(0.0, -0.35, 1.52),
+            forge_amber,
+            Vector3(0.0, 0.0, 0.0),
+            "MechromancerTierVProtocolClasp",
+            0.18
+        )
+        ModelKit3D.add_louvered_panel(
+            _progression_visual_root,
+            Vector3(0.18, 0.12, 0.06),
+            Vector3(0.18, 0.5, 1.47),
+            dark_steel,
+            forge_amber,
+            Vector3(0.0, 0.0, -0.12),
+            "MechromancerTierVHeatVent",
+            3
+        )
 
 
 func _build_death_presentation() -> void:

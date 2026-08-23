@@ -459,6 +459,16 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     world._show_presentation_review_page(0)
     await process_frame
     _expect(world.presentation_review_camera_desired.z - world.presentation_review_camera_target.z <= 13.3, "Core presentation pages must use a closer roster framing for authored detail review.")
+    world.player.apply_progression_visuals({
+        &"unlock_machine_society": true,
+        &"unlock_adaptive_defence": true,
+        &"unlock_final_protocol_research": true,
+        &"machine_signal_lattice": true,
+    }, 5)
+    await process_frame
+    _expect(world.player.find_child("MechromancerProgressionVisuals", true, false) != null, "The Mechromancer must expose a derived progression visual layer.")
+    _expect(world.player.find_child("MechromancerTierIIShoulderBrace", true, false) != null and world.player.find_child("MechromancerTierIIICognitionRail", true, false) != null, "Heartforge and machine-society progression must add protected field and cognition hardware to the player model.")
+    _expect(world.player.find_child("MechromancerTierIVBioSensorLens", true, false) != null and world.player.find_child("MechromancerTierVProtocolClasp", true, false) != null, "Late progression must add adaptive sensing and protocol hardware without replacing the field-engineer silhouette.")
     world._show_presentation_review_page(1)
     await process_frame
     _expect(world.presentation_review_camera_desired.z - world.presentation_review_camera_target.z <= 11.6, "Organic presentation pages must use a dedicated close detail frame for authored anatomy review.")
