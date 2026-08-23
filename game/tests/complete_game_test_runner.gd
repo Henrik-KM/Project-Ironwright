@@ -84,11 +84,14 @@ func _run_all() -> void:
     _expect(FileAccess.file_exists(TEST_SAVE_PATH), "The complete-world save hook must write while a long-range group is in flight.")
     world._load_game()
     _expect(StringName(world.long_operation_director.active_operation.get("id", &"")) == checkpoint_id, "Loading must restore the active long-range operation identity.")
+    var primary_west_route_before_block := world.region_director.route_from_heartforge(&"region.west_grid", world.heartforge.global_position)
+    world.long_operation_director.active_operation["anchor"] = primary_west_route_before_block[1]
+    world.long_operation_director.active_operation["route_index"] = 2
     var route_blocker := Node3D.new()
     route_blocker.name = "RouteRecoveryOrganicBlocker"
     route_blocker.add_to_group(&"organic_enemies")
     world.add_child(route_blocker)
-    route_blocker.global_position = world.long_operation_director.active_operation.get("anchor", world.heartforge.global_position)
+    route_blocker.global_position = primary_west_route_before_block[1]
     world.long_operation_director._update_active_operation(2.5)
     _expect(int(world.long_operation_director.active_operation.get("route_recovery_count", 0)) == 1, "A sustained organic blockage must trigger one bounded route recovery attempt.")
     _expect(bool(world.long_operation_director.active_operation.get("route_recovery_active", false)), "A route recovery must remain an explicit active formation decision until the side route is cleared.")
@@ -98,15 +101,19 @@ func _run_all() -> void:
     _expect(recovery_beacon != null and recovery_beacon.global_position.distance_to(recovery_target) < 0.1, "The autonomous-detour beacon must sit on the real inserted recovery waypoint.")
     var learned_west_route: Variant = world.long_operation_director.route_memory.get("region.west_grid", {})
     _expect(learned_west_route is Dictionary and float((learned_west_route as Dictionary).get("risk", 0.0)) >= 1.0, "A route disruption must become bounded persistent route-risk memory.")
-    _expect(world.region_director.route_variant_count(&"region.west_grid") == 1, "The West Grid must expose one authored alternate street route for adaptive selection.")
-    _expect(world.long_operation_director._preferred_route_variant(&"region.west_grid") == 1, "Repeated route disruption must make the authored alternate route the next autonomous preference.")
+    _expect(learned_west_route is Dictionary and bool((learned_west_route as Dictionary).get("has_block_position", false)), "A route disruption must remember the physical blockage position for future authored-route scoring.")
+    _expect(learned_west_route is Dictionary and (learned_west_route as Dictionary).get("last_block_position", Vector3.ZERO).distance_to(route_blocker.global_position) < 0.1, "Route memory must record the actual obstruction position rather than only a region-wide risk value.")
+    _expect(world.region_director.route_variant_count(&"region.west_grid") == 2, "The West Grid must expose two authored alternate street routes for segment-aware adaptive selection.")
+    _expect(world.long_operation_director._preferred_route_variant(&"region.west_grid") == 2, "A blockage on the primary street must make the clearest authored alternate route the next autonomous preference.")
     var learned_route_preview := world.long_operation_director.route_preview(&"operation.west_grid_survey")
-    _expect(int(learned_route_preview.get("route_variant", 0)) == 1, "An operation preview must surface the route-memory alternate selected for the West Grid.")
-    _expect(str(learned_route_preview.get("route_brief", "")).contains("canal service road") and str(learned_route_preview.get("route_brief", "")).contains("waypoint"), "An operation preview must explain the remembered street route and bounded waypoint count.")
+    _expect(int(learned_route_preview.get("route_variant", 0)) == 2, "An operation preview must surface the clearest route-memory alternate selected for the West Grid.")
+    _expect(str(learned_route_preview.get("route_brief", "")).contains("rail-yard cut-through") and str(learned_route_preview.get("route_brief", "")).contains("waypoint"), "An operation preview must explain the remembered street route and bounded waypoint count.")
     _expect(float(learned_route_preview.get("route_distance", 0.0)) > 0.0, "An operation preview must expose a non-zero physical travel distance.")
     var primary_west_route := world.region_director.route_from_heartforge(&"region.west_grid", world.heartforge.global_position)
     var alternate_west_route := world.region_director.route_from_heartforge_variant(&"region.west_grid", world.heartforge.global_position, 1)
-    _expect(primary_west_route.size() == alternate_west_route.size() and primary_west_route[1] != alternate_west_route[1], "The alternate route must change the physical street waypoints rather than only renaming the report.")
+    var clearest_west_route := world.region_director.route_from_heartforge_variant(&"region.west_grid", world.heartforge.global_position, 2)
+    _expect(primary_west_route.size() == alternate_west_route.size() and primary_west_route[1] != alternate_west_route[1], "The first alternate route must change the physical street waypoints rather than only renaming the report.")
+    _expect(primary_west_route.size() == clearest_west_route.size() and primary_west_route[1] != clearest_west_route[1], "The second alternate route must change the physical street waypoints rather than only renaming the report.")
     var route_contract_regions: Array[StringName] = [
         &"region.north_ruins",
         &"region.west_grid",
@@ -139,6 +146,8 @@ func _run_all() -> void:
     _expect(int(world.long_operation_director.active_operation.get("route_recovery_count", 0)) == 1, "Route-recovery progress must survive an in-flight operation save/load.")
     var restored_west_route_memory: Variant = world.long_operation_director.route_memory.get("region.west_grid", {})
     _expect(restored_west_route_memory is Dictionary and float((restored_west_route_memory as Dictionary).get("risk", 0.0)) >= 1.0, "Learned route-risk memory must survive the unified save/load path.")
+    _expect(restored_west_route_memory is Dictionary and bool((restored_west_route_memory as Dictionary).get("has_block_position", false)), "Remembered route blockage state must survive the unified save/load path.")
+    _expect(restored_west_route_memory is Dictionary and (restored_west_route_memory as Dictionary).get("last_block_position", Vector3.ZERO).distance_to(recovery_anchor) < 0.1, "The saved route-memory blockage position must restore to the same physical location.")
     var recovered_operation_snapshot := world.long_operation_director.to_dictionary()
     var retreat_blocker := Node3D.new()
     retreat_blocker.name = "RouteRecoveryRetreatBlocker"

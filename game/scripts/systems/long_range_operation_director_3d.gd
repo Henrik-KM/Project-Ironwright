@@ -497,7 +497,8 @@ func _update_active_operation(delta: float) -> void:
                 return
             _record_route_disruption(
                 StringName(active_operation.get("region_id", &"region.heartforge_district")),
-                int(active_operation.get("route_variant", 0))
+                int(active_operation.get("route_variant", 0)),
+                anchor
             )
             _insert_route_recovery(anchor, waypoint, route_index)
             route_recovery_active = true
@@ -983,7 +984,7 @@ func to_dictionary() -> Dictionary:
     for component_id in recovered_components:
         components.append(String(component_id))
     return {
-        "schema_version": 3,
+        "schema_version": 4,
         "completed_operations": completed,
         "recovered_components": components,
         "casualty_serial": casualty_serial,
@@ -1035,6 +1036,8 @@ func restore_from_dictionary(data: Dictionary) -> void:
             "risk": clampf(float(saved_memory.get("risk", 0.0)), 0.0, 6.0),
             "preferred_variant": maxi(0, int(saved_memory.get("preferred_variant", 0))),
             "recoveries": maxi(0, int(saved_memory.get("recoveries", 0))),
+            "has_block_position": bool(saved_memory.get("has_block_position", false)),
+            "last_block_position": _array_to_vector(saved_memory.get("last_block_position", [])),
         }
     _restore_active_operation(data.get("active_operation", {}))
 
@@ -1059,10 +1062,26 @@ func _preferred_route_variant(region_id: StringName) -> int:
         return 0
     if float((memory as Dictionary).get("risk", 0.0)) < ROUTE_MEMORY_SWITCH_THRESHOLD:
         return 0
-    return clampi(int((memory as Dictionary).get("preferred_variant", 1)), 1, variant_count)
+    var memory_value := memory as Dictionary
+    var stored_variant := clampi(int(memory_value.get("preferred_variant", 1)), 1, variant_count)
+    if not bool(memory_value.get("has_block_position", false)) or heartforge == null:
+        return stored_variant
+    var block_position := memory_value.get("last_block_position", Vector3.ZERO) as Vector3
+    var best_variant := stored_variant
+    var best_clearance := _route_clearance(
+        region_director.route_from_heartforge_variant(region_id, heartforge.global_position, stored_variant),
+        block_position
+    )
+    for candidate_variant in range(1, variant_count + 1):
+        var candidate_route := region_director.route_from_heartforge_variant(region_id, heartforge.global_position, candidate_variant)
+        var candidate_clearance := _route_clearance(candidate_route, block_position)
+        if candidate_clearance > best_clearance + 0.25:
+            best_variant = candidate_variant
+            best_clearance = candidate_clearance
+    return best_variant
 
 
-func _record_route_disruption(region_id: StringName, current_variant: int) -> void:
+func _record_route_disruption(region_id: StringName, current_variant: int, block_position: Vector3) -> void:
     var key := String(region_id)
     if not route_memory.has(key) and route_memory.size() >= ROUTE_MEMORY_MAX_ENTRIES:
         var oldest_key := str(route_memory.keys()[0])
@@ -1071,9 +1090,13 @@ func _record_route_disruption(region_id: StringName, current_variant: int) -> vo
         "risk": 0.0,
         "preferred_variant": 0,
         "recoveries": 0,
+        "has_block_position": false,
+        "last_block_position": Vector3.ZERO,
     })
     memory["risk"] = clampf(float(memory.get("risk", 0.0)) + 1.0, 0.0, 6.0)
     memory["recoveries"] = maxi(0, int(memory.get("recoveries", 0))) + 1
+    memory["has_block_position"] = true
+    memory["last_block_position"] = block_position
     var variant_count := region_director.route_variant_count(region_id) if region_director != null else 0
     if variant_count > 0:
         var recovery_number := int(memory.get("recoveries", 1))
@@ -1093,6 +1116,8 @@ func _record_route_success(region_id: StringName, route_variant: int, recovery_c
         memory["risk"] = maxf(0.0, float(memory.get("risk", 0.0)) - ROUTE_MEMORY_SUCCESS_DECAY)
         if float(memory.get("risk", 0.0)) < ROUTE_MEMORY_SWITCH_THRESHOLD:
             memory["preferred_variant"] = 0
+            memory["has_block_position"] = false
+            memory["last_block_position"] = Vector3.ZERO
     else:
         memory["risk"] = minf(6.0, float(memory.get("risk", 0.0)) + 0.15)
     route_memory[key] = memory
@@ -1116,8 +1141,28 @@ func _serialize_route_memory() -> Array[Dictionary]:
             "risk": clampf(float(value.get("risk", 0.0)), 0.0, 6.0),
             "preferred_variant": maxi(0, int(value.get("preferred_variant", 0))),
             "recoveries": maxi(0, int(value.get("recoveries", 0))),
+            "has_block_position": bool(value.get("has_block_position", false)),
+            "last_block_position": _vector_to_array(value.get("last_block_position", Vector3.ZERO) as Vector3),
         })
     return serialized
+
+
+func _route_clearance(route: PackedVector3Array, block_position: Vector3) -> float:
+    if route.is_empty():
+        return 0.0
+    var closest := INF
+    for index in range(route.size() - 1):
+        var start := route[index]
+        var finish := route[index + 1]
+        var segment := finish - start
+        var segment_length_squared := segment.length_squared()
+        var projection := 0.0
+        if segment_length_squared > 0.001:
+            projection = clampf((block_position - start).dot(segment) / segment_length_squared, 0.0, 1.0)
+        closest = minf(closest, block_position.distance_to(start + segment * projection))
+    if route.size() == 1:
+        closest = block_position.distance_to(route[0])
+    return closest
 
 
 func _serialize_active_operation() -> Dictionary:

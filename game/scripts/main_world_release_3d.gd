@@ -494,6 +494,9 @@ func _finish_release_boot() -> void:
 	elif _has_presentation_review_flag():
 		_start_release_world()
 		call_deferred("_start_presentation_review")
+	elif _has_route_memory_review_flag():
+		_start_release_world()
+		call_deferred("_start_route_memory_review")
 	elif _has_dynamic_operation_review_flag():
 		_start_release_world()
 		call_deferred("_start_dynamic_operation_review")
@@ -515,6 +518,16 @@ func _has_presentation_review_flag() -> bool:
 			return true
 	for argument in OS.get_cmdline_user_args():
 		if str(argument) == "--presentation-review":
+			return true
+	return false
+
+
+func _has_route_memory_review_flag() -> bool:
+	for argument in OS.get_cmdline_args():
+		if str(argument) == "--route-memory-review":
+			return true
+	for argument in OS.get_cmdline_user_args():
+		if str(argument) == "--route-memory-review":
 			return true
 	return false
 
