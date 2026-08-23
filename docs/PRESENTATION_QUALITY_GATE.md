@@ -17,10 +17,12 @@ does not by itself constitute final human acceptance of the full art library.
 The remote review gallery now also uses bounded per-family presentation framing:
 Riverworks and Tram Graveyard expose their authored service faces with a
 diagonal close frame, while North Ruins, West Grid, East Tenements, Municipal
-Glasshouse, Flood Market, Cathedral Quarter, Observatory Ridge, Buried
-Laboratories and Root Cistern retain their authored front orientation. This is
-review-only camera and actor staging; runtime landmark transforms, routes,
-collision, operations and save state are unchanged.
+Glasshouse, Cathedral Quarter, Observatory Ridge, Buried Laboratories and Root
+Cistern retain their authored front orientation. Flood Market now also uses a
+bounded diagonal close frame so its canopy ribs, stall service hardware, water
+channels and crane read in depth. This is review-only camera and actor staging;
+runtime landmark transforms, routes, collision, operations and save state are
+unchanged.
 
 The West Grid source builder now adds a framed hall access door, repeated
 louvers, roof service vents and signal caps, and a distinct side service panel.

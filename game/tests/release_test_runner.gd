@@ -440,6 +440,8 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     _expect(riverworks_review_offset.z <= 16.6 and riverworks_review_offset.y <= 10.3, "Riverworks presentation review must use a closer frame for its pump and sluice hardware.")
     var tram_review_offset := world._presentation_review_region_camera_offset(&"region.tram_graveyard")
     _expect(tram_review_offset.z <= 16.6 and tram_review_offset.y <= 10.3, "Tram Graveyard presentation review must use a closer frame for its rail and carriage hardware.")
+    var flood_market_review_offset := world._presentation_review_region_camera_offset(&"region.flood_market")
+    _expect(flood_market_review_offset.z <= 15.5 and flood_market_review_offset.y <= 9.5 and flood_market_review_offset.x >= 8.4, "Flood Market presentation review must use a bounded diagonal frame for its canopy, stall and water-channel hardware.")
     var cathedral_review_offset := world._presentation_review_region_camera_offset(&"region.cathedral_quarter")
     _expect(cathedral_review_offset.z <= 17.1 and cathedral_review_offset.y <= 10.6, "Cathedral Quarter presentation review must use a closer frame for its tower and choir hardware.")
     world._show_presentation_review_page(13)

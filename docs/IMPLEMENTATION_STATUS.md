@@ -1,5 +1,15 @@
 # Implementation status
 
+## Flood Market review framing pass
+
+- added a bounded diagonal review frame for Flood Market so the authored
+  canopy ribs, stall service hardware, water channels and crane read in depth
+  instead of collapsing into a broad front elevation;
+- kept this change inside the development-only presentation gallery; landmark
+  geometry, collision, routes, operations, ecology, save state and player
+  workload are unchanged, with the framing contract covered by the release
+  runner and exact-export live review required before merge.
+
 ## Convex organic anatomy pass
 
 - replaced the shared late-family plate, membrane and plate-cap box geometry
