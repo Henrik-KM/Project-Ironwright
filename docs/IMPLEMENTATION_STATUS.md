@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused late-organic gallery readability pass
+
+- added a restrained review-only low front fill to the late-organic gallery so
+  dark wet shells retain readable secondary anatomy against the compact blue
+  review backdrop;
+- kept runtime lighting, ecology, materials, combat and the opening mood
+  unchanged; the fixture exists only to judge the authored cast at the exact
+  exported Windows review scale;
+- added release coverage for the bounded organic detail light; the fresh page
+  3/14 Windows capture is the required visual acceptance check.
+
 ## Focused regional witness storytelling pass
 
 - connected each authored remote district landmark to its stable Town Archive

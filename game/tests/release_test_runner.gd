@@ -534,8 +534,10 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         if core_page >= 1:
             var organic_front_fill := world.presentation_review_stage.get_node_or_null("ReviewFrontFill") as OmniLight3D
             var organic_cool_light := world.presentation_review_stage.get_node_or_null("ReviewCoolLight") as OmniLight3D
+            var organic_detail_fill := world.presentation_review_stage.get_node_or_null("ReviewOrganicFill") as OmniLight3D
             _expect(organic_front_fill != null and organic_front_fill.light_energy >= 4.0, "Organic presentation pages must receive a stronger compact-frame key light for material separation.")
             _expect(organic_cool_light != null and organic_cool_light.light_energy >= 3.2, "Organic presentation pages must retain a cool rim lift for readable anatomy edges.")
+            _expect(organic_detail_fill != null and organic_detail_fill.visible and organic_detail_fill.light_energy >= 1.5, "Organic presentation pages must receive a restrained low front fill for secondary anatomy readability.")
         _expect(world.presentation_review_camera_desired.z < 18.0, "Core presentation pages must use the closer review camera framing.")
     world._show_presentation_review_page(13)
     world.presentation_review_active = false
