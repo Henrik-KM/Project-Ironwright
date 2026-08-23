@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "cathedral.gltf"
@@ -38,32 +38,32 @@ def main() -> None:
 
     stone, brick, iron, blue_glass, rose_glass, membrane, warm = range(7)
     mesh_ids = {
-        "NaveWall": mesh("NaveWall", add_box(builder, (12.0, 2.8, 0.50), stone)),
-        "NaveSide": mesh("NaveSide", add_box(builder, (0.55, 2.8, 6.0), stone)),
-        "NaveCap": mesh("NaveCap", add_box(builder, (12.6, 0.32, 0.34), iron)),
-        "Brick": mesh("Brick", add_box(builder, (2.2, 1.1, 0.22), brick)),
-        "Tower": mesh("Tower", add_box(builder, (3.4, 8.4, 3.4), brick)),
-        "TowerCap": mesh("TowerCap", add_box(builder, (3.9, 0.38, 3.9), iron)),
+        "NaveWall": mesh("NaveWall", add_beveled_box(builder, (12.0, 2.8, 0.50), stone, 0.16)),
+        "NaveSide": mesh("NaveSide", add_beveled_box(builder, (0.55, 2.8, 6.0), stone, 0.14)),
+        "NaveCap": mesh("NaveCap", add_beveled_box(builder, (12.6, 0.32, 0.34), iron, 0.12)),
+        "Brick": mesh("Brick", add_beveled_box(builder, (2.2, 1.1, 0.22), brick, 0.12)),
+        "Tower": mesh("Tower", add_beveled_box(builder, (3.4, 8.4, 3.4), brick, 0.16)),
+        "TowerCap": mesh("TowerCap", add_beveled_box(builder, (3.9, 0.38, 3.9), iron, 0.14)),
         "Glass": mesh("Glass", add_cylinder(builder, 1.42, 0.16, blue_glass, 32)),
         "Rose": mesh("Rose", add_cylinder(builder, 0.72, 0.18, rose_glass, 28)),
-        "Rib": mesh("Rib", add_box(builder, (0.14, 3.0, 0.22), iron)),
-        "Buttress": mesh("Buttress", add_box(builder, (0.72, 3.8, 1.0), stone)),
+        "Rib": mesh("Rib", add_beveled_box(builder, (0.14, 3.0, 0.22), iron, 0.12)),
+        "Buttress": mesh("Buttress", add_beveled_box(builder, (0.72, 3.8, 1.0), stone, 0.16)),
         "Choir": mesh("Choir", add_uv_sphere(builder, 0.72, membrane, 20, 28)),
         "Spine": mesh("Spine", add_cylinder(builder, 0.14, 3.0, membrane, 22)),
         "Vein": mesh("Vein", add_cylinder(builder, 0.075, 3.8, membrane, 18)),
         "Signal": mesh("Signal", add_uv_sphere(builder, 0.14, rose_glass, 18, 26)),
         "Bell": mesh("Bell", add_uv_sphere(builder, 0.42, iron, 20, 28)),
         "Lamp": mesh("Lamp", add_uv_sphere(builder, 0.10, warm, 16, 22)),
-        "Aisle": mesh("Aisle", add_box(builder, (0.42, 0.18, 5.0), iron)),
-        "Cross": mesh("Cross", add_box(builder, (0.18, 1.8, 0.18), iron)),
-        "DoorPost": mesh("DoorPost", add_box(builder, (0.18, 2.45, 0.22), iron)),
-        "DoorLintel": mesh("DoorLintel", add_box(builder, (3.5, 0.18, 0.22), iron)),
-        "TowerSlit": mesh("TowerSlit", add_box(builder, (0.18, 0.82, 0.12), blue_glass)),
+        "Aisle": mesh("Aisle", add_beveled_box(builder, (0.42, 0.18, 5.0), iron, 0.12)),
+        "Cross": mesh("Cross", add_beveled_box(builder, (0.18, 1.8, 0.18), iron, 0.12)),
+        "DoorPost": mesh("DoorPost", add_beveled_box(builder, (0.18, 2.45, 0.22), iron, 0.12)),
+        "DoorLintel": mesh("DoorLintel", add_beveled_box(builder, (3.5, 0.18, 0.22), iron, 0.12)),
+        "TowerSlit": mesh("TowerSlit", add_beveled_box(builder, (0.18, 0.82, 0.12), blue_glass, 0.12)),
         "WindowLatch": mesh("WindowLatch", add_uv_sphere(builder, 0.075, iron, 14, 20)),
         "ChoirRib": mesh("ChoirRib", add_cylinder(builder, 0.055, 2.4, iron, 18)),
         "ChoirRing": mesh("ChoirRing", add_cylinder(builder, 0.24, 0.08, rose_glass, 24)),
         "BellClapper": mesh("BellClapper", add_cylinder(builder, 0.075, 0.72, iron, 18)),
-        "ButtressCap": mesh("ButtressCap", add_box(builder, (0.88, 0.18, 1.08), iron)),
+        "ButtressCap": mesh("ButtressCap", add_beveled_box(builder, (0.88, 0.18, 1.08), iron, 0.12)),
         "VeinKnuckle": mesh("VeinKnuckle", add_uv_sphere(builder, 0.11, rose_glass, 14, 20)),
         "RoofDrain": mesh("RoofDrain", add_cylinder(builder, 0.075, 1.1, iron, 18)),
     }

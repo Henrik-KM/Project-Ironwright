@@ -34,6 +34,16 @@
 - native aesthetic coverage now guards the retaining-edge bounds, and a fresh
   exact-export live review of remote page 9 is accepted as stable.
 
+## Focused Cathedral Quarter focal-occlusion milestone
+
+- reduced and shifted the presentation-only nest occluder so the authored
+  cathedral nave, tower, rose window and choir remain readable in the remote
+  presentation view;
+- preserved the biological takeover, region pressure, encounter, expedition
+  and ecology contracts; this is a bounded composition correction with no new
+  recurring work;
+- requires a fresh exact-export live review of remote page 11 before merge.
+
 ## Focused organic attack-audio telegraph milestone
 
 - connected the existing organic attack wind-up signal to the release audio
