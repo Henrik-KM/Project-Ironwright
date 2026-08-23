@@ -21,14 +21,14 @@ OUTPUT_PATH = SOURCE_DIR / "tenement.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Tenement brick", "pbrMetallicRoughness": {"baseColorFactor": [0.24, 0.095, 0.075, 1.0], "metallicFactor": 0.03, "roughnessFactor": 0.92}},
-        {"name": "Tenement concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.19, 0.21, 0.21, 1.0], "metallicFactor": 0.05, "roughnessFactor": 0.88}},
+        {"name": "Tenement brick", "pbrMetallicRoughness": {"baseColorFactor": [0.11, 0.038, 0.032, 1.0], "metallicFactor": 0.03, "roughnessFactor": 0.92}},
+        {"name": "Tenement concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.075, 0.10, 0.11, 1.0], "metallicFactor": 0.05, "roughnessFactor": 0.88}},
         {"name": "Tenement iron", "pbrMetallicRoughness": {"baseColorFactor": [0.06, 0.09, 0.11, 1.0], "metallicFactor": 0.72, "roughnessFactor": 0.44}},
         {"name": "Tenement rust", "pbrMetallicRoughness": {"baseColorFactor": [0.52, 0.20, 0.07, 1.0], "metallicFactor": 0.38, "roughnessFactor": 0.68}, "emissiveFactor": [0.12, 0.02, 0.005]},
-        {"name": "Tenement window", "pbrMetallicRoughness": {"baseColorFactor": [0.06, 0.24, 0.30, 1.0], "metallicFactor": 0.10, "roughnessFactor": 0.26}, "emissiveFactor": [0.03, 0.18, 0.24]},
+        {"name": "Tenement window", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.13, 0.18, 1.0], "metallicFactor": 0.10, "roughnessFactor": 0.26}, "emissiveFactor": [0.015, 0.10, 0.15]},
         {"name": "Tenement cloth", "pbrMetallicRoughness": {"baseColorFactor": [0.33, 0.10, 0.18, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.92}},
         {"name": "Tenement organic", "pbrMetallicRoughness": {"baseColorFactor": [0.20, 0.035, 0.13, 1.0], "metallicFactor": 0.01, "roughnessFactor": 0.86}, "emissiveFactor": [0.28, 0.01, 0.08]},
-        {"name": "Tenement tank", "pbrMetallicRoughness": {"baseColorFactor": [0.17, 0.22, 0.22, 1.0], "metallicFactor": 0.64, "roughnessFactor": 0.52}},
+        {"name": "Tenement tank", "pbrMetallicRoughness": {"baseColorFactor": [0.08, 0.13, 0.14, 1.0], "metallicFactor": 0.22, "roughnessFactor": 0.62}},
     ]
     meshes: list[dict] = []
 
