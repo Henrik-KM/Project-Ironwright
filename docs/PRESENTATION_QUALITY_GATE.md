@@ -218,6 +218,12 @@ navigation.
 
 The deliberate command-map mode now keeps its live-position banner inside an explicit viewport-safe inset and allows wrapping at small capture sizes, so the strategic affordance remains readable without competing with the objective card or ecology intelligence panel.
 
+Strategic operations and returning-world recap surfaces now use a denser modal
+backdrop so persistent machine-report toasts remain subordinate to the fixed
+close footer while a restrained world silhouette remains visible behind the
+readout. This is a presentation-only correction and does not change the
+operations, archive, save or input contracts.
+
 The ordinary building masses now carry the next bounded depth pass: beveled
 collision-preserving shells, a side elevation with floor plates and windows,
 roof slabs, collapsed roof silhouettes and small utility/ventilation hardware.

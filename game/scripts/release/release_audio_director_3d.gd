@@ -141,7 +141,9 @@ func _audio_player(node_name: String, bus_name: String, stream_id: StringName, v
 func _build_caption_ui() -> void:
     caption_layer = CanvasLayer.new()
     caption_layer.name = "SoundCaptionLayer"
-    caption_layer.layer = 42
+    # Strategic readouts must sit above captions so a transient audio label
+    # cannot cover their fixed close footer.
+    caption_layer.layer = 34
     add_child(caption_layer)
     caption_panel = PanelContainer.new()
     caption_panel.name = "SoundCaptionPanel"
