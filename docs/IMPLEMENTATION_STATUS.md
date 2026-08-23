@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused release-population evaluation pass
+
+- classify actors outside the medium-detail radius during the initial pass, so
+  only nearby actors are materialized into the deterministic distance sort;
+- use squared-distance comparisons and reuse the spatial index's maintained
+  actor snapshots, preserving all active, medium and reduced-detail budgets;
+- the 192-actor release benchmark improved from 7.76 to 8.18 measured FPS in
+  the local headless environment, and the large-population stress runner still
+  passes; target-hardware profiling remains an open commercial gate.
+
 ## Focused late-organic gallery readability pass
 
 - added a restrained review-only low front fill to the late-organic gallery so
