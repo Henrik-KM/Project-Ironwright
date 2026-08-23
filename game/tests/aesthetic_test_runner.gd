@@ -1214,6 +1214,15 @@ func _run_all() -> void:
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Nest") >= 5, "Sporecaster Nest must carry paired gill and spine watch channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 5, "Sporecaster Retreat must carry paired-leg and gill withdrawal channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Death") >= 4, "Sporecaster Death must carry cowl and gill collapse channels.")
+            if species_names[index] == &"roofleaper":
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 6, "Roofleaper Idle must carry paired membrane and vascular-wing breathing channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Walk") >= 6, "Roofleaper Walk must carry paired wing and spar locomotion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 8, "Roofleaper Attack must carry paired wing, spar and crown-ridge threat channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Hit") >= 5, "Roofleaper Hit must carry paired wing and crown impact channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 5, "Roofleaper Feed must carry crown and vascular-wing motion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Nest") >= 5, "Roofleaper Nest must carry paired spar and crown-ridge watch channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 5, "Roofleaper Retreat must carry paired-wing and talon withdrawal channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Death") >= 4, "Roofleaper Death must carry crown and wing-spar collapse channels.")
             if species_names[index] == &"apex":
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 4, "Apex Idle must carry living membrane flex channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 6, "Apex Attack must carry jaw and membrane threat channels.")

@@ -407,7 +407,56 @@ def build_family(name: str, spec: dict) -> None:
             ("Torso", "rotation", [0.0, 0.28, 0.64], quat((0.0, 0.0, 0.0)) + quat((0.18, 0.0, 0.0)) + quat((0.46, 0.0, 0.0))),
         ]
 
-    if name == "rootweaver":
+    if name == "roofleaper":
+        # Roofleaper's identity is carried by paired membrane wings, spars,
+        # vascular veins and the crown/talon ambush profile. Give those
+        # authored surfaces their own restrained channels so the vertical
+        # ambusher does not collapse into a torso-only beat at review distance.
+        idle_channels.extend([
+            ("RoofleaperWingL", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.18, -0.1)) + quat((0.08, -0.24, -0.16)) + quat((0.0, -0.18, -0.1))),
+            ("RoofleaperWingR", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.18, 0.1)) + quat((-0.08, 0.24, 0.16)) + quat((0.0, 0.18, 0.1))),
+            ("RoofleaperFineVeinL", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.32, -0.28)) + quat((0.04, -0.38, -0.34)) + quat((0.0, -0.32, -0.28))),
+            ("RoofleaperFineVeinR", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.32, 0.28)) + quat((-0.04, 0.38, 0.34)) + quat((0.0, 0.32, 0.28))),
+        ])
+        walk_channels.extend([
+            ("RoofleaperWingL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.18, -0.1)) + quat((0.18, -0.32, -0.24)) + quat((0.0, -0.18, -0.1))),
+            ("RoofleaperWingR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.18, 0.1)) + quat((-0.18, 0.32, 0.24)) + quat((0.0, 0.18, 0.1))),
+            ("RoofleaperWingFrameL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.35, -0.72)) + quat((0.16, -0.44, -0.84)) + quat((0.0, -0.35, -0.72))),
+            ("RoofleaperWingFrameR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.35, 0.72)) + quat((-0.16, 0.44, 0.84)) + quat((0.0, 0.35, 0.72))),
+        ])
+        attack_channels.extend([
+            ("RoofleaperWingL", "rotation", [0.0, 0.24, 0.48], quat((0.0, -0.18, -0.1)) + quat((-0.22, -0.46, -0.34)) + quat((0.0, -0.18, -0.1))),
+            ("RoofleaperWingR", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.18, 0.1)) + quat((0.22, 0.46, 0.34)) + quat((0.0, 0.18, 0.1))),
+            ("RoofleaperWingFrameL", "rotation", [0.0, 0.24, 0.48], quat((0.0, -0.35, -0.72)) + quat((-0.28, -0.56, -0.94)) + quat((0.0, -0.35, -0.72))),
+            ("RoofleaperWingFrameR", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.35, 0.72)) + quat((0.28, 0.56, 0.94)) + quat((0.0, 0.35, 0.72))),
+            ("RoofleaperCrownRidge0", "rotation", [0.0, 0.24, 0.48], quat((0.0, -0.16, -0.14)) + quat((0.18, -0.24, -0.22)) + quat((0.0, -0.16, -0.14))),
+            ("RoofleaperCrownRidge1", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.16, 0.14)) + quat((0.18, 0.24, 0.22)) + quat((0.0, 0.16, 0.14))),
+        ])
+        hit_channels.extend([
+            ("RoofleaperWingL", "rotation", [0.0, 0.10, 0.24], quat((0.0, -0.18, -0.1)) + quat((0.0, 0.18, 0.2)) + quat((0.0, -0.18, -0.1))),
+            ("RoofleaperWingR", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.18, 0.1)) + quat((0.0, -0.18, -0.2)) + quat((0.0, 0.18, 0.1))),
+            ("RoofleaperCrown", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.0)) + quat((-0.16, 0.08, 0.0)) + quat((0.0, 0.0, 0.0))),
+        ])
+        feed_channels.extend([
+            ("RoofleaperCrown", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.0, 0.0)) + quat((0.16, 0.0, 0.0)) + quat((0.0, 0.0, 0.0))),
+            ("RoofleaperFineVeinL", "rotation", [0.0, 0.3, 0.6], quat((0.0, -0.32, -0.28)) + quat((0.0, -0.22, -0.2)) + quat((0.0, -0.32, -0.28))),
+            ("RoofleaperFineVeinR", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.32, 0.28)) + quat((0.0, 0.22, 0.2)) + quat((0.0, 0.32, 0.28))),
+        ])
+        nest_channels.extend([
+            ("RoofleaperWingFrameL", "rotation", [0.0, 0.5, 1.0], quat((0.0, -0.35, -0.72)) + quat((0.0, -0.24, -0.58)) + quat((0.0, -0.35, -0.72))),
+            ("RoofleaperWingFrameR", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.35, 0.72)) + quat((0.0, 0.24, 0.58)) + quat((0.0, 0.35, 0.72))),
+            ("RoofleaperCrownRidge0", "rotation", [0.0, 0.5, 1.0], quat((0.0, -0.16, -0.14)) + quat((0.0, -0.08, -0.08)) + quat((0.0, -0.16, -0.14))),
+        ])
+        retreat_channels.extend([
+            ("RoofleaperWingL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.18, -0.1)) + quat((0.28, -0.42, -0.3)) + quat((0.0, -0.18, -0.1))),
+            ("RoofleaperWingR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.18, 0.1)) + quat((-0.28, 0.42, 0.3)) + quat((0.0, 0.18, 0.1))),
+            ("RoofleaperTalonsL", "rotation", [0.0, 0.22, 0.44], quat((-0.76, 0.0, -0.18)) + quat((-0.58, 0.0, -0.1)) + quat((-0.76, 0.0, -0.18))),
+        ])
+        death_channels.extend([
+            ("RoofleaperCrown", "rotation", [0.0, 0.28, 0.64], quat((0.0, 0.0, 0.0)) + quat((0.34, 0.08, 0.2)) + quat((0.78, 0.16, 0.42))),
+            ("RoofleaperWingFrameL", "rotation", [0.0, 0.28, 0.64], quat((0.0, -0.35, -0.72)) + quat((0.22, -0.16, -0.38)) + quat((0.54, 0.0, 0.0))),
+        ])
+    elif name == "rootweaver":
         # The route-controller silhouette is carried by the spore fan and the
         # paired root arms. Keep the motion small enough for reduced-detail
         # transitions while giving the close release camera living secondary
