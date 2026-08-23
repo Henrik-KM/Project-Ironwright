@@ -2920,3 +2920,16 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - added aesthetic regression coverage for the authored chassis and breech
   vertex density; exact exported live review remains required for the full
   friendly-role family acceptance gate.
+
+## Focused Scrapper manufactured-edge milestone
+
+- regenerated the source-authored Scrapper salvager shell with bounded beveled
+  chassis, cargo bin, cargo lip, strap, optic housing, claw, hopper rim,
+  cutting guard and intake-tooth geometry so its extraction hardware catches
+  close-camera light as maintained machinery rather than flat blocks;
+- preserved stable salvager node names, cargo and salvage-tool sockets,
+  animation clips, collision ownership and autonomous extraction behaviour;
+  the refinement is presentation-only and adds no recurring machine task;
+- added aesthetic regression coverage for the authored chassis and cargo-bin
+  vertex density; exact exported live review remains required for the full
+  friendly-role family acceptance gate.

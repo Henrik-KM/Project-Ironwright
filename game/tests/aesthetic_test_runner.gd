@@ -5,6 +5,7 @@ const ROBOT_SCENE := preload("res://scenes/actors/robot_unit_3d.tscn")
 const ENEMY_SCENE := preload("res://scenes/actors/organic_enemy_3d.tscn")
 const MECHROMANCER_SCENE := preload("res://scenes/actors/mechromancer_3d.tscn")
 const OUTPOST_SCENE := preload("res://scenes/world/outpost_3d.tscn")
+const SCRAPPER_ASSET_SCENE := preload("res://assets/scrapper/scrapper.gltf")
 
 var failures: Array[String] = []
 
@@ -877,6 +878,13 @@ func _run_all() -> void:
             _expect(_find_named(role_samples[index], "ScrapperHopperLatch") != null and _find_named(role_samples[index], "ScrapperCargoFastenerLeft") != null, "The Scrapper must expose its maintained hopper hardware.")
             _expect(_find_named(role_samples[index], "ScrapperHopperLip") != null and _find_named(role_samples[index], "ScrapperDrumLeft") != null and _find_named(role_samples[index], "ScrapperCuttingGuard") != null, "The Scrapper must expose its third-pass hopper, drum and cutting hardware.")
             _expect(_find_named(role_samples[index], "ScrapClaw") != null, "The Scrapper must retain layered dismantler claw hardware.")
+            var scrapper_asset := SCRAPPER_ASSET_SCENE.instantiate()
+            root.add_child(scrapper_asset)
+            await process_frame
+            var scrapper_chassis := _find_named(scrapper_asset, "Chassis") as MeshInstance3D
+            var scrapper_cargo := _find_named(scrapper_asset, "CargoBin") as MeshInstance3D
+            _expect(scrapper_chassis != null and scrapper_cargo != null and _mesh_vertex_count(scrapper_chassis) >= 48 and _mesh_vertex_count(scrapper_cargo) >= 48, "The authored Scrapper chassis and cargo bin must retain beveled high-definition manufactured edges.")
+            scrapper_asset.queue_free()
         elif role_names[index] == &"scout":
             _expect(_find_named(role_samples[index], "PathfinderMastBraceLeft") != null and _find_named(role_samples[index], "PathfinderSurveyBeacon") != null, "The Pathfinder must expose its braced mast and survey beacon hardware.")
             _expect(_find_named(role_samples[index], "PathfinderMastCollar") != null and _find_named(role_samples[index], "PathfinderDishRibLeft") != null and _find_named(role_samples[index], "PathfinderSignalCanister") != null, "The Pathfinder must expose its third-pass mast, dish and signal hardware.")

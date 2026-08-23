@@ -454,6 +454,14 @@ sockets, animation clips and gameplay ownership remain unchanged. This is a
 presentation-only refinement; exact exported live review of the guardian page
 is required before the broader friendly-role family gate can be accepted.
 
+The source-authored Scrapper shell now carries the same treatment through its
+primary chassis, cargo bin, cargo lip, strap, optic housing, claw, hopper rim,
+cutting guard and intake tooth. These work-facing surfaces now catch the
+gallery lighting as maintained salvage hardware rather than flat blocks, with
+the salvager's cargo/tool sockets, animation clips, collision and autonomous
+extraction behaviour unchanged. This is presentation-only; exact exported
+live review of the salvager page remains required.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside
