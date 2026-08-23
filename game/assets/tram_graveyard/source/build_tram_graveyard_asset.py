@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "tram_graveyard.gltf"
@@ -39,41 +39,41 @@ def main() -> None:
 
     tram, rust, dark, window, amber, concrete, organic, ceramic = range(8)
     mesh_ids = {
-        "Carriage": mesh("Carriage", add_box(builder, (8.6, 3.25, 2.45), tram)),
-        "CarriageRoof": mesh("CarriageRoof", add_box(builder, (8.95, 0.24, 2.72), rust)),
-        "Window": mesh("Window", add_box(builder, (1.35, 0.82, 0.10), window)),
-        "WindowFrameVertical": mesh("WindowFrameVertical", add_box(builder, (0.10, 0.96, 0.14), rust)),
-        "WindowFrameHorizontal": mesh("WindowFrameHorizontal", add_box(builder, (1.52, 0.10, 0.14), rust)),
-        "Door": mesh("Door", add_box(builder, (1.55, 1.92, 0.12), dark)),
-        "DoorTrim": mesh("DoorTrim", add_box(builder, (1.70, 0.12, 0.18), rust)),
+        "Carriage": mesh("Carriage", add_beveled_box(builder, (8.6, 3.25, 2.45), tram, 0.18)),
+        "CarriageRoof": mesh("CarriageRoof", add_beveled_box(builder, (8.95, 0.24, 2.72), rust, 0.07)),
+        "Window": mesh("Window", add_beveled_box(builder, (1.35, 0.82, 0.10), window, 0.035)),
+        "WindowFrameVertical": mesh("WindowFrameVertical", add_beveled_box(builder, (0.10, 0.96, 0.14), rust, 0.025)),
+        "WindowFrameHorizontal": mesh("WindowFrameHorizontal", add_beveled_box(builder, (1.52, 0.10, 0.14), rust, 0.025)),
+        "Door": mesh("Door", add_beveled_box(builder, (1.55, 1.92, 0.12), dark, 0.035)),
+        "DoorTrim": mesh("DoorTrim", add_beveled_box(builder, (1.70, 0.12, 0.18), rust, 0.03)),
         "DoorHandle": mesh("DoorHandle", add_cylinder(builder, 0.07, 0.42, amber, 16)),
-        "BeltRail": mesh("BeltRail", add_box(builder, (7.65, 0.14, 0.14), rust)),
-        "LowerPanel": mesh("LowerPanel", add_box(builder, (1.45, 0.62, 0.10), dark)),
-        "Undercarriage": mesh("Undercarriage", add_box(builder, (7.5, 0.52, 1.75), dark)),
-        "BogiePlate": mesh("BogiePlate", add_box(builder, (1.35, 0.24, 1.34), dark)),
+        "BeltRail": mesh("BeltRail", add_beveled_box(builder, (7.65, 0.14, 0.14), rust, 0.03)),
+        "LowerPanel": mesh("LowerPanel", add_beveled_box(builder, (1.45, 0.62, 0.10), dark, 0.025)),
+        "Undercarriage": mesh("Undercarriage", add_beveled_box(builder, (7.5, 0.52, 1.75), dark, 0.08)),
+        "BogiePlate": mesh("BogiePlate", add_beveled_box(builder, (1.35, 0.24, 1.34), dark, 0.055)),
         "Wheel": mesh("Wheel", add_cylinder(builder, 0.62, 0.22, dark, 28)),
         "Rail": mesh("Rail", add_cylinder(builder, 0.11, 15.0, rust, 20)),
-        "Sleeper": mesh("Sleeper", add_box(builder, (4.6, 0.18, 0.34), concrete)),
+        "Sleeper": mesh("Sleeper", add_beveled_box(builder, (4.6, 0.18, 0.34), concrete, 0.04)),
         "RailFastener": mesh("RailFastener", add_cylinder(builder, 0.08, 0.10, rust, 16)),
-        "Pit": mesh("Pit", add_box(builder, (5.4, 0.42, 3.2), dark)),
-        "PitEdge": mesh("PitEdge", add_box(builder, (0.32, 0.24, 4.0), concrete)),
-        "PitRung": mesh("PitRung", add_box(builder, (0.12, 0.74, 0.12), rust)),
+        "Pit": mesh("Pit", add_beveled_box(builder, (5.4, 0.42, 3.2), dark, 0.08)),
+        "PitEdge": mesh("PitEdge", add_beveled_box(builder, (0.32, 0.24, 4.0), concrete, 0.05)),
+        "PitRung": mesh("PitRung", add_beveled_box(builder, (0.12, 0.74, 0.12), rust, 0.025)),
         "SignalMast": mesh("SignalMast", add_cylinder(builder, 0.14, 6.2, rust, 16)),
         "Signal": mesh("Signal", add_uv_sphere(builder, 0.22, amber, 18, 28)),
         "SignalHousing": mesh("SignalHousing", add_cylinder(builder, 0.30, 0.22, dark, 20)),
-        "SignalVisor": mesh("SignalVisor", add_box(builder, (0.50, 0.12, 0.32), rust)),
-        "OverheadBeam": mesh("OverheadBeam", add_box(builder, (15.0, 0.20, 0.20), dark)),
+        "SignalVisor": mesh("SignalVisor", add_beveled_box(builder, (0.50, 0.12, 0.32), rust, 0.03)),
+        "OverheadBeam": mesh("OverheadBeam", add_beveled_box(builder, (15.0, 0.20, 0.20), dark, 0.04)),
         "Cable": mesh("Cable", add_cylinder(builder, 0.045, 5.0, amber, 10)),
         "CableClamp": mesh("CableClamp", add_cylinder(builder, 0.10, 0.14, amber, 16)),
-        "PantographArm": mesh("PantographArm", add_box(builder, (2.6, 0.10, 0.10), dark)),
+        "PantographArm": mesh("PantographArm", add_beveled_box(builder, (2.6, 0.10, 0.10), dark, 0.025)),
         "PantographInsulator": mesh("PantographInsulator", add_cylinder(builder, 0.10, 0.22, ceramic, 18)),
-        "RoofVent": mesh("RoofVent", add_box(builder, (0.92, 0.16, 0.42), rust)),
+        "RoofVent": mesh("RoofVent", add_beveled_box(builder, (0.92, 0.16, 0.42), rust, 0.035)),
         "HeadlampHousing": mesh("HeadlampHousing", add_cylinder(builder, 0.17, 0.20, dark, 22)),
         "HeadlampLens": mesh("HeadlampLens", add_cylinder(builder, 0.11, 0.07, amber, 22)),
         "Seep": mesh("Seep", add_uv_sphere(builder, 0.48, organic, 18, 28)),
         "SeepTendril": mesh("SeepTendril", add_cylinder(builder, 0.055, 0.82, organic, 14)),
         "ServiceLamp": mesh("ServiceLamp", add_uv_sphere(builder, 0.10, amber, 16, 24)),
-        "Marker": mesh("Marker", add_box(builder, (0.7, 0.08, 0.7), amber)),
+        "Marker": mesh("Marker", add_beveled_box(builder, (0.7, 0.08, 0.7), amber, 0.025)),
     }
 
     nodes: list[dict] = [{

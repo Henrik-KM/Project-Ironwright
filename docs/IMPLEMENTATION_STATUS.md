@@ -44,6 +44,19 @@
   recurring work;
 - requires a fresh exact-export live review of remote page 11 before merge.
 
+## Focused Tram Graveyard focal-hierarchy milestone
+
+- reduced the presentation-only release wreck field from six broad carriage
+  blocks to four smaller background wrecks so the authored focal pair, service
+  pit and overhead transit hardware remain legible together;
+- regenerated the authored Tram Graveyard shell with conservative bevels on
+  carriage, roof, window, door, undercarriage, pit, rail-support and service
+  surfaces, preserving stable sockets and region contracts;
+- extended native aesthetic coverage for the beveled authored carriage shell;
+- the exact exported Windows page 10 was live-reviewed at a stable consecutive
+  capture before merge, with no gameplay, traversal, ecology, or operation
+  ownership change.
+
 ## Focused organic attack-audio telegraph milestone
 
 - connected the existing organic attack wind-up signal to the release audio
