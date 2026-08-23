@@ -6,6 +6,8 @@
   paired articulated mandibles, layered mouth ridges and cowl bone spines so
   its danger reads from the compact tactical camera instead of relying on eye
   emission alone;
+- extended the existing authored clips with restrained mandible and cowl-spine
+  beats for idle breathing, attack/feed opening and hit/retreat response;
 - preserved the stable asset ID, animation clips, authored sockets, runtime
   collision and organic behaviour ownership while extending the source and
   native aesthetic contract;

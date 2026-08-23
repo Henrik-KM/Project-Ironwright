@@ -145,6 +145,8 @@ def main() -> None:
         animation("Idle", [
             ("VeilstalkerModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.018, 0.0, 0.0, 0.0, 0.0]),
             ("Torso", "rotation", [0.0, 0.8, 1.6], quat((0.012, 0.0, 0.0)) + quat((-0.012, 0.0, 0.0)) + quat((0.012, 0.0, 0.0))),
+            ("VeilstalkerMandibleL", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.0, -0.31)) + quat((0.0, 0.0, -0.22)) + quat((0.0, 0.0, -0.31))),
+            ("VeilstalkerMandibleR", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.0, 0.31)) + quat((0.0, 0.0, 0.22)) + quat((0.0, 0.0, 0.31))),
         ]),
         animation("Walk", [
             ("TorsoSegment0", "rotation", [0.0, 0.22, 0.44], quat((0.12, 0.0, 0.0)) + quat((-0.12, 0.0, 0.0)) + quat((0.12, 0.0, 0.0))),
@@ -153,14 +155,22 @@ def main() -> None:
         animation("Attack", [
             ("VeilstalkerVeil", "rotation", [0.0, 0.34, 0.68], quat((0.0, 0.0, -0.16)) + quat((0.0, 0.0, 0.12)) + quat((0.0, 0.0, -0.16))),
             ("Torso", "rotation", [0.0, 0.34, 0.68], quat((0.04, 0.0, 0.0)) + quat((-0.1, 0.0, 0.0)) + quat((0.04, 0.0, 0.0))),
+            ("VeilstalkerMandibleL", "rotation", [0.0, 0.34, 0.68], quat((0.0, 0.0, -0.28)) + quat((0.0, 0.0, -0.62)) + quat((0.0, 0.0, -0.28))),
+            ("VeilstalkerMandibleR", "rotation", [0.0, 0.34, 0.68], quat((0.0, 0.0, 0.28)) + quat((0.0, 0.0, 0.62)) + quat((0.0, 0.0, 0.28))),
+            ("VeilstalkerCowlSpineL", "rotation", [0.0, 0.34, 0.68], quat((0.0, 0.0, -0.32)) + quat((0.0, 0.0, -0.46)) + quat((0.0, 0.0, -0.32))),
+            ("VeilstalkerCowlSpineR", "rotation", [0.0, 0.34, 0.68], quat((0.0, 0.0, 0.32)) + quat((0.0, 0.0, 0.46)) + quat((0.0, 0.0, 0.32))),
         ]),
         animation("Hit", [
             ("VeilstalkerModel", "translation", [0.0, 0.10, 0.24], [0.0, 0.0, 0.0, 0.0, 0.0, 0.12, 0.0, 0.0, 0.0]),
             ("Torso", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.0)) + quat((-0.16, 0.08, 0.0)) + quat((0.0, 0.0, 0.0))),
+            ("VeilstalkerMandibleL", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, -0.28)) + quat((0.0, 0.0, -0.18)) + quat((0.0, 0.0, -0.28))),
+            ("VeilstalkerMandibleR", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.28)) + quat((0.0, 0.0, 0.18)) + quat((0.0, 0.0, 0.28))),
         ]),
         animation("Feed", [
             ("VeilstalkerModel", "translation", [0.0, 0.3, 0.6], [0.0, 0.0, 0.0, 0.0, -0.12, -0.08, 0.0, 0.0, 0.0]),
             ("Torso", "rotation", [0.0, 0.3, 0.6], quat((0.02, 0.0, 0.0)) + quat((0.16, 0.0, 0.0)) + quat((0.02, 0.0, 0.0))),
+            ("VeilstalkerMandibleL", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.0, -0.28)) + quat((0.0, 0.0, -0.54)) + quat((0.0, 0.0, -0.28))),
+            ("VeilstalkerMandibleR", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.0, 0.28)) + quat((0.0, 0.0, 0.54)) + quat((0.0, 0.0, 0.28))),
         ]),
         animation("Nest", [
             ("VeilstalkerModel", "translation", [0.0, 0.5, 1.0], [0.0, 0.0, 0.0, 0.0, 0.08, 0.0, 0.0, 0.0, 0.0]),
@@ -169,6 +179,8 @@ def main() -> None:
         animation("Retreat", [
             ("TorsoSegment0", "rotation", [0.0, 0.22, 0.44], quat((0.28, 0.0, 0.0)) + quat((-0.16, 0.0, 0.0)) + quat((0.28, 0.0, 0.0))),
             ("Torso", "rotation", [0.0, 0.22, 0.44], quat((0.12, 0.0, 0.0)) + quat((0.22, 0.0, 0.0)) + quat((0.12, 0.0, 0.0))),
+            ("VeilstalkerCowlSpineL", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, -0.32)) + quat((0.0, 0.0, -0.18)) + quat((0.0, 0.0, -0.32))),
+            ("VeilstalkerCowlSpineR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, 0.32)) + quat((0.0, 0.0, 0.18)) + quat((0.0, 0.0, 0.32))),
         ]),
         animation("Death", [
             ("VeilstalkerModel", "rotation", [0.0, 0.28, 0.64], quat((0.0, 0.0, 0.0)) + quat((0.34, 0.08, 0.2)) + quat((0.78, 0.16, 0.42))),

@@ -8,3 +8,8 @@ The asset supplies the layered thorax, protected threat eyes, sensory cowl
 spines, articulated mandibles, veil membranes, tendrils, hooks and threat eyes.
 Runtime movement, attack wind-up, ecology, collision and damage remain owned by
 `OrganicEnemy3D`.
+
+The authored clips also carry small mandible and cowl-spine beats: breathing in
+`Idle`, opening through `Attack` and `Feed`, and bracing during `Hit` and
+`Retreat`. The release animator may layer its deterministic locomotion on top
+of these clips without changing gameplay timing.
