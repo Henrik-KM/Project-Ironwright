@@ -2986,3 +2986,15 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - added direct imported-asset aesthetic regression coverage for the refined
   anatomy meshes; exact exported hostile-family live review remains required
   for the broader acceptance gate.
+
+## Focused North Ruins material-contrast milestone
+
+- tuned the authored North Ruins archive's civic-stone and brick materials
+  darker so the vault surround, pilasters, window framing and amber beacon
+  retain readable material separation instead of washing toward one white
+  mass in the compact exact-export review frame;
+- preserved the existing archive landmark geometry, collision, route,
+  discovery, ecology and operation ownership; this is presentation-only and
+  adds no player task or recurring management burden;
+- exact exported North Ruins review is required before this region-family
+  acceptance item is considered closed.

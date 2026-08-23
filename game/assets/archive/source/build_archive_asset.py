@@ -21,8 +21,8 @@ OUTPUT_PATH = SOURCE_DIR / "archive.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Archive pale stone", "pbrMetallicRoughness": {"baseColorFactor": [0.20, 0.22, 0.22, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.88}},
-        {"name": "Archive civic brick", "pbrMetallicRoughness": {"baseColorFactor": [0.20, 0.10, 0.08, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.90}},
+        {"name": "Archive pale stone", "pbrMetallicRoughness": {"baseColorFactor": [0.055, 0.07, 0.08, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.88}},
+        {"name": "Archive civic brick", "pbrMetallicRoughness": {"baseColorFactor": [0.11, 0.045, 0.035, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.90}},
         {"name": "Archive iron", "pbrMetallicRoughness": {"baseColorFactor": [0.045, 0.065, 0.075, 1.0], "metallicFactor": 0.72, "roughnessFactor": 0.46}},
         {"name": "Archive amber", "pbrMetallicRoughness": {"baseColorFactor": [0.62, 0.25, 0.06, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.38}, "emissiveFactor": [0.92, 0.16, 0.02]},
         {"name": "Archive cold glass", "alphaMode": "BLEND", "doubleSided": True, "pbrMetallicRoughness": {"baseColorFactor": [0.16, 0.30, 0.34, 0.44], "metallicFactor": 0.08, "roughnessFactor": 0.28}, "emissiveFactor": [0.02, 0.08, 0.10]},
