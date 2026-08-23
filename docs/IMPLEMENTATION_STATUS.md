@@ -1815,6 +1815,17 @@ West Grid detour visibly selected.
   landmark actor, and retains the dedicated Root Cistern authored-model check;
   formal human acceptance of the broader region family remains outstanding.
 
+## Focused remote-region review framing milestone
+
+- tightened the development-only exact-export review camera for Riverworks,
+  Tram Graveyard and Cathedral Quarter so their pump, rail and choir hardware
+  occupies a comparable inspection scale to the already-close Observatory
+  Ridge and Buried Laboratories frames;
+- kept the change presentation-only: runtime navigation, landmark transforms,
+  collision, encounter logic and player-facing camera behaviour are unchanged;
+- added regression coverage for all three region-specific review offsets;
+  exact exported live review remains required before merge.
+
 ## Focused town-wide route-recovery breadth milestone
 
 - expanded authored alternate street routes to North Ruins, East Tenements,
