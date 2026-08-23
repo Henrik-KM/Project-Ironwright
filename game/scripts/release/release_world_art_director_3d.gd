@@ -221,6 +221,11 @@ func _texture_mesh(mesh_instance: MeshInstance3D) -> void:
         material.roughness = 0.48 if category == &"metal" else 0.72
     elif category in [&"chitin", &"membrane"]:
         material.roughness = 0.58
+        # Authored membrane shells share a high-contrast source texture. Keep
+        # the family color rich but restrained when beveled anatomy turns a
+        # previously flat face toward the release key light.
+        if category == &"membrane" and _contains_any(str(mesh_instance.get_path()).to_lower(), AUTHORED_ORGANIC_TOKENS):
+            material.albedo_color = Color(0.54, 0.44, 0.52, 1.0)
     mesh_instance.material_override = material
     mesh_instance.visibility_range_end = 250.0
     mesh_instance.set_meta(&"release_material_family", category)

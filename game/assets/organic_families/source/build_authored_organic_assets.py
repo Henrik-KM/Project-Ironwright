@@ -1,6 +1,6 @@
 """Build the remaining original high-definition organic family shells.
 
-The five assets in this builder deliberately share a small production mesh kit
+The seven assets in this builder deliberately share a small production mesh kit
 while keeping distinct silhouettes and stable anatomy names. They are imported
 as presentation shells; gameplay collision, ecology and tier data remain owned
 by the runtime enemy actor.
@@ -18,7 +18,7 @@ from typing import Sequence
 SOURCE_DIR = Path(__file__).resolve().parent
 ASSET_ROOT = SOURCE_DIR.parents[1]
 sys.path.insert(0, str(ASSET_ROOT / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 FAMILIES = {
@@ -78,10 +78,11 @@ def build_family(name: str, spec: dict) -> None:
     builder = BufferBuilder()
     wet, shell, membrane, bone, eye, tendon = range(6)
     colors = spec["colors"]
+    membrane_tone = [channel * 0.62 if index < 3 else channel for index, channel in enumerate(colors[2])]
     materials = [
         {"name": f"{spec['display']} wet shell", "pbrMetallicRoughness": {"baseColorFactor": list(colors[0]), "metallicFactor": 0.18, "roughnessFactor": 0.32}},
         {"name": f"{spec['display']} layered plate", "pbrMetallicRoughness": {"baseColorFactor": list(colors[1]), "metallicFactor": 0.14, "roughnessFactor": 0.42}},
-        {"name": f"{spec['display']} membrane", "pbrMetallicRoughness": {"baseColorFactor": list(colors[2]), "metallicFactor": 0.02, "roughnessFactor": 0.58}},
+        {"name": f"{spec['display']} membrane", "pbrMetallicRoughness": {"baseColorFactor": membrane_tone, "metallicFactor": 0.02, "roughnessFactor": 0.58}},
         {"name": f"{spec['display']} bone", "pbrMetallicRoughness": {"baseColorFactor": list(colors[3]), "metallicFactor": 0.0, "roughnessFactor": 0.62}},
         {"name": f"{spec['display']} threat light", "pbrMetallicRoughness": {"baseColorFactor": list(colors[4]), "metallicFactor": 0.0, "roughnessFactor": 0.22}, "emissiveFactor": [1.0, 0.18, 0.04]},
         {"name": f"{spec['display']} tendon", "pbrMetallicRoughness": {"baseColorFactor": list(colors[5]), "metallicFactor": 0.0, "roughnessFactor": 0.55}},
@@ -100,8 +101,11 @@ def build_family(name: str, spec: dict) -> None:
         # light instead of hiding the issue behind a material-only pass.
         "Core": mesh("Core", add_uv_sphere(builder, 0.62, wet, 24, 36)),
         "Segment": mesh("Segment", add_uv_sphere(builder, 0.48, shell, 24, 36)),
-        "Plate": mesh("Plate", add_box(builder, (1.52, 0.16, 0.28), shell)),
-        "Membrane": mesh("Membrane", add_box(builder, (1.26, 0.045, 1.08), membrane)),
+        # The close review gallery exposed the shared plate kit as flat bars.
+        # Small bevels keep the anatomy layered while giving the controlled
+        # key/rim lights a real edge to catch at tactical distance.
+        "Plate": mesh("Plate", add_beveled_box(builder, (1.52, 0.16, 0.28), shell, 0.035)),
+        "Membrane": mesh("Membrane", add_beveled_box(builder, (1.26, 0.045, 1.08), membrane, 0.012)),
         "Bone": mesh("Bone", add_cylinder(builder, 0.09, 0.86, bone, 24)),
         "LongBone": mesh("LongBone", add_cylinder(builder, 0.065, 1.35, bone, 24)),
         "Tendon": mesh("Tendon", add_cylinder(builder, 0.07, 1.15, tendon, 24)),
@@ -109,7 +113,7 @@ def build_family(name: str, spec: dict) -> None:
         "Soft": mesh("Soft", add_uv_sphere(builder, 0.34, membrane, 24, 36)),
         "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.045, bone, 24, 36)),
         "FineVein": mesh("FineVein", add_cylinder(builder, 0.026, 1.22, bone, 24)),
-        "Ridge": mesh("Ridge", add_box(builder, (1.24, 0.07, 0.10), bone)),
+        "Ridge": mesh("Ridge", add_beveled_box(builder, (1.24, 0.07, 0.10), bone, 0.018)),
         "ResonatorRing": mesh("ResonatorRing", add_cylinder(builder, 0.11, 0.07, bone, 24)),
         "RootKnuckle": mesh("RootKnuckle", add_uv_sphere(builder, 0.14, bone, 24, 36)),
         "WingFrame": mesh("WingFrame", add_cylinder(builder, 0.045, 1.58, bone, 24)),
@@ -117,7 +121,7 @@ def build_family(name: str, spec: dict) -> None:
         "GillSpine": mesh("GillSpine", add_cylinder(builder, 0.045, 0.78, bone, 24)),
         "BellRib": mesh("BellRib", add_cylinder(builder, 0.04, 0.92, bone, 24)),
         "RootSpine": mesh("RootSpine", add_cylinder(builder, 0.055, 1.42, bone, 24)),
-        "PlateCap": mesh("PlateCap", add_box(builder, (0.44, 0.10, 0.18), bone)),
+        "PlateCap": mesh("PlateCap", add_beveled_box(builder, (0.44, 0.10, 0.18), bone, 0.022)),
         "CrownFastener": mesh("CrownFastener", add_uv_sphere(builder, 0.06, bone, 24, 36)),
     }
 
@@ -162,7 +166,7 @@ def build_family(name: str, spec: dict) -> None:
         add_node(f"{name.capitalize()}ThoraxRib", mesh_ids["Plate"], (0.0, 1.37 - index * 0.035, z), rotation=(0.0, 0.0, 0.03 * (index - 1)), scale=(1.0, 1.0, 0.74), parent=torso, extras={"surface": "layered_shell_break"} if index == 1 else None)
         add_node("ThoraxFastener", mesh_ids["Fastener"], (-0.56, 1.18, z), parent=torso)
         add_node("ThoraxFastener", mesh_ids["Fastener"], (0.56, 1.18, z), parent=torso)
-    dorsal = add_node("OrganicDorsalPlate", mesh_ids["Plate"], (-0.12, 1.54, 0.18), rotation=(0.0, 0.0, -0.04), scale=(1.08, 1.0, 1.4), extras={"surface": "layered_shell_break"})
+    dorsal = add_node("OrganicDorsalPlate", mesh_ids["Plate"], (-0.12, 1.54, 0.18), rotation=(0.0, 0.0, -0.04), scale=(1.08, 1.0, 1.4), extras={"surface": "beveled_layered_shell_break"})
 
     if name == "roofleaper":
         add_node("RoofleaperCrown", mesh_ids["Soft"], (0.0, 1.3, -1.02), scale=(1.15, 0.82, 1.05), extras={"socket_type": "crown"})
