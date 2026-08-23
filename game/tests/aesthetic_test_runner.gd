@@ -900,6 +900,15 @@ func _run_all() -> void:
                 for clip_name in [&"Idle", &"Walk", &"Work", &"Fire", &"Hit"]:
                     _expect(_animation_player_has_clip(relay_animation.animation_player, clip_name), "The authored Signal Relay must expose the %s animation clip." % clip_name)
                     _expect(_animation_player_track_count(relay_animation.animation_player, clip_name) >= 2, "The Signal Relay %s clip must carry primary and secondary authored motion channels." % clip_name)
+                _expect(_animation_player_track_count(relay_animation.animation_player, &"Idle") >= 6, "Signal Relay Idle must carry mast-collar, heat-sink and service-face channels.")
+                _expect(_animation_player_track_count(relay_animation.animation_player, &"Walk") >= 6, "Signal Relay Walk must carry mast-brace and mast articulation channels.")
+                _expect(_animation_player_track_count(relay_animation.animation_player, &"Work") >= 5, "Signal Relay Work must carry dish-rim, hub and signal-cable channels.")
+                _expect(_animation_player_track_count(relay_animation.animation_player, &"Fire") >= 4, "Signal Relay Fire must carry dish hub and rim response channels.")
+                _expect(_animation_player_track_count(relay_animation.animation_player, &"Hit") >= 5, "Signal Relay Hit must carry service-face, mast-collar and dish-rim impact channels.")
+                _expect(_animation_player_has_clip(relay_animation.animation_player, &"Retreat"), "The authored Signal Relay must expose a Retreat clip.")
+                _expect(_animation_player_track_count(relay_animation.animation_player, &"Retreat") >= 5, "Signal Relay Retreat must carry mast-brace and collar withdrawal channels.")
+                _expect(_animation_player_has_clip(relay_animation.animation_player, &"Death"), "The authored Signal Relay must expose a Death clip.")
+                _expect(_animation_player_track_count(relay_animation.animation_player, &"Death") >= 4, "Signal Relay Death must carry dish and beacon-cap collapse channels.")
         if role_names[index] == &"guardian":
             _expect(_find_named(role_samples[index], "WardenTargetingFace") != null and _find_named(role_samples[index], "WardenRecoilCollarLeft") != null, "The Warden must expose its maintained targeting and recoil hardware.")
             _expect(_find_named(role_samples[index], "WardenThermalFinLeft") != null and _find_named(role_samples[index], "WardenOpticShroud") != null and _find_named(role_samples[index], "WardenBreechClamp") != null, "The Warden must expose its third-pass thermal, optic and breech hardware.")

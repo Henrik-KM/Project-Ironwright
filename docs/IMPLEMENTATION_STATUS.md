@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Signal Relay secondary-animation pass
+
+- extended the relay's authored clips with mast-collar, heat-sink and
+  service-face breathing, mast-brace locomotion, dish-rim and hub work
+  response, signal-cable articulation, impact response and beacon collapse;
+- regenerated only the Signal Relay runtime asset from its original authored
+  high-definition builder and added native track-count coverage so the relay
+  cannot silently regress to chassis-only motion;
+- regenerated-import validation passed, and exact exported Windows opening
+  plus normal-flow review passed on 2026-08-23; broader human visual
+  acceptance remains an open commercial gate.
+
 ## Focused Engineer secondary-animation pass
 
 - extended the constructor's authored clips with cradle-latch breathing,
