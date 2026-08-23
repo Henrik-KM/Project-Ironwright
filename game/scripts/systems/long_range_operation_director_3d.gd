@@ -13,6 +13,7 @@ const ROUTE_RECOVERY_LATERAL_OFFSET := 11.0
 const ROUTE_MEMORY_SWITCH_THRESHOLD := 1.0
 const ROUTE_MEMORY_SUCCESS_DECAY := 0.22
 const ROUTE_MEMORY_MAX_ENTRIES := 24
+const DYNAMIC_OPERATION_MAX_OFFERS := 3
 
 var run_state: RunState3D
 var progression: ProgressionDirector3D
@@ -25,6 +26,7 @@ var operation_detail_director: Variant
 var spawn_enemy_callback: Callable
 var context_provider: Callable
 var operations: Dictionary = {}
+var dynamic_templates: Dictionary = {}
 var completed_operations: Array[StringName] = []
 var recovered_components: Array[StringName] = []
 var active_operation: Dictionary = {}
@@ -73,6 +75,7 @@ func _process(delta: float) -> void:
 
 func _load_operations() -> void:
     operations.clear()
+    dynamic_templates.clear()
     load_errors.clear()
     var file := FileAccess.open(OPERATIONS_PATH, FileAccess.READ)
     if file == null:
@@ -91,11 +94,23 @@ func _load_operations() -> void:
             load_errors.append("Operation without stable id")
             continue
         operations[operation_id] = entry
+    for raw_template in (parsed as Dictionary).get("dynamic_templates", []):
+        if not (raw_template is Dictionary):
+            continue
+        var template := (raw_template as Dictionary).duplicate(true)
+        var template_id := StringName(str(template.get("id", "")))
+        if template_id == &"":
+            load_errors.append("Dynamic operation template without stable id")
+            continue
+        dynamic_templates[template_id] = template
 
 
 func operation(operation_id: StringName) -> Dictionary:
-    var raw: Variant = operations.get(operation_id, {})
-    return (raw as Dictionary).duplicate(true) if raw is Dictionary else {}
+    if operations.has(operation_id):
+        var raw: Variant = operations.get(operation_id, {})
+        if raw is Dictionary:
+            return (raw as Dictionary).duplicate(true)
+    return _dynamic_operation(operation_id)
 
 
 func has_completed(operation_id: StringName) -> bool:
@@ -119,6 +134,8 @@ func available_operations() -> Array[Dictionary]:
         var entry := operation(operation_id)
         if requirements_met(entry):
             result.append(_with_route_preview(entry))
+    for entry in _dynamic_operation_offers():
+        result.append(_with_route_preview(entry))
     result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
         return str(a.get("display_name", "")) < str(b.get("display_name", ""))
     )
@@ -128,6 +145,100 @@ func available_operations() -> Array[Dictionary]:
 func route_preview(operation_id: StringName) -> Dictionary:
     var entry := operation(operation_id)
     return _with_route_preview(entry) if not entry.is_empty() else {}
+
+
+func _dynamic_operation_id(template_id: StringName, region_id: StringName) -> StringName:
+    return StringName("operation.%s.%s" % [String(template_id), String(region_id)])
+
+
+func _is_dynamic_operation_id(operation_id: StringName) -> bool:
+    return String(operation_id).begins_with("operation.dynamic.")
+
+
+func _dynamic_operation(operation_id: StringName) -> Dictionary:
+    var operation_text := String(operation_id)
+    if not _is_dynamic_operation_id(operation_id) or region_director == null:
+        return {}
+    for raw_template_id in dynamic_templates.keys():
+        var template_id := raw_template_id as StringName
+        var prefix := "operation.%s." % String(template_id)
+        if not operation_text.begins_with(prefix):
+            continue
+        var region_id := StringName(operation_text.trim_prefix(prefix))
+        if region_id == &"" or not region_director.region_data.has(region_id):
+            return {}
+        var raw_template: Variant = dynamic_templates.get(template_id, {})
+        if not (raw_template is Dictionary):
+            return {}
+        var entry := (raw_template as Dictionary).duplicate(true)
+        var region_data := region_director.get_region_data(region_id)
+        var region_name := str(region_data.get("display_name", String(region_id)))
+        entry["id"] = operation_id
+        entry["region_id"] = region_id
+        entry["dynamic_template_id"] = template_id
+        entry["generated_from"] = String(entry.get("trigger", "world_state"))
+        entry["display_name"] = str(entry.get("display_name", "Strategic response")).replace("{region}", region_name)
+        entry["description"] = str(entry.get("description", "")).replace("{region}", region_name)
+        return entry
+    return {}
+
+
+func _dynamic_operation_offers() -> Array[Dictionary]:
+    var candidates: Array[Dictionary] = []
+    if region_director == null or progression == null:
+        return candidates
+    var region_ids: Array[StringName] = []
+    for raw_region_id in region_director.region_data.keys():
+        var region_id := raw_region_id as StringName
+        if region_id == &"region.heartforge_district" or not region_director.is_discovered(region_id):
+            continue
+        region_ids.append(region_id)
+    region_ids.sort_custom(func(a: StringName, b: StringName) -> bool: return String(a) < String(b))
+    var template_ids: Array[StringName] = []
+    for raw_template_id in dynamic_templates.keys():
+        template_ids.append(raw_template_id as StringName)
+    template_ids.sort_custom(func(a: StringName, b: StringName) -> bool: return String(a) < String(b))
+    for region_id in region_ids:
+        for template_id in template_ids:
+            var operation_id := _dynamic_operation_id(template_id, region_id)
+            if has_completed(operation_id):
+                continue
+            var entry := _dynamic_operation(operation_id)
+            if entry.is_empty() or not requirements_met(entry):
+                continue
+            var priority := _dynamic_trigger_priority(entry, region_id)
+            if priority < 0.0:
+                continue
+            entry["dynamic_priority"] = priority
+            candidates.append(entry)
+    candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+        var priority_a := float(a.get("dynamic_priority", 0.0))
+        var priority_b := float(b.get("dynamic_priority", 0.0))
+        if not is_equal_approx(priority_a, priority_b):
+            return priority_a > priority_b
+        var name_a := str(a.get("display_name", ""))
+        var name_b := str(b.get("display_name", ""))
+        if name_a != name_b:
+            return name_a < name_b
+        return str(a.get("id", "")) < str(b.get("id", ""))
+    )
+    if candidates.size() > DYNAMIC_OPERATION_MAX_OFFERS:
+        candidates.resize(DYNAMIC_OPERATION_MAX_OFFERS)
+    return candidates
+
+
+func _dynamic_trigger_priority(entry: Dictionary, region_id: StringName) -> float:
+    var trigger := String(entry.get("trigger", ""))
+    if trigger == "pressure":
+        var threshold := float(entry.get("pressure_threshold", INF))
+        var pressure := region_director.effective_pressure(region_id)
+        return pressure if pressure >= threshold else -1.0
+    if trigger == "route_risk":
+        var memory: Variant = route_memory.get(String(region_id), {})
+        var risk := float((memory as Dictionary).get("risk", 0.0)) if memory is Dictionary else 0.0
+        var threshold := float(entry.get("route_risk_threshold", INF))
+        return risk if risk >= threshold else -1.0
+    return -1.0
 
 
 func _with_route_preview(entry: Dictionary) -> Dictionary:
@@ -749,7 +860,7 @@ func restore_from_dictionary(data: Dictionary) -> void:
     active_operation.clear()
     for raw_operation in data.get("completed_operations", []):
         var operation_id := StringName(str(raw_operation))
-        if operation_id in operations and operation_id not in completed_operations:
+        if (operation_id in operations or _is_dynamic_operation_id(operation_id)) and operation_id not in completed_operations:
             completed_operations.append(operation_id)
     for raw_component in data.get("recovered_components", []):
         var component_id := StringName(str(raw_component))

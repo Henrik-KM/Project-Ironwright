@@ -169,6 +169,27 @@ func _run_all() -> void:
     _expect(world.region_director.get_landmark(&"region.west_grid").get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing") != null, "Discovering a remote region must attach its authored encounter dressing without changing the operation contract.")
     _expect(complete_world.story_archive_director.has_record(&"story.north_ruins.ledger") and complete_world.story_archive_director.has_record(&"story.west_grid.reroute"), "Physical regional discoveries must unlock their stable Town Archive records.")
 
+    var west_landmark := world.region_director.get_landmark(&"region.west_grid")
+    if west_landmark != null:
+        west_landmark.set_pressure(1.15)
+    var dynamic_pressure_id := &"operation.dynamic.pressure_suppression.region.west_grid"
+    var dynamic_route_id := &"operation.dynamic.route_recovery.region.west_grid"
+    var dynamic_offers := world.long_operation_director.available_operations()
+    _expect(dynamic_offers.any(func(entry: Dictionary) -> bool: return StringName(str(entry.get("id", ""))) == dynamic_pressure_id), "High regional pressure must generate a bounded dynamic suppression proposal.")
+    _expect(dynamic_offers.any(func(entry: Dictionary) -> bool: return StringName(str(entry.get("id", ""))) == dynamic_route_id), "Learned route risk must generate a bounded dynamic route-recovery proposal.")
+    var dynamic_pressure_entry := world.long_operation_director.operation(dynamic_pressure_id)
+    _expect(StringName(str(dynamic_pressure_entry.get("dynamic_template_id", ""))) == &"dynamic.pressure_suppression" and StringName(str(dynamic_pressure_entry.get("region_id", ""))) == &"region.west_grid", "Dynamic proposals must retain stable template and region provenance.")
+    _expect(not str(dynamic_pressure_entry.get("generated_from", "")).is_empty() and str(dynamic_pressure_entry.get("description", "")).contains("West Grid"), "Dynamic proposals must explain the world-state cause in player-facing language.")
+    var dynamic_route_preview := world.long_operation_director.route_preview(dynamic_route_id)
+    _expect(float(dynamic_route_preview.get("route_distance", 0.0)) > 0.0 and int(dynamic_route_preview.get("route_waypoints", 0)) > 0, "Dynamic proposals must use the same physical route preview contract as authored operations.")
+    _expect(_complete_operation(world, dynamic_route_id), "A dynamic route-recovery proposal must resolve through the same physical formation and return path.")
+    _expect(world.long_operation_director.has_completed(dynamic_route_id), "A completed dynamic proposal must become a stable one-time world record.")
+    var dynamic_checkpoint := world.long_operation_director.to_dictionary()
+    world.long_operation_director.restore_from_dictionary(dynamic_checkpoint)
+    _expect(world.long_operation_director.has_completed(dynamic_route_id), "Completed dynamic proposals must survive operation save/load restoration.")
+    _expect(_complete_operation(world, dynamic_pressure_id), "A dynamic pressure proposal must resolve through the same physical formation and return path.")
+    _expect(not world.long_operation_director.available_operations().any(func(entry: Dictionary) -> bool: return StringName(str(entry.get("id", ""))) == dynamic_pressure_id or StringName(str(entry.get("id", ""))) == dynamic_route_id), "Dynamic proposals must not become a recurring management queue after resolution.")
+
     _expect(world.progression.purchase(&"tech.heartforge.tier_3"), "West Grid data and one outpost must permit Heartforge tier 3.")
     _expect(world.progression.heartforge_tier == 3, "The run must reach Heartforge tier 3.")
     _expect(world.progression.purchase(&"tech.machine.forge_assistance"), "Tier 3 must permit autonomous ordinary replacement.")

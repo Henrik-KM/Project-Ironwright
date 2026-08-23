@@ -225,5 +225,35 @@
       "threat_level": 1.05,
       "rewards": {"rare_cores": 1, "component": "component.town_archive"}
     }
+  ],
+  "dynamic_templates": [
+    {
+      "id": "dynamic.pressure_suppression",
+      "display_name": "Stabilize {region}",
+      "trigger": "pressure",
+      "pressure_threshold": 0.9,
+      "description": "The ecology has pushed {region} beyond a safe operating pressure. Authorize a compact escorted formation to suppress the immediate source before the route becomes more dangerous.",
+      "requirements": {"heartforge_tier": 2},
+      "team_roles": ["scout", "guardian", "engineer"],
+      "scrap_cost": 78,
+      "work_seconds": 16.0,
+      "noise_radius": 38.0,
+      "threat_level": 1.38,
+      "rewards": {"suppress_region": 0.22}
+    },
+    {
+      "id": "dynamic.route_recovery",
+      "display_name": "Reopen the {region} route",
+      "trigger": "route_risk",
+      "route_risk_threshold": 1.0,
+      "description": "Repeated organic blockages have made the remembered route through {region} unreliable. Send a protected engineering group to reopen the corridor and teach the society which street can carry the next formation.",
+      "requirements": {"heartforge_tier": 2},
+      "team_roles": ["scout", "guardian", "engineer"],
+      "scrap_cost": 92,
+      "work_seconds": 14.0,
+      "noise_radius": 34.0,
+      "threat_level": 1.24,
+      "rewards": {"suppress_region": 0.08}
+    }
   ]
 }
