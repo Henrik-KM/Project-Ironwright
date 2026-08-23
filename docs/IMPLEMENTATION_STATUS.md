@@ -2511,6 +2511,20 @@ West Grid detour visibly selected.
 
 ## Commercial work still remaining
 
+## Focused Mechromancer progression silhouette milestone
+
+- added a progression-derived authored hardware layer for Heartforge tiers
+  II-V, including field-rig, cognition-lattice, bio-sensor and final-protocol
+  forms;
+- kept the layer presentation-only and attached it to the gameplay actor, so
+  collision, targeting, sockets, input and the human field-engineer silhouette
+  remain stable while the player visibly evolves with the machine society;
+- added release regression coverage for the derived layer and a development-
+  only exact-export review flag (`--mechromancer-evolution-review`); the fresh
+  Windows export was live-reviewed beside the friendly roster;
+- broader authored animation/audio, content breadth, performance, external
+  playtest and final human acceptance remain commercial gates.
+
 ## Focused persistent-operation status milestone
 
 - added a compact exception-based tactical badge that appears only while a

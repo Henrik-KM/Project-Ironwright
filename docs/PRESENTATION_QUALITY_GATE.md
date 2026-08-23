@@ -470,6 +470,16 @@ and paired fasteners. The weak pistol remains deliberately small and the
 field-engineer silhouette remains asymmetric; this is a visual refinement only
 and does not alter weapon sockets, input, collision or damage.
 
+The Mechromancer now also receives a progression-derived authored hardware
+layer at Heartforge tiers II-V: a field shoulder rig, cognition lattice,
+bio-sensor housing and final-protocol hardware. These details are attached to
+the gameplay actor rather than the import-owned shell, so their scale and
+stable targeting/collision contracts remain explicit. The exact Windows export
+can be inspected with `--mechromancer-evolution-review`; its live review shows
+the evolved player beside the friendly machine society. This is a bounded
+presentation layer, not a new equipment-management task, and broader full-run
+human acceptance remains outstanding.
+
 The six-role machine kit now also removes the remaining flat role inserts:
 Warden counterweight, Scrapper dismantler claws, Pathfinder survey wings and
 Engineer clamp hardware use beveled forms, with the nearby forge pump/control

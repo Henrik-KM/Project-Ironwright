@@ -127,6 +127,8 @@ func _setup_full_game_services() -> void:
 
 
 func _refresh_progression_modifiers() -> void:
+    if player != null and player.has_method(&"apply_progression_visuals"):
+        player.call(&"apply_progression_visuals", progression.unlocked_effects, progression.heartforge_tier)
     for robot in autonomy_director.living_robots():
         robot.set_progression(progression)
 

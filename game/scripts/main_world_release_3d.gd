@@ -491,6 +491,9 @@ func _finish_release_boot() -> void:
 	pending_launch_mode = &"title"
 	if _is_headless_release():
 		_start_release_world()
+	elif _has_mechromancer_evolution_review_flag():
+		_start_release_world()
+		call_deferred("_start_mechromancer_evolution_review")
 	elif _has_presentation_review_flag():
 		_start_release_world()
 		call_deferred("_start_presentation_review")
@@ -518,6 +521,16 @@ func _has_presentation_review_flag() -> bool:
 			return true
 	for argument in OS.get_cmdline_user_args():
 		if str(argument) == "--presentation-review":
+			return true
+	return false
+
+
+func _has_mechromancer_evolution_review_flag() -> bool:
+	for argument in OS.get_cmdline_args():
+		if str(argument) == "--mechromancer-evolution-review":
+			return true
+	for argument in OS.get_cmdline_user_args():
+		if str(argument) == "--mechromancer-evolution-review":
 			return true
 	return false
 
@@ -633,6 +646,22 @@ func _start_presentation_review() -> void:
 	_show_presentation_review_page(0)
 	get_tree().paused = true
 	run_state.log_event("Presentation review mode: 1 friendly roster, 2 early organics, 3 late organics, 4-14 all remote regions. Arrow keys browse; Escape exits review.")
+
+
+func _start_mechromancer_evolution_review() -> void:
+	if progression != null:
+		progression.set_heartforge_tier(5)
+		for effect_id in [
+			&"unlock_machine_society",
+			&"unlock_adaptive_defence",
+			&"unlock_final_protocol_research",
+			&"machine_signal_lattice",
+		]:
+			progression.unlocked_effects[effect_id] = true
+		progression.progression_changed.emit()
+	_start_presentation_review()
+	if presentation_review_label != null:
+		presentation_review_label.text = "MECHROMANCER EVOLUTION REVIEW  ·  HEARTFORGE TIER V\nTIER II FIELD RIG  ·  TIER III COGNITION LATTICE  ·  TIER IV BIO-SENSOR  ·  TIER V PROTOCOL HARDWARE"
 
 
 func _create_presentation_review_stage() -> void:
