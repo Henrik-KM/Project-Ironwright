@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused Roofleaper secondary-animation pass
+
+- extended the vertical ambusher's shared authored clips with paired wing,
+  spar, vascular-vein, crown-ridge and talon motion across breathing,
+  locomotion, threat, impact, feeding, nest-watch, retreat and collapse
+  responses;
+- regenerated the shared seven-family authored asset set from its original
+  high-definition builder and added native Roofleaper track-count coverage so
+  the membrane silhouette cannot silently regress to torso-only motion;
+- regenerated-import validation passed, and exact exported Windows
+  presentation plus normal-flow review passed on 2026-08-23; broader human
+  visual acceptance remains an open commercial gate.
+
 ## Focused Sporecaster secondary-animation pass
 
 - extended the infestation caster's authored clips with cowl plates, gill
