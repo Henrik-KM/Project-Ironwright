@@ -1135,6 +1135,12 @@ func _run_all() -> void:
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 6, "Apex Attack must carry jaw and membrane threat channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 4, "Apex Feed must carry jaw motion channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 4, "Apex Retreat must carry membrane withdrawal channels.")
+            if species_names[index] == &"rootweaver":
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 5, "Rootweaver Idle must carry spore-fan and rib breathing channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Walk") >= 4, "Rootweaver Walk must carry paired root-arm channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 6, "Rootweaver Attack must carry fan, rib and root-spine threat channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 5, "Rootweaver Feed must carry fan and root-arm motion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 5, "Rootweaver Retreat must carry paired root-spine withdrawal channels.")
             var previous_state: StringName = StringName(enemy_samples[index].get(&"state_name"))
             enemy_samples[index].set(&"state_name", &"feeding")
             enemy_samples[index].set_meta(&"enemy_behaviour", "feed")
