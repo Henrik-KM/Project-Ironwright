@@ -57,6 +57,17 @@
   capture before merge, with no gameplay, traversal, ecology, or operation
   ownership change.
 
+## Focused East Tenements facade-edge milestone
+
+- regenerated the authored residential block shell with conservative bevels on
+  the two main blocks, facade edge breaks, approach windows, balconies, window
+  trim and service-floor surfaces so the district reads as built architecture
+  at the compact tactical review distance;
+- extended native aesthetic coverage for the beveled authored block geometry;
+- retained the vertical-life dressing, fire escape, rooftop tank, discovery,
+  ecology and operation contracts; the exact exported Windows page 6 was
+  live-reviewed at a stable consecutive capture before merge.
+
 ## Focused organic attack-audio telegraph milestone
 
 - connected the existing organic attack wind-up signal to the release audio
