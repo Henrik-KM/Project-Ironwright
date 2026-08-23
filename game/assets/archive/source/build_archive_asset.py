@@ -21,13 +21,13 @@ OUTPUT_PATH = SOURCE_DIR / "archive.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Archive pale stone", "pbrMetallicRoughness": {"baseColorFactor": [0.055, 0.07, 0.08, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.88}},
-        {"name": "Archive civic brick", "pbrMetallicRoughness": {"baseColorFactor": [0.11, 0.045, 0.035, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.90}},
-        {"name": "Archive iron", "pbrMetallicRoughness": {"baseColorFactor": [0.045, 0.065, 0.075, 1.0], "metallicFactor": 0.72, "roughnessFactor": 0.46}},
-        {"name": "Archive amber", "pbrMetallicRoughness": {"baseColorFactor": [0.62, 0.25, 0.06, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.38}, "emissiveFactor": [0.92, 0.16, 0.02]},
-        {"name": "Archive cold glass", "alphaMode": "BLEND", "doubleSided": True, "pbrMetallicRoughness": {"baseColorFactor": [0.16, 0.30, 0.34, 0.44], "metallicFactor": 0.08, "roughnessFactor": 0.28}, "emissiveFactor": [0.02, 0.08, 0.10]},
-        {"name": "Archive organic creep", "pbrMetallicRoughness": {"baseColorFactor": [0.22, 0.04, 0.12, 1.0], "metallicFactor": 0.02, "roughnessFactor": 0.84}, "emissiveFactor": [0.28, 0.01, 0.08]},
-        {"name": "Archive paper stacks", "pbrMetallicRoughness": {"baseColorFactor": [0.38, 0.32, 0.23, 1.0], "metallicFactor": 0.02, "roughnessFactor": 0.94}},
+        {"name": "Archive pale stone", "pbrMetallicRoughness": {"baseColorFactor": [0.018, 0.024, 0.030, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.94}},
+        {"name": "Archive civic brick", "pbrMetallicRoughness": {"baseColorFactor": [0.038, 0.010, 0.007, 1.0], "metallicFactor": 0.02, "roughnessFactor": 0.94}},
+        {"name": "Archive iron", "pbrMetallicRoughness": {"baseColorFactor": [0.018, 0.030, 0.035, 1.0], "metallicFactor": 0.50, "roughnessFactor": 0.58}},
+        {"name": "Archive amber", "pbrMetallicRoughness": {"baseColorFactor": [0.48, 0.16, 0.03, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.46}, "emissiveFactor": [0.58, 0.08, 0.008]},
+        {"name": "Archive cold glass", "alphaMode": "BLEND", "doubleSided": True, "pbrMetallicRoughness": {"baseColorFactor": [0.012, 0.07, 0.09, 0.18], "metallicFactor": 0.04, "roughnessFactor": 0.42}, "emissiveFactor": [0.0, 0.015, 0.02]},
+        {"name": "Archive organic creep", "pbrMetallicRoughness": {"baseColorFactor": [0.10, 0.015, 0.05, 1.0], "metallicFactor": 0.01, "roughnessFactor": 0.88}, "emissiveFactor": [0.12, 0.0, 0.025]},
+        {"name": "Archive paper stacks", "pbrMetallicRoughness": {"baseColorFactor": [0.16, 0.11, 0.06, 1.0], "metallicFactor": 0.01, "roughnessFactor": 0.96}},
     ]
     meshes: list[dict] = []
 
