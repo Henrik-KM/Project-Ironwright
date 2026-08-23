@@ -776,6 +776,12 @@ func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3
 	# Small, vertically focused authored landmarks need a closer review frame;
 	# otherwise the shared remote-region camera makes their detail impossible to
 	# judge against the broader districts.
+	if region_id == &"region.riverworks":
+		return Vector3(0.0, 10.2, 16.5)
+	if region_id == &"region.tram_graveyard":
+		return Vector3(0.0, 10.2, 16.5)
+	if region_id == &"region.cathedral_quarter":
+		return Vector3(0.0, 10.5, 17.0)
 	if region_id == &"region.observatory_ridge":
 		return Vector3(0.0, 8.8, 13.0)
 	if region_id == &"region.buried_labs":

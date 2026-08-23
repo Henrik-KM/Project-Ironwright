@@ -436,6 +436,12 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         if region_page.size() == 1:
             _expect((region_page[0] as Node3D).visible, "Every remote presentation-review landmark must be visible when selected.")
         _expect(world.presentation_review_camera_desired.z - world.presentation_review_camera_target.z <= 19.1, "Remote presentation pages must use a closer landmark framing for authored detail review.")
+    var riverworks_review_offset := world._presentation_review_region_camera_offset(&"region.riverworks")
+    _expect(riverworks_review_offset.z <= 16.6 and riverworks_review_offset.y <= 10.3, "Riverworks presentation review must use a closer frame for its pump and sluice hardware.")
+    var tram_review_offset := world._presentation_review_region_camera_offset(&"region.tram_graveyard")
+    _expect(tram_review_offset.z <= 16.6 and tram_review_offset.y <= 10.3, "Tram Graveyard presentation review must use a closer frame for its rail and carriage hardware.")
+    var cathedral_review_offset := world._presentation_review_region_camera_offset(&"region.cathedral_quarter")
+    _expect(cathedral_review_offset.z <= 17.1 and cathedral_review_offset.y <= 10.6, "Cathedral Quarter presentation review must use a closer frame for its tower and choir hardware.")
     world._show_presentation_review_page(13)
     await process_frame
     var page: Array = world.presentation_review_pages[13] if world.presentation_review_pages.size() > 13 else []
