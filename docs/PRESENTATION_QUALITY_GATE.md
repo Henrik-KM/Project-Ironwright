@@ -63,6 +63,15 @@ maintenance obligation.
 
 The current actor rebuild also raises the shared source-builder tessellation floor: curved authored parts use at least 24 radial segments and spherical parts at least 16 rings before export. The Mechromancer, six friendly robot frames and every current organic family have been regenerated from those builders, and `scripts/validate_aesthetic.py` checks their exported POSITION density. The Bulwark hero builder now also bevels its chassis, shield, service and foot blocks, while the Mechromancer fallback keeps the same bounded chamfer language as its canonical Blender export. This protects close tactical silhouettes from silent coarse-geometry regressions while preserving stable names, sockets, animation clips and presentation-only scope.
 
+The opening cast light hierarchy now has a focused readability correction: the
+warm Heartforge key is slightly restrained while the Mechromancer and Bulwark
+receive stronger cool separation plus a restrained warm fill. This keeps the
+inhabited forge as the warm focal source without allowing its bloom to flatten
+the foreground silhouettes. The exact exported Windows build was live-reviewed
+through title, new-world initialization, objective presentation and movement
+smoke-test states; the camera, collision, companion protection and route
+geometry remain unchanged.
+
 The optional Town Archive now also records the run's machine-witness moments:
 the first outpost construction, a remote loss, an automatic rebuild and the
 chosen final protocol. These entries are driven by real persistent signals and

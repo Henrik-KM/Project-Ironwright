@@ -846,7 +846,7 @@ func _build_atmospheric_steam() -> void:
 
 func _build_lighting_rig() -> void:
     var definitions := [
-        [Vector3(0.0, 5.2, 1.6), Color("ff8d42"), 2.15, 14.0, true, &"heartforge_key"],
+        [Vector3(0.0, 5.2, 1.6), Color("ff8d42"), 1.8, 14.0, true, &"heartforge_key"],
         [Vector3(-6.8, 3.2, 2.0), Color("ffb36a"), 0.78, 8.0, true, &"warm_threshold"],
         [Vector3(7.8, 3.0, -2.0), Color("9fcbd8"), 0.58, 9.0, false, &"cool_facade"],
         [Vector3(0.0, 3.4, -10.0), Color("7ec4d1"), 0.5, 9.0, false, &"cool_route"],
@@ -857,8 +857,8 @@ func _build_lighting_rig() -> void:
         # the technician and Bulwark read against the Heartforge key. These
         # lights are presentation-only and do not alter actors, collision or
         # the tactical light budget.
-        [Vector3(-2.4, 3.0, 7.5), Color("7ad7e1"), 0.62, 5.5, false, &"cast_cool_key"],
-        [Vector3(3.2, 2.4, 4.0), Color("f2a05b"), 0.36, 5.0, false, &"cast_warm_fill"],
+        [Vector3(-2.4, 3.0, 7.5), Color("7ad7e1"), 0.85, 5.5, false, &"cast_cool_key"],
+        [Vector3(3.2, 2.4, 4.0), Color("f2a05b"), 0.5, 5.0, false, &"cast_warm_fill"],
     ]
     for data in definitions:
         var light := _add_light(root, data[0], data[1], float(data[2]), float(data[3]), bool(data[4]))
