@@ -866,6 +866,10 @@ func _ensure_deferred_proxy_root() -> Node3D:
 func _refresh_visuals() -> void:
     if _model_root == null:
         return
+    # Keep the runtime species available to the release material pass after
+    # authored children are flattened under OrganicModel. This is presentation
+    # metadata only; combat, ecology and collision remain actor-owned.
+    _model_root.set_meta(&"ironwright_organic_family", String(species))
     for child in _model_root.get_children():
         # Visuals are rebuilt synchronously when a tier or authored shell is
         # applied. Free the old presentation tree immediately so stable

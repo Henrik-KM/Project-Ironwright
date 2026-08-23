@@ -29,6 +29,15 @@ the service hall as a layered maintained facade instead of one broad slab. The
 addition is presentation-only; broader art-library acceptance and formal human
 review remain outstanding.
 
+The release material pass now retains stable species metadata after organic
+authored shells are flattened into the runtime actor, applying restrained
+family-specific tinting instead of one shared magenta membrane value. The
+early and late organic roster pages also receive a stronger review-only key and
+rim so the family palette and anatomy breaks remain judgeable at compact export
+size. Consecutive exact-export captures of pages 2/14 and 3/14 confirm the
+presentation change; combat, ecology, collision, animation ownership and
+performance LOD remain unchanged.
+
 The remaining friendly source builders now use dense radial tessellation for
 Bulwark defensive hardware and Relay communications hardware, with the Relay
 export floor protecting future rebuilds. Stable sockets and runtime contracts

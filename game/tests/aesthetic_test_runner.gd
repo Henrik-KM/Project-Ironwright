@@ -1014,6 +1014,8 @@ func _run_all() -> void:
     await process_frame
     for index in enemy_samples.size():
         _expect(_enemy_model_has_details(enemy_samples[index], species_names[index]), "The %s organic family must expose a role-readable silhouette." % species_names[index])
+        var organic_model := enemy_samples[index].get_node_or_null("OrganicModel") as Node
+        _expect(organic_model != null and organic_model.has_meta(&"ironwright_organic_family") and String(organic_model.get_meta(&"ironwright_organic_family")) == String(species_names[index]), "The %s organic presentation must retain species metadata for release palette application." % species_names[index])
         _expect(_find_named(enemy_samples[index], "OrganicDorsalPlate") != null, "The %s organic family must expose a layered shell material break." % species_names[index])
         _expect(_find_named(enemy_samples[index], "TorsoCore") != null and _find_named(enemy_samples[index], "TorsoSegment0") != null, "The %s organic family must expose segmented high-definition torso anatomy." % species_names[index])
         if species_names[index] in [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle"]:
