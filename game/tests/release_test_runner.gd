@@ -430,6 +430,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         _expect(region_page.size() == 1, "Every remote presentation-review page must expose one landmark actor.")
         if region_page.size() == 1:
             _expect((region_page[0] as Node3D).visible, "Every remote presentation-review landmark must be visible when selected.")
+        _expect(world.presentation_review_camera_desired.z - world.presentation_review_camera_target.z <= 19.1, "Remote presentation pages must use a closer landmark framing for authored detail review.")
     world._show_presentation_review_page(13)
     await process_frame
     var page: Array = world.presentation_review_pages[13] if world.presentation_review_pages.size() > 13 else []
@@ -438,6 +439,22 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         var actor := page[0] as Node3D
         _expect(actor != null and actor.visible, "Root Cistern presentation review actor must be visible on the final remote page.")
         _expect(actor != null and actor.find_children("*", "MeshInstance3D", true, false).size() > 20, "Root Cistern presentation review actor must retain its authored high-definition mesh hierarchy.")
+    world._show_presentation_review_page(11)
+    await process_frame
+    var observatory_page: Array = world.presentation_review_pages[11] if world.presentation_review_pages.size() > 11 else []
+    _expect(observatory_page.size() == 1, "Observatory Ridge presentation review must expose one dedicated review actor.")
+    if observatory_page.size() == 1:
+        var observatory_actor := observatory_page[0] as Node3D
+        _expect(observatory_actor != null and observatory_actor.visible, "Observatory Ridge presentation review actor must be visible on its remote page.")
+        _expect(observatory_actor != null and observatory_actor.find_children("*", "MeshInstance3D", true, false).size() > 20, "Observatory Ridge presentation review actor must retain its authored mesh hierarchy.")
+    world._show_presentation_review_page(12)
+    await process_frame
+    var buried_labs_page: Array = world.presentation_review_pages[12] if world.presentation_review_pages.size() > 12 else []
+    _expect(buried_labs_page.size() == 1, "Buried Laboratories presentation review must expose one dedicated review actor.")
+    if buried_labs_page.size() == 1:
+        var buried_labs_actor := buried_labs_page[0] as Node3D
+        _expect(buried_labs_actor != null and buried_labs_actor.visible, "Buried Laboratories presentation review actor must be visible on its remote page.")
+        _expect(buried_labs_actor != null and buried_labs_actor.find_children("*", "MeshInstance3D", true, false).size() > 20, "Buried Laboratories presentation review actor must retain its authored mesh hierarchy.")
     for core_page in range(3):
         world._show_presentation_review_page(core_page)
         await process_frame

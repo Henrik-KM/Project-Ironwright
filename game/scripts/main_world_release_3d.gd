@@ -12,6 +12,8 @@ const SESSION_DIAGNOSTICS_SCRIPT := preload("res://scripts/release/release_sessi
 const COLOR_FILTER_SCRIPT := preload("res://scripts/release/release_color_filter_3d.gd")
 const REMOTE_CAMERA_HEIGHT_EXPANSION := 5.5
 const REMOTE_CAMERA_DISTANCE_EXPANSION := 6.5
+const OBSERVATORY_PRESENTATION_REVIEW_SCENE: PackedScene = preload("res://assets/observatory/observatory.gltf")
+const BURIED_LABS_PRESENTATION_REVIEW_SCENE: PackedScene = preload("res://assets/buried_labs/buried_labs.gltf")
 
 static var pending_launch_mode: StringName = &"title"
 
@@ -598,6 +600,10 @@ func _start_presentation_review() -> void:
 		var review_actor: Node3D = landmark
 		if PRESENTATION_REVIEW_REGIONS[index] == &"region.root_cistern" and landmark != null:
 			review_actor = _create_root_cistern_presentation_review_actor(landmark)
+		elif PRESENTATION_REVIEW_REGIONS[index] == &"region.observatory_ridge" and landmark != null:
+			review_actor = _create_observatory_presentation_review_actor(landmark)
+		elif PRESENTATION_REVIEW_REGIONS[index] == &"region.buried_labs" and landmark != null:
+			review_actor = _create_buried_labs_presentation_review_actor(landmark)
 		if review_actor != null:
 			landmark.set_presentation_detail_level(0)
 			landmark.set_map_emphasis(false)
@@ -735,10 +741,10 @@ func _show_presentation_review_page(page: int) -> void:
 	presentation_review_label.text = "PRESENTATION REVIEW  ·  %s  ·  %d/%d\n1-9 / 0 DIRECT PAGE   ←/→ BROWSE   ESC EXIT" % [page_title, presentation_review_page + 1, presentation_review_pages.size()]
 	if is_region_page and not actors.is_empty():
 		presentation_review_camera_target = (actors[0] as Node3D).global_position + Vector3.UP * 2.0
-		presentation_review_camera_desired = presentation_review_camera_target + Vector3(0.0, 18.0, 27.0)
+		presentation_review_camera_desired = presentation_review_camera_target + Vector3(0.0, 12.0, 19.0)
 	elif is_region_page and region_director != null:
 		presentation_review_camera_target = region_director.center(region_id) + Vector3.UP * 2.0
-		presentation_review_camera_desired = presentation_review_camera_target + Vector3(0.0, 18.0, 27.0)
+		presentation_review_camera_desired = presentation_review_camera_target + Vector3(0.0, 12.0, 19.0)
 	else:
 		presentation_review_camera_target = Vector3(0.0, 1.45, -0.7)
 		presentation_review_camera_desired = Vector3(0.0, 5.9, 16.8)
@@ -766,6 +772,28 @@ func _create_root_cistern_presentation_review_actor(landmark: RegionLandmark3D) 
 	review_actor.global_position = landmark.global_position
 	var authored_scene := ROOT_CISTERN_PRESENTATION_REVIEW_SCENE.instantiate()
 	authored_scene.name = "RootCisternPresentationReviewModel"
+	review_actor.add_child(authored_scene)
+	return review_actor
+
+
+func _create_observatory_presentation_review_actor(landmark: RegionLandmark3D) -> Node3D:
+	var review_actor := Node3D.new()
+	review_actor.name = "ObservatoryPresentationReviewActor"
+	add_child(review_actor)
+	review_actor.global_position = landmark.global_position
+	var authored_scene := OBSERVATORY_PRESENTATION_REVIEW_SCENE.instantiate()
+	authored_scene.name = "ObservatoryPresentationReviewModel"
+	review_actor.add_child(authored_scene)
+	return review_actor
+
+
+func _create_buried_labs_presentation_review_actor(landmark: RegionLandmark3D) -> Node3D:
+	var review_actor := Node3D.new()
+	review_actor.name = "BuriedLabsPresentationReviewActor"
+	add_child(review_actor)
+	review_actor.global_position = landmark.global_position
+	var authored_scene := BURIED_LABS_PRESENTATION_REVIEW_SCENE.instantiate()
+	authored_scene.name = "BuriedLabsPresentationReviewModel"
 	review_actor.add_child(authored_scene)
 	return review_actor
 
