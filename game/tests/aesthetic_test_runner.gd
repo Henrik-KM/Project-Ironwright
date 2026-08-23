@@ -1022,6 +1022,16 @@ func _run_all() -> void:
             var dorsal_plate := _find_named(enemy_samples[index], "OrganicDorsalPlate") as Node3D
             var dorsal_mesh := _find_first_mesh(dorsal_plate)
             _expect(dorsal_mesh != null and _mesh_vertex_count(dorsal_mesh) >= 48, "The %s authored dorsal plate must retain the beveled close-camera edge treatment." % species_names[index])
+            var convex_sheet_name := &"RoofleaperWingL"
+            match species_names[index]:
+                &"glassmoth": convex_sheet_name = &"GlassmothWingL0"
+                &"miremaw": convex_sheet_name = &"MiremawWaterFinL"
+                &"carrionbell": convex_sheet_name = &"CarrionbellCrownPlate"
+                &"rootweaver": convex_sheet_name = &"RootweaverSporeFan"
+                &"thornback": convex_sheet_name = &"ThornbackCrownPlate"
+                &"ashmantle": convex_sheet_name = &"AshmantleHeatLouverL"
+            var convex_sheet := _find_first_mesh(_find_named(enemy_samples[index], convex_sheet_name) as Node3D)
+            _expect(convex_sheet != null and _mesh_vertex_count(convex_sheet) >= 200, "The %s shared anatomy sheet must retain dense convex close-camera geometry." % species_names[index])
         _expect(_find_named(enemy_samples[index], "OrganicDeathPresentation") != null, "The %s organic family must expose a dedicated high-definition death presentation root." % species_names[index])
         _expect(_find_named(enemy_samples[index], "OrganicDeathCarapace") != null and _find_named(enemy_samples[index], "OrganicDeathRootCollar") != null, "The %s death presentation must expose fractured shell and exposed root anatomy." % species_names[index])
         _expect(_find_named(enemy_samples[index], "OrganicDeathShard00") != null and _find_named(enemy_samples[index], "OrganicDeathVein00") != null and _find_named(enemy_samples[index], "OrganicDeathSignal") != null, "The %s death presentation must expose shell shards, dead vascular channels and a spent signal core." % species_names[index])
