@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused Skitterling secondary-animation pass
+
+- extended the scavenger's authored clips with antenna and sensory-fan
+  breathing, paired-leg and sensory-rib locomotion, paired mandible and plate
+  threat motion, carapace impact response, feeding, nest-guard, retreat and
+  collapse detail;
+- regenerated only the Skitterling runtime asset from its original authored
+  high-definition builder and added native track-count coverage so the early
+  organic family cannot silently regress to chassis-only motion;
+- regenerated-import validation passed, and exact exported Windows opening
+  plus normal-flow review passed on 2026-08-23; broader human visual
+  acceptance remains an open commercial gate.
+
 ## Focused Signal Relay secondary-animation pass
 
 - extended the relay's authored clips with mast-collar, heat-sink and
