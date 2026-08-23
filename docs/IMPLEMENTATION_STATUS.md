@@ -24,6 +24,16 @@
   selection, with runtime landmark transforms, routes, collision, operations,
   and persistence unchanged.
 
+## West Grid authored service-facade pass
+
+- added a framed hall access door, repeated louver hardware, roof service vents
+  and signal caps, plus a distinct side service panel to the West Grid source
+  builder and regenerated glTF;
+- live-reviewed consecutive captures of remote page 5 in the exact exported
+  Windows build, where the service hall now reads as a maintained industrial
+  facade rather than a single slab; this remains presentation-only and leaves
+  landmark geometry, collision, routes, operations and persistence unchanged.
+
 ## Focused Root Cistern material-hierarchy milestone
 
 - deepened the authored wet-root, layered-bark, bone, buried-alloy, cold-signal

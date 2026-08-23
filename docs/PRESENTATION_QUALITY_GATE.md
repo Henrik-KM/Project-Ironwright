@@ -22,6 +22,13 @@ Laboratories and Root Cistern retain their authored front orientation. This is
 review-only camera and actor staging; runtime landmark transforms, routes,
 collision, operations and save state are unchanged.
 
+The West Grid source builder now adds a framed hall access door, repeated
+louvers, roof service vents and signal caps, and a distinct side service panel.
+Consecutive captures of remote page 5 in the exact exported Windows build show
+the service hall as a layered maintained facade instead of one broad slab. The
+addition is presentation-only; broader art-library acceptance and formal human
+review remain outstanding.
+
 The remaining friendly source builders now use dense radial tessellation for
 Bulwark defensive hardware and Relay communications hardware, with the Relay
 export floor protecting future rebuilds. Stable sockets and runtime contracts
