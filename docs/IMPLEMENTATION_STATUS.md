@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Warden secondary-animation pass
+
+- extended the guardian's authored clips with exchanger breathing, paired
+  thermal-fin articulation, breech and recoil-collar response, targeting-face
+  impact, rear-shield withdrawal and collapse motion;
+- regenerated only the Warden runtime asset from its original authored
+  high-definition builder and added native track-count coverage so the
+  guardian cannot silently regress to chassis-only motion;
+- regenerated-import validation passed, and exact exported Windows opening
+  plus normal-flow review passed on 2026-08-23; broader human visual
+  acceptance remains an open commercial gate.
+
 ## Focused Bulwark secondary-animation pass
 
 - extended the opening Bulwark clips with shield-emitter breathing, paired
