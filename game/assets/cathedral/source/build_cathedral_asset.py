@@ -21,8 +21,8 @@ OUTPUT_PATH = SOURCE_DIR / "cathedral.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Cathedral weathered stone", "pbrMetallicRoughness": {"baseColorFactor": [0.20, 0.23, 0.25, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.84}},
-        {"name": "Cathedral soot brick", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.115, 0.10, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.88}},
+        {"name": "Cathedral weathered stone", "pbrMetallicRoughness": {"baseColorFactor": [0.085, 0.115, 0.14, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.84}},
+        {"name": "Cathedral soot brick", "pbrMetallicRoughness": {"baseColorFactor": [0.095, 0.050, 0.042, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.88}},
         {"name": "Cathedral oxidized iron", "pbrMetallicRoughness": {"baseColorFactor": [0.32, 0.16, 0.10, 1.0], "metallicFactor": 0.46, "roughnessFactor": 0.64}},
         {"name": "Cathedral cold glass", "pbrMetallicRoughness": {"baseColorFactor": [0.08, 0.20, 0.28, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.22}, "emissiveFactor": [0.06, 0.28, 0.44]},
         {"name": "Cathedral rose glass", "pbrMetallicRoughness": {"baseColorFactor": [0.36, 0.10, 0.20, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.28}, "emissiveFactor": [0.42, 0.05, 0.18]},

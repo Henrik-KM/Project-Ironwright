@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Cathedral Quarter material-hierarchy milestone
+
+- deepened the authored nave stone and soot-brick palette so the compact
+  exact-export view separates the pale choir/front plane from the tower,
+  rose-window hardware and pink organic focal elements;
+- preserved the Cathedral Quarter landmark geometry, sockets, collision,
+  region pressure, encounter and ecology contracts; this is presentation-only
+  and adds no recurring player-managed work;
+- requires consecutive exact-export live review of remote page 11 before merge.
+
 ## Focused North-Ruins archive facade depth milestone
 
 - regenerated the original North Ruins civic archive shell with conservative
