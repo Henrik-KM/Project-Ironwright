@@ -38,6 +38,7 @@ func set_reduced_detail(value: bool) -> void:
         return
     reduced_detail = value
     coarse_simulation = false
+    _update_release_collision()
     set_physics_process(not reduced_detail)
     if reduced_detail:
         velocity = Vector3.ZERO
@@ -47,6 +48,7 @@ func set_coarse_simulation(value: bool) -> void:
     if reduced_detail or coarse_simulation == value:
         return
     coarse_simulation = value
+    _update_release_collision()
     set_physics_process(not coarse_simulation)
 
 
@@ -132,6 +134,14 @@ func _sync_presentation_lod() -> void:
         var controller := get_node_or_null(NodePath(String(child_name)))
         if controller != null and controller.has_method(&"set_presentation_lod"):
             controller.call(&"set_presentation_lod", visual_lod_level)
+
+
+func _update_release_collision() -> void:
+    if not alive:
+        return
+    var collision_enabled := not reduced_detail and not coarse_simulation
+    collision_layer = 2 if collision_enabled else 0
+    collision_mask = (1 | 2 | 4) if collision_enabled else 0
 
 
 func _ensure_reduced_proxy() -> void:
