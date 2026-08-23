@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused Buried Laboratories material-hierarchy milestone
+
+- deepened the authored laboratory ceramic, frame, containment glass, core,
+  warning, floor, contamination and genome-prism signal palette so the
+  exact-export view separates the containment vessels from transfer rails,
+  extraction hardware and warning panels;
+- restrained vessel/core/prism emission and reduced compact review lighting for
+  the broad bay while preserving its geometry, sockets, collision, route,
+  ecology, story and operation contracts; this is presentation-only and adds
+  no recurring player-managed work;
+- completed consecutive exact-export live review of remote page 13 with stable
+  material hierarchy before merge.
+
 ## Focused Observatory Ridge material-hierarchy milestone
 
 - deepened the authored weathered-concrete, dark-alloy, oxidized-trim, violet
