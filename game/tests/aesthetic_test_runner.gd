@@ -1113,7 +1113,7 @@ func _run_all() -> void:
                 _expect(tier_channel.transform != tier_before, "%s tier vascular channels must carry a visible living pulse." % species_names[index])
         if species_names[index] == &"razorhound":
             _expect(_find_named(enemy_samples[index], "RazorhoundAuthoredModel") != null and _find_named(enemy_samples[index], "ProductionAssetMarker") != null, "The Razorhound must expose its authored production asset contract.")
-        if species_names[index] in [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle"]:
+        if species_names[index] in [&"skitterling", &"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle"]:
             var authored_marker_name := "%sAuthoredModel" % String(species_names[index]).capitalize()
             _expect(_find_named(enemy_samples[index], authored_marker_name) != null and _find_named(enemy_samples[index], "ProductionAssetMarker") != null, "The %s must expose its authored production asset contract." % species_names[index])
         match species_names[index]:
@@ -1178,6 +1178,15 @@ func _run_all() -> void:
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 6, "Veilstalker Attack must carry mandible and cowl-spine threat channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 4, "Veilstalker Feed must carry mandible motion channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 4, "Veilstalker Retreat must carry cowl-spine response channels.")
+            if species_names[index] == &"skitterling":
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 6, "Skitterling Idle must carry antenna and sensory-fan breathing channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Walk") >= 6, "Skitterling Walk must carry paired-leg and sensory-rib locomotion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 6, "Skitterling Attack must carry paired mandible, plate and sensory-fan threat channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Hit") >= 5, "Skitterling Hit must carry antenna and carapace impact channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 5, "Skitterling Feed must carry paired mandible and sensory-fan motion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Nest") >= 5, "Skitterling Nest must carry carapace, fan and antenna-joint motion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 5, "Skitterling Retreat must carry paired-leg and antenna withdrawal channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Death") >= 4, "Skitterling Death must carry carapace and antenna collapse channels.")
             if species_names[index] == &"apex":
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 4, "Apex Idle must carry living membrane flex channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 6, "Apex Attack must carry jaw and membrane threat channels.")
