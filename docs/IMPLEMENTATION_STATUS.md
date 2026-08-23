@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Scrapper secondary-animation pass
+
+- extended the salvager's authored clips with hopper-latch breathing, paired
+  magnet-coil articulation, intake-tooth locomotion, dismantler work response,
+  salvage-drum motion, cutting-guard impact and collapse detail;
+- regenerated only the Scrapper runtime asset from its original authored
+  high-definition builder and added native track-count coverage so the
+  salvager cannot silently regress to chassis-only motion;
+- regenerated-import validation passed, and exact exported Windows opening
+  plus normal-flow review passed on 2026-08-23; broader human visual
+  acceptance remains an open commercial gate.
+
 ## Focused Warden secondary-animation pass
 
 - extended the guardian's authored clips with exchanger breathing, paired
