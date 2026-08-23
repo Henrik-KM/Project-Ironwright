@@ -356,11 +356,11 @@
 - Long-range operations now persist bounded disruption memory by discovered
   region, so a blocked street informs later autonomous route selection without
   exposing a route-management panel or adding per-unit orders.
-- West Grid, Flood Market, Riverworks, Tram Graveyard, Buried Laboratories and
-  Root Cistern now carry authored alternate street routes. After a sustained
-  obstruction the operation still performs its immediate bounded side-route
-  recovery, then remembers the disruption and selects the appropriate authored
-  alternate on a later operation.
+- West Grid now carries two authored alternate street routes while Flood Market,
+  Riverworks, Tram Graveyard, Buried Laboratories and Root Cistern carry bounded
+  alternate street routes. After a sustained obstruction the operation still
+  performs its immediate bounded side-route recovery, then remembers the
+  disruption and selects the appropriate authored alternate on a later operation.
 - Route memory is included in the versioned operation save state, decays after
   an undisturbed successful return, remains bounded to a fixed entry count, and
   has complete-run coverage for learning, alternate-waypoint selection and
@@ -1783,6 +1783,11 @@ environmentally distinct without changing ecology, routing or player workload.
 - added a development-only exact-export review flag (`--dynamic-operation-review`)
   that opens the existing operations surface with a pressure-generated proposal.
 
+The segment-aware route-memory milestone also adds a development-only exact-export
+review flag (`--route-memory-review`) that seeds a deterministic primary-street
+obstruction and opens the existing operations surface with the clearest authored
+West Grid detour visibly selected.
+
 ## Commercial work still remaining
 
 ## Focused title-screen atmosphere milestone
@@ -2475,6 +2480,18 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - added complete-game native coverage for beacon creation, waypoint alignment,
   and clearing, so route recovery remains one visible autonomous decision rather
   than a new player-managed route task.
+
+## Focused segment-aware route-memory milestone
+
+- extended bounded route memory with the physical position of the last sustained
+  organic blockage, while retaining safe defaults for older operation snapshots;
+- future authored alternate-route selection now compares its real route segments
+  against that remembered obstruction and chooses the clearest candidate, rather
+  than only round-robinning region-wide variants;
+- kept the decision autonomous and bounded: the player still authorizes an
+  expedition at most, with no route editor, worker assignment, or recurring
+  logistics task; complete-game coverage verifies the remembered position and
+  unified save/load restoration.
 
 ## Focused systemic run-variation milestone
 

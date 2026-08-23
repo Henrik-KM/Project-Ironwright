@@ -39,7 +39,8 @@
       "spawn_budget": 10,
       "route_from_heartforge": [[-28.0, 0.0, 0.0], [-54.0, 0.0, 8.0], [-76.0, 0.0, 14.0], [-92.0, 0.0, 18.0]],
       "route_variants": [
-        {"label": "canal service road", "points": [[-24.0, 0.0, -6.0], [-48.0, 0.0, -18.0], [-76.0, 0.0, -8.0], [-92.0, 0.0, 18.0]]}
+        {"label": "canal service road", "points": [[-24.0, 0.0, -6.0], [-48.0, 0.0, -18.0], [-76.0, 0.0, -8.0], [-92.0, 0.0, 18.0]]},
+        {"label": "rail-yard cut-through", "points": [[-8.0, 0.0, 22.0], [-24.0, 0.0, 46.0], [-60.0, 0.0, 42.0], [-92.0, 0.0, 18.0]]}
       ],
       "description": "A flooded substation and tram-maintenance corridor threaded through hunting territory."
     },

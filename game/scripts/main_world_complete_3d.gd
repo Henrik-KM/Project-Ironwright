@@ -291,6 +291,35 @@ func _start_dynamic_operation_review() -> void:
     hud.push_notification("WORLD-STATE RESPONSE OFFER · PRESSURE HAS BECOME A CHOICE")
 
 
+func _start_route_memory_review() -> void:
+    if progression == null or region_director == null or long_operation_director == null or operations_hud == null:
+        return
+    progression.set_heartforge_tier(2)
+    run_state.scrap = maxi(run_state.scrap, 260)
+    run_state.scrap_changed.emit(run_state.scrap)
+    var required_roles: Array[StringName] = [&"scout", &"guardian", &"engineer"]
+    var spawn_positions: Array[Vector3] = [Vector3(-3.0, 0.0, 4.0), Vector3(0.0, 0.0, 5.0), Vector3(3.0, 0.0, 4.0)]
+    for index in range(required_roles.size()):
+        if world_role_count(required_roles[index]) <= 0:
+            _spawn_robot(required_roles[index], spawn_positions[index], 1)
+    region_director.discover_region(&"region.west_grid")
+    var west_landmark := region_director.get_landmark(&"region.west_grid")
+    if west_landmark != null:
+        west_landmark.set_pressure(1.12)
+    _ensure_region_salvage(&"region.west_grid")
+    var primary_route := region_director.route_from_heartforge(&"region.west_grid", heartforge.global_position)
+    long_operation_director.route_memory["region.west_grid"] = {
+        "risk": 1.0,
+        "preferred_variant": 1,
+        "recoveries": 1,
+        "has_block_position": true,
+        "last_block_position": primary_route[1] if primary_route.size() > 1 else heartforge.global_position,
+    }
+    operations_hud.open_operations()
+    player.input_enabled = false
+    hud.push_notification("ROUTE MEMORY REVIEW · THE CLEAREST AUTHORED DETOUR IS PROPOSED")
+
+
 func _start_casualty_recovery_review() -> void:
     if progression == null or region_director == null or long_operation_director == null or operations_hud == null:
         return
