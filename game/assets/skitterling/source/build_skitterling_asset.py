@@ -11,7 +11,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "skitterling.gltf"
@@ -38,15 +38,15 @@ def main() -> None:
     mesh_ids = {
         "Core": mesh("Core", add_uv_sphere(builder, 0.38, wet, 20, 32)),
         "Segment": mesh("Segment", add_uv_sphere(builder, 0.3, shell, 18, 28)),
-        "Ridge": mesh("Ridge", add_box(builder, (0.72, 0.12, 0.18), shell)),
+        "Ridge": mesh("Ridge", add_beveled_box(builder, (0.72, 0.12, 0.18), shell, 0.025)),
         "Antenna": mesh("Antenna", add_cylinder(builder, 0.035, 0.72, tendon, 24)),
         "Mandible": mesh("Mandible", add_cylinder(builder, 0.045, 0.56, bone, 24)),
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.065, eye, 16, 24)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.06, 0.78, tendon, 24)),
         "Claw": mesh("Claw", add_cylinder(builder, 0.04, 0.42, bone, 24)),
-        "Fan": mesh("Fan", add_box(builder, (0.08, 0.42, 0.34), membrane)),
+        "Fan": mesh("Fan", add_beveled_box(builder, (0.08, 0.42, 0.34), membrane, 0.018)),
         "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.03, bone, 16, 24)),
-        "CarapaceCap": mesh("CarapaceCap", add_box(builder, (0.42, 0.08, 0.14), shell)),
+        "CarapaceCap": mesh("CarapaceCap", add_beveled_box(builder, (0.42, 0.08, 0.14), shell, 0.02)),
         "SensoryRib": mesh("SensoryRib", add_cylinder(builder, 0.022, 0.46, bone, 24)),
     }
 

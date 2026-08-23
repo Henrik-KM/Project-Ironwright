@@ -478,6 +478,14 @@ engineer's construction and forge sockets, animation clips, collision and
 autonomous building behaviour remain unchanged. This is presentation-only;
 exact exported live review of the engineer page remains required.
 
+The common hostile shells now carry a matching manufactured-edge pass across
+Razorhound dorsal and cheek plates, Sporecaster ribs and gill membranes, and
+Skitterling ridges, carapace caps and sensory fans. These bounded edges keep
+the early-organic silhouettes readable under the exact gallery key/rim setup,
+while species sockets, animation clips, collision, ecology and attack
+ownership remain unchanged. This is presentation-only; broader hostile-family
+live acceptance remains required.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside
