@@ -2681,3 +2681,17 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   stable machine-witness archive moment through save/load;
 - added complete-game integration coverage for casualty capture, provenance,
   route targeting, recovery completion, bounded one-time cleanup and persistence.
+
+## Focused Flood Market vertical encounter milestone
+
+- strengthened the authored `flood.market.v1` shell with a civic tide-control
+  arch, signal fins and beacon row that give the flooded district a readable
+  vertical landmark from the approach;
+- added elevated flood decks with rails, suspended vendor banners and a
+  foreground waterline so the market reads as a layered, interrupted public
+  space rather than three tables on an empty apron;
+- retained the existing Flood Market collision, ecology, salvage, route,
+  discovery and operation ownership; all new geometry is presentation-only and
+  adds no interaction, inventory or recurring management task;
+- expanded the stable authored socket manifest and aesthetic regression
+  coverage; exact exported live review remains required for acceptance.
