@@ -2790,3 +2790,17 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   reward delivery rules;
 - added first-session UX coverage for the actionable-offer copy and retained
   the exact-export live review requirement for recovery presentation.
+
+## Focused beveled organic anatomy milestone
+
+- regenerated the seven shared authored Roofleaper, Glassmoth, Miremaw,
+  Carrion Bell, Rootweaver, Thornback and Ashmantle shells with beveled
+  close-camera plate, membrane, ridge and cap geometry so the repeated
+  anatomy layers catch the release gallery key and rim lights instead of
+  reading as flat bars;
+- preserved stable family names, sockets, animation clips, material families,
+  collision, ecology and runtime actor ownership; the change is presentation-
+  only and adds no simulation or recurring management task;
+- added aesthetic regression coverage for the denser dorsal plate geometry;
+  exact exported live review remains required for the broader organic-family
+  acceptance gate.
