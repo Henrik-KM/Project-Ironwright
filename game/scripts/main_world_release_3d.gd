@@ -923,7 +923,7 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	# Darker organic shells need a little more review-only key and rim energy
 	# than the manufactured roster to keep wet materials and anatomy breaks
 	# judgeable at the supported compact export size. Runtime lighting is untouched.
-	var organic_gallery_light_scale := 1.18 if presentation_review_page >= 1 and presentation_review_page <= 2 else 1.0
+	var organic_gallery_light_scale := 1.38 if presentation_review_page >= 1 and presentation_review_page <= 2 else 1.0
 	var review_light_scale := compact_region_light_scale * organic_gallery_light_scale
 	if front_fill != null:
 		front_fill.light_energy = 3.4 * review_light_scale

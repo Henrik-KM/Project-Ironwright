@@ -34,6 +34,17 @@
   facade rather than a single slab; this remains presentation-only and leaves
   landmark geometry, collision, routes, operations and persistence unchanged.
 
+## Species-aware organic release palette pass
+
+- preserved the family identity of authored organic shells through the release
+  triplanar material pass with stable species metadata and restrained per-family
+  tinting for wet shell, plate, membrane, bone and signal detail;
+- raised the review-only key/rim energy for the early and late organic gallery
+  pages so the palette separation remains readable at the compact export size;
+- live-reviewed consecutive captures of pages 2/14 and 3/14 in the fresh exact
+  Windows export; runtime combat, ecology, collision, animation ownership and
+  performance LOD contracts remain unchanged.
+
 ## Focused Root Cistern material-hierarchy milestone
 
 - deepened the authored wet-root, layered-bark, bone, buried-alloy, cold-signal

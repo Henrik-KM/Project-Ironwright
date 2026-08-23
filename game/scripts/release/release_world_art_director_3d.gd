@@ -65,6 +65,22 @@ const ORGANIC_MEMBRANE_TOKENS: Array[String] = [
     "spore",
     "vein",
 ]
+const AUTHORED_ORGANIC_TINTS: Dictionary = {
+    "veilstalker": Color("8b9aa3"),
+    "razorhound": Color("a27d68"),
+    "sporecaster": Color("98a86b"),
+    "broodmass": Color("a2687d"),
+    "burrower": Color("a39277"),
+    "skitterling": Color("78a9a9"),
+    "apex": Color("a85d5d"),
+    "roofleaper": Color("78aeb7"),
+    "glassmoth": Color("78c8c8"),
+    "miremaw": Color("9eac78"),
+    "carrionbell": Color("b5769e"),
+    "rootweaver": Color("78b187"),
+    "thornback": Color("c19760"),
+    "ashmantle": Color("82a7b6"),
+}
 
 var world: Node3D
 var region_director: WorldRegionDirector3D
@@ -221,11 +237,15 @@ func _texture_mesh(mesh_instance: MeshInstance3D) -> void:
         material.roughness = 0.48 if category == &"metal" else 0.72
     elif category in [&"chitin", &"membrane"]:
         material.roughness = 0.58
-        # Authored membrane shells share a high-contrast source texture. Keep
-        # the family color rich but restrained when beveled anatomy turns a
-        # previously flat face toward the release key light.
-        if category == &"membrane" and _contains_any(str(mesh_instance.get_path()).to_lower(), AUTHORED_ORGANIC_TOKENS):
-            material.albedo_color = Color(0.54, 0.44, 0.52, 1.0)
+        var authored_path := str(mesh_instance.get_path()).to_lower()
+        var authored_tint := _organic_family_tint_for_mesh(mesh_instance, authored_path)
+        if authored_tint != Color.WHITE:
+            # Keep the release normal/texture pass, but preserve the authored
+            # species palette instead of collapsing every organic family into
+            # one magenta membrane value. A single tint per family keeps the
+            # roster legible while the source material still separates wet
+            # shell, plate, membrane, bone and signal details.
+            material.albedo_color = authored_tint
     mesh_instance.material_override = material
     mesh_instance.visibility_range_end = 250.0
     mesh_instance.set_meta(&"release_material_family", category)
@@ -274,6 +294,23 @@ func _contains_organic_membrane_name(name_text: String) -> bool:
     for family_token in AUTHORED_ORGANIC_TOKENS:
         detail_name = detail_name.replace(family_token, "")
     return _contains_any(detail_name, ORGANIC_MEMBRANE_TOKENS)
+
+
+func _organic_family_tint(path_text: String) -> Color:
+    for family_token in AUTHORED_ORGANIC_TOKENS:
+        if family_token in path_text:
+            return AUTHORED_ORGANIC_TINTS.get(family_token, Color.WHITE)
+    return Color.WHITE
+
+
+func _organic_family_tint_for_mesh(mesh_instance: MeshInstance3D, path_text: String) -> Color:
+    var current: Node = mesh_instance
+    while current != null:
+        if current.has_meta(&"ironwright_organic_family"):
+            var family := String(current.get_meta(&"ironwright_organic_family"))
+            return AUTHORED_ORGANIC_TINTS.get(family, Color.WHITE)
+        current = current.get_parent()
+    return _organic_family_tint(path_text)
 
 
 func _uv_scale(category: StringName) -> Vector3:
