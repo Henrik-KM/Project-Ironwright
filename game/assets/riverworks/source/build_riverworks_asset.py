@@ -42,8 +42,8 @@ def main() -> None:
         "Pump": mesh("Pump", add_uv_sphere(builder, 1.0, alloy, 24, 36)),
         "Pipe": mesh("Pipe", add_cylinder(builder, 0.30, 5.0, rust, 24)),
         "PipeCollar": mesh("PipeCollar", add_cylinder(builder, 0.48, 0.22, ceramic, 24)),
-        "Sluice": mesh("Sluice", add_beveled_box(builder, (5.8, 3.8, 0.26), alloy, 0.08)),
-        "SluiceRib": mesh("SluiceRib", add_beveled_box(builder, (0.16, 3.25, 0.38), rust, 0.025)),
+        "Sluice": mesh("Sluice", add_beveled_box(builder, (5.8, 1.8, 0.26), alloy, 0.08)),
+        "SluiceRib": mesh("SluiceRib", add_beveled_box(builder, (0.16, 1.55, 0.38), rust, 0.025)),
         "Rotor": mesh("Rotor", add_cylinder(builder, 0.92, 0.18, water, 32)),
         "Valve": mesh("Valve", add_cylinder(builder, 0.44, 0.16, amber, 24)),
         "Signal": mesh("Signal", add_uv_sphere(builder, 0.20, amber, 18, 28)),
@@ -106,13 +106,13 @@ def main() -> None:
     add_node("RiverworksMaintenanceValve", mesh_ids["Valve"], (2.65, 2.15, -0.65), rotation=(0.0, math.pi * 0.5, 0.0), parent=pump_core, extras={"socket_type": "maintenance_valve"})
     add_node("RiverworksValveHandle", mesh_ids["ValveHandle"], (2.65, 2.15, -0.65), rotation=(0.0, math.pi * 0.5, 0.0), parent=pump_core, extras={"surface": "maintenance_handle"})
 
-    sluice = add_node("RiverworksSluiceGate", mesh_ids["Sluice"], (0.0, 2.0, 5.8), extras={"socket_type": "sluice_gate"})
+    sluice = add_node("RiverworksSluiceGate", mesh_ids["Sluice"], (0.0, 1.0, 5.8), extras={"socket_type": "sluice_gate"})
     for index, x in enumerate((-2.0, 0.0, 2.0)):
         # Sluice ribs inherit the gate's position. These offsets must remain
         # local or the ribs drift away from the gate in the world.
         add_node("RiverworksSluiceRib%d" % index, mesh_ids["SluiceRib"], (x, 0.0, -0.17), parent=sluice)
-    add_node("RiverworksSluiceRail", mesh_ids["SluiceRail"], (0.0, 1.82, -0.17), parent=sluice, extras={"surface": "sluice_top_rail"})
-    add_node("RiverworksSluiceLatch", mesh_ids["SluiceLatch"], (0.0, 0.42, -0.38), parent=sluice, extras={"surface": "sluice_latch"})
+    add_node("RiverworksSluiceRail", mesh_ids["SluiceRail"], (0.0, 0.92, -0.17), parent=sluice, extras={"surface": "sluice_top_rail"})
+    add_node("RiverworksSluiceLatch", mesh_ids["SluiceLatch"], (0.0, 0.18, -0.38), parent=sluice, extras={"surface": "sluice_latch"})
     add_node("RiverworksSluiceSignalHousing", mesh_ids["SignalHousing"], (0.0, 4.32, 5.8), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "flow_signal_housing"})
     add_node("RiverworksSluiceSignal", mesh_ids["Signal"], (0.0, 4.32, 5.8), extras={"socket_type": "flow_signal"})
     for index, (x, z) in enumerate(((-5.5, 6.6), (5.5, 6.6), (-5.5, -2.8), (5.5, -2.8))):

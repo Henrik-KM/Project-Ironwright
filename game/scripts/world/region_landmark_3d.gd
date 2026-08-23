@@ -211,7 +211,9 @@ func _build_visuals() -> void:
             waterfront.name = "WaterfrontIdentityDetails"
             _visual_root.add_child(waterfront)
             var retaining := ModelKit3D.material(Color("2d3c3f"), 0.28, 0.78)
-            ModelKit3D.add_beveled_box(waterfront, Vector3(16.0, 2.6, 1.0), Vector3(0.0, 1.3, 6.6), retaining, Vector3(0.0, 0.0, 0.0), "RetainingWall", 0.2)
+            # Keep the river edge readable while preserving the authored pump
+            # landmark as the close-range focal subject.
+            ModelKit3D.add_beveled_box(waterfront, Vector3(12.0, 0.85, 0.8), Vector3(0.0, 0.48, 6.6), retaining, Vector3(0.0, 0.0, 0.0), "RetainingWall", 0.14)
             var water := ModelKit3D.material(Color("0c303a"), 0.3, 0.24, Color("2a7f8a"), 0.16)
             var waterline := ModelKit3D.material(Color("1b5960"), 0.46, 0.2, Color("69d4c7"), 0.42)
             var sluice_metal := ModelKit3D.material(Color("26383b"), 0.68, 0.42)

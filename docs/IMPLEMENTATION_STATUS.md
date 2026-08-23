@@ -23,6 +23,17 @@
 - extended native aesthetic coverage for the authored housing and sluice meshes,
   with exact remote-page live review required before merge.
 
+## Focused Riverworks focal-hierarchy milestone
+
+- reduced only the presentation dressing's broad foreground sluice face and
+  lowered its ribs and signal hardware, then bounded the persistent retaining
+  edge and authored gate so the pump and manifold remain visible as the page's
+  primary subject;
+- retained the sluice's region identity, service cue and all gameplay-owned
+  world geometry; this is a release-presentation composition correction;
+- native aesthetic coverage now guards the retaining-edge bounds, and a fresh
+  exact-export live review of remote page 9 is accepted as stable.
+
 ## Focused organic attack-audio telegraph milestone
 
 - connected the existing organic attack wind-up signal to the release audio
