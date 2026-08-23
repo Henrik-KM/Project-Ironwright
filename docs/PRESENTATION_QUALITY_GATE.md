@@ -568,6 +568,14 @@ cathedral identity, landmark geometry, collision, route, discovery and
 operation ownership; consecutive exact exported Cathedral Quarter review is
 complete.
 
+The Observatory Ridge shell now also uses a deeper weathered-concrete,
+dark-alloy, oxidized-trim and violet-dish palette with restrained dish, cyan
+signal and console emission so the survey dish separates from the feed arm,
+console and ridge hardware under the compact exact-export key. The pass
+preserves the survey identity, landmark geometry, collision, route, discovery
+and operation ownership; consecutive exact exported Observatory Ridge review is
+complete.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside

@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Observatory Ridge material-hierarchy milestone
+
+- deepened the authored weathered-concrete, dark-alloy, oxidized-trim, violet
+  dish, cyan signal, warm console and ridge-signal palette so the exact-export
+  view separates the survey dish from the feed arm, console and ridge hardware;
+- restrained dish and signal emission and reduced compact review lighting for
+  the broad dish while preserving its geometry, sockets, collision, route,
+  ecology, story and operation contracts; this is presentation-only and adds no
+  recurring player-managed work;
+- completed consecutive exact-export live review of remote page 12 with stable
+  material hierarchy before merge.
+
 ## Focused Cathedral Quarter material-hierarchy milestone
 
 - deepened the authored weathered-stone, soot-brick, oxidized-iron, cold-glass,
