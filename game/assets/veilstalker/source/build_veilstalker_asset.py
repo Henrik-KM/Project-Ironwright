@@ -17,7 +17,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "veilstalker.gltf"
@@ -48,11 +48,11 @@ def main() -> None:
     mesh_ids = {
         "Core": mesh("ThoraxCore", add_uv_sphere(builder, 0.62, wet, 20, 32)),
         "Segment": mesh("ThoraxSegment", add_uv_sphere(builder, 0.5, shell, 16, 28)),
-        "Rib": mesh("ThoraxRib", add_box(builder, (1.38, 0.13, 0.18), shell)),
+        "Rib": mesh("ThoraxRib", add_beveled_box(builder, (1.38, 0.13, 0.18), shell, 0.028)),
         "Abdomen": mesh("Abdomen", add_uv_sphere(builder, 0.48, flesh, 16, 28)),
         "Head": mesh("Cowl", add_uv_sphere(builder, 0.48, shell, 16, 28)),
         "Eye": mesh("ThreatEye", add_uv_sphere(builder, 0.09, eye, 16, 24)),
-        "Plate": mesh("DorsalPlate", add_box(builder, (1.25, 0.16, 0.46), shell)),
+        "Plate": mesh("DorsalPlate", add_beveled_box(builder, (1.25, 0.16, 0.46), shell, 0.035)),
         "Spine": mesh("DorsalSpine", add_cylinder(builder, 0.09, 0.58, bone, 24)),
         "Veil": mesh("VeilMembrane", add_uv_sphere(builder, 0.34, membrane, 16, 28)),
         "Limb": mesh("Forelimb", add_cylinder(builder, 0.075, 1.35, tendon, 24)),

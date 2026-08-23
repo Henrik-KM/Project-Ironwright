@@ -11,6 +11,9 @@ const ENGINEER_ASSET_SCENE := preload("res://assets/engineer/engineer.gltf")
 const RAZORHOUND_ASSET_SCENE := preload("res://assets/razorhound/razorhound.gltf")
 const SPORECASTER_ASSET_SCENE := preload("res://assets/sporecaster/sporecaster.gltf")
 const SKITTERLING_ASSET_SCENE := preload("res://assets/skitterling/skitterling.gltf")
+const VEILSTALKER_ASSET_SCENE := preload("res://assets/veilstalker/veilstalker.gltf")
+const BURROWER_ASSET_SCENE := preload("res://assets/burrower/burrower.gltf")
+const BROODMASSS_ASSET_SCENE := preload("res://assets/broodmass/broodmass.gltf")
 
 var failures: Array[String] = []
 
@@ -1160,6 +1163,16 @@ func _run_all() -> void:
     razorhound_asset.queue_free()
     sporecaster_asset.queue_free()
     skitterling_asset.queue_free()
+
+    var veilstalker_asset := VEILSTALKER_ASSET_SCENE.instantiate()
+    var burrower_asset := BURROWER_ASSET_SCENE.instantiate()
+    var broodmass_asset := BROODMASSS_ASSET_SCENE.instantiate()
+    _expect(_mesh_vertex_count(_find_named(veilstalker_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerDorsalPlate") as MeshInstance3D) >= 48, "The authored Veilstalker dorsal plates must retain beveled high-definition anatomy edges.")
+    _expect(_mesh_vertex_count(_find_named(burrower_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(burrower_asset, "BurrowerLampGuardL") as MeshInstance3D) >= 48, "The authored Burrower dorsal and lamp guards must retain beveled high-definition anatomy edges.")
+    _expect(_mesh_vertex_count(_find_named(broodmass_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(broodmass_asset, "BroodmassFanL") as MeshInstance3D) >= 48, "The authored Broodmass dorsal and membrane hardware must retain beveled high-definition anatomy edges.")
+    veilstalker_asset.queue_free()
+    burrower_asset.queue_free()
+    broodmass_asset.queue_free()
 
     var veilstalker: Node3D
     for enemy in get_nodes_in_group("organic_enemies"):

@@ -2973,3 +2973,16 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - added direct imported-asset aesthetic regression coverage for the refined
   anatomy meshes; exact exported early-organic live review remains required
   for the broader hostile-family acceptance gate.
+
+## Focused remaining hostile manufactured-edge milestone
+
+- regenerated the source-authored Veilstalker, Burrower and Broodmass shells
+  with bounded beveled thorax/dorsal plates, bore fins, lamp guards, nest ribs,
+  membrane fans and lobe/maw ridge anatomy so their close-camera material
+  breaks catch the gallery key and rim lights instead of reading as flat bars;
+- preserved stable species node names, anatomy sockets, animation clips,
+  collision ownership, ecology and attack behaviour; the refinement is
+  presentation-only and adds no player task or recurring simulation work;
+- added direct imported-asset aesthetic regression coverage for the refined
+  anatomy meshes; exact exported hostile-family live review remains required
+  for the broader acceptance gate.
