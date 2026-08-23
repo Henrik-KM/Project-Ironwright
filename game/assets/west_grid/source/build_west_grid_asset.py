@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "west_grid.gltf"
@@ -39,26 +39,26 @@ def main() -> None:
 
     concrete, steel, painted_iron, rust, signal, amber, organic, ceramic = range(8)
     mesh_ids = {
-        "Floor": mesh("WestGridFloor", add_box(builder, (26.0, 0.16, 22.0), concrete)),
-        "Hall": mesh("WestGridTurbineHall", add_box(builder, (11.5, 6.6, 5.0), steel)),
-        "Roof": mesh("WestGridRoof", add_box(builder, (12.3, 0.32, 5.5), painted_iron)),
-        "Window": mesh("WestGridWindow", add_box(builder, (1.65, 1.25, 0.08), signal)),
+        "Floor": mesh("WestGridFloor", add_beveled_box(builder, (26.0, 0.16, 22.0), concrete, 0.04)),
+        "Hall": mesh("WestGridTurbineHall", add_beveled_box(builder, (11.5, 6.6, 5.0), steel, 0.20)),
+        "Roof": mesh("WestGridRoof", add_beveled_box(builder, (12.3, 0.32, 5.5), painted_iron, 0.07)),
+        "Window": mesh("WestGridWindow", add_beveled_box(builder, (1.65, 1.25, 0.08), signal, 0.03)),
         "Tank": mesh("WestGridPressureTank", add_cylinder(builder, 1.15, 3.8, ceramic, 28)),
         "TankBand": mesh("WestGridTankBand", add_cylinder(builder, 1.22, 0.12, rust, 28)),
-        "Transformer": mesh("WestGridTransformer", add_box(builder, (2.4, 1.7, 2.0), painted_iron)),
-        "Fin": mesh("WestGridTransformerFin", add_box(builder, (0.12, 1.2, 1.7), ceramic)),
+        "Transformer": mesh("WestGridTransformer", add_beveled_box(builder, (2.4, 1.7, 2.0), painted_iron, 0.10)),
+        "Fin": mesh("WestGridTransformerFin", add_beveled_box(builder, (0.12, 1.2, 1.7), ceramic, 0.025)),
         "Pipe": mesh("WestGridPipe", add_cylinder(builder, 0.085, 5.6, rust, 12)),
         "Rail": mesh("WestGridRail", add_cylinder(builder, 0.065, 4.0, painted_iron, 12)),
         "Signal": mesh("WestGridSignalLight", add_uv_sphere(builder, 0.16, signal, 14, 22)),
         "Amber": mesh("WestGridWarningLight", add_uv_sphere(builder, 0.18, amber, 14, 22)),
         "Organic": mesh("WestGridOrganicCreep", add_uv_sphere(builder, 0.58, organic, 18, 28)),
-        "Marker": mesh("WestGridMarker", add_box(builder, (0.7, 0.08, 0.7), rust)),
-        "WindowFrame": mesh("WestGridWindowFrame", add_box(builder, (1.86, 0.10, 1.46), painted_iron)),
-        "WindowMullion": mesh("WestGridWindowMullion", add_box(builder, (0.10, 1.25, 0.12), painted_iron)),
+        "Marker": mesh("WestGridMarker", add_beveled_box(builder, (0.7, 0.08, 0.7), rust, 0.025)),
+        "WindowFrame": mesh("WestGridWindowFrame", add_beveled_box(builder, (1.86, 0.10, 1.46), painted_iron, 0.03)),
+        "WindowMullion": mesh("WestGridWindowMullion", add_beveled_box(builder, (0.10, 1.25, 0.12), painted_iron, 0.025)),
         "TankValve": mesh("WestGridTankValve", add_cylinder(builder, 0.14, 0.22, rust, 18)),
         "TankLadder": mesh("WestGridTankLadder", add_cylinder(builder, 0.055, 2.8, painted_iron, 12)),
-        "TransformerCap": mesh("WestGridTransformerCap", add_box(builder, (2.62, 0.12, 2.2), ceramic)),
-        "TransformerBrace": mesh("WestGridTransformerBrace", add_box(builder, (0.10, 0.12, 2.05), rust)),
+        "TransformerCap": mesh("WestGridTransformerCap", add_beveled_box(builder, (2.62, 0.12, 2.2), ceramic, 0.03)),
+        "TransformerBrace": mesh("WestGridTransformerBrace", add_beveled_box(builder, (0.10, 0.12, 2.05), rust, 0.025)),
         "PipeFlange": mesh("WestGridPipeFlange", add_cylinder(builder, 0.17, 0.14, rust, 18)),
         "WarningHousing": mesh("WestGridWarningHousing", add_cylinder(builder, 0.12, 0.16, painted_iron, 16)),
         "OrganicTendril": mesh("WestGridOrganicTendril", add_cylinder(builder, 0.05, 0.84, organic, 14)),
