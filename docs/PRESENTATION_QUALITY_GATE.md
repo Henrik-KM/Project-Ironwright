@@ -111,6 +111,12 @@ The exact export was live-reviewed through the objective, manual fabrication
 and command-map states after this adjustment. It remains a presentation-only
 composition pass; final human acceptance of the full opening remains a gate.
 
+North Ruins now uses a bounded diagonal review frame that exposes the authored
+civic wings, vault inset, beacon mast and archive-depth layers without changing
+the runtime landmark transform or route. Consecutive exact-export captures of
+remote page 4 confirm the focal facade remains readable; broader region-family
+acceptance remains outstanding.
+
 The optional Town Archive now also records the run's machine-witness moments:
 the first outpost construction, a remote loss, an automatic rebuild and the
 chosen final protocol. These entries are driven by real persistent signals and

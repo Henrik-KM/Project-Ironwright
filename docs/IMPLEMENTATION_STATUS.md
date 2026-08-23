@@ -55,6 +55,16 @@
   presentation-only change and leaves movement, formation, protection,
   collision, interaction and save contracts unchanged.
 
+## North Ruins authored-depth review framing
+
+- added a bounded diagonal review offset for North Ruins so its civic wings,
+  facade depth, vault inset, beacon mast and archive signal remain visible as
+  separate authored layers at compact gallery scale;
+- live-reviewed consecutive captures of remote page 4 in the exact exported
+  Windows build; this changes only development review staging and leaves
+  runtime landmark transforms, collision, routes, operations and persistence
+  unchanged.
+
 ## Focused Root Cistern material-hierarchy milestone
 
 - deepened the authored wet-root, layered-bark, bone, buried-alloy, cold-signal
