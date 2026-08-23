@@ -478,12 +478,20 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
             var first_core_actor := core_actors[0] as Node3D
             var last_core_actor := core_actors[core_actors.size() - 1] as Node3D
             _expect(first_core_actor != null and last_core_actor != null and absf(first_core_actor.position.z - last_core_actor.position.z) > 1.0, "Core presentation pages must use depth-separated rows so authored actors remain judgeable.")
-            if core_page >= 1:
-                _expect(world.camera.fov <= 42.5, "Organic presentation pages must use a tighter camera frame for anatomy review.")
             if core_page == 1 and first_core_actor != null:
                 var skitterling_shell := first_core_actor.find_child("SkitterlingAuthoredShell", true, false) as Node3D
                 _expect(skitterling_shell != null and skitterling_shell.scale.x >= 0.55, "The small Skitterling shell must retain an enlarged authored presentation shell instead of becoming a thumbnail.")
                 _expect(first_core_actor.position.z >= 1.8, "The small Skitterling shell must be staged slightly forward for readable anatomy without stretching its actor root.")
+        if core_page >= 1:
+            for core_actor in core_actors:
+                var staged_actor := core_actor as Node3D
+                _expect(staged_actor != null and absf(staged_actor.position.x) <= 5.4, "Organic presentation pages must keep every staged family fully inside the compact review frame.")
+            _expect(world.camera.fov <= 42.5, "Organic presentation pages must use a tighter camera frame for anatomy review.")
+        if core_page >= 1:
+            var organic_front_fill := world.presentation_review_stage.get_node_or_null("ReviewFrontFill") as OmniLight3D
+            var organic_cool_light := world.presentation_review_stage.get_node_or_null("ReviewCoolLight") as OmniLight3D
+            _expect(organic_front_fill != null and organic_front_fill.light_energy >= 4.0, "Organic presentation pages must receive a stronger compact-frame key light for material separation.")
+            _expect(organic_cool_light != null and organic_cool_light.light_energy >= 3.2, "Organic presentation pages must retain a cool rim lift for readable anatomy edges.")
         _expect(world.presentation_review_camera_desired.z < 18.0, "Core presentation pages must use the closer review camera framing.")
     world._show_presentation_review_page(13)
     world.presentation_review_active = false

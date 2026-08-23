@@ -1826,6 +1826,20 @@ West Grid detour visibly selected.
 - added regression coverage for all three region-specific review offsets;
   exact exported live review remains required before merge.
 
+## Focused hostile-family review readability milestone
+
+- added a restrained page-specific key and cool-rim lift to the development-only
+  early- and late-organic gallery pages so darker wet shells, membranes and
+  anatomy breaks remain judgeable at the supported compact export size;
+- tightened the organic-only row spacing and lowered the review target so wide
+  silhouettes remain fully inside the compact frame instead of crowding its
+  right edge;
+- kept the lighting change isolated to the non-saving presentation gallery;
+  runtime combat lighting, materials, damage, ecology and performance budgets
+  are unchanged;
+- added release coverage for the stronger organic review lights; exact
+  exported hostile-family live review remains required before merge.
+
 ## Focused town-wide route-recovery breadth milestone
 
 - expanded authored alternate street routes to North Ruins, East Tenements,
