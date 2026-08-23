@@ -60,6 +60,10 @@ def main() -> None:
         "Tendril": mesh("Tendril", add_cylinder(builder, 0.035, 0.8, tendon, 24)),
         "Tail": mesh("Tail", add_uv_sphere(builder, 0.19, flesh, 16, 24)),
         "Fastener": mesh("ShellFastener", add_uv_sphere(builder, 0.045, eye, 16, 24)),
+        "EyeRim": mesh("ThreatEyeRim", add_beveled_box(builder, (0.18, 0.12, 0.24), shell, 0.025)),
+        "Mandible": mesh("Mandible", add_beveled_box(builder, (0.16, 0.12, 0.48), bone, 0.032)),
+        "MandibleRidge": mesh("MandibleRidge", add_beveled_box(builder, (0.11, 0.08, 0.36), shell, 0.022)),
+        "CowlSpine": mesh("CowlSpine", add_cylinder(builder, 0.075, 0.5, bone, 24)),
     }
 
     nodes: list[dict] = [{
@@ -103,6 +107,10 @@ def main() -> None:
     add_node("VeilstalkerCowl", mesh_ids["Head"], (0.0, 1.38, -1.02), extras={"socket_type": "sensory_cowl"})
     for side in (-1.0, 1.0):
         add_node("VeilstalkerEye", mesh_ids["Eye"], (side * 0.27, 1.48, -1.37), extras={"socket_type": "threat_eye"})
+        add_node("VeilstalkerEyeRim%s" % ("L" if side < 0.0 else "R"), mesh_ids["EyeRim"], (side * 0.27, 1.48, -1.3), rotation=(0.0, 0.0, side * 0.18), extras={"surface": "protected_threat_eye"})
+        add_node("VeilstalkerMandible%s" % ("L" if side < 0.0 else "R"), mesh_ids["Mandible"], (side * 0.24, 1.17, -1.43), rotation=(0.0, 0.0, side * 0.28), extras={"socket_type": "attack_mandible"})
+        add_node("VeilstalkerMandibleRidge%s" % ("L" if side < 0.0 else "R"), mesh_ids["MandibleRidge"], (side * 0.28, 1.34, -1.36), rotation=(0.0, 0.0, side * 0.12), extras={"surface": "layered_mouth_ridge"})
+        add_node("VeilstalkerCowlSpine%s" % ("L" if side < 0.0 else "R"), mesh_ids["CowlSpine"], (side * 0.39, 1.7, -1.08), rotation=(0.0, 0.0, side * 0.32), extras={"surface": "cowl_bone_spine"})
         add_node("VeilstalkerVeil", mesh_ids["Veil"], (side * 0.98, 1.08, -0.16), rotation=(0.0, side * 0.08, side * 0.11), extras={"socket_type": "attack_membrane"})
         add_node("VeilstalkerForelimb", mesh_ids["Limb"], (side * 0.78, 0.72, -0.62), rotation=(0.0, 0.0, side * 0.34))
         add_node("VeilstalkerHook", mesh_ids["Hook"], (side * 0.93, 0.22, -1.02), rotation=(0.58, 0.0, side * 0.2), extras={"socket_type": "attack_hook"})

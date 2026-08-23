@@ -1195,6 +1195,7 @@ func _run_all() -> void:
     var burrower_asset := BURROWER_ASSET_SCENE.instantiate()
     var broodmass_asset := BROODMASSS_ASSET_SCENE.instantiate()
     _expect(_mesh_vertex_count(_find_named(veilstalker_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerDorsalPlate") as MeshInstance3D) >= 48, "The authored Veilstalker dorsal plates must retain beveled high-definition anatomy edges.")
+    _expect(_mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerMandibleL") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerCowlSpineL") as MeshInstance3D) >= 48, "The authored Veilstalker must retain dense mouth and cowl silhouette hardware.")
     _expect(_mesh_vertex_count(_find_named(burrower_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(burrower_asset, "BurrowerLampGuardL") as MeshInstance3D) >= 48, "The authored Burrower dorsal and lamp guards must retain beveled high-definition anatomy edges.")
     _expect(_mesh_vertex_count(_find_named(broodmass_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(broodmass_asset, "BroodmassFanL") as MeshInstance3D) >= 48, "The authored Broodmass dorsal and membrane hardware must retain beveled high-definition anatomy edges.")
     veilstalker_asset.queue_free()
@@ -1214,6 +1215,8 @@ func _run_all() -> void:
         var veilstalker_animator := veilstalker.get_node_or_null("ProceduralAnimator3D") as ProceduralAnimator3D
         _expect(veilstalker_animator != null, "The authored organic family must receive readable motion presentation.")
         _expect(veilstalker.find_child("VeilstalkerCowl", true, false) != null, "The Veilstalker must expose a distinct sensory crown silhouette.")
+        _expect(veilstalker.find_child("VeilstalkerMandibleL", true, false) != null and veilstalker.find_child("VeilstalkerMandibleR", true, false) != null, "The Veilstalker must expose paired attack mandibles.")
+        _expect(veilstalker.find_child("VeilstalkerCowlSpineL", true, false) != null and veilstalker.find_child("VeilstalkerCowlSpineR", true, false) != null, "The Veilstalker must expose paired cowl spines.")
         _expect(veilstalker.find_child("VeilstalkerVeil", true, false) != null, "The Veilstalker must expose layered membrane anatomy.")
         _expect(veilstalker.find_child("VeilstalkerTendril", true, false) != null, "The Veilstalker must expose readable sensory tendrils.")
         _expect(veilstalker.find_child("VeilstalkerThoraxDorsalRib", true, false) != null, "The Veilstalker must expose a ribbed high-detail thorax construction.")

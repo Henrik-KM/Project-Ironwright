@@ -1,5 +1,19 @@
 # Implementation status
 
+## Focused Veilstalker high-definition face pass
+
+- rebuilt the canonical Veilstalker source/glTF with protected threat-eye rims,
+  paired articulated mandibles, layered mouth ridges and cowl bone spines so
+  its danger reads from the compact tactical camera instead of relying on eye
+  emission alone;
+- preserved the stable asset ID, animation clips, authored sockets, runtime
+  collision and organic behaviour ownership while extending the source and
+  native aesthetic contract;
+- regenerated and imported the runtime asset, passed static aesthetic
+  validation and the native aesthetic overhaul runner, and live-reviewed the
+  exact Windows early-organic gallery page 2/14; broader commercial art
+  acceptance remains an open gate.
+
 ## Focused release collision-budget pass
 
 - release actors in coarse or reduced simulation now release physics-server
