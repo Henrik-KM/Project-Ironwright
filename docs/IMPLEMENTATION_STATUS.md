@@ -1,5 +1,16 @@
 # Implementation status
 
+## Active long-range operation affordance
+
+- the long-range command surface now receives the authoritative active-operation
+  state and keeps the current operation readable without offering a misleading
+  second authorization action;
+- while a group is outbound, working, returning or retreating, the primary
+  control is disabled and explains the existing `F` follow affordance; the
+  operation remains one strategic choice with no added management queue;
+- covered by the first-session UX runner and live export review remains
+  required for the next Windows build.
+
 ## Core presentation-gallery cleanup
 
 - removed the two bright full-width stage bands from the development-only
