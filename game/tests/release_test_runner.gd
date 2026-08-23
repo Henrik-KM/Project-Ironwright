@@ -460,6 +460,9 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         var buried_labs_actor := buried_labs_page[0] as Node3D
         _expect(buried_labs_actor != null and buried_labs_actor.visible, "Buried Laboratories presentation review actor must be visible on its remote page.")
         _expect(buried_labs_actor != null and buried_labs_actor.find_children("*", "MeshInstance3D", true, false).size() > 20, "Buried Laboratories presentation review actor must retain its authored mesh hierarchy.")
+        _expect(buried_labs_actor != null and buried_labs_actor.find_child("BuriedLabsGenomePrism", true, false) != null and buried_labs_actor.find_child("BuriedLabsExtractionBeam", true, false) != null, "Buried Laboratories presentation review actor must retain its genome-prism extraction focal assembly.")
+        var buried_labs_review_offset := world._presentation_review_region_camera_offset(&"region.buried_labs")
+        _expect(buried_labs_review_offset.z <= 15.1 and buried_labs_review_offset.y <= 10.3, "Buried Laboratories presentation review must use a closer vertical frame for its authored extraction gantry.")
     for core_page in range(3):
         world._show_presentation_review_page(core_page)
         await process_frame

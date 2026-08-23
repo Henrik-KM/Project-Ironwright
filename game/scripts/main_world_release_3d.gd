@@ -771,6 +771,8 @@ func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3
 	# judge against the broader districts.
 	if region_id == &"region.observatory_ridge":
 		return Vector3(0.0, 8.8, 13.0)
+	if region_id == &"region.buried_labs":
+		return Vector3(0.0, 10.2, 15.0)
 	return Vector3(0.0, 12.0, 19.0)
 
 
@@ -826,7 +828,7 @@ func _update_presentation_review_camera(delta: float) -> void:
 	var target := presentation_review_camera_target
 	var desired := presentation_review_camera_desired
 	camera.global_position = camera.global_position.lerp(desired, 1.0 - exp(-delta * 5.0))
-	camera.fov = 48.0 if presentation_review_page == 11 else (52.0 if presentation_review_page >= 3 else 43.0)
+	camera.fov = 46.0 if presentation_review_page == 12 else (48.0 if presentation_review_page == 11 else (52.0 if presentation_review_page >= 3 else 43.0))
 	camera.look_at(target, Vector3.UP)
 
 
@@ -845,7 +847,7 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	var warm_light := presentation_review_stage.get_node_or_null("ReviewWarmLight") as OmniLight3D
 	var cool_light := presentation_review_stage.get_node_or_null("ReviewCoolLight") as OmniLight3D
 	var rim_light := presentation_review_stage.get_node_or_null("ReviewRimLight") as OmniLight3D
-	var compact_region_light_scale := 0.68 if presentation_review_page == 11 else 1.0
+	var compact_region_light_scale := 0.72 if presentation_review_page == 12 else (0.68 if presentation_review_page == 11 else 1.0)
 	if front_fill != null:
 		front_fill.light_energy = 3.4 * compact_region_light_scale
 		front_fill.position = target + Vector3(0.0, 9.0, 16.0)
