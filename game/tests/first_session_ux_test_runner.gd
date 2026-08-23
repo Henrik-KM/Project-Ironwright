@@ -125,6 +125,14 @@ func _run_all() -> void:
     _expect("ready to authorize" in operations.status_label.text.to_lower(), "An actionable operation offer must not be labelled as if no operation exists.")
     operations.close()
 
+    operations.update_operations(ready_operation, "Stabilize West Grid · Outbound", true)
+    operations.open_operations()
+    _expect(operations.operation_active, "The operations surface must retain the active-operation state while it is open.")
+    _expect(operations.authorize_button.disabled, "An active operation must not expose a second authorization action.")
+    _expect(operations.authorize_button.text == "OPERATION ACTIVE · FOLLOW WITH F", "An active operation must replace authorization with the existing follow affordance.")
+    _expect("ACTIVE GROUP · F TO FOLLOW" in operations.requirements_label.text, "An active operation must explain how to follow it without adding a management task.")
+    operations.close()
+
     world._process(0.1)
     await process_frame
     _expect(world.objective_guidance != null and world.objective_guidance.is_guiding(), "The opening must immediately guide the player to a physical objective.")

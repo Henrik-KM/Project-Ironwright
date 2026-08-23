@@ -23,6 +23,7 @@ var protocols: Array[Dictionary] = []
 var archive_records: Array[Dictionary] = []
 var selected_index: int = 0
 var current_operation_status: String = "No long-range operation"
+var operation_active: bool = false
 var endgame_status: String = "No final protocol active"
 
 
@@ -191,8 +192,9 @@ func is_open() -> bool:
     return panel != null and panel.visible
 
 
-func update_operations(next_operations: Array[Dictionary], status: String) -> void:
+func update_operations(next_operations: Array[Dictionary], status: String, active: bool = false) -> void:
     operations = next_operations
+    operation_active = active
     if mode != &"recap":
         current_operation_status = status
     _clamp_selection()
@@ -338,7 +340,7 @@ func _refresh() -> void:
         requirements_label.text = "%s · SOURCE: %s\nARC: %s · Press L or ESC to close." % [kind_label, str(item.get("source_name", "Unknown")).to_upper(), str(item.get("arc", "town_history")).replace("_", " ").to_upper()]
         return
     authorize_button.visible = true
-    authorize_button.disabled = false
+    authorize_button.disabled = operation_active and mode == &"operations"
     if mode == &"endgame":
         authorize_button.text = "INITIATE IRREVERSIBLE PROTOCOL"
         requirements_label.text = "Cost: %d Scrap · %d Cognition Core%s · Duration: %d s\nStarting this deliberately provokes the final ecological response." % [
@@ -348,8 +350,12 @@ func _refresh() -> void:
             int(round(float(item.get("duration_seconds", 0.0)))),
         ]
     else:
-        authorize_button.text = "AUTHORIZE PHYSICAL OPERATION"
-        requirements_label.text = "%s\nCost: %d Scrap · Team: %s · Work exposure: %d s · Threat %.1f" % [
+        authorize_button.text = "OPERATION ACTIVE · FOLLOW WITH F"
+        if not operation_active:
+            authorize_button.text = "AUTHORIZE PHYSICAL OPERATION"
+        var operation_prefix := "ACTIVE GROUP · F TO FOLLOW\n" if operation_active else ""
+        requirements_label.text = "%s%s\nCost: %d Scrap · Team: %s · Work exposure: %d s · Threat %.1f" % [
+            operation_prefix,
             str(item.get("route_brief", "Route: physical route preview unavailable")),
             int(item.get("scrap_cost", 0)),
             ", ".join(item.get("team_roles", [])),
