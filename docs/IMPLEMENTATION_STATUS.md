@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused North Ruins material-hierarchy milestone
+
+- deepened the authored archive stone, civic brick, iron, glass, beacon and
+  paper palette so the exact-export view separates the civic facade and brick
+  wings from the vault, archive windows and amber beacon;
+- reduced compact review lighting for the broad archive shell while preserving
+  its geometry, sockets, collision, route, ecology, story and operation
+  contracts; this is presentation-only and adds no recurring player-managed
+  work;
+- completed consecutive exact-export live review of remote page 4 with stable
+  material hierarchy before merge.
+
 ## Focused Municipal Glasshouse material-hierarchy milestone
 
 - deepened the authored frame, glass, grow-light and organic-growth palette so

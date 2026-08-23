@@ -530,6 +530,13 @@ signals under the compact exact-export key. The pass preserves the cultivation
 identity, landmark geometry, collision, route, discovery and operation
 ownership; consecutive exact exported Municipal Glasshouse review is complete.
 
+The North Ruins shell now also uses a deeper archive-stone, civic-brick, iron
+and cold-glass palette with restrained beacon and organic emission so the civic
+facade and brick wings separate from the vault, archive windows, paper stacks
+and amber beacon under the compact exact-export key. The pass preserves the
+archive identity, landmark geometry, collision, route, discovery and operation
+ownership; consecutive exact exported North Ruins review is complete.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside
