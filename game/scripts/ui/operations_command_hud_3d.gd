@@ -315,7 +315,10 @@ func _refresh() -> void:
         status_label.text = "%d story thread%s · %d record%s recovered from physical discoveries.\nThreads assemble from what the machines actually found; this history is optional and never creates another maintenance task." % [thread_count, "" if thread_count == 1 else "s", record_count, "" if record_count == 1 else "s"]
     else:
         title_label.text = "LONG-RANGE OPERATIONS"
-        status_label.text = "%s\nEvery group travels through the same persistent world and delivers rewards only after returning." % current_operation_status
+        var operation_status := current_operation_status
+        if not items.is_empty() and operation_status.to_lower().contains("no long-range operation"):
+            operation_status = "A physical operation is ready to authorize."
+        status_label.text = "%s\nEvery group travels through the same persistent world and delivers rewards only after returning." % operation_status
 
     if items.is_empty():
         selection_label.text = "NO RECORDS RECOVERED" if mode == &"archive" else ("NO OPERATION AVAILABLE" if mode == &"operations" else "FINAL PROTOCOL LOCKED")
