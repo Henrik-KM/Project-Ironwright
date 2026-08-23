@@ -560,6 +560,14 @@ preserves the rail identity, landmark geometry, collision, route, discovery and
 operation ownership; consecutive exact exported Tram Graveyard review is
 complete.
 
+The Cathedral Quarter shell now also uses a deeper weathered-stone, soot-brick,
+oxidized-iron and cold/rose-glass palette with restrained votive and organic
+emission so the nave and tower separate from the choir, rose window and
+structural hardware under the compact exact-export key. The pass preserves the
+cathedral identity, landmark geometry, collision, route, discovery and
+operation ownership; consecutive exact exported Cathedral Quarter review is
+complete.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside

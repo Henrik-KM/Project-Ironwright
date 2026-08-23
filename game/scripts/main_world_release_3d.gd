@@ -888,10 +888,11 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	# North Ruins' broad archive facade, West Grid's steel hall and ceramic
 	# pressure tanks, East Tenements' brick blocks, Municipal Glasshouse's
 	# transparent panes, Flood Market's broad canopy, Riverworks' pump housing,
-	# and Tram Graveyard's carriage shells need a lower presentation key so
-	# authored surfaces do not bloom into pale blocks at the compact exact-export
-	# review size. Runtime lighting is unchanged; region accents remain untouched.
-	var compact_region_light_scale := 0.46 if presentation_review_page == 4 else (0.62 if presentation_review_page == 5 else (0.64 if presentation_review_page == 6 else (0.58 if presentation_review_page == 7 else (0.60 if presentation_review_page == 8 else (0.56 if presentation_review_page == 9 else (0.72 if presentation_review_page == 12 else (0.68 if presentation_review_page == 11 else 1.0)))))))
+	# and Tram Graveyard's carriage shells, plus Cathedral Quarter's broad nave,
+	# need a lower presentation key so authored surfaces do not bloom into pale
+	# blocks at the compact exact-export review size. Runtime lighting is
+	# unchanged; region accents remain untouched.
+	var compact_region_light_scale := 0.46 if presentation_review_page == 4 else (0.62 if presentation_review_page == 5 else (0.64 if presentation_review_page == 6 else (0.58 if presentation_review_page == 7 else (0.60 if presentation_review_page == 8 else (0.56 if presentation_review_page == 9 else (0.58 if presentation_review_page == 10 else (0.72 if presentation_review_page == 12 else (0.68 if presentation_review_page == 11 else 1.0))))))))
 	# Darker organic shells need a little more review-only key and rim energy
 	# than the manufactured roster to keep wet materials and anatomy breaks
 	# judgeable at the supported compact export size. Runtime lighting is untouched.

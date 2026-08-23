@@ -21,13 +21,13 @@ OUTPUT_PATH = SOURCE_DIR / "cathedral.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Cathedral weathered stone", "pbrMetallicRoughness": {"baseColorFactor": [0.085, 0.115, 0.14, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.84}},
-        {"name": "Cathedral soot brick", "pbrMetallicRoughness": {"baseColorFactor": [0.095, 0.050, 0.042, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.88}},
-        {"name": "Cathedral oxidized iron", "pbrMetallicRoughness": {"baseColorFactor": [0.32, 0.16, 0.10, 1.0], "metallicFactor": 0.46, "roughnessFactor": 0.64}},
-        {"name": "Cathedral cold glass", "pbrMetallicRoughness": {"baseColorFactor": [0.08, 0.20, 0.28, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.22}, "emissiveFactor": [0.06, 0.28, 0.44]},
-        {"name": "Cathedral rose glass", "pbrMetallicRoughness": {"baseColorFactor": [0.36, 0.10, 0.20, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.28}, "emissiveFactor": [0.42, 0.05, 0.18]},
-        {"name": "Cathedral organic membrane", "pbrMetallicRoughness": {"baseColorFactor": [0.26, 0.055, 0.10, 1.0], "metallicFactor": 0.02, "roughnessFactor": 0.86}, "emissiveFactor": [0.25, 0.015, 0.06]},
-        {"name": "Cathedral warm votive", "pbrMetallicRoughness": {"baseColorFactor": [0.55, 0.23, 0.07, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.42}, "emissiveFactor": [0.85, 0.18, 0.035]},
+        {"name": "Cathedral weathered stone", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.040, 0.050, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.94}},
+        {"name": "Cathedral soot brick", "pbrMetallicRoughness": {"baseColorFactor": [0.050, 0.012, 0.008, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.94}},
+        {"name": "Cathedral oxidized iron", "pbrMetallicRoughness": {"baseColorFactor": [0.16, 0.045, 0.015, 1.0], "metallicFactor": 0.28, "roughnessFactor": 0.76}},
+        {"name": "Cathedral cold glass", "pbrMetallicRoughness": {"baseColorFactor": [0.015, 0.09, 0.15, 1.0], "metallicFactor": 0.06, "roughnessFactor": 0.38}, "emissiveFactor": [0.0, 0.10, 0.18]},
+        {"name": "Cathedral rose glass", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.025, 0.08, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.42}, "emissiveFactor": [0.16, 0.0, 0.05]},
+        {"name": "Cathedral organic membrane", "pbrMetallicRoughness": {"baseColorFactor": [0.10, 0.010, 0.035, 1.0], "metallicFactor": 0.01, "roughnessFactor": 0.92}, "emissiveFactor": [0.08, 0.0, 0.02]},
+        {"name": "Cathedral warm votive", "pbrMetallicRoughness": {"baseColorFactor": [0.40, 0.10, 0.015, 1.0], "metallicFactor": 0.06, "roughnessFactor": 0.52}, "emissiveFactor": [0.32, 0.06, 0.006]},
     ]
     meshes: list[dict] = []
 
