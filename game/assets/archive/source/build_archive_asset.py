@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "archive.gltf"
@@ -21,9 +21,9 @@ OUTPUT_PATH = SOURCE_DIR / "archive.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Archive pale stone", "pbrMetallicRoughness": {"baseColorFactor": [0.29, 0.31, 0.30, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.88}},
-        {"name": "Archive civic brick", "pbrMetallicRoughness": {"baseColorFactor": [0.28, 0.15, 0.12, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.90}},
-        {"name": "Archive iron", "pbrMetallicRoughness": {"baseColorFactor": [0.07, 0.10, 0.12, 1.0], "metallicFactor": 0.72, "roughnessFactor": 0.46}},
+        {"name": "Archive pale stone", "pbrMetallicRoughness": {"baseColorFactor": [0.20, 0.22, 0.22, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.88}},
+        {"name": "Archive civic brick", "pbrMetallicRoughness": {"baseColorFactor": [0.20, 0.10, 0.08, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.90}},
+        {"name": "Archive iron", "pbrMetallicRoughness": {"baseColorFactor": [0.045, 0.065, 0.075, 1.0], "metallicFactor": 0.72, "roughnessFactor": 0.46}},
         {"name": "Archive amber", "pbrMetallicRoughness": {"baseColorFactor": [0.62, 0.25, 0.06, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.38}, "emissiveFactor": [0.92, 0.16, 0.02]},
         {"name": "Archive cold glass", "alphaMode": "BLEND", "doubleSided": True, "pbrMetallicRoughness": {"baseColorFactor": [0.16, 0.30, 0.34, 0.44], "metallicFactor": 0.08, "roughnessFactor": 0.28}, "emissiveFactor": [0.02, 0.08, 0.10]},
         {"name": "Archive organic creep", "pbrMetallicRoughness": {"baseColorFactor": [0.22, 0.04, 0.12, 1.0], "metallicFactor": 0.02, "roughnessFactor": 0.84}, "emissiveFactor": [0.28, 0.01, 0.08]},
@@ -39,28 +39,31 @@ def main() -> None:
     stone, brick, iron, amber, glass, organic, paper = range(7)
     mesh_ids = {
         "Floor": mesh("ArchiveFloor", add_box(builder, (18.0, 0.16, 14.0), stone)),
-        "Facade": mesh("ArchiveFacade", add_box(builder, (12.0, 5.6, 0.42), stone)),
-        "BrickWing": mesh("ArchiveBrickWing", add_box(builder, (4.4, 4.2, 4.4), brick)),
+        "Facade": mesh("ArchiveFacade", add_beveled_box(builder, (12.0, 5.6, 0.42), stone, 0.12)),
+        "BrickWing": mesh("ArchiveBrickWing", add_beveled_box(builder, (4.4, 4.2, 4.4), brick, 0.16)),
         "Door": mesh("ArchiveVaultDoor", add_cylinder(builder, 1.65, 0.24, iron, 32)),
         "DoorRing": mesh("ArchiveVaultRing", add_cylinder(builder, 2.0, 0.16, amber, 32)),
-        "Step": mesh("ArchiveStep", add_box(builder, (4.4, 0.28, 1.0), stone)),
-        "Shelf": mesh("ArchiveShelf", add_box(builder, (2.8, 2.5, 0.24), iron)),
+        "Step": mesh("ArchiveStep", add_beveled_box(builder, (4.4, 0.28, 1.0), stone, 0.055)),
+        "Shelf": mesh("ArchiveShelf", add_beveled_box(builder, (2.8, 2.5, 0.24), iron, 0.045)),
         "Paper": mesh("ArchivePaperStack", add_box(builder, (1.9, 0.32, 0.85), paper)),
         "BeaconMast": mesh("ArchiveBeaconMast", add_cylinder(builder, 0.13, 6.0, iron, 16)),
         "Beacon": mesh("ArchiveBeacon", add_uv_sphere(builder, 0.26, amber, 18, 28)),
-        "Window": mesh("ArchiveWindow", add_box(builder, (2.4, 1.55, 0.08), glass)),
+        "Window": mesh("ArchiveWindow", add_beveled_box(builder, (2.4, 1.55, 0.08), glass, 0.018)),
         "Creep": mesh("ArchiveOrganicCreep", add_uv_sphere(builder, 0.46, organic, 18, 28)),
         "Cable": mesh("ArchiveCable", add_cylinder(builder, 0.045, 4.8, amber, 10)),
         "Marker": mesh("ArchiveMarker", add_box(builder, (0.7, 0.08, 0.7), amber)),
-        "WindowFrame": mesh("ArchiveWindowFrame", add_box(builder, (2.72, 0.10, 1.84), iron)),
-        "WindowMullion": mesh("ArchiveWindowMullion", add_box(builder, (0.10, 1.62, 0.12), iron)),
-        "DoorJamb": mesh("ArchiveDoorJamb", add_box(builder, (0.24, 3.45, 0.34), stone)),
-        "DoorLintel": mesh("ArchiveDoorLintel", add_box(builder, (4.75, 0.24, 0.34), stone)),
-        "ShelfDivider": mesh("ArchiveShelfDivider", add_box(builder, (0.12, 2.42, 0.38), iron)),
-        "ShelfRail": mesh("ArchiveShelfRail", add_box(builder, (2.52, 0.08, 0.08), amber)),
+        "WindowFrame": mesh("ArchiveWindowFrame", add_beveled_box(builder, (2.72, 0.10, 1.84), iron, 0.022)),
+        "WindowMullion": mesh("ArchiveWindowMullion", add_beveled_box(builder, (0.10, 1.62, 0.12), iron, 0.018)),
+        "DoorJamb": mesh("ArchiveDoorJamb", add_beveled_box(builder, (0.24, 3.45, 0.34), stone, 0.035)),
+        "DoorLintel": mesh("ArchiveDoorLintel", add_beveled_box(builder, (4.75, 0.24, 0.34), stone, 0.035)),
+        "ShelfDivider": mesh("ArchiveShelfDivider", add_beveled_box(builder, (0.12, 2.42, 0.38), iron, 0.018)),
+        "ShelfRail": mesh("ArchiveShelfRail", add_beveled_box(builder, (2.52, 0.08, 0.08), amber, 0.018)),
         "BeaconBrace": mesh("ArchiveBeaconBrace", add_box(builder, (0.12, 1.42, 0.12), iron)),
         "BeaconCollar": mesh("ArchiveBeaconCollar", add_cylinder(builder, 0.36, 0.16, amber, 24)),
-        "Plaque": mesh("ArchivePlaque", add_box(builder, (3.0, 0.58, 0.08), amber)),
+        "Plaque": mesh("ArchivePlaque", add_beveled_box(builder, (3.0, 0.58, 0.08), amber, 0.018)),
+        "FacadeCornice": mesh("ArchiveFacadeCornice", add_beveled_box(builder, (12.4, 0.24, 0.58), stone, 0.055)),
+        "FacadePilaster": mesh("ArchiveFacadePilaster", add_beveled_box(builder, (0.34, 4.85, 0.54), stone, 0.045)),
+        "VaultInset": mesh("ArchiveVaultInset", add_beveled_box(builder, (5.25, 4.02, 0.16), iron, 0.055)),
         "CreepTendril": mesh("ArchiveCreepTendril", add_cylinder(builder, 0.045, 0.78, organic, 14)),
     }
 
@@ -98,19 +101,23 @@ def main() -> None:
 
     add_node("ArchiveFloor", mesh_ids["Floor"], (0.0, 0.08, 0.0), extras={"socket_type": "archive_floor"})
     add_node("ArchiveCivicFacade", mesh_ids["Facade"], (0.0, 2.8, 1.7), extras={"socket_type": "civic_facade"})
+    add_node("ArchiveFacadeCornice", mesh_ids["FacadeCornice"], (0.0, 5.56, 2.0), extras={"surface": "civic_facade_cornice"})
+    add_node("ArchiveFacadePilasterL", mesh_ids["FacadePilaster"], (-5.48, 2.82, 2.0), extras={"surface": "civic_facade_pilaster"})
+    add_node("ArchiveFacadePilasterR", mesh_ids["FacadePilaster"], (5.48, 2.82, 2.0), extras={"surface": "civic_facade_pilaster"})
     add_node("ArchiveBrickWingL", mesh_ids["BrickWing"], (-7.0, 2.1, -2.5))
     add_node("ArchiveBrickWingR", mesh_ids["BrickWing"], (7.0, 2.1, -2.5), rotation=(0.0, 0.04, 0.0))
-    add_node("ArchiveFacadeWindowL", mesh_ids["Window"], (-3.2, 3.0, 1.46), extras={"socket_type": "civic_window"})
-    add_node("ArchiveFacadeWindowR", mesh_ids["Window"], (3.2, 3.0, 1.46), extras={"socket_type": "civic_window"})
+    add_node("ArchiveFacadeWindowL", mesh_ids["Window"], (-3.2, 3.0, 2.0), extras={"socket_type": "civic_window"})
+    add_node("ArchiveFacadeWindowR", mesh_ids["Window"], (3.2, 3.0, 2.0), extras={"socket_type": "civic_window"})
     for side, x in (("L", -3.2), ("R", 3.2)):
-        add_node("ArchiveWindowFrame%s" % side, mesh_ids["WindowFrame"], (x, 3.0, 1.40), extras={"surface": "civic_window_frame"})
-        add_node("ArchiveWindowMullion%s" % side, mesh_ids["WindowMullion"], (x, 3.0, 1.31), extras={"surface": "civic_window_mullion"})
-    add_node("ArchiveVaultDoorJambL", mesh_ids["DoorJamb"], (-2.28, 2.15, 1.38), extras={"surface": "vault_door_jamb"})
-    add_node("ArchiveVaultDoorJambR", mesh_ids["DoorJamb"], (2.28, 2.15, 1.38), extras={"surface": "vault_door_jamb"})
-    add_node("ArchiveVaultDoorLintel", mesh_ids["DoorLintel"], (0.0, 3.86, 1.38), extras={"surface": "vault_door_lintel"})
-    add_node("ArchiveVaultDoor", mesh_ids["Door"], (0.0, 2.15, 1.42), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "vault_door"})
-    add_node("ArchiveVaultDoorRing", mesh_ids["DoorRing"], (0.0, 2.15, 1.28), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "vault_door_ring"})
-    add_node("ArchiveCivicPlaque", mesh_ids["Plaque"], (0.0, 4.48, 1.26), extras={"socket_type": "archive_plaque"})
+        add_node("ArchiveWindowFrame%s" % side, mesh_ids["WindowFrame"], (x, 3.0, 2.02), extras={"surface": "civic_window_frame"})
+        add_node("ArchiveWindowMullion%s" % side, mesh_ids["WindowMullion"], (x, 3.0, 2.03), extras={"surface": "civic_window_mullion"})
+    add_node("ArchiveVaultInset", mesh_ids["VaultInset"], (0.0, 2.15, 1.99), extras={"surface": "vault_door_inset"})
+    add_node("ArchiveVaultDoorJambL", mesh_ids["DoorJamb"], (-2.28, 2.15, 2.02), extras={"surface": "vault_door_jamb"})
+    add_node("ArchiveVaultDoorJambR", mesh_ids["DoorJamb"], (2.28, 2.15, 2.02), extras={"surface": "vault_door_jamb"})
+    add_node("ArchiveVaultDoorLintel", mesh_ids["DoorLintel"], (0.0, 3.86, 2.02), extras={"surface": "vault_door_lintel"})
+    add_node("ArchiveVaultDoor", mesh_ids["Door"], (0.0, 2.15, 2.04), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "vault_door"})
+    add_node("ArchiveVaultDoorRing", mesh_ids["DoorRing"], (0.0, 2.15, 2.07), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "vault_door_ring"})
+    add_node("ArchiveCivicPlaque", mesh_ids["Plaque"], (0.0, 4.48, 2.01), extras={"socket_type": "archive_plaque"})
     add_node("ArchiveVaultSteps", mesh_ids["Step"], (0.0, 0.18, 0.2), extras={"socket_type": "vault_steps"})
     for side, x in enumerate((-4.9, 4.9)):
         shelf = add_node("ArchiveStack%d" % side, mesh_ids["Shelf"], (x, 1.35, -3.2), extras={"socket_type": "archive_stack"})
@@ -143,7 +150,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "archive.north_ruins.v1",
-            "required_nodes": ["ArchiveModel", "ArchiveCivicFacade", "ArchiveFacadeWindowL", "ArchiveWindowFrameL", "ArchiveWindowMullionL", "ArchiveVaultDoor", "ArchiveVaultDoorJambL", "ArchiveVaultDoorLintel", "ArchiveCivicPlaque", "ArchiveRoofBeacon", "ArchiveBeaconCollar", "ArchiveBeaconBraceL", "ArchiveStack0", "ArchiveShelfDivider0_0", "ArchiveShelfRail0", "ArchiveOrganicCreep0", "ArchiveOrganicTendril0_0", "ProductionAssetMarker"],
+            "required_nodes": ["ArchiveModel", "ArchiveCivicFacade", "ArchiveFacadeCornice", "ArchiveFacadePilasterL", "ArchiveVaultInset", "ArchiveFacadeWindowL", "ArchiveWindowFrameL", "ArchiveWindowMullionL", "ArchiveVaultDoor", "ArchiveVaultDoorJambL", "ArchiveVaultDoorLintel", "ArchiveCivicPlaque", "ArchiveRoofBeacon", "ArchiveBeaconCollar", "ArchiveBeaconBraceL", "ArchiveStack0", "ArchiveShelfDivider0_0", "ArchiveShelfRail0", "ArchiveOrganicCreep0", "ArchiveOrganicTendril0_0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused North-Ruins archive facade depth milestone
+
+- regenerated the original North Ruins civic archive shell with conservative
+  bevels across the facade, brick wings, windows, vault framing, steps and
+  filing hardware, plus a cornice, pilasters and a recessed vault surround;
+- moved the front-facing civic detail onto the camera-facing facade plane so
+  the authored windows and sealed vault read in the exact presentation build;
+- kept the archive's discovery, salvage, expedition, story and encounter
+  contracts unchanged; this is presentation-only geometry with no new
+  recurring work;
+- extended native aesthetic coverage for the authored facade pieces and
+  verified a stable consecutive exact Windows export capture on remote page 4.
+
 ## Focused organic attack-audio telegraph milestone
 
 - connected the existing organic attack wind-up signal to the release audio

@@ -222,6 +222,7 @@ func _run_all() -> void:
         for raw_region_id in region_director.region_data.keys():
             region_director.discover_region(StringName(raw_region_id))
         await process_frame
+        await process_frame
         if story_archive != null:
             var expected_regional_records := {
                 "region.north_ruins": &"story.north_ruins.ledger",
@@ -398,6 +399,8 @@ func _run_all() -> void:
                     _expect(not market_growth.scale.is_equal_approx(market_growth_before), "Flood Market organic growth must carry deterministic presentation motion.")
             if landmark.region_kind == &"archive":
                 _expect(landmark.find_child("ArchiveCivicFacade", true, false) != null, "North Ruins must expose an authored civic archive facade.")
+                _expect(landmark.find_child("ArchiveFacadeCornice", true, false) != null and landmark.find_child("ArchiveFacadePilasterL", true, false) != null, "North Ruins must expose layered facade edge treatment and civic pilaster detail.")
+                _expect(landmark.find_child("ArchiveVaultInset", true, false) != null, "North Ruins must expose a readable recessed vault surround.")
                 _expect(landmark.find_child("ArchiveVaultDoor", true, false) != null, "North Ruins must expose a readable archive vault entrance.")
                 _expect(landmark.find_child("ArchiveRoofBeacon", true, false) != null, "North Ruins must expose a surviving archive beacon silhouette.")
                 _expect(landmark.find_child("ArchiveWindowFrameL", true, false) != null and landmark.find_child("ArchiveWindowMullionL", true, false) != null, "North Ruins must expose civic window framing and mullion detail.")
@@ -406,6 +409,9 @@ func _run_all() -> void:
                 _expect(landmark.find_child("ArchiveShelfDivider0_0", true, false) != null and landmark.find_child("ArchiveShelfRail0", true, false) != null, "North Ruins must expose archive stack filing hardware.")
                 _expect(landmark.find_child("ArchiveOrganicTendril0_0", true, false) != null, "North Ruins organic growth must expose secondary tendril anatomy.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/ArchiveAuthoredModel") != null, "North Ruins must expose its authored civic archive landmark shell.")
+                var archive_facade := landmark.find_child("ArchiveCivicFacade", true, false) as MeshInstance3D
+                var archive_cornice := landmark.find_child("ArchiveFacadeCornice", true, false) as MeshInstance3D
+                _expect(archive_facade != null and archive_cornice != null and _mesh_vertex_count(archive_facade) >= 48 and _mesh_vertex_count(archive_cornice) >= 48, "North Ruins authored facade pieces must retain beveled high-definition geometry.")
                 var archive_beacon := landmark.find_child("ArchiveRoofBeaconLight", true, false) as Node3D
                 var archive_creep := landmark.find_child("ArchiveOrganicCreep0", true, false) as Node3D
                 var archive_collar := landmark.find_child("ArchiveBeaconCollar", true, false) as Node3D
