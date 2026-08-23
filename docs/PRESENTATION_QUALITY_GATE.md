@@ -545,6 +545,13 @@ the trade identity, landmark geometry, collision, route, discovery and
 operation ownership; consecutive exact exported Flood Market review is
 complete.
 
+The Riverworks shell now also uses a deeper wet-alloy, oxidized-iron, ceramic
+and cold-water palette with restrained maintenance and growth emission so the
+pump housing and service panel separate from rusted pipework, rotor water and
+amber maintenance cues under the compact exact-export key. The pass preserves
+the waterworks identity, landmark geometry, collision, route, discovery and
+operation ownership; consecutive exact exported Riverworks review is complete.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside

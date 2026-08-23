@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Riverworks material-hierarchy milestone
+
+- deepened the authored wet-alloy, oxidized-iron, ceramic, water, maintenance
+  amber and growth palette so the exact-export view separates the pump housing
+  and service panel from pipework, rotor water and maintenance signals;
+- reduced compact review lighting for the broad pump housing while preserving
+  its geometry, sockets, collision, route, ecology, motion and operation
+  contracts; this is presentation-only and adds no recurring player-managed
+  work;
+- completed consecutive exact-export live review of remote page 9 with stable
+  material hierarchy before merge.
+
 ## Focused Flood Market material-hierarchy milestone
 
 - deepened the authored market frame, canopy, oxidized trim, signal ceramic,
