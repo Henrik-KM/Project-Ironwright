@@ -116,6 +116,15 @@ func _run_all() -> void:
         _expect(operations_scroll_rect.end.y <= operations_close_rect.position.y, "The operations scroll region must stop above the fixed close footer.")
     operations.close()
 
+    var ready_operation: Array[Dictionary] = [{
+        "display_name": "Recover field frame",
+        "description": "A disabled machine is waiting for an escorted recovery.",
+    }]
+    operations.update_operations(ready_operation, "No long-range operation")
+    operations.open_operations()
+    _expect("ready to authorize" in operations.status_label.text.to_lower(), "An actionable operation offer must not be labelled as if no operation exists.")
+    operations.close()
+
     world._process(0.1)
     await process_frame
     _expect(world.objective_guidance != null and world.objective_guidance.is_guiding(), "The opening must immediately guide the player to a physical objective.")

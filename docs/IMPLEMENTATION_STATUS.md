@@ -2780,3 +2780,13 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - added regression coverage for the bounded opening energy relationship;
 - live-reviewed the exact exported Windows build through title, New World,
   opening objective and movement smoke-test states.
+
+## Actionable operation-offer status milestone
+
+- clarified the casualty-recovery operations state so an available physical
+  operation is described as ready to authorize instead of as if no operation
+  exists;
+- preserved the separate in-motion operation summary, authorization flow and
+  reward delivery rules;
+- added first-session UX coverage for the actionable-offer copy and retained
+  the exact-export live review requirement for recovery presentation.
