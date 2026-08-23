@@ -861,6 +861,106 @@ func _dress_rail(root: Node3D) -> void:
 func _dress_nest(root: Node3D) -> void:
     var chitin := _textured_material(&"chitin", Color("302028"), 0.05, 0.66)
     var membrane := _textured_material(&"membrane", Color("6d173b"), 0.0, 0.62)
+    # The Cathedral Quarter needs a civic silhouette before its biological
+    # takeover reads as a deliberate contrast. Keep the facade shallow and
+    # front-facing so the authored nave remains visible without adding a solid
+    # collision shell, route blocker or second landmark simulation.
+    var cathedral_facade := Node3D.new()
+    cathedral_facade.name = "CathedralReleaseFacade"
+    root.add_child(cathedral_facade)
+    var brick := _textured_material(&"brick", Color("70453b"), 0.0, 0.78)
+    var brick_dark := _textured_material(&"brick", Color("3c2a2b"), 0.08, 0.86)
+    var stained_glass := ModelKit3D.material(Color("312c4b"), 0.18, 0.28, Color("c653a8"), 1.1)
+    # Release gallery cameras approach the landmark from positive Z. Keep the
+    # civic layer on the near face and slightly forward of the authored nest
+    # frame so the nave reads before the biological shell.
+    var facade_z := 7.6
+    var nave := ModelKit3D.add_beveled_box(
+        cathedral_facade,
+        Vector3(6.4, 3.6, 0.78),
+        Vector3(0.0, 1.85, facade_z),
+        brick,
+        Vector3.ZERO,
+        "CathedralReleaseNave",
+        0.2
+    )
+    ModelKit3D.add_beveled_box(
+        nave,
+        Vector3(1.28, 2.0, 0.12),
+        Vector3(0.0, -0.55, 0.46),
+        brick_dark,
+        Vector3.ZERO,
+        "CathedralReleaseDoor",
+        0.12
+    )
+    for side in [-1.0, 1.0]:
+        var tower := ModelKit3D.add_beveled_box(
+            cathedral_facade,
+            Vector3(1.7, 6.2, 1.5),
+            Vector3(side * 4.15, 3.1, facade_z - 0.18),
+            brick,
+            Vector3(0.0, 0.0, side * 0.015),
+            "CathedralReleaseTower%s" % ("L" if side < 0.0 else "R"),
+            0.2
+        )
+        ModelKit3D.add_beveled_box(
+            tower,
+            Vector3(1.98, 0.24, 1.78),
+            Vector3(0.0, 3.18, 0.0),
+            brick_dark,
+            Vector3.ZERO,
+            "CathedralReleaseTowerCap%s" % ("L" if side < 0.0 else "R"),
+            0.14
+        )
+        for slit_index in range(2):
+            ModelKit3D.add_surface_panel(
+                tower,
+                Vector3(0.28, 1.15, 0.08),
+                Vector3(0.0, 1.2 + float(slit_index) * 1.55, -0.8),
+                brick_dark,
+                stained_glass,
+                Vector3.ZERO,
+                "CathedralReleaseTowerSlit%s%d" % ["L" if side < 0.0 else "R", slit_index]
+            )
+    ModelKit3D.add_cylinder(
+        cathedral_facade,
+        1.08,
+        0.16,
+        Vector3(0.0, 3.25, facade_z + 0.48),
+        brick_dark,
+        Vector3(PI * 0.5, 0.0, 0.0),
+        "CathedralReleaseRoseFrame"
+    )
+    ModelKit3D.add_cylinder(
+        cathedral_facade,
+        0.78,
+        0.18,
+        Vector3(0.0, 3.25, facade_z + 0.58),
+        stained_glass,
+        Vector3(PI * 0.5, 0.0, 0.0),
+        "CathedralReleaseRoseGlass"
+    )
+    for spoke_index in range(6):
+        var spoke_angle := TAU * float(spoke_index) / 6.0
+        ModelKit3D.add_cylinder(
+            cathedral_facade,
+            0.045,
+            1.45,
+            Vector3(cos(spoke_angle) * 0.34, 3.25 + sin(spoke_angle) * 0.34, facade_z + 0.7),
+            brick_dark,
+            Vector3(PI * 0.5, 0.0, spoke_angle),
+            "CathedralReleaseRoseSpoke%02d" % spoke_index
+        )
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(
+            cathedral_facade,
+            Vector3(0.42, 2.8, 0.42),
+            Vector3(side * 2.75, 2.0, facade_z + 0.52),
+            brick_dark,
+            Vector3(0.0, 0.0, side * 0.12),
+            "CathedralReleaseButtress%s" % ("L" if side < 0.0 else "R"),
+            0.12
+        )
     for index in range(12):
         var angle := TAU * float(index) / 12.0
         var radius := 7.0 + float(index % 4) * 2.5

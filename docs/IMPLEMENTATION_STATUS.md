@@ -1,5 +1,19 @@
 # Implementation status
 
+## Cathedral Quarter nave silhouette pass
+
+- added a bounded release-only shallow nave, paired civic towers, tower slits,
+  entry door, buttresses and rose-window focal cue to the Cathedral Quarter;
+- preserved the authored cathedral shell, choir-yard hardware, organic nest
+  spines, collision, route, ecology and reduced-detail contracts; the facade is
+  presentation-only and adds no player-managed work;
+- added aesthetic coverage for the release nave/tower and rose-window layers;
+  exact exported Windows review passed on 2026-08-23 at page 11/14, with the
+  civic silhouette readable before the organic takeover;
+- corrected presentation-review cleanup to preserve the sibling
+  `ReleaseWorldDressing` root, so release-only landmark layers are now included
+  in exact gallery evidence rather than silently hidden.
+
 ## Enemy-tier sidecar checksum stability
 
 - stabilized the canonical JSON float precision used by the enemy-tier
