@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Thornback secondary-animation pass
+
+- extended the late-game Thornback clips with paired jaw-plate articulation,
+  dorsal-spine response, ridge travel and crown threat beats, preserving the
+  stable asset ID, sockets and gameplay ownership;
+- regenerated only the Thornback runtime asset from the shared original
+  high-definition family builder and added native track-count coverage so the
+  armored predator cannot silently regress to body-only motion;
+- regenerated-import validation passed, and exact exported Windows
+  late-organic page 3/14 plus normal opening review passed on 2026-08-23;
+  broader human visual acceptance remains an open commercial gate.
+
 ## Focused Carrionbell secondary-animation pass
 
 - extended the late-game Carrionbell clips with resonator-ring pulse, layered

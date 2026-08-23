@@ -1159,6 +1159,12 @@ func _run_all() -> void:
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 7, "Carrionbell Attack must carry resonator and bell-rib threat channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 6, "Carrionbell Feed must carry resonator and mantle motion channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 6, "Carrionbell Retreat must carry ring and tendril withdrawal channels.")
+            if species_names[index] == &"thornback":
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 6, "Thornback Idle must carry paired jaw and dorsal-spine breathing channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Walk") >= 5, "Thornback Walk must carry paired spine and dorsal-ridge motion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 7, "Thornback Attack must carry jaw, spine and crown threat channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 6, "Thornback Feed must carry paired jaw and spine motion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 6, "Thornback Retreat must carry paired spine withdrawal channels.")
             var previous_state: StringName = StringName(enemy_samples[index].get(&"state_name"))
             enemy_samples[index].set(&"state_name", &"feeding")
             enemy_samples[index].set_meta(&"enemy_behaviour", "feed")
