@@ -462,6 +462,14 @@ the salvager's cargo/tool sockets, animation clips, collision and autonomous
 extraction behaviour unchanged. This is presentation-only; exact exported
 live review of the salvager page remains required.
 
+The source-authored Pathfinder shell now carries the same treatment through
+its survey chassis, optic housing, fins, sensor pod, signal rail, mast braces,
+dish ribs and sensor wings. These instrument surfaces now catch the gallery
+lighting as maintained field-survey hardware, while the scout's sensor and
+survey sockets, animation clips, collision and autonomous route-screening
+behaviour remain unchanged. This is presentation-only; exact exported live
+review of the scout page remains required.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside

@@ -6,6 +6,7 @@ const ENEMY_SCENE := preload("res://scenes/actors/organic_enemy_3d.tscn")
 const MECHROMANCER_SCENE := preload("res://scenes/actors/mechromancer_3d.tscn")
 const OUTPOST_SCENE := preload("res://scenes/world/outpost_3d.tscn")
 const SCRAPPER_ASSET_SCENE := preload("res://assets/scrapper/scrapper.gltf")
+const PATHFINDER_ASSET_SCENE := preload("res://assets/pathfinder/pathfinder.gltf")
 
 var failures: Array[String] = []
 
@@ -889,6 +890,13 @@ func _run_all() -> void:
             _expect(_find_named(role_samples[index], "PathfinderMastBraceLeft") != null and _find_named(role_samples[index], "PathfinderSurveyBeacon") != null, "The Pathfinder must expose its braced mast and survey beacon hardware.")
             _expect(_find_named(role_samples[index], "PathfinderMastCollar") != null and _find_named(role_samples[index], "PathfinderDishRibLeft") != null and _find_named(role_samples[index], "PathfinderSignalCanister") != null, "The Pathfinder must expose its third-pass mast, dish and signal hardware.")
             _expect(_find_named(role_samples[index], "PathfinderSensorWing") != null, "The Pathfinder must retain layered survey-wing hardware.")
+            var pathfinder_asset := PATHFINDER_ASSET_SCENE.instantiate()
+            root.add_child(pathfinder_asset)
+            await process_frame
+            var pathfinder_chassis := _find_named(pathfinder_asset, "Chassis") as MeshInstance3D
+            var pathfinder_sensor_pod := _find_named(pathfinder_asset, "PathfinderSensorPod") as MeshInstance3D
+            _expect(pathfinder_chassis != null and pathfinder_sensor_pod != null and _mesh_vertex_count(pathfinder_chassis) >= 48 and _mesh_vertex_count(pathfinder_sensor_pod) >= 48, "The authored Pathfinder chassis and sensor pod must retain beveled high-definition manufactured edges.")
+            pathfinder_asset.queue_free()
         elif role_names[index] == &"engineer":
             _expect(_find_named(role_samples[index], "EngineerToolControl") != null and _find_named(role_samples[index], "EngineerForgeGuard") != null, "The Engineer must expose its tool-control and forge-guard hardware.")
             _expect(_find_named(role_samples[index], "EngineerCableSpool") != null and _find_named(role_samples[index], "EngineerWeldingShield") != null and _find_named(role_samples[index], "EngineerClampJaw") != null, "The Engineer must expose its third-pass cable, welding and clamp hardware.")
