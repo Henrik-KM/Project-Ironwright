@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused title-screen atmosphere readability pass
+
+- lifted the bounded title-only forge-and-service atmosphere so the Heartforge
+  warm core, cool service rings and horizon haze remain visibly present behind
+  the menu instead of collapsing into a near-black field;
+- retained the existing panel, vignette, focus, input, settings and save-state
+  contracts, with no runtime lighting or gameplay change;
+- strengthened the commercial backdrop-alpha regression; exact exported
+  Windows title and New World review passed on 2026-08-23 with the opening
+  objective and inhabited Heartforge still readable.
+
 ## Cathedral Quarter nave silhouette pass
 
 - added a bounded release-only shallow nave, paired civic towers, tower slits,
