@@ -18,18 +18,15 @@ func _resolve_release_services() -> void:
 func _update_movement(delta: float) -> void:
     var input_vector := Vector2.ZERO
     if input_enabled:
-        if (
-            InputMap.has_action(&"iw_move_left")
-            and InputMap.has_action(&"iw_move_right")
-            and InputMap.has_action(&"iw_move_up")
-            and InputMap.has_action(&"iw_move_down")
-        ):
-            input_vector = Input.get_vector(&"iw_move_left", &"iw_move_right", &"iw_move_up", &"iw_move_down")
-        else:
-            input_vector = Vector2(
-                float(Input.is_key_pressed(KEY_D)) - float(Input.is_key_pressed(KEY_A)),
-                float(Input.is_key_pressed(KEY_S)) - float(Input.is_key_pressed(KEY_W))
-            )
+        # Use the shared action-strength path so keyboard bindings remain
+        # reliable even while the release settings service is rebuilding the
+        # dynamic InputMap. The previous direct Input.get_vector override only
+        # saw controller events in the exported release build, leaving the
+        # player visually responsive but unable to walk with WASD.
+        input_vector = Vector2(
+            _movement_action_strength(&"iw_move_right") - _movement_action_strength(&"iw_move_left"),
+            _movement_action_strength(&"iw_move_down") - _movement_action_strength(&"iw_move_up")
+        )
     input_vector = input_vector.normalized()
 
     var target_velocity := Vector3(input_vector.x, 0.0, input_vector.y) * move_speed

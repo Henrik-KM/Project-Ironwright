@@ -251,8 +251,14 @@ func _canonical_json(value: Variant) -> String:
         return "[%s]" % ",".join(items)
     if value is float:
         var number := float(value)
-        if is_finite(number) and is_equal_approx(number, round(number)):
+        if not is_finite(number):
+            return "null"
+        if is_equal_approx(number, round(number)):
             return str(int(number))
+        # JSON round-tripping can perturb the last binary-float digits. A
+        # stable 12-decimal representation keeps the checksum deterministic
+        # without erasing meaningful ecological rates.
+        return String.num(number, 12)
     return JSON.stringify(value)
 
 
