@@ -1,5 +1,17 @@
 # Implementation status
 
+## Core presentation-gallery cleanup
+
+- removed the two bright full-width stage bands from the development-only
+  presentation gallery so the friendly roster and both organic-family pages
+  keep an uninterrupted slate backdrop and the actor silhouettes remain the
+  focal point;
+- live-reviewed the exact exported Windows build after the cleanup on pages
+  1/14, 2/14 and 3/14, then verified the same export reaches the opening
+  Heartforge through title-screen New World selection with the first-scrap
+  objective visible; this remains presentation-only and does not alter runtime
+  gameplay, collision, AI, or save contracts.
+
 ## Focused Root Cistern material-hierarchy milestone
 
 - deepened the authored wet-root, layered-bark, bone, buried-alloy, cold-signal

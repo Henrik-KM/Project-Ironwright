@@ -6,6 +6,14 @@ The current build is not release-ready merely because its systemic gameplay path
 
 The current visual state is explicitly classified as **pre-alpha production prototype** until the following gates are met.
 
+The exact merged Windows export was live-reviewed after the latest core-gallery
+cleanup: the friendly roster, early organic and late organic pages now present
+their silhouettes against an uninterrupted slate backdrop, with the former
+bright horizontal stage bands removed. The fresh export also reaches the
+opening Heartforge through title-screen New World selection with the first
+scrap objective readable. This closes a shared review-stage distraction, but
+does not by itself constitute final human acceptance of the full art library.
+
 The remaining friendly source builders now use dense radial tessellation for
 Bulwark defensive hardware and Relay communications hardware, with the Relay
 export floor protecting future rebuilds. Stable sockets and runtime contracts
