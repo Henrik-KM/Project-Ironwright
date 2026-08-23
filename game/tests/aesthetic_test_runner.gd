@@ -1153,6 +1153,12 @@ func _run_all() -> void:
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 8, "Glassmoth Attack must carry wing flare and antenna threat channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 6, "Glassmoth Feed must carry wing and antenna motion channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 6, "Glassmoth Retreat must carry paired wing withdrawal channels.")
+            if species_names[index] == &"carrionbell":
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 5, "Carrionbell Idle must carry mantle-seam and resonator-ring breathing channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Walk") >= 5, "Carrionbell Walk must carry mantle and seam motion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 7, "Carrionbell Attack must carry resonator and bell-rib threat channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 6, "Carrionbell Feed must carry resonator and mantle motion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 6, "Carrionbell Retreat must carry ring and tendril withdrawal channels.")
             var previous_state: StringName = StringName(enemy_samples[index].get(&"state_name"))
             enemy_samples[index].set(&"state_name", &"feeding")
             enemy_samples[index].set_meta(&"enemy_behaviour", "feed")

@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Carrionbell secondary-animation pass
+
+- extended the late-game Carrionbell clips with resonator-ring pulse, layered
+  bell-rib threat, mantle-seam breathing and signal-tendril withdrawal,
+  preserving the stable asset ID, sockets and gameplay ownership;
+- regenerated only the Carrionbell runtime asset from the shared original
+  high-definition family builder and added native track-count coverage so the
+  resonant predator cannot silently regress to body-only motion;
+- regenerated-import validation passed, and exact exported Windows
+  late-organic page 3/14 plus normal opening review passed on 2026-08-23;
+  broader human visual acceptance remains an open commercial gate.
+
 ## Focused Glassmoth secondary-animation pass
 
 - extended the late-game Glassmoth clips with paired membrane breathing,

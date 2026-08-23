@@ -504,6 +504,40 @@ def build_family(name: str, spec: dict) -> None:
             ("GlassmothWingL0", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.2, -0.18)) + quat((0.18, -0.34, -0.3)) + quat((0.0, -0.2, -0.18))),
             ("GlassmothWingR0", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.2, 0.18)) + quat((-0.18, 0.34, 0.3)) + quat((0.0, 0.2, 0.18))),
         ])
+    elif name == "carrionbell":
+        # Carrionbell's threat is a resonant, living instrument: the mantle
+        # breathes around the ring, the bell ribs answer the core, and the
+        # low tendrils trail the signal. Keep those layers articulated rather
+        # than asking the torso beat to carry the entire silhouette.
+        idle_channels.extend([
+            ("CarrionbellMantleSeamL", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.24, -0.08)) + quat((0.06, -0.28, -0.12)) + quat((0.0, -0.24, -0.08))),
+            ("CarrionbellMantleSeamR", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.24, 0.08)) + quat((-0.06, 0.28, 0.12)) + quat((0.0, 0.24, 0.08))),
+            ("CarrionbellResonatorRing", "rotation", [0.0, 0.8, 1.6], quat((1.5708, 0.0, 0.0)) + quat((1.5708, 0.04, 0.0)) + quat((1.5708, 0.0, 0.0))),
+        ])
+        walk_channels.extend([
+            ("CarrionbellMantle", "rotation", [0.0, 0.22, 0.44], quat((0.18, 0.0, 0.0)) + quat((-0.18, 0.0, 0.0)) + quat((0.18, 0.0, 0.0))),
+            ("CarrionbellMantleSeamL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.24, -0.08)) + quat((0.12, -0.3, -0.16)) + quat((0.0, -0.24, -0.08))),
+            ("CarrionbellMantleSeamR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.24, 0.08)) + quat((-0.12, 0.3, 0.16)) + quat((0.0, 0.24, 0.08))),
+        ])
+        attack_channels.extend([
+            ("CarrionbellResonator", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.0, 0.0)) + quat((-0.18, 0.0, 0.0)) + quat((0.0, 0.0, 0.0))),
+            ("CarrionbellResonatorCore", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, 0.22)) + quat((0.0, 0.0, 0.0))),
+            ("CarrionbellResonatorRing", "rotation", [0.0, 0.24, 0.48], quat((1.5708, 0.0, 0.0)) + quat((1.5708, 0.0, 0.34)) + quat((1.5708, 0.0, 0.0))),
+            ("CarrionbellBellRib0", "rotation", [0.0, 0.24, 0.48], quat((0.0, -0.32, -0.52)) + quat((0.18, -0.46, -0.68)) + quat((0.0, -0.32, -0.52))),
+            ("CarrionbellBellRib1", "rotation", [0.0, 0.24, 0.48], quat((0.0, -0.32, -0.52)) + quat((0.18, -0.46, -0.68)) + quat((0.0, -0.32, -0.52))),
+        ])
+        feed_channels.extend([
+            ("CarrionbellResonatorCore", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, 0.16)) + quat((0.0, 0.0, 0.0))),
+            ("CarrionbellResonatorRing", "rotation", [0.0, 0.3, 0.6], quat((1.5708, 0.0, 0.0)) + quat((1.5708, 0.0, 0.24)) + quat((1.5708, 0.0, 0.0))),
+            ("CarrionbellMantleSeamL", "rotation", [0.0, 0.3, 0.6], quat((0.0, -0.24, -0.08)) + quat((0.1, -0.28, -0.12)) + quat((0.0, -0.24, -0.08))),
+            ("CarrionbellMantleSeamR", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.24, 0.08)) + quat((-0.1, 0.28, 0.12)) + quat((0.0, 0.24, 0.08))),
+        ])
+        retreat_channels.extend([
+            ("CarrionbellMantleSeamL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.24, -0.08)) + quat((-0.18, -0.34, -0.2)) + quat((0.0, -0.24, -0.08))),
+            ("CarrionbellMantleSeamR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.24, 0.08)) + quat((0.18, 0.34, 0.2)) + quat((0.0, 0.24, 0.08))),
+            ("CarrionbellResonatorRing", "rotation", [0.0, 0.22, 0.44], quat((1.5708, 0.0, 0.0)) + quat((1.5708, 0.0, -0.28)) + quat((1.5708, 0.0, 0.0))),
+            ("CarrionbellSignalTendril2", "rotation", [0.0, 0.22, 0.44], quat((0.32, 0.0, 0.0)) + quat((0.48, 0.0, 0.18)) + quat((0.32, 0.0, 0.0))),
+        ])
 
     animations = [
         animation("Idle", idle_channels),
