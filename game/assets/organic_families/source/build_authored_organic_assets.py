@@ -374,39 +374,79 @@ def build_family(name: str, spec: dict) -> None:
             entries.append({"sampler": sampler_index, "target": {"node": node_index[target_name], "path": path}})
         return {"name": animation_name, "samplers": samplers, "channels": entries}
 
-    animations = [
-        animation("Idle", [
+    idle_channels = [
             (root_name, "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.014, 0.0, 0.0, 0.0, 0.0]),
             ("Torso", "rotation", [0.0, 0.8, 1.6], quat((0.012, 0.0, 0.0)) + quat((-0.012, 0.0, 0.0)) + quat((0.012, 0.0, 0.0))),
-        ]),
-        animation("Walk", [
+        ]
+    walk_channels = [
             (walk_node, "rotation", [0.0, 0.22, 0.44], quat((0.2, 0.0, 0.0)) + quat((-0.2, 0.0, 0.0)) + quat((0.2, 0.0, 0.0))),
             ("Torso", "rotation", [0.0, 0.22, 0.44], quat((0.04, 0.0, 0.0)) + quat((-0.04, 0.0, 0.0)) + quat((0.04, 0.0, 0.0))),
-        ]),
-        animation("Attack", [
+        ]
+    attack_channels = [
             (attack_node, "translation", [0.0, 0.24, 0.48], [0.0, 0.0, 0.0, 0.0, 0.0, -0.16, 0.0, 0.0, 0.0]),
             ("Torso", "rotation", [0.0, 0.24, 0.48], quat((0.05, 0.0, 0.0)) + quat((-0.09, 0.0, 0.0)) + quat((0.05, 0.0, 0.0))),
-        ]),
-        animation("Hit", [
+        ]
+    hit_channels = [
             (root_name, "translation", [0.0, 0.10, 0.24], [0.0, 0.0, 0.0, 0.0, 0.0, 0.12, 0.0, 0.0, 0.0]),
             ("Torso", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.0)) + quat((-0.16, 0.08, 0.0)) + quat((0.0, 0.0, 0.0))),
-        ]),
-        animation("Feed", [
+        ]
+    feed_channels = [
             (root_name, "translation", [0.0, 0.3, 0.6], [0.0, 0.0, 0.0, 0.0, -0.12, -0.08, 0.0, 0.0, 0.0]),
             ("Torso", "rotation", [0.0, 0.3, 0.6], quat((0.02, 0.0, 0.0)) + quat((0.16, 0.0, 0.0)) + quat((0.02, 0.0, 0.0))),
-        ]),
-        animation("Nest", [
+        ]
+    nest_channels = [
             (root_name, "translation", [0.0, 0.5, 1.0], [0.0, 0.0, 0.0, 0.0, 0.08, 0.0, 0.0, 0.0, 0.0]),
             ("Torso", "rotation", [0.0, 0.5, 1.0], quat((0.025, 0.0, 0.0)) + quat((-0.025, 0.0, 0.0)) + quat((0.025, 0.0, 0.0))),
-        ]),
-        animation("Retreat", [
+        ]
+    retreat_channels = [
             (walk_node, "rotation", [0.0, 0.22, 0.44], quat((0.28, 0.0, 0.0)) + quat((-0.16, 0.0, 0.0)) + quat((0.28, 0.0, 0.0))),
             ("Torso", "rotation", [0.0, 0.22, 0.44], quat((0.12, 0.0, 0.0)) + quat((0.22, 0.0, 0.0)) + quat((0.12, 0.0, 0.0))),
-        ]),
-        animation("Death", [
+        ]
+    death_channels = [
             (root_name, "rotation", [0.0, 0.28, 0.64], quat((0.0, 0.0, 0.0)) + quat((0.34, 0.08, 0.2)) + quat((0.78, 0.16, 0.42))),
             ("Torso", "rotation", [0.0, 0.28, 0.64], quat((0.0, 0.0, 0.0)) + quat((0.18, 0.0, 0.0)) + quat((0.46, 0.0, 0.0))),
-        ]),
+        ]
+
+    if name == "rootweaver":
+        # The route-controller silhouette is carried by the spore fan and the
+        # paired root arms. Keep the motion small enough for reduced-detail
+        # transitions while giving the close release camera living secondary
+        # anatomy to read between the broad torso beats.
+        idle_channels.extend([
+            ("RootweaverSporeFan", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.0, 1.48)) + quat((0.0, 0.0, 1.66)) + quat((0.0, 0.0, 1.48))),
+            ("RootweaverSporeRib0", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.18, -0.46)) + quat((0.04, -0.18, -0.42)) + quat((0.0, -0.18, -0.46))),
+            ("RootweaverSporeRib1", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.18, 0.46)) + quat((-0.04, 0.18, 0.42)) + quat((0.0, 0.18, 0.46))),
+        ])
+        walk_channels.extend([
+            ("RootweaverArmL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.2, -0.8)) + quat((0.14, -0.24, -0.72)) + quat((0.0, -0.2, -0.8))),
+            ("RootweaverArmR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.2, 0.8)) + quat((-0.14, 0.24, 0.72)) + quat((0.0, 0.2, 0.8))),
+        ])
+        attack_channels.extend([
+            ("RootweaverSporeFan", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.0, 1.57)) + quat((0.0, 0.0, 1.22)) + quat((0.0, 0.0, 1.57))),
+            ("RootweaverSporeRib0", "rotation", [0.0, 0.24, 0.48], quat((0.0, -0.18, -0.46)) + quat((0.18, -0.2, -0.34)) + quat((0.0, -0.18, -0.46))),
+            ("RootweaverSporeRib1", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.18, 0.46)) + quat((-0.18, 0.2, 0.34)) + quat((0.0, 0.18, 0.46))),
+            ("RootweaverRootSpineL", "rotation", [0.0, 0.24, 0.48], quat((0.0, -0.28, -0.4)) + quat((0.12, -0.34, -0.48)) + quat((0.0, -0.28, -0.4))),
+        ])
+        feed_channels.extend([
+            ("RootweaverSporeFan", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.0, 1.57)) + quat((0.0, 0.0, 1.34)) + quat((0.0, 0.0, 1.57))),
+            ("RootweaverArmL", "rotation", [0.0, 0.3, 0.6], quat((0.0, -0.2, -0.8)) + quat((0.16, -0.28, -0.68)) + quat((0.0, -0.2, -0.8))),
+            ("RootweaverArmR", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.2, 0.8)) + quat((0.16, 0.28, 0.68)) + quat((0.0, 0.2, 0.8))),
+        ])
+        retreat_channels.extend([
+            ("RootweaverArmR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.2, 0.8)) + quat((0.28, 0.3, 0.92)) + quat((0.0, 0.2, 0.8))),
+            ("RootweaverRootSpineL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.28, -0.4)) + quat((-0.14, -0.34, -0.48)) + quat((0.0, -0.28, -0.4))),
+            ("RootweaverRootSpineR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.28, 0.4)) + quat((-0.14, 0.34, 0.48)) + quat((0.0, 0.28, 0.4))),
+        ])
+
+    animations = [
+        animation("Idle", idle_channels),
+        animation("Walk", walk_channels),
+        animation("Attack", attack_channels),
+        animation("Hit", hit_channels),
+        animation("Feed", feed_channels),
+        animation("Nest", nest_channels),
+        animation("Retreat", retreat_channels),
+        animation("Death", death_channels),
     ]
     document = {
         "asset": {"version": "2.0", "generator": f"Project Ironwright original {spec['display']} asset builder"},

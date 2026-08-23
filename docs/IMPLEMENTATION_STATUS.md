@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Rootweaver secondary-animation pass
+
+- extended the late-game Rootweaver clips with restrained spore-fan flex,
+  membrane-rib breathing, paired root-arm articulation and route-spine
+  withdrawal, preserving the stable asset ID, sockets and gameplay ownership;
+- regenerated only the Rootweaver runtime asset from the shared original
+  high-definition family builder and added native track-count coverage so the
+  route-controller silhouette cannot silently regress to body-only motion;
+- regenerated-import validation passed, and exact exported Windows
+  late-organic page 3/14 review passed on 2026-08-23; broader human visual
+  acceptance remains an open commercial gate.
+
 ## Focused Cistern Apex secondary-animation pass
 
 - extended the late-game Apex clips with living membrane flex, jaw flare,
@@ -7,8 +19,9 @@
   animation names and gameplay ownership;
 - added source documentation and native track-count coverage so the late
   predator cannot silently regress to body-only motion;
-- this pass is awaiting regenerated-import validation and exact Windows
-  late-organic page 3/14 review before merge.
+- regenerated-import validation passed, and exact Windows late-organic page
+  3/14 review passed on 2026-08-23; the broader commercial art acceptance gate
+  remains open.
 
 ## Focused Veilstalker high-definition face pass
 
