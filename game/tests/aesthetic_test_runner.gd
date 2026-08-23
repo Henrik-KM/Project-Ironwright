@@ -7,6 +7,7 @@ const MECHROMANCER_SCENE := preload("res://scenes/actors/mechromancer_3d.tscn")
 const OUTPOST_SCENE := preload("res://scenes/world/outpost_3d.tscn")
 const SCRAPPER_ASSET_SCENE := preload("res://assets/scrapper/scrapper.gltf")
 const PATHFINDER_ASSET_SCENE := preload("res://assets/pathfinder/pathfinder.gltf")
+const ENGINEER_ASSET_SCENE := preload("res://assets/engineer/engineer.gltf")
 
 var failures: Array[String] = []
 
@@ -901,6 +902,13 @@ func _run_all() -> void:
             _expect(_find_named(role_samples[index], "EngineerToolControl") != null and _find_named(role_samples[index], "EngineerForgeGuard") != null, "The Engineer must expose its tool-control and forge-guard hardware.")
             _expect(_find_named(role_samples[index], "EngineerCableSpool") != null and _find_named(role_samples[index], "EngineerWeldingShield") != null and _find_named(role_samples[index], "EngineerClampJaw") != null, "The Engineer must expose its third-pass cable, welding and clamp hardware.")
             _expect(_find_named(role_samples[index], "EngineerClamp") != null, "The Engineer must retain layered clamp hardware.")
+            var engineer_asset := ENGINEER_ASSET_SCENE.instantiate()
+            root.add_child(engineer_asset)
+            await process_frame
+            var engineer_chassis := _find_named(engineer_asset, "Chassis") as MeshInstance3D
+            var engineer_cradle := _find_named(engineer_asset, "MaterialCradle") as MeshInstance3D
+            _expect(engineer_chassis != null and engineer_cradle != null and _mesh_vertex_count(engineer_chassis) >= 48 and _mesh_vertex_count(engineer_cradle) >= 48, "The authored Engineer chassis and material cradle must retain beveled high-definition manufactured edges.")
+            engineer_asset.queue_free()
         elif role_names[index] == &"relay":
             _expect(_find_named(role_samples[index], "RelayMastCollar") != null and _find_named(role_samples[index], "RelayDishRibLeft") != null and _find_named(role_samples[index], "RelaySignalFace") != null, "The Signal Relay must expose maintained mast, dish-rib and signal-face hardware.")
         role_samples[index].queue_free()

@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "engineer.gltf"
@@ -40,19 +40,19 @@ def main() -> None:
 
     chassis, steel, oxide, amber, cyan, rubber = range(6)
     mesh_ids = {
-        "Chassis": mesh("Chassis", add_box(builder, (1.42, 0.7, 1.58), chassis)),
-        "Core": mesh("Core", add_box(builder, (1.16, 0.34, 1.28), oxide)),
-        "Plate": mesh("Plate", add_box(builder, (1.3, 0.18, 0.14), steel)),
+        "Chassis": mesh("Chassis", add_beveled_box(builder, (1.42, 0.7, 1.58), chassis, 0.1)),
+        "Core": mesh("Core", add_beveled_box(builder, (1.16, 0.34, 1.28), oxide, 0.055)),
+        "Plate": mesh("Plate", add_beveled_box(builder, (1.3, 0.18, 0.14), steel, 0.035)),
         "Corner": mesh("Corner", add_cylinder(builder, 0.11, 0.15, steel, 20)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.11, 0.7, rubber, 20)),
-        "Foot": mesh("Foot", add_box(builder, (0.27, 0.12, 0.4), oxide)),
-        "OpticHousing": mesh("OpticHousing", add_box(builder, (0.48, 0.25, 0.12), chassis)),
+        "Foot": mesh("Foot", add_beveled_box(builder, (0.27, 0.12, 0.4), oxide, 0.03)),
+        "OpticHousing": mesh("OpticHousing", add_beveled_box(builder, (0.48, 0.25, 0.12), chassis, 0.03)),
         "Optic": mesh("Optic", add_uv_sphere(builder, 0.085, cyan)),
-        "Cradle": mesh("Cradle", add_box(builder, (0.98, 0.46, 0.82), chassis)),
-        "CradleLip": mesh("CradleLip", add_box(builder, (1.08, 0.08, 0.9), oxide)),
+        "Cradle": mesh("Cradle", add_beveled_box(builder, (0.98, 0.46, 0.82), chassis, 0.06)),
+        "CradleLip": mesh("CradleLip", add_beveled_box(builder, (1.08, 0.08, 0.9), oxide, 0.025)),
         "Joint": mesh("Joint", add_uv_sphere(builder, 0.13, chassis)),
         "Arm": mesh("Arm", add_cylinder(builder, 0.1, 1.18, oxide, 20)),
-        "ToolHead": mesh("ToolHead", add_box(builder, (0.24, 0.2, 0.34), steel)),
+        "ToolHead": mesh("ToolHead", add_beveled_box(builder, (0.24, 0.2, 0.34), steel, 0.03)),
         "ForgeCoil": mesh("ForgeCoil", add_cylinder(builder, 0.13, 0.17, amber, 24)),
         "Glow": mesh("Glow", add_uv_sphere(builder, 0.08, amber)),
         "Fastener": mesh("Fastener", add_cylinder(builder, 0.04, 0.04, amber, 20)),
@@ -61,11 +61,11 @@ def main() -> None:
         # collars, cable spools, welding shields and clamp jaws make the
         # engineer read as maintained fabrication equipment at approach range.
         "CradleLatch": mesh("CradleLatch", add_cylinder(builder, 0.06, 0.12, amber, 20)),
-        "ForgeGuard": mesh("ForgeGuard", add_box(builder, (0.4, 0.1, 0.12), steel)),
+        "ForgeGuard": mesh("ForgeGuard", add_beveled_box(builder, (0.4, 0.1, 0.12), steel, 0.022)),
         "ToolCollar": mesh("ToolCollar", add_cylinder(builder, 0.13, 0.08, cyan, 24)),
         "CableSpool": mesh("CableSpool", add_cylinder(builder, 0.13, 0.12, oxide, 24)),
-        "WeldingShield": mesh("WeldingShield", add_box(builder, (0.3, 0.12, 0.16), steel)),
-        "ClampJaw": mesh("ClampJaw", add_box(builder, (0.18, 0.16, 0.28), steel)),
+        "WeldingShield": mesh("WeldingShield", add_beveled_box(builder, (0.3, 0.12, 0.16), steel, 0.025)),
+        "ClampJaw": mesh("ClampJaw", add_beveled_box(builder, (0.18, 0.16, 0.28), steel, 0.025)),
     }
 
     nodes: list[dict] = [{

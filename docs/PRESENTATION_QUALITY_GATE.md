@@ -470,6 +470,14 @@ survey sockets, animation clips, collision and autonomous route-screening
 behaviour remain unchanged. This is presentation-only; exact exported live
 review of the scout page remains required.
 
+The source-authored Engineer shell now carries the same treatment through its
+construction chassis, optic housing, material cradle, cradle lip, tool heads,
+forge guard, welding shield and clamp jaws. These fabrication surfaces now
+catch the gallery lighting as maintained workshop equipment, while the
+engineer's construction and forge sockets, animation clips, collision and
+autonomous building behaviour remain unchanged. This is presentation-only;
+exact exported live review of the engineer page remains required.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside
