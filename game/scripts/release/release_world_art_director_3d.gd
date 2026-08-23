@@ -897,6 +897,101 @@ func _dress_observatory(root: Node3D) -> void:
     ModelKit3D.add_cylinder(observatory_detail, 0.28, 0.34, Vector3(0.0, 8.32, 0.0), signal_material, Vector3.ZERO, "DishReceiverLens")
     ModelKit3D.add_beveled_box(observatory_detail, Vector3(0.82, 0.14, 0.82), Vector3(0.0, 3.62, 0.0), rust, Vector3.ZERO, "ObservatoryDishHub", 0.18)
 
+    # The primary dish needs a surrounding instrument silhouette at remote
+    # review distance. Keep this as release dressing: it frames the receiver
+    # and gives the survey deck a small operator-facing control identity
+    # without adding collision, routing or a second simulation system.
+    var array_frame := Node3D.new()
+    array_frame.name = "ObservatoryArrayFrame"
+    observatory_detail.add_child(array_frame)
+    var frame_dark := _textured_material(&"metal", Color("1b2b30"), 0.8, 0.32)
+    var frame_edge := _textured_material(&"rust", Color("9a5d3a"), 0.42, 0.6)
+    for pylon_index in range(4):
+        var pylon_x := -4.0 if pylon_index % 2 == 0 else 4.0
+        var pylon_z := -3.0 if pylon_index < 2 else 3.0
+        ModelKit3D.add_cylinder(
+            array_frame,
+            0.15,
+            6.2,
+            Vector3(pylon_x, 3.25, pylon_z),
+            frame_dark,
+            Vector3(0.0, 0.0, 0.16 if pylon_index % 2 == 0 else -0.16),
+            "ObservatoryArrayPylon%02d" % pylon_index
+        )
+        ModelKit3D.add_sphere(
+            array_frame,
+            0.16,
+            Vector3(pylon_x, 6.45, pylon_z),
+            signal_material,
+            Vector3.ONE,
+            "ObservatoryArrayBeacon%02d" % pylon_index
+        )
+    for crossbar_index in range(2):
+        var crossbar_z := -3.0 if crossbar_index == 0 else 3.0
+        ModelKit3D.add_cylinder(
+            array_frame,
+            0.1,
+            8.25,
+            Vector3(0.0, 6.02, crossbar_z),
+            frame_edge,
+            Vector3(0.0, 0.0, PI * 0.5),
+            "ObservatoryArrayCrossbar%02d" % crossbar_index
+        )
+    var control_pod := ModelKit3D.add_beveled_box(
+        array_frame,
+        Vector3(1.9, 1.25, 1.45),
+        Vector3(-2.15, 1.0, -3.2),
+        frame_dark,
+        Vector3.ZERO,
+        "ObservatoryArrayControlPod",
+        0.16
+    )
+    ModelKit3D.add_surface_panel(
+        control_pod,
+        Vector3(1.16, 0.56, 0.08),
+        Vector3(0.0, 0.2, -0.76),
+        frame_dark,
+        signal_material,
+        Vector3.ZERO,
+        "ObservatoryArrayControlReadout"
+    )
+    var approach_control_pod := ModelKit3D.add_beveled_box(
+        array_frame,
+        Vector3(1.9, 1.25, 1.45),
+        Vector3(2.15, 1.0, 3.2),
+        frame_dark,
+        Vector3.ZERO,
+        "ObservatoryArrayApproachControlPod",
+        0.16
+    )
+    ModelKit3D.add_surface_panel(
+        approach_control_pod,
+        Vector3(1.16, 0.56, 0.08),
+        Vector3(0.0, 0.2, 0.76),
+        frame_dark,
+        signal_material,
+        Vector3(0.0, PI, 0.0),
+        "ObservatoryArrayApproachControlReadout"
+    )
+    ModelKit3D.add_cylinder(
+        array_frame,
+        0.07,
+        2.8,
+        Vector3(3.55, 6.8, -3.0),
+        frame_edge,
+        Vector3(0.0, 0.0, 0.18),
+        "ObservatoryArrayRelayMast"
+    )
+    ModelKit3D.add_surface_panel(
+        array_frame,
+        Vector3(1.25, 0.48, 0.08),
+        Vector3(1.25, 0.52, -3.72),
+        frame_dark,
+        signal_material,
+        Vector3.ZERO,
+        "ObservatoryArrayStatusPanel"
+    )
+
 
 func _dress_research(root: Node3D) -> void:
     var concrete := _textured_material(&"concrete", Color("3f4243"), 0.0, 0.7)

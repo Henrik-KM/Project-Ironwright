@@ -1,5 +1,16 @@
 # Implementation status
 
+## Observatory Ridge survey-array silhouette pass
+
+- added a bounded release-only instrument array around the Observatory Ridge
+  dish, including four beacons, crossbars, a relay mast, status panel and
+  operator-facing control pod;
+- preserved the authored dish, service deck, survey sockets, collision,
+  routing, ecology and reduced-detail contracts; this adds no gameplay state or
+  player-managed maintenance work;
+- added aesthetic coverage for the release array frame and relay structure;
+  exact exported Windows review passed on the Observatory Ridge page.
+
 ## Municipal Glasshouse climate-volume pass
 
 - added a bounded cold-glass facade and split roof canopy to the release
