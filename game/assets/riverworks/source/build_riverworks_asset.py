@@ -21,12 +21,12 @@ OUTPUT_PATH = SOURCE_DIR / "riverworks.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Riverworks wet alloy", "pbrMetallicRoughness": {"baseColorFactor": [0.10, 0.16, 0.18, 1.0], "metallicFactor": 0.76, "roughnessFactor": 0.34}},
-        {"name": "Riverworks oxidized iron", "pbrMetallicRoughness": {"baseColorFactor": [0.30, 0.13, 0.075, 1.0], "metallicFactor": 0.38, "roughnessFactor": 0.62}},
-        {"name": "Riverworks ceramic", "pbrMetallicRoughness": {"baseColorFactor": [0.24, 0.29, 0.28, 1.0], "metallicFactor": 0.22, "roughnessFactor": 0.48}},
-        {"name": "Riverworks cold water", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.18, 0.22, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.24}, "emissiveFactor": [0.02, 0.38, 0.50]},
-        {"name": "Riverworks maintenance amber", "pbrMetallicRoughness": {"baseColorFactor": [0.52, 0.24, 0.08, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.42}, "emissiveFactor": [0.55, 0.16, 0.035]},
-        {"name": "Riverworks growth", "pbrMetallicRoughness": {"baseColorFactor": [0.075, 0.25, 0.18, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.68}, "emissiveFactor": [0.02, 0.26, 0.14]},
+        {"name": "Riverworks wet alloy", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.07, 0.08, 1.0], "metallicFactor": 0.46, "roughnessFactor": 0.52}},
+        {"name": "Riverworks oxidized iron", "pbrMetallicRoughness": {"baseColorFactor": [0.22, 0.055, 0.018, 1.0], "metallicFactor": 0.26, "roughnessFactor": 0.76}},
+        {"name": "Riverworks ceramic", "pbrMetallicRoughness": {"baseColorFactor": [0.07, 0.10, 0.10, 1.0], "metallicFactor": 0.10, "roughnessFactor": 0.66}},
+        {"name": "Riverworks cold water", "pbrMetallicRoughness": {"baseColorFactor": [0.012, 0.10, 0.14, 1.0], "metallicFactor": 0.10, "roughnessFactor": 0.32}, "emissiveFactor": [0.0, 0.08, 0.12]},
+        {"name": "Riverworks maintenance amber", "pbrMetallicRoughness": {"baseColorFactor": [0.38, 0.12, 0.02, 1.0], "metallicFactor": 0.10, "roughnessFactor": 0.52}, "emissiveFactor": [0.28, 0.06, 0.01]},
+        {"name": "Riverworks growth", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.13, 0.07, 1.0], "metallicFactor": 0.02, "roughnessFactor": 0.84}, "emissiveFactor": [0.01, 0.08, 0.03]},
     ]
     meshes: list[dict] = []
 
