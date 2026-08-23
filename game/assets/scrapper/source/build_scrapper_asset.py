@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "scrapper.gltf"
@@ -40,20 +40,20 @@ def main() -> None:
 
     chassis, steel, oxide, cyan, warm, rubber = range(6)
     mesh_ids = {
-        "Chassis": mesh("Chassis", add_box(builder, (1.28, 0.64, 1.5), chassis)),
-        "Core": mesh("Core", add_box(builder, (1.04, 0.3, 1.22), oxide)),
-        "Plate": mesh("Plate", add_box(builder, (1.16, 0.16, 0.14), steel)),
+        "Chassis": mesh("Chassis", add_beveled_box(builder, (1.28, 0.64, 1.5), chassis, 0.09)),
+        "Core": mesh("Core", add_beveled_box(builder, (1.04, 0.3, 1.22), oxide, 0.055)),
+        "Plate": mesh("Plate", add_beveled_box(builder, (1.16, 0.16, 0.14), steel, 0.035)),
         "Corner": mesh("Corner", add_cylinder(builder, 0.11, 0.15, steel, 20)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.105, 0.7, rubber, 20)),
-        "Foot": mesh("Foot", add_box(builder, (0.26, 0.12, 0.38), oxide)),
-        "OpticHousing": mesh("OpticHousing", add_box(builder, (0.44, 0.24, 0.12), chassis)),
+        "Foot": mesh("Foot", add_beveled_box(builder, (0.26, 0.12, 0.38), oxide, 0.03)),
+        "OpticHousing": mesh("OpticHousing", add_beveled_box(builder, (0.44, 0.24, 0.12), chassis, 0.03)),
         "Optic": mesh("Optic", add_uv_sphere(builder, 0.08, cyan)),
-        "Cargo": mesh("Cargo", add_box(builder, (1.0, 0.58, 0.86), chassis)),
-        "CargoLip": mesh("CargoLip", add_box(builder, (1.12, 0.08, 0.92), oxide)),
-        "Strap": mesh("Strap", add_box(builder, (0.12, 0.48, 0.92), oxide)),
+        "Cargo": mesh("Cargo", add_beveled_box(builder, (1.0, 0.58, 0.86), chassis, 0.07)),
+        "CargoLip": mesh("CargoLip", add_beveled_box(builder, (1.12, 0.08, 0.92), oxide, 0.025)),
+        "Strap": mesh("Strap", add_beveled_box(builder, (0.12, 0.48, 0.92), oxide, 0.025)),
         "Arm": mesh("Arm", add_cylinder(builder, 0.09, 1.2, oxide, 20)),
         "Joint": mesh("Joint", add_uv_sphere(builder, 0.14, chassis)),
-        "Claw": mesh("Claw", add_box(builder, (0.32, 0.18, 0.48), steel)),
+        "Claw": mesh("Claw", add_beveled_box(builder, (0.32, 0.18, 0.48), steel, 0.035)),
         "CutHead": mesh("CutHead", add_cylinder(builder, 0.18, 0.32, chassis, 24)),
         "Drum": mesh("Drum", add_cylinder(builder, 0.13, 0.22, oxide, 24)),
         "Magnet": mesh("Magnet", add_cylinder(builder, 0.12, 0.16, cyan, 24)),
@@ -62,12 +62,12 @@ def main() -> None:
         # Salvage-machine close-camera hardware: the hopper rim, tool collars,
         # cutter guard and magnetic pickup details make the work identity read
         # as maintained industrial machinery rather than a cargo box with arms.
-        "HopperRim": mesh("HopperRim", add_box(builder, (1.18, 0.08, 0.98), steel)),
+        "HopperRim": mesh("HopperRim", add_beveled_box(builder, (1.18, 0.08, 0.98), steel, 0.025)),
         "HopperLatch": mesh("HopperLatch", add_cylinder(builder, 0.06, 0.12, warm, 20)),
         "DismantlerCollar": mesh("DismantlerCollar", add_cylinder(builder, 0.12, 0.08, cyan, 24)),
-        "CuttingGuard": mesh("CuttingGuard", add_box(builder, (0.46, 0.1, 0.14), steel)),
+        "CuttingGuard": mesh("CuttingGuard", add_beveled_box(builder, (0.46, 0.1, 0.14), steel, 0.025)),
         "MagnetCoil": mesh("MagnetCoil", add_cylinder(builder, 0.15, 0.06, cyan, 24)),
-        "IntakeTooth": mesh("IntakeTooth", add_box(builder, (0.08, 0.12, 0.18), warm)),
+        "IntakeTooth": mesh("IntakeTooth", add_beveled_box(builder, (0.08, 0.12, 0.18), warm, 0.018)),
     }
 
     nodes: list[dict] = [{
