@@ -13,6 +13,16 @@
 - extended native aesthetic coverage for the authored facade pieces and
   verified a stable consecutive exact Windows export capture on remote page 4.
 
+## Focused Riverworks pump-edge refinement milestone
+
+- raised the authored Riverworks pump housing, sluice gate, ribs, service
+  panel, braces, rails, latches and cable clamp to conservative beveled source
+  geometry so the waterworks landmark catches readable edge light;
+- preserved the pump, sluice, maintenance, ecology, motion and region contracts
+  without adding collision, resources or recurring management work;
+- extended native aesthetic coverage for the authored housing and sluice meshes,
+  with exact remote-page live review required before merge.
+
 ## Focused organic attack-audio telegraph milestone
 
 - connected the existing organic attack wind-up signal to the release audio

@@ -524,6 +524,9 @@ func _run_all() -> void:
                 _expect(landmark.find_child("RiverWaterChannel", true, false) != null, "Riverworks must expose a readable shallow water channel.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/RiverworksAuthoredModel") != null, "Riverworks must expose its authored pump landmark shell.")
                 _expect(landmark.find_child("RiverworksPumpPanel", true, false) != null and landmark.find_child("RiverworksRotorHub", true, false) != null and landmark.find_child("RiverworksValveHandle", true, false) != null, "Riverworks must expose pump service and maintenance hardware.")
+                var riverworks_housing := landmark.find_child("RiverworksPumpHousing", true, false) as MeshInstance3D
+                var riverworks_sluice := landmark.find_child("RiverworksSluiceGate", true, false) as MeshInstance3D
+                _expect(riverworks_housing != null and riverworks_sluice != null and _mesh_vertex_count(riverworks_housing) >= 48 and _mesh_vertex_count(riverworks_sluice) >= 48, "Riverworks authored housing and sluice pieces must retain beveled high-definition geometry.")
                 _expect(landmark.find_child("RiverworksSluiceRail", true, false) != null and landmark.find_child("RiverworksSluiceLatch", true, false) != null and landmark.find_child("RiverworksSluiceSignalHousing", true, false) != null, "Riverworks must expose layered sluice and flow-signal hardware.")
                 _expect(landmark.find_child("RiverworksCableClamp", true, false) != null and landmark.find_child("RiverworksGrowthTendril0_0", true, false) != null, "Riverworks must expose maintenance-cable and organic detail.")
                 var riverworks_rotor := landmark.find_child("RiverworksRotor", true, false) as Node3D

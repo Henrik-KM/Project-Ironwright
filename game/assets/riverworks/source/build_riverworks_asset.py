@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "riverworks.gltf"
@@ -37,26 +37,26 @@ def main() -> None:
 
     alloy, rust, ceramic, water, amber, growth = range(6)
     mesh_ids = {
-        "Housing": mesh("Housing", add_box(builder, (4.8, 2.8, 3.9), alloy)),
-        "HousingCap": mesh("HousingCap", add_box(builder, (5.2, 0.28, 4.3), ceramic)),
+        "Housing": mesh("Housing", add_beveled_box(builder, (4.8, 2.8, 3.9), alloy, 0.18)),
+        "HousingCap": mesh("HousingCap", add_beveled_box(builder, (5.2, 0.28, 4.3), ceramic, 0.06)),
         "Pump": mesh("Pump", add_uv_sphere(builder, 1.0, alloy, 24, 36)),
         "Pipe": mesh("Pipe", add_cylinder(builder, 0.30, 5.0, rust, 24)),
         "PipeCollar": mesh("PipeCollar", add_cylinder(builder, 0.48, 0.22, ceramic, 24)),
-        "Sluice": mesh("Sluice", add_box(builder, (5.8, 3.8, 0.26), alloy)),
-        "SluiceRib": mesh("SluiceRib", add_box(builder, (0.16, 3.25, 0.38), rust)),
+        "Sluice": mesh("Sluice", add_beveled_box(builder, (5.8, 3.8, 0.26), alloy, 0.08)),
+        "SluiceRib": mesh("SluiceRib", add_beveled_box(builder, (0.16, 3.25, 0.38), rust, 0.025)),
         "Rotor": mesh("Rotor", add_cylinder(builder, 0.92, 0.18, water, 32)),
         "Valve": mesh("Valve", add_cylinder(builder, 0.44, 0.16, amber, 24)),
         "Signal": mesh("Signal", add_uv_sphere(builder, 0.20, amber, 18, 28)),
         "Growth": mesh("Growth", add_uv_sphere(builder, 0.42, growth, 18, 28)),
         "Cable": mesh("Cable", add_cylinder(builder, 0.07, 3.8, amber, 12)),
-        "PumpPanel": mesh("PumpPanel", add_box(builder, (3.65, 0.12, 2.75), ceramic)),
-        "PumpBrace": mesh("PumpBrace", add_box(builder, (0.12, 2.65, 0.12), rust)),
+        "PumpPanel": mesh("PumpPanel", add_beveled_box(builder, (3.65, 0.12, 2.75), ceramic, 0.03)),
+        "PumpBrace": mesh("PumpBrace", add_beveled_box(builder, (0.12, 2.65, 0.12), rust, 0.025)),
         "RotorHub": mesh("RotorHub", add_cylinder(builder, 0.28, 0.24, amber, 20)),
         "ValveHandle": mesh("ValveHandle", add_cylinder(builder, 0.56, 0.08, rust, 20)),
-        "SluiceRail": mesh("SluiceRail", add_box(builder, (6.2, 0.14, 0.16), rust)),
-        "SluiceLatch": mesh("SluiceLatch", add_box(builder, (0.24, 0.52, 0.18), amber)),
+        "SluiceRail": mesh("SluiceRail", add_beveled_box(builder, (6.2, 0.14, 0.16), rust, 0.025)),
+        "SluiceLatch": mesh("SluiceLatch", add_beveled_box(builder, (0.24, 0.52, 0.18), amber, 0.025)),
         "SignalHousing": mesh("SignalHousing", add_cylinder(builder, 0.14, 0.16, ceramic, 16)),
-        "CableClamp": mesh("CableClamp", add_cylinder(builder, 0.12, 0.14, amber, 16)),
+        "CableClamp": mesh("CableClamp", add_beveled_box(builder, (0.24, 0.14, 0.24), amber, 0.03)),
         "GrowthTendril": mesh("GrowthTendril", add_cylinder(builder, 0.045, 0.78, growth, 14)),
     }
     nodes: list[dict] = [{
