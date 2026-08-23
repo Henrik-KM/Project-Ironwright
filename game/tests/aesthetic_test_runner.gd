@@ -1196,6 +1196,15 @@ func _run_all() -> void:
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Nest") >= 5, "Razorhound Nest must carry tail, ear and dorsal-spine watch channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 5, "Razorhound Retreat must carry tail, ear and cheek withdrawal channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Death") >= 4, "Razorhound Death must carry tail and ear collapse channels.")
+            if species_names[index] == &"burrower":
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 6, "Burrower Idle must carry lamp, fin, thorax and drill breathing channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Walk") >= 6, "Burrower Walk must carry paired-leg, fin and drill locomotion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 6, "Burrower Attack must carry drill, lamp and jaw threat channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Hit") >= 5, "Burrower Hit must carry lamp and drill impact channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 5, "Burrower Feed must carry paired jaw and lamp motion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Nest") >= 5, "Burrower Nest must carry paired fin and drill watch channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 5, "Burrower Retreat must carry paired-leg and fin withdrawal channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Death") >= 4, "Burrower Death must carry drill and lamp collapse channels.")
             if species_names[index] == &"apex":
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 4, "Apex Idle must carry living membrane flex channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 6, "Apex Attack must carry jaw and membrane threat channels.")
