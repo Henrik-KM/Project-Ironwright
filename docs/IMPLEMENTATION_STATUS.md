@@ -2745,3 +2745,13 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   then started a new world and moved through the opening frame to confirm the
   presentation pass does not disturb the shipped title, objective or movement
   path.
+
+## Opening cast light hierarchy milestone
+
+- restrained the warm Heartforge key slightly while strengthening the
+  Mechromancer/Bulwark cool separation and maintained warm fill;
+- kept the change presentation-only, with the camera, collision, movement,
+  companion protection and route geometry unchanged;
+- added regression coverage for the bounded opening energy relationship;
+- live-reviewed the exact exported Windows build through title, New World,
+  opening objective and movement smoke-test states.

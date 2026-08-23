@@ -1152,6 +1152,20 @@ func _run_all() -> void:
         _expect(opening_roles.has(&"cool_route"), "The opening lighting hierarchy must retain a cool route separation light.")
         _expect(opening_roles.has(&"cast_cool_key"), "The opening cast must retain a restrained cool separation light for the technician and Bulwark silhouettes.")
         _expect(opening_roles.has(&"cast_warm_fill"), "The opening cast must retain a restrained warm fill that keeps maintained hardware readable against the cool foreground.")
+        var heartforge_key_energy := 0.0
+        var cast_cool_energy := 0.0
+        var cast_warm_energy := 0.0
+        for opening_light in opening_slice.get_children():
+            if not opening_light is OmniLight3D:
+                continue
+            match opening_light.get_meta(&"opening_light_role", &""):
+                &"heartforge_key":
+                    heartforge_key_energy = float(opening_light.get_meta(&"vertical_base_energy", opening_light.light_energy))
+                &"cast_cool_key":
+                    cast_cool_energy = float(opening_light.get_meta(&"vertical_base_energy", opening_light.light_energy))
+                &"cast_warm_fill":
+                    cast_warm_energy = float(opening_light.get_meta(&"vertical_base_energy", opening_light.light_energy))
+        _expect(heartforge_key_energy <= 1.85 and cast_cool_energy >= 0.8 and cast_warm_energy >= 0.45, "The opening light hierarchy must give the Mechromancer and Bulwark readable foreground separation while preserving the Heartforge as the warm focal source.")
         _expect(strongest_opening_light <= 2.3, "The opening key light must avoid washing the wet district surface into a white pool.")
 
     var opening_environment := _find_world_environment(world)
