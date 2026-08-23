@@ -1,5 +1,20 @@
 # Implementation status
 
+## Focused West Grid material-hierarchy milestone
+
+- deepened the authored industrial concrete, turbine-hall steel, painted iron
+  and pressure-tank ceramic palette so the exact-export view separates the
+  hall mass and tank yard from the rust pipework, cyan signals and amber
+  warning hardware;
+- moved the turbine-hall window bays, frames and mullions onto the
+  camera-facing service elevation and reduced only the development gallery's
+  West Grid key so those details remain visible without changing runtime
+  lighting;
+- preserved West Grid geometry, sockets, collision, route, ecology, outpost
+  and operation contracts; this is presentation-only and adds no recurring
+  player-managed work;
+- requires consecutive exact-export live review of remote page 5 before merge.
+
 ## Focused Cathedral Quarter material-hierarchy milestone
 
 - deepened the authored nave stone and soot-brick palette so the compact
