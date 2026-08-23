@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "tenement.gltf"
@@ -39,23 +39,23 @@ def main() -> None:
 
     brick, concrete, iron, rust, window, cloth, organic, tank = range(8)
     mesh_ids = {
-        "Floor": mesh("TenementFloor", add_box(builder, (18.0, 0.16, 14.0), concrete)),
-        "Block": mesh("TenementBlock", add_box(builder, (6.0, 9.0, 4.7), brick)),
-        "BlockEdge": mesh("TenementBlockEdge", add_box(builder, (0.28, 9.0, 4.9), concrete)),
-        "Window": mesh("TenementWindow", add_box(builder, (1.05, 1.25, 0.08), window)),
-        "Balcony": mesh("TenementBalcony", add_box(builder, (3.0, 0.20, 1.35), iron)),
+        "Floor": mesh("TenementFloor", add_beveled_box(builder, (18.0, 0.16, 14.0), concrete, 0.04)),
+        "Block": mesh("TenementBlock", add_beveled_box(builder, (6.0, 9.0, 4.7), brick, 0.20)),
+        "BlockEdge": mesh("TenementBlockEdge", add_beveled_box(builder, (0.28, 9.0, 4.9), concrete, 0.07)),
+        "Window": mesh("TenementWindow", add_beveled_box(builder, (1.05, 1.25, 0.08), window, 0.03)),
+        "Balcony": mesh("TenementBalcony", add_beveled_box(builder, (3.0, 0.20, 1.35), iron, 0.06)),
         "Rail": mesh("TenementRail", add_cylinder(builder, 0.07, 3.0, rust, 12)),
         "Ladder": mesh("TenementLadder", add_cylinder(builder, 0.08, 8.8, iron, 12)),
         "Tank": mesh("TenementWaterTank", add_cylinder(builder, 1.15, 2.2, tank, 24)),
         "TankCap": mesh("TenementTankCap", add_cylinder(builder, 1.28, 0.16, rust, 24)),
-        "Cloth": mesh("TenementCloth", add_box(builder, (1.35, 1.15, 0.06), cloth)),
+        "Cloth": mesh("TenementCloth", add_beveled_box(builder, (1.35, 1.15, 0.06), cloth, 0.025)),
         "Creep": mesh("TenementOrganicCreep", add_uv_sphere(builder, 0.52, organic, 18, 28)),
         "Light": mesh("TenementWindowLight", add_uv_sphere(builder, 0.13, rust, 16, 24)),
         "Cable": mesh("TenementCable", add_cylinder(builder, 0.045, 5.2, rust, 10)),
-        "Marker": mesh("TenementMarker", add_box(builder, (0.7, 0.08, 0.7), rust)),
-        "WindowLintel": mesh("TenementWindowLintel", add_box(builder, (1.22, 0.10, 0.14), iron)),
-        "WindowSill": mesh("TenementWindowSill", add_box(builder, (1.28, 0.10, 0.18), rust)),
-        "BalconyBrace": mesh("TenementBalconyBrace", add_box(builder, (0.14, 1.05, 0.14), rust)),
+        "Marker": mesh("TenementMarker", add_beveled_box(builder, (0.7, 0.08, 0.7), rust, 0.025)),
+        "WindowLintel": mesh("TenementWindowLintel", add_beveled_box(builder, (1.22, 0.10, 0.14), iron, 0.025)),
+        "WindowSill": mesh("TenementWindowSill", add_beveled_box(builder, (1.28, 0.10, 0.18), rust, 0.03)),
+        "BalconyBrace": mesh("TenementBalconyBrace", add_beveled_box(builder, (0.14, 1.05, 0.14), rust, 0.025)),
         "LaundryLine": mesh("TenementLaundryLine", add_cylinder(builder, 0.03, 2.4, iron, 10)),
         "TankValve": mesh("TenementTankValve", add_cylinder(builder, 0.12, 0.18, rust, 16)),
         "CreepTendril": mesh("TenementCreepTendril", add_cylinder(builder, 0.045, 0.78, organic, 14)),

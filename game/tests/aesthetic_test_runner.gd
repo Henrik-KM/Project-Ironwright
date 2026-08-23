@@ -610,6 +610,9 @@ func _run_all() -> void:
                 _expect(landmark.find_child("TenementFrontWindowLintelL0_0", true, false) != null and landmark.find_child("TenementFrontWindowSillL0_0", true, false) != null, "East Tenements must expose approach-facing window framing detail.")
                 _expect(landmark.find_child("TenementBalconyBrace0_L", true, false) != null and landmark.find_child("TenementTankValve", true, false) != null, "East Tenements must expose structural balcony and roof-tank service detail.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/TenementAuthoredModel") != null, "East Tenements must expose its authored residential block landmark shell.")
+                var tenement_block := landmark.find_child("TenementBlockL", true, false) as MeshInstance3D
+                var tenement_edge := landmark.find_child("TenementBlockLEdgeL", true, false) as MeshInstance3D
+                _expect(tenement_block != null and tenement_edge != null and _mesh_vertex_count(tenement_block) >= 48 and _mesh_vertex_count(tenement_edge) >= 48, "East Tenements authored blocks must retain beveled high-definition facade geometry.")
                 var tenement_creep := landmark.find_child("TenementOrganicCreep0", true, false) as Node3D
                 _expect(tenement_creep != null, "East Tenements must expose a named organic-creep motion socket.")
                 _expect(landmark.find_child("TenementLaundryLine0", true, false) != null and landmark.find_child("TenementLightHousingL", true, false) != null and landmark.find_child("TenementOrganicTendril0_0", true, false) != null, "East Tenements must expose lived-in laundry, window-light and organic detail.")
