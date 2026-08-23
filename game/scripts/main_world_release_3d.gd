@@ -693,6 +693,14 @@ func _create_presentation_review_stage() -> void:
 	rim_light.light_color = Color("72c2ca")
 	rim_light.shadow_enabled = true
 	presentation_review_stage.add_child(rim_light)
+	var organic_fill := OmniLight3D.new()
+	organic_fill.name = "ReviewOrganicFill"
+	organic_fill.position = Vector3(0.0, 3.8, 8.0)
+	organic_fill.omni_range = 18.0
+	organic_fill.light_energy = 0.0
+	organic_fill.light_color = Color("d6aa8f")
+	organic_fill.shadow_enabled = false
+	presentation_review_stage.add_child(organic_fill)
 
 
 func _add_presentation_review_box(node_name: String, size: Vector3, position: Vector3, color: Color, metallic: float, roughness: float, emission: Color = Color.BLACK) -> void:
@@ -950,6 +958,7 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	var warm_light := presentation_review_stage.get_node_or_null("ReviewWarmLight") as OmniLight3D
 	var cool_light := presentation_review_stage.get_node_or_null("ReviewCoolLight") as OmniLight3D
 	var rim_light := presentation_review_stage.get_node_or_null("ReviewRimLight") as OmniLight3D
+	var organic_fill := presentation_review_stage.get_node_or_null("ReviewOrganicFill") as OmniLight3D
 	# North Ruins' broad archive facade, West Grid's steel hall and ceramic
 	# pressure tanks, East Tenements' brick blocks, Municipal Glasshouse's
 	# transparent panes, Flood Market's broad canopy, Riverworks' pump housing,
@@ -990,6 +999,11 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	# judgeable at the supported compact export size. Runtime lighting is untouched.
 	var organic_gallery_light_scale := 1.38 if presentation_review_page >= 1 and presentation_review_page <= 2 else 1.0
 	var review_light_scale := compact_region_light_scale * organic_gallery_light_scale
+	var organic_page := presentation_review_page >= 1 and presentation_review_page <= 2
+	if organic_fill != null:
+		organic_fill.visible = organic_page
+		organic_fill.light_energy = 1.75 if organic_page else 0.0
+		organic_fill.position = target + Vector3(0.0, 4.0, 8.0)
 	if front_fill != null:
 		front_fill.light_energy = 3.4 * review_light_scale
 		front_fill.position = target + Vector3(0.0, 9.0, 16.0)
