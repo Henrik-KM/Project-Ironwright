@@ -1887,6 +1887,16 @@ environmentally distinct without changing ecology, routing or player workload.
 - added aesthetic and vertical-slice coverage for the cab, undercarriage,
   service and damage sockets; live opening-route review remains required.
 
+## Focused strategic-readout occlusion milestone
+
+- strengthened the operations and world-recap backdrop so persistent machine
+  report toasts cannot bleed through the fixed close footer and compete with
+  the strategic readout;
+- retained a faint world silhouette behind the modal while keeping the recap,
+  archive and operation text surfaces visually dominant;
+- added complete-game coverage for the modal occlusion contract and confirmed
+  the correction in a fresh exact-export returning-world review.
+
 ## Focused opening pharmacy interior milestone
 
 - added one bounded cutaway pharmacy interior to the opening district, with a

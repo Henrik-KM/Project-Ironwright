@@ -263,6 +263,7 @@ func _run_all() -> void:
     _expect(world.operations_hud.description_label.text.contains("CURRENT UNRESOLVED PROBLEM") and world.operations_hud.description_label.text.contains("ACTIVE OR PROPOSED EXPEDITION"), "The world recap must restore the strategic problem and expedition context in one readable surface.")
     _expect(world.operations_hud.requirements_label.text.contains("NEXT AVAILABLE MAJOR CHOICES"), "The world recap must expose the next major choices without opening a management dashboard.")
     _expect(not world.operations_hud.authorize_button.visible, "The world recap must remain read-only and cannot authorize an operation accidentally.")
+    _expect(world.operations_hud.backdrop.color.a >= 0.9, "Strategic readouts must sufficiently occlude persistent HUD toasts so the fixed close footer remains readable.")
     world._close_operations_hud()
     world.heartforge.current_health = world.heartforge.maximum_health * 0.72
     world.heartforge.health_changed.emit(world.heartforge.current_health, world.heartforge.maximum_health)

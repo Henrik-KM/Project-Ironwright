@@ -52,6 +52,8 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.performance_director is PerformanceDirector3D, "Release runtime must install active/reduced-detail simulation.")
     _expect(world.release_audio is ReleaseAudioDirector3D, "Release runtime must install adaptive audio.")
     _expect(world.release_color_filter is ReleaseColorFilter3D, "Release runtime must install the live colour-vision correction layer.")
+    if world.release_audio is ReleaseAudioDirector3D and world.operations_hud != null:
+        _expect(world.release_audio.caption_layer != null and world.release_audio.caption_layer.layer < world.operations_hud.layer, "Sound captions must remain below strategic readouts so modal close actions stay readable.")
     if world.release_color_filter is ReleaseColorFilter3D:
         _expect(not world.release_color_filter.is_active(), "Colour-vision correction must default to off.")
     if world.release_audio is ReleaseAudioDirector3D:

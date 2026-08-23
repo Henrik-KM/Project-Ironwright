@@ -39,7 +39,9 @@ func _build_ui() -> void:
     backdrop = ColorRect.new()
     backdrop.name = "OperationsBackdrop"
     backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-    backdrop.color = Color(0.004, 0.012, 0.016, 0.8)
+    # Keep persistent HUD toasts from bleeding through the fixed recap footer
+    # while retaining a faint sense of the world behind strategic readouts.
+    backdrop.color = Color(0.004, 0.012, 0.016, 0.94)
     backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
     backdrop.visible = false
     add_child(backdrop)
