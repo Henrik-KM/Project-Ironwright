@@ -892,8 +892,9 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	# need a lower presentation key so authored surfaces do not bloom into pale
 	# blocks at the compact exact-export review size. Runtime lighting is
 	# unchanged; region accents remain untouched. Observatory's dish and Buried
-	# Laboratories' vessel bay use the same review-only restraint so their survey
-	# and containment hardware stays visible.
+	# Laboratories' vessel bay and Root Cistern's core use the same review-only
+	# restraint so their survey, containment, basin and pylon hardware stays
+	# visible.
 	var compact_region_light_scale := 1.0
 	if presentation_review_page == 4:
 		compact_region_light_scale = 0.46
@@ -913,6 +914,8 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 		compact_region_light_scale = 0.54
 	elif presentation_review_page == 12:
 		compact_region_light_scale = 0.60
+	elif presentation_review_page == 13:
+		compact_region_light_scale = 0.58
 	# Darker organic shells need a little more review-only key and rim energy
 	# than the manufactured roster to keep wet materials and anatomy breaks
 	# judgeable at the supported compact export size. Runtime lighting is untouched.

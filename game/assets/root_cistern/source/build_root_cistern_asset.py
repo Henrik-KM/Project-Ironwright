@@ -21,12 +21,12 @@ OUTPUT_PATH = SOURCE_DIR / "root_cistern.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Cistern wet root", "pbrMetallicRoughness": {"baseColorFactor": [0.14, 0.035, 0.08, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.4}, "emissiveFactor": [0.12, 0.005, 0.04]},
-        {"name": "Cistern layered bark", "pbrMetallicRoughness": {"baseColorFactor": [0.27, 0.07, 0.13, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.52}, "emissiveFactor": [0.08, 0.005, 0.03]},
-        {"name": "Cistern bone", "pbrMetallicRoughness": {"baseColorFactor": [0.52, 0.34, 0.28, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.62}},
-        {"name": "Cistern buried alloy", "pbrMetallicRoughness": {"baseColorFactor": [0.15, 0.25, 0.27, 1.0], "metallicFactor": 0.62, "roughnessFactor": 0.42}},
-        {"name": "Cistern cold signal", "pbrMetallicRoughness": {"baseColorFactor": [0.03, 0.20, 0.24, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.26}, "emissiveFactor": [0.08, 0.85, 0.95]},
-        {"name": "Cistern root pulse", "pbrMetallicRoughness": {"baseColorFactor": [0.28, 0.025, 0.10, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.44}, "emissiveFactor": [0.38, 0.015, 0.08]},
+        {"name": "Cistern wet root", "pbrMetallicRoughness": {"baseColorFactor": [0.06, 0.008, 0.03, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.52}, "emissiveFactor": [0.04, 0.0, 0.012]},
+        {"name": "Cistern layered bark", "pbrMetallicRoughness": {"baseColorFactor": [0.10, 0.018, 0.05, 1.0], "metallicFactor": 0.02, "roughnessFactor": 0.68}, "emissiveFactor": [0.025, 0.0, 0.008]},
+        {"name": "Cistern bone", "pbrMetallicRoughness": {"baseColorFactor": [0.22, 0.12, 0.09, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.76}},
+        {"name": "Cistern buried alloy", "pbrMetallicRoughness": {"baseColorFactor": [0.04, 0.10, 0.12, 1.0], "metallicFactor": 0.38, "roughnessFactor": 0.56}},
+        {"name": "Cistern cold signal", "pbrMetallicRoughness": {"baseColorFactor": [0.01, 0.10, 0.14, 1.0], "metallicFactor": 0.10, "roughnessFactor": 0.38}, "emissiveFactor": [0.01, 0.22, 0.30]},
+        {"name": "Cistern root pulse", "pbrMetallicRoughness": {"baseColorFactor": [0.12, 0.006, 0.04, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.56}, "emissiveFactor": [0.12, 0.004, 0.03]},
     ]
     meshes: list[dict] = []
 
