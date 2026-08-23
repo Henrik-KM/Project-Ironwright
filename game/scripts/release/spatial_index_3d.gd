@@ -14,6 +14,7 @@ var rebuild_interval: float = 0.32
 var rebuild_clock: float = 0.0
 var grids: Dictionary = {}
 var indexed_counts: Dictionary = {}
+var flat_nodes: Dictionary = {}
 
 
 func _ready() -> void:
@@ -32,8 +33,10 @@ func _process(delta: float) -> void:
 func rebuild() -> void:
     grids.clear()
     indexed_counts.clear()
+    flat_nodes.clear()
     for group_name in INDEXED_GROUPS:
         var grid: Dictionary = {}
+        var nodes: Array[Node3D] = []
         var count := 0
         for candidate in get_tree().get_nodes_in_group(group_name):
             if not is_instance_valid(candidate) or not (candidate is Node3D):
@@ -41,13 +44,22 @@ func rebuild() -> void:
             var node := candidate as Node3D
             if not node.visible:
                 continue
+            nodes.append(node)
             var cell := _cell_for(node.global_position)
             if not grid.has(cell):
                 grid[cell] = []
             (grid[cell] as Array).append(node)
             count += 1
         grids[group_name] = grid
+        flat_nodes[group_name] = nodes
         indexed_counts[group_name] = count
+
+
+func indexed_nodes(group_name: StringName) -> Array[Node3D]:
+    var value: Variant = flat_nodes.get(group_name, [])
+    if value is Array:
+        return (value as Array[Node3D]).duplicate()
+    return []
 
 
 func query_radius(group_name: StringName, origin: Vector3, radius: float) -> Array[Node3D]:

@@ -213,11 +213,12 @@ func register_nest(nest: Node) -> void:
 func _refresh_nest_sources() -> void:
     for raw_nest_id in nests.keys():
         var nest_id := raw_nest_id as StringName
-        var nest: Node = nests.get(nest_id, null)
-        if nest == null or not is_instance_valid(nest):
+        var raw_nest: Variant = nests.get(nest_id, null)
+        if raw_nest == null or not is_instance_valid(raw_nest):
             _remove_sources_for_owner(nest_id)
             nests.erase(nest_id)
             continue
+        var nest := raw_nest as Node
         _sync_nest_sources(nest)
 
 
@@ -551,9 +552,10 @@ func _accumulate_and_spawn(tier: int, delta: float) -> void:
 func _select_spawn_nest(tier: int) -> Node:
     var candidates: Array[Node] = []
     for raw_nest_id in nests.keys():
-        var nest: Node = nests.get(raw_nest_id, null)
-        if nest == null or not is_instance_valid(nest):
+        var raw_nest: Variant = nests.get(raw_nest_id, null)
+        if raw_nest == null or not is_instance_valid(raw_nest):
             continue
+        var nest := raw_nest as Node
         if nest.has_method(&"can_spawn_tier") and bool(nest.call(&"can_spawn_tier", tier)):
             candidates.append(nest)
     if candidates.is_empty():
@@ -763,8 +765,11 @@ func to_dictionary() -> Dictionary:
         serialized_sources[String(source_id)] = (rate_sources[source_id] as Dictionary).duplicate(true)
     var serialized_nests: Dictionary = {}
     for nest_id in nests:
-        var nest: Node = nests[nest_id]
-        if is_instance_valid(nest) and nest.has_method(&"to_dictionary"):
+        var raw_nest: Variant = nests[nest_id]
+        if raw_nest == null or not is_instance_valid(raw_nest):
+            continue
+        var nest := raw_nest as Node
+        if nest.has_method(&"to_dictionary"):
             serialized_nests[String(nest_id)] = nest.call(&"to_dictionary")
     return {
         "schema_version": 1,
@@ -805,8 +810,11 @@ func restore_from_dictionary(data: Dictionary) -> void:
     var saved_nests: Dictionary = data.get("nests", {})
     for raw_nest_id in saved_nests:
         var nest_id := StringName(str(raw_nest_id))
-        var nest: Node = nests.get(nest_id, null)
-        if nest != null and is_instance_valid(nest) and nest.has_method(&"restore_from_dictionary"):
+        var raw_nest: Variant = nests.get(nest_id, null)
+        if raw_nest == null or not is_instance_valid(raw_nest):
+            continue
+        var nest := raw_nest as Node
+        if nest.has_method(&"restore_from_dictionary"):
             nest.call(&"restore_from_dictionary", saved_nests[raw_nest_id])
     _reconcile_population()
     _refresh_nest_sources()

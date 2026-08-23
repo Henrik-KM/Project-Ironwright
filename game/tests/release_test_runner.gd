@@ -50,6 +50,9 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.spatial_index is SpatialIndex3D, "Release runtime must install the spatial index.")
     _expect(world.balance_director is BalanceDirector3D, "Release runtime must install long-run balance profiles.")
     _expect(world.performance_director is PerformanceDirector3D, "Release runtime must install active/reduced-detail simulation.")
+    if world.spatial_index is SpatialIndex3D:
+        _expect(world.spatial_index.indexed_nodes(&"organic_enemies").size() == int(world.spatial_index.indexed_counts.get(&"organic_enemies", 0)), "The spatial index must expose its current organic population without a second scene-tree scan.")
+        _expect(world.spatial_index.indexed_nodes(&"friendly_robots").size() == int(world.spatial_index.indexed_counts.get(&"friendly_robots", 0)), "The spatial index must expose its current friendly population without a second scene-tree scan.")
     _expect(world.release_audio is ReleaseAudioDirector3D, "Release runtime must install adaptive audio.")
     _expect(world.release_color_filter is ReleaseColorFilter3D, "Release runtime must install the live colour-vision correction layer.")
     if world.release_audio is ReleaseAudioDirector3D and world.operations_hud != null:

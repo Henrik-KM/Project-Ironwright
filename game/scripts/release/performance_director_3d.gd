@@ -4,6 +4,7 @@ extends Node
 signal performance_snapshot(snapshot: Dictionary)
 
 var focus_provider: Callable
+var _spatial_index: SpatialIndex3D
 var target_fps: int = 60
 var active_radius: float = 58.0
 var medium_radius: float = 118.0
@@ -37,6 +38,11 @@ func configure(next_focus_provider: Callable, next_target_fps: int = 60) -> void
 
 func _ready() -> void:
     add_to_group(&"performance_director")
+    call_deferred("_resolve_spatial_index")
+
+
+func _resolve_spatial_index() -> void:
+    _spatial_index = get_tree().get_first_node_in_group(&"spatial_index_service") as SpatialIndex3D
 
 
 func _process(delta: float) -> void:
@@ -84,14 +90,14 @@ func _evaluate_entities() -> void:
     medium_robots.clear()
     var candidates: Array[Dictionary] = []
 
-    for raw_enemy in get_tree().get_nodes_in_group(&"organic_enemies"):
+    for raw_enemy in _indexed_or_group_nodes(&"organic_enemies"):
         if not is_instance_valid(raw_enemy) or not (raw_enemy is Node3D):
             continue
         if raw_enemy is OrganicEnemyRelease3D:
             var enemy_node := raw_enemy as Node3D
             candidates.append({"node": raw_enemy, "distance": focus.distance_to(enemy_node.global_position)})
 
-    for raw_robot in get_tree().get_nodes_in_group(&"friendly_robots"):
+    for raw_robot in _indexed_or_group_nodes(&"friendly_robots"):
         if not is_instance_valid(raw_robot) or not (raw_robot is Node3D):
             continue
         if raw_robot is RobotUnitRelease3D:
@@ -150,6 +156,20 @@ func _evaluate_entities() -> void:
         "sorted_candidate_count": last_sorted_candidate_count,
     }
     performance_snapshot.emit(last_snapshot.duplicate(true))
+
+
+func _indexed_or_group_nodes(group_name: StringName) -> Array[Node3D]:
+    if _spatial_index == null or not is_instance_valid(_spatial_index):
+        _resolve_spatial_index()
+    if _spatial_index != null and is_instance_valid(_spatial_index) and _spatial_index.has_method(&"indexed_nodes"):
+        var indexed: Variant = _spatial_index.call(&"indexed_nodes", group_name)
+        if indexed is Array:
+            return indexed as Array[Node3D]
+    var fallback: Array[Node3D] = []
+    for candidate in get_tree().get_nodes_in_group(group_name):
+        if candidate is Node3D:
+            fallback.append(candidate as Node3D)
+    return fallback
 
 
 func _tick_reduced_entities(delta: float) -> void:
