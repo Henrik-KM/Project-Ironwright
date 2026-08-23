@@ -552,6 +552,14 @@ amber maintenance cues under the compact exact-export key. The pass preserves
 the waterworks identity, landmark geometry, collision, route, discovery and
 operation ownership; consecutive exact exported Riverworks review is complete.
 
+The Tram Graveyard shell now also uses a deeper weathered-teal, oxidized-iron,
+cold-window, concrete and ceramic palette with restrained service and seepage
+emission so the carriage shells separate from windows, rails, undercarriage and
+overhead transit hardware under the compact exact-export key. The pass
+preserves the rail identity, landmark geometry, collision, route, discovery and
+operation ownership; consecutive exact exported Tram Graveyard review is
+complete.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside
