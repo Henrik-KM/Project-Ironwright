@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "glasshouse.gltf"
@@ -38,24 +38,24 @@ def main() -> None:
 
     frame, rust, glass, grow_light, growth, soil, amber = range(7)
     mesh_ids = {
-        "Floor": mesh("GlasshouseFloor", add_box(builder, (18.0, 0.16, 14.0), frame)),
-        "Post": mesh("GlasshousePost", add_box(builder, (0.20, 6.6, 0.20), frame)),
-        "Beam": mesh("GlasshouseBeam", add_box(builder, (0.22, 0.22, 12.2), rust)),
-        "Glass": mesh("GlasshouseGlass", add_box(builder, (0.06, 4.9, 5.0), glass)),
-        "RoofGlass": mesh("GlasshouseRoofGlass", add_box(builder, (5.0, 0.06, 5.8), glass)),
-        "Bed": mesh("GrowthBed", add_box(builder, (3.0, 0.30, 1.20), soil)),
+        "Floor": mesh("GlasshouseFloor", add_beveled_box(builder, (18.0, 0.16, 14.0), frame, 0.04)),
+        "Post": mesh("GlasshousePost", add_beveled_box(builder, (0.20, 6.6, 0.20), frame, 0.05)),
+        "Beam": mesh("GlasshouseBeam", add_beveled_box(builder, (0.22, 0.22, 12.2), rust, 0.05)),
+        "Glass": mesh("GlasshouseGlass", add_beveled_box(builder, (0.06, 4.9, 5.0), glass, 0.02)),
+        "RoofGlass": mesh("GlasshouseRoofGlass", add_beveled_box(builder, (5.0, 0.06, 5.8), glass, 0.02)),
+        "Bed": mesh("GrowthBed", add_beveled_box(builder, (3.0, 0.30, 1.20), soil, 0.06)),
         "Growth": mesh("GrowthCluster", add_uv_sphere(builder, 0.62, growth, 18, 28)),
         "GrowthLight": mesh("GrowthLight", add_uv_sphere(builder, 0.15, grow_light, 16, 24)),
-        "Louver": mesh("ClimateLouver", add_box(builder, (2.6, 1.05, 0.16), frame)),
-        "LouverSlat": mesh("ClimateLouverSlat", add_box(builder, (2.3, 0.08, 0.10), grow_light)),
-        "Door": mesh("GlasshouseServiceDoor", add_box(builder, (2.2, 4.2, 0.18), frame)),
-        "DoorTrim": mesh("GlasshouseDoorTrim", add_box(builder, (2.5, 0.14, 0.22), amber)),
-        "Skylight": mesh("BrokenSkylight", add_box(builder, (2.9, 0.07, 2.0), glass)),
+        "Louver": mesh("ClimateLouver", add_beveled_box(builder, (2.6, 1.05, 0.16), frame, 0.04)),
+        "LouverSlat": mesh("ClimateLouverSlat", add_beveled_box(builder, (2.3, 0.08, 0.10), grow_light, 0.02)),
+        "Door": mesh("GlasshouseServiceDoor", add_beveled_box(builder, (2.2, 4.2, 0.18), frame, 0.05)),
+        "DoorTrim": mesh("GlasshouseDoorTrim", add_beveled_box(builder, (2.5, 0.14, 0.22), amber, 0.03)),
+        "Skylight": mesh("BrokenSkylight", add_beveled_box(builder, (2.9, 0.07, 2.0), glass, 0.025)),
         "Cable": mesh("ClimateCable", add_cylinder(builder, 0.04, 5.0, amber, 10)),
-        "Marker": mesh("GlasshouseMarker", add_box(builder, (0.7, 0.08, 0.7), amber)),
-        "RoofRib": mesh("GlasshouseRoofRib", add_box(builder, (0.14, 0.14, 5.8), rust)),
-        "PaneLatch": mesh("GlasshousePaneLatch", add_box(builder, (0.16, 0.18, 0.10), amber)),
-        "BedEdge": mesh("GlasshouseBedEdge", add_box(builder, (3.25, 0.16, 0.14), frame)),
+        "Marker": mesh("GlasshouseMarker", add_beveled_box(builder, (0.7, 0.08, 0.7), amber, 0.025)),
+        "RoofRib": mesh("GlasshouseRoofRib", add_beveled_box(builder, (0.14, 0.14, 5.8), rust, 0.035)),
+        "PaneLatch": mesh("GlasshousePaneLatch", add_beveled_box(builder, (0.16, 0.18, 0.10), amber, 0.025)),
+        "BedEdge": mesh("GlasshouseBedEdge", add_beveled_box(builder, (3.25, 0.16, 0.14), frame, 0.03)),
         "GrowthTendril": mesh("GlasshouseGrowthTendril", add_cylinder(builder, 0.045, 0.92, growth, 14)),
         "LightHousing": mesh("GlasshouseLightHousing", add_cylinder(builder, 0.11, 0.16, frame, 16)),
         "ClimateActuator": mesh("GlasshouseClimateActuator", add_cylinder(builder, 0.08, 0.54, amber, 14)),

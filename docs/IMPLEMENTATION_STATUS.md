@@ -68,6 +68,18 @@
   ecology and operation contracts; the exact exported Windows page 6 was
   live-reviewed at a stable consecutive capture before merge.
 
+## Focused Municipal Glasshouse structure-edge milestone
+
+- regenerated the authored climate-frame shell with conservative bevels on the
+  posts, beams, glazing, roof panels, growth beds, service door, broken
+  skylight, roof ribs and pane hardware so the civic frame catches light as a
+  designed structure at the compact tactical review distance;
+- extended native aesthetic coverage for the beveled authored frame and roof
+  rib geometry;
+- retained the climate, growth, discovery, ecology and operation contracts;
+  the exact exported Windows page 7 was live-reviewed at a stable consecutive
+  capture before merge.
+
 ## Focused organic attack-audio telegraph milestone
 
 - connected the existing organic attack wind-up signal to the release audio
