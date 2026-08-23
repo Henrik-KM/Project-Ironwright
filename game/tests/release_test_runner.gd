@@ -214,6 +214,20 @@ func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void
                 has_controller_event = true
         _expect(has_controller_event, "Controller action %s needs a joypad binding." % String(action))
 
+    for movement_action in [&"iw_move_up", &"iw_move_down", &"iw_move_left", &"iw_move_right"]:
+        var has_keyboard_event := false
+        for event in InputMap.action_get_events(movement_action):
+            if event is InputEventKey:
+                has_keyboard_event = true
+        _expect(has_keyboard_event, "Keyboard movement action %s needs a live key binding." % String(movement_action))
+
+    var keyboard_position_before := world.player.global_position
+    Input.action_press(&"iw_move_up")
+    for _frame in range(12):
+        await physics_frame
+    Input.action_release(&"iw_move_up")
+    _expect(world.player.global_position.z < keyboard_position_before.z - 0.2, "The release Mechromancer must move through the shared keyboard action-strength path.")
+
     var position_before := world.player.global_position
     var motion := InputEventJoypadMotion.new()
     motion.device = 0

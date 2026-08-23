@@ -1,5 +1,28 @@
 # Implementation status
 
+## Enemy-tier sidecar checksum stability
+
+- stabilized the canonical JSON float precision used by the enemy-tier
+  progression sidecar so very small ecological rates survive a write/read
+  round-trip without invalidating their checksum;
+- preserved transactional temp/backup rotation, migration behavior and
+  isolated save-root routing; the correction changes verification stability,
+  not the ecological model or progression values;
+- the commercial release runner now passes its isolated sidecar-save and
+  beside-save assertions.
+
+## Release keyboard movement path correction
+
+- routed the release Mechromancer through the shared action-strength movement
+  path so keyboard bindings remain available alongside controller bindings
+  while the runtime InputMap is assembled;
+- preserved the existing movement speed, collision, channel lockout and
+  controller axis behavior; this is a reliability correction, not a new input
+  mode or recurring player task;
+- added release coverage for live keyboard action bindings and simulated
+  keyboard movement, then verified command-key input in the exact exported
+  Windows build.
+
 ## Observatory Ridge survey-array silhouette pass
 
 - added a bounded release-only instrument array around the Observatory Ridge
