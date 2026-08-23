@@ -2946,3 +2946,17 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - added aesthetic regression coverage for the authored chassis and sensor pod
   vertex density; exact exported live review remains required for the full
   friendly-role family acceptance gate.
+
+## Focused Engineer manufactured-edge milestone
+
+- regenerated the source-authored Engineer constructor shell with bounded
+  beveled chassis, optic housing, material cradle, cradle lip, tool heads,
+  forge guard, welding shield and clamp-jaw geometry so its fabrication role
+  catches close-camera light as maintained workshop equipment rather than flat
+  blocks;
+- preserved stable engineer node names, construction and forge sockets,
+  animation clips, collision ownership and autonomous building behaviour; the
+  refinement is presentation-only and adds no recurring machine task;
+- added aesthetic regression coverage for the authored chassis and material
+  cradle vertex density; exact exported live review remains required for the
+  full friendly-role family acceptance gate.
