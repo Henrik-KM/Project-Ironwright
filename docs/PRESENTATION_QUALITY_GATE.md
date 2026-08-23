@@ -507,6 +507,14 @@ the choir-yard focal hierarchy without changing landmark geometry, collision,
 route, discovery or operation ownership; consecutive exact exported Cathedral
 Quarter review remains required.
 
+The West Grid shell now also uses a deeper industrial concrete, turbine-hall
+steel, painted-iron and pressure-tank ceramic palette so the hall mass and
+tank yard separate from rust pipework, cyan signals and amber warning hardware
+under the compact exact-export key. The pass restores the substation focal
+hierarchy without changing landmark geometry, collision, route, discovery or
+operation ownership; consecutive exact exported West Grid review remains
+required.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside

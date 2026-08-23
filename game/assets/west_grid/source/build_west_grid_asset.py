@@ -21,14 +21,14 @@ OUTPUT_PATH = SOURCE_DIR / "west_grid.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "West Grid concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.13, 0.17, 0.18, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.88}},
-        {"name": "West Grid steel", "pbrMetallicRoughness": {"baseColorFactor": [0.14, 0.22, 0.24, 1.0], "metallicFactor": 0.72, "roughnessFactor": 0.48}},
-        {"name": "West Grid painted iron", "pbrMetallicRoughness": {"baseColorFactor": [0.22, 0.32, 0.33, 1.0], "metallicFactor": 0.56, "roughnessFactor": 0.5}},
+        {"name": "West Grid concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.012, 0.026, 0.035, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.88}},
+        {"name": "West Grid steel", "pbrMetallicRoughness": {"baseColorFactor": [0.02, 0.05, 0.065, 1.0], "metallicFactor": 0.20, "roughnessFactor": 0.62}},
+        {"name": "West Grid painted iron", "pbrMetallicRoughness": {"baseColorFactor": [0.045, 0.10, 0.12, 1.0], "metallicFactor": 0.22, "roughnessFactor": 0.62}},
         {"name": "West Grid rust", "pbrMetallicRoughness": {"baseColorFactor": [0.46, 0.17, 0.055, 1.0], "metallicFactor": 0.36, "roughnessFactor": 0.7}, "emissiveFactor": [0.08, 0.012, 0.002]},
-        {"name": "West Grid signal", "pbrMetallicRoughness": {"baseColorFactor": [0.04, 0.34, 0.36, 1.0], "metallicFactor": 0.2, "roughnessFactor": 0.3}, "emissiveFactor": [0.18, 0.85, 0.88]},
+        {"name": "West Grid signal", "pbrMetallicRoughness": {"baseColorFactor": [0.02, 0.20, 0.24, 1.0], "metallicFactor": 0.2, "roughnessFactor": 0.3}, "emissiveFactor": [0.05, 0.32, 0.36]},
         {"name": "West Grid amber", "pbrMetallicRoughness": {"baseColorFactor": [0.63, 0.28, 0.06, 1.0], "metallicFactor": 0.22, "roughnessFactor": 0.5}, "emissiveFactor": [0.26, 0.045, 0.004]},
         {"name": "West Grid organic", "pbrMetallicRoughness": {"baseColorFactor": [0.16, 0.025, 0.11, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.84}, "emissiveFactor": [0.24, 0.01, 0.08]},
-        {"name": "West Grid ceramic", "pbrMetallicRoughness": {"baseColorFactor": [0.32, 0.36, 0.35, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.62}},
+        {"name": "West Grid ceramic", "pbrMetallicRoughness": {"baseColorFactor": [0.05, 0.10, 0.11, 1.0], "metallicFactor": 0.10, "roughnessFactor": 0.68}},
     ]
     meshes: list[dict] = []
 
@@ -100,9 +100,9 @@ def main() -> None:
     hall = add_node("WestGridTurbineHall", mesh_ids["Hall"], (-4.8, 3.3, -2.8), extras={"socket_type": "turbine_hall"})
     add_node("WestGridRoofCap", mesh_ids["Roof"], (0.0, 3.4, 0.0), parent=hall)
     for index, x in enumerate((-8.2, -5.0, -1.8)):
-        add_node("WestGridWindow%d" % index, mesh_ids["Window"], (x, 3.55, -5.34), extras={"socket_type": "hall_window"})
-        add_node("WestGridWindowFrame%d" % index, mesh_ids["WindowFrame"], (x, 3.55, -5.27), extras={"surface": "hall_window_frame"})
-        add_node("WestGridWindowMullion%d" % index, mesh_ids["WindowMullion"], (x, 3.55, -5.19), extras={"surface": "hall_window_mullion"})
+        add_node("WestGridWindow%d" % index, mesh_ids["Window"], (x, 3.55, -0.26), extras={"socket_type": "hall_window"})
+        add_node("WestGridWindowFrame%d" % index, mesh_ids["WindowFrame"], (x, 3.55, -0.19), extras={"surface": "hall_window_frame"})
+        add_node("WestGridWindowMullion%d" % index, mesh_ids["WindowMullion"], (x, 3.55, -0.11), extras={"surface": "hall_window_mullion"})
     for index, (x, z) in enumerate(((5.3, -5.2), (9.0, -5.0), (7.2, 3.9))):
         add_node("WestGridPressureTank%d" % index, mesh_ids["Tank"], (x, 2.15, z), extras={"socket_type": "pressure_tank"})
         add_node("WestGridPressureTankBand%d" % index, mesh_ids["TankBand"], (x, 2.15, z), parent=0)
