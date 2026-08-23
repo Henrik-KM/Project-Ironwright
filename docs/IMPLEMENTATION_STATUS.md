@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused East Tenements material-hierarchy milestone
+
+- deepened the authored residential brick, concrete and rooftop-tank palette
+  so the exact-export view separates the two lived-in blocks from cyan windows,
+  rust balcony hardware, laundry and the roof service tank;
+- restrained window emission and preserved East Tenements geometry, sockets,
+  collision, route, ecology, story and vertical-life contracts; this is
+  presentation-only and adds no recurring player-managed work;
+- completed consecutive exact-export live review of remote page 6 with stable
+  material hierarchy before merge.
+
 ## Focused West Grid material-hierarchy milestone
 
 - deepened the authored industrial concrete, turbine-hall steel, painted iron

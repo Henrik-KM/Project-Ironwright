@@ -515,6 +515,14 @@ hierarchy without changing landmark geometry, collision, route, discovery or
 operation ownership; consecutive exact exported West Grid review remains
 required.
 
+The East Tenements shell now also uses a deeper residential brick, concrete
+and rooftop-tank palette with restrained window emission so the two blocks
+separate from cyan windows, rust balcony hardware, laundry and the roof service
+tank under the compact exact-export key. The pass restores the lived-in
+vertical-life hierarchy without changing landmark geometry, collision, route,
+discovery or operation ownership; consecutive exact exported East Tenements
+review is complete.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside

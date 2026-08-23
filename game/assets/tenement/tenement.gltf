@@ -1670,9 +1670,9 @@
       "name": "Tenement brick",
       "pbrMetallicRoughness": {
         "baseColorFactor": [
-          0.24,
-          0.095,
-          0.075,
+          0.11,
+          0.038,
+          0.032,
           1.0
         ],
         "metallicFactor": 0.03,
@@ -1683,9 +1683,9 @@
       "name": "Tenement concrete",
       "pbrMetallicRoughness": {
         "baseColorFactor": [
-          0.19,
-          0.21,
-          0.21,
+          0.075,
+          0.1,
+          0.11,
           1.0
         ],
         "metallicFactor": 0.05,
@@ -1727,18 +1727,18 @@
       "name": "Tenement window",
       "pbrMetallicRoughness": {
         "baseColorFactor": [
-          0.06,
-          0.24,
-          0.3,
+          0.025,
+          0.13,
+          0.18,
           1.0
         ],
         "metallicFactor": 0.1,
         "roughnessFactor": 0.26
       },
       "emissiveFactor": [
-        0.03,
-        0.18,
-        0.24
+        0.015,
+        0.1,
+        0.15
       ]
     },
     {
@@ -1776,13 +1776,13 @@
       "name": "Tenement tank",
       "pbrMetallicRoughness": {
         "baseColorFactor": [
-          0.17,
-          0.22,
-          0.22,
+          0.08,
+          0.13,
+          0.14,
           1.0
         ],
-        "metallicFactor": 0.64,
-        "roughnessFactor": 0.52
+        "metallicFactor": 0.22,
+        "roughnessFactor": 0.62
       }
     }
   ],
