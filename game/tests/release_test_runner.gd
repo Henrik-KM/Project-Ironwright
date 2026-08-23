@@ -439,6 +439,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     world._start_presentation_review()
     await process_frame
     _expect(world.presentation_review_pages.size() == 14, "Presentation review must expose the three core pages plus all eleven remote regions.")
+    _expect(world.release_world_art != null and world.release_world_art.dressing_root != null, "Presentation review must retain the release dressing root alongside its controller.")
     world._show_presentation_review_page(0)
     await process_frame
     _expect(world.presentation_review_camera_desired.z - world.presentation_review_camera_target.z <= 13.3, "Core presentation pages must use a closer roster framing for authored detail review.")
@@ -458,6 +459,11 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     _expect(flood_market_review_offset.z <= 15.5 and flood_market_review_offset.y <= 9.5 and flood_market_review_offset.x >= 8.4, "Flood Market presentation review must use a bounded diagonal frame for its canopy, stall and water-channel hardware.")
     var cathedral_review_offset := world._presentation_review_region_camera_offset(&"region.cathedral_quarter")
     _expect(cathedral_review_offset.z <= 17.1 and cathedral_review_offset.y <= 10.6, "Cathedral Quarter presentation review must use a closer frame for its tower and choir hardware.")
+    world._show_presentation_review_page(10)
+    await process_frame
+    var cathedral_dressing := world.release_world_art.region_dressing_root(&"region.cathedral_quarter") if world.release_world_art != null else null
+    _expect(world.release_world_art != null and world.release_world_art.dressing_root.visible, "Remote presentation review must keep the sibling release dressing root visible.")
+    _expect(cathedral_dressing != null and cathedral_dressing.visible and cathedral_dressing.find_child("CathedralReleaseFacade", true, false) != null, "Cathedral Quarter presentation review must retain its release facade dressing when selected.")
     world._show_presentation_review_page(13)
     await process_frame
     var page: Array = world.presentation_review_pages[13] if world.presentation_review_pages.size() > 13 else []

@@ -631,6 +631,13 @@ func _create_presentation_review_stage() -> void:
 	var preserved_nodes: Array[Node] = [camera]
 	if release_world_art != null:
 		preserved_nodes.append(release_world_art)
+		# ReleaseWorldArtDirector3D owns the dressing controller, but its
+		# presentation root is intentionally parented directly under the world so
+		# region LOD and cleanup can address it as one bounded layer. Preserve that
+		# sibling root as well or the exact gallery silently hides every release
+		# dressing pass while leaving authored landmark geometry visible.
+		if release_world_art.dressing_root != null:
+			preserved_nodes.append(release_world_art.dressing_root)
 	for page_actors in presentation_review_pages:
 		for actor in page_actors:
 			if is_instance_valid(actor):
