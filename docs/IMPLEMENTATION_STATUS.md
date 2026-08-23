@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Pathfinder secondary-animation pass
+
+- extended the scout's authored clips with survey-pod breathing, mast-collar
+  and signal-canister articulation, wing and brace locomotion, dish-rib survey
+  response, sensor impact and beacon collapse detail;
+- regenerated only the Pathfinder runtime asset from its original authored
+  high-definition builder and added native track-count coverage so the scout
+  cannot silently regress to chassis-only motion;
+- regenerated-import validation passed, and exact exported Windows opening
+  plus normal-flow review passed on 2026-08-23; broader human visual
+  acceptance remains an open commercial gate.
+
 ## Focused Scrapper secondary-animation pass
 
 - extended the salvager's authored clips with hopper-latch breathing, paired
