@@ -955,6 +955,14 @@ func _run_all() -> void:
     var warden_chassis := _find_named(authored_warden, "Chassis") as MeshInstance3D
     var warden_breech := _find_named(authored_warden, "WardenBreech") as MeshInstance3D
     _expect(warden_chassis != null and warden_breech != null and _mesh_vertex_count(warden_chassis) >= 48 and _mesh_vertex_count(warden_breech) >= 48, "The authored Warden chassis and breech must retain beveled high-definition manufactured edges.")
+    var warden_animation := authored_warden.get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
+    if warden_animation != null and warden_animation.animation_player != null:
+        _expect(_animation_player_track_count(warden_animation.animation_player, &"Idle") >= 6, "Warden Idle must carry exchanger breathing and paired thermal-fin channels.")
+        _expect(_animation_player_track_count(warden_animation.animation_player, &"Walk") >= 6, "Warden Walk must carry thermal-fin and counterweight locomotion channels.")
+        _expect(_animation_player_track_count(warden_animation.animation_player, &"Fire") >= 6, "Warden Fire must carry breech, clamp and paired recoil-collar channels.")
+        _expect(_animation_player_track_count(warden_animation.animation_player, &"Hit") >= 5, "Warden Hit must carry targeting-face and thermal-fin impact channels.")
+        _expect(_animation_player_track_count(warden_animation.animation_player, &"Retreat") >= 5, "Warden Retreat must carry thermal-fin and rear-shield withdrawal channels.")
+        _expect(_animation_player_track_count(warden_animation.animation_player, &"Death") >= 4, "Warden Death must carry exchanger and thermal-fin collapse channels.")
     authored_warden.queue_free()
 
     var disabled_robot := ROBOT_SCENE.instantiate() as RobotUnit3D
