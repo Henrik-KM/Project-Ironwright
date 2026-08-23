@@ -914,6 +914,14 @@ func _run_all() -> void:
             var scrapper_chassis := _find_named(scrapper_asset, "Chassis") as MeshInstance3D
             var scrapper_cargo := _find_named(scrapper_asset, "CargoBin") as MeshInstance3D
             _expect(scrapper_chassis != null and scrapper_cargo != null and _mesh_vertex_count(scrapper_chassis) >= 48 and _mesh_vertex_count(scrapper_cargo) >= 48, "The authored Scrapper chassis and cargo bin must retain beveled high-definition manufactured edges.")
+            var scrapper_animation := role_samples[index].get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
+            if scrapper_animation != null and scrapper_animation.animation_player != null:
+                _expect(_animation_player_track_count(scrapper_animation.animation_player, &"Idle") >= 6, "Scrapper Idle must carry hopper-latch and paired magnet-coil channels.")
+                _expect(_animation_player_track_count(scrapper_animation.animation_player, &"Walk") >= 7, "Scrapper Walk must carry intake-tooth and magnet-coil locomotion channels.")
+                _expect(_animation_player_track_count(scrapper_animation.animation_player, &"Work") >= 7, "Scrapper Work must carry dismantler, magnet and salvage-drum channels.")
+                _expect(_animation_player_track_count(scrapper_animation.animation_player, &"Hit") >= 5, "Scrapper Hit must carry cutting-guard and paired collar impact channels.")
+                _expect(_animation_player_track_count(scrapper_animation.animation_player, &"Retreat") >= 5, "Scrapper Retreat must carry magnet withdrawal and hopper response channels.")
+                _expect(_animation_player_track_count(scrapper_animation.animation_player, &"Death") >= 4, "Scrapper Death must carry drum and hopper collapse channels.")
             scrapper_asset.queue_free()
         elif role_names[index] == &"scout":
             _expect(_find_named(role_samples[index], "PathfinderMastBraceLeft") != null and _find_named(role_samples[index], "PathfinderSurveyBeacon") != null, "The Pathfinder must expose its braced mast and survey beacon hardware.")
