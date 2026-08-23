@@ -92,6 +92,17 @@
     contracts; the exact exported Windows page 5 was live-reviewed at a stable
     consecutive capture before merge.
 
+## Focused Flood Market manufactured-edge milestone
+
+- regenerated the authored market floor, canopies, stalls, tide-control arch,
+  flood decks, service boxes, cargo crates and vendor banners with conservative
+  bevels so the flooded civic trade space reads as designed infrastructure at
+  the compact tactical review distance;
+- extended native aesthetic coverage for the authored canopy and stall meshes;
+- retained the flood channels, waterline signals, tide-control, discovery,
+  ecology and operation contracts; the exact exported Windows page 8 was
+  live-reviewed at a stable consecutive capture before merge.
+
 ## Focused organic attack-audio telegraph milestone
 
 - connected the existing organic attack wind-up signal to the release audio
