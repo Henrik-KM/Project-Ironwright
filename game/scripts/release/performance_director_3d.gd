@@ -88,41 +88,46 @@ func _evaluate_entities() -> void:
     reduced_robots.clear()
     medium_enemies.clear()
     medium_robots.clear()
-    var candidates: Array[Dictionary] = []
+    var nearby_candidates: Array[Dictionary] = []
+    last_candidate_count = 0
+    var active_radius_squared := active_radius * active_radius
+    var medium_radius_squared := medium_radius * medium_radius
 
     for raw_enemy in _indexed_or_group_nodes(&"organic_enemies"):
         if not is_instance_valid(raw_enemy) or not (raw_enemy is Node3D):
             continue
         if raw_enemy is OrganicEnemyRelease3D:
             var enemy_node := raw_enemy as Node3D
-            candidates.append({"node": raw_enemy, "distance": focus.distance_to(enemy_node.global_position)})
+            var distance_squared := focus.distance_squared_to(enemy_node.global_position)
+            last_candidate_count += 1
+            if distance_squared > medium_radius_squared:
+                _apply_actor_detail(raw_enemy, 2)
+                reduced_entities += 1
+            else:
+                nearby_candidates.append({"node": raw_enemy, "distance_squared": distance_squared})
 
     for raw_robot in _indexed_or_group_nodes(&"friendly_robots"):
         if not is_instance_valid(raw_robot) or not (raw_robot is Node3D):
             continue
         if raw_robot is RobotUnitRelease3D:
-            candidates.append({"node": raw_robot, "distance": focus.distance_to((raw_robot as Node3D).global_position)})
-
-    last_candidate_count = candidates.size()
-    var nearby_candidates: Array[Dictionary] = []
-    for candidate in candidates:
-        var distant_actor := candidate["node"] as Node
-        if float(candidate["distance"]) > medium_radius:
-            _apply_actor_detail(distant_actor, 2)
-            reduced_entities += 1
-        else:
-            nearby_candidates.append(candidate)
+            var distance_squared := focus.distance_squared_to((raw_robot as Node3D).global_position)
+            last_candidate_count += 1
+            if distance_squared > medium_radius_squared:
+                _apply_actor_detail(raw_robot, 2)
+                reduced_entities += 1
+            else:
+                nearby_candidates.append({"node": raw_robot, "distance_squared": distance_squared})
 
     nearby_candidates.sort_custom(Callable(self, "_sort_candidates_by_distance"))
     last_sorted_candidate_count = nearby_candidates.size()
     for candidate in nearby_candidates:
         var actor := candidate["node"] as Node
-        var distance := float(candidate["distance"])
+        var distance_squared := float(candidate["distance_squared"])
         var lod_level := 2
-        if distance <= active_radius and active_entities < active_entity_budget:
+        if distance_squared <= active_radius_squared and active_entities < active_entity_budget:
             lod_level = 0
             active_entities += 1
-        elif distance <= medium_radius and active_entities + medium_entities < medium_entity_budget:
+        elif active_entities + medium_entities < medium_entity_budget:
             lod_level = 1
             medium_entities += 1
         else:
@@ -191,7 +196,7 @@ func _tick_medium_entities(delta: float) -> void:
 
 
 func _sort_candidates_by_distance(left: Dictionary, right: Dictionary) -> bool:
-    return float(left.get("distance", INF)) < float(right.get("distance", INF))
+    return float(left.get("distance_squared", INF)) < float(right.get("distance_squared", INF))
 
 
 func _apply_actor_detail(actor: Node, lod_level: int) -> void:

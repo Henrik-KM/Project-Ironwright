@@ -58,7 +58,9 @@ func rebuild() -> void:
 func indexed_nodes(group_name: StringName) -> Array[Node3D]:
     var value: Variant = flat_nodes.get(group_name, [])
     if value is Array:
-        return (value as Array[Node3D]).duplicate()
+        # Callers only inspect the current index. Returning the maintained
+        # snapshot avoids copying the full population on every LOD evaluation.
+        return value as Array[Node3D]
     return []
 
 
