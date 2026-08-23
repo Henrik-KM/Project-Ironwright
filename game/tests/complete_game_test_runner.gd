@@ -79,6 +79,9 @@ func _run_all() -> void:
     var cores_before_west := world.run_state.rare_cores
     world.transactional_save_service.configure(TEST_SAVE_ROOT, 3)
     _expect(world.long_operation_director.authorize(&"operation.west_grid_survey"), "A long-range operation must be authorizable before checkpoint testing.")
+    world._process(0.1)
+    _expect("FOLLOW THE ACTIVE MACHINE GROUP" in world.hud.objective_label.text, "An active long-range operation must replace the previous strategic objective with the physical group follow objective.")
+    _expect("F FOLLOW ACTIVE MACHINE GROUP" in world.hud.prompt_label.text, "An active long-range operation must replace stale opening guidance with the direct follow affordance.")
     var checkpoint_id := StringName(world.long_operation_director.active_operation.get("id", &""))
     world._save_game()
     _expect(FileAccess.file_exists(TEST_SAVE_PATH), "The complete-world save hook must write while a long-range group is in flight.")

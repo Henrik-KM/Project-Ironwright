@@ -101,6 +101,16 @@ func _apply_compact_layout(viewport_size: Vector2) -> void:
     prompt_label.position = Vector2(16.0, 8.0)
     prompt_label.size = Vector2(prompt_width - 32.0, 36.0)
 
+    if operation_badge != null:
+        var badge_width := minf(600.0, maxf(360.0, viewport_size.x * 0.62))
+        operation_badge.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+        operation_badge.offset_left = -badge_width * 0.5
+        operation_badge.offset_right = badge_width * 0.5
+        operation_badge.offset_top = -130.0
+        operation_badge.offset_bottom = -88.0
+        operation_badge_label.position = Vector2(12.0, 7.0)
+        operation_badge_label.size = Vector2(badge_width - 24.0, 28.0)
+
     if _health_panel != null:
         _health_panel.position = Vector2(18.0, -106.0)
         _health_panel.size = Vector2(312.0, 82.0)

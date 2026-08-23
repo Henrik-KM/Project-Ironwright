@@ -48,9 +48,16 @@ func _process(delta: float) -> void:
         strategic_hud.update_adaptation(adaptive_defense_director.available_plans(), adaptive_defense_director.proposal_summary())
 
     if not endgame_director.active_protocol.is_empty():
-        hud.set_operation(endgame_director.status_summary())
+        var protocol_status := endgame_director.status_summary()
+        hud.set_operation(protocol_status)
+        hud.set_operation_badge(protocol_status, true, "FINAL PROTOCOL")
     elif not long_operation_director.active_operation.is_empty():
-        hud.set_operation(long_operation_director.operation_summary())
+        var operation_status := long_operation_director.operation_summary()
+        hud.set_operation(operation_status)
+        hud.set_operation_badge(operation_status, true)
+    else:
+        hud.set_operation("No remote operation")
+        hud.set_operation_badge("", false)
 
     if not game_ended:
         _update_complete_game_objective()
@@ -506,9 +513,22 @@ func _build_collapse_report() -> String:
 
 
 func _update_complete_game_objective() -> void:
-    if not run_state.expedition_core_recovered or not full_game_milestone_complete:
-        return
     if long_operation_director == null or endgame_director == null:
+        return
+
+    if not long_operation_director.active_operation.is_empty():
+        var active_operation_status := long_operation_director.operation_summary()
+        hud.set_objective(
+            "FOLLOW THE ACTIVE MACHINE GROUP",
+            "%s. Press F to follow the physical formation or P to review its route, state and recovery affordance." % active_operation_status
+        )
+        hud.set_prompt("F FOLLOW ACTIVE MACHINE GROUP · P REVIEW OPERATION STATUS")
+        var guidance := get_node_or_null("ObjectiveGuidance")
+        if guidance != null and guidance.has_method(&"clear_guidance"):
+            guidance.call(&"clear_guidance")
+        return
+
+    if not run_state.expedition_core_recovered or not full_game_milestone_complete:
         return
 
     if not long_operation_director.has_completed(&"operation.west_grid_survey"):

@@ -133,6 +133,13 @@ func _run_all() -> void:
     _expect("ACTIVE GROUP · F TO FOLLOW" in operations.requirements_label.text, "An active operation must explain how to follow it without adding a management task.")
     operations.close()
 
+    hud.set_operation_badge("Stabilize West Grid · Outbound", true)
+    _expect(hud.operation_badge.visible, "An active physical operation must expose a persistent tactical status badge after the modal closes.")
+    _expect("ACTIVE OPERATION" in hud.operation_badge_label.text and "F FOLLOW" in hud.operation_badge_label.text, "The active operation badge must name the operation and retain the direct follow affordance.")
+    _expect(_rect_fits_viewport(hud.operation_badge.get_global_rect(), Vector2(TEST_VIEWPORT_SIZE)), "The active operation badge must remain inside the compact viewport.")
+    hud.set_operation_badge("", false)
+    _expect(not hud.operation_badge.visible, "The active operation badge must disappear when no operation is in motion.")
+
     world._process(0.1)
     await process_frame
     _expect(world.objective_guidance != null and world.objective_guidance.is_guiding(), "The opening must immediately guide the player to a physical objective.")
