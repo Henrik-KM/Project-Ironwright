@@ -522,6 +522,9 @@ func _run_all() -> void:
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/WaterfrontIdentityDetails/RiverworksSluiceDetails") != null, "Riverworks must expose an authored sluice assembly.")
                 _expect(landmark.find_child("RiverWaterlineBreak", true, false) != null, "Riverworks must expose bounded waterline breaks at the dock edge.")
                 _expect(landmark.find_child("RiverWaterChannel", true, false) != null, "Riverworks must expose a readable shallow water channel.")
+                var riverworks_retaining_edge := landmark.find_child("RetainingWall", true, false) as Node3D
+                var riverworks_retaining_core := riverworks_retaining_edge.get_node_or_null("RetainingWallCore") as MeshInstance3D if riverworks_retaining_edge != null else null
+                _expect(riverworks_retaining_core != null and riverworks_retaining_core.mesh != null and riverworks_retaining_core.mesh.get_aabb().size.y <= 0.75 and riverworks_retaining_core.mesh.get_aabb().size.x <= 12.0, "Riverworks retaining edge must remain a low, bounded foreground cue so the authored pump stays readable.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/RiverworksAuthoredModel") != null, "Riverworks must expose its authored pump landmark shell.")
                 _expect(landmark.find_child("RiverworksPumpPanel", true, false) != null and landmark.find_child("RiverworksRotorHub", true, false) != null and landmark.find_child("RiverworksValveHandle", true, false) != null, "Riverworks must expose pump service and maintenance hardware.")
                 var riverworks_housing := landmark.find_child("RiverworksPumpHousing", true, false) as MeshInstance3D

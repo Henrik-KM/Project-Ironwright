@@ -689,12 +689,14 @@ func _dress_waterfront(root: Node3D) -> void:
     var sluice := Node3D.new()
     sluice.name = "WaterworksSluiceAssembly"
     waterworks_detail.add_child(sluice)
-    ModelKit3D.add_beveled_box(sluice, Vector3(9.8, 2.4, 0.42), Vector3(0.0, 1.22, 7.25), channel_edge, Vector3.ZERO, "WaterSluiceGate", 0.16)
-    for rib_index in range(6):
-        var rib_x := -4.0 + float(rib_index) * 1.6
-        ModelKit3D.add_cylinder(sluice, 0.09, 2.25, Vector3(rib_x, 1.35, 7.03), metal, Vector3.ZERO, "WaterSluiceRib%02d" % rib_index)
-    ModelKit3D.add_surface_panel(sluice, Vector3(1.18, 0.72, 0.12), Vector3(5.0, 1.25, 7.0), dark_metal, warning, Vector3.ZERO, "WaterSluiceControlPanel")
-    ModelKit3D.add_sphere(sluice, 0.18, Vector3(5.0, 1.78, 6.96), signal_material, Vector3.ONE, "WaterSluiceSignal")
+    # The sluice is a foreground identity cue, but its broad face must not
+    # erase the authored pump and manifold behind it in the release view.
+    ModelKit3D.add_beveled_box(sluice, Vector3(5.2, 0.55, 0.42), Vector3(0.0, 0.34, 7.25), channel_edge, Vector3.ZERO, "WaterSluiceGate", 0.16)
+    for rib_index in range(4):
+        var rib_x := -2.4 + float(rib_index) * 1.6
+        ModelKit3D.add_cylinder(sluice, 0.09, 0.62, Vector3(rib_x, 0.42, 7.03), metal, Vector3.ZERO, "WaterSluiceRib%02d" % rib_index)
+    ModelKit3D.add_surface_panel(sluice, Vector3(0.95, 0.48, 0.12), Vector3(2.05, 0.42, 7.0), dark_metal, warning, Vector3.ZERO, "WaterSluiceControlPanel")
+    ModelKit3D.add_sphere(sluice, 0.18, Vector3(2.05, 0.78, 6.96), signal_material, Vector3.ONE, "WaterSluiceSignal")
     for index in range(5):
         var x := -14.0 + float(index) * 7.0
         var walkway := ModelKit3D.add_beveled_box(waterworks_detail, Vector3(4.8, 0.65, 12.0), Vector3(x, 0.33, 0.0), concrete, Vector3.ZERO, "PumpWalkway%02d" % index, 0.14)
