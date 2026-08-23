@@ -2710,3 +2710,21 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   interaction or recurring management task;
 - expanded the stable authored socket manifest and aesthetic regression
   coverage; exact exported live review remains required for acceptance.
+
+## Focused Buried Laboratories extraction-bay milestone
+
+- strengthened the authored `buried.labs.v1` shell with a protected genome-
+  extraction gantry, containment mast, specimen cradle, signal beacons and
+  framed service panel so the late-game laboratory now has a readable focal
+  operation rather than only a row of vessels and a transfer rail;
+- added a layered prism housing, rotating containment ring and restrained
+  presentation motion for the extraction bay, with a closer exact-export
+  review frame tuned to keep the focal object and vessel silhouettes judgeable;
+- retained the existing Buried Laboratories collision, ecology, salvage,
+  route, discovery and operation ownership; all new geometry and motion are
+  presentation-only and add no interaction, extraction state, inventory or
+  recurring management task;
+- expanded the stable authored socket manifest and aesthetic/release
+  regression coverage; the exact Windows export was live-reviewed on the
+  Buried Laboratories page with the prism, gantry and vessel bay reading
+  clearly across consecutive captures.

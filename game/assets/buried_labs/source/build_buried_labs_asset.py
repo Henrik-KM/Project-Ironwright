@@ -28,6 +28,8 @@ def main() -> None:
         {"name": "Laboratory warning", "pbrMetallicRoughness": {"baseColorFactor": [0.64, 0.18, 0.055, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.42}, "emissiveFactor": [0.78, 0.10, 0.025]},
         {"name": "Laboratory floor", "pbrMetallicRoughness": {"baseColorFactor": [0.10, 0.14, 0.16, 1.0], "metallicFactor": 0.44, "roughnessFactor": 0.78}},
         {"name": "Organic contamination", "pbrMetallicRoughness": {"baseColorFactor": [0.24, 0.035, 0.12, 1.0], "metallicFactor": 0.02, "roughnessFactor": 0.88}, "emissiveFactor": [0.30, 0.012, 0.08]},
+        {"name": "Genome prism housing", "pbrMetallicRoughness": {"baseColorFactor": [0.035, 0.11, 0.15, 1.0], "metallicFactor": 0.78, "roughnessFactor": 0.34}},
+        {"name": "Genome prism signal", "pbrMetallicRoughness": {"baseColorFactor": [0.10, 0.22, 0.46, 1.0], "metallicFactor": 0.14, "roughnessFactor": 0.24}, "emissiveFactor": [0.16, 0.28, 0.90]},
     ]
     meshes: list[dict] = []
 
@@ -36,7 +38,7 @@ def main() -> None:
         meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
-    ceramic, frame, glass, core, warning, floor, organic = range(7)
+    ceramic, frame, glass, core, warning, floor, organic, prism_housing, prism_signal = range(9)
     mesh_ids = {
         "Floor": mesh("LaboratoryFloor", add_box(builder, (17.0, 0.18, 13.0), floor)),
         "Wall": mesh("ContainmentWall", add_box(builder, (0.28, 5.4, 9.0), ceramic)),
@@ -62,6 +64,20 @@ def main() -> None:
         "PanelFrame": mesh("SpecimenPanelFrame", add_box(builder, (1.72, 1.12, 0.08), frame)),
         "CableClamp": mesh("LaboratoryCableClamp", add_cylinder(builder, 0.12, 0.14, warning, 16)),
         "SeepTendril": mesh("OrganicSeepTendril", add_cylinder(builder, 0.045, 0.82, organic, 14)),
+        "ExtractionPylon": mesh("GenomeExtractionPylon", add_box(builder, (0.42, 6.6, 0.42), prism_housing)),
+        "ExtractionBeam": mesh("GenomeExtractionBeam", add_box(builder, (13.0, 0.28, 0.36), prism_housing)),
+        "ExtractionBrace": mesh("GenomeExtractionBrace", add_box(builder, (0.16, 4.8, 0.16), frame)),
+        "ExtractionBeacon": mesh("GenomeExtractionBeacon", add_uv_sphere(builder, 0.14, prism_signal, 18, 28)),
+        "PrismHousing": mesh("GenomePrismHousing", add_cylinder(builder, 0.88, 0.18, prism_housing, 32)),
+        "Prism": mesh("GenomePrism", add_cylinder(builder, 0.30, 1.9, prism_signal, 24)),
+        "PrismRing": mesh("GenomePrismRing", add_cylinder(builder, 0.52, 0.10, prism_signal, 28)),
+        "PrismShard": mesh("GenomePrismShard", add_box(builder, (0.12, 1.5, 0.12), prism_signal)),
+        "ExtractionCradle": mesh("GenomeExtractionCradle", add_box(builder, (2.2, 0.18, 1.4), prism_housing)),
+        "ExtractionClamp": mesh("GenomeExtractionClamp", add_box(builder, (0.12, 0.34, 1.9), warning)),
+        "ExtractionPanel": mesh("GenomeExtractionPanel", add_box(builder, (1.4, 1.0, 0.12), prism_signal)),
+        "ExtractionPanelFrame": mesh("GenomeExtractionPanelFrame", add_box(builder, (1.66, 1.22, 0.08), frame)),
+        "ExtractionCable": mesh("GenomeExtractionCable", add_cylinder(builder, 0.045, 2.8, warning, 10)),
+        "ExtractionMastCap": mesh("GenomeExtractionMastCap", add_cylinder(builder, 0.32, 0.14, prism_signal, 24)),
     }
 
     nodes: list[dict] = [{
@@ -136,6 +152,31 @@ def main() -> None:
         add_node("BuriedLabsOrganicSeep%d" % index, mesh_ids["Seep"], (x, 0.52, z), scale=scale, extras={"socket_type": "organic_contamination"})
         for tendril_index, tendril_x in enumerate((-0.22, 0.16)):
             add_node("BuriedLabsOrganicTendril%d_%d" % (index, tendril_index), mesh_ids["SeepTendril"], (x + tendril_x, 0.86, z), rotation=(0.0, 0.0, -0.24 + float(tendril_index) * 0.40), extras={"surface": "organic_tendril"})
+
+    # The excavation operation's genome prism now has a legible vertical focal
+    # bay: a protected gantry, suspended cradle, signal mast and service face.
+    # These parts stay inside the landmark's presentation shell and do not own
+    # collision, navigation, extraction state or operation timing.
+    for side in (-1.0, 1.0):
+        side_label = "L" if side < 0.0 else "R"
+        add_node("BuriedLabsExtractionPylon%s" % side_label, mesh_ids["ExtractionPylon"], (side * 6.2, 3.3, -3.8), extras={"socket_type": "extraction_gantry"})
+        add_node("BuriedLabsExtractionBrace%s" % side_label, mesh_ids["ExtractionBrace"], (side * 6.2, 3.15, -3.48), rotation=(0.0, 0.0, -side * 0.20), extras={"surface": "extraction_gantry_brace"})
+    add_node("BuriedLabsExtractionBeam", mesh_ids["ExtractionBeam"], (0.0, 6.45, -3.8), extras={"socket_type": "extraction_gantry"})
+    add_node("BuriedLabsExtractionBeaconL", mesh_ids["ExtractionBeacon"], (-5.2, 6.76, -3.8), extras={"socket_type": "extraction_signal"})
+    add_node("BuriedLabsExtractionBeaconR", mesh_ids["ExtractionBeacon"], (5.2, 6.76, -3.8), extras={"socket_type": "extraction_signal"})
+    add_node("BuriedLabsExtractionMastCap", mesh_ids["ExtractionMastCap"], (0.0, 6.72, -3.8), extras={"surface": "extraction_mast_cap"})
+    add_node("BuriedLabsExtractionCradle", mesh_ids["ExtractionCradle"], (0.0, 5.30, -2.92), extras={"socket_type": "genome_prism_cradle"})
+    add_node("BuriedLabsExtractionClampL", mesh_ids["ExtractionClamp"], (-0.94, 5.48, -2.92), rotation=(0.0, 0.0, -0.08), extras={"surface": "genome_prism_clamp"})
+    add_node("BuriedLabsExtractionClampR", mesh_ids["ExtractionClamp"], (0.94, 5.48, -2.92), rotation=(0.0, 0.0, 0.08), extras={"surface": "genome_prism_clamp"})
+    add_node("BuriedLabsGenomePrismHousing", mesh_ids["PrismHousing"], (0.0, 4.45, -3.02), extras={"socket_type": "genome_prism"})
+    add_node("BuriedLabsGenomePrism", mesh_ids["Prism"], (0.0, 4.55, -3.02), extras={"socket_type": "genome_prism"})
+    add_node("BuriedLabsGenomePrismRing", mesh_ids["PrismRing"], (0.0, 4.55, -3.22), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "genome_prism_signal_ring"})
+    for index, angle in enumerate((0.0, math.pi * 0.5, math.pi, math.pi * 1.5)):
+        add_node("BuriedLabsGenomePrismShard%d" % index, mesh_ids["PrismShard"], (math.cos(angle) * 0.40, 4.55 + math.sin(angle) * 0.40, -3.24), rotation=(0.0, 0.0, angle), extras={"surface": "genome_prism_shard"})
+    add_node("BuriedLabsExtractionServicePanel", mesh_ids["ExtractionPanel"], (0.0, 2.48, -6.36), extras={"socket_type": "extraction_service"})
+    add_node("BuriedLabsExtractionServicePanelFrame", mesh_ids["ExtractionPanelFrame"], (0.0, 2.48, -6.43), extras={"surface": "extraction_service_frame"})
+    add_node("BuriedLabsExtractionCableL", mesh_ids["ExtractionCable"], (-1.45, 4.75, -3.02), rotation=(0.0, 0.0, math.pi * 0.5), extras={"surface": "extraction_cable"})
+    add_node("BuriedLabsExtractionCableR", mesh_ids["ExtractionCable"], (1.45, 4.75, -3.02), rotation=(0.0, 0.0, math.pi * 0.5), extras={"surface": "extraction_cable"})
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "buried.labs.v1", "source": "original_procedural_mesh_builder"})
 
     document = {
@@ -150,7 +191,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "buried.labs.v1",
-            "required_nodes": ["BuriedLabsModel", "BuriedLabsContainmentHall", "BuriedLabsVessel0", "BuriedLabsVesselCore0", "BuriedLabsVesselPort0", "BuriedLabsVesselClampL0", "BuriedLabsTransferRail", "BuriedLabsTransferCarriage", "BuriedLabsTransferRailStopL", "BuriedLabsContainmentDoor", "BuriedLabsContainmentDoorJambL", "BuriedLabsContainmentDoorLintel", "BuriedLabsWarningPanelFrame", "BuriedLabsCableClamp0", "BuriedLabsOrganicSeep0", "BuriedLabsOrganicTendril0_0", "ProductionAssetMarker"],
+            "required_nodes": ["BuriedLabsModel", "BuriedLabsContainmentHall", "BuriedLabsVessel0", "BuriedLabsVesselCore0", "BuriedLabsVesselPort0", "BuriedLabsVesselClampL0", "BuriedLabsTransferRail", "BuriedLabsTransferCarriage", "BuriedLabsTransferRailStopL", "BuriedLabsContainmentDoor", "BuriedLabsContainmentDoorJambL", "BuriedLabsContainmentDoorLintel", "BuriedLabsWarningPanelFrame", "BuriedLabsCableClamp0", "BuriedLabsOrganicSeep0", "BuriedLabsOrganicTendril0_0", "BuriedLabsExtractionPylonL", "BuriedLabsExtractionBeam", "BuriedLabsExtractionCradle", "BuriedLabsGenomePrism", "BuriedLabsGenomePrismRing", "BuriedLabsExtractionServicePanelFrame", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

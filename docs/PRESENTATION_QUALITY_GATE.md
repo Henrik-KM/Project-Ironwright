@@ -437,6 +437,16 @@ instead of flat runtime inserts. This strengthens the guardian read in escort
 and remote-salvage views while preserving formation, weapon sockets, collision,
 animation and autonomous protection behaviour.
 
+Buried Laboratories now carries a vertical extraction-bay pass: a protected
+gantry, containment mast, specimen cradle, genome-prism housing and framed
+service panel give the late-game laboratory a legible focal operation beside
+the existing vessels and transfer rail. The prism, containment ring and
+beacons have restrained presentation motion. This remains presentation-only;
+the landmark does not own extraction state, collision, routing, inventory or
+recurring management. The exact exported Windows review now shows the bay
+clearly on the Buried Laboratories page, while formal human acceptance and
+broader region-family review remain outstanding.
+
 Automated presence tests only prove the slice exists technically. Actual screenshot/gameplay review decides whether it clears the visual bar. The exact exported presentation gallery now exposes all eleven remote-region landmarks, including the undiscovered Root Cistern page populated with its authored basin, core, signal pylons and root hardware instead of presenting a blank slate; formal human acceptance remains outstanding.
 
 ## Art production sequence

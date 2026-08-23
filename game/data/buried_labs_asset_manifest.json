@@ -20,6 +20,12 @@
     "BuriedLabsCableClamp0",
     "BuriedLabsOrganicSeep0",
     "BuriedLabsOrganicTendril0_0",
+    "BuriedLabsExtractionPylonL",
+    "BuriedLabsExtractionBeam",
+    "BuriedLabsExtractionCradle",
+    "BuriedLabsGenomePrism",
+    "BuriedLabsGenomePrismRing",
+    "BuriedLabsExtractionServicePanelFrame",
     "ProductionAssetMarker"
   ],
   "presentation_only": true
