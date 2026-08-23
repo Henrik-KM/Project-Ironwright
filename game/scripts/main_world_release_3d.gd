@@ -754,7 +754,7 @@ func _show_presentation_review_page(page: int) -> void:
 	presentation_review_label.text = "PRESENTATION REVIEW  ·  %s  ·  %d/%d\n1-9 / 0 DIRECT PAGE   ←/→ BROWSE   ESC EXIT" % [page_title, presentation_review_page + 1, presentation_review_pages.size()]
 	if is_region_page and not actors.is_empty():
 		presentation_review_camera_target = (actors[0] as Node3D).global_position + Vector3.UP * 2.0
-		presentation_review_camera_desired = presentation_review_camera_target + Vector3(0.0, 12.0, 19.0)
+		presentation_review_camera_desired = presentation_review_camera_target + _presentation_review_region_camera_offset(region_id)
 	elif is_region_page and region_director != null:
 		presentation_review_camera_target = region_director.center(region_id) + Vector3.UP * 2.0
 		presentation_review_camera_desired = presentation_review_camera_target + Vector3(0.0, 12.0, 19.0)
@@ -763,6 +763,15 @@ func _show_presentation_review_page(page: int) -> void:
 		presentation_review_camera_desired = Vector3(0.0, 4.8, 12.5)
 	_set_presentation_review_stage_for_page(is_region_page)
 	_update_presentation_review_camera(1.0)
+
+
+func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3:
+	# Small, vertically focused authored landmarks need a closer review frame;
+	# otherwise the shared remote-region camera makes their detail impossible to
+	# judge against the broader districts.
+	if region_id == &"region.observatory_ridge":
+		return Vector3(0.0, 8.8, 13.0)
+	return Vector3(0.0, 12.0, 19.0)
 
 
 func _presentation_review_landmark(region_id: StringName) -> RegionLandmark3D:
@@ -817,7 +826,7 @@ func _update_presentation_review_camera(delta: float) -> void:
 	var target := presentation_review_camera_target
 	var desired := presentation_review_camera_desired
 	camera.global_position = camera.global_position.lerp(desired, 1.0 - exp(-delta * 5.0))
-	camera.fov = 52.0 if presentation_review_page >= 3 else 43.0
+	camera.fov = 48.0 if presentation_review_page == 11 else (52.0 if presentation_review_page >= 3 else 43.0)
 	camera.look_at(target, Vector3.UP)
 
 
@@ -836,13 +845,18 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	var warm_light := presentation_review_stage.get_node_or_null("ReviewWarmLight") as OmniLight3D
 	var cool_light := presentation_review_stage.get_node_or_null("ReviewCoolLight") as OmniLight3D
 	var rim_light := presentation_review_stage.get_node_or_null("ReviewRimLight") as OmniLight3D
+	var compact_region_light_scale := 0.68 if presentation_review_page == 11 else 1.0
 	if front_fill != null:
+		front_fill.light_energy = 3.4 * compact_region_light_scale
 		front_fill.position = target + Vector3(0.0, 9.0, 16.0)
 	if warm_light != null:
+		warm_light.light_energy = 3.6 * compact_region_light_scale
 		warm_light.position = target + Vector3(-12.0, 8.0, 10.0)
 	if cool_light != null:
+		cool_light.light_energy = 2.8 * compact_region_light_scale
 		cool_light.position = target + Vector3(12.0, 7.0, 6.0)
 	if rim_light != null:
+		rim_light.light_energy = 4.2 * compact_region_light_scale
 		rim_light.position = target + Vector3(0.0, 7.0, -8.0)
 
 

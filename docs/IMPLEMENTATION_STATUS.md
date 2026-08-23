@@ -2695,3 +2695,18 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   adds no interaction, inventory or recurring management task;
 - expanded the stable authored socket manifest and aesthetic regression
   coverage; exact exported live review remains required for acceptance.
+
+## Focused Observatory Ridge vertical encounter milestone
+
+- strengthened the authored `observatory.ridge.v1` shell with a collapsed
+  survey gantry, twin pylons, signal panel, service ladder, structural braces
+  and instrument beacon row so the district reads as a surviving civic survey
+  station rather than a dish floating on an empty slab;
+- added a closer, vertically focused exact-export review frame for this compact
+  landmark so its authored control, optics and structural detail can be judged
+  at the same visual standard as the broader remote regions;
+- retained Observatory collision, ecology, route, discovery and operation
+  ownership; all new geometry and framing are presentation-only and add no
+  interaction or recurring management task;
+- expanded the stable authored socket manifest and aesthetic regression
+  coverage; exact exported live review remains required for acceptance.
