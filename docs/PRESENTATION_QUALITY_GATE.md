@@ -14,6 +14,14 @@ opening Heartforge through title-screen New World selection with the first
 scrap objective readable. This closes a shared review-stage distraction, but
 does not by itself constitute final human acceptance of the full art library.
 
+The remote review gallery now also uses bounded per-family presentation framing:
+Riverworks and Tram Graveyard expose their authored service faces with a
+diagonal close frame, while North Ruins, West Grid, East Tenements, Municipal
+Glasshouse, Flood Market, Cathedral Quarter, Observatory Ridge, Buried
+Laboratories and Root Cistern retain their authored front orientation. This is
+review-only camera and actor staging; runtime landmark transforms, routes,
+collision, operations and save state are unchanged.
+
 The remaining friendly source builders now use dense radial tessellation for
 Bulwark defensive hardware and Relay communications hardware, with the Relay
 export floor protecting future rebuilds. Stable sockets and runtime contracts
