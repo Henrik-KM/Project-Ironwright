@@ -27,18 +27,22 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          test "$(gh pr view 8 --repo "$GITHUB_REPOSITORY" --json state --jq .state)" = "OPEN"
-          if [ "$(gh pr view 8 --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft)" = "true" ]; then
-            gh pr ready 8 --repo "$GITHUB_REPOSITORY"
+          PR_NUMBER="$(gh pr list --repo "$GITHUB_REPOSITORY" --head agent/commercial-release-candidate --base main --state open --json number --jq '.[0].number')"
+          test -n "$PR_NUMBER"
+          test "$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json state --jq .state)" = "OPEN"
+          if [ "$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft)" = "true" ]; then
+            gh pr ready "$PR_NUMBER" --repo "$GITHUB_REPOSITORY"
           fi
 
-      - name: Squash-merge certified release candidate into main
+      - name: Merge certified release candidate into main
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr merge 8 \
+          PR_NUMBER="$(gh pr list --repo "$GITHUB_REPOSITORY" --head agent/commercial-release-candidate --base main --state open --json number --jq '.[0].number')"
+          test -n "$PR_NUMBER"
+          gh pr merge "$PR_NUMBER" \
             --repo "$GITHUB_REPOSITORY" \
-            --squash \
+            --merge \
             --delete-branch \
             --subject "Release Project Ironwright 1.0.0-rc.1" \
             --body "Merge the certificate-gated commercial release candidate: original production assets, secondary animation, adaptive audio and music, expanded content, large-world performance architecture, transactional save migration, controller/accessibility/localization, long-run balance profiles, Windows/Linux packaging, complete start-to-victory validation, and an exact machine-readable release certificate."
