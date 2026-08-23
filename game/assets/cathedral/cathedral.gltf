@@ -1454,9 +1454,9 @@
       "name": "Cathedral weathered stone",
       "pbrMetallicRoughness": {
         "baseColorFactor": [
-          0.2,
-          0.23,
-          0.25,
+          0.085,
+          0.115,
+          0.14,
           1.0
         ],
         "metallicFactor": 0.18,
@@ -1467,9 +1467,9 @@
       "name": "Cathedral soot brick",
       "pbrMetallicRoughness": {
         "baseColorFactor": [
-          0.18,
-          0.115,
-          0.1,
+          0.095,
+          0.05,
+          0.042,
           1.0
         ],
         "metallicFactor": 0.12,

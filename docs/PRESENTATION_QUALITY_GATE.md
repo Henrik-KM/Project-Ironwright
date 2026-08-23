@@ -500,6 +500,13 @@ clear archive focal hierarchy without changing landmark geometry, collision,
 route, discovery or operation ownership; exact exported North Ruins review
 remains required.
 
+The Cathedral Quarter shell now also uses a deeper weathered-stone and soot-
+brick palette so the nave/front plane, tower, rose-window hardware and pink
+choir remain separated under the compact exact-export key. The pass restores
+the choir-yard focal hierarchy without changing landmark geometry, collision,
+route, discovery or operation ownership; consecutive exact exported Cathedral
+Quarter review remains required.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside
