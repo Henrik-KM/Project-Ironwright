@@ -836,6 +836,13 @@ func _run_all() -> void:
         _expect(_find_named(robot, "ProductionAssetMarker") != null, "The authored Bulwark model must expose its production asset marker.")
         _expect(_find_named(robot, "BulwarkRadiatorLouver") != null and _find_named(robot, "BulwarkFrontSensorVisor") != null and _find_named(robot, "BulwarkEmitterCollar") != null, "The Bulwark must receive a second high-definition protection hardware layer.")
         _expect(_find_named(robot, "BulwarkServiceFace") != null and _find_named(robot, "BulwarkServiceLatchLeft") != null and _find_named(robot, "BulwarkShoulderRailLeft") != null and _find_named(robot, "BulwarkFootPlateLeft") != null, "The Bulwark must expose its refined service face, shoulder rail and foot hardware.")
+        if robot_animation != null and robot_animation.animation_player != null and _find_named(robot, "BulwarkAuthoredModel") != null:
+            _expect(_animation_player_track_count(robot_animation.animation_player, &"Idle") >= 6, "Bulwark Idle must carry shield-emitter and guard breathing channels.")
+            _expect(_animation_player_track_count(robot_animation.animation_player, &"Walk") >= 7, "Bulwark Walk must carry shield-emitter and guard locomotion channels.")
+            _expect(_animation_player_track_count(robot_animation.animation_player, &"Fire") >= 7, "Bulwark Fire must carry emitter, guard and radiator reaction channels.")
+            _expect(_animation_player_track_count(robot_animation.animation_player, &"Hit") >= 5, "Bulwark Hit must carry emitter and guard impact channels.")
+            _expect(_animation_player_track_count(robot_animation.animation_player, &"Retreat") >= 6, "Bulwark Retreat must carry shield withdrawal and crown response channels.")
+            _expect(_animation_player_track_count(robot_animation.animation_player, &"Death") >= 4, "Bulwark Death must carry shield and radiator collapse channels.")
 
     var organic_actors := get_nodes_in_group("organic_enemies")
     if not organic_actors.is_empty():

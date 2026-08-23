@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Bulwark secondary-animation pass
+
+- extended the opening Bulwark clips with shield-emitter breathing, paired
+  emitter-guard articulation, radiator recoil and companion-crown withdrawal,
+  preserving the stable asset ID, protection sockets and gameplay ownership;
+- regenerated only the Bulwark runtime asset from its original authored
+  high-definition builder and added native track-count coverage so the
+  indispensable companion cannot silently regress to chassis-only motion;
+- regenerated-import validation passed, and exact exported Windows opening
+  plus normal-flow review passed on 2026-08-23; broader human visual
+  acceptance remains an open commercial gate.
+
 ## Focused Ashmantle secondary-animation pass
 
 - extended the late-game Ashmantle clips with paired heat-louver breathing,
