@@ -74,9 +74,20 @@ def main() -> int:
     if certification_head is None or source_parent is None:
         return fail("current head does not contain the exact certification commit")
     if certified_source != source_parent:
-        return fail(
-            f"certificate names {certified_source or '<empty>'}, but the certification commit parent is {source_parent}"
-        )
+        # A workflow-dispatch certification may need one empty bootstrap
+        # commit so GitHub can represent the candidate as an open PR. In that
+        # case the certificate names the real source parent, while the
+        # generated certificate commit is parented by the empty bootstrap.
+        bootstrap_parent = git("rev-parse", f"{source_parent}^")
+        bootstrap_is_empty = subprocess.run(
+            ["git", "diff", "--quiet", bootstrap_parent, source_parent],
+            cwd=ROOT,
+            check=False,
+        ).returncode == 0
+        if not (bootstrap_is_empty and certified_source == bootstrap_parent):
+            return fail(
+                f"certificate names {certified_source or '<empty>'}, but the certification commit parent is {source_parent}"
+            )
 
     # A merged certification must not silently coexist with later source
     # changes. The first parent of the merge is the exact source revision that
