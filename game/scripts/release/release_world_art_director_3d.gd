@@ -1177,12 +1177,19 @@ func _dress_research(root: Node3D) -> void:
 
 func _dress_cistern(root: Node3D) -> void:
     var concrete := _textured_material(&"concrete", Color("30383a"), 0.0, 0.68)
+    # The broad basin is a presentation anchor, not a light-catching white
+    # card. Keep its wet concrete readable beneath the late landmark hardware
+    # while leaving the more exposed control deck and pump housing on the
+    # brighter service material.
+    var basin_concrete := ModelKit3D.material(Color("10191b"), 0.0, 0.9)
     var membrane := _textured_material(&"membrane", Color("631431"), 0.0, 0.58)
     var metal := _textured_material(&"metal", Color("263437"), 0.74, 0.4)
     var rust := _textured_material(&"rust", Color("72432f"), 0.42, 0.7)
     var glow := _emissive_material(Color("d33f67"), 3.2)
     var cool_signal := ModelKit3D.material(Color("17464b"), 0.28, 0.3, Color("61dfe0"), 1.5)
-    ModelKit3D.add_cylinder(root, 18.0, 0.8, Vector3(0.0, 0.4, 0.0), concrete, Vector3.ZERO, "CisternBasin")
+    var service_ring_material := ModelKit3D.material(Color("1b2b2e"), 0.46, 0.56)
+    var signal_ring_material := ModelKit3D.material(Color("0d3036"), 0.28, 0.42, Color("2d9ba4"), 0.34)
+    ModelKit3D.add_cylinder(root, 18.0, 0.8, Vector3(0.0, 0.4, 0.0), basin_concrete, Vector3.ZERO, "CisternBasin")
     for index in range(14):
         var angle := TAU * float(index) / 14.0
         var radius := 8.0 + float(index % 3) * 3.4
@@ -1195,8 +1202,8 @@ func _dress_cistern(root: Node3D) -> void:
     var depth_detail := Node3D.new()
     depth_detail.name = "HighDefinitionCisternDressing"
     root.add_child(depth_detail)
-    ModelKit3D.add_cylinder(depth_detail, 12.8, 0.18, Vector3(0.0, 0.86, 0.0), metal, Vector3.ZERO, "CisternServiceRing")
-    ModelKit3D.add_cylinder(depth_detail, 10.6, 0.1, Vector3(0.0, 0.97, 0.0), cool_signal, Vector3.ZERO, "CisternSignalRing")
+    ModelKit3D.add_cylinder(depth_detail, 12.8, 0.18, Vector3(0.0, 0.86, 0.0), service_ring_material, Vector3.ZERO, "CisternServiceRing")
+    ModelKit3D.add_cylinder(depth_detail, 10.6, 0.1, Vector3(0.0, 0.97, 0.0), signal_ring_material, Vector3.ZERO, "CisternSignalRing")
     var control := Node3D.new()
     control.name = "CisternControlWalkway"
     depth_detail.add_child(control)

@@ -433,6 +433,19 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         _expect(cistern_dressing.find_child("CisternControlDeck", true, false) != null and cistern_dressing.find_child("CisternDeckGrate00", true, false) != null and cistern_dressing.find_child("CisternProtocolPanel", true, false) != null, "Release Root Cistern dressing must expose an approach-facing control deck.")
         _expect(cistern_dressing.find_child("CisternPumpHousing", true, false) != null and cistern_dressing.find_child("CisternPumpLouver", true, false) != null and cistern_dressing.find_child("CisternHeaderPipe00", true, false) != null, "Release Root Cistern dressing must expose buried pump hardware and header pipes.")
         _expect(cistern_dressing.find_child("CisternRootAnchor00", true, false) != null and cistern_dressing.find_child("CisternAnchorPulse00", true, false) != null, "Release Root Cistern dressing must expose bounded living-root anchor detail.")
+        var cistern_service_ring := cistern_dressing.find_child("CisternServiceRing", true, false) as MeshInstance3D
+        var cistern_service_material := cistern_service_ring.material_override as StandardMaterial3D if cistern_service_ring != null else null
+        _expect(cistern_service_material != null and cistern_service_material.albedo_color.r < 0.20 and cistern_service_material.albedo_color.g < 0.30, "Release Root Cistern service ring must retain a dark wet-metal treatment instead of blooming into a white disc.")
+        var cistern_signal_ring := cistern_dressing.find_child("CisternSignalRing", true, false) as MeshInstance3D
+        var cistern_signal_material := cistern_signal_ring.material_override as StandardMaterial3D if cistern_signal_ring != null else null
+        _expect(cistern_signal_material != null and cistern_signal_material.albedo_color.r < 0.12 and cistern_signal_material.albedo_color.g < 0.25, "Release Root Cistern signal ring must retain a dark inset beneath the cyan service pulse.")
+    var root_cistern_landmark := world.region_director.get_landmark(&"region.root_cistern") if world.region_director != null else null
+    var authored_basin := root_cistern_landmark.find_child("RootCisternBasin", true, false) as MeshInstance3D if root_cistern_landmark != null else null
+    var authored_basin_material := authored_basin.material_override as StandardMaterial3D if authored_basin != null else null
+    _expect(authored_basin_material != null and authored_basin_material.albedo_color.r < 0.20 and authored_basin_material.albedo_color.g < 0.35, "Root Cistern authored basin must retain a dark wet-concrete tint instead of blooming into a white review card.")
+    var authored_water := root_cistern_landmark.find_child("RootCisternBasinWater", true, false) as MeshInstance3D if root_cistern_landmark != null else null
+    var authored_water_material := authored_water.material_override as StandardMaterial3D if authored_water != null else null
+    _expect(authored_water_material != null and not authored_water_material.emission_enabled and authored_water_material.albedo_color.r < 0.12 and authored_water_material.albedo_color.g < 0.25, "Root Cistern authored water must remain a dark readable pool instead of blooming over the core.")
 
 
 func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
@@ -472,6 +485,12 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         var actor := page[0] as Node3D
         _expect(actor != null and actor.visible, "Root Cistern presentation review actor must be visible on the final remote page.")
         _expect(actor != null and actor.find_children("*", "MeshInstance3D", true, false).size() > 20, "Root Cistern presentation review actor must retain its authored high-definition mesh hierarchy.")
+        var review_basin := actor.find_child("RootCisternBasin", true, false) as MeshInstance3D
+        var review_basin_material := review_basin.material_override as StandardMaterial3D if review_basin != null else null
+        _expect(review_basin_material != null and review_basin_material.albedo_color.r < 0.20 and review_basin_material.albedo_color.g < 0.35, "Root Cistern presentation review must retain the dark basin treatment used by the persistent landmark.")
+        var review_water := actor.find_child("RootCisternBasinWater", true, false) as MeshInstance3D
+        var review_water_material := review_water.material_override as StandardMaterial3D if review_water != null else null
+        _expect(review_water_material != null and not review_water_material.emission_enabled and review_water_material.albedo_color.r < 0.12 and review_water_material.albedo_color.g < 0.25, "Root Cistern presentation review must retain a dark water treatment around the core.")
     world._show_presentation_review_page(11)
     await process_frame
     var observatory_page: Array = world.presentation_review_pages[11] if world.presentation_review_pages.size() > 11 else []

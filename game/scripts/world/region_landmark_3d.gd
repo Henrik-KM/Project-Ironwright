@@ -354,6 +354,29 @@ func _build_authored_root_cistern_visuals() -> void:
     # runtime import and can make the entire late landmark disappear.
     authored_scene_instance.name = "RootCisternAuthoredScene"
     _visual_root.add_child(authored_scene_instance)
+    # The basin is a broad wet-concrete anchor, not a white stage card. Keep
+    # the authored water, core and service hardware readable under the release
+    # key by preserving the imported texture while applying a restrained dark
+    # concrete tint to the basin surface only.
+    var authored_basin := authored_scene_instance.find_child("RootCisternBasin", true, false) as MeshInstance3D
+    if authored_basin != null:
+        var basin_material := authored_basin.get_active_material(0) as StandardMaterial3D
+        if basin_material != null:
+            basin_material = basin_material.duplicate(true) as StandardMaterial3D
+            basin_material.albedo_color = Color("18282b")
+            basin_material.roughness = 0.82
+            basin_material.metallic = 0.04
+            authored_basin.material_override = basin_material
+    var authored_water := authored_scene_instance.find_child("RootCisternBasinWater", true, false) as MeshInstance3D
+    if authored_water != null:
+        var water_material := authored_water.get_active_material(0) as StandardMaterial3D
+        if water_material != null:
+            water_material = water_material.duplicate(true) as StandardMaterial3D
+            water_material.albedo_color = Color("0b2025")
+            water_material.emission_enabled = false
+            water_material.roughness = 0.34
+            water_material.metallic = 0.08
+            authored_water.material_override = water_material
     var authored_marker := Node3D.new()
     authored_marker.name = "RootCisternAuthoredModel"
     _visual_root.add_child(authored_marker)

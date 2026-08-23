@@ -849,7 +849,49 @@ func _create_root_cistern_presentation_review_actor(landmark: RegionLandmark3D) 
 	var authored_scene := ROOT_CISTERN_PRESENTATION_REVIEW_SCENE.instantiate()
 	authored_scene.name = "RootCisternPresentationReviewModel"
 	review_actor.add_child(authored_scene)
+	_tune_root_cistern_basin_material(authored_scene)
+	var presentation_surface := landmark.find_child("AuthoredDistrictSurfaceFinish", true, false) as Node3D
+	if presentation_surface != null:
+		# Root Cistern's generic district apron blooms into a white card at the
+		# exact review scale. The authored basin and release dressing already
+		# provide the readable ground anchor for this bounded presentation page.
+		presentation_surface.visible = false
+	var persistent_geometry := landmark.get_node_or_null("PersistentRegionGeometry") as Node3D
+	if persistent_geometry != null:
+		persistent_geometry.visible = false
 	return review_actor
+
+
+func _tune_root_cistern_basin_material(scene_root: Node) -> void:
+	# The dedicated exact-review actor is a second instance of the authored
+	# scene, so it needs the same dark wet-concrete treatment as the persistent
+	# landmark instance. Without this bounded presentation correction the
+	# broad basin reads as a white card and hides the core hardware.
+	if scene_root == null:
+		return
+	var basin := scene_root.find_child("RootCisternBasin", true, false) as MeshInstance3D
+	if basin == null:
+		return
+	var material := basin.get_active_material(0) as StandardMaterial3D
+	if material == null:
+		return
+	material = material.duplicate(true) as StandardMaterial3D
+	material.albedo_color = Color("18282b")
+	material.roughness = 0.82
+	material.metallic = 0.04
+	basin.material_override = material
+	var water := scene_root.find_child("RootCisternBasinWater", true, false) as MeshInstance3D
+	if water == null:
+		return
+	var water_material := water.get_active_material(0) as StandardMaterial3D
+	if water_material == null:
+		return
+	water_material = water_material.duplicate(true) as StandardMaterial3D
+	water_material.albedo_color = Color("0b2025")
+	water_material.emission_enabled = false
+	water_material.roughness = 0.34
+	water_material.metallic = 0.08
+	water.material_override = water_material
 
 
 func _create_observatory_presentation_review_actor(landmark: RegionLandmark3D) -> Node3D:
@@ -930,7 +972,11 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	elif presentation_review_page == 12:
 		compact_region_light_scale = 0.60
 	elif presentation_review_page == 13:
-		compact_region_light_scale = 0.58
+		# The authored Root Cistern basin carries a broad pale surface that
+		# clips into a white disc under the shared compact key. Keep this
+		# development-only review exposure lower so the core, service ring and
+		# root anchors retain readable depth without changing runtime lighting.
+		compact_region_light_scale = 0.32
 	# Darker organic shells need a little more review-only key and rim energy
 	# than the manufactured roster to keep wet materials and anatomy breaks
 	# judgeable at the supported compact export size. Runtime lighting is untouched.
