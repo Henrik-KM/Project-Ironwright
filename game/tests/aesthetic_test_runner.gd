@@ -300,6 +300,9 @@ func _run_all() -> void:
                 _expect(landmark.find_child("WestGridTransformerCap0", true, false) != null and landmark.find_child("WestGridTransformerBrace0", true, false) != null, "West Grid must expose layered transformer-yard hardware.")
                 _expect(landmark.find_child("WestGridPipeFlange0", true, false) != null and landmark.find_child("WestGridWarningHousing0", true, false) != null, "West Grid must expose service-pipe and warning hardware.")
                 _expect(landmark.find_child("WestGridOrganicTendril0_0", true, false) != null, "West Grid organic growth must expose secondary tendril anatomy.")
+                var west_grid_hall := landmark.find_child("WestGridTurbineHall", true, false) as MeshInstance3D
+                var west_grid_transformer := landmark.find_child("WestGridTransformer0", true, false) as MeshInstance3D
+                _expect(west_grid_hall != null and west_grid_transformer != null and _mesh_vertex_count(west_grid_hall) >= 48 and _mesh_vertex_count(west_grid_transformer) >= 48, "West Grid authored hall and transformer must retain beveled high-definition geometry.")
                 var grid_signal := landmark.find_child("WestGridTankSignal0", true, false) as Node3D
                 var grid_warning := landmark.find_child("WestGridWarningLight0", true, false) as Node3D
                 var grid_growth := landmark.find_child("WestGridOrganicCreep0", true, false) as Node3D

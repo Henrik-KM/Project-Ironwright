@@ -80,6 +80,18 @@
   the exact exported Windows page 7 was live-reviewed at a stable consecutive
   capture before merge.
 
+## Focused West Grid industrial-edge milestone
+
+- regenerated the authored turbine hall and transformer-yard shell with
+  conservative bevels on the hall, roof cap, windows, transformer bodies,
+  service frames, floor and marker surfaces so the industrial landmark reads
+  with manufactured edge separation at the compact tactical review distance;
+- extended native aesthetic coverage for the beveled authored hall and
+  transformer geometry;
+  - retained the substation, pressure-tank, discovery, ecology and operation
+    contracts; the exact exported Windows page 5 was live-reviewed at a stable
+    consecutive capture before merge.
+
 ## Focused organic attack-audio telegraph milestone
 
 - connected the existing organic attack wind-up signal to the release audio
