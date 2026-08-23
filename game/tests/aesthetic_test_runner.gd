@@ -933,6 +933,14 @@ func _run_all() -> void:
             var pathfinder_chassis := _find_named(pathfinder_asset, "Chassis") as MeshInstance3D
             var pathfinder_sensor_pod := _find_named(pathfinder_asset, "PathfinderSensorPod") as MeshInstance3D
             _expect(pathfinder_chassis != null and pathfinder_sensor_pod != null and _mesh_vertex_count(pathfinder_chassis) >= 48 and _mesh_vertex_count(pathfinder_sensor_pod) >= 48, "The authored Pathfinder chassis and sensor pod must retain beveled high-definition manufactured edges.")
+            var pathfinder_animation := role_samples[index].get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
+            if pathfinder_animation != null and pathfinder_animation.animation_player != null:
+                _expect(_animation_player_track_count(pathfinder_animation.animation_player, &"Idle") >= 6, "Pathfinder Idle must carry sensor-pod, mast-collar and signal-canister channels.")
+                _expect(_animation_player_track_count(pathfinder_animation.animation_player, &"Walk") >= 6, "Pathfinder Walk must carry sensor-wing and mast-brace locomotion channels.")
+                _expect(_animation_player_track_count(pathfinder_animation.animation_player, &"Survey") >= 6, "Pathfinder Survey must carry dish-rib and signal-service channels.")
+                _expect(_animation_player_track_count(pathfinder_animation.animation_player, &"Hit") >= 5, "Pathfinder Hit must carry wing, mast-collar and dish-hub impact channels.")
+                _expect(_animation_player_track_count(pathfinder_animation.animation_player, &"Retreat") >= 5, "Pathfinder Retreat must carry brace and sensor-pod withdrawal channels.")
+                _expect(_animation_player_track_count(pathfinder_animation.animation_player, &"Death") >= 4, "Pathfinder Death must carry dish and survey-beacon collapse channels.")
             pathfinder_asset.queue_free()
         elif role_names[index] == &"engineer":
             _expect(_find_named(role_samples[index], "EngineerToolControl") != null and _find_named(role_samples[index], "EngineerForgeGuard") != null, "The Engineer must expose its tool-control and forge-guard hardware.")
