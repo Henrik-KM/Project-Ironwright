@@ -482,6 +482,9 @@ func _finish_release_boot() -> void:
 	elif _has_dynamic_operation_review_flag():
 		_start_release_world()
 		call_deferred("_start_dynamic_operation_review")
+	elif _has_casualty_recovery_review_flag():
+		_start_release_world()
+		call_deferred("_start_casualty_recovery_review")
 	elif mode == &"new":
 		_start_release_world()
 	elif mode == &"continue":
@@ -507,6 +510,16 @@ func _has_dynamic_operation_review_flag() -> bool:
 			return true
 	for argument in OS.get_cmdline_user_args():
 		if str(argument) == "--dynamic-operation-review":
+			return true
+	return false
+
+
+func _has_casualty_recovery_review_flag() -> bool:
+	for argument in OS.get_cmdline_args():
+		if str(argument) == "--casualty-recovery-review":
+			return true
+	for argument in OS.get_cmdline_user_args():
+		if str(argument) == "--casualty-recovery-review":
 			return true
 	return false
 

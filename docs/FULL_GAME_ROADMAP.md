@@ -223,6 +223,10 @@ Systems:
 - utility-based task allocation;
 - machine memory and learned route risk;
 - casualty recovery and disabled-machine retrieval;
+- persistent field-casualty beacons now generate bounded retrieval proposals for
+  disabled non-companion frames; the retrieving formation travels to the recorded
+  position, restores the damaged chassis on physical return, and preserves the
+  record through save/load;
 - automatic ordinary replacement after unlocked progression;
 - class quotas or broad composition intentions rather than build queues;
 - exception-based alerts;

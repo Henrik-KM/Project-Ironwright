@@ -5,6 +5,7 @@ signal operation_changed(operation_id: StringName, state: StringName, detail: St
 signal operation_returned(operation_id: StringName, display_name: String, rewards: Dictionary)
 signal component_recovered(component_id: StringName)
 signal site_discovery_requested(site_id: StringName)
+signal machine_recovered(record: Dictionary)
 
 const OPERATIONS_PATH := "res://data/strategic_operations.json"
 const ROUTE_BLOCK_GRACE_SECONDS := 2.4
@@ -14,6 +15,7 @@ const ROUTE_MEMORY_SWITCH_THRESHOLD := 1.0
 const ROUTE_MEMORY_SUCCESS_DECAY := 0.22
 const ROUTE_MEMORY_MAX_ENTRIES := 24
 const DYNAMIC_OPERATION_MAX_OFFERS := 3
+const MAX_CASUALTY_RECORDS := 8
 
 var run_state: RunState3D
 var progression: ProgressionDirector3D
@@ -31,8 +33,10 @@ var completed_operations: Array[StringName] = []
 var recovered_components: Array[StringName] = []
 var active_operation: Dictionary = {}
 var route_memory: Dictionary = {}
+var casualty_records: Array[Dictionary] = []
 var load_errors: Array[String] = []
 var threat_serial: int = 0
+var casualty_serial: int = 0
 var endgame_pressure_reduction: float = 0.0
 
 
@@ -58,6 +62,8 @@ func configure(
     spawn_enemy_callback = next_spawn_enemy_callback
     operation_detail_director = next_operation_detail_director
     context_provider = next_context_provider
+    if autonomy_director != null and not autonomy_director.robot_casualty.is_connected(_on_robot_casualty):
+        autonomy_director.robot_casualty.connect(_on_robot_casualty)
 
 
 func _ready() -> void:
@@ -68,9 +74,11 @@ func _process(delta: float) -> void:
     if active_operation.is_empty():
         if operation_detail_director != null:
             operation_detail_director.clear_route_recovery()
+        _sync_casualty_recovery_marker()
         return
     _update_active_operation(delta)
     _sync_route_recovery_marker()
+    _sync_casualty_recovery_marker()
 
 
 func _load_operations() -> void:
@@ -164,11 +172,13 @@ func _dynamic_operation(operation_id: StringName) -> Dictionary:
         var prefix := "operation.%s." % String(template_id)
         if not operation_text.begins_with(prefix):
             continue
-        var region_id := StringName(operation_text.trim_prefix(prefix))
-        if region_id == &"" or not region_director.region_data.has(region_id):
-            return {}
         var raw_template: Variant = dynamic_templates.get(template_id, {})
         if not (raw_template is Dictionary):
+            return {}
+        if str((raw_template as Dictionary).get("trigger", "")) == "casualty":
+            return _dynamic_casualty_operation(operation_id, template_id, operation_text.trim_prefix(prefix), raw_template as Dictionary)
+        var region_id := StringName(operation_text.trim_prefix(prefix))
+        if region_id == &"" or not region_director.region_data.has(region_id):
             return {}
         var entry := (raw_template as Dictionary).duplicate(true)
         var region_data := region_director.get_region_data(region_id)
@@ -181,6 +191,30 @@ func _dynamic_operation(operation_id: StringName) -> Dictionary:
         entry["description"] = str(entry.get("description", "")).replace("{region}", region_name)
         return entry
     return {}
+
+
+func _dynamic_casualty_operation(operation_id: StringName, template_id: StringName, casualty_id: String, template: Dictionary) -> Dictionary:
+    if casualty_id.is_empty():
+        return {}
+    var record := _casualty_record(casualty_id)
+    if record.is_empty():
+        return {}
+    var region_id := StringName(str(record.get("region_id", "region.heartforge_district")))
+    if region_id == &"region.heartforge_district" or not region_director.region_data.has(region_id):
+        return {}
+    var entry := template.duplicate(true)
+    var region_data := region_director.get_region_data(region_id)
+    var region_name := str(region_data.get("display_name", String(region_id)))
+    var machine_name := str(record.get("callsign", record.get("name", "disabled machine")))
+    entry["id"] = operation_id
+    entry["region_id"] = region_id
+    entry["dynamic_template_id"] = template_id
+    entry["recovery_record_id"] = StringName(casualty_id)
+    entry["recovery_position"] = record.get("position", region_director.center(region_id))
+    entry["generated_from"] = "disabled_machine"
+    entry["display_name"] = str(entry.get("display_name", "Recover {machine}")).replace("{machine}", machine_name).replace("{region}", region_name)
+    entry["description"] = str(entry.get("description", "")).replace("{machine}", machine_name).replace("{region}", region_name)
+    return entry
 
 
 func _dynamic_operation_offers() -> Array[Dictionary]:
@@ -200,6 +234,9 @@ func _dynamic_operation_offers() -> Array[Dictionary]:
     template_ids.sort_custom(func(a: StringName, b: StringName) -> bool: return String(a) < String(b))
     for region_id in region_ids:
         for template_id in template_ids:
+            var template: Variant = dynamic_templates.get(template_id, {})
+            if template is Dictionary and str((template as Dictionary).get("trigger", "")) == "casualty":
+                continue
             var operation_id := _dynamic_operation_id(template_id, region_id)
             if has_completed(operation_id):
                 continue
@@ -211,6 +248,19 @@ func _dynamic_operation_offers() -> Array[Dictionary]:
                 continue
             entry["dynamic_priority"] = priority
             candidates.append(entry)
+    for raw_record in casualty_records:
+        var record := raw_record as Dictionary
+        var casualty_id := str(record.get("id", ""))
+        if casualty_id.is_empty():
+            continue
+        var operation_id := StringName("operation.dynamic.machine_recovery.%s" % casualty_id)
+        if has_completed(operation_id):
+            continue
+        var entry := _dynamic_operation(operation_id)
+        if entry.is_empty() or not requirements_met(entry):
+            continue
+        entry["dynamic_priority"] = 10.0 + float(record.get("sequence", 0)) * 0.001
+        candidates.append(entry)
     candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
         var priority_a := float(a.get("dynamic_priority", 0.0))
         var priority_b := float(b.get("dynamic_priority", 0.0))
@@ -248,7 +298,7 @@ func _with_route_preview(entry: Dictionary) -> Dictionary:
         return preview
     var region_id := StringName(str(preview.get("region_id", "region.heartforge_district")))
     var route_variant := _preferred_route_variant(region_id)
-    var route := region_director.route_from_heartforge_variant(region_id, heartforge.global_position, route_variant)
+    var route := _route_for_entry(preview, route_variant)
     var route_distance := 0.0
     for index in range(1, route.size()):
         route_distance += route[index - 1].distance_to(route[index])
@@ -265,6 +315,17 @@ func _with_route_preview(entry: Dictionary) -> Dictionary:
         int(round(route_distance)),
     ]
     return preview
+
+
+func _route_for_entry(entry: Dictionary, route_variant: int) -> PackedVector3Array:
+    var region_id := StringName(str(entry.get("region_id", "region.heartforge_district")))
+    var route := region_director.route_from_heartforge_variant(region_id, heartforge.global_position, route_variant)
+    var recovery_position: Variant = entry.get("recovery_position", null)
+    if recovery_position is Vector3:
+        var target := recovery_position as Vector3
+        if route.is_empty() or route[route.size() - 1].distance_to(target) > 0.5:
+            route.append(target)
+    return route
 
 
 func requirements_met(entry: Dictionary) -> bool:
@@ -328,7 +389,7 @@ func authorize(operation_id: StringName) -> bool:
 
     var region_id := StringName(str(entry.get("region_id", "region.heartforge_district")))
     var route_variant := _preferred_route_variant(region_id)
-    var route := region_director.route_from_heartforge_variant(region_id, heartforge.global_position, route_variant)
+    var route := _route_for_entry(entry, route_variant)
     for index in range(team.size()):
         team[index].set_group(&"long_range_operation", index)
 
@@ -595,7 +656,7 @@ func _begin_return() -> void:
         reversed.append(route[index])
     active_operation["route"] = reversed
     active_operation["route_index"] = 1
-    active_operation["anchor"] = region_director.center(StringName(active_operation.get("region_id", &"region.heartforge_district")))
+    active_operation["anchor"] = route[route.size() - 1] if not route.is_empty() else region_director.center(StringName(active_operation.get("region_id", &"region.heartforge_district")))
     active_operation["last_forward"] = Vector3(0.0, 0.0, 1.0)
     active_operation["blocked_clock"] = 0.0
     active_operation["route_recovery_active"] = false
@@ -613,6 +674,9 @@ func _complete_return() -> void:
         int(active_operation.get("route_recovery_count", 0))
     )
     _apply_rewards(rewards)
+    var recovery_record_id := StringName(str(entry.get("recovery_record_id", "")))
+    if recovery_record_id != &"":
+        _recover_casualty(recovery_record_id)
     if operation_id not in completed_operations:
         completed_operations.append(operation_id)
     for robot in _living_members():
@@ -646,6 +710,79 @@ func _apply_rewards(rewards: Dictionary) -> void:
         region_director.suppress_region(StringName(active_operation.get("region_id", &"")), float(rewards["suppress_region"]))
     if rewards.has("endgame_pressure_reduction"):
         endgame_pressure_reduction = clampf(endgame_pressure_reduction + float(rewards["endgame_pressure_reduction"]), 0.0, 0.55)
+
+
+func _recover_casualty(casualty_id: StringName) -> void:
+    for index in range(casualty_records.size() - 1, -1, -1):
+        var record := casualty_records[index]
+        if StringName(str(record.get("id", ""))) != casualty_id:
+            continue
+        casualty_records.remove_at(index)
+        var recovered := record.duplicate(true)
+        recovered["recovered_by_operation"] = true
+        machine_recovered.emit(recovered)
+        run_state.log_event("Disabled machine recovered: %s returned from %s." % [str(record.get("callsign", record.get("name", "machine"))), str(record.get("region_id", "the field"))])
+        return
+
+
+func _on_robot_casualty(raw_record: Dictionary) -> void:
+    var archetype := StringName(str(raw_record.get("archetype", "salvager")))
+    if archetype == &"companion" or region_director == null:
+        return
+    var position: Vector3 = raw_record.get("position", heartforge.global_position)
+    var region_id := region_director.region_for_position(position)
+    if region_id == &"region.heartforge_district" or not region_director.is_discovered(region_id):
+        return
+    var robot_name := str(raw_record.get("name", "machine"))
+    for existing in casualty_records:
+        if str(existing.get("name", "")) == robot_name:
+            return
+    casualty_serial += 1
+    var record := {
+        "id": "casualty.%03d" % casualty_serial,
+        "sequence": casualty_serial,
+        "name": robot_name,
+        "archetype": String(archetype),
+        "level": clampi(int(raw_record.get("level", 1)), 1, 3),
+        "callsign": str(raw_record.get("callsign", robot_name)),
+        "position": position,
+        "region_id": String(region_id),
+    }
+    casualty_records.append(record)
+    while casualty_records.size() > MAX_CASUALTY_RECORDS:
+        casualty_records.pop_front()
+    run_state.log_event("CASUALTY BEACON · %s went dark in %s; autonomous recovery is now available." % [str(record.get("callsign", robot_name)), str(region_id)])
+    operation_changed.emit(StringName(str(record.get("id", ""))), &"casualty", "%s went dark in the field. A recovery group can retrieve the disabled frame." % str(record.get("callsign", robot_name)))
+
+
+func casualty_record(casualty_id: StringName) -> Dictionary:
+    return _casualty_record(String(casualty_id)).duplicate(true)
+
+
+func _casualty_record(casualty_id: String) -> Dictionary:
+    for record in casualty_records:
+        if str(record.get("id", "")) == casualty_id:
+            return record
+    return {}
+
+
+func _sync_casualty_recovery_marker() -> void:
+    if operation_detail_director == null or not operation_detail_director.has_method(&"clear_casualty_recovery"):
+        return
+    var marker_record: Dictionary = {}
+    var active_record_id := str(active_operation.get("data", {}).get("recovery_record_id", "")) if not active_operation.is_empty() else ""
+    if not active_record_id.is_empty():
+        marker_record = _casualty_record(active_record_id)
+    elif not casualty_records.is_empty():
+        marker_record = casualty_records[0]
+    if marker_record.is_empty():
+        operation_detail_director.clear_casualty_recovery()
+        return
+    operation_detail_director.show_casualty_recovery(
+        StringName(str(marker_record.get("id", "casualty"))),
+        marker_record.get("position", Vector3.ZERO),
+        str(marker_record.get("callsign", marker_record.get("name", "disabled machine")))
+    )
 
 
 func _abort(reason: String) -> void:
@@ -832,6 +969,7 @@ func context_dictionary() -> Dictionary:
         "completed_operations_count": completed.size(),
         "components": components,
         "components_count": components.size(),
+        "casualties": casualty_records.size(),
         "endgame_pressure_reduction": endgame_pressure_reduction,
         "route_memory": _serialize_route_memory(),
     }
@@ -848,6 +986,8 @@ func to_dictionary() -> Dictionary:
         "schema_version": 3,
         "completed_operations": completed,
         "recovered_components": components,
+        "casualty_serial": casualty_serial,
+        "casualty_records": _serialize_casualty_records(),
         "endgame_pressure_reduction": endgame_pressure_reduction,
         "route_memory": _serialize_route_memory(),
         "active_operation": _serialize_active_operation(),
@@ -858,6 +998,7 @@ func restore_from_dictionary(data: Dictionary) -> void:
     completed_operations.clear()
     recovered_components.clear()
     active_operation.clear()
+    casualty_records.clear()
     for raw_operation in data.get("completed_operations", []):
         var operation_id := StringName(str(raw_operation))
         if (operation_id in operations or _is_dynamic_operation_id(operation_id)) and operation_id not in completed_operations:
@@ -866,6 +1007,21 @@ func restore_from_dictionary(data: Dictionary) -> void:
         var component_id := StringName(str(raw_component))
         if component_id != &"" and component_id not in recovered_components:
             recovered_components.append(component_id)
+    casualty_serial = maxi(0, int(data.get("casualty_serial", 0)))
+    for raw_record in data.get("casualty_records", []):
+        if not (raw_record is Dictionary):
+            continue
+        var saved_record := raw_record as Dictionary
+        var casualty_id := str(saved_record.get("id", ""))
+        if casualty_id.is_empty() or _casualty_record(casualty_id).is_empty() == false:
+            continue
+        var restored_record := saved_record.duplicate(true)
+        restored_record["position"] = _array_to_vector(saved_record.get("position", []))
+        restored_record["sequence"] = maxi(0, int(saved_record.get("sequence", 0)))
+        casualty_serial = maxi(casualty_serial, int(restored_record.get("sequence", 0)))
+        casualty_records.append(restored_record)
+    if casualty_records.size() > MAX_CASUALTY_RECORDS:
+        casualty_records = casualty_records.slice(casualty_records.size() - MAX_CASUALTY_RECORDS)
     endgame_pressure_reduction = clampf(float(data.get("endgame_pressure_reduction", 0.0)), 0.0, 0.55)
     route_memory.clear()
     for raw_memory in data.get("route_memory", []):
@@ -881,6 +1037,15 @@ func restore_from_dictionary(data: Dictionary) -> void:
             "recoveries": maxi(0, int(saved_memory.get("recoveries", 0))),
         }
     _restore_active_operation(data.get("active_operation", {}))
+
+
+func _serialize_casualty_records() -> Array[Dictionary]:
+    var result: Array[Dictionary] = []
+    for record in casualty_records:
+        var serialized := record.duplicate(true)
+        serialized["position"] = _vector_to_array(record.get("position", Vector3.ZERO))
+        result.append(serialized)
+    return result
 
 
 func _preferred_route_variant(region_id: StringName) -> int:

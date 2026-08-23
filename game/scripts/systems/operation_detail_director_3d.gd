@@ -18,6 +18,10 @@ var route_recovery_label: Label3D
 var route_recovery_ring: MeshInstance3D
 var route_recovery_material: StandardMaterial3D
 var route_recovery_elapsed: float = 0.0
+var casualty_recovery_beacon: Node3D
+var casualty_recovery_label: Label3D
+var casualty_recovery_ring: MeshInstance3D
+var casualty_recovery_elapsed: float = 0.0
 
 
 func configure(next_camera: Camera3D) -> void:
@@ -29,16 +33,21 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-    if route_recovery_beacon == null or not route_recovery_beacon.visible:
-        return
-    route_recovery_elapsed += delta
-    var pulse := 0.92 + sin(route_recovery_elapsed * 3.1) * 0.08
-    route_recovery_beacon.scale = Vector3.ONE * pulse
-    if route_recovery_ring != null:
-        route_recovery_ring.rotation.y = route_recovery_elapsed * 0.72
-        route_recovery_ring.position.y = 2.72 + sin(route_recovery_elapsed * 2.4) * 0.08
-    if route_recovery_label != null:
-        route_recovery_label.position.y = 3.28 + sin(route_recovery_elapsed * 2.1) * 0.07
+    if route_recovery_beacon != null and route_recovery_beacon.visible:
+        route_recovery_elapsed += delta
+        var pulse := 0.92 + sin(route_recovery_elapsed * 3.1) * 0.08
+        route_recovery_beacon.scale = Vector3.ONE * pulse
+        if route_recovery_ring != null:
+            route_recovery_ring.rotation.y = route_recovery_elapsed * 0.72
+            route_recovery_ring.position.y = 2.72 + sin(route_recovery_elapsed * 2.4) * 0.08
+        if route_recovery_label != null:
+            route_recovery_label.position.y = 3.28 + sin(route_recovery_elapsed * 2.1) * 0.07
+    if casualty_recovery_beacon != null and casualty_recovery_beacon.visible:
+        casualty_recovery_elapsed += delta
+        var casualty_pulse := 0.94 + sin(casualty_recovery_elapsed * 2.7) * 0.06
+        casualty_recovery_beacon.scale = Vector3.ONE * casualty_pulse
+        if casualty_recovery_ring != null:
+            casualty_recovery_ring.rotation.y = casualty_recovery_elapsed * -0.66
 
 
 func update_operation(operation_id: StringName, anchor: Vector3) -> StringName:
@@ -73,6 +82,23 @@ func show_route_recovery(operation_id: StringName, target: Vector3, attempt: int
 func clear_route_recovery() -> void:
     if route_recovery_beacon != null:
         route_recovery_beacon.visible = false
+
+
+func show_casualty_recovery(record_id: StringName, target: Vector3, identity: String) -> void:
+    if casualty_recovery_beacon == null:
+        _build_casualty_recovery_beacon()
+    casualty_recovery_beacon.global_position = target
+    casualty_recovery_beacon.visible = true
+    casualty_recovery_label.text = "CASUALTY BEACON\n%s · %s" % [identity.to_upper(), String(record_id).replace("casualty.", "FIELD SIGNAL ")]
+
+
+func clear_casualty_recovery() -> void:
+    if casualty_recovery_beacon != null:
+        casualty_recovery_beacon.visible = false
+
+
+func is_casualty_recovery_visible() -> bool:
+    return casualty_recovery_beacon != null and casualty_recovery_beacon.visible
 
 
 func is_route_recovery_visible() -> bool:
@@ -183,3 +209,69 @@ func _build_route_recovery_beacon() -> void:
     route_recovery_label.no_depth_test = false
     route_recovery_beacon.add_child(route_recovery_label)
     ModelKit3D.add_glow_light(route_recovery_beacon, Vector3(0.0, 1.35, 0.0), Color("5ce0d1"), 0.42, 3.4)
+
+
+func _build_casualty_recovery_beacon() -> void:
+    if casualty_recovery_beacon != null:
+        return
+    var material := ModelKit3D.material(Color("4a241a"), 0.18, 0.36, Color("ef8c55"), 3.6)
+    casualty_recovery_beacon = Node3D.new()
+    casualty_recovery_beacon.name = "DisabledMachineRecoveryBeacon"
+    casualty_recovery_beacon.visible = false
+    add_child(casualty_recovery_beacon)
+    for index in range(6):
+        var angle := TAU * float(index) / 6.0
+        var segment := ModelKit3D.add_box(
+            casualty_recovery_beacon,
+            Vector3(0.72, 0.075, 0.14),
+            Vector3(cos(angle) * 1.06, 0.09, sin(angle) * 1.06),
+            material,
+            Vector3(0.0, -angle, 0.0),
+            "CasualtyRingSegment"
+        )
+        segment.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+    var stem := ModelKit3D.add_tapered_cylinder(
+        casualty_recovery_beacon,
+        0.055,
+        0.11,
+        2.26,
+        Vector3(0.0, 1.15, 0.0),
+        material,
+        Vector3.ZERO,
+        "CasualtyStem"
+    )
+    stem.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+    ModelKit3D.add_sphere(
+        casualty_recovery_beacon,
+        0.2,
+        Vector3(0.0, 2.42, 0.0),
+        material,
+        Vector3(1.0, 0.58, 1.0),
+        "CasualtySignal"
+    )
+    casualty_recovery_ring = MeshInstance3D.new()
+    casualty_recovery_ring.name = "CasualtySignalRing"
+    var ring_mesh := TorusMesh.new()
+    ring_mesh.inner_radius = 0.22
+    ring_mesh.outer_radius = 0.36
+    ring_mesh.rings = 16
+    ring_mesh.ring_segments = 28
+    casualty_recovery_ring.mesh = ring_mesh
+    casualty_recovery_ring.material_override = material
+    casualty_recovery_ring.position = Vector3(0.0, 2.44, 0.0)
+    casualty_recovery_ring.rotation.x = PI * 0.5
+    casualty_recovery_ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+    casualty_recovery_beacon.add_child(casualty_recovery_ring)
+    casualty_recovery_label = Label3D.new()
+    casualty_recovery_label.name = "CasualtyLabel"
+    casualty_recovery_label.text = "CASUALTY BEACON"
+    casualty_recovery_label.position = Vector3(0.0, 3.08, 0.0)
+    casualty_recovery_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+    casualty_recovery_label.font_size = 20
+    casualty_recovery_label.pixel_size = 0.018
+    casualty_recovery_label.outline_size = 5
+    casualty_recovery_label.modulate = Color("ffe0c4")
+    casualty_recovery_label.outline_modulate = Color(0.03, 0.012, 0.008, 0.96)
+    casualty_recovery_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    casualty_recovery_beacon.add_child(casualty_recovery_label)
+    ModelKit3D.add_glow_light(casualty_recovery_beacon, Vector3(0.0, 1.15, 0.0), Color("ef8c55"), 0.48, 3.8)

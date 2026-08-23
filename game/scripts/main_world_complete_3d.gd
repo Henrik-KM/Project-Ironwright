@@ -222,6 +222,7 @@ func _connect_complete_game_services() -> void:
     long_operation_director.operation_returned.connect(_on_long_operation_returned)
     long_operation_director.component_recovered.connect(_on_component_recovered)
     long_operation_director.site_discovery_requested.connect(_on_site_discovery_requested)
+    long_operation_director.machine_recovered.connect(_on_machine_recovered)
 
     machine_society_director.autonomous_machine_built.connect(_on_autonomous_machine_built)
     strategic_ecology_director.ecology_report.connect(_on_ecology_report)
@@ -288,6 +289,32 @@ func _start_dynamic_operation_review() -> void:
     operations_hud.open_operations()
     player.input_enabled = false
     hud.push_notification("WORLD-STATE RESPONSE OFFER · PRESSURE HAS BECOME A CHOICE")
+
+
+func _start_casualty_recovery_review() -> void:
+    if progression == null or region_director == null or long_operation_director == null or operations_hud == null:
+        return
+    progression.set_heartforge_tier(2)
+    run_state.scrap = maxi(run_state.scrap, 320)
+    run_state.robots_built = maxi(run_state.robots_built, 4)
+    if not progression.has_technology(&"tech.machine.group_coordination"):
+        progression.purchase(&"tech.machine.group_coordination")
+    run_state.scrap_changed.emit(run_state.scrap)
+    var required_roles: Array[StringName] = [&"scout", &"guardian", &"engineer"]
+    var spawn_positions: Array[Vector3] = [Vector3(-3.0, 0.0, 4.0), Vector3(0.0, 0.0, 5.0), Vector3(3.0, 0.0, 4.0)]
+    for index in range(required_roles.size()):
+        if world_role_count(required_roles[index]) <= 0:
+            _spawn_robot(required_roles[index], spawn_positions[index], 1)
+    if world_role_count(&"engineer") < 2:
+        _spawn_robot(&"engineer", Vector3(5.0, 0.0, 4.0), 1)
+    region_director.discover_region(&"region.west_grid")
+    var casualty_machine := autonomy_director.living_robots(&"engineer")[0]
+    casualty_machine.global_position = region_director.center(&"region.west_grid") + Vector3(3.0, 0.0, -2.0)
+    casualty_machine.apply_damage(casualty_machine.maximum_health * 2.0)
+    long_operation_director._sync_casualty_recovery_marker()
+    operations_hud.open_operations()
+    player.input_enabled = false
+    hud.push_notification("FIELD CASUALTY SIGNAL · RECOVERY IS A STRATEGIC CHOICE")
 
 
 func world_role_count(role: StringName) -> int:
@@ -612,6 +639,20 @@ func _on_long_operation_returned(operation_id: StringName, display_name: String,
 
 func _on_component_recovered(component_id: StringName) -> void:
     hud.push_notification("UNIQUE BIOLOGICAL COMPONENT RECOVERED · %s" % String(component_id).replace("component.", "").replace("_", " ").to_upper())
+
+
+func _on_machine_recovered(record: Dictionary) -> void:
+    var archetype := StringName(str(record.get("archetype", "salvager")))
+    var level := clampi(int(record.get("level", 1)), 1, 3)
+    var robot := _spawn_robot(archetype, heartforge.global_position + Vector3(2.6, 0.0, 3.2), level)
+    robot.restore_callsign(record.get("callsign", ""))
+    robot.current_health = robot.maximum_health * 0.68
+    robot.health_changed.emit(robot, robot.current_health, robot.maximum_health)
+    var identity := robot.display_identity()
+    hud.push_notification("MACHINE RECOVERED · %s · RETURNED DAMAGED BUT ALIVE" % identity.to_upper())
+    run_state.log_event("MACHINE WITNESS · %s returned from a field casualty beacon and rejoined the Heartforge." % identity)
+    if story_archive_director != null:
+        story_archive_director.record_machine_witness(&"machine.first_recovery")
 
 
 func _on_site_discovery_requested(site_id: StringName) -> void:
