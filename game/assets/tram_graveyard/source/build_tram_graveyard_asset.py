@@ -21,14 +21,14 @@ OUTPUT_PATH = SOURCE_DIR / "tram_graveyard.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Tram weathered teal", "pbrMetallicRoughness": {"baseColorFactor": [0.13, 0.27, 0.29, 1.0], "metallicFactor": 0.38, "roughnessFactor": 0.68}},
-        {"name": "Tram oxidized iron", "pbrMetallicRoughness": {"baseColorFactor": [0.42, 0.19, 0.09, 1.0], "metallicFactor": 0.48, "roughnessFactor": 0.64}},
+        {"name": "Tram weathered teal", "pbrMetallicRoughness": {"baseColorFactor": [0.035, 0.09, 0.11, 1.0], "metallicFactor": 0.28, "roughnessFactor": 0.78}},
+        {"name": "Tram oxidized iron", "pbrMetallicRoughness": {"baseColorFactor": [0.28, 0.065, 0.018, 1.0], "metallicFactor": 0.28, "roughnessFactor": 0.76}},
         {"name": "Tram dark undercarriage", "pbrMetallicRoughness": {"baseColorFactor": [0.045, 0.065, 0.075, 1.0], "metallicFactor": 0.74, "roughnessFactor": 0.42}},
-        {"name": "Tram cold window", "pbrMetallicRoughness": {"baseColorFactor": [0.04, 0.20, 0.27, 1.0], "metallicFactor": 0.16, "roughnessFactor": 0.24}, "emissiveFactor": [0.04, 0.30, 0.46]},
-        {"name": "Tram service amber", "pbrMetallicRoughness": {"baseColorFactor": [0.62, 0.25, 0.055, 1.0], "metallicFactor": 0.14, "roughnessFactor": 0.38}, "emissiveFactor": [0.95, 0.22, 0.025]},
-        {"name": "Tram concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.24, 0.27, 0.27, 1.0], "metallicFactor": 0.10, "roughnessFactor": 0.88}},
+        {"name": "Tram cold window", "pbrMetallicRoughness": {"baseColorFactor": [0.018, 0.10, 0.15, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.38}, "emissiveFactor": [0.0, 0.12, 0.20]},
+        {"name": "Tram service amber", "pbrMetallicRoughness": {"baseColorFactor": [0.42, 0.12, 0.018, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.50}, "emissiveFactor": [0.34, 0.06, 0.006]},
+        {"name": "Tram concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.07, 0.09, 0.09, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.94}},
         {"name": "Tram organic seepage", "pbrMetallicRoughness": {"baseColorFactor": [0.22, 0.045, 0.10, 1.0], "metallicFactor": 0.02, "roughnessFactor": 0.86}, "emissiveFactor": [0.30, 0.018, 0.08]},
-        {"name": "Tram ceramic insulator", "pbrMetallicRoughness": {"baseColorFactor": [0.38, 0.42, 0.40, 1.0], "metallicFactor": 0.16, "roughnessFactor": 0.54}},
+        {"name": "Tram ceramic insulator", "pbrMetallicRoughness": {"baseColorFactor": [0.12, 0.16, 0.14, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.68}},
     ]
     meshes: list[dict] = []
 

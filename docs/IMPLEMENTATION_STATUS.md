@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused Tram Graveyard material-hierarchy milestone
+
+- deepened the authored weathered-teal carriage, oxidized-iron roof and rail,
+  cold-window, service-amber, concrete, seepage and ceramic palette so the
+  exact-export view separates the two tram shells from windows, rails,
+  undercarriage and overhead transit hardware;
+- reduced compact review lighting for the broad carriage shells while
+  preserving their geometry, sockets, collision, route, ecology, motion and
+  operation contracts; this is presentation-only and adds no recurring
+  player-managed work;
+- completed consecutive exact-export live review of remote page 10 with stable
+  material hierarchy before merge.
+
 ## Focused Riverworks material-hierarchy milestone
 
 - deepened the authored wet-alloy, oxidized-iron, ceramic, water, maintenance
