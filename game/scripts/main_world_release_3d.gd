@@ -737,7 +737,7 @@ func _show_presentation_review_page(page: int) -> void:
 			var row_index := 0 if index < mini(4, actors.size()) else 1
 			var row_count := mini(4, actors.size()) if row_index == 0 else actors.size() - mini(4, actors.size())
 			var row_position := index if row_index == 0 else index - mini(4, actors.size())
-			var spacing := 3.9 if presentation_review_page >= 1 else 4.2
+			var spacing := 3.4 if presentation_review_page >= 1 else 4.2
 			var centered_x := (float(row_position) - float(row_count - 1) * 0.5) * spacing
 			var row_z := 0.9 if row_index == 0 else -2.15
 			if presentation_review_page == 0:
@@ -766,7 +766,8 @@ func _show_presentation_review_page(page: int) -> void:
 		presentation_review_camera_target = region_director.center(region_id) + Vector3.UP * 2.0
 		presentation_review_camera_desired = presentation_review_camera_target + Vector3(0.0, 12.0, 19.0)
 	else:
-		presentation_review_camera_target = Vector3(0.0, 1.45, -0.7)
+		var core_target_height := 0.95 if presentation_review_page >= 1 else 1.45
+		presentation_review_camera_target = Vector3(0.0, core_target_height, -0.7)
 		presentation_review_camera_desired = Vector3(0.0, 4.8, 12.5)
 	_set_presentation_review_stage_for_page(is_region_page)
 	_update_presentation_review_camera(1.0)
@@ -885,17 +886,22 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	var cool_light := presentation_review_stage.get_node_or_null("ReviewCoolLight") as OmniLight3D
 	var rim_light := presentation_review_stage.get_node_or_null("ReviewRimLight") as OmniLight3D
 	var compact_region_light_scale := 0.72 if presentation_review_page == 12 else (0.68 if presentation_review_page == 11 else 1.0)
+	# Darker organic shells need a little more review-only key and rim energy
+	# than the manufactured roster to keep wet materials and anatomy breaks
+	# judgeable at the supported compact export size. Runtime lighting is untouched.
+	var organic_gallery_light_scale := 1.18 if presentation_review_page >= 1 and presentation_review_page <= 2 else 1.0
+	var review_light_scale := compact_region_light_scale * organic_gallery_light_scale
 	if front_fill != null:
-		front_fill.light_energy = 3.4 * compact_region_light_scale
+		front_fill.light_energy = 3.4 * review_light_scale
 		front_fill.position = target + Vector3(0.0, 9.0, 16.0)
 	if warm_light != null:
-		warm_light.light_energy = 3.6 * compact_region_light_scale
+		warm_light.light_energy = 3.6 * review_light_scale
 		warm_light.position = target + Vector3(-12.0, 8.0, 10.0)
 	if cool_light != null:
-		cool_light.light_energy = 2.8 * compact_region_light_scale
+		cool_light.light_energy = 2.8 * review_light_scale
 		cool_light.position = target + Vector3(12.0, 7.0, 6.0)
 	if rim_light != null:
-		rim_light.light_energy = 4.2 * compact_region_light_scale
+		rim_light.light_energy = 4.2 * review_light_scale
 		rim_light.position = target + Vector3(0.0, 7.0, -8.0)
 
 
