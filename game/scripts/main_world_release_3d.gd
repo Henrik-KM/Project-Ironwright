@@ -53,6 +53,7 @@ var vertical_slice_actor_art: VerticalSliceActorArt3D
 var run_variation_director: RunVariationDirector3D
 var camera_target_velocity: Vector3 = Vector3.ZERO
 var camera_heading: Vector3 = Vector3(0.0, 0.0, 1.0)
+var release_camera_departure_clock: float = 0.0
 var presentation_review_active: bool = false
 var presentation_review_page: int = 0
 var presentation_review_pages: Array = []
@@ -138,6 +139,8 @@ func _setup_vertical_slice_presentation() -> void:
 func _update_camera(delta: float) -> void:
 	if camera == null or player == null:
 		return
+	if not follow_operation or long_operation_director == null or long_operation_director.active_operation.is_empty():
+		release_camera_departure_clock = 0.0
 
 	if map_mode:
 		var map_target := Vector3(0.0, 0.0, -8.0)
@@ -149,10 +152,16 @@ func _update_camera(delta: float) -> void:
 		return
 
 	var target := player.global_position
+	var home_focus := false
 	if follow_operation:
 		var operation_target := _active_follow_target()
 		if operation_target != null:
 			target = operation_target.global_position
+			if long_operation_director != null and not long_operation_director.active_operation.is_empty():
+				release_camera_departure_clock += delta
+				home_focus = release_camera_departure_clock < 3.0 or operation_target.global_position.distance_to(heartforge.global_position) < 18.0
+				if home_focus:
+					target = player.global_position
 		else:
 			follow_operation = false
 
@@ -175,8 +184,11 @@ func _update_camera(delta: float) -> void:
 		dynamic_height += remote_expansion.x
 		dynamic_distance += remote_expansion.y
 	var desired := target + Vector3(0.0, dynamic_height, 0.0) + _camera_horizontal_offset(dynamic_distance)
-	var resolved := _resolve_camera_occlusion(target, desired, dynamic_height, dynamic_distance)
-	camera.global_position = camera.global_position.lerp(resolved, 1.0 - exp(-delta * 7.2))
+	var resolved := desired if home_focus else _resolve_camera_occlusion(target, desired, dynamic_height, dynamic_distance)
+	if camera.global_position.distance_to(resolved) > 20.0:
+		camera.global_position = resolved
+	else:
+		camera.global_position = camera.global_position.lerp(resolved, 1.0 - exp(-delta * 7.2))
 	camera.look_at(target + Vector3.UP * 0.68, Vector3.UP)
 
 
@@ -241,12 +253,14 @@ func _active_follow_target() -> Node3D:
 func _resolve_camera_occlusion(target: Vector3, desired: Vector3, dynamic_height: float, dynamic_distance: float) -> Vector3:
 	var space_state := get_world_3d().direct_space_state
 	var target_eye := target + Vector3.UP * 1.1
-	var horizontal_offset := _camera_horizontal_offset(dynamic_distance)
 	var candidates: Array[Vector3] = [
 		desired,
-		target + Vector3(0.0, dynamic_height + 5.5, 0.0) + horizontal_offset * 0.72,
-		target + Vector3(0.0, dynamic_height + 10.0, 0.0) + horizontal_offset * 0.48,
-		target + Vector3(0.0, dynamic_height + 15.0, 0.0) + horizontal_offset * 0.22,
+		target + Vector3(-dynamic_distance * 0.82, dynamic_height + 2.0, dynamic_distance * 0.42),
+		target + Vector3(dynamic_distance * 0.82, dynamic_height + 2.0, dynamic_distance * 0.42),
+		target + Vector3(-dynamic_distance * 0.72, dynamic_height + 5.5, -dynamic_distance * 0.54),
+		target + Vector3(dynamic_distance * 0.72, dynamic_height + 5.5, -dynamic_distance * 0.54),
+		target + Vector3(0.0, dynamic_height + 8.0, dynamic_distance * 0.22),
+		target + Vector3(0.0, dynamic_height + 16.0, 0.0),
 	]
 
 	var exclusions: Array[RID] = []
@@ -268,10 +282,9 @@ func _resolve_camera_occlusion(target: Vector3, desired: Vector3, dynamic_height
 		last_hit = hit
 
 	if not last_hit.is_empty():
-		var collision_position: Vector3 = last_hit.get("position", desired)
-		var direction := (collision_position - target_eye).normalized()
-		var safe_distance := maxf(5.0, target_eye.distance_to(collision_position) - 1.0)
-		return target_eye + direction * safe_distance
+		# If the landmark is surrounded by tall city geometry, keep a high
+		# establishing shot instead of parking the camera against the hit face.
+		return candidates[candidates.size() - 1]
 	return desired
 
 
