@@ -737,9 +737,16 @@ func _show_presentation_review_page(page: int) -> void:
 			var row_index := 0 if index < mini(4, actors.size()) else 1
 			var row_count := mini(4, actors.size()) if row_index == 0 else actors.size() - mini(4, actors.size())
 			var row_position := index if row_index == 0 else index - mini(4, actors.size())
-			var spacing := 4.2
+			var spacing := 3.9 if presentation_review_page >= 1 else 4.2
 			var centered_x := (float(row_position) - float(row_count - 1) * 0.5) * spacing
-			var row_z := 0.7 if row_index == 0 else -2.5
+			var row_z := 0.9 if row_index == 0 else -2.15
+			if presentation_review_page == 0:
+				row_z = 0.7 if row_index == 0 else -2.5
+			row_z += _presentation_review_depth_offset(actor)
+			actor.scale = Vector3.ONE
+			var review_model_root := actor.get_node_or_null("OrganicModel") as Node3D
+			if review_model_root != null:
+				review_model_root.scale = Vector3.ONE * _presentation_review_model_scale(actor)
 			actor.position = Vector3(centered_x, 0.0, row_z)
 			if actor.has_method("set_visual_lod"):
 				actor.call("set_visual_lod", 0)
@@ -775,6 +782,29 @@ func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3
 		return Vector3(0.0, 10.2, 15.0)
 	return Vector3(0.0, 12.0, 19.0)
 
+
+func _presentation_review_depth_offset(actor: Node3D) -> float:
+	# Small organisms are staged slightly forward in the development-only gallery
+	# so perspective gives their authored anatomy room without stretching child
+	# offsets or touching runtime actor scale, collision, damage, ecology or
+	# navigation.
+	var actor_name := actor.name.to_lower()
+	if actor_name.begins_with("skitterling"):
+		return 1.0
+	if actor_name.begins_with("glassmoth"):
+		return 0.8
+	if actor_name.begins_with("roofleaper"):
+		return 0.3
+	return 0.0
+
+
+func _presentation_review_model_scale(actor: Node3D) -> float:
+	# Apply only a restrained visual-root compensation for families authored at
+	# a smaller inspection scale. The actor root remains at unit scale.
+	var actor_name := actor.name.to_lower()
+	if actor_name.begins_with("glassmoth"):
+		return 1.1
+	return 1.0
 
 func _presentation_review_landmark(region_id: StringName) -> RegionLandmark3D:
 	if region_director == null:
@@ -828,7 +858,8 @@ func _update_presentation_review_camera(delta: float) -> void:
 	var target := presentation_review_camera_target
 	var desired := presentation_review_camera_desired
 	camera.global_position = camera.global_position.lerp(desired, 1.0 - exp(-delta * 5.0))
-	camera.fov = 46.0 if presentation_review_page == 12 else (48.0 if presentation_review_page == 11 else (52.0 if presentation_review_page >= 3 else 43.0))
+	var core_review_fov := 42.0 if presentation_review_page >= 1 else 43.0
+	camera.fov = 46.0 if presentation_review_page == 12 else (48.0 if presentation_review_page == 11 else (52.0 if presentation_review_page >= 3 else core_review_fov))
 	camera.look_at(target, Vector3.UP)
 
 

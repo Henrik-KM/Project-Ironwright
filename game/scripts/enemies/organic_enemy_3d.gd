@@ -1203,7 +1203,11 @@ func _build_authored_skitterling_visuals() -> void:
         imported_root = authored_scene_instance
     var authored_shell_root := Node3D.new()
     authored_shell_root.name = "SkitterlingAuthoredShell"
-    authored_shell_root.scale = Vector3.ONE * 0.28
+    # The scavenger is physically small, but the earlier 0.28 shell scale made
+    # its authored anatomy disappear beside common predators. Enlarge only the
+    # presentation shell; collision, movement, ecology and attack range remain
+    # owned by the actor and are unchanged.
+    authored_shell_root.scale = Vector3.ONE * 0.58
     _model_root.add_child(authored_shell_root)
     var authored_children := imported_root.get_children()
     for child in authored_children:
