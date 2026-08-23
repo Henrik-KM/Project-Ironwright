@@ -1125,6 +1125,11 @@ func _run_all() -> void:
             for clip_name in [&"Idle", &"Walk", &"Attack", &"Hit", &"Feed", &"Nest", &"Retreat", &"Death"]:
                 _expect(_animation_player_has_clip(authored_animation.animation_player, clip_name), "%s must import the authored %s clip." % [species_names[index], clip_name])
                 _expect(_animation_player_track_count(authored_animation.animation_player, clip_name) >= 2, "%s authored %s clip must carry multiple readable channels." % [species_names[index], clip_name])
+            if species_names[index] == &"veilstalker":
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 4, "Veilstalker Idle must carry mandible breathing channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 6, "Veilstalker Attack must carry mandible and cowl-spine threat channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 4, "Veilstalker Feed must carry mandible motion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 4, "Veilstalker Retreat must carry cowl-spine response channels.")
             var previous_state: StringName = StringName(enemy_samples[index].get(&"state_name"))
             enemy_samples[index].set(&"state_name", &"feeding")
             enemy_samples[index].set_meta(&"enemy_behaviour", "feed")
