@@ -76,6 +76,13 @@ distance while preserving the interior growth beds, service hardware and
 presentation-only scope. Exact exported Windows review confirmed that the
 added panes improve depth without obscuring the cultivation identity.
 
+The Observatory Ridge release dressing now also carries a bounded instrument
+array around its primary survey dish, with beaconed pylons, crossbars, a relay
+mast and a small operator-facing control pod. This reinforces the survey
+identity at compact tactical distance without changing the authored dish,
+collision or simulation contracts. Exact exported Windows review confirmed that
+the array frames the dish without obscuring its readable silhouette.
+
 The Engineer constructor now also carries a denser close-camera arm and forge
 pass with authored cradle latch, forge guard, tool collars, cable spools,
 welding shields and clamp jaws. This preserves its construction role and stable
