@@ -21,11 +21,11 @@ OUTPUT_PATH = SOURCE_DIR / "glasshouse.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Glasshouse frame", "pbrMetallicRoughness": {"baseColorFactor": [0.08, 0.16, 0.17, 1.0], "metallicFactor": 0.72, "roughnessFactor": 0.42}},
+        {"name": "Glasshouse frame", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.07, 0.075, 1.0], "metallicFactor": 0.42, "roughnessFactor": 0.62}},
         {"name": "Glasshouse oxidized trim", "pbrMetallicRoughness": {"baseColorFactor": [0.38, 0.16, 0.08, 1.0], "metallicFactor": 0.42, "roughnessFactor": 0.66}},
-        {"name": "Glasshouse cold glass", "alphaMode": "BLEND", "doubleSided": True, "pbrMetallicRoughness": {"baseColorFactor": [0.10, 0.27, 0.28, 0.30], "metallicFactor": 0.08, "roughnessFactor": 0.28}, "emissiveFactor": [0.01, 0.07, 0.07]},
-        {"name": "Glasshouse grow light", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.30, 0.20, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.48}, "emissiveFactor": [0.16, 0.70, 0.34]},
-        {"name": "Glasshouse organic growth", "pbrMetallicRoughness": {"baseColorFactor": [0.06, 0.28, 0.17, 1.0], "metallicFactor": 0.02, "roughnessFactor": 0.78}, "emissiveFactor": [0.03, 0.28, 0.12]},
+        {"name": "Glasshouse cold glass", "alphaMode": "BLEND", "doubleSided": True, "pbrMetallicRoughness": {"baseColorFactor": [0.03, 0.12, 0.14, 0.16], "metallicFactor": 0.04, "roughnessFactor": 0.42}, "emissiveFactor": [0.0, 0.025, 0.03]},
+        {"name": "Glasshouse grow light", "pbrMetallicRoughness": {"baseColorFactor": [0.08, 0.22, 0.10, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.58}, "emissiveFactor": [0.06, 0.30, 0.10]},
+        {"name": "Glasshouse organic growth", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.15, 0.07, 1.0], "metallicFactor": 0.02, "roughnessFactor": 0.84}, "emissiveFactor": [0.01, 0.08, 0.025]},
         {"name": "Glasshouse soil", "pbrMetallicRoughness": {"baseColorFactor": [0.17, 0.12, 0.08, 1.0], "metallicFactor": 0.03, "roughnessFactor": 0.92}},
         {"name": "Glasshouse service amber", "pbrMetallicRoughness": {"baseColorFactor": [0.64, 0.25, 0.05, 1.0], "metallicFactor": 0.10, "roughnessFactor": 0.40}, "emissiveFactor": [0.85, 0.18, 0.02]},
     ]
