@@ -1147,6 +1147,12 @@ func _run_all() -> void:
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 6, "Miremaw Attack must carry paired jaw-hook and jaw-plate threat channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 5, "Miremaw Feed must carry jaw and gill-fan motion channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 5, "Miremaw Retreat must carry water-fin and gill withdrawal channels.")
+            if species_names[index] == &"glassmoth":
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 6, "Glassmoth Idle must carry paired wing breathing channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Walk") >= 6, "Glassmoth Walk must carry paired wing flight channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 8, "Glassmoth Attack must carry wing flare and antenna threat channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 6, "Glassmoth Feed must carry wing and antenna motion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 6, "Glassmoth Retreat must carry paired wing withdrawal channels.")
             var previous_state: StringName = StringName(enemy_samples[index].get(&"state_name"))
             enemy_samples[index].set(&"state_name", &"feeding")
             enemy_samples[index].set_meta(&"enemy_behaviour", "feed")

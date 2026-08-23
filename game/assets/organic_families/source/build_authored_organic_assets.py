@@ -467,6 +467,43 @@ def build_family(name: str, spec: dict) -> None:
             ("MiremawWaterFinR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.28, 0.08)) + quat((0.14, 0.36, 0.2)) + quat((0.0, 0.28, 0.08))),
             ("MiremawGillFan", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, 1.57)) + quat((0.0, 0.0, 1.82)) + quat((0.0, 0.0, 1.57))),
         ])
+    elif name == "glassmoth":
+        # Glassmoth reads as a living light-trap through its paired wing
+        # membranes, spars and antennae. Keep those surfaces breathing in
+        # concert so the high-definition silhouette does not freeze into a
+        # decorative plane during close tactical views.
+        idle_channels.extend([
+            ("GlassmothWingL0", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.2, -0.18)) + quat((0.08, -0.24, -0.26)) + quat((0.0, -0.2, -0.18))),
+            ("GlassmothWingR0", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.2, 0.18)) + quat((-0.08, 0.24, 0.26)) + quat((0.0, 0.2, 0.18))),
+            ("GlassmothWingL1", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.28, -0.24)) + quat((0.06, -0.32, -0.3)) + quat((0.0, -0.28, -0.24))),
+            ("GlassmothWingR1", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.28, 0.24)) + quat((-0.06, 0.32, 0.3)) + quat((0.0, 0.28, 0.24))),
+        ])
+        walk_channels.extend([
+            ("GlassmothWingL0", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.2, -0.18)) + quat((0.16, -0.28, -0.32)) + quat((0.0, -0.2, -0.18))),
+            ("GlassmothWingR0", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.2, 0.18)) + quat((-0.16, 0.28, 0.32)) + quat((0.0, 0.2, 0.18))),
+            ("GlassmothWingL1", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.28, -0.24)) + quat((0.12, -0.36, -0.34)) + quat((0.0, -0.28, -0.24))),
+            ("GlassmothWingR1", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.28, 0.24)) + quat((-0.12, 0.36, 0.34)) + quat((0.0, 0.28, 0.24))),
+        ])
+        attack_channels.extend([
+            ("GlassmothWingL1", "rotation", [0.0, 0.24, 0.48], quat((0.0, -0.28, -0.24)) + quat((-0.22, -0.4, -0.42)) + quat((0.0, -0.28, -0.24))),
+            ("GlassmothWingR1", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.28, 0.24)) + quat((0.22, 0.4, 0.42)) + quat((0.0, 0.28, 0.24))),
+            ("GlassmothWingL0", "rotation", [0.0, 0.24, 0.48], quat((0.0, -0.2, -0.18)) + quat((-0.16, -0.32, -0.34)) + quat((0.0, -0.2, -0.18))),
+            ("GlassmothWingR0", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.2, 0.18)) + quat((0.16, 0.32, 0.34)) + quat((0.0, 0.2, 0.18))),
+            ("GlassmothAntennaL", "rotation", [0.0, 0.24, 0.48], quat((0.48, 0.0, -0.22)) + quat((0.72, 0.0, -0.32)) + quat((0.48, 0.0, -0.22))),
+            ("GlassmothAntennaR", "rotation", [0.0, 0.24, 0.48], quat((0.48, 0.0, 0.22)) + quat((0.72, 0.0, 0.32)) + quat((0.48, 0.0, 0.22))),
+        ])
+        feed_channels.extend([
+            ("GlassmothWingL0", "rotation", [0.0, 0.3, 0.6], quat((0.0, -0.2, -0.18)) + quat((0.12, -0.28, -0.26)) + quat((0.0, -0.2, -0.18))),
+            ("GlassmothWingR0", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.2, 0.18)) + quat((-0.12, 0.28, 0.26)) + quat((0.0, 0.2, 0.18))),
+            ("GlassmothAntennaL", "rotation", [0.0, 0.3, 0.6], quat((0.48, 0.0, -0.22)) + quat((0.62, 0.0, -0.28)) + quat((0.48, 0.0, -0.22))),
+            ("GlassmothAntennaR", "rotation", [0.0, 0.3, 0.6], quat((0.48, 0.0, 0.22)) + quat((0.62, 0.0, 0.28)) + quat((0.48, 0.0, 0.22))),
+        ])
+        retreat_channels.extend([
+            ("GlassmothWingL1", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.28, -0.24)) + quat((0.26, -0.42, -0.38)) + quat((0.0, -0.28, -0.24))),
+            ("GlassmothWingR1", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.28, 0.24)) + quat((-0.26, 0.42, 0.38)) + quat((0.0, 0.28, 0.24))),
+            ("GlassmothWingL0", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.2, -0.18)) + quat((0.18, -0.34, -0.3)) + quat((0.0, -0.2, -0.18))),
+            ("GlassmothWingR0", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.2, 0.18)) + quat((-0.18, 0.34, 0.3)) + quat((0.0, 0.2, 0.18))),
+        ])
 
     animations = [
         animation("Idle", idle_channels),
