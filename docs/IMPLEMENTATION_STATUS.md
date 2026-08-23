@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Cathedral Quarter material-hierarchy milestone
+
+- deepened the authored weathered-stone, soot-brick, oxidized-iron, cold-glass,
+  rose-glass, membrane and votive palette so the exact-export view separates
+  the nave and tower from the choir, rose window and structural hardware;
+- reduced compact review lighting for the broad nave while preserving its
+  geometry, sockets, collision, route, ecology, story and operation contracts;
+  this is presentation-only and adds no recurring player-managed work;
+- completed consecutive exact-export live review of remote page 11 with stable
+  material hierarchy before merge.
+
 ## Focused Tram Graveyard material-hierarchy milestone
 
 - deepened the authored weathered-teal carriage, oxidized-iron roof and rail,
