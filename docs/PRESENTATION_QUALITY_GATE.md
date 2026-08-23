@@ -538,6 +538,14 @@ flat anatomy bars in the exact organic gallery while preserving species
 sockets, animation clips, collision, ecology and attack ownership. This is
 presentation-only; broader hostile-family live acceptance remains required.
 
+The seven later authored families now also use a shared convex-sheet mesh kit
+for primary plates, membranes and plate caps. The raised centers and continuous
+perimeter rims keep Roofleaper, Glassmoth, Miremaw, Carrion Bell, Rootweaver,
+Thornback and Ashmantle anatomy from collapsing into flat bars at compact
+review scale. The change preserves the existing node, socket, animation,
+material, collision and ecology contracts; exact exported early/late organic
+review remains required for broader human acceptance.
+
 The North Ruins archive shell now also uses a darker civic-stone and brick
 palette so its vault surround, pilasters, windows and amber beacon retain
 material separation under the compact exact-export key. The pass restores a

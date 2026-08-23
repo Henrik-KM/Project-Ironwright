@@ -569,7 +569,10 @@ def validate_shared_organic_source_tessellation() -> None:
     """Require the shared organic-family builder to retain its close-camera floor."""
     for relative, (ring_floor, side_floor, cylinder_floor) in SHARED_ORGANIC_SOURCE_TESSELLATION.items():
         source_path = ROOT / relative
-        tree = ast.parse(source_path.read_text(encoding="utf-8"), filename=str(source_path))
+        source_text = source_path.read_text(encoding="utf-8")
+        if "def add_convex_sheet(" not in source_text or '"Plate": mesh("Plate", add_convex_sheet' not in source_text or '"Membrane": mesh("Membrane", add_convex_sheet' not in source_text:
+            fail("shared organic source builder must use the convex close-camera sheet kit for plates and membranes.")
+        tree = ast.parse(source_text, filename=str(source_path))
         mesh_assignment = next(
             (
                 node

@@ -1,5 +1,17 @@
 # Implementation status
 
+## Convex organic anatomy pass
+
+- replaced the shared late-family plate, membrane and plate-cap box geometry
+  with dense convex sheets that carry a raised center and a real perimeter rim;
+  the seven later organic families now catch continuous key/rim light instead
+  of reading as flat manufactured bars at compact review scale;
+- preserved stable family nodes, anatomy sockets, animation clips, release
+  material metadata, collision ownership, ecology and attack behavior; this is
+  presentation-only and adds no player-managed work;
+- added source-builder and imported-runtime geometry checks, then live-reviewed
+  consecutive early/late organic pages and a fresh opening-world export.
+
 ## Active long-range operation affordance
 
 - the long-range command surface now receives the authoritative active-operation

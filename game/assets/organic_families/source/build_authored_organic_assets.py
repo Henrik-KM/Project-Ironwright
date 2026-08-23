@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import base64
 import json
+import math
 import sys
 from pathlib import Path
 from typing import Sequence
@@ -18,7 +19,7 @@ from typing import Sequence
 SOURCE_DIR = Path(__file__).resolve().parent
 ASSET_ROOT = SOURCE_DIR.parents[1]
 sys.path.insert(0, str(ASSET_ROOT / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_beveled_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 FAMILIES = {
@@ -74,6 +75,95 @@ FAMILIES = {
 }
 
 
+def add_convex_sheet(
+    builder: BufferBuilder,
+    size: Sequence[float],
+    material: int,
+    rings: int = 5,
+    sides: int = 24,
+) -> tuple[int, int, int, int]:
+    """Build a smooth organic plate or membrane with a raised center and edge rim.
+
+    The old shared kit used beveled boxes for both shell plates and membranes.
+    That kept the node/socket contract stable but left broad anatomy reading as
+    manufactured flat bars in the compact review gallery. This sheet keeps the
+    same authored dimensions while giving the key light a continuous convex
+    surface and a real perimeter break.
+    """
+    width, thickness, depth = (max(0.001, float(value)) for value in size)
+    rings = max(4, rings)
+    sides = max(24, sides)
+    half_width = width * 0.5
+    half_thickness = thickness * 0.5
+    half_depth = depth * 0.5
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+
+    def add_vertex(point: Sequence[float], normal: Sequence[float]) -> int:
+        index = len(positions) // 3
+        positions.extend(point)
+        length = math.sqrt(sum(value * value for value in normal)) or 1.0
+        normals.extend(value / length for value in normal)
+        return index
+
+    surfaces: dict[int, list[list[int]]] = {}
+    for sign in (1, -1):
+        center = add_vertex((0.0, sign * half_thickness, 0.0), (0.0, sign, 0.0))
+        ring_indices: list[list[int]] = []
+        for ring in range(1, rings + 1):
+            radius = ring / rings
+            y = sign * half_thickness * (0.34 + 0.66 * (1.0 - radius * radius))
+            current: list[int] = []
+            for side in range(sides):
+                angle = math.tau * side / sides
+                cosine = math.cos(angle)
+                sine = math.sin(angle)
+                current.append(add_vertex(
+                    (half_width * radius * cosine, y, half_depth * radius * sine),
+                    (sign * 0.95 * radius * cosine, sign, sign * 0.95 * radius * sine),
+                ))
+            ring_indices.append(current)
+            previous = ring_indices[-2] if len(ring_indices) > 1 else None
+            for side in range(sides):
+                next_side = (side + 1) % sides
+                if previous is None:
+                    if sign > 0:
+                        indices.extend([center, current[next_side], current[side]])
+                    else:
+                        indices.extend([center, current[side], current[next_side]])
+                elif sign > 0:
+                    indices.extend([
+                        previous[side], previous[next_side], current[next_side],
+                        previous[side], current[next_side], current[side],
+                    ])
+                else:
+                    indices.extend([
+                        previous[side], current[side], current[next_side],
+                        previous[side], current[next_side], previous[next_side],
+                    ])
+        surfaces[sign] = ring_indices
+
+    rim_front: list[int] = []
+    rim_back: list[int] = []
+    rim_y = half_thickness * 0.34
+    for side in range(sides):
+        angle = math.tau * side / sides
+        cosine = math.cos(angle)
+        sine = math.sin(angle)
+        rim_normal = (cosine, 0.0, sine)
+        rim_front.append(add_vertex((half_width * cosine, rim_y, half_depth * sine), rim_normal))
+        rim_back.append(add_vertex((half_width * cosine, -rim_y, half_depth * sine), rim_normal))
+    for side in range(sides):
+        next_side = (side + 1) % sides
+        indices.extend([
+            rim_front[side], rim_front[next_side], rim_back[next_side],
+            rim_front[side], rim_back[next_side], rim_back[side],
+        ])
+
+    return _geometry(builder, positions, normals, indices, material)
+
+
 def build_family(name: str, spec: dict) -> None:
     builder = BufferBuilder()
     wet, shell, membrane, bone, eye, tendon = range(6)
@@ -101,11 +191,8 @@ def build_family(name: str, spec: dict) -> None:
         # light instead of hiding the issue behind a material-only pass.
         "Core": mesh("Core", add_uv_sphere(builder, 0.62, wet, 24, 36)),
         "Segment": mesh("Segment", add_uv_sphere(builder, 0.48, shell, 24, 36)),
-        # The close review gallery exposed the shared plate kit as flat bars.
-        # Small bevels keep the anatomy layered while giving the controlled
-        # key/rim lights a real edge to catch at tactical distance.
-        "Plate": mesh("Plate", add_beveled_box(builder, (1.52, 0.16, 0.28), shell, 0.035)),
-        "Membrane": mesh("Membrane", add_beveled_box(builder, (1.26, 0.045, 1.08), membrane, 0.012)),
+        "Plate": mesh("Plate", add_convex_sheet(builder, (1.52, 0.16, 0.28), shell, rings=5, sides=24)),
+        "Membrane": mesh("Membrane", add_convex_sheet(builder, (1.26, 0.045, 1.08), membrane, rings=6, sides=28)),
         "Bone": mesh("Bone", add_cylinder(builder, 0.09, 0.86, bone, 24)),
         "LongBone": mesh("LongBone", add_cylinder(builder, 0.065, 1.35, bone, 24)),
         "Tendon": mesh("Tendon", add_cylinder(builder, 0.07, 1.15, tendon, 24)),
@@ -121,7 +208,7 @@ def build_family(name: str, spec: dict) -> None:
         "GillSpine": mesh("GillSpine", add_cylinder(builder, 0.045, 0.78, bone, 24)),
         "BellRib": mesh("BellRib", add_cylinder(builder, 0.04, 0.92, bone, 24)),
         "RootSpine": mesh("RootSpine", add_cylinder(builder, 0.055, 1.42, bone, 24)),
-        "PlateCap": mesh("PlateCap", add_beveled_box(builder, (0.44, 0.10, 0.18), bone, 0.022)),
+        "PlateCap": mesh("PlateCap", add_convex_sheet(builder, (0.44, 0.10, 0.18), bone, rings=4, sides=24)),
         "CrownFastener": mesh("CrownFastener", add_uv_sphere(builder, 0.06, bone, 24, 36)),
     }
 
