@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Engineer secondary-animation pass
+
+- extended the constructor's authored clips with cradle-latch breathing,
+  forge-coil and cable-spool articulation, tool-collar locomotion, welding
+  shield and clamp work response, forge-guard impact and collapse detail;
+- regenerated only the Engineer runtime asset from its original authored
+  high-definition builder and added native track-count coverage so the
+  constructor cannot silently regress to chassis-only motion;
+- regenerated-import validation passed, and exact exported Windows opening
+  plus normal-flow review passed on 2026-08-23; broader human visual
+  acceptance remains an open commercial gate.
+
 ## Focused Pathfinder secondary-animation pass
 
 - extended the scout's authored clips with survey-pod breathing, mast-collar
