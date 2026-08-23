@@ -378,6 +378,16 @@
       "description": "The first long-range group returned through streets it had learned without human supervision. The Heartforge answered with a warmer signal, as if the route itself had become part of the society."
     },
     {
+      "id": "story.machine.first_recovery",
+      "arc": "machine_witness",
+      "trigger": "machine_witness",
+      "trigger_id": "machine.first_recovery",
+      "sequence": 91,
+      "display_name": "The Signal That Came Home",
+      "source_name": "Field casualty recovery",
+      "description": "The disabled frame was not replaced from memory. A formation followed its last signal, carried the wounded machine through the town, and made room for it beside the Heartforge again."
+    },
+    {
       "id": "story.endgame.severance",
       "arc": "ecological_convergence",
       "trigger": "endgame_completed",

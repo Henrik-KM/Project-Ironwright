@@ -254,6 +254,19 @@
       "noise_radius": 34.0,
       "threat_level": 1.24,
       "rewards": {"suppress_region": 0.08}
+    },
+    {
+      "id": "dynamic.machine_recovery",
+      "display_name": "Recover {machine}",
+      "trigger": "casualty",
+      "description": "{machine} went dark in {region}. Authorize a protected retrieval group to reach the casualty beacon, restore the disabled frame, and carry it back before the ecology buries the signal.",
+      "requirements": {"heartforge_tier": 2, "technology": "tech.machine.group_coordination"},
+      "team_roles": ["scout", "guardian", "engineer"],
+      "scrap_cost": 110,
+      "work_seconds": 12.0,
+      "noise_radius": 42.0,
+      "threat_level": 1.46,
+      "rewards": {"recover_machine": true}
     }
   ]
 }

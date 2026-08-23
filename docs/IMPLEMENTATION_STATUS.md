@@ -2630,3 +2630,16 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   playtests or live targeting;
 - added release regression coverage for staged depth, closer camera framing,
   and review-scene cleanup before spatial and performance checks.
+
+## Focused field-casualty recovery milestone
+
+- added bounded persistent casualty records for disabled non-companion frames,
+  including stable identity, level, field position and discovered region;
+- generated a world-state recovery proposal from each casualty beacon, with a
+  physical route extended to the recorded machine position and a visible
+  recovery beacon in the world;
+- restored the damaged frame only after the escorted group physically returned
+  to the Heartforge, then preserved the recovery record, active operation and
+  stable machine-witness archive moment through save/load;
+- added complete-game integration coverage for casualty capture, provenance,
+  route targeting, recovery completion, bounded one-time cleanup and persistence.

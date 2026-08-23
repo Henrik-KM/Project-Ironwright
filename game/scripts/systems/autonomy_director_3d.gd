@@ -3,6 +3,7 @@ extends Node
 
 signal robot_registered(robot: RobotUnit3D)
 signal robot_lost(robot_name: String, position: Vector3)
+signal robot_casualty(record: Dictionary)
 signal operation_changed(kind: StringName, state: StringName, detail: String)
 signal expedition_core_secured
 signal expedition_returned
@@ -975,6 +976,13 @@ func _abort_operation(operation: Dictionary, reason: String) -> void:
 
 
 func _on_robot_destroyed(robot: RobotUnit3D) -> void:
+    robot_casualty.emit({
+        "name": String(robot.name),
+        "archetype": String(robot.archetype),
+        "level": robot.level,
+        "callsign": robot.display_identity(),
+        "position": robot.global_position,
+    })
     robot_lost.emit(robot.name, robot.global_position)
     if not salvage_operation.is_empty() and bool(salvage_operation.get("distributed", false)):
         var assignments: Dictionary = salvage_operation.get("assignments", {})
