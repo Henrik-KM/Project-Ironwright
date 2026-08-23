@@ -486,6 +486,13 @@ while species sockets, animation clips, collision, ecology and attack
 ownership remain unchanged. This is presentation-only; broader hostile-family
 live acceptance remains required.
 
+The remaining common/late hostile shells now carry the same treatment across
+Veilstalker thorax and dorsal plates, Burrower fins and bore-lamp guards, and
+Broodmass ribs, membrane fans and lobe/maw ridges. This closes another set of
+flat anatomy bars in the exact organic gallery while preserving species
+sockets, animation clips, collision, ecology and attack ownership. This is
+presentation-only; broader hostile-family live acceptance remains required.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside

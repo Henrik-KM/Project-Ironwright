@@ -11,7 +11,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "burrower.gltf"
@@ -42,14 +42,14 @@ def main() -> None:
         "Ring": mesh("Ring", add_cylinder(builder, 0.3, 0.14, shell, 24)),
         "Tip": mesh("Tip", add_uv_sphere(builder, 0.2, wet, 16, 28)),
         "Jaw": mesh("Jaw", add_cylinder(builder, 0.065, 0.62, bone, 24)),
-        "Fin": mesh("Fin", add_box(builder, (0.12, 0.7, 0.58), shell)),
+        "Fin": mesh("Fin", add_beveled_box(builder, (0.12, 0.7, 0.58), shell, 0.022)),
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.08, eye, 16, 24)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.08, 1.15, tendon, 24)),
         "Talon": mesh("Talon", add_cylinder(builder, 0.05, 0.58, bone, 24)),
         "Spine": mesh("Spine", add_cylinder(builder, 0.09, 0.92, bone, 24)),
         "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 16, 24)),
         "DrillFlute": mesh("DrillFlute", add_cylinder(builder, 0.035, 0.56, bone, 24)),
-        "LampGuard": mesh("LampGuard", add_box(builder, (0.18, 0.08, 0.12), shell)),
+        "LampGuard": mesh("LampGuard", add_beveled_box(builder, (0.18, 0.08, 0.12), shell, 0.018)),
     }
 
     nodes: list[dict] = [{

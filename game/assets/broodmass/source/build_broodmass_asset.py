@@ -11,7 +11,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "broodmass.gltf"
@@ -42,8 +42,8 @@ def main() -> None:
         "Core": mesh("Core", add_uv_sphere(builder, 0.74, flesh, 24, 36)),
         "Segment": mesh("Segment", add_uv_sphere(builder, 0.58, shell, 24, 32)),
         "Lobe": mesh("Lobe", add_uv_sphere(builder, 0.42, flesh, 24, 36)),
-        "Rib": mesh("Rib", add_box(builder, (1.5, 0.15, 0.24), shell)),
-        "Fan": mesh("Fan", add_box(builder, (0.18, 1.4, 0.8), membrane)),
+        "Rib": mesh("Rib", add_beveled_box(builder, (1.5, 0.15, 0.24), shell, 0.032)),
+        "Fan": mesh("Fan", add_beveled_box(builder, (0.18, 1.4, 0.8), membrane, 0.025)),
         "Maw": mesh("Maw", add_uv_sphere(builder, 0.44, membrane, 24, 36)),
         "Spine": mesh("Spine", add_cylinder(builder, 0.13, 1.15, bone, 24)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.12, 1.72, tendon, 24)),
@@ -51,8 +51,8 @@ def main() -> None:
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.105, eye, 20, 28)),
         "Tendon": mesh("Tendon", add_cylinder(builder, 0.065, 0.82, tendon, 28)),
         "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.055, bone, 20, 28)),
-        "LobeRidge": mesh("LobeRidge", add_box(builder, (0.5, 0.08, 0.16), bone)),
-        "MawRidge": mesh("MawRidge", add_box(builder, (0.62, 0.09, 0.14), bone)),
+        "LobeRidge": mesh("LobeRidge", add_beveled_box(builder, (0.5, 0.08, 0.16), bone, 0.018)),
+        "MawRidge": mesh("MawRidge", add_beveled_box(builder, (0.62, 0.09, 0.14), bone, 0.018)),
         "CrownFastener": mesh("CrownFastener", add_uv_sphere(builder, 0.065, bone, 16, 24)),
         "CrownCap": mesh("CrownCap", add_uv_sphere(builder, 0.28, shell, 24, 36)),
     }
