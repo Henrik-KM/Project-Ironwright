@@ -584,6 +584,13 @@ pass preserves the laboratory identity, landmark geometry, collision, route,
 discovery and operation ownership; consecutive exact exported Buried
 Laboratories review is complete.
 
+The Root Cistern shell now also uses a deeper wet-root, layered-bark, bone and
+buried-alloy palette with restrained cold-signal and root-pulse emission so the
+final core separates from the basin, ribs, pylon braces, signal inlays and
+cables under the compact exact-export key. The pass preserves the final-basin
+identity, landmark geometry, collision, route, discovery and operation
+ownership; consecutive exact exported Root Cistern review is complete.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside

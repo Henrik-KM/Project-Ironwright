@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Root Cistern material-hierarchy milestone
+
+- deepened the authored wet-root, layered-bark, bone, buried-alloy, cold-signal
+  and root-pulse palette so the exact-export view separates the final core from
+  the basin, ribs, pylon braces, signal inlays and cables;
+- restrained root-pulse and cold-signal emission and reduced compact review
+  lighting for the core while preserving its geometry, sockets, collision,
+  route, ecology, story and operation contracts; this is presentation-only and
+  adds no recurring player-managed work;
+- completed consecutive exact-export live review of remote page 14 with stable
+  material hierarchy before merge.
+
 ## Focused Buried Laboratories material-hierarchy milestone
 
 - deepened the authored laboratory ceramic, frame, containment glass, core,
