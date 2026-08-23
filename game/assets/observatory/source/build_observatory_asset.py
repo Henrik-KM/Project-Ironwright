@@ -21,13 +21,13 @@ OUTPUT_PATH = SOURCE_DIR / "observatory.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Observatory weathered concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.30, 0.34, 0.36, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.78}},
-        {"name": "Observatory dark alloy", "pbrMetallicRoughness": {"baseColorFactor": [0.11, 0.17, 0.20, 1.0], "metallicFactor": 0.74, "roughnessFactor": 0.42}},
-        {"name": "Observatory oxidized trim", "pbrMetallicRoughness": {"baseColorFactor": [0.46, 0.22, 0.09, 1.0], "metallicFactor": 0.42, "roughnessFactor": 0.62}},
-        {"name": "Observatory violet dish", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.12, 0.30, 1.0], "metallicFactor": 0.38, "roughnessFactor": 0.42}, "emissiveFactor": [0.08, 0.03, 0.20]},
-        {"name": "Observatory cyan signal", "pbrMetallicRoughness": {"baseColorFactor": [0.04, 0.24, 0.30, 1.0], "metallicFactor": 0.22, "roughnessFactor": 0.26}, "emissiveFactor": [0.03, 0.34, 0.42]},
-        {"name": "Observatory warm console", "pbrMetallicRoughness": {"baseColorFactor": [0.58, 0.24, 0.06, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.38}, "emissiveFactor": [0.45, 0.10, 0.018]},
-        {"name": "Observatory ridge signal", "pbrMetallicRoughness": {"baseColorFactor": [0.06, 0.30, 0.35, 1.0], "metallicFactor": 0.26, "roughnessFactor": 0.30}, "emissiveFactor": [0.01, 0.16, 0.20]},
+        {"name": "Observatory weathered concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.07, 0.09, 0.10, 1.0], "metallicFactor": 0.06, "roughnessFactor": 0.92}},
+        {"name": "Observatory dark alloy", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.07, 0.09, 1.0], "metallicFactor": 0.46, "roughnessFactor": 0.58}},
+        {"name": "Observatory oxidized trim", "pbrMetallicRoughness": {"baseColorFactor": [0.28, 0.07, 0.018, 1.0], "metallicFactor": 0.26, "roughnessFactor": 0.76}},
+        {"name": "Observatory violet dish", "pbrMetallicRoughness": {"baseColorFactor": [0.07, 0.035, 0.14, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.58}, "emissiveFactor": [0.02, 0.005, 0.06]},
+        {"name": "Observatory cyan signal", "pbrMetallicRoughness": {"baseColorFactor": [0.015, 0.12, 0.17, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.38}, "emissiveFactor": [0.0, 0.12, 0.18]},
+        {"name": "Observatory warm console", "pbrMetallicRoughness": {"baseColorFactor": [0.38, 0.10, 0.015, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.52}, "emissiveFactor": [0.22, 0.04, 0.005]},
+        {"name": "Observatory ridge signal", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.15, 0.18, 1.0], "metallicFactor": 0.16, "roughnessFactor": 0.42}, "emissiveFactor": [0.0, 0.08, 0.10]},
     ]
     meshes: list[dict] = []
 
