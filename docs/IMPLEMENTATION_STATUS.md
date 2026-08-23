@@ -2933,3 +2933,16 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - added aesthetic regression coverage for the authored chassis and cargo-bin
   vertex density; exact exported live review remains required for the full
   friendly-role family acceptance gate.
+
+## Focused Pathfinder manufactured-edge milestone
+
+- regenerated the source-authored Pathfinder scout shell with bounded beveled
+  chassis, optic housing, fins, sensor pod, signal rail, mast braces, dish
+  ribs and sensor-wing geometry so its survey hardware catches close-camera
+  light as maintained field instrumentation rather than flat blocks;
+- preserved stable scout node names, sensor and survey sockets, animation
+  clips, collision ownership and autonomous route-screening behaviour; the
+  refinement is presentation-only and adds no recurring machine task;
+- added aesthetic regression coverage for the authored chassis and sensor pod
+  vertex density; exact exported live review remains required for the full
+  friendly-role family acceptance gate.

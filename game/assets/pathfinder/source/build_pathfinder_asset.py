@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "pathfinder.gltf"
@@ -40,31 +40,31 @@ def main() -> None:
 
     chassis, steel, oxide, green, cyan, rubber = range(6)
     mesh_ids = {
-        "Chassis": mesh("Chassis", add_box(builder, (1.18, 0.58, 1.38), chassis)),
-        "Core": mesh("Core", add_box(builder, (0.94, 0.28, 1.1), oxide)),
-        "Plate": mesh("Plate", add_box(builder, (1.04, 0.15, 0.13), steel)),
+        "Chassis": mesh("Chassis", add_beveled_box(builder, (1.18, 0.58, 1.38), chassis, 0.08)),
+        "Core": mesh("Core", add_beveled_box(builder, (0.94, 0.28, 1.1), oxide, 0.05)),
+        "Plate": mesh("Plate", add_beveled_box(builder, (1.04, 0.15, 0.13), steel, 0.03)),
         "Corner": mesh("Corner", add_cylinder(builder, 0.1, 0.14, steel, 20)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.1, 0.68, rubber, 20)),
-        "Foot": mesh("Foot", add_box(builder, (0.25, 0.11, 0.36), oxide)),
-        "OpticHousing": mesh("OpticHousing", add_box(builder, (0.42, 0.22, 0.12), chassis)),
+        "Foot": mesh("Foot", add_beveled_box(builder, (0.25, 0.11, 0.36), oxide, 0.028)),
+        "OpticHousing": mesh("OpticHousing", add_beveled_box(builder, (0.42, 0.22, 0.12), chassis, 0.028)),
         "Optic": mesh("Optic", add_uv_sphere(builder, 0.08, cyan)),
-        "Fin": mesh("Fin", add_box(builder, (0.16, 0.34, 0.82), steel)),
+        "Fin": mesh("Fin", add_beveled_box(builder, (0.16, 0.34, 0.82), steel, 0.035)),
         "Mast": mesh("Mast", add_cylinder(builder, 0.055, 1.82, chassis, 20)),
         "Dish": mesh("Dish", add_uv_sphere(builder, 0.3, steel, 12, 24)),
         "DishHub": mesh("DishHub", add_cylinder(builder, 0.1, 0.16, cyan, 24)),
         "BeaconRing": mesh("BeaconRing", add_cylinder(builder, 0.16, 0.08, oxide, 24)),
         "Beacon": mesh("Beacon", add_uv_sphere(builder, 0.11, green)),
-        "SensorPod": mesh("SensorPod", add_box(builder, (0.64, 0.25, 0.18), chassis)),
-        "SensorRail": mesh("SensorRail", add_box(builder, (0.72, 0.05, 0.06), green)),
+        "SensorPod": mesh("SensorPod", add_beveled_box(builder, (0.64, 0.25, 0.18), chassis, 0.03)),
+        "SensorRail": mesh("SensorRail", add_beveled_box(builder, (0.72, 0.05, 0.06), green, 0.012)),
         "Cable": mesh("Cable", add_cylinder(builder, 0.03, 0.7, rubber, 12)),
         # Survey-machine close-camera hardware: restrained mast braces, dish
         # ribs and signal service surfaces make the scout read as a maintained
         # instrument instead of a chassis carrying one undifferentiated dish.
-        "MastBrace": mesh("MastBrace", add_box(builder, (0.08, 0.72, 0.12), steel)),
+        "MastBrace": mesh("MastBrace", add_beveled_box(builder, (0.08, 0.72, 0.12), steel, 0.018)),
         "MastCollar": mesh("MastCollar", add_cylinder(builder, 0.09, 0.1, oxide, 24)),
-        "DishRib": mesh("DishRib", add_box(builder, (0.06, 0.08, 0.58), oxide)),
+        "DishRib": mesh("DishRib", add_beveled_box(builder, (0.06, 0.08, 0.58), oxide, 0.018)),
         "SignalCanister": mesh("SignalCanister", add_cylinder(builder, 0.08, 0.2, green, 24)),
-        "SensorWing": mesh("SensorWing", add_box(builder, (0.12, 0.22, 0.42), steel)),
+        "SensorWing": mesh("SensorWing", add_beveled_box(builder, (0.12, 0.22, 0.42), steel, 0.025)),
         "SurveyLens": mesh("SurveyLens", add_uv_sphere(builder, 0.07, cyan, 12, 16)),
     }
 
