@@ -2907,3 +2907,16 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - added aesthetic regression coverage for the denser dorsal plate geometry;
   exact exported live review remains required for the broader organic-family
   acceptance gate.
+
+## Focused Warden manufactured-edge milestone
+
+- regenerated the source-authored Warden guardian shell with bounded beveled
+  chassis, armour plate, optic housing, breech, heat-panel, louver and
+  counterweight geometry so the escort frame catches close-camera light across
+  its primary manufactured surfaces rather than reading as flat blocks;
+- preserved the stable guardian node names, weapon and sensor sockets,
+  animation clips, collision ownership and autonomous protection behaviour;
+  the refinement is presentation-only and adds no recurring machine task;
+- added aesthetic regression coverage for the authored chassis and breech
+  vertex density; exact exported live review remains required for the full
+  friendly-role family acceptance gate.

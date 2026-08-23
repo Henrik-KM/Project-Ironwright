@@ -17,7 +17,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "warden.gltf"
@@ -45,30 +45,30 @@ def main() -> None:
 
     chassis, steel, oxide, warm, cyan, rubber = range(6)
     mesh_ids = {
-        "Chassis": mesh("Chassis", add_box(builder, (1.8, 0.86, 1.76), chassis)),
-        "Core": mesh("Core", add_box(builder, (1.48, 0.44, 1.42), oxide)),
-        "Plate": mesh("Plate", add_box(builder, (1.55, 0.2, 0.16), steel)),
-        "SidePlate": mesh("SidePlate", add_box(builder, (0.22, 0.72, 1.34), steel)),
+        "Chassis": mesh("Chassis", add_beveled_box(builder, (1.8, 0.86, 1.76), chassis, 0.12)),
+        "Core": mesh("Core", add_beveled_box(builder, (1.48, 0.44, 1.42), oxide, 0.07)),
+        "Plate": mesh("Plate", add_beveled_box(builder, (1.55, 0.2, 0.16), steel, 0.045)),
+        "SidePlate": mesh("SidePlate", add_beveled_box(builder, (0.22, 0.72, 1.34), steel, 0.045)),
         "Corner": mesh("Corner", add_cylinder(builder, 0.13, 0.18, oxide, 20)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.13, 0.74, rubber, 20)),
-        "Foot": mesh("Foot", add_box(builder, (0.3, 0.13, 0.44), oxide)),
-        "OpticHousing": mesh("OpticHousing", add_box(builder, (0.58, 0.3, 0.14), chassis)),
+        "Foot": mesh("Foot", add_beveled_box(builder, (0.3, 0.13, 0.44), oxide, 0.035)),
+        "OpticHousing": mesh("OpticHousing", add_beveled_box(builder, (0.58, 0.3, 0.14), chassis, 0.035)),
         "Optic": mesh("Optic", add_uv_sphere(builder, 0.095, warm)),
-        "Breech": mesh("Breech", add_box(builder, (0.66, 0.42, 0.62), oxide)),
+        "Breech": mesh("Breech", add_beveled_box(builder, (0.66, 0.42, 0.62), oxide, 0.06)),
         "Cannon": mesh("Cannon", add_cylinder(builder, 0.14, 1.52, chassis, 24)),
         "Muzzle": mesh("Muzzle", add_cylinder(builder, 0.18, 0.15, warm, 24)),
         "RecoilRing": mesh("RecoilRing", add_cylinder(builder, 0.18, 0.09, cyan, 24)),
-        "HeatPanel": mesh("HeatPanel", add_box(builder, (0.92, 0.24, 0.16), chassis)),
-        "Louver": mesh("Louver", add_box(builder, (0.7, 0.045, 0.08), steel)),
-        "Counterweight": mesh("Counterweight", add_box(builder, (1.68, 0.16, 0.5), chassis)),
+        "HeatPanel": mesh("HeatPanel", add_beveled_box(builder, (0.92, 0.24, 0.16), chassis, 0.035)),
+        "Louver": mesh("Louver", add_beveled_box(builder, (0.7, 0.045, 0.08), steel, 0.012)),
+        "Counterweight": mesh("Counterweight", add_beveled_box(builder, (1.68, 0.16, 0.5), chassis, 0.04)),
         "Antenna": mesh("Antenna", add_cylinder(builder, 0.045, 0.72, rubber, 20)),
         "Beacon": mesh("Beacon", add_uv_sphere(builder, 0.1, cyan)),
         "Fastener": mesh("Fastener", add_cylinder(builder, 0.045, 0.045, warm, 20)),
         # Close-camera guardian hardware: these restrained service surfaces
         # make the targeting and recoil language read as maintained machinery
         # rather than a single barrel laid over a box chassis.
-        "TargetingFace": mesh("TargetingFace", add_box(builder, (0.88, 0.16, 0.08), steel)),
-        "OpticShroud": mesh("OpticShroud", add_box(builder, (0.72, 0.16, 0.18), oxide)),
+        "TargetingFace": mesh("TargetingFace", add_beveled_box(builder, (0.88, 0.16, 0.08), steel, 0.02)),
+        "OpticShroud": mesh("OpticShroud", add_beveled_box(builder, (0.72, 0.16, 0.18), oxide, 0.03)),
         "RecoilCollar": mesh("RecoilCollar", add_cylinder(builder, 0.14, 0.08, cyan, 24)),
         "ThermalFin": mesh("ThermalFin", add_box(builder, (0.09, 0.34, 0.42), steel)),
         "BreechClamp": mesh("BreechClamp", add_cylinder(builder, 0.17, 0.08, warm, 24)),

@@ -900,6 +900,9 @@ func _run_all() -> void:
     _expect(_find_named(authored_warden, "WardenRecoilCollarLeft") != null and _find_named(authored_warden, "WardenThermalFinRight") != null and _find_named(authored_warden, "WardenBreechClamp") != null, "The authored Warden model must expose close-camera recoil, thermal and breech hardware.")
     _expect(_find_named(authored_warden, "RearShieldCore") != null and _find_named(authored_warden, "RearShieldCornerCap") != null, "The Warden must expose beveled rear protection hardware.")
     _expect(_find_named(authored_warden, "ShieldRibCore") != null and _find_named(authored_warden, "ShieldRibCornerCap") != null, "The Warden must expose a beveled protection-rib assembly.")
+    var warden_chassis := _find_named(authored_warden, "Chassis") as MeshInstance3D
+    var warden_breech := _find_named(authored_warden, "WardenBreech") as MeshInstance3D
+    _expect(warden_chassis != null and warden_breech != null and _mesh_vertex_count(warden_chassis) >= 48 and _mesh_vertex_count(warden_breech) >= 48, "The authored Warden chassis and breech must retain beveled high-definition manufactured edges.")
     authored_warden.queue_free()
 
     var disabled_robot := ROBOT_SCENE.instantiate() as RobotUnit3D

@@ -446,6 +446,14 @@ instead of flat runtime inserts. This strengthens the guardian read in escort
 and remote-salvage views while preserving formation, weapon sockets, collision,
 animation and autonomous protection behaviour.
 
+The source-authored Warden shell now carries that manufactured-edge treatment
+through its primary chassis, armour plates, optic housing, breech, heat panels,
+louvers and counterweight as well. The close-camera surfaces use the shared
+beveled production helper rather than flat six-face blocks, while node names,
+sockets, animation clips and gameplay ownership remain unchanged. This is a
+presentation-only refinement; exact exported live review of the guardian page
+is required before the broader friendly-role family gate can be accepted.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside
