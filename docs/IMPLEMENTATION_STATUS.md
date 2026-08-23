@@ -2728,3 +2728,20 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   regression coverage; the exact Windows export was live-reviewed on the
   Buried Laboratories page with the prism, gantry and vessel bay reading
   clearly across consecutive captures.
+
+## Focused species-aware organic review staging milestone
+
+- raised the authored Skitterling presentation shell from its earlier
+  thumbnail-scale treatment while keeping its small scavenger identity and
+  all gameplay-owned collision, movement, ecology and attack contracts intact;
+- staged small early-organic families slightly forward in the development-only
+  review gallery and tightened the organic camera so winged and low-profile
+  anatomy can be judged beside larger families without scaling the actor root
+  or introducing a runtime presentation dependency;
+- added release regression coverage for depth-separated rows, the tighter
+  organic frame, the enlarged Skitterling authored shell and its forward
+  inspection placement;
+- live-reviewed the exact Windows export on the early- and late-organic pages,
+  then started a new world and moved through the opening frame to confirm the
+  presentation pass does not disturb the shipped title, objective or movement
+  path.
