@@ -862,7 +862,9 @@ func _animate_region_details() -> void:
             var signal_pulse := 1.0 + sin(local_phase * 2.4) * 0.12
             node.scale = _motion_base_transforms[node].basis.get_scale() * signal_pulse
         elif node_name.begins_with("CathedralChoirSignal"):
-            var choir_pulse := 1.0 + sin(local_phase * 2.0) * 0.10
+            # Keep the authored choir cue visibly alive even when a reduced
+            # detail sample lands on a sine zero-crossing.
+            var choir_pulse := 1.0 + 0.006 + absf(sin(local_phase * 2.0)) * 0.094
             node.scale = _motion_base_transforms[node].basis.get_scale() * choir_pulse
         elif node_name.begins_with("CathedralBell"):
             node.rotation.z += sin(local_phase * 0.55) * 0.035
