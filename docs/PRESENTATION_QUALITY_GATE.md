@@ -523,6 +523,13 @@ vertical-life hierarchy without changing landmark geometry, collision, route,
 discovery or operation ownership; consecutive exact exported East Tenements
 review is complete.
 
+The Municipal Glasshouse shell now also uses a deeper frame, restrained cold
+glass, lower grow-light emission and a darker organic-growth palette so the
+transparent panes separate from crop beds, service amber and cultivation
+signals under the compact exact-export key. The pass preserves the cultivation
+identity, landmark geometry, collision, route, discovery and operation
+ownership; consecutive exact exported Municipal Glasshouse review is complete.
+
 Buried Laboratories now carries a vertical extraction-bay pass: a protected
 gantry, containment mast, specimen cradle, genome-prism housing and framed
 service panel give the late-game laboratory a legible focal operation beside

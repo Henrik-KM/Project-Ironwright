@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Municipal Glasshouse material-hierarchy milestone
+
+- deepened the authored frame, glass, grow-light and organic-growth palette so
+  the exact-export view separates the greenhouse structure from transparent
+  panes, crop beds, service amber and cultivation signals;
+- reduced compact review lighting for the broad glasshouse shell while
+  preserving its geometry, sockets, collision, route, ecology, story and
+  vertical-life contracts; this is presentation-only and adds no recurring
+  player-managed work;
+- completed consecutive exact-export live review of remote page 7 with stable
+  material hierarchy before merge.
+
 ## Focused East Tenements material-hierarchy milestone
 
 - deepened the authored residential brick, concrete and rooftop-tank palette
