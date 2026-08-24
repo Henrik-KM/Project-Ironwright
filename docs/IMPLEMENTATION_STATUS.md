@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused East Tenements facade-depth pass
+
+- added authored floor bands and a central approach-facing facade spine to
+  break both residential blocks into maintained structural bays;
+- aligned the release-gallery balconies, rails and clothesline details to the
+  actual block faces and reduced their material mass so windows and rooftop
+  service hardware remain readable;
+- preserved the tenement collision, navigation, operation and ecology
+  contracts; exact Windows export review passed on 2026-08-24 at 1280×720 on
+  page 6/14.
+
 ## Focused Cathedral rose-window depth pass
 
 - added a dense continuous iron rim and eight radial mullions to both the

@@ -18,6 +18,13 @@ and the release-gallery facade. Exact Windows capture at 1280×720 on page
 assembly rather than a flat saturated disk; the broader human art-acceptance
 gate remains open.
 
+The East Tenements review now carries continuous authored floor bands and a
+central facade spine, with the release balcony, rail and clothesline dressing
+aligned to the approach-facing block surfaces. Exact Windows capture at
+1280×720 on page 6/14 confirms the residential structure reads as attached,
+maintained architecture without obscuring its windows; broader human region
+acceptance remains open.
+
 The current visual state is explicitly classified as **pre-alpha production prototype** until the following gates are met.
 
 The exact merged Windows export was live-reviewed after the latest core-gallery

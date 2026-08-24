@@ -481,29 +481,34 @@ func _dress_industrial(root: Node3D) -> void:
 
 func _dress_tenement(root: Node3D) -> void:
     var brick := _textured_material(&"brick", Color("55443d"), 0.0, 0.88)
-    var cloth := ModelKit3D.material(Color("6d514b"), 0.0, 0.92)
+    var cloth := ModelKit3D.material(Color("4b3437"), 0.0, 0.92)
     var tenement_detail := Node3D.new()
     tenement_detail.name = "HighDefinitionTenementDressing"
     root.add_child(tenement_detail)
     var rail_metal := _textured_material(&"rust", Color("70462f"), 0.4, 0.72)
-    var cloth_edge := ModelKit3D.material(Color("9a7065"), 0.0, 0.86)
+    var cloth_edge := ModelKit3D.material(Color("70545a"), 0.0, 0.86)
     for side_index in range(2):
         var side := -1.0 if side_index == 0 else 1.0
+        var facade_z := 2.94 if side < 0.0 else 5.34
         for floor_index in range(4):
-            var y := 2.5 + float(floor_index) * 2.35
+            var y := 1.25 + float(floor_index) * 2.25
             var balcony_index := floor_index * 2 + side_index
-            var balcony := ModelKit3D.add_beveled_box(tenement_detail, Vector3(9.0, 0.18, 1.2), Vector3(side * 8.5, y, 0.0), brick, Vector3.ZERO, "TenementBalcony%02d" % balcony_index, 0.16)
+            # The authored blocks sit at x +/-5 with their approach faces at
+            # z 2.5 and 4.9. Keep the release dressing on those same faces so
+            # balconies read as attached residential infrastructure instead of
+            # detached rails floating behind the landmark.
+            var balcony := ModelKit3D.add_beveled_box(tenement_detail, Vector3(4.6, 0.18, 0.92), Vector3(side * 5.0, y, facade_z), brick, Vector3.ZERO, "TenementBalcony%02d" % balcony_index, 0.16)
             for front_back in [-1.0, 1.0]:
-                ModelKit3D.add_cylinder(balcony, 0.055, 8.2, Vector3(0.0, 0.66, front_back * 0.5), rail_metal, Vector3(0.0, 0.0, PI * 0.5), "TenementBalconyRail%02d" % balcony_index)
+                ModelKit3D.add_cylinder(balcony, 0.055, 4.1, Vector3(0.0, 0.66, front_back * 0.38), rail_metal, Vector3(0.0, 0.0, PI * 0.5), "TenementBalconyRail%02d" % balcony_index)
             for post_index in range(3):
-                ModelKit3D.add_cylinder(balcony, 0.045, 0.72, Vector3(-3.5 + float(post_index) * 3.5, 0.36, -0.5), rail_metal, Vector3.ZERO, "TenementBalconyPost%02d_%02d" % [balcony_index, post_index])
-            ModelKit3D.add_surface_panel(balcony, Vector3(1.4, 0.54, 0.08), Vector3(side * -0.2, 0.48, 0.56), brick, rail_metal, Vector3.ZERO, "TenementBalconyService%02d" % balcony_index)
+                ModelKit3D.add_cylinder(balcony, 0.045, 0.72, Vector3(-1.7 + float(post_index) * 1.7, 0.36, 0.38), rail_metal, Vector3.ZERO, "TenementBalconyPost%02d_%02d" % [balcony_index, post_index])
+            ModelKit3D.add_surface_panel(balcony, Vector3(1.4, 0.54, 0.08), Vector3(side * -0.2, 0.48, 0.42), brick, rail_metal, Vector3.ZERO, "TenementBalconyService%02d" % balcony_index)
             ModelKit3D.add_cylinder(balcony, 0.035, 5.0, Vector3(0.0, 0.76, -0.1), rail_metal, Vector3(PI * 0.5, 0.0, 0.0), "TenementClothesline%02d" % balcony_index)
-            for cloth_index in range(5):
+            for cloth_index in range(3):
                 ModelKit3D.add_beveled_box(
                     balcony,
-                    Vector3(0.55, 0.75, 0.04),
-                    Vector3(side * -0.65, 0.54, -2.4 + float(cloth_index) * 1.2),
+                    Vector3(0.34, 0.50, 0.04),
+                    Vector3(-0.85 + float(cloth_index) * 0.85, 0.42, 0.42),
                     cloth if cloth_index % 2 == 0 else cloth_edge,
                     Vector3(0.0, float(cloth_index) * 0.08, 0.0),
                     "TenementHangingCloth%02d_%02d" % [balcony_index, cloth_index],

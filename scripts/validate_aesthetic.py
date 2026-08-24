@@ -430,6 +430,8 @@ AUTHORED_REGION_ASSETS = {
             "TenementFrontWindowLintelL0_0",
             "TenementFrontWindowSillL0_0",
             "TenementBlockLEdgeL",
+            "TenementFacadeBandL0",
+            "TenementFacadePillarL",
             "TenementBalcony0",
             "TenementBalconyBrace0_L",
             "TenementFireEscapeLadder",
