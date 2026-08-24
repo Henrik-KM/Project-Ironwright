@@ -9,6 +9,8 @@
   moving the presentation layer to locale-aware content lookup;
 - exact Windows export review passed on 2026-08-24 at 1280×720 in the German
   dynamic-operation fixture with no mixed-locale operation text.
+- authored operation catalog entries now use the same locale boundary; exact
+  Windows review of the West Grid authored offer also passed in German.
 
 ## Focused Municipal Glasshouse material/readability pass
 

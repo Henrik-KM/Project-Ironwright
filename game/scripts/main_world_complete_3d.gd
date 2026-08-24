@@ -302,6 +302,25 @@ func _start_dynamic_operation_review() -> void:
     hud.push_notification("WORLD-STATE RESPONSE OFFER · PRESSURE HAS BECOME A CHOICE")
 
 
+func _start_authored_operation_review() -> void:
+    if long_operation_director == null or operations_hud == null:
+        return
+    var authored_operation := long_operation_director.operation(&"operation.west_grid_survey")
+    if authored_operation.is_empty():
+        return
+    authored_operation = long_operation_director._with_route_preview(authored_operation)
+    var locale_service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    var ready_status: String = locale_service.text("command.operations.ready") if locale_service != null else "A physical authored operation is ready to authorize."
+    operations_hud.update_operations([authored_operation], ready_status, false)
+    operations_hud.open_operations()
+    # Freeze the ordinary world refresh so this non-saving presentation fixture
+    # keeps the authored entry visible instead of replacing it with the normal
+    # progression-gated offer list on the next frame.
+    set_process(false)
+    player.input_enabled = false
+    hud.push_notification("AUTHORED OPERATION REVIEW · THE WEST GRID BRIEFING IS READY")
+
+
 func _start_route_memory_review() -> void:
     if progression == null or region_director == null or long_operation_director == null or operations_hud == null:
         return

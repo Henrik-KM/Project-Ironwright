@@ -10,6 +10,11 @@ locale. Exact Windows capture at 1280×720 in German confirms that the
 strategic-operation modal no longer mixes German chrome with English dynamic
 content; broader professional localization review remains open.
 
+The authored operation catalog now follows the same boundary. Exact Windows
+capture of the West Grid offer at 1280×720 confirms that a stable operation
+name and briefing also remain German through the release modal; broader
+professional localization review remains open.
+
 The final-protocol review now enters the complete-game milestone state and
 clears the opening salvage beacon when the late-run crisis starts and after
 victory, so neither the HUD nor the world-space guidance layer contradicts
