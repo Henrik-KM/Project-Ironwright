@@ -13,6 +13,7 @@ var last_health: float = -1.0
 var fire_remaining: float = 0.0
 var hit_remaining: float = 0.0
 var fallback_time: float = 0.0
+var progression_time: float = 0.0
 var active_clip: StringName = &""
 
 
@@ -39,8 +40,10 @@ func _process(delta: float) -> void:
     if subject == null or not is_instance_valid(subject):
         return
     fallback_time += delta
+    progression_time += delta
     fire_remaining = maxf(0.0, fire_remaining - delta)
     hit_remaining = maxf(0.0, hit_remaining - delta)
+    _animate_progression_hardware()
 
     if animation_player == null:
         _animate_fallback(delta)
@@ -149,6 +152,42 @@ func _animate_fallback(delta: float) -> void:
     var movement := clampf(speed / 4.5, 0.0, 1.0)
     model_root.position.y = sin(fallback_time * 1.35) * 0.012
     model_root.rotation.z = sin(fallback_time * 8.0) * 0.018 * movement
+
+
+func _animate_progression_hardware() -> void:
+    if subject == null or not is_instance_valid(subject):
+        return
+    var progression_root := subject.get_node_or_null("MechromancerProgressionVisuals") as Node3D
+    if progression_root == null or not progression_root.visible:
+        return
+
+    # These are intentionally small, low-frequency hardware responses. They
+    # make the player's learned machine language feel alive while preserving
+    # the human field-engineer silhouette, collision capsule and imported clip
+    # ownership. The nodes are resolved each frame because progression rebuilds
+    # replace this derived root synchronously.
+    var cognition_rail := progression_root.get_node_or_null("MechromancerTierIIICognitionRail") as Node3D
+    if cognition_rail != null:
+        cognition_rail.rotation.z = sin(progression_time * 1.7) * 0.025
+
+    var cognition_node := progression_root.get_node_or_null("MechromancerTierIIICognitionNode") as Node3D
+    if cognition_node != null:
+        var cognition_pulse := 1.0 + sin(progression_time * 2.4 + 0.6) * 0.11
+        cognition_node.scale = Vector3.ONE * cognition_pulse
+
+    var signal_pin := progression_root.get_node_or_null("MechromancerTierIISignalPin") as Node3D
+    if signal_pin != null:
+        signal_pin.rotation.y = fmod(progression_time * 0.8, TAU)
+
+    var bio_sensor_lens := progression_root.get_node_or_null("MechromancerTierIVBioSensorLens") as Node3D
+    if bio_sensor_lens != null:
+        var sensor_sweep := 1.0 + sin(progression_time * 1.35 + 1.4) * 0.08
+        bio_sensor_lens.scale = Vector3(1.2, 0.42, 0.8) * sensor_sweep
+        bio_sensor_lens.rotation.y = sin(progression_time * 0.9) * 0.12
+
+    var heat_vent := progression_root.get_node_or_null("MechromancerTierVHeatVent") as Node3D
+    if heat_vent != null:
+        heat_vent.rotation.x = sin(progression_time * 1.1 + 0.9) * 0.035
 
 
 func _find_animation_player(root: Node) -> AnimationPlayer:

@@ -765,6 +765,24 @@ func _run_all() -> void:
                     _expect(_animation_player_track_count(player_presentation.animation_player, clip_name) >= 2, "The authored Mechromancer %s clip must carry body and equipment motion channels." % clip_name)
                 player_presentation._on_channel_started(&"forge_upgrade", 1.0, "Upgrade the Heartforge.")
                 _expect(_animation_clip_matches(player_presentation.active_clip, &"Upgrade"), "The forge_upgrade channel must select the authored Mechromancer Upgrade clip.")
+                player.apply_progression_visuals({
+                    &"unlock_machine_society": true,
+                    &"unlock_adaptive_defence": true,
+                    &"unlock_final_protocol_research": true,
+                    &"machine_signal_lattice": true,
+                }, 5)
+                var cognition_node := player.get_node_or_null("MechromancerProgressionVisuals/MechromancerTierIIICognitionNode") as Node3D
+                var sensor_lens := player.get_node_or_null("MechromancerProgressionVisuals/MechromancerTierIVBioSensorLens") as Node3D
+                _expect(cognition_node != null and sensor_lens != null, "The progression animation test must expose cognition and sensor hardware.")
+                if cognition_node != null and sensor_lens != null:
+                    player_presentation.progression_time = 0.0
+                    player_presentation._animate_progression_hardware()
+                    var initial_cognition_scale := cognition_node.scale
+                    var initial_sensor_rotation := sensor_lens.rotation.y
+                    player_presentation.progression_time = 0.8
+                    player_presentation._animate_progression_hardware()
+                    _expect(not initial_cognition_scale.is_equal_approx(cognition_node.scale), "The cognition node must carry a bounded progression pulse.")
+                    _expect(not is_equal_approx(initial_sensor_rotation, sensor_lens.rotation.y), "The adaptive sensor must carry a readable sweep response.")
         if audio_director != null:
             var event_count_before := audio_director.event_count
             audio_director.play_profile(&"pistol", player.global_position)

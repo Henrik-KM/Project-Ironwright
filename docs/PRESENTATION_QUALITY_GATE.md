@@ -477,7 +477,10 @@ the gameplay actor rather than the import-owned shell, so their scale and
 stable targeting/collision contracts remain explicit. The exact Windows export
 can be inspected with `--mechromancer-evolution-review`; its live review shows
 the evolved player beside the friendly machine society. This is a bounded
-presentation layer, not a new equipment-management task, and broader full-run
+presentation layer, not a new equipment-management task. Its cognition node,
+signal pin, adaptive sensor and heat vent now carry restrained secondary motion
+through the existing Mechromancer presentation controller, keeping progression
+readable without replacing the imported body/equipment clips. Broader full-run
 human acceptance remains outstanding.
 
 The six-role machine kit now also removes the remaining flat role inserts:
