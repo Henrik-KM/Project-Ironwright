@@ -12,10 +12,51 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, _geometry, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "observatory.gltf"
+
+
+def add_parabolic_dish(
+    builder: BufferBuilder,
+    radius: float,
+    depth: float,
+    material: int,
+    rings: int = 18,
+    sides: int = 64,
+) -> tuple[int, int, int, int]:
+    """Build a high-definition open reflector instead of a scaled sphere."""
+    positions: list[float] = [0.0, depth, 0.0]
+    normals: list[float] = [0.0, 1.0, 0.0]
+    indices: list[int] = []
+    for ring in range(1, rings + 1):
+        radial = ring / rings
+        y = depth * (1.0 - radial * radial)
+        for side in range(sides):
+            angle = math.tau * side / sides
+            x = radius * radial * math.cos(angle)
+            z = radius * radial * math.sin(angle)
+            dy_dx = -2.0 * depth * x / (radius * radius)
+            dy_dz = -2.0 * depth * z / (radius * radius)
+            normal_length = math.sqrt(dy_dx * dy_dx + 1.0 + dy_dz * dy_dz)
+            positions.extend([x, y, z])
+            normals.extend([-dy_dx / normal_length, 1.0 / normal_length, -dy_dz / normal_length])
+    first_ring = 1
+    for side in range(sides):
+        next_side = (side + 1) % sides
+        indices.extend([0, first_ring + next_side, first_ring + side])
+    for ring in range(rings - 1):
+        current = 1 + ring * sides
+        following = current + sides
+        for side in range(sides):
+            next_side = (side + 1) % sides
+            a = current + side
+            b = current + next_side
+            c = following + next_side
+            d = following + side
+            indices.extend([a, b, c, a, c, d])
+    return _geometry(builder, positions, normals, indices, material)
 
 
 def main() -> None:
@@ -24,7 +65,7 @@ def main() -> None:
         {"name": "Observatory weathered concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.07, 0.09, 0.10, 1.0], "metallicFactor": 0.06, "roughnessFactor": 0.92}},
         {"name": "Observatory dark alloy", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.07, 0.09, 1.0], "metallicFactor": 0.46, "roughnessFactor": 0.58}},
         {"name": "Observatory oxidized trim", "pbrMetallicRoughness": {"baseColorFactor": [0.28, 0.07, 0.018, 1.0], "metallicFactor": 0.26, "roughnessFactor": 0.76}},
-        {"name": "Observatory violet dish", "pbrMetallicRoughness": {"baseColorFactor": [0.07, 0.035, 0.14, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.58}, "emissiveFactor": [0.02, 0.005, 0.06]},
+        {"name": "Observatory blue-violet dish", "pbrMetallicRoughness": {"baseColorFactor": [0.012, 0.024, 0.042, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.86}, "emissiveFactor": [0.0, 0.004, 0.010]},
         {"name": "Observatory cyan signal", "pbrMetallicRoughness": {"baseColorFactor": [0.015, 0.12, 0.17, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.38}, "emissiveFactor": [0.0, 0.12, 0.18]},
         {"name": "Observatory warm console", "pbrMetallicRoughness": {"baseColorFactor": [0.38, 0.10, 0.015, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.52}, "emissiveFactor": [0.22, 0.04, 0.005]},
         {"name": "Observatory ridge signal", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.15, 0.18, 1.0], "metallicFactor": 0.16, "roughnessFactor": 0.42}, "emissiveFactor": [0.0, 0.08, 0.10]},
@@ -41,7 +82,7 @@ def main() -> None:
         "Platform": mesh("Platform", add_box(builder, (11.0, 0.38, 8.0), concrete)),
         "Control": mesh("Control", add_box(builder, (2.8, 2.4, 2.5), alloy)),
         "ControlCap": mesh("ControlCap", add_box(builder, (3.1, 0.18, 2.8), rust)),
-        "Dish": mesh("Dish", add_uv_sphere(builder, 3.0, dish, 24, 36)),
+        "Dish": mesh("Dish", add_parabolic_dish(builder, 3.0, 0.62, dish)),
         "DishRim": mesh("DishRim", add_box(builder, (6.5, 0.16, 0.22), rust)),
         "DishBrace": mesh("DishBrace", add_box(builder, (0.16, 3.5, 0.26), alloy)),
         "FeedArm": mesh("FeedArm", add_cylinder(builder, 0.16, 4.6, alloy, 16)),
@@ -125,7 +166,7 @@ def main() -> None:
     add_node("ObservatoryFrontConsoleFrame", mesh_ids["ConsoleFrame"], (3.6, 1.42, -0.82), extras={"surface": "front_console_frame"})
     add_node("ObservatoryServiceCase", mesh_ids["ServiceCase"], (0.2, 0.9, -3.2), extras={"socket_type": "survey_service_case"})
 
-    add_node("ObservatoryDish", mesh_ids["Dish"], (-0.4, 3.05, 1.0), scale=(1.0, 0.28, 0.82), rotation=(math.pi * 0.12, 0.0, 0.0), extras={"socket_type": "dish"})
+    add_node("ObservatoryDish", mesh_ids["Dish"], (-0.4, 3.05, 1.0), scale=(1.0, 1.0, 0.82), rotation=(math.pi * 0.12, 0.0, 0.0), extras={"socket_type": "dish"})
     add_node("ObservatoryDishRim", mesh_ids["DishRim"], (-0.4, 3.15, -1.52), rotation=(0.0, 0.0, 0.0))
     for index, rotation_y in enumerate((0.0, math.pi * 0.33, -math.pi * 0.33)):
         add_node("ObservatoryDishRib%d" % index, mesh_ids["DishRib"], (-0.4, 3.18, 1.0), rotation=(math.pi * 0.12, rotation_y, 0.0), extras={"surface": "dish_structural_rib"})
