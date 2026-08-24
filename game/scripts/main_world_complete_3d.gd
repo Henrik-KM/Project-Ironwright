@@ -302,6 +302,25 @@ func _start_dynamic_operation_review() -> void:
     hud.push_notification("WORLD-STATE RESPONSE OFFER · PRESSURE HAS BECOME A CHOICE")
 
 
+func _start_adaptive_defense_review() -> void:
+    if progression != null:
+        progression.set_heartforge_tier(5)
+        progression.unlocked_effects[&"unlock_adaptive_defence"] = true
+        progression.progression_changed.emit()
+    if run_state != null:
+        run_state.scrap = 900
+        run_state.expedition_core_recovered = true
+    if heartforge != null:
+        heartforge.set_progression_tier(5)
+        heartforge.current_health = heartforge.maximum_health * 0.55
+        heartforge.health_changed.emit(heartforge.current_health, heartforge.maximum_health)
+    if adaptive_defense_director != null:
+        adaptive_defense_director.evaluate_now()
+        if adaptive_defense_director.has_pending_proposal():
+            strategic_hud.open_adaptation(adaptive_defense_director.available_plans(), adaptive_defense_director.proposal_summary())
+            player.input_enabled = false
+
+
 func _start_authored_operation_review() -> void:
     if long_operation_director == null or operations_hud == null:
         return
@@ -417,9 +436,15 @@ func _authorize_long_operation(operation_id: StringName) -> void:
 func _authorize_adaptation(adaptation_id: StringName) -> void:
     if adaptive_defense_director != null and adaptive_defense_director.authorize(adaptation_id):
         _close_strategic_hud()
-        hud.push_notification("ADAPTIVE DEFENCE AUTHORIZED · MACHINES ARE RETROFITTING THE HEARTFORGE WITHOUT MANUAL PLACEMENT")
+        hud.push_notification(_localized_text(
+            "notification.adaptive.authorized",
+            "ADAPTIVE DEFENCE AUTHORIZED · MACHINES ARE RETROFITTING THE HEARTFORGE WITHOUT MANUAL PLACEMENT"
+        ))
     else:
-        hud.push_notification("ADAPTIVE DEFENCE UNAVAILABLE · CHECK THE PROPOSAL AND SCRAP RESERVE")
+        hud.push_notification(_localized_text(
+            "notification.adaptive.unavailable",
+            "ADAPTIVE DEFENCE UNAVAILABLE · CHECK THE PROPOSAL AND SCRAP RESERVE"
+        ))
 
 
 func _initiate_protocol(protocol_id: StringName) -> void:
@@ -782,15 +807,32 @@ func _on_long_operation_changed(operation_id: StringName, state: StringName, det
 
 
 func _on_adaptive_defense_proposal(summary: String) -> void:
-    hud.push_notification("ADAPTIVE DEFENCE PROPOSAL · PRESS T TO CHOOSE\n%s" % summary)
+    hud.push_notification(_localized_text(
+        "notification.adaptive.proposal",
+        "ADAPTIVE DEFENCE PROPOSAL · PRESS T TO CHOOSE\n{0}",
+        [summary]
+    ))
 
 
 func _on_adaptation_changed(adaptation_id: StringName, state: StringName, detail: String) -> void:
-    hud.push_notification("HEARTFORGE ADAPTATION · %s · %s\n%s" % [String(adaptation_id).replace("adaptation.", "").replace("_", " ").to_upper(), String(state).to_upper(), detail])
+    var adaptation_name := String(adaptation_id).replace("adaptation.", "").replace("_", " ")
+    if adaptive_defense_director != null:
+        var localized_entry := adaptive_defense_director.localized_adaptation(adaptation_id)
+        adaptation_name = str(localized_entry.get("display_name", adaptation_name))
+    var localized_state := _localized_text("adaptive.state.label.%s" % String(state), String(state).capitalize())
+    hud.push_notification(_localized_text(
+        "notification.adaptive.state",
+        "HEARTFORGE ADAPTATION · %s · %s\n%s",
+        [adaptation_name.to_upper(), localized_state.to_upper(), detail]
+    ))
 
 
 func _on_adaptation_completed(_adaptation_id: StringName, display_name: String) -> void:
-    hud.push_notification("HEARTFORGE RESPONSE ONLINE · %s · THE NEW STRUCTURE IS NOW MACHINE-MAINTAINED" % display_name.to_upper())
+    hud.push_notification(_localized_text(
+        "notification.adaptive.complete",
+        "HEARTFORGE RESPONSE ONLINE · %s · THE NEW STRUCTURE IS NOW MACHINE-MAINTAINED",
+        [display_name.to_upper()]
+    ))
 
 
 func _on_long_operation_returned(operation_id: StringName, display_name: String, rewards: Dictionary) -> void:

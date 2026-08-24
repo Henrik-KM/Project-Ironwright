@@ -20,6 +20,8 @@ var adaptations: Dictionary = {}
 var pending_reason: String = ""
 var active_adaptation: Dictionary = {}
 var completed_adaptation: StringName = &""
+var pending_reason_kind: StringName = &""
+var pending_reason_value: float = 0.0
 var evaluation_clock: float = 0.0
 var last_reported_progress: int = -1
 var load_errors: Array[String] = []
@@ -95,7 +97,21 @@ func has_pending_proposal() -> bool:
 
 
 func proposal_summary() -> String:
-    return pending_reason if has_pending_proposal() else "No adaptive Heartforge proposal is waiting."
+    if not has_pending_proposal():
+        return _localized_text("adaptive.proposal.none", "No adaptive Heartforge proposal is waiting.")
+    var reason := pending_reason
+    var reason_key := ""
+    if pending_reason_kind == &"damage":
+        reason_key = "adaptive.proposal.reason.damage"
+    elif pending_reason_kind == &"pressure":
+        reason_key = "adaptive.proposal.reason.pressure"
+    if not reason_key.is_empty():
+        reason = _localized_text(reason_key, pending_reason, [int(round(pending_reason_value))])
+    var detail := _localized_text(
+        "adaptive.proposal.detail",
+        "Machines will handle geometry, escorts, construction and reconstruction. Choose one principle; this proposal is a rare run-level commitment."
+    )
+    return "%s\n%s" % [reason, detail]
 
 
 func available_plans() -> Array[Dictionary]:
@@ -103,10 +119,24 @@ func available_plans() -> Array[Dictionary]:
     if not has_pending_proposal():
         return result
     for raw_id in adaptations:
-        result.append(adaptation(raw_id as StringName))
+        result.append(localized_adaptation(raw_id as StringName))
     result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
         return str(a.get("display_name", "")) < str(b.get("display_name", ""))
     )
+    return result
+
+
+func localized_adaptation(adaptation_id: StringName) -> Dictionary:
+    var result := adaptation(adaptation_id)
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service == null or result.is_empty():
+        return result
+    var base_key := "adaptation.%s" % String(adaptation_id).trim_prefix("adaptation.")
+    for field in ["display_name", "construction_name", "description", "problem", "tradeoff"]:
+        var key := "%s.%s" % [base_key, field]
+        var localized := service.text(key)
+        if localized != key:
+            result[field] = localized
     return result
 
 
@@ -122,11 +152,15 @@ func evaluate_now() -> bool:
     if integrity > 0.82 and pressure < 0.65:
         return false
     if integrity <= 0.82:
+        pending_reason_kind = &"damage"
+        pending_reason_value = integrity * 100.0
         pending_reason = "The Heartforge architect found repeated perimeter damage at %d%% integrity and proposes one structural response." % int(round(integrity * 100.0))
     else:
+        pending_reason_kind = &"pressure"
+        pending_reason_value = pressure * 100.0
         pending_reason = "The Heartforge architect detected organic pressure at %.0f%% around the district and proposes a quieter defensive principle." % (pressure * 100.0)
     var detail := "Machines will handle geometry, escorts, construction and reconstruction. Choose one principle; this proposal is a rare run-level commitment."
-    proposal_available.emit("%s\n%s" % [pending_reason, detail])
+    proposal_available.emit(proposal_summary())
     if run_state != null:
         run_state.log_event("Adaptive Heartforge proposal available: %s" % pending_reason)
     return true
@@ -157,7 +191,14 @@ func authorize(adaptation_id: StringName) -> bool:
     last_reported_progress = -1
     if heartforge != null:
         heartforge.set_operation(&"heartforge_adaptation")
-    adaptation_changed.emit(adaptation_id, &"building", "The machine society is travelling to the Heartforge perimeter to build the selected response.")
+    adaptation_changed.emit(
+        adaptation_id,
+        &"building",
+        _localized_text(
+            "adaptive.state.authorized",
+            "The machine society is travelling to the Heartforge perimeter to build the selected response."
+        )
+    )
     return true
 
 
@@ -172,7 +213,16 @@ func _update_active_adaptation(delta: float) -> void:
     var progress_report := int(floor(float(progress_percent) / 10.0))
     if progress_report != last_reported_progress:
         last_reported_progress = progress_report
-        adaptation_changed.emit(adaptation_id, &"building", "Machines are building %s · %d%%" % [str(entry.get("display_name", String(adaptation_id))), progress_percent])
+        var localized_entry := localized_adaptation(adaptation_id)
+        adaptation_changed.emit(
+            adaptation_id,
+            &"building",
+            _localized_text(
+                "adaptive.state.building",
+                "Machines are building %s · %d%%" % [str(entry.get("display_name", String(adaptation_id))), progress_percent],
+                [str(localized_entry.get("construction_name", localized_entry.get("display_name", entry.get("display_name", String(adaptation_id))))), progress_percent]
+            )
+        )
     if float(active_adaptation.get("elapsed", 0.0)) < duration:
         return
     completed_adaptation = adaptation_id
@@ -183,10 +233,21 @@ func _update_active_adaptation(delta: float) -> void:
         heartforge.set_adaptation_profile(completed_adaptation)
         heartforge.set_operation(&"")
     var display_name := str(entry.get("display_name", String(completed_adaptation)))
+    var localized_entry := localized_adaptation(completed_adaptation)
+    var localized_display_name := str(localized_entry.get("display_name", display_name))
+    var localized_construction_name := str(localized_entry.get("construction_name", localized_display_name))
     if run_state != null:
         run_state.log_event("Adaptive Heartforge response completed: %s" % display_name)
-    adaptation_changed.emit(completed_adaptation, &"complete", "%s is online. Routine geometry remains machine-managed." % display_name)
-    adaptation_completed.emit(completed_adaptation, display_name)
+    adaptation_changed.emit(
+        completed_adaptation,
+        &"complete",
+        _localized_text(
+            "adaptive.state.complete",
+            "%s is online. Routine geometry remains machine-managed." % display_name,
+            [localized_construction_name]
+        )
+    )
+    adaptation_completed.emit(completed_adaptation, localized_display_name)
 
 
 func activity_noise_multiplier() -> float:
@@ -211,6 +272,8 @@ func to_dictionary() -> Dictionary:
     return {
         "schema_version": 1,
         "pending_reason": pending_reason,
+        "pending_reason_kind": String(pending_reason_kind),
+        "pending_reason_value": pending_reason_value,
         "active_adaptation": serialized_active,
         "completed_adaptation": String(completed_adaptation),
     }
@@ -218,6 +281,8 @@ func to_dictionary() -> Dictionary:
 
 func restore_from_dictionary(data: Dictionary) -> void:
     pending_reason = str(data.get("pending_reason", ""))
+    pending_reason_kind = StringName(str(data.get("pending_reason_kind", "")))
+    pending_reason_value = float(data.get("pending_reason_value", 0.0))
     completed_adaptation = StringName(str(data.get("completed_adaptation", "")))
     active_adaptation.clear()
     last_reported_progress = -1
@@ -237,3 +302,13 @@ func restore_from_dictionary(data: Dictionary) -> void:
             heartforge.set_adaptation_profile(completed_adaptation)
         elif not active_adaptation.is_empty():
             heartforge.set_operation(&"heartforge_adaptation")
+
+
+func _localized_text(key: String, fallback: String, replacements: Array = []) -> String:
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service != null:
+        return service.text(key, replacements)
+    var result := fallback
+    for index in range(replacements.size()):
+        result = result.replace("{%d}" % index, str(replacements[index]))
+    return result

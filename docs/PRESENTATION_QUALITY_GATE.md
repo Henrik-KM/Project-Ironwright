@@ -11,6 +11,13 @@ formation report all remained localized, while stable operation and event
 identifiers stayed canonical for persistence and diagnostics. Broader
 professional localization and human acceptance remain open.
 
+The adaptive Heartforge proposal boundary was re-reviewed on 2026-08-24 in the
+exact German Windows export at 1280×720. The Tier V proposal modal, all three
+choice descriptions, authorization report, construction state and progress
+report remained localized after the player authorized the physical retrofit;
+stable adaptation identifiers and saved mechanics remained unchanged. Broader
+professional localization and human acceptance remain open.
+
 The final-protocol German export was re-reviewed on 2026-08-24 after the
 endgame completion slice exposed mixed-language copy. The active objective,
 intervention prompt, sanctuary damage badge, victory title, protocol name,
