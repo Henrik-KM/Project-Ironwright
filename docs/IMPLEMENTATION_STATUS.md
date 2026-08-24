@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Broodmass crown-silhouette pass
+
+- regenerated the original Broodmass shell with smooth tapered crown spines
+  while preserving all stable names, animation channels, gameplay collision and
+  nest/ecology ownership;
+- exact Windows export review passed at 1280×720 on presentation page 3/14;
+  the late nest-organism crown now reads as pointed organic anatomy rather than
+  a row of identical bars.
+
 ## Focused organic material-separation pass
 
 - preserved each authored organic family's release tint while lifting shell

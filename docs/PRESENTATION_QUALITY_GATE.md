@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The Broodmass late-family shell received a focused crown-silhouette pass on
+2026-08-24. Its seven stable crown-spine sockets now use smooth tapered thorn
+geometry, reducing the manufactured-bar read without changing the authored
+animation clips, collision, nest state or ecology. Exact Windows capture at
+1280×720 on page 3/14 confirms the nest-organism crown reads as organic;
+broader late-family human art acceptance remains open.
+
 The organic gallery received a focused material-separation pass on 2026-08-24.
 Authored shell plates, ribs, spines and socket hardware now lift from the
 family tint while membranes and vascular details retain a distinct living

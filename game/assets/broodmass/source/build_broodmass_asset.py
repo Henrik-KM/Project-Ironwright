@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import json
+import math
 import sys
 from pathlib import Path
 from typing import Sequence
@@ -11,10 +12,55 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "broodmass.gltf"
+
+
+def add_tapered_cylinder(
+    builder: BufferBuilder,
+    bottom_radius: float,
+    top_radius: float,
+    height: float,
+    material: int,
+    sides: int = 24,
+) -> tuple[int, int, int, int]:
+    """Build a smooth pointed spine without changing the node/socket contract."""
+    sides = max(sides, 24)
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+    bottom = len(positions) // 3
+    for y, radius in ((-height * 0.5, bottom_radius), (height * 0.5, top_radius)):
+        for side in range(sides):
+            angle = math.tau * side / sides
+            positions.extend([math.cos(angle) * radius, y, math.sin(angle) * radius])
+            slope = (bottom_radius - top_radius) / max(height, 0.001)
+            normal = [math.cos(angle), slope, math.sin(angle)]
+            normal_length = math.sqrt(sum(value * value for value in normal)) or 1.0
+            normals.extend(value / normal_length for value in normal)
+    for side in range(sides):
+        next_side = (side + 1) % sides
+        indices.extend([
+            bottom + side,
+            bottom + next_side,
+            bottom + sides + next_side,
+            bottom + side,
+            bottom + sides + next_side,
+            bottom + sides + side,
+        ])
+    bottom_center = len(positions) // 3
+    positions.extend([0.0, -height * 0.5, 0.0])
+    normals.extend([0.0, -1.0, 0.0])
+    top_center = len(positions) // 3
+    positions.extend([0.0, height * 0.5, 0.0])
+    normals.extend([0.0, 1.0, 0.0])
+    for side in range(sides):
+        next_side = (side + 1) % sides
+        indices.extend([bottom_center, bottom + next_side, bottom + side])
+        indices.extend([top_center, bottom + sides + side, bottom + sides + next_side])
+    return _geometry(builder, positions, normals, indices, material)
 
 
 def main() -> None:
@@ -45,7 +91,9 @@ def main() -> None:
         "Rib": mesh("Rib", add_beveled_box(builder, (1.5, 0.15, 0.24), shell, 0.032)),
         "Fan": mesh("Fan", add_beveled_box(builder, (0.18, 1.4, 0.8), membrane, 0.025)),
         "Maw": mesh("Maw", add_uv_sphere(builder, 0.44, membrane, 24, 36)),
-        "Spine": mesh("Spine", add_cylinder(builder, 0.13, 1.15, bone, 24)),
+        # Pointed crown spines keep the nest silhouette organic instead of
+        # reading as a row of identical manufactured bars at review distance.
+        "Spine": mesh("Spine", add_tapered_cylinder(builder, 0.13, 0.026, 0.98, bone, 24)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.12, 1.72, tendon, 24)),
         "Hook": mesh("Hook", add_cylinder(builder, 0.075, 0.78, bone, 24)),
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.105, eye, 20, 28)),
