@@ -288,6 +288,10 @@ func _clamp_selection() -> void:
 func _refresh() -> void:
     if panel == null:
         return
+    previous_button.text = _text("command.previous", "◀ PREVIOUS")
+    next_button.text = _text("command.next", "NEXT ▶")
+    close_button.text = _text("command.close", "CLOSE · ESC")
+    authorize_button.text = _text("command.authorize", "AUTHORIZE")
     _clamp_selection()
     var items := _current_items()
     var has_navigation := items.size() > 1
@@ -297,9 +301,9 @@ func _refresh() -> void:
     next_button.disabled = not has_navigation
 
     if mode == &"recap":
-        title_label.text = "WORLD RECAP"
+        title_label.text = _text("command.recap.title", "WORLD RECAP")
         status_label.text = "%s\nA short strategic readout for returning to a persistent world." % current_operation_status
-        selection_label.text = "RETURNING TO THE HEARTFORGE"
+        selection_label.text = _text("command.recap.selection", "RETURNING TO THE HEARTFORGE")
         description_label.text = str(items[0].get("description", ""))
         requirements_label.text = "NEXT AVAILABLE MAJOR CHOICES\n%s\n\nPress ESC, P, L or V to close." % str(items[0].get("recap_choices", "Continue the current objective."))
         previous_button.visible = false
@@ -308,26 +312,26 @@ func _refresh() -> void:
         return
 
     if mode == &"endgame":
-        title_label.text = "FINAL PROTOCOLS"
+        title_label.text = _text("command.endgame.title", "FINAL PROTOCOLS")
         status_label.text = "%s\nThe final crisis is player-triggered and causal. No recurring wave schedule exists." % endgame_status
     elif mode == &"archive":
-        title_label.text = "TOWN ARCHIVE"
+        title_label.text = _text("command.archive.title", "TOWN ARCHIVE")
         var thread_count := items.filter(func(item: Dictionary) -> bool: return str(item.get("kind", "")) == "story_thread").size()
         var record_count := items.size() - thread_count
         status_label.text = "%d story thread%s · %d record%s recovered from physical discoveries.\nThreads assemble from what the machines actually found; this history is optional and never creates another maintenance task." % [thread_count, "" if thread_count == 1 else "s", record_count, "" if record_count == 1 else "s"]
     else:
-        title_label.text = "LONG-RANGE OPERATIONS"
+        title_label.text = _text("command.operations.title", "LONG-RANGE OPERATIONS")
         var operation_status := current_operation_status
         if not items.is_empty() and operation_status.to_lower().contains("no long-range operation"):
-            operation_status = "A physical operation is ready to authorize."
+            operation_status = _text("command.operations.ready", "A physical operation is ready to authorize.")
         status_label.text = "%s\nEvery group travels through the same persistent world and delivers rewards only after returning." % operation_status
 
     if items.is_empty():
-        selection_label.text = "NO RECORDS RECOVERED" if mode == &"archive" else ("NO OPERATION AVAILABLE" if mode == &"operations" else "FINAL PROTOCOL LOCKED")
+        selection_label.text = _text("command.archive.empty", "NO RECORDS RECOVERED") if mode == &"archive" else (_text("command.operations.empty", "NO OPERATION AVAILABLE") if mode == &"operations" else _text("command.endgame.locked", "FINAL PROTOCOL LOCKED"))
         description_label.text = _empty_state_text()
         requirements_label.text = "Explore and complete real discoveries to recover the town's remaining records." if mode == &"archive" else "Continue the current strategic objective. The screen becomes actionable only when a real choice exists."
         authorize_button.visible = mode != &"archive"
-        authorize_button.text = "NO OPERATION AVAILABLE" if mode == &"operations" else "FINAL PROTOCOL LOCKED"
+        authorize_button.text = _text("command.operations.empty", "NO OPERATION AVAILABLE") if mode == &"operations" else _text("command.endgame.locked", "FINAL PROTOCOL LOCKED")
         authorize_button.disabled = true
         return
 
@@ -342,7 +346,7 @@ func _refresh() -> void:
     authorize_button.visible = true
     authorize_button.disabled = operation_active and mode == &"operations"
     if mode == &"endgame":
-        authorize_button.text = "INITIATE IRREVERSIBLE PROTOCOL"
+        authorize_button.text = _text("command.endgame.authorize", "INITIATE IRREVERSIBLE PROTOCOL")
         requirements_label.text = "Cost: %d Scrap · %d Cognition Core%s · Duration: %d s\nStarting this deliberately provokes the final ecological response." % [
             int(item.get("scrap_cost", 0)),
             int(item.get("rare_core_cost", 0)),
@@ -350,9 +354,9 @@ func _refresh() -> void:
             int(round(float(item.get("duration_seconds", 0.0)))),
         ]
     else:
-        authorize_button.text = "OPERATION ACTIVE · FOLLOW WITH F"
+        authorize_button.text = _text("command.operations.active", "OPERATION ACTIVE · FOLLOW WITH F")
         if not operation_active:
-            authorize_button.text = "AUTHORIZE PHYSICAL OPERATION"
+            authorize_button.text = _text("command.operations.authorize", "AUTHORIZE PHYSICAL OPERATION")
         var operation_prefix := "ACTIVE GROUP · F TO FOLLOW\n" if operation_active else ""
         requirements_label.text = "%s%s\nCost: %d Scrap · Team: %s · Work exposure: %d s · Threat %.1f" % [
             operation_prefix,
@@ -370,6 +374,20 @@ func _empty_state_text() -> String:
     if mode == &"endgame":
         return "Recover the required biological components, map the Root Cistern, evolve the Heartforge to tier 5, and authorize an endgame technology. Until then, no final decision is being hidden."
     return "Complete the current Heartforge, outpost, or technology prerequisite. Routine salvage, repair, rebuilding, and replacement continue without opening another management task."
+
+
+func refresh_localized_text() -> void:
+    _refresh()
+
+
+func _text(key: String, fallback: String, replacements: Array = []) -> String:
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service != null:
+        return service.text(key, replacements)
+    var result := fallback
+    for index in range(replacements.size()):
+        result = result.replace("{%d}" % index, str(replacements[index]))
+    return result
 
 
 func _label(text_value: String, font_size: int, color: Color) -> Label:

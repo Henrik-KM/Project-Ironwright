@@ -373,6 +373,7 @@ func _setup_release_services() -> void:
 	localization_service.name = "LocalizationService"
 	localization_service.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(localization_service)
+	localization_service.locale_changed.connect(_on_release_locale_changed)
 
 	settings_service = ReleaseSettingsService3D.new()
 	settings_service.name = "ReleaseSettingsService"
@@ -1226,6 +1227,13 @@ func _on_front_end_settings_applied(values: Dictionary) -> void:
 	performance_director.target_fps = int(values.get("target_fps", 60))
 	settings_service.apply_accessibility_to_tree(self)
 	release_audio.play_effect(&"ui_confirm", "", 0.0, -4.0)
+
+
+func _on_release_locale_changed(_locale: StringName) -> void:
+	if strategic_hud != null:
+		strategic_hud.refresh_localized_text()
+	if operations_hud != null:
+		operations_hud.refresh_localized_text()
 
 
 func _apply_release_settings() -> void:

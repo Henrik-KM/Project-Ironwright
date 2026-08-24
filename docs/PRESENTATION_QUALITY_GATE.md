@@ -38,6 +38,18 @@ The exact exported Windows build was live-reviewed on 2026-08-24 by changing
 an active German pause menu to Svenska and returning from settings; the
 existing pause actions refreshed to Swedish immediately after Apply.
 
+The same stable-key boundary now covers the long-run strategic command layer:
+evolution, adaptive defence, autonomous outposts, long-range operations and
+final protocols refresh their navigation, title and authorization chrome when
+the locale changes while the panel is open. Exact exported Windows review must
+confirm the command panels in the selected locale before this slice is
+presentation-certified. Exact exported Windows review passed on 2026-08-24:
+the physical-operation panel rendered Swedish, the real settings flow applied
+German, and the reopened panel rendered `LANGSTRECKENOPERATIONEN`, `PHYSISCHE
+OPERATION AUTORISIEREN` and `SCHLIESSEN · ESC`. Authored operation, archive and
+strategic detail prose remains intentionally covered by the professional
+translation gate.
+
 Cathedral Quarter's release brood sacs now use layered shell-and-ridge anatomy
 instead of a ring of flat proxy spheres. Exact exported Windows page 11/14
 review confirms that the biological takeover reads as grouped organic plates
