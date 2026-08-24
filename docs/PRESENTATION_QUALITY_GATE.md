@@ -492,6 +492,13 @@ The exact Windows tactical frame can be inspected with
 `--heartforge-progression-review` alongside the existing Mechromancer evolution
 review entrypoint.
 
+The final-protocol capstone now has a matching exact-export review entrypoint:
+`--endgame-protocol-review` prepares a non-saving Tier V prerequisite fixture,
+starts the real Severance protocol, holds the active lattice for a readable
+crisis frame, and then resolves through the ordinary victory signal into the
+sanctuary crown and continuation-capable ending overlay. This is a visual QA
+fixture only; it does not add a second ending path or alter normal run pacing.
+
 The six-role machine kit now also removes the remaining flat role inserts:
 Warden counterweight, Scrapper dismantler claws, Pathfinder survey wings and
 Engineer clamp hardware use beveled forms, with the nearby forge pump/control

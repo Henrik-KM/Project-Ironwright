@@ -912,7 +912,10 @@ func _animate_region_details() -> void:
             node.position.y = _motion_base_transforms[node].origin.y + sin(local_phase * 0.58) * 0.035
         elif node_name.begins_with("BuriedLabsOrganicSeep"):
             node.rotation.y += sin(local_phase * 0.8) * 0.06
-            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.2) * 0.07)
+            # Keep the contamination visibly alive even when a deterministic
+            # presentation sample lands on a sine zero-crossing.
+            var seep_pulse := 1.0 + 0.006 + absf(sin(local_phase * 1.2)) * 0.064
+            node.scale = _motion_base_transforms[node].basis.get_scale() * seep_pulse
         elif node_name.begins_with("BuriedLabsOrganicTendril"):
             node.rotation.z += sin(local_phase * 1.02) * 0.12
         elif node_name.begins_with("GlasshouseCanopyPulse"):

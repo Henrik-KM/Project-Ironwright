@@ -63,6 +63,9 @@ var presentation_review_label: Label
 var presentation_review_stage: Node3D
 var presentation_review_camera_target: Vector3 = Vector3.ZERO
 var presentation_review_camera_desired: Vector3 = Vector3(0.0, 4.8, 18.0)
+var endgame_protocol_review_active: bool = false
+var endgame_protocol_review_clock: float = 0.0
+var endgame_protocol_review_completed: bool = false
 
 
 func _ready() -> void:
@@ -85,6 +88,14 @@ func _process(delta: float) -> void:
 		_set_region_map_emphasis(map_mode)
 	controller_action_cooldown = maxf(0.0, controller_action_cooldown - delta)
 	release_save_clock += delta
+	if endgame_protocol_review_active and not endgame_protocol_review_completed:
+		endgame_protocol_review_clock += delta
+		# Hold the real active-protocol frame long enough for visual and audio
+		# review, then use the director's normal completion signal to show the
+		# actual victory overlay and sanctuary crown. This mode never saves.
+		if endgame_protocol_review_clock >= 8.0 and endgame_director != null and not endgame_director.active_protocol.is_empty():
+			endgame_protocol_review_completed = true
+			endgame_director._complete_active_protocol()
 	if release_started:
 		_handle_controller_actions()
 	if release_front_end != null and release_front_end.is_modal_open():
@@ -494,6 +505,9 @@ func _finish_release_boot() -> void:
 	elif _has_heartforge_progression_review_flag():
 		_start_release_world()
 		call_deferred("_start_heartforge_progression_review")
+	elif _has_endgame_protocol_review_flag():
+		_start_release_world()
+		call_deferred("_start_endgame_protocol_review")
 	elif _has_mechromancer_evolution_review_flag():
 		_start_release_world()
 		call_deferred("_start_mechromancer_evolution_review")
@@ -544,6 +558,16 @@ func _has_heartforge_progression_review_flag() -> bool:
 			return true
 	for argument in OS.get_cmdline_user_args():
 		if str(argument) == "--heartforge-progression-review":
+			return true
+	return false
+
+
+func _has_endgame_protocol_review_flag() -> bool:
+	for argument in OS.get_cmdline_args():
+		if str(argument) == "--endgame-protocol-review":
+			return true
+	for argument in OS.get_cmdline_user_args():
+		if str(argument) == "--endgame-protocol-review":
 			return true
 	return false
 
@@ -699,6 +723,41 @@ func _start_heartforge_progression_review() -> void:
 	# gameplay.
 	if release_audio != null and progression != null:
 		release_audio.call_deferred("_on_heartforge_tier_changed", progression.heartforge_tier)
+
+
+func _start_endgame_protocol_review() -> void:
+	# This is a non-saving fixture for the exact exported build. It satisfies the
+	# same late-run data contracts as a real run, then enters the ordinary
+	# player-triggered protocol path so the review covers both crisis and victory
+	# presentation without inventing a parallel cutscene system.
+	endgame_protocol_review_active = true
+	endgame_protocol_review_clock = 0.0
+	endgame_protocol_review_completed = false
+	if progression != null:
+		progression.set_heartforge_tier(5)
+		for technology_id in [&"tech.endgame.severance", &"tech.endgame.containment"]:
+			if technology_id not in progression.unlocked_technologies:
+				progression.unlocked_technologies.append(technology_id)
+		progression.unlocked_effects[&"unlock_final_protocol_research"] = true
+		progression.progression_changed.emit()
+	if long_operation_director != null:
+		long_operation_director.completed_operations = [&"operation.root_cistern_mapping"]
+		long_operation_director.recovered_components = [
+			&"component.choral_gland",
+			&"component.genome_prism",
+			&"component.root_map",
+			&"component.migration_ephemeris",
+		]
+	if run_state != null:
+		run_state.scrap = 1200
+		run_state.rare_cores = 8
+	if region_director != null:
+		region_director.discover_region(&"region.root_cistern")
+	if endgame_director != null and endgame_director.initiate(&"protocol.severance"):
+		if hud != null:
+			hud.push_notification("FINAL PROTOCOL REVIEW · SEVERANCE LATTICE ACTIVE · VICTORY RESOLUTION IN 8 SECONDS")
+		if run_state != null:
+			run_state.log_event("Endgame protocol review mode: active Severance lattice will resolve through the ordinary victory path.")
 
 
 func _create_presentation_review_stage() -> void:
@@ -1349,7 +1408,8 @@ func _on_heartforge_destroyed() -> void:
 func _on_endgame_completed(protocol_id: StringName, display_name: String, ending: String) -> void:
 	balance_director.record_victory(run_state.elapsed_seconds)
 	release_audio.notify_victory()
-	_save_release_game()
+	if not endgame_protocol_review_active:
+		_save_release_game()
 	super._on_endgame_completed(protocol_id, display_name, ending)
 
 
