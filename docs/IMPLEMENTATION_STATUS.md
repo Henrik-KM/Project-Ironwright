@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused East Tenements facade-depth pass
+
+- rebuilt the approach-facing residential windows with recessed reveal bays,
+  beveled vertical jambs and central mullions so the two authored blocks no
+  longer read as broad pastel slabs at review distance;
+- preserved the stable residential landmark, balcony, fire-escape, tank,
+  collision, navigation and ecology contracts;
+- exact Windows export review passed on 2026-08-24 at 1280×720.
+
 ## Focused opening-cast scale refinement
 
 - tightened the Heartforge opening tactical camera to a bounded 11.2 height,
