@@ -512,6 +512,9 @@ func _finish_release_boot() -> void:
 	elif _has_heartforge_progression_review_flag():
 		_start_release_world()
 		call_deferred("_start_heartforge_progression_review")
+	elif _has_adaptive_defense_review_flag():
+		_start_release_world()
+		call_deferred("_start_adaptive_defense_review")
 	elif _has_endgame_protocol_review_flag():
 		_start_release_world()
 		call_deferred("_start_endgame_protocol_review")
@@ -590,6 +593,16 @@ func _has_heartforge_progression_review_flag() -> bool:
 			return true
 	for argument in OS.get_cmdline_user_args():
 		if str(argument) == "--heartforge-progression-review":
+			return true
+	return false
+
+
+func _has_adaptive_defense_review_flag() -> bool:
+	for argument in OS.get_cmdline_args():
+		if str(argument) == "--adaptive-defense-review":
+			return true
+	for argument in OS.get_cmdline_user_args():
+		if str(argument) == "--adaptive-defense-review":
 			return true
 	return false
 

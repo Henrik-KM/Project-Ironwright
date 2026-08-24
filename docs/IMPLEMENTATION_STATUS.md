@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused adaptive-Heartforge localization pass
+
+- localized the adaptive proposal reason, rare-commitment explanation, all
+  three adaptation names/descriptions/problem/trade-off fields, authorization
+  report, construction state, progress state and completion report across
+  English, Swedish and German;
+- kept adaptation ids, mechanics, and serialized state canonical while adding
+  persisted proposal-reason metadata for locale-aware presentation;
+- exact Windows export review passed on 2026-08-24 at 1280×720 in the German
+  adaptive-defence fixture after authorizing the physical retrofit; no English
+  copy or unresolved placeholders remained in the modal/report surface.
+
 ## Focused casualty-recovery operation localization pass
 
 - localized the post-authorization active objective, operation badge,
