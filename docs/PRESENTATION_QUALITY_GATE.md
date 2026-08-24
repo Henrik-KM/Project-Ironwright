@@ -4,6 +4,13 @@
 
 The current build is not release-ready merely because its systemic gameplay path is complete. The native presentation must be judged against the actual shipped frame, not against internal implementation breadth.
 
+The final-protocol German export was re-reviewed on 2026-08-24 after the
+endgame completion slice exposed mixed-language copy. The active objective,
+intervention prompt, sanctuary damage badge, victory title, protocol name,
+ending prose and continuation prompt now resolve from the selected locale in
+the live Windows export. The focused endgame surface is consistent; broader
+professional localization and human acceptance remain open.
+
 The Observatory Ridge review now keeps the dish in a restrained blue-violet
 range, separates its ribs and actuators, and exposes a bounded survey service
 deck with approach consoles and signal readouts. Exact Windows capture at

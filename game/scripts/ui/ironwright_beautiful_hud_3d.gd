@@ -44,11 +44,11 @@ func _process(delta: float) -> void:
     if impact_overlay != null:
         impact_overlay.color.a = damage_intensity * 0.32
     if sanctuary_label != null:
-        var status := "COZY LIGHT · MACHINES ACTIVE"
+        var status := _text("hud.sanctuary.cozy", "COZY LIGHT · MACHINES ACTIVE")
         if sanctuary_integrity < 0.35:
-            status = "SANCTUARY CRITICAL · THE WARM LIGHT IS FAILING"
+            status = _text("hud.sanctuary.critical", "SANCTUARY CRITICAL · THE WARM LIGHT IS FAILING")
         elif sanctuary_integrity < 0.7:
-            status = "SANCTUARY DAMAGED · HOLD THE HEARTFORGE"
+            status = _text("hud.sanctuary.damaged", "SANCTUARY DAMAGED · HOLD THE HEARTFORGE")
         sanctuary_label.text = status
         sanctuary_label.modulate = Color("ff9270") if sanctuary_integrity < 0.35 else Color("ffd9a2")
     _refresh_contextual_chrome()

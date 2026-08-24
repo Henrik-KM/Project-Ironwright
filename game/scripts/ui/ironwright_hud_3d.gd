@@ -591,9 +591,13 @@ func show_ending(victory: bool, detail: String, allow_continuation: bool = false
     ending_panel.name = "EndingPanel"
     ending_panel.set_anchors_preset(Control.PRESET_CENTER)
     ending_panel.mouse_filter = Control.MOUSE_FILTER_STOP
-    var prompt := "Press ENTER to continue exploring." if allow_continuation else "Press ENTER to restart."
+    var title_key := "hud.ending.first_light_secured" if victory else "hud.ending.heartforge_fell"
+    var title_fallback := "FIRST LIGHT SECURED" if victory else "THE HEARTFORGE FELL"
+    var prompt_key := "hud.ending.continue" if allow_continuation else "hud.ending.restart"
+    var prompt_fallback := "Press ENTER to continue exploring." if allow_continuation else "Press ENTER to restart."
+    var prompt := _text(prompt_key, prompt_fallback)
     var readable_detail := _wrap_ending_detail(detail, 76)
-    var label := _label(ending_panel, ("FIRST LIGHT SECURED" if victory else "THE HEARTFORGE FELL") + "\n\n" + readable_detail + "\n\n" + prompt, 19, Color("79d8dc") if victory else Color("e06b5f"))
+    var label := _label(ending_panel, _text(title_key, title_fallback) + "\n\n" + readable_detail + "\n\n" + prompt, 19, Color("79d8dc") if victory else Color("e06b5f"))
     label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
     label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -620,7 +624,12 @@ func show_failure_report(detail: String) -> void:
     report_style.content_margin_bottom = 18.0
     ending_panel.add_theme_stylebox_override("panel", report_style)
     var readable_detail := _wrap_multiline_detail(detail, 76)
-    var label := _label(ending_panel, "THE HEARTFORGE FELL\n\nPOST-COLLAPSE REPORT\n\n" + readable_detail + "\n\nPress ENTER to restart.", 15, Color("e8b0a5"))
+    var label := _label(ending_panel, "%s\n\n%s\n\n%s\n\n%s" % [
+        _text("hud.ending.heartforge_fell", "THE HEARTFORGE FELL"),
+        _text("hud.ending.post_collapse_report", "POST-COLLAPSE REPORT"),
+        readable_detail,
+        _text("hud.ending.restart", "Press ENTER to restart."),
+    ], 15, Color("e8b0a5"))
     label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
     label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
     label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
