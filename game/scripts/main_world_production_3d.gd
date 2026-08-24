@@ -63,6 +63,14 @@ func _update_first_session_guidance() -> void:
     if objective_guidance == null or run_state == null or autonomy_director == null:
         return
 
+    # The world-space beacon is deliberately a first-session aid. Once the
+    # player has entered or completed a final protocol, the strategic HUD and
+    # protocol presentation own the objective; leaving the salvage beacon
+    # visible would contradict the active late-run state.
+    if endgame_director != null and (not endgame_director.active_protocol.is_empty() or endgame_director.completed_protocol != &""):
+        objective_guidance.clear_guidance()
+        return
+
     var interact_hint := _input_binding_hint(&"iw_interact", "E")
 
     if run_state.manual_scrap_recovered < 20:

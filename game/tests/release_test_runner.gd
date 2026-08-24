@@ -376,6 +376,16 @@ func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void
     world._update_first_session_guidance()
     _expect(world.objective_guidance != null and "HOLD I" in world.objective_guidance.marker_label.text, "The opening world marker must use the remapped interact binding.")
     _expect("Hold I" in world.hud.objective_label.text, "The opening objective copy must use the remapped interact binding.")
+    var original_active_protocol := world.endgame_director.active_protocol
+    var original_completed_protocol := world.endgame_director.completed_protocol
+    world.endgame_director.active_protocol = {"id": &"protocol.severance"}
+    world._update_first_session_guidance()
+    _expect(not world.objective_guidance.is_guiding() and not world.objective_guidance.marker_root.visible, "The opening world marker must clear when a final protocol becomes active.")
+    world.endgame_director.active_protocol = original_active_protocol
+    world.endgame_director.completed_protocol = &"protocol.severance"
+    world._update_first_session_guidance()
+    _expect(not world.objective_guidance.is_guiding() and not world.objective_guidance.marker_root.visible, "The opening world marker must remain clear after final protocol victory.")
+    world.endgame_director.completed_protocol = original_completed_protocol
     _expect(settings.set_key_binding(&"iw_interact", original_interact, false), "Release settings must restore the original interact binding.")
     _expect("E INTERACT" in world.hud.help_label.text, "Restoring the interact binding must refresh the control legend.")
 
