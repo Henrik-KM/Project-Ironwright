@@ -603,10 +603,13 @@ func _movement_binding_hint() -> String:
 func refresh_input_legend() -> void:
     if hud == null or hud.help_label == null:
         return
-    hud.help_label.text = "%s MOVE · %s INTERACT · T EVOLVE · O OUTPOSTS · P OPERATIONS · L ARCHIVE · V ENDGAME · F FOLLOW · M MAP · F5/F9 SAVE/LOAD" % [
-        _movement_binding_hint(),
-        _input_binding_hint(&"iw_interact", "E"),
-    ]
+    var movement := _movement_binding_hint()
+    var interact := _input_binding_hint(&"iw_interact", "E")
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service != null:
+        hud.help_label.text = service.text("hud.input_legend", [movement, interact])
+    else:
+        hud.help_label.text = "%s MOVE · %s INTERACT · T EVOLVE · O OUTPOSTS · P OPERATIONS · L ARCHIVE · V ENDGAME · F FOLLOW · M MAP · F5/F9 SAVE/LOAD" % [movement, interact]
 
 
 func _save_game() -> void:
