@@ -34,6 +34,9 @@ settings actions, so changing language from an active pause menu refreshes the
 already-built pause actions immediately instead of leaving the prior locale in
 place. Commercial-release coverage protects the Swedish and German refresh
 paths.
+The exact exported Windows build was live-reviewed on 2026-08-24 by changing
+an active German pause menu to Svenska and returning from settings; the
+existing pause actions refreshed to Swedish immediately after Apply.
 
 Cathedral Quarter's release brood sacs now use layered shell-and-ridge anatomy
 instead of a ring of flat proxy spheres. Exact exported Windows page 11/14

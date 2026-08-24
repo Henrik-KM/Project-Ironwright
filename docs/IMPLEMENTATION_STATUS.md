@@ -7,6 +7,9 @@
   language change;
 - added commercial-release coverage for Swedish and German pause action
   refresh, preserving the existing callbacks and modal flow;
+- exact exported Windows review passed on 2026-08-24 by switching an active
+  German pause menu to Svenska and confirming the existing pause actions
+  refreshed immediately after Apply;
 - this is a release UI correctness fix only: no gameplay, save-state or
   accessibility control contracts changed.
 
