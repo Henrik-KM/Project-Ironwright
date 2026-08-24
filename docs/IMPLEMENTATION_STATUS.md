@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Cathedral brood-sac anatomy pass
+
+- replaced the release-only ring of Cathedral brood-sac proxy spheres with
+  layered shell-and-ridge organic plates while preserving the existing bounded
+  presentation footprint;
+- added commercial-release coverage for the shell and ridge anatomy so the
+  release dressing cannot silently regress to flat proxy sacs;
+- exact exported Windows page 11/14 review passed, with no gameplay, collision,
+  ecology or save-state changes.
+
 ## Focused sanctuary warm-light calibration
 
 - lowered the authored Heartforge camp and release-dressing string-bulb

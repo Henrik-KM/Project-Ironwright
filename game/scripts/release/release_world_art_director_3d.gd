@@ -970,7 +970,15 @@ func _dress_nest(root: Node3D) -> void:
         var angle := TAU * float(index) / 12.0
         var radius := 7.0 + float(index % 4) * 2.5
         ModelKit3D.add_capsule(root, 0.18, 4.5 + float(index % 3), Vector3(cos(angle) * radius, 2.0, sin(angle) * radius), chitin, Vector3(0.0, -angle, 0.35), "NestSpine")
-        ModelKit3D.add_sphere(root, 0.7, Vector3(cos(angle) * radius * 0.72, 0.7, sin(angle) * radius * 0.72), membrane, Vector3(1.4, 0.8, 1.4), "BroodSac")
+        ModelKit3D.add_organic_plate(
+            root,
+            0.7,
+            Vector3(cos(angle) * radius * 0.72, 0.7, sin(angle) * radius * 0.72),
+            membrane,
+            chitin,
+            Vector3(1.4, 0.8, 1.4),
+            "BroodSac%02d" % index
+        )
 
 
 func _dress_observatory(root: Node3D) -> void:

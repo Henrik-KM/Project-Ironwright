@@ -595,6 +595,9 @@ func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
     _expect(riverworks != null and riverworks.find_child("RiverworksRotor", true, false) != null, "Commercial release must retain the authored Riverworks pump landmark.")
     var cathedral := world.region_director.get_landmark(&"region.cathedral_quarter")
     _expect(cathedral != null and cathedral.find_child("CathedralChoirCore", true, false) != null, "Commercial release must retain the authored Cathedral Quarter landmark.")
+    var cathedral_brood_sac := world.release_world_art.dressing_root.find_child("BroodSac00Shell", true, false) if world.release_world_art.dressing_root != null else null
+    var cathedral_brood_ridge := world.release_world_art.dressing_root.find_child("BroodSac00Ridge", true, false) if world.release_world_art.dressing_root != null else null
+    _expect(cathedral_brood_sac != null and cathedral_brood_ridge != null, "Cathedral Quarter release dressing must retain layered brood-sac anatomy instead of a ring of flat proxy spheres.")
     var observatory := world.region_director.get_landmark(&"region.observatory_ridge")
     _expect(observatory != null and observatory.find_child("ObservatoryDish", true, false) != null, "Commercial release must retain the authored Observatory Ridge landmark.")
     var tram_graveyard := world.region_director.get_landmark(&"region.tram_graveyard")
