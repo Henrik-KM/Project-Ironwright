@@ -20,10 +20,10 @@ OUTPUT_PATH = SOURCE_DIR / "burrower.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Burrower wet shell", "pbrMetallicRoughness": {"baseColorFactor": [0.045, 0.06, 0.064, 1.0], "metallicFactor": 0.22, "roughnessFactor": 0.3}},
-        {"name": "Burrower layered plate", "pbrMetallicRoughness": {"baseColorFactor": [0.19, 0.21, 0.19, 1.0], "metallicFactor": 0.16, "roughnessFactor": 0.43}},
-        {"name": "Burrower flesh", "pbrMetallicRoughness": {"baseColorFactor": [0.12, 0.035, 0.035, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.72}},
-        {"name": "Burrower bone", "pbrMetallicRoughness": {"baseColorFactor": [0.48, 0.4, 0.27, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.6}},
+        {"name": "Burrower wet shell", "pbrMetallicRoughness": {"baseColorFactor": [0.08, 0.11, 0.115, 1.0], "metallicFactor": 0.22, "roughnessFactor": 0.3}},
+        {"name": "Burrower layered plate", "pbrMetallicRoughness": {"baseColorFactor": [0.28, 0.3, 0.26, 1.0], "metallicFactor": 0.16, "roughnessFactor": 0.43}},
+        {"name": "Burrower flesh", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.045, 0.04, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.72}},
+        {"name": "Burrower bone", "pbrMetallicRoughness": {"baseColorFactor": [0.56, 0.45, 0.3, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.6}},
         {"name": "Burrower bore lamp", "pbrMetallicRoughness": {"baseColorFactor": [0.56, 0.16, 0.025, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.2}, "emissiveFactor": [1.0, 0.12, 0.01]},
         {"name": "Burrower tendon", "pbrMetallicRoughness": {"baseColorFactor": [0.3, 0.08, 0.075, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.53}},
     ]

@@ -20,10 +20,10 @@ OUTPUT_PATH = SOURCE_DIR / "skitterling.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Skitterling wet carapace", "pbrMetallicRoughness": {"baseColorFactor": [0.055, 0.07, 0.072, 1.0], "metallicFactor": 0.24, "roughnessFactor": 0.3}},
-        {"name": "Skitterling shell ridge", "pbrMetallicRoughness": {"baseColorFactor": [0.2, 0.22, 0.19, 1.0], "metallicFactor": 0.14, "roughnessFactor": 0.4}},
+        {"name": "Skitterling wet carapace", "pbrMetallicRoughness": {"baseColorFactor": [0.09, 0.12, 0.125, 1.0], "metallicFactor": 0.24, "roughnessFactor": 0.3}},
+        {"name": "Skitterling shell ridge", "pbrMetallicRoughness": {"baseColorFactor": [0.28, 0.31, 0.26, 1.0], "metallicFactor": 0.14, "roughnessFactor": 0.4}},
         {"name": "Skitterling tendon", "pbrMetallicRoughness": {"baseColorFactor": [0.27, 0.065, 0.08, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.52}},
-        {"name": "Skitterling bone", "pbrMetallicRoughness": {"baseColorFactor": [0.5, 0.41, 0.28, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.58}},
+        {"name": "Skitterling bone", "pbrMetallicRoughness": {"baseColorFactor": [0.58, 0.46, 0.3, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.58}},
         {"name": "Skitterling scavenger eye", "pbrMetallicRoughness": {"baseColorFactor": [0.42, 0.16, 0.02, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.2}, "emissiveFactor": [1.0, 0.13, 0.015]},
         {"name": "Skitterling membrane", "pbrMetallicRoughness": {"baseColorFactor": [0.14, 0.025, 0.06, 0.82], "metallicFactor": 0.0, "roughnessFactor": 0.38}, "emissiveFactor": [0.035, 0.001, 0.01]},
     ]

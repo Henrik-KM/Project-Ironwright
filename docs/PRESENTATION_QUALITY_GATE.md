@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The early-organic family received a focused material-separation pass on
+2026-08-24. Skitterling, Razorhound, Burrower, Sporecaster and Veilstalker
+now separate structural shell plates, ridges, membranes and bone accents from
+their dark wet flesh bases. Exact exported Windows review at 1280x720 on page
+2/14 and a fresh opening Heartforge frame confirm that the silhouettes remain
+hostile while the small shells no longer collapse into one dark band; broader
+hostile-family and production-art acceptance remain open.
+
 The remaining friendly machine family received a focused high-definition shell
 pass on 2026-08-24. Warden, Scrapper, Pathfinder, Engineer and Relay now use
 smooth authored ellipsoidal chassis/core envelopes and rounded front plates

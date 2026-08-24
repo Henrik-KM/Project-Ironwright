@@ -1465,9 +1465,9 @@
       "name": "Sporecaster wet flesh",
       "pbrMetallicRoughness": {
         "baseColorFactor": [
-          0.055,
-          0.07,
-          0.075,
+          0.09,
+          0.12,
+          0.13,
           1.0
         ],
         "metallicFactor": 0.12,
@@ -1478,9 +1478,9 @@
       "name": "Sporecaster shell",
       "pbrMetallicRoughness": {
         "baseColorFactor": [
-          0.18,
-          0.2,
-          0.18,
+          0.26,
+          0.29,
+          0.27,
           1.0
         ],
         "metallicFactor": 0.15,
@@ -1491,9 +1491,9 @@
       "name": "Sporecaster membrane",
       "pbrMetallicRoughness": {
         "baseColorFactor": [
-          0.18,
-          0.035,
-          0.11,
+          0.25,
+          0.045,
+          0.14,
           0.88
         ],
         "metallicFactor": 0.0,
@@ -1509,9 +1509,9 @@
       "name": "Sporecaster bone",
       "pbrMetallicRoughness": {
         "baseColorFactor": [
-          0.49,
-          0.42,
-          0.31,
+          0.56,
+          0.46,
+          0.32,
           1.0
         ],
         "metallicFactor": 0.0,

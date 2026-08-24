@@ -26,10 +26,10 @@ OUTPUT_PATH = SOURCE_DIR / "veilstalker.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Veilstalker wet chitin", "pbrMetallicRoughness": {"baseColorFactor": [0.055, 0.035, 0.045, 1.0], "metallicFactor": 0.22, "roughnessFactor": 0.28}},
-        {"name": "Veilstalker shell ridge", "pbrMetallicRoughness": {"baseColorFactor": [0.16, 0.08, 0.10, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.42}},
-        {"name": "Veilstalker deep flesh", "pbrMetallicRoughness": {"baseColorFactor": [0.10, 0.025, 0.035, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.72}},
-        {"name": "Veilstalker bone hooks", "pbrMetallicRoughness": {"baseColorFactor": [0.38, 0.29, 0.23, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.62}},
+        {"name": "Veilstalker wet chitin", "pbrMetallicRoughness": {"baseColorFactor": [0.09, 0.06, 0.08, 1.0], "metallicFactor": 0.22, "roughnessFactor": 0.28}},
+        {"name": "Veilstalker shell ridge", "pbrMetallicRoughness": {"baseColorFactor": [0.25, 0.12, 0.15, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.42}},
+        {"name": "Veilstalker deep flesh", "pbrMetallicRoughness": {"baseColorFactor": [0.14, 0.03, 0.045, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.72}},
+        {"name": "Veilstalker bone hooks", "pbrMetallicRoughness": {"baseColorFactor": [0.48, 0.36, 0.27, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.62}},
         {"name": "Veilstalker membrane", "pbrMetallicRoughness": {"baseColorFactor": [0.22, 0.018, 0.065, 0.82], "metallicFactor": 0.0, "roughnessFactor": 0.5}, "alphaMode": "BLEND", "emissiveFactor": [0.16, 0.01, 0.025]},
         {"name": "Veilstalker threat eyes", "pbrMetallicRoughness": {"baseColorFactor": [0.24, 0.018, 0.008, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.3}, "emissiveFactor": [1.0, 0.05, 0.012]},
         {"name": "Veilstalker tendon", "pbrMetallicRoughness": {"baseColorFactor": [0.28, 0.06, 0.08, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.55}},

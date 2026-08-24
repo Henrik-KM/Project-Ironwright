@@ -21,10 +21,10 @@ OUTPUT_PATH = SOURCE_DIR / "razorhound.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Razorhound wet chitin", "pbrMetallicRoughness": {"baseColorFactor": [0.045, 0.06, 0.068, 1.0], "metallicFactor": 0.2, "roughnessFactor": 0.3}},
-        {"name": "Razorhound shell ridge", "pbrMetallicRoughness": {"baseColorFactor": [0.16, 0.19, 0.19, 1.0], "metallicFactor": 0.16, "roughnessFactor": 0.42}},
-        {"name": "Razorhound flesh", "pbrMetallicRoughness": {"baseColorFactor": [0.12, 0.04, 0.035, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.74}},
-        {"name": "Razorhound bone", "pbrMetallicRoughness": {"baseColorFactor": [0.42, 0.38, 0.3, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.6}},
+        {"name": "Razorhound wet chitin", "pbrMetallicRoughness": {"baseColorFactor": [0.08, 0.11, 0.12, 1.0], "metallicFactor": 0.2, "roughnessFactor": 0.3}},
+        {"name": "Razorhound shell ridge", "pbrMetallicRoughness": {"baseColorFactor": [0.24, 0.28, 0.28, 1.0], "metallicFactor": 0.16, "roughnessFactor": 0.42}},
+        {"name": "Razorhound flesh", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.05, 0.04, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.74}},
+        {"name": "Razorhound bone", "pbrMetallicRoughness": {"baseColorFactor": [0.52, 0.44, 0.32, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.6}},
         {"name": "Razorhound threat eye", "pbrMetallicRoughness": {"baseColorFactor": [0.3, 0.03, 0.008, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.28}, "emissiveFactor": [1.0, 0.06, 0.01]},
         {"name": "Razorhound tendon", "pbrMetallicRoughness": {"baseColorFactor": [0.26, 0.08, 0.07, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.55}},
     ]
