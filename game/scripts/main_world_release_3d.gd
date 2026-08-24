@@ -1487,8 +1487,20 @@ func _start_release_world() -> void:
 	settings_service.apply_accessibility_to_tree(self)
 	if run_variation_director != null:
 		run_variation_director.ensure_current_variant()
-		hud.push_notification("WORLD CONDITION · %s" % run_variation_director.current_display_name())
-	hud.push_notification("SURVIVAL PROFILE · THE TOWN IS LISTENING")
+		var variant_key := String(run_state.world_variant_id).replace("weather.", "")
+		var variant_name := localization_service.text("world.condition.%s.name" % variant_key)
+		hud.push_notification(localization_service.text("notification.world_condition", [variant_name]))
+	hud.push_notification(localization_service.text("notification.survival_profile"))
+
+
+func _on_run_state_event_logged(message: String) -> void:
+	if message.begins_with("World condition: "):
+		var variant_key := String(run_state.world_variant_id).replace("weather.", "")
+		var variant_name := localization_service.text("world.condition.%s.name" % variant_key)
+		var variant_description := localization_service.text("world.condition.%s.description" % variant_key)
+		hud.push_notification(localization_service.text("notification.world_condition_detail", [variant_name, variant_description]))
+		return
+	super._on_run_state_event_logged(message)
 
 
 func _set_tactical_hud_visible(should_show: bool) -> void:

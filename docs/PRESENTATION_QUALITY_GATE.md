@@ -41,6 +41,13 @@ capture of the West Grid offer at 1280×720 confirms that a stable operation
 name and briefing also remain German through the release modal; broader
 professional localization review remains open.
 
+The fresh-world machine-report stack now follows the selected locale as well:
+the survival profile, world-condition name and authored weather description
+are localized at the release boundary while the persistent event log retains
+its canonical save text. Exact Windows captures at 1280×720 on 2026-08-24
+confirmed consistent German and Swedish opening reports; broader gameplay
+prose localization remains open.
+
 The final-protocol review now enters the complete-game milestone state and
 clears the opening salvage beacon when the late-run crisis starts and after
 victory, so neither the HUD nor the world-space guidance layer contradicts

@@ -214,6 +214,7 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     _expect(service.text("endgame.severance.ending").begins_with("Das Signal bricht zusammen"), "German Severance ending copy must be present for the live final-protocol overlay.")
     _expect(service.text("objective.endgame.active.title") == "HERZSCHMIEDE HALTEN" and service.text("objective.endgame.active.prompt").begins_with("HERZSCHMIEDE HALTEN"), "German active final-protocol objective chrome must be localized.")
     _expect(service.text("hud.sanctuary.damaged") == "ZUFUCHT BESCHÄDIGT · HERZSCHMIEDE HALTEN", "German sanctuary status badge must be localized.")
+    _expect(service.text("world.condition.mist_lull.name") == "Nebelruhe" and service.text("world.condition.mist_lull.description").begins_with("Der Regen lässt nach"), "German authored world-condition name and description must resolve for the opening report.")
     _expect(_front_end_has_button_text(world.release_front_end.pause_panel, "WELT SPEICHERN"), "Changing to German in pause settings must refresh the already-built pause actions.")
     world.hud.show_forge_menu()
     _expect(world.hud.forge_title.text == "HERZSCHMIEDE · MANUELLE FERTIGUNG", "German locale must refresh the first-session Heartforge title.")

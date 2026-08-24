@@ -232,7 +232,7 @@ func _connect_systems() -> void:
     run_state.scrap_changed.connect(func(value: int) -> void: hud.set_resources(value, run_state.rare_cores))
     run_state.rare_cores_changed.connect(func(value: int) -> void: hud.set_resources(run_state.scrap, value))
     run_state.focus_changed.connect(hud.set_focus)
-    run_state.event_logged.connect(hud.push_notification)
+    run_state.event_logged.connect(Callable(self, "_on_run_state_event_logged"))
     run_state.robot_level_changed.connect(_on_robot_level_changed)
 
     autonomy_director.operation_changed.connect(_on_operation_changed)
@@ -244,6 +244,10 @@ func _connect_systems() -> void:
     hud.forge_upgrade_selected.connect(_start_manual_upgrade)
     hud.forge_closed.connect(_close_forge_menu)
     hud.expedition_authorized.connect(_authorize_expedition)
+
+
+func _on_run_state_event_logged(message: String) -> void:
+    hud.push_notification(message)
 
 
 func _spawn_initial_salvage() -> void:
