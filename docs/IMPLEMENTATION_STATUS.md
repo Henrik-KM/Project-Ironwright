@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused strategic-operation localization pass
+
+- localized dynamic pressure, route-recovery and machine-recovery operation
+  names and briefings, region names, role labels and route-preview grammar
+  across the validated English, Swedish and German catalogs;
+- preserved stable operation identifiers and dynamic-template data while
+  moving the presentation layer to locale-aware content lookup;
+- exact Windows export review passed on 2026-08-24 at 1280×720 in the German
+  dynamic-operation fixture with no mixed-locale operation text.
+
 ## Focused Municipal Glasshouse material/readability pass
 
 - reduced the translucent facade and roof emission plus the review-only key

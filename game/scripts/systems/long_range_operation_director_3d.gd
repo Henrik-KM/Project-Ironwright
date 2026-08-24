@@ -187,6 +187,7 @@ func _dynamic_operation(operation_id: StringName) -> Dictionary:
         entry["region_id"] = region_id
         entry["dynamic_template_id"] = template_id
         entry["generated_from"] = String(entry.get("trigger", "world_state"))
+        entry["localization_region_id"] = region_id
         entry["display_name"] = str(entry.get("display_name", "Strategic response")).replace("{region}", region_name)
         entry["description"] = str(entry.get("description", "")).replace("{region}", region_name)
         return entry
@@ -212,6 +213,8 @@ func _dynamic_casualty_operation(operation_id: StringName, template_id: StringNa
     entry["recovery_record_id"] = StringName(casualty_id)
     entry["recovery_position"] = record.get("position", region_director.center(region_id))
     entry["generated_from"] = "disabled_machine"
+    entry["localization_region_id"] = region_id
+    entry["localization_machine_name"] = machine_name
     entry["display_name"] = str(entry.get("display_name", "Recover {machine}")).replace("{machine}", machine_name).replace("{region}", region_name)
     entry["description"] = str(entry.get("description", "")).replace("{machine}", machine_name).replace("{region}", region_name)
     return entry
