@@ -3667,3 +3667,17 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - added aesthetic regression coverage for the imported emission peak and
   resting light budget; exact exported live review remains required for
   acceptance.
+
+## Focused Heartforge progression-audio milestone
+
+- connected the release audio director to the real Heartforge tier-change
+  signal, adding one localized forge cue and caption per upward transition;
+- retained bounded rate limiting and made Tier IV/V progression resolve to the
+  sovereignty music language, while ordinary operation audio and save state
+  remain unchanged;
+- added release regression coverage for the signal connection, cue count and
+  last-announced tier state; exact exported live review remains required for
+  acceptance.
+- wired the development-only Tier V review entrypoint to re-submit the same
+  guarded cue after deferred audio startup, making the exact exported review
+  visibly exercise the progression caption without changing normal gameplay.

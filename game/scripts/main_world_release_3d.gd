@@ -692,6 +692,13 @@ func _start_heartforge_progression_review() -> void:
 		hud.push_notification("HEARTFORGE PROGRESSION REVIEW · TIER V CROWN ACTIVE")
 	if run_state != null:
 		run_state.log_event("Heartforge progression review mode: Tier V authored hardware and presentation motion are active in the opening tactical frame.")
+	# The review flag can raise the tier before the release audio node finishes
+	# its deferred ready path. Re-submit the same signal through the audio
+	# director so the exact exported review also exercises the localized
+	# progression cue; its own tier guard prevents duplicate playback in normal
+	# gameplay.
+	if release_audio != null and progression != null:
+		release_audio.call_deferred("_on_heartforge_tier_changed", progression.heartforge_tier)
 
 
 func _create_presentation_review_stage() -> void:

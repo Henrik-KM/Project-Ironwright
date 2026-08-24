@@ -62,6 +62,14 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
     if world.release_audio is ReleaseAudioDirector3D:
         _expect(is_equal_approx(world.release_audio._organic_signature_pitch(&"glassmoth", false), 1.28), "Release audio must preserve the high signature of Glassmoth.")
         _expect(world.release_audio._organic_signature_pitch(&"apex", true) < world.release_audio._organic_signature_pitch(&"apex", false), "Release audio must lower a species signature on death.")
+        var tier_callback := Callable(world.release_audio, "_on_heartforge_tier_changed")
+        _expect(world.progression.heartforge_tier_changed.is_connected(tier_callback), "Heartforge tier changes must connect to the release progression audio cue.")
+        var tier_cue_count_before := world.release_audio.heartforge_tier_cue_count
+        world.release_audio._on_heartforge_tier_changed(2)
+        _expect(world.release_audio.heartforge_tier_cue_count == tier_cue_count_before + 1, "A Heartforge tier change must emit one bounded progression cue.")
+        _expect(world.release_audio.last_heartforge_tier == 2, "Progression audio must retain the last announced Heartforge tier for rate limiting.")
+        world.release_audio._on_heartforge_tier_changed(2)
+        _expect(world.release_audio.heartforge_tier_cue_count == tier_cue_count_before + 1, "Repeated Heartforge tier notifications must not flood the progression audio layer.")
         var report_count_before := world.release_audio.operation_report_count
         world.release_audio.notify_operation(&"salvage", &"outbound", "Test machine report", Vector3(0.0, 0.0, -18.0))
         _expect(world.release_audio.operation_report_count == report_count_before + 1, "Autonomous operation transitions must emit a bounded machine report cue.")
