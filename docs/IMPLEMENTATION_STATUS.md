@@ -1,5 +1,11 @@
 # Implementation status
 
+## Fresh-world locale evidence
+
+- exact merged Windows export review passed on 2026-08-24 at 1024×576 in
+  German: the opening objective, salvage route, Mechromancer/Bulwark cards,
+  resource readout and bottom route prompt were all visible and consistent.
+
 ## Focused strategic-operation localization pass
 
 - localized dynamic pressure, route-recovery and machine-recovery operation

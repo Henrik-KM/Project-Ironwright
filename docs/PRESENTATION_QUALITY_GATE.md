@@ -4,6 +4,11 @@
 
 The current build is not release-ready merely because its systemic gameplay path is complete. The native presentation must be judged against the actual shipped frame, not against internal implementation breadth.
 
+The merged build's fresh-world German opening was captured at 1024×576 on
+2026-08-24. The opening objective, salvage route, Mechromancer/Bulwark cards,
+resource readout and bottom route prompt remain visible together; Swedish and
+the broader professional localization review remain open.
+
 The dynamic long-range operation review now resolves operation names and
 briefings, world-region names, team roles and route grammar from the selected
 locale. Exact Windows capture at 1280×720 in German confirms that the
