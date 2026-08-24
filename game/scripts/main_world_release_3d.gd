@@ -503,6 +503,11 @@ func _finish_release_boot() -> void:
 	pending_launch_mode = &"title"
 	if _is_headless_release():
 		_start_release_world()
+	elif _has_new_world_flag():
+		# A direct fresh-world launch keeps exact-export playtests reproducible
+		# without requiring UI automation through the title screen. It is a
+		# developer-facing launch flag and does not bypass any in-world gate.
+		_start_release_world()
 	elif _has_heartforge_progression_review_flag():
 		_start_release_world()
 		call_deferred("_start_heartforge_progression_review")
@@ -531,6 +536,16 @@ func _finish_release_boot() -> void:
 		_load_release_game()
 	else:
 		_show_title_screen()
+
+
+func _has_new_world_flag() -> bool:
+	for argument in OS.get_cmdline_args():
+		if str(argument) in ["--new", "--new-world"]:
+			return true
+	for argument in OS.get_cmdline_user_args():
+		if str(argument) in ["--new", "--new-world"]:
+			return true
+	return false
 
 
 func _has_presentation_review_flag() -> bool:

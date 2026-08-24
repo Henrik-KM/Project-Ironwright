@@ -79,7 +79,13 @@ func _apply_compact_layout(viewport_size: Vector2) -> void:
     objective_label.size = Vector2(objective_panel.size.x - 36.0, 78.0)
 
     resource_panel.size = Vector2(296.0 if narrow else 318.0, 174.0)
-    resource_panel.position = Vector2(-resource_panel.size.x - 18.0, 18.0)
+    # The base HUD uses right-anchored offsets, but the compact release scene
+    # also runs inside real SubViewports and small exported windows where that
+    # anchor can resolve against an unmeasured parent during the first layout
+    # pass. Place the tactical cards in viewport coordinates so the persistent
+    # resource/focus readout cannot disappear off the left edge.
+    resource_panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
+    resource_panel.position = Vector2(maxf(18.0, viewport_size.x - resource_panel.size.x - 18.0), 18.0)
     resource_label.position = Vector2(18.0, 31.0)
     resource_label.size = Vector2(resource_panel.size.x - 36.0, 66.0)
     focus_label.position = Vector2(18.0, 108.0)
@@ -88,7 +94,8 @@ func _apply_compact_layout(viewport_size: Vector2) -> void:
     operation_label.size = Vector2(resource_panel.size.x - 36.0, 32.0)
 
     notification_panel.size = Vector2(330.0, 126.0)
-    notification_panel.position = Vector2(-348.0, 206.0)
+    notification_panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
+    notification_panel.position = Vector2(maxf(18.0, viewport_size.x - notification_panel.size.x - 18.0), 206.0)
     notification_label.position = Vector2(18.0, 32.0)
     notification_label.size = Vector2(294.0, 82.0)
 
@@ -112,7 +119,11 @@ func _apply_compact_layout(viewport_size: Vector2) -> void:
         operation_badge_label.size = Vector2(badge_width - 24.0, 28.0)
 
     if _health_panel != null:
-        _health_panel.position = Vector2(18.0, -106.0)
+        _health_panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
+        # Keep the two vulnerable silhouettes' health bars visible under the
+        # opening objective rather than letting a bottom-left anchor resolve
+        # to a negative y-coordinate in the compact release viewport.
+        _health_panel.position = Vector2(18.0, objective_panel.position.y + objective_panel.size.y + 10.0)
         _health_panel.size = Vector2(312.0, 82.0)
         var content := _health_panel.get_node_or_null("PanelContent") as Control
         if content != null:

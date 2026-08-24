@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused opening tactical-HUD layout pass
+
+- placed the compact release resource/focus and Mechromancer/Bulwark health
+  cards in explicit viewport coordinates so the first-session tactical readout
+  remains inside small real SubViewports and Windows exports;
+- added a first-session regression assertion for both cards' global rectangles,
+  catching the anchored-layout failure that previously placed them off-screen;
+- added the developer-only `--new`/`--new-world` launch flag so exact export
+  reviews can enter a deterministic fresh world without title-screen input
+  automation; no simulation, save, progression or input contract changed;
+- exact Windows export review passed on 2026-08-24 at 1024×576: objective,
+  health, resource/focus and opening route prompt are all visible in-world.
+
 ## Focused opening-forge localization pass
 
 - localized the shared first-session HUD chrome and manual Heartforge panel

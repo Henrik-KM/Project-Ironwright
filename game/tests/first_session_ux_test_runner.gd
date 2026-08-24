@@ -71,6 +71,14 @@ func _run_all() -> void:
     hud.hide_forge_menu()
 
     var objective_rect := hud.objective_panel.get_global_rect()
+    var resource_rect := hud.resource_panel.get_global_rect()
+    var health_panel := hud.root_control.get_node("HealthPanel") as PanelContainer
+    var health_rect := health_panel.get_global_rect()
+    print("First-session HUD diagnostic · objective=%s resource=%s health=%s viewport=%s" % [
+        str(objective_rect), str(resource_rect), str(health_rect), str(test_viewport.get_visible_rect().size),
+    ])
+    _expect(_rect_fits_viewport(resource_rect, Vector2(TEST_VIEWPORT_SIZE)), "The persistent resource and focus panel must remain visible inside an 800×520 viewport.")
+    _expect(_rect_fits_viewport(health_rect, Vector2(TEST_VIEWPORT_SIZE)), "The Mechromancer and Bulwark health panel must remain visible inside an 800×520 viewport.")
     hud.push_notification("FIRST MACHINE REPORT")
     hud.push_notification("SECOND MACHINE REPORT")
     hud.push_notification("THIRD MACHINE REPORT")
