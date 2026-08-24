@@ -1,5 +1,24 @@
 # Implementation status
 
+## Focused organic roster model-detail pass
+
+- regenerated the seven shared late-organic family shells with distinct
+  body-profile proportions so Roofleaper, Glassmoth, Miremaw, Carrion Bell,
+  Rootweaver, Thornback and Ashmantle no longer inherit one indistinguishable
+  torso silhouette;
+- added paired recessed torso surface veins across all seven authored shells,
+  preserving the stable socket contracts, animation clips, gameplay collision
+  ownership and asset IDs while improving close-camera material breakup;
+- added aesthetic validation requiring the generated glTFs to retain the
+  authored vascular detail rather than silently reverting to the shared coarse
+  kit;
+- extended the development-only presentation review entrypoint with a direct
+  page selector so exact Windows captures of individual roster pages remain
+  reproducible without player-facing input changes;
+- exact Windows export review passed on 2026-08-24 at 1280×720 for early and
+  late organic pages 2/14 and 3/14, with family profiles and fine surface
+  detail readable under the review lighting.
+
 ## Focused opening tactical-HUD layout pass
 
 - placed the compact release resource/focus and Mechromancer/Bulwark health

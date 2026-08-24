@@ -27,6 +27,7 @@ FAMILIES = {
         "display": "Roofleaper",
         "asset_id": "roofleaper.ambusher.v1",
         "colors": ([0.035, 0.055, 0.07, 1.0], [0.16, 0.22, 0.25, 1.0], [0.10, 0.28, 0.34, 1.0], [0.48, 0.39, 0.28, 1.0], [0.75, 0.22, 0.04, 1.0], [0.30, 0.09, 0.08, 1.0]),
+        "body_profile": ((1.25, 0.74, 1.55), (1.08, 0.66, 1.20), 0.04),
         "socket_contract": "crown, wing_membranes, talons, threat_eyes",
         "signature_nodes": ["RoofleaperFineVeinL", "RoofleaperFineVeinR", "RoofleaperWingFrameL", "RoofleaperWingFastenerR"],
     },
@@ -34,6 +35,7 @@ FAMILIES = {
         "display": "Glassmoth",
         "asset_id": "glassmoth.swarm.v1",
         "colors": ([0.025, 0.07, 0.075, 1.0], [0.19, 0.38, 0.39, 1.0], [0.27, 0.16, 0.34, 1.0], [0.64, 0.58, 0.43, 1.0], [0.12, 0.72, 0.68, 1.0], [0.20, 0.24, 0.26, 1.0]),
+        "body_profile": ((0.94, 1.04, 1.18), (0.88, 0.82, 1.02), 0.035),
         "socket_contract": "wing_pairs, antennae, luminous_eyes, thorax",
         "signature_nodes": ["GlassmothFineVeinL0", "GlassmothFineVeinR0", "GlassmothWingFrameL0", "GlassmothWingFastenerR1"],
     },
@@ -41,6 +43,7 @@ FAMILIES = {
         "display": "Miremaw",
         "asset_id": "miremaw.amphibious.v1",
         "colors": ([0.035, 0.065, 0.045, 1.0], [0.22, 0.28, 0.18, 1.0], [0.25, 0.07, 0.045, 1.0], [0.52, 0.44, 0.29, 1.0], [0.82, 0.32, 0.05, 1.0], [0.28, 0.12, 0.075, 1.0]),
+        "body_profile": ((1.45, 0.76, 1.34), (1.28, 0.66, 1.10), 0.025),
         "socket_contract": "maw, gill_fan, water_fins, jaw_hooks",
         "signature_nodes": ["MiremawGillRidgeL", "MiremawGillRidgeR", "MiremawJawPlateL", "MiremawGillSpineR"],
     },
@@ -48,6 +51,7 @@ FAMILIES = {
         "display": "Carrion Bell",
         "asset_id": "carrionbell.signal.v1",
         "colors": ([0.065, 0.035, 0.06, 1.0], [0.25, 0.12, 0.22, 1.0], [0.35, 0.08, 0.24, 1.0], [0.56, 0.45, 0.32, 1.0], [0.9, 0.22, 0.14, 1.0], [0.34, 0.09, 0.16, 1.0]),
+        "body_profile": ((1.32, 1.15, 1.18), (1.18, 0.86, 1.02), 0.02),
         "socket_contract": "resonator, bell_mantle, signal_tendrils, crown_plate",
         "signature_nodes": ["CarrionbellResonatorRing", "CarrionbellResonatorCore", "CarrionbellBellRib0"],
     },
@@ -55,6 +59,7 @@ FAMILIES = {
         "display": "Rootweaver",
         "asset_id": "rootweaver.route_controller.v1",
         "colors": ([0.035, 0.05, 0.04, 1.0], [0.20, 0.23, 0.14, 1.0], [0.29, 0.06, 0.12, 1.0], [0.48, 0.38, 0.24, 1.0], [0.16, 0.72, 0.63, 1.0], [0.28, 0.08, 0.09, 1.0]),
+        "body_profile": ((1.18, 1.05, 1.45), (1.04, 0.84, 1.18), 0.025),
         "socket_contract": "root_arms, route_spines, spore_fan, crown_oculi",
         "signature_nodes": ["RootweaverKnuckleL", "RootweaverKnuckleR", "RootweaverCrownPlate0", "RootweaverRootSpineR"],
     },
@@ -62,6 +67,7 @@ FAMILIES = {
         "display": "Thornback",
         "asset_id": "thornback.territorial.v1",
         "colors": ([0.055, 0.045, 0.035, 1.0], [0.30, 0.19, 0.10, 1.0], [0.36, 0.12, 0.08, 1.0], [0.57, 0.46, 0.30, 1.0], [0.92, 0.38, 0.08, 1.0], [0.34, 0.12, 0.07, 1.0]),
+        "body_profile": ((1.50, 0.82, 1.45), (1.34, 0.75, 1.25), 0.03),
         "socket_contract": "thorn_crown, dorsal_spines, jaw_plates, threat_eyes",
         "signature_nodes": ["ThornbackCrown", "ThornbackSpineL", "ThornbackSpineR", "ThornbackJawPlateL"],
     },
@@ -69,6 +75,7 @@ FAMILIES = {
         "display": "Ashmantle",
         "asset_id": "ashmantle.route_predator.v1",
         "colors": ([0.035, 0.045, 0.055, 1.0], [0.16, 0.20, 0.24, 1.0], [0.20, 0.27, 0.32, 1.0], [0.52, 0.48, 0.38, 1.0], [0.94, 0.23, 0.08, 1.0], [0.18, 0.10, 0.08, 1.0]),
+        "body_profile": ((1.48, 0.82, 1.42), (1.30, 0.72, 1.22), 0.03),
         "socket_contract": "heat_mantle, louver_fins, route_siphon, sensory_tendrils",
         "signature_nodes": ["AshmantleMantle", "AshmantleHeatLouverL", "AshmantleHeatLouverR", "AshmantleSiphon"],
     },
@@ -200,6 +207,7 @@ def build_family(name: str, spec: dict) -> None:
         "Soft": mesh("Soft", add_uv_sphere(builder, 0.34, membrane, 24, 36)),
         "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.045, bone, 24, 36)),
         "FineVein": mesh("FineVein", add_cylinder(builder, 0.026, 1.22, bone, 24)),
+        "SurfaceVein": mesh("SurfaceVein", add_cylinder(builder, 0.024, 0.88, tendon, 24)),
         "Ridge": mesh("Ridge", add_beveled_box(builder, (1.24, 0.07, 0.10), bone, 0.018)),
         "ResonatorRing": mesh("ResonatorRing", add_cylinder(builder, 0.11, 0.07, bone, 24)),
         "RootKnuckle": mesh("RootKnuckle", add_uv_sphere(builder, 0.14, bone, 24, 36)),
@@ -246,13 +254,23 @@ def build_family(name: str, spec: dict) -> None:
         return len(nodes) - 1
 
     torso = add_node("Torso", extras={"surface": "layered_wet_chitin"})
-    add_node("TorsoCore", mesh_ids["Core"], (0.0, 0.92, 0.08), scale=(1.45, 0.82, 1.62), parent=torso, extras={"release_material_family": "chitin"})
+    core_scale, segment_scale, segment_taper = spec["body_profile"]
+    add_node("TorsoCore", mesh_ids["Core"], (0.0, 0.92, 0.08), scale=core_scale, parent=torso, extras={"release_material_family": "chitin"})
     for index in range(4):
         z = -0.62 + index * 0.43
-        add_node(f"TorsoSegment{index}", mesh_ids["Segment"], (0.0, 0.89 - index * 0.018, z), scale=(1.22 - index * 0.04, 0.72, 1.25 - index * 0.03), parent=torso)
+        segment_width = max(0.72, float(segment_scale[0]) - index * segment_taper)
+        segment_depth = max(0.78, float(segment_scale[2]) - index * segment_taper * 0.8)
+        add_node(f"TorsoSegment{index}", mesh_ids["Segment"], (0.0, 0.89 - index * 0.018, z), scale=(segment_width, segment_scale[1], segment_depth), parent=torso)
         add_node(f"{name.capitalize()}ThoraxRib", mesh_ids["Plate"], (0.0, 1.37 - index * 0.035, z), rotation=(0.0, 0.0, 0.03 * (index - 1)), scale=(1.0, 1.0, 0.74), parent=torso, extras={"surface": "layered_shell_break"} if index == 1 else None)
         add_node("ThoraxFastener", mesh_ids["Fastener"], (-0.56, 1.18, z), parent=torso)
         add_node("ThoraxFastener", mesh_ids["Fastener"], (0.56, 1.18, z), parent=torso)
+        # Paired surface veins break up the shared torso kit at close camera
+        # distance. They are deliberately thin and recessed into the front
+        # face, adding living vascular rhythm without becoming gameplay
+        # sockets, collision geometry, or a new runtime dependency.
+        for side in (-1.0, 1.0):
+            suffix = "L" if side < 0.0 else "R"
+            add_node(f"{name.capitalize()}TorsoSurfaceVein{index}{suffix}", mesh_ids["SurfaceVein"], (side * 0.31, 1.19, z - 0.54), rotation=(0.0, 0.0, side * 0.08), scale=(1.0, 1.0, 0.72), parent=torso, extras={"surface": "vascular_surface_detail"})
     dorsal = add_node("OrganicDorsalPlate", mesh_ids["Plate"], (-0.12, 1.54, 0.18), rotation=(0.0, 0.0, -0.04), scale=(1.08, 1.0, 1.4), extras={"surface": "beveled_layered_shell_break"})
 
     if name == "roofleaper":
