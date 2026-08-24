@@ -1689,18 +1689,18 @@
       "name": "Cathedral organic membrane",
       "pbrMetallicRoughness": {
         "baseColorFactor": [
-          0.1,
-          0.01,
-          0.035,
+          0.055,
+          0.018,
+          0.03,
           1.0
         ],
         "metallicFactor": 0.01,
-        "roughnessFactor": 0.92
+        "roughnessFactor": 0.96
       },
       "emissiveFactor": [
-        0.08,
+        0.015,
         0.0,
-        0.02
+        0.006
       ]
     },
     {

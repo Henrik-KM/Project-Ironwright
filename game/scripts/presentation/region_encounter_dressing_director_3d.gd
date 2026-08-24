@@ -105,6 +105,9 @@ func _build_district_breadth(parent: Node3D, kind: StringName) -> void:
     # The authored vignette gives each landmark a focal story. This bounded
     # edge kit makes the surrounding district feel inhabited and weathered as
     # well, without adding collision, resources, routes or player-managed work.
+    var nest_membrane := _membrane
+    if kind == &"nest":
+        nest_membrane = ModelKit3D.material(Color("241b24"), 0.0, 0.92)
     var breadth := Node3D.new()
     breadth.name = "DistrictBreadthLayer"
     parent.add_child(breadth)
@@ -181,7 +184,7 @@ func _build_district_breadth(parent: Node3D, kind: StringName) -> void:
             _add_beam(identity, Vector3(3.0, 0.35, 8.35), Vector3(8.3, 0.35, 8.35), 0.06, _steel, "DistrictBreadthRailLine")
         &"nest":
             _add_beam(identity, Vector3(4.0, 0.35, 8.6), Vector3(6.8, 3.25, 8.2), 0.12, _organic, "DistrictBreadthNestRib")
-            ModelKit3D.add_membrane_fan(identity, 0.72, Vector3(6.3, 1.1, 8.2), _membrane, 6, "DistrictBreadthNestVeil")
+            ModelKit3D.add_membrane_fan(identity, 0.72, Vector3(6.3, 1.1, 8.2), nest_membrane, 6, "DistrictBreadthNestVeil")
         &"observatory":
             ModelKit3D.add_cylinder(identity, 0.12, 2.2, Vector3(5.1, 1.3, 8.35), _steel, Vector3.ZERO, "DistrictBreadthSurveyStake")
             ModelKit3D.add_surface_panel(identity, Vector3(1.1, 0.62, 0.08), Vector3(5.1, 1.45, 8.2), _dark_steel, _cool, Vector3.ZERO, "DistrictBreadthSurveyPanel")
@@ -511,13 +514,17 @@ func _build_rail_vignette(parent: Node3D) -> void:
 
 
 func _build_nest_vignette(parent: Node3D) -> void:
+    # Cathedral Quarter's civic nave should carry the frame. Keep the brood
+    # material vascular and textured, but remove the broad hot-pink lift that
+    # made the review vignette read like an emissive placeholder.
+    var cathedral_membrane := ModelKit3D.material(Color("2d202d"), 0.0, 0.84, Color("7c304f"), 0.28)
     for side in [-1.0, 1.0]:
         _add_beam(parent, Vector3(side * 5.8, 0.2, -6.5), Vector3(side * 2.3, 3.9, -5.8), 0.18, _organic, "NestRibArch")
     for index in range(5):
         var angle := -0.9 + float(index) * 0.45
-        ModelKit3D.add_sphere(parent, 0.42, Vector3(cos(angle) * 3.6, 0.5, -5.6 + sin(angle) * 1.5), _membrane, Vector3(1.0, 0.82, 1.15), "NestEggSac")
+        ModelKit3D.add_sphere(parent, 0.42, Vector3(cos(angle) * 3.6, 0.5, -5.6 + sin(angle) * 1.5), cathedral_membrane, Vector3(1.0, 0.82, 1.15), "NestEggSac")
     ModelKit3D.add_membrane_fan(parent, 1.6, Vector3(0.0, 2.4, -5.7), _organic, 7, "NestWarningFan")
-    _add_light(parent, Vector3(0.0, 2.2, -5.4), Color("b83a60"), 1.0, 7.5)
+    _add_light(parent, Vector3(0.0, 2.2, -5.4), Color("71354d"), 0.42, 7.5)
 
     var choir_yard := Node3D.new()
     choir_yard.name = "CathedralChoirYardHardware"
@@ -573,8 +580,8 @@ func _build_nest_vignette(parent: Node3D) -> void:
         _add_beam(choir_yard, Vector3(x, 2.12, 4.76), Vector3(x + 0.38, 0.72, 4.76), 0.032, yard_signal, "CathedralChoirYardHangingCable%d" % index)
         ModelKit3D.add_tapered_cylinder(choir_yard, 0.12, 0.2, 0.62, Vector3(x, 0.66, 4.76), yard_brass, Vector3.ZERO, "CathedralChoirYardAnchor%d" % index)
     ModelKit3D.add_cylinder(choir_yard, 0.42, 0.12, Vector3(0.0, 2.18, 4.76), yard_signal, Vector3(PI * 0.5, 0.0, 0.0), "CathedralChoirYardResonator")
-    ModelKit3D.add_organic_plate(choir_yard, 0.72, Vector3(0.0, 0.72, 5.78), _membrane, _organic, Vector3(1.6, 0.42, 0.82), "CathedralChoirYardRootPlate")
-    _add_light(choir_yard, Vector3(0.0, 1.65, 4.35), Color("d25c9a"), 0.62, 5.5)
+    ModelKit3D.add_organic_plate(choir_yard, 0.72, Vector3(0.0, 0.72, 5.78), cathedral_membrane, _organic, Vector3(1.6, 0.42, 0.82), "CathedralChoirYardRootPlate")
+    _add_light(choir_yard, Vector3(0.0, 1.65, 4.35), Color("71354d"), 0.32, 5.5)
 
 
 func _build_observatory_vignette(parent: Node3D) -> void:

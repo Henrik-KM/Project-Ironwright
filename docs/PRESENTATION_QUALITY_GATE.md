@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Cathedral Quarter received a focused brood-material hierarchy pass on
+2026-08-24. The authored choir, spine and vein meshes now use a dry deep-violet
+organic response in the compact review frame, while the source membrane and
+Cathedral-specific dressing use restrained saturation and emission. Exact
+Windows capture at 1280×720 on page 11/14 confirms that the nave, rose window
+and organic takeover read as one hierarchy; broader human region acceptance
+remains open.
+
 The Tram Graveyard review actor received a focused wreck-condition pass on
 2026-08-24. The two authored carriage roots now carry a restrained bank, and
 the exact review-only yard adds grounded collapsed panels, broken window
