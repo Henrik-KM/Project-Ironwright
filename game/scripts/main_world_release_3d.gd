@@ -1500,6 +1500,40 @@ func _on_run_state_event_logged(message: String) -> void:
 		var variant_description := localization_service.text("world.condition.%s.description" % variant_key)
 		hud.push_notification(localization_service.text("notification.world_condition_detail", [variant_name, variant_description]))
 		return
+	if message.begins_with("Town record recovered: "):
+		var record_name := message.trim_prefix("Town record recovered: ")
+		var record_key := ""
+		if record_name == "The Severed Root":
+			record_key = "endgame_severance"
+		elif record_name == "The Caged Root":
+			record_key = "endgame_containment"
+		if not record_key.is_empty():
+			hud.push_notification(localization_service.text("notification.town_record_recovered", [localization_service.text("story.record.%s.name" % record_key)]))
+			return
+	if message.begins_with("Technology unlocked: "):
+		var technology_name := message.trim_prefix("Technology unlocked: ")
+		var technology_key := "technology.name.%s" % technology_name.to_lower().replace(" ", "_")
+		var localized_name := localization_service.text(technology_key)
+		if localized_name != technology_key:
+			hud.push_notification(localization_service.text("notification.technology_unlocked", [localized_name.to_upper()]))
+			return
+	if message.begins_with("First victory achieved through "):
+		var protocol_name := message.trim_prefix("First victory achieved through ").trim_suffix(".")
+		var protocol_key := protocol_name.to_lower()
+		var localized_protocol := localization_service.text("endgame.%s.name" % protocol_key)
+		if localized_protocol != "endgame.%s.name" % protocol_key:
+			hud.push_notification(localization_service.text("notification.first_victory_achieved", [localized_protocol]))
+			return
+	if message.ends_with(" integrity."):
+		var status_parts := message.trim_suffix(".").split(" ")
+		if status_parts.size() >= 9 and status_parts[1] == "outpost" and status_parts[2] == "at" and status_parts[4] == "is" and status_parts[5] == "tier" and status_parts[7] == "with":
+			var role_key := status_parts[0].to_lower()
+			var site_key := status_parts[3].replace(".", "_")
+			var role_name := localization_service.text("outpost.role.%s" % role_key)
+			var site_name := localization_service.text("outpost.site.%s.name" % site_key)
+			if role_name != "outpost.role.%s" % role_key and site_name != "outpost.site.%s.name" % site_key:
+				hud.push_notification(localization_service.text("notification.outpost_status", [role_name, site_name, status_parts[6], status_parts[8].trim_suffix("%")]))
+				return
 	super._on_run_state_event_logged(message)
 
 
