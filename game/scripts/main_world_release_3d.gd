@@ -558,6 +558,18 @@ func _has_presentation_review_flag() -> bool:
 	return false
 
 
+func _presentation_review_start_page() -> int:
+	var arguments: Array = OS.get_cmdline_args()
+	arguments.append_array(OS.get_cmdline_user_args())
+	for index in arguments.size():
+		var argument := str(arguments[index])
+		if argument.begins_with("--presentation-review-page="):
+			return maxi(0, int(argument.get_slice("=", 1)))
+		if argument == "--presentation-review-page" and index + 1 < arguments.size():
+			return maxi(0, int(arguments[index + 1]))
+	return 0
+
+
 func _has_mechromancer_evolution_review_flag() -> bool:
 	for argument in OS.get_cmdline_args():
 		if str(argument) == "--mechromancer-evolution-review":
@@ -696,7 +708,7 @@ func _start_presentation_review() -> void:
 			landmark.set_map_emphasis(false)
 			presentation_review_pages[3 + index].append(review_actor)
 	_create_presentation_review_stage()
-	_show_presentation_review_page(0)
+	_show_presentation_review_page(_presentation_review_start_page())
 	get_tree().paused = true
 	run_state.log_event("Presentation review mode: 1 friendly roster, 2 early organics, 3 late organics, 4-14 all remote regions. Arrow keys browse; Escape exits review.")
 

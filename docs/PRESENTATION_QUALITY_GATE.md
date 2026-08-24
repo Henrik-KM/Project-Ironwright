@@ -22,6 +22,13 @@ the same runtime actor roots, scale, collision and animation contracts. This
 improves evidence quality for the remaining human art-acceptance gate; it does
 not claim that gate is complete.
 
+The seven shared late-organic shells now carry family-specific body profiles
+and paired recessed torso surface veins in addition to their existing crowns,
+membranes, fins, spines and threat sockets. Exact Windows review of pages 2/14
+and 3/14 at 1280×720 confirms more distinct proportions and readable vascular
+breakup at the close gallery distance. The authored asset validator protects
+the new detail, while broader human art acceptance remains an open gate.
+
 The opening sanctuary string-light pass now uses a restrained amber material
 budget in both the camp decorator and release dressing instead of the former
 high-emission bulb surfaces. Exact exported Windows review confirms that the

@@ -191,6 +191,16 @@ SHARED_ORGANIC_SOURCE_TESSELLATION = {
     "game/assets/organic_families/source/build_authored_organic_assets.py": (24, 36, 24),
 }
 
+SHARED_AUTHORED_ORGANIC_FAMILIES = {
+    "roofleaper",
+    "glassmoth",
+    "miremaw",
+    "carrionbell",
+    "rootweaver",
+    "thornback",
+    "ashmantle",
+}
+
 # These seven production builders predate the shared authored-family builder.
 # Keep their source-level primitive floors explicit so a generated glTF can
 # remain dense while a later rebuild quietly reintroduces coarse components.
@@ -700,6 +710,18 @@ def validate_authored_organic_assets() -> None:
         for required in expected["required"]:
             if required not in node_names:
                 fail(f"{family} glTF is missing required node: {required}")
+        if family in SHARED_AUTHORED_ORGANIC_FAMILIES:
+            family_prefix = expected["root"].removesuffix("Model")
+            surface_veins = [
+                node_name
+                for node_name in node_names
+                if node_name.startswith(f"{family_prefix}TorsoSurfaceVein")
+            ]
+            if len(surface_veins) < 8:
+                fail(
+                    f"{family} glTF must retain paired authored torso surface veins: "
+                    f"{len(surface_veins)} < 8."
+                )
         animation_names = {str(animation.get("name")) for animation in gltf.get("animations", [])}
         for required in ORGANIC_ANIMATION_CLIPS:
             if required not in animation_names:
