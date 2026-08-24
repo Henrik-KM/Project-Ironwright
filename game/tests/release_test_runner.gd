@@ -193,8 +193,10 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     _expect(service.set_locale(&"sv"), "Swedish locale must be selectable.")
     var swedish := service.text("menu.new_world")
     _expect(swedish == "NY VÄRLD" and swedish != english, "Swedish catalog must resolve localized release strings.")
+    _expect(service.text("objective.opening.salvage.title") == "BÄRGA DITT FÖRSTA SKROT", "Swedish catalog must localize the opening objective title.")
     _expect(service.set_locale(&"de"), "German locale must be selectable.")
     _expect(service.text("menu.settings") == "EINSTELLUNGEN", "German catalog must resolve release settings text.")
+    _expect(service.text("objective.opening.salvage.title") == "BERGE DEIN ERSTES SCHROTTGUT", "German catalog must localize the opening objective title.")
     service.set_locale(&"en")
 
 

@@ -87,6 +87,25 @@
     "release.content_optional": "Optional operation",
     "release.content_discovered": "District discovered",
     "release.first_victory": "FIRST VICTORY",
-    "release.post_victory": "The sanctuary remains playable after the first victory."
+    "release.post_victory": "The sanctuary remains playable after the first victory.",
+    "guidance.salvage": "SALVAGE WRECK",
+    "guidance.salvage.hold": "HOLD {0} · LOUD",
+    "guidance.heartforge": "HEARTFORGE",
+    "guidance.heartforge.build": "PRESS {0} · BUILD SCRAPPER",
+    "guidance.heartforge.escort": "PRESS {0} · BUILD ESCORT GROUP",
+    "objective.opening.salvage.title": "RECOVER YOUR FIRST SCRAP",
+    "objective.opening.salvage.detail": "Follow the amber ground lights to the highlighted municipal wreck ({0}). Hold {1} to dismantle it; the pistol goes offline and the noise attracts organisms.",
+    "objective.opening.scrapper.title": "BUILD YOUR FIRST SCRAPPER",
+    "objective.opening.scrapper.detail": "Return along the cyan route to the Heartforge ({0}). Press {1} at the assembly plate and choose Build Scrapper. Fabrication is loud and leaves you dependent on the Bulwark.",
+    "objective.opening.autonomy.title": "LET THE SCRAPPER TAKE OVER",
+    "objective.opening.autonomy.detail": "Press 2 to set Salvage focus. The machines choose a wreck, form a protected group, travel there physically, recover Scrap, and return without individual orders.",
+    "objective.opening.expedition.title": "PREPARE THE NORTH RUINS GROUP",
+    "objective.opening.expedition.detail": "Return to the forge and manually fabricate one Warden and one Pathfinder. The Warden protects vulnerable machines; the Pathfinder keeps the expedition coherent.",
+    "prompt.opening.route": "FOLLOW THE AMBER ROUTE · STAY WITHIN THE BULWARK'S PROTECTION",
+    "prompt.opening.salvage": "HOLD {0} · DISMANTLE THE HIGHLIGHTED WRECK · PISTOL OFFLINE · NOISE ATTRACTS ORGANISMS",
+    "prompt.opening.forge": "PRESS {0} · OPEN THE HEARTFORGE · BUILD SCRAPPER",
+    "prompt.opening.return": "FOLLOW THE CYAN ROUTE BACK TO THE HEARTFORGE",
+    "prompt.opening.autonomy": "PRESS 2 · AUTHORIZE ROUTINE MACHINE SALVAGE",
+    "prompt.opening.escort": "PRESS {0} · BUILD THE MISSING WARDEN OR PATHFINDER"
   }
 }

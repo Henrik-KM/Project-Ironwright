@@ -87,6 +87,25 @@
     "release.content_optional": "Valfri operation",
     "release.content_discovered": "Stadsdel upptäckt",
     "release.first_victory": "FÖRSTA SEGERN",
-    "release.post_victory": "Fristaden förblir spelbar efter den första segern."
+    "release.post_victory": "Fristaden förblir spelbar efter den första segern.",
+    "guidance.salvage": "BÄRGA VRAK",
+    "guidance.salvage.hold": "HÅLL {0} · HÖGLJUTT",
+    "guidance.heartforge": "HJÄRTSMEDJAN",
+    "guidance.heartforge.build": "TRYCK {0} · BYGG SKROTARE",
+    "guidance.heartforge.escort": "TRYCK {0} · BYGG ESKORTGRUPP",
+    "objective.opening.salvage.title": "BÄRGA DITT FÖRSTA SKROT",
+    "objective.opening.salvage.detail": "Följ de bärnstensfärgade markljusen till det markerade kommunala vraket ({0}). Håll {1} för att demontera det; pistolen stängs av och ljudet lockar organismer.",
+    "objective.opening.scrapper.title": "BYGG DIN FÖRSTA SKROTARE",
+    "objective.opening.scrapper.detail": "Följ den cyanblå rutten tillbaka till Hjärtsmedjan ({0}). Tryck {1} vid monteringsplattan och välj Bygg skrotare. Tillverkningen låter högt och gör dig beroende av Bulwark.",
+    "objective.opening.autonomy.title": "LÅT SKROTAREN TA ÖVER",
+    "objective.opening.autonomy.detail": "Tryck 2 för att välja skrotfokus. Maskinerna väljer ett vrak, bildar en skyddad grupp, färdas dit fysiskt, bärgar skrot och återvänder utan individuella order.",
+    "objective.opening.expedition.title": "FÖRBERED GRUPPEN FÖR NORDRUINERNA",
+    "objective.opening.expedition.detail": "Återvänd till smedjan och tillverka manuellt en Väktare och en Vägvisare. Väktaren skyddar sårbara maskiner; Vägvisaren håller expeditionen samlad.",
+    "prompt.opening.route": "FÖLJ DEN BÄRNSTENSFÄRGADE RUTTEN · HÅLL DIG INOM BULWARKS SKYDD",
+    "prompt.opening.salvage": "HÅLL {0} · DEMONTERA DET MARKERADE VRAKET · PISTOLEN AVSTÄNGD · LJUD LOCKAR ORGANISMER",
+    "prompt.opening.forge": "TRYCK {0} · ÖPPNA HJÄRTSMEDJAN · BYGG SKROTARE",
+    "prompt.opening.return": "FÖLJ DEN CYANBLÅ RUTTEN TILLBAKA TILL HJÄRTSMEDJAN",
+    "prompt.opening.autonomy": "TRYCK 2 · AUKTORISERA MASKINERNAS RUTINBÄRGNING",
+    "prompt.opening.escort": "TRYCK {0} · BYGG DEN SAKNADE VÄKTAREN ELLER VÄGVISAREN"
   }
 }

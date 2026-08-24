@@ -22,6 +22,13 @@ while the Heartforge and cool foreground retain their focal separation. This
 remains presentation-only and does not change camp geometry, interaction,
 lighting ownership or save state.
 
+The release shell now localizes the first-session guidance layer as well as the
+title, pause and settings surfaces: salvage and Heartforge labels, opening
+objective titles/details and route prompts resolve from the validated English,
+Swedish and German catalogs. Exact exported Windows review must confirm a
+fresh-world opening in each selected locale; this is copy/presentation work
+only and does not alter gameplay or persistence.
+
 Cathedral Quarter's release brood sacs now use layered shell-and-ridge anatomy
 instead of a ring of flat proxy spheres. Exact exported Windows page 11/14
 review confirms that the biological takeover reads as grouped organic plates
