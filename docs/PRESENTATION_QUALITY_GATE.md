@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The Cistern Apex final-threat shell received a focused crown-silhouette pass on
+2026-08-24. Its nine stable crown-spine sockets now use smooth tapered thorn
+geometry, reducing the manufactured-bar read without changing authored
+animation clips, collision, or ecology. Exact Windows capture at 1280×720 on
+page 3/14 confirms the final threat crown reads as organic; broader final-threat
+human art acceptance remains open.
+
 The Broodmass late-family shell received a focused crown-silhouette pass on
 2026-08-24. Its seven stable crown-spine sockets now use smooth tapered thorn
 geometry, reducing the manufactured-bar read without changing the authored
