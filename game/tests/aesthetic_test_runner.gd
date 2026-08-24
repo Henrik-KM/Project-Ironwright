@@ -53,6 +53,9 @@ func _run_all() -> void:
     _expect(camp != null and camp.get_node_or_null("HeartforgeCampHighDefinitionService") != null, "The inhabited Heartforge camp must carry a bounded high-definition service layer.")
     _expect(camp != null and camp.find_child("CampToolControlFace", true, false) != null and camp.find_child("CampServiceBatteryPod", true, false) != null and camp.find_child("CampBatteryStatusLens", true, false) != null, "The Heartforge camp service layer must retain readable tool and battery hardware.")
     _expect(camp != null and camp.get_node_or_null("MemoryWitnessRelay") != null, "The sanctuary must carry a physical memory relay for machine-society history.")
+    var warm_bulb := camp.find_child("WarmBulb", true, false) as MeshInstance3D if camp != null else null
+    var warm_bulb_material := warm_bulb.material_override as StandardMaterial3D if warm_bulb != null else null
+    _expect(warm_bulb_material != null and warm_bulb_material.emission_energy_multiplier <= 0.9, "Sanctuary string bulbs must retain an amber, non-clipping emission budget in the opening frame.")
     _expect(camp != null and camp.find_child("WitnessFrameTop", true, false) != null and camp.find_child("WitnessRecordPlate00", true, false) != null and camp.find_child("WitnessSignalLens00", true, false) != null, "The memory relay must expose a layered frame, record plate and readable signal lens.")
     var witness_relay := camp.get_node_or_null("MemoryWitnessRelay") as Node3D
     var witness_lens := camp.find_child("WitnessSignalLens00", true, false) as Node3D

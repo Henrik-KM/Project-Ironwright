@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused sanctuary warm-light calibration
+
+- lowered the authored Heartforge camp string-bulb emission and slightly
+  deepened its amber material so the opening ACES/glow grade preserves readable
+  warm points instead of clipping the bulbs into white discs;
+- added a native aesthetic regression check for the bounded bulb emission
+  budget;
+- exact exported Windows fresh-world review confirmed the opening objective,
+  Heartforge service layer and inhabited camp remain readable after the change;
+- kept the change presentation-only with no gameplay, interaction, lighting
+  ownership or save-state changes.
+
 ## Focused Roofleaper secondary-animation pass
 
 - extended the vertical ambusher's shared authored clips with paired wing,
