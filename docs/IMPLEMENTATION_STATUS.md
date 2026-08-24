@@ -10,6 +10,17 @@
   camera expansion unchanged;
 - exact fresh-world Windows export review passed on 2026-08-24 at 1280×720.
 
+## Focused organic gallery close-up pass
+
+- tightened the early and late organic presentation pages to an 11.15 review
+  distance, 41.5-degree field of view and compact 3.10-row spacing so the
+  authored anatomy fills more of the exact export without clipping the outer
+  families;
+- kept actor roots, gameplay scale, collisions, animation and runtime camera
+  behaviour unchanged;
+- exact Windows export review passed on 2026-08-24 at 1280×720 for pages 2/14
+  and 3/14.
+
 ## Focused friendly-roster material-separation pass
 
 - restrained the shared development-gallery key only on the friendly roster

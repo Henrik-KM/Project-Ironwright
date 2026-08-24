@@ -824,6 +824,13 @@ This is a review-only lighting adjustment; tactical/runtime lighting remains
 unchanged. Exact Windows review passed at 1280×720, while broader human art
 acceptance remains outstanding.
 
+The early and late organic review pages now use a closer 11.15-distance,
+41.5-degree frame with compact row spacing. The exact 1280×720 captures keep
+the outer families inside the frame while making the authored membranes, legs,
+veins and anatomy hardware easier to judge. This remains a presentation-only
+review change; runtime actor scale, collision, animation and camera behaviour
+are unchanged. Broader hostile-family human acceptance remains outstanding.
+
 ## Art production sequence
 
 The presentation milestones proceed in this order:
