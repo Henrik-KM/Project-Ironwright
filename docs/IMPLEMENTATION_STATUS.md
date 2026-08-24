@@ -1,5 +1,19 @@
 # Implementation status
 
+## Focused strategic-command explanatory localization pass
+
+- externalized adaptive-defence, evolution, outpost, recap, archive,
+  operations and endgame explanatory/status copy through stable English,
+  Swedish and German keys;
+- preserved data-driven authored operation and story names/descriptions for the
+  professional translation gate rather than treating runtime content as UI
+  chrome;
+- added release coverage for representative Swedish and German explanatory
+  copy and retained catalog parity validation;
+- exact exported Windows review passed on 2026-08-24 via GDI desktop capture:
+  the German long-range operation panel showed localized status sentences,
+  authorization and close actions alongside the authored operation payload.
+
 ## Focused strategic keyboard-command recovery pass
 
 - restored the established `T` evolution and `O` outpost keyboard commands in
