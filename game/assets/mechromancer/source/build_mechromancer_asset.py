@@ -257,6 +257,56 @@ def add_cone(builder: BufferBuilder, bottom_radius: float, top_radius: float, he
     return position_accessor, normal_accessor, index_accessor, material
 
 
+def add_ellipsoid(
+    builder: BufferBuilder,
+    scale: Sequence[float],
+    material: int,
+    rings: int = 16,
+    sides: int = 32,
+) -> tuple[int, int, int, int]:
+    """Build a smooth shallow shell for the dependency-free hero fallback."""
+    rings = max(rings, 12)
+    sides = max(sides, 24)
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+    sx, sy, sz = scale
+    for ring in range(rings + 1):
+        latitude = -math.pi * 0.5 + math.pi * ring / rings
+        latitude_cos = math.cos(latitude)
+        latitude_sin = math.sin(latitude)
+        for side in range(sides):
+            longitude = math.tau * side / sides
+            longitude_cos = math.cos(longitude)
+            longitude_sin = math.sin(longitude)
+            positions.extend([
+                sx * latitude_cos * longitude_cos,
+                sy * latitude_sin,
+                sz * latitude_cos * longitude_sin,
+            ])
+            normal = Vector3(
+                latitude_cos * longitude_cos / max(sx, 0.001),
+                latitude_sin / max(sy, 0.001),
+                latitude_cos * longitude_sin / max(sz, 0.001),
+            ).normalized()
+            normals.extend([normal.x, normal.y, normal.z])
+    for ring in range(rings):
+        for side in range(sides):
+            next_side = (side + 1) % sides
+            a = ring * sides + side
+            b = (ring + 1) * sides + side
+            c = (ring + 1) * sides + next_side
+            d = ring * sides + next_side
+            indices.extend([a, b, c, a, c, d])
+    position_min, position_max = vec_min_max(zip(*[iter(positions)] * 3))
+    position_accessor = builder.accessor(
+        positions, 5126, "VEC3", len(positions) // 3, 34962, position_min, position_max
+    )
+    normal_accessor = builder.accessor(normals, 5126, "VEC3", len(normals) // 3, 34962)
+    index_accessor = builder.accessor(indices, 5123, "SCALAR", len(indices), 34963)
+    return position_accessor, normal_accessor, index_accessor, material
+
+
 class Vector3:
     def __init__(self, x: float, y: float, z: float) -> None:
         self.x, self.y, self.z = x, y, z
@@ -297,6 +347,8 @@ def main() -> None:
 
     mesh_ids = {
         "Torso": mesh("Torso", add_beveled_box(builder, (0.62, 0.72, 0.38), coat, 0.055)),
+        "ChestShell": mesh("ChestShell", add_ellipsoid(builder, (0.31, 0.09, 0.27), coat, 16, 32)),
+        "ChestArmorPlate": mesh("ChestArmorPlate", add_ellipsoid(builder, (0.24, 0.055, 0.20), metal, 16, 32)),
         "ChestPlate": mesh("ChestPlate", add_beveled_box(builder, (0.48, 0.36, 0.10), metal, 0.025)),
         "Scarf": mesh("Scarf", add_cylinder(builder, 0.22, 0.14, leather, 10)),
         "Hood": mesh("Hood", add_cone(builder, 0.35, 0.22, 0.40, coat, 10)),
@@ -341,6 +393,8 @@ def main() -> None:
         return len(nodes) - 1
 
     torso = add_node("Torso", mesh_ids["Torso"], (0.0, 1.28, 0.0))
+    add_node("ChestShell", mesh_ids["ChestShell"], (0.0, 1.36, 0.22))
+    add_node("ChestArmorPlate", mesh_ids["ChestArmorPlate"], (0.0, 1.37, 0.325))
     add_node("ChestPlate", mesh_ids["ChestPlate"], (0.0, 1.43, -0.22))
     add_node("Scarf", mesh_ids["Scarf"], (0.0, 1.69, 0.0))
     add_node("Hood", mesh_ids["Hood"], (0.0, 1.88, 0.03))

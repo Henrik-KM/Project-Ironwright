@@ -282,8 +282,8 @@ def torus(
     mat: bpy.types.Material,
 ) -> bpy.types.Object:
     bpy.ops.mesh.primitive_torus_add(
-        major_segments=20,
-        minor_segments=8,
+        major_segments=32,
+        minor_segments=12,
         major_radius=major_radius,
         minor_radius=minor_radius,
         location=(0.0, 0.0, 0.0),
@@ -643,6 +643,32 @@ def main() -> None:
         coat,
         20,
     )
+    # The old flat vest was legible in isolation but collapsed into a broad
+    # rectangular chest at the compact release-gallery distance. Keep the
+    # underlying torso and equipment sockets unchanged, then add a shallow
+    # curved shell that catches a continuous highlight across the field rig.
+    # The seam rails and central latch make the shell read as worn equipment,
+    # not as an unbroken mannequin torso.
+    sectioned_form(
+        "ChestShell",
+        [(-0.25, 0.24, 0.075), (-0.10, 0.31, 0.105), (0.12, 0.30, 0.105), (0.27, 0.22, 0.070)],
+        (0.0, -0.22, 1.36),
+        root,
+        coat_fold,
+        28,
+    )
+    sectioned_form(
+        "ChestArmorPlate",
+        [(-0.20, 0.19, 0.035), (-0.10, 0.255, 0.055), (0.09, 0.25, 0.055), (0.20, 0.17, 0.035)],
+        (0.0, -0.325, 1.37),
+        root,
+        metal,
+        32,
+    )
+    limb_between("ChestShellSeamLeft", (-0.19, -0.315, 1.13), (-0.14, -0.325, 1.59), 0.012, root, coat, 0.82, 0.004)
+    limb_between("ChestShellSeamRight", (0.19, -0.315, 1.13), (0.14, -0.325, 1.59), 0.012, root, coat, 0.82, 0.004)
+    chest_latch = cylinder("ChestShellLatch", 0.032, 0.040, (0.0, -0.335, 1.39), root, metal, 24, 0.006)
+    chest_latch.rotation_euler.x = math.pi * 0.5
     cloth_panel("FieldVest", [(-0.22, -0.20), (0.22, -0.20), (0.19, 0.20), (0.10, 0.29), (-0.11, 0.28), (-0.20, 0.18)], 0.105, (0.0, -0.20, 1.43), root, leather, 0.026)
     cloth_panel("ChestInset", [(-0.13, -0.08), (0.14, -0.08), (0.12, 0.11), (0.04, 0.16), (-0.09, 0.14)], 0.035, (0.0, -0.265, 1.49), root, metal, 0.014)
     vest_left = limb_between("VestLapelsLeft", (-0.16, -0.275, 1.29), (-0.08, -0.275, 1.67), 0.026, root, coat, 0.88, 0.008)

@@ -19,10 +19,10 @@ The Blender source preserves these names and clips:
 
 The model is original Project Ironwright art: charcoal hood and split coat,
 worn field metal, leather pack, cyan shoulder cognition lamp, warm utility
-light, visible face/visor, and a weak sidearm. Curved and spherical source
-helpers enforce a 24-vertex radial floor, 32-segment sphere floor, and
-16-ring sphere floor before export so small field hardware does not regress to
-faceted close-camera silhouettes. The dependency-free fallback also uses
+light, visible face/visor, and a weak sidearm. Curved source helpers enforce a
+24-vertex radial floor and 32-major/12-minor torus floor; spherical helpers
+enforce a 32-segment and 16-ring floor before export so small field hardware
+does not regress to faceted close-camera silhouettes. The dependency-free fallback also uses
 bounded chamfers for hero-scale field equipment, matching the canonical
 Blender export's bevelled manufactured edges. The source is authored at 1.0 scale; the
 gameplay presentation applies a 1.28 visual scale while retaining the existing
