@@ -900,6 +900,7 @@ func _show_presentation_review_page(page: int) -> void:
 		if actor == null or not is_instance_valid(actor):
 			continue
 		actor.visible = true
+		_set_presentation_review_actor_lighting(actor, presentation_review_page == 0)
 		if is_region_page:
 			# Riverworks and Tram Graveyard place their service/focal face toward
 			# the opposite side of the shared review camera. Correct only those two
@@ -956,6 +957,21 @@ func _show_presentation_review_page(page: int) -> void:
 		presentation_review_camera_desired = Vector3(0.0, 4.75, 12.35) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5)
 	_set_presentation_review_stage_for_page(is_region_page)
 	_update_presentation_review_camera(1.0)
+
+
+func _set_presentation_review_actor_lighting(actor: Node3D, friendly_roster: bool) -> void:
+	# Friendly robot sensor lamps are valuable in the live tactical scene, but
+	# their short-range pools become large soft blobs on the neutral gallery
+	# floor and compete with the authored shell materials. Store each original
+	# energy once and attenuate only the development-only roster page.
+	for child in actor.find_children("*", "OmniLight3D", true, false):
+		var light := child as OmniLight3D
+		if light == null:
+			continue
+		if not light.has_meta("presentation_review_base_energy"):
+			light.set_meta("presentation_review_base_energy", light.light_energy)
+		var base_energy := float(light.get_meta("presentation_review_base_energy"))
+		light.light_energy = base_energy * (0.24 if friendly_roster else 1.0)
 
 
 func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3:

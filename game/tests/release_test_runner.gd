@@ -518,6 +518,19 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     world._show_presentation_review_page(0)
     await process_frame
     _expect(world.presentation_review_camera_desired.z - world.presentation_review_camera_target.z <= 13.3, "Core presentation pages must use a closer roster framing for authored detail review.")
+    var friendly_lamp_count := 0
+    var friendly_lamp_max_energy := 0.0
+    for friendly_actor in world.presentation_review_pages[0]:
+        var friendly_node := friendly_actor as Node3D
+        if friendly_node == null:
+            continue
+        for child in friendly_node.find_children("*", "OmniLight3D", true, false):
+            var lamp := child as OmniLight3D
+            if lamp == null:
+                continue
+            friendly_lamp_count += 1
+            friendly_lamp_max_energy = maxf(friendly_lamp_max_energy, lamp.light_energy)
+    _expect(friendly_lamp_count > 0 and friendly_lamp_max_energy <= 0.25, "Friendly roster review must attenuate actor sensor lamps so floor pools do not overpower authored robot materials.")
     world.player.apply_progression_visuals({
         &"unlock_machine_society": true,
         &"unlock_adaptive_defence": true,
