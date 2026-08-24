@@ -255,6 +255,10 @@ func _texture_category(mesh_instance: MeshInstance3D) -> StringName:
     var path_text := str(mesh_instance.get_path()).to_lower()
     var name_text := String(mesh_instance.name).to_lower()
     var combined := "%s %s" % [path_text, name_text]
+    if mesh_instance.name == "ObservatoryDish":
+        # The authored hero reflector carries its own dark blue-violet material.
+        # Preserve that surface instead of replacing it with the generic metal atlas.
+        return &""
     # The Mechromancer is an authored field kit, not a machine chassis. Its
     # imported materials deliberately separate worn coat, leather, skin,
     # oxidized hardware, visor glass, utility light and the weak sidearm.
@@ -981,7 +985,9 @@ func _dress_observatory(root: Node3D) -> void:
     ModelKit3D.add_surface_panel(observatory_detail, Vector3(1.25, 0.68, 0.1), Vector3(0.0, 0.9, -3.1), dark_metal, signal_material, Vector3.ZERO, "ObservatoryAccessPanel")
     for side in [-1.0, 1.0]:
         ModelKit3D.add_cylinder(observatory_detail, 0.1, 3.8, Vector3(side * 2.45, 1.75, 0.0), rust, Vector3(0.0, 0.0, side * 0.42), "ObservatoryTripodBrace")
-    ModelKit3D.add_sphere(observatory_detail, 3.6, Vector3(0.0, 4.3, 0.0), metal, Vector3(1.0, 0.26, 1.0), "ObservatoryDish")
+    # The authored Observatory asset owns the primary reflector surface. Do
+    # not add the former scaled-sphere proxy here: at remote review distance
+    # it reads as a pale duplicate crescent beneath the real parabolic dish.
     for rib_index in range(8):
         var rib_angle := TAU * float(rib_index) / 8.0
         ModelKit3D.add_capsule(

@@ -547,6 +547,7 @@ func _run_all() -> void:
                 var observatory_mast_collar := landmark.find_child("ObservatoryMastCollar", true, false) as Node3D
                 _expect(observatory_dish != null and observatory_feed != null and observatory_actuator != null and observatory_collar != null and observatory_mast_collar != null, "Observatory Ridge must expose named dish, actuator, feed, collar and mast motion sockets.")
                 if observatory_dish != null and observatory_feed != null and observatory_actuator != null and observatory_collar != null and observatory_mast_collar != null:
+                    _expect(observatory_dish is MeshInstance3D and _mesh_vertex_count(observatory_dish as MeshInstance3D) >= 900, "Observatory hero dish must retain a dense parabolic reflector mesh instead of a low-detail proxy.")
                     var dish_before := observatory_dish.rotation.y
                     var feed_before := observatory_feed.scale
                     var actuator_before := observatory_actuator.rotation
