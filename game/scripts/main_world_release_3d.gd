@@ -766,13 +766,19 @@ func _start_endgame_protocol_review() -> void:
 	endgame_protocol_review_completed = false
 	if progression != null:
 		progression.set_heartforge_tier(5)
-		for technology_id in [&"tech.endgame.severance", &"tech.endgame.containment"]:
+		for technology_id in [&"tech.machine.forge_assistance", &"tech.endgame.severance", &"tech.endgame.containment"]:
 			if technology_id not in progression.unlocked_technologies:
 				progression.unlocked_technologies.append(technology_id)
 		progression.unlocked_effects[&"unlock_final_protocol_research"] = true
 		progression.progression_changed.emit()
 	if long_operation_director != null:
-		long_operation_director.completed_operations = [&"operation.root_cistern_mapping"]
+		long_operation_director.completed_operations = [
+			&"operation.west_grid_survey",
+			&"operation.flood_market_recovery",
+			&"operation.cathedral_brood_suppression",
+			&"operation.buried_lab_excavation",
+			&"operation.root_cistern_mapping",
+		]
 		long_operation_director.recovered_components = [
 			&"component.choral_gland",
 			&"component.genome_prism",
@@ -782,6 +788,18 @@ func _start_endgame_protocol_review() -> void:
 	if run_state != null:
 		run_state.scrap = 1200
 		run_state.rare_cores = 8
+		run_state.manual_scrap_recovered = 20
+		run_state.autonomous_scrap_recovered = 30
+		run_state.expedition_core_recovered = true
+		full_game_milestone_complete = true
+	if outpost_director != null:
+		for index in range(mini(3, outpost_director.sites.size())):
+			var site := outpost_director.sites[index] as OutpostSite3D
+			if site == null:
+				continue
+			site.set_discovered(true)
+			if not site.has_outpost():
+				outpost_director._spawn_outpost(site, site.recommended_role, 1)
 	if region_director != null:
 		region_director.discover_region(&"region.root_cistern")
 	if endgame_director != null and endgame_director.initiate(&"protocol.severance"):

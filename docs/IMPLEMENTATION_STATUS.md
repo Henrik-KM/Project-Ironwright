@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused final-protocol guidance cleanup
+
+- cleared the first-session world-space salvage beacon as soon as a final
+  protocol becomes active or completes, keeping the late-run objective owned
+  by the protocol and strategic HUD;
+- aligned the exported endgame review fixture with the complete-game milestone
+  state so its HUD enters the final objective path instead of retaining an
+  opening wreck objective;
+- synchronized the active-protocol prompt with the final HUD objective so
+  stale forge, operations or salvage actions cannot remain on screen;
+- added a release regression check for both the active-crisis and post-victory
+  states; the endgame export review now has no contradictory opening marker.
+
 ## Focused Observatory Ridge material-depth pass
 
 - raised the authored survey station's material separation and added a smooth

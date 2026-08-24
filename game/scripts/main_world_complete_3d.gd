@@ -580,6 +580,7 @@ func _update_complete_game_objective() -> void:
         hud.set_prompt("PRESS V · REVIEW IRREVERSIBLE FINAL PROTOCOLS")
     else:
         hud.set_objective("HOLD THE HEARTFORGE", "%s. Routine machines and outposts continue acting autonomously; intervene only where the final response breaks through." % endgame_director.status_summary())
+        hud.set_prompt("HOLD THE HEARTFORGE · INTERVENE ONLY IF THE FINAL RESPONSE BREAKS THROUGH")
 
 
 func _on_region_discovered(region_id: StringName, display_name: String) -> void:

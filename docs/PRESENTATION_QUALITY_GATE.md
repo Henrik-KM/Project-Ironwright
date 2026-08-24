@@ -4,6 +4,13 @@
 
 The current build is not release-ready merely because its systemic gameplay path is complete. The native presentation must be judged against the actual shipped frame, not against internal implementation breadth.
 
+The final-protocol review now enters the complete-game milestone state and
+clears the opening salvage beacon when the late-run crisis starts and after
+victory, so neither the HUD nor the world-space guidance layer contradicts
+the active strategic objective; the bottom action prompt names the same
+hold-the-Heartforge state. The release regression suite protects both
+transitions.
+
 The current visual state is explicitly classified as **pre-alpha production prototype** until the following gates are met.
 
 The exact merged Windows export was live-reviewed after the latest core-gallery
