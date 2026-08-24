@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused organic material-separation pass
+
+- preserved each authored organic family's release tint while lifting shell
+  plates, ribs, spines and socket hardware into a readable structural band and
+  separating membranes and vascular details as living surfaces;
+- strengthened and flattened only the presentation-review organic key so the
+  compact gallery does not turn close-range normal detail into black bands;
+- added release regression coverage for the authored structural-versus-membrane
+  material break; aesthetic and commercial release suites passed, and the
+  exact Windows export was reviewed at 1280×720 on page 3/14.
+
 ## Focused adaptive-Heartforge localization pass
 
 - localized the adaptive proposal reason, rare-commitment explanation, all

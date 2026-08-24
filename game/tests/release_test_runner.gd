@@ -823,6 +823,12 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     _expect(late_authored_family != null and late_authored_family.find_child("RootweaverAuthoredModel", true, false) != null and late_authored_family_mesh != null and late_authored_family_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Late-spawned Rootweaver shells must retain their authored marker and release chitin material pass.")
     var rootweaver_membrane_material := rootweaver_membrane_mesh.material_override as StandardMaterial3D if rootweaver_membrane_mesh != null else null
     _expect(rootweaver_membrane_material != null and rootweaver_membrane_material.albedo_color.r < 0.7 and rootweaver_membrane_material.albedo_color.b < 0.7, "Authored organic membrane surfaces must retain restrained release color after texturing.")
+    var rootweaver_spine_mesh := _find_first_mesh(late_authored_family.get_node_or_null("OrganicModel/RootweaverRootSpineR") if late_authored_family != null else null)
+    var rootweaver_spine_material := rootweaver_spine_mesh.material_override as StandardMaterial3D if rootweaver_spine_mesh != null else null
+    var rootweaver_material_delta := 0.0
+    if rootweaver_spine_material != null and rootweaver_membrane_material != null:
+        rootweaver_material_delta = absf(rootweaver_spine_material.albedo_color.r - rootweaver_membrane_material.albedo_color.r) + absf(rootweaver_spine_material.albedo_color.g - rootweaver_membrane_material.albedo_color.g) + absf(rootweaver_spine_material.albedo_color.b - rootweaver_membrane_material.albedo_color.b)
+    _expect(rootweaver_spine_material != null and rootweaver_membrane_material != null and rootweaver_material_delta > 0.12, "Authored organic structural ridges must retain a visible material break from living membranes.")
     for family in later_families:
         var family_mesh := _find_first_mesh(family.get_node_or_null("OrganicModel") if family != null else null)
         _expect(family_mesh != null and family_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Every later organic family shell must receive the release chitin material pass.")
