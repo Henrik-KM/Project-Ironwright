@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused opening-cast scale refinement
+
+- tightened the Heartforge opening tactical camera to a bounded 11.2 height,
+  8.45 distance and 43.8-degree field of view so the Mechromancer and
+  indispensable Bulwark carry more screen presence without losing the forge,
+  escape lane or route context;
+- kept the existing camera safety bounds, movement, collision and remote
+  camera expansion unchanged;
+- exact fresh-world Windows export review passed on 2026-08-24 at 1280×720.
+
 ## Focused friendly-roster material-separation pass
 
 - restrained the shared development-gallery key only on the friendly roster
@@ -19,7 +29,8 @@
   apex, preserving the existing landmark, socket, LOD, animation and
   collision contracts while making the final organic-machine silhouette read
   as one anchored structure;
-- exact Windows export review is required before this pass can be accepted.
+- exact Windows export review passed on 2026-08-24 at 1280×720; formal human
+  acceptance of the broader capstone and region library remains outstanding.
 
 ## Focused Mechromancer roster-review framing pass
 
