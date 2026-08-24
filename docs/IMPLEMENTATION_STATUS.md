@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Cistern Apex crown-silhouette pass
+
+- regenerated the original Cistern Apex shell with smooth tapered crown spines
+  while preserving stable names, animation channels, gameplay collision and
+  ecology ownership;
+- exact Windows export review passed at 1280×720 on presentation page 3/14;
+  the final threat crown now reads as pointed organic anatomy rather than a row
+  of identical bars.
+
 ## Focused Broodmass crown-silhouette pass
 
 - regenerated the original Broodmass shell with smooth tapered crown spines
