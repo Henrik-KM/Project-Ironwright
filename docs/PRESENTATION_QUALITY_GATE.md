@@ -22,6 +22,12 @@ while the Heartforge and cool foreground retain their focal separation. This
 remains presentation-only and does not change camp geometry, interaction,
 lighting ownership or save state.
 
+Cathedral Quarter's release brood sacs now use layered shell-and-ridge anatomy
+instead of a ring of flat proxy spheres. Exact exported Windows page 11/14
+review confirms that the biological takeover reads as grouped organic plates
+against the civic brick shell. This remains presentation-only; nest spawning,
+collision, simulation and persistence are unchanged.
+
 The remote review gallery now also uses bounded per-family presentation framing:
 Riverworks and Tram Graveyard expose their authored service faces with a
 diagonal close frame, while North Ruins, West Grid, East Tenements, Municipal
