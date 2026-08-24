@@ -336,6 +336,8 @@ AUTHORED_REGION_ASSETS = {
             "TramCarriageAFrontHeadlampHousing",
             "TramCarriageABogiePlate0",
             "TramCarriageAPantograph",
+            "TramCarriageASidePanelFront0",
+            "TramYardDeck",
             "TramMaintenancePit",
             "TramPitRung0",
             "TramSignalMast",

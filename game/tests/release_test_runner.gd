@@ -563,7 +563,16 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     var riverworks_review_offset := world._presentation_review_region_camera_offset(&"region.riverworks")
     _expect(riverworks_review_offset.z <= 16.6 and riverworks_review_offset.y <= 10.3, "Riverworks presentation review must use a closer frame for its pump and sluice hardware.")
     var tram_review_offset := world._presentation_review_region_camera_offset(&"region.tram_graveyard")
-    _expect(tram_review_offset.z <= 16.6 and tram_review_offset.y <= 10.3, "Tram Graveyard presentation review must use a closer frame for its rail and carriage hardware.")
+    _expect(tram_review_offset.z <= 16.6 and tram_review_offset.y <= 10.3 and is_zero_approx(tram_review_offset.x), "Tram Graveyard presentation review must use a centered rail-yard frame for its carriage hardware.")
+    world._show_presentation_review_page(9)
+    await process_frame
+    var tram_review_page: Array = world.presentation_review_pages[9] if world.presentation_review_pages.size() > 9 else []
+    if tram_review_page.size() == 1:
+        var tram_review_actor := tram_review_page[0] as Node3D
+        _expect(is_zero_approx(tram_review_actor.rotation.y), "Tram Graveyard review must face the authored carriage fronts toward the exact gallery camera.")
+        _expect(tram_review_actor.name == "TramGraveyardPresentationReviewActor" and tram_review_actor.find_child("TramYardDeck", true, false) != null, "Tram Graveyard review must use a dedicated authored actor with its grounded yard deck.")
+    var tram_review_dressing := world.release_world_art.region_dressing_root(&"region.tram_graveyard") if world.release_world_art != null else null
+    _expect(tram_review_dressing == null or not tram_review_dressing.visible, "Tram Graveyard review must hide the sparse release dressing so the authored carriage pair remains the focal landmark.")
     var flood_market_review_offset := world._presentation_review_region_camera_offset(&"region.flood_market")
     _expect(flood_market_review_offset.z <= 15.5 and flood_market_review_offset.y <= 9.5 and flood_market_review_offset.x >= 8.4, "Flood Market presentation review must use a bounded diagonal frame for its canopy, stall and water-channel hardware.")
     var cathedral_review_offset := world._presentation_review_region_camera_offset(&"region.cathedral_quarter")

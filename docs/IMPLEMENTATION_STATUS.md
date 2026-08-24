@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Tram Graveyard shell and review pass
+
+- added a grounded authored rail-yard deck, maintained lower carriage panels
+  and a dedicated exact-review actor so both carriage shells, windows,
+  undercarriages, overhead line and rail bed read as one coherent landmark;
+- kept the rail, maintenance-pit, route, collision, navigation, ecology and
+  operation contracts unchanged;
+- exact Windows export review passed on 2026-08-24 at 1280×720.
+
 ## Focused West Grid hall-depth pass
 
 - broke the broad upper turbine-hall skin into authored vertical service ribs,
