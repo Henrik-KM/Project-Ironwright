@@ -262,6 +262,51 @@ def add_uv_sphere(builder: BufferBuilder, radius: float, material: int, rings: i
     return _geometry(builder, positions, normals, indices, material)
 
 
+def add_ellipsoid(
+    builder: BufferBuilder,
+    scale: tuple[float, float, float],
+    material: int,
+    rings: int = 18,
+    sides: int = 36,
+) -> tuple[int, int, int, int]:
+    """Build a smooth armored envelope with correct ellipsoid normals."""
+    rings = max(rings, HERO_SPHERE_RINGS)
+    sides = max(sides, HERO_CURVE_SIDES)
+    sx, sy, sz = scale
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+    for ring in range(rings + 1):
+        latitude = -math.pi * 0.5 + math.pi * ring / rings
+        latitude_cos = math.cos(latitude)
+        latitude_sin = math.sin(latitude)
+        for side in range(sides):
+            longitude = math.tau * side / sides
+            longitude_cos = math.cos(longitude)
+            longitude_sin = math.sin(longitude)
+            positions.extend([
+                sx * latitude_cos * longitude_cos,
+                sy * latitude_sin,
+                sz * latitude_cos * longitude_sin,
+            ])
+            normal = [
+                latitude_cos * longitude_cos / max(sx, 0.001),
+                latitude_sin / max(sy, 0.001),
+                latitude_cos * longitude_sin / max(sz, 0.001),
+            ]
+            normal_length = math.sqrt(sum(value * value for value in normal))
+            normals.extend([value / max(normal_length, 0.001) for value in normal])
+    for ring in range(rings):
+        for side in range(sides):
+            next_side = (side + 1) % sides
+            a = ring * sides + side
+            b = (ring + 1) * sides + side
+            c = (ring + 1) * sides + next_side
+            d = ring * sides + next_side
+            indices.extend([a, b, c, a, c, d])
+    return _geometry(builder, positions, normals, indices, material)
+
+
 def main() -> None:
     builder = BufferBuilder()
     materials = [
@@ -289,9 +334,12 @@ def main() -> None:
     warm = 4
     rubber = 5
     mesh_ids = {
-        "Chassis": mesh("Chassis", add_beveled_box(builder, (1.55, 0.78, 1.65), chassis, 0.11)),
-        "ChassisCore": mesh("ChassisCore", add_beveled_box(builder, (1.28, 0.38, 1.38), oxide, 0.07)),
-        "Plate": mesh("Plate", add_beveled_box(builder, (1.44, 0.26, 0.16), steel, 0.045)),
+        # The companion's body is a protective envelope, not a shipping crate.
+        # Keep the named meshes and all sockets stable while giving the close
+        # camera a continuous highlight roll across the chassis and armor.
+        "Chassis": mesh("Chassis", add_ellipsoid(builder, (0.79, 0.43, 0.84), chassis)),
+        "ChassisCore": mesh("ChassisCore", add_ellipsoid(builder, (0.66, 0.23, 0.70), oxide)),
+        "Plate": mesh("Plate", add_ellipsoid(builder, (0.72, 0.13, 0.10), steel, 14, 32)),
         "Rail": mesh("Rail", add_box(builder, (0.12, 0.12, 1.24), oxide)),
         "Panel": mesh("Panel", add_beveled_box(builder, (0.72, 0.055, 0.46), chassis, 0.02)),
         "Corner": mesh("Corner", add_cylinder(builder, 0.12, 0.16, steel, 20)),

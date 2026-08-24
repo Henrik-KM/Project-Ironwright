@@ -5,9 +5,11 @@ scene. The builder is dependency-free so the named-node and animation contract
 can be rebuilt on machines without Blender.
 
 Curved defensive hardware uses dense source tessellation so a rebuild does not
-reintroduce faceted legs, weapons or emitter spines. Hero-scale chassis, shield,
-service and foot surfaces use authored chamfers so tactical light catches the
-manufactured edges without changing the companion collision contract.
+reintroduce faceted legs, weapons or emitter spines. The hero-scale chassis and
+front armor plate use smooth authored ellipsoidal envelopes rather than crate
+planes, while shield, service and foot surfaces retain authored chamfers so
+tactical light catches the manufactured edges without changing the companion
+collision contract.
 
 The asset is original Project Ironwright art: layered weathered steel, copper
 oxide service plates, protected cyan optics, twin defensive weapons, a rear
