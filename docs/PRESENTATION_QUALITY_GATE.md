@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The Bulwark received a focused high-definition chassis pass on 2026-08-24.
+The dependency-free authored source and runtime glTF now use smooth ellipsoidal
+envelopes for the primary chassis and front armor plate, retaining the stable
+service, optic, weapon, shield and emitter presentation nodes. Exact exported
+Windows review at 1280x720 on page 1/14 and a fresh opening Heartforge frame
+confirm the rounded protective silhouette and readable hardware; broader
+friendly-roster and robot art acceptance remain open.
+
 The Mechromancer received a focused high-definition chest pass on 2026-08-24.
 The canonical Blender source and runtime glTF now carry a shallow curved coat
 shell, a layered metal breastplate, seam hardware and a central latch; scarf

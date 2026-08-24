@@ -921,6 +921,10 @@ func _run_all() -> void:
         _expect(_find_named(robot, "ProductionAssetMarker") != null, "The authored Bulwark model must expose its production asset marker.")
         _expect(_find_named(robot, "BulwarkRadiatorLouver") != null and _find_named(robot, "BulwarkFrontSensorVisor") != null and _find_named(robot, "BulwarkEmitterCollar") != null, "The Bulwark must receive a second high-definition protection hardware layer.")
         _expect(_find_named(robot, "BulwarkServiceFace") != null and _find_named(robot, "BulwarkServiceLatchLeft") != null and _find_named(robot, "BulwarkShoulderRailLeft") != null and _find_named(robot, "BulwarkFootPlateLeft") != null, "The Bulwark must expose its refined service face, shoulder rail and foot hardware.")
+        var bulwark_chassis := _find_named(robot, "Chassis") as MeshInstance3D
+        var bulwark_plate := _find_named(robot, "ArmorPlate") as MeshInstance3D
+        _expect(bulwark_chassis != null and _mesh_vertex_count(bulwark_chassis) >= 600, "The Bulwark chassis must retain dense rounded high-definition geometry.")
+        _expect(bulwark_plate != null and _mesh_vertex_count(bulwark_plate) >= 300, "The Bulwark armor plate must retain dense rounded high-definition geometry.")
         if robot_animation != null and robot_animation.animation_player != null and _find_named(robot, "BulwarkAuthoredModel") != null:
             _expect(_animation_player_track_count(robot_animation.animation_player, &"Idle") >= 6, "Bulwark Idle must carry shield-emitter and guard breathing channels.")
             _expect(_animation_player_track_count(robot_animation.animation_player, &"Walk") >= 7, "Bulwark Walk must carry shield-emitter and guard locomotion channels.")

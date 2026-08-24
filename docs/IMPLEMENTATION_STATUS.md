@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Bulwark chassis high-definition pass
+
+- replaced the companion's broad crate-like chassis and flat armor plate with
+  smooth authored ellipsoidal envelopes while preserving stable named nodes,
+  sockets, collision, animation clips and protection behaviour;
+- regenerated the dependency-free glTF and live-reviewed the exact Windows
+  friendly-roster page plus a fresh opening Heartforge frame at 1280x720; the
+  Bulwark now reads as a rounded protective machine with legible service,
+  emitter and weapon hardware, while the broader robot-roster art gate remains
+  open.
+
 ## Focused Mechromancer chest high-definition pass
 
 - added a shallow curved chest shell and a layered metal breastplate to the
