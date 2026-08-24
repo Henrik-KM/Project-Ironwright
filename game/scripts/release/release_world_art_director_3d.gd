@@ -826,40 +826,49 @@ func _dress_rail(root: Node3D) -> void:
     rail_detail.name = "HighDefinitionRailDressing"
     root.add_child(rail_detail)
     # The authored Tram Graveyard shell owns the focal pair of carriages. Keep
-    # this release layer as a sparse background wreck field so six broad
-    # boxes cannot flatten the carriage, pit and overhead service hierarchy.
+    # this release layer as a sparse background wreck field. Keep the wrecks
+    # lower and darker than the authored pair so they support the carriage,
+    # pit and overhead-service hierarchy instead of becoming orange slabs.
     for index in range(4):
         var position := Vector3(-15.0 + float(index) * 10.0, 0.0, -7.0 + float(index % 2) * 14.0)
         var heading := Vector3(0.0, 0.16 * float(index % 3), 0.04 * float(index))
-        var carriage_material := metal if index % 2 == 0 else rust
-        var carriage := ModelKit3D.add_beveled_box(rail_detail, Vector3(5.0, 1.7, 2.1), position + Vector3.UP * 0.85, carriage_material, heading, "DerailedTram%02d" % index, 0.16)
-        # Broken window bands establish the carriage scale and preserve a
-        # readable cool/warm contrast under the remote-region lighting pass.
+        var carriage_material := metal
+        var carriage := ModelKit3D.add_beveled_box(rail_detail, Vector3(4.6, 1.18, 1.85), position + Vector3.UP * 0.72, carriage_material, heading, "DerailedTram%02d" % index, 0.16)
+        var roof_material := rust if index % 3 == 0 else metal
+        ModelKit3D.add_beveled_box(carriage, Vector3(4.86, 0.16, 2.02), Vector3(0.0, 1.38, 0.0), roof_material, Vector3.ZERO, "TramRoofPlate%02d" % index, 0.08)
+        # Broken window bands establish carriage scale while the paired sides
+        # keep the wreck readable from either bounded review approach.
         for window_index in range(3):
             var window_x := -1.9 + float(window_index) * 1.9
-            ModelKit3D.add_beveled_box(
-                carriage,
-                Vector3(1.02, 0.42, 0.07),
-                Vector3(window_x * 0.88, 1.05, -1.07),
-                dark_glass if window_index != index % 3 else rust,
-                Vector3(0.0, 0.0, 0.02 * float(window_index % 2)),
-                "TramWindow%02d_%02d" % [index, window_index],
-                0.12
-            )
+            var window_material := dark_glass if window_index != index % 3 else rust
+            for side in [-1.0, 1.0]:
+                var window_name := "TramWindow%02d_%02d" % [index, window_index] if side < 0.0 else "TramWindow%02d_%02d_Front" % [index, window_index]
+                ModelKit3D.add_beveled_box(
+                    carriage,
+                    Vector3(1.02, 0.42, 0.07),
+                    Vector3(window_x * 0.88, 0.86, side * 0.96),
+                    window_material,
+                    Vector3(0.0, 0.0, 0.02 * float(window_index % 2)),
+                    window_name,
+                    0.12
+                )
+        for side in [-1.0, 1.0]:
+            ModelKit3D.add_beveled_box(carriage, Vector3(4.0, 0.09, 0.09), Vector3(0.0, 0.62, side * 0.99), rust, Vector3.ZERO, "TramBeltRail%02d_%s" % [index, "Front" if side > 0.0 else "Rear"])
+        ModelKit3D.add_beveled_box(carriage, Vector3(1.1, 0.72, 0.08), Vector3(0.0, 0.76, 0.99), dark_glass, Vector3.ZERO, "TramDoor%02d" % index, 0.05)
         ModelKit3D.add_surface_panel(
             carriage,
             Vector3(1.20, 0.52, 0.08),
-            Vector3(0.0, 0.68, 1.08),
+            Vector3(0.0, 0.58, 1.02),
             metal,
             rust,
             Vector3.ZERO,
             "TramServicePanel%02d" % index
         )
-        ModelKit3D.add_beveled_box(carriage, Vector3(1.1, 0.18, 0.62), Vector3(0.0, 1.78, 0.0), metal, Vector3.ZERO, "TramRoofVent%02d" % index, 0.16)
+        ModelKit3D.add_beveled_box(carriage, Vector3(1.1, 0.18, 0.62), Vector3(0.0, 1.54, 0.0), metal, Vector3.ZERO, "TramRoofVent%02d" % index, 0.16)
         for bogie_index in range(2):
             var bogie_x := -1.4 + float(bogie_index) * 2.8
-            ModelKit3D.add_beveled_box(carriage, Vector3(0.95, 0.16, 1.25), Vector3(bogie_x, -0.08, 0.0), rust, Vector3.ZERO, "TramBogiePlate%02d_%02d" % [index, bogie_index], 0.14)
-            ModelKit3D.add_cylinder(carriage, 0.18, 1.28, Vector3(bogie_x, -0.20, 0.0), metal, Vector3(0.0, 0.0, PI * 0.5), "TramAxle%02d_%02d" % [index, bogie_index])
+            ModelKit3D.add_beveled_box(carriage, Vector3(0.95, 0.16, 1.25), Vector3(bogie_x, -0.03, 0.0), rust, Vector3.ZERO, "TramBogiePlate%02d_%02d" % [index, bogie_index], 0.14)
+            ModelKit3D.add_cylinder(carriage, 0.18, 1.28, Vector3(bogie_x, -0.16, 0.0), metal, Vector3(0.0, 0.0, PI * 0.5), "TramAxle%02d_%02d" % [index, bogie_index])
         ModelKit3D.add_cylinder(root, 0.05, 8.0, position + Vector3.UP * 5.0, rust, Vector3(0.0, 0.0, 1.5708), "OverheadLine")
 
 

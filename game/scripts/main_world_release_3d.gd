@@ -938,7 +938,9 @@ func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3
 	if region_id == &"region.riverworks":
 		return Vector3(8.2, 9.2, 14.4)
 	if region_id == &"region.tram_graveyard":
-		return Vector3(-8.0, 9.2, 14.6)
+		# Lower the rail frame enough for the carriage sides, windows and
+		# undercarriages to read as depth rather than a stack of roof planes.
+		return Vector3(-8.0, 7.4, 13.8)
 	if region_id == &"region.flood_market":
 		return Vector3(8.5, 9.4, 15.4)
 	if region_id == &"region.cathedral_quarter":

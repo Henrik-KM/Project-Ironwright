@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Tram Graveyard carriage-depth pass
+
+- replaced the release-only background wreck slabs with smaller, darker
+  carriage shells that expose paired window bands, belt rails, roof plates,
+  service doors, vents, bogie plates and axles while preserving stable node
+  contracts;
+- lowered the bounded page 10/14 review frame so carriage sides and
+  undercarriages remain visible alongside the authored rail landmark;
+- added commercial-release coverage for the paired carriage anatomy, and
+  exact exported Windows review passed on Tram Graveyard page 10/14 with no
+  changes to landmark geometry, collision, route, discovery or operations.
+
 ## Focused Cathedral brood-sac anatomy pass
 
 - replaced the release-only ring of Cathedral brood-sac proxy spheres with
