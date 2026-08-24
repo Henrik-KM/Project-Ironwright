@@ -4,6 +4,12 @@
 
 The current build is not release-ready merely because its systemic gameplay path is complete. The native presentation must be judged against the actual shipped frame, not against internal implementation breadth.
 
+The dynamic long-range operation review now resolves operation names and
+briefings, world-region names, team roles and route grammar from the selected
+locale. Exact Windows capture at 1280×720 in German confirms that the
+strategic-operation modal no longer mixes German chrome with English dynamic
+content; broader professional localization review remains open.
+
 The final-protocol review now enters the complete-game milestone state and
 clears the opening salvage beacon when the late-run crisis starts and after
 victory, so neither the HUD nor the world-space guidance layer contradicts

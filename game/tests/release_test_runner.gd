@@ -221,6 +221,21 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     world.strategic_hud.open_outposts()
     _expect("AUSSENPOSTEN" in world.strategic_hud.title_label.text and world.strategic_hud.close_button.text == "SCHLIESSEN · ESC" and "Autonome Außenposten" in world.strategic_hud.detail_label.text, "German locale must refresh strategic outpost chrome and explanatory copy.")
     world.strategic_hud.close()
+    var dynamic_operation := {
+        "id": "operation.dynamic.pressure_suppression.region.west_grid",
+        "dynamic_template_id": "dynamic.pressure_suppression",
+        "localization_region_id": "region.west_grid",
+        "route_waypoints": 4,
+        "route_distance": 94.0,
+        "route_variant": 0,
+        "team_roles": ["scout", "guardian", "engineer"],
+    }
+    _expect(world.operations_hud._localized_operation_field(dynamic_operation, "name", "Stabilize West Grid") == "Westliches Netz stabilisieren", "German dynamic operation names must resolve the dynamic template namespace and region replacement.")
+    _expect("Wegpunkte" in world.operations_hud._localized_route_brief(dynamic_operation) and world.operations_hud._localized_team_roles(dynamic_operation["team_roles"]) == "Späher, Wächter, Ingenieur", "German dynamic operation route grammar and team roles must stay localized.")
+    var casualty_operation := dynamic_operation.duplicate(true)
+    casualty_operation["dynamic_template_id"] = "dynamic.machine_recovery"
+    casualty_operation["localization_machine_name"] = "Siebzehn"
+    _expect(world.operations_hud._localized_operation_field(casualty_operation, "description", "Siebzehn went dark in West Grid.").begins_with("Siebzehn ist in der Region Westliches Netz"), "German casualty recovery briefings must localize both the machine and region replacements.")
     world.operations_hud.open_endgame()
     _expect(world.operations_hud.title_label.text == "ENDPROTOKOLLE", "German locale must refresh final-protocol command chrome.")
     world.operations_hud.close()

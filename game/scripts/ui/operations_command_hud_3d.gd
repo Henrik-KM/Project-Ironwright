@@ -336,8 +336,8 @@ func _refresh() -> void:
         return
 
     var item := items[selected_index]
-    selection_label.text = str(item.get("display_name", "Unknown")).to_upper()
-    description_label.text = str(item.get("description", ""))
+    selection_label.text = _localized_operation_field(item, "name", str(item.get("display_name", "Unknown"))).to_upper()
+    description_label.text = _localized_operation_field(item, "description", str(item.get("description", "")))
     if mode == &"archive":
         authorize_button.visible = false
         var kind_label := _text("command.archive.story_thread", "STORY THREAD") if str(item.get("kind", "")) == "story_thread" else _text("command.archive.physical_record", "PHYSICAL RECORD")
@@ -358,10 +358,11 @@ func _refresh() -> void:
         if not operation_active:
             authorize_button.text = _text("command.operations.authorize", "AUTHORIZE PHYSICAL OPERATION")
         var operation_prefix := _text("command.operations.active_prefix", "ACTIVE GROUP · F TO FOLLOW\n") if operation_active else ""
+        var localized_roles := _localized_team_roles(item.get("team_roles", []))
         requirements_label.text = "%s%s\n%s" % [
             operation_prefix,
-            str(item.get("route_brief", "Route: physical route preview unavailable")),
-            _text("command.operations.requirements", "Cost: {0} Scrap · Team: {1} · Work exposure: {2} s · Threat {3}", [int(item.get("scrap_cost", 0)), ", ".join(item.get("team_roles", [])), int(round(float(item.get("work_seconds", 0.0)))), float(item.get("threat_level", 1.0))]),
+            _localized_route_brief(item),
+            _text("command.operations.requirements", "Cost: {0} Scrap · Team: {1} · Work exposure: {2} s · Threat {3}", [int(item.get("scrap_cost", 0)), localized_roles, int(round(float(item.get("work_seconds", 0.0)))), float(item.get("threat_level", 1.0))]),
         ]
 
 
@@ -371,6 +372,63 @@ func _empty_state_text() -> String:
     if mode == &"endgame":
         return _text("command.endgame.empty_detail", "Recover the required biological components, map the Root Cistern, evolve the Heartforge to tier 5, and authorize an endgame technology. Until then, no final decision is being hidden.")
     return _text("command.operations.empty_detail", "Complete the current Heartforge, outpost, or technology prerequisite. Routine salvage, repair, rebuilding, and replacement continue without opening another management task.")
+
+
+func _localized_operation_field(item: Dictionary, field: String, fallback: String) -> String:
+    var template_id := str(item.get("dynamic_template_id", ""))
+    var operation_id := str(item.get("id", "")).trim_prefix("operation.")
+    var key_base := "operation.%s" % operation_id.replace(".", "_")
+    var replacements: Array = []
+    if not template_id.is_empty():
+        var template_key := template_id.trim_prefix("dynamic.")
+        # Dynamic template ids are stable content ids such as
+        # `dynamic.pressure_suppression`; the catalog namespace already owns
+        # the `operation.dynamic` prefix.
+        key_base = "operation.dynamic.%s" % template_key
+        replacements.append(_localized_region_name(StringName(str(item.get("localization_region_id", item.get("region_id", ""))))))
+        if template_key == "machine_recovery":
+            replacements.push_front(str(item.get("localization_machine_name", "disabled machine")))
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service == null:
+        return fallback
+    var key := "%s.%s" % [key_base, field]
+    var localized := service.text(key, replacements)
+    return fallback if localized == key else localized
+
+
+func _localized_region_name(region_id: StringName) -> String:
+    var raw_name := String(region_id).trim_prefix("region.").replace("_", " ")
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service == null:
+        return raw_name
+    var key := "world.region.%s" % String(region_id).trim_prefix("region.")
+    var localized := service.text(key)
+    return raw_name if localized == key else localized
+
+
+func _localized_team_roles(raw_roles: Variant) -> String:
+    var role_names: Array[String] = []
+    if raw_roles is Array:
+        for raw_role in raw_roles as Array:
+            var role := str(raw_role)
+            role_names.append(_text("command.role.short.%s" % role, role.replace("_", " ")))
+    return ", ".join(role_names)
+
+
+func _localized_route_brief(item: Dictionary) -> String:
+    var waypoint_count := int(item.get("route_waypoints", 0))
+    var distance := int(round(float(item.get("route_distance", 0.0))))
+    if not item.has("route_waypoints"):
+        return str(item.get("route_brief", "Route: physical route preview unavailable"))
+    var route_key := "command.operations.route.primary" if int(item.get("route_variant", 0)) <= 0 else "command.operations.route.alternate"
+    var route_label := _text(route_key, "primary route" if route_key.ends_with("primary") else "alternate route")
+    var plural_suffix := "" if waypoint_count == 1 else "s"
+    var locale_service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if locale_service != null and locale_service.current_locale == &"de":
+        plural_suffix = "" if waypoint_count == 1 else "e"
+    elif locale_service != null and locale_service.current_locale == &"sv":
+        plural_suffix = "" if waypoint_count == 1 else "er"
+    return _text("command.operations.route_brief", "Route: {0} · {1} waypoint{2} · {3} m", [route_label, waypoint_count, plural_suffix, distance])
 
 
 func refresh_localized_text() -> void:
