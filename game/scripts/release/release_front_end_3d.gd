@@ -506,21 +506,24 @@ func _translate_buttons(root: Node) -> void:
     for child in root.get_children():
         if child is Button:
             var button := child as Button
-            var current := button.text.to_lower().replace(" ", "_").replace("·", "").strip_edges()
-            var mappings := {
-                "continue": "menu.continue",
-                "new_world": "menu.new_world",
-                "settings": "menu.settings",
-                "quit": "menu.quit",
-                "resume": "menu.resume",
-                "save_world": "menu.save",
-                "load_world": "menu.load",
-                "return_to_title": "menu.return_title",
-                "apply": "menu.apply",
-                "back": "menu.back",
-            }
-            if mappings.has(current):
-                button.text = localization.text(str(mappings[current]))
+            var localization_key := str(button.get_meta(&"localization_key", ""))
+            if localization_key.is_empty():
+                var current := button.text.to_lower().replace(" ", "_").replace("·", "").strip_edges()
+                var mappings := {
+                    "continue": "menu.continue",
+                    "new_world": "menu.new_world",
+                    "settings": "menu.settings",
+                    "quit": "menu.quit",
+                    "resume": "menu.resume",
+                    "save_world": "menu.save",
+                    "load_world": "menu.load",
+                    "return_to_title": "menu.return_title",
+                    "apply": "menu.apply",
+                    "back": "menu.back",
+                }
+                localization_key = str(mappings.get(current, ""))
+            if not localization_key.is_empty():
+                button.text = localization.text(localization_key)
         _translate_buttons(child)
 
 
@@ -604,6 +607,20 @@ func _body_label(value: String, size_value: int, color: Color, minimum_height: f
 func _menu_button(value: String, callback: Callable) -> Button:
     var button := Button.new()
     button.text = value
+    var localization_keys := {
+        "CONTINUE": "menu.continue",
+        "NEW WORLD": "menu.new_world",
+        "SETTINGS": "menu.settings",
+        "QUIT": "menu.quit",
+        "RESUME": "menu.resume",
+        "SAVE WORLD": "menu.save",
+        "LOAD WORLD": "menu.load",
+        "RETURN TO TITLE": "menu.return_title",
+        "APPLY": "menu.apply",
+        "BACK": "menu.back",
+    }
+    if localization_keys.has(value):
+        button.set_meta(&"localization_key", localization_keys[value])
     button.custom_minimum_size = Vector2(0, 52)
     button.add_theme_font_size_override("font_size", 18)
     button.focus_mode = Control.FOCUS_ALL

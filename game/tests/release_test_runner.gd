@@ -23,6 +23,10 @@ func _run_all() -> void:
     if world == null:
         _finish()
         return
+    # Release assertions use the canonical English copy; isolate the suite
+    # from a locale persisted by a preceding live export review.
+    world.settings_service.set_value(&"language", "en", false)
+    world.localization_service.set_locale(&"en")
 
     _test_release_services(world)
     _test_run_variation(world)
@@ -194,10 +198,22 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     var swedish := service.text("menu.new_world")
     _expect(swedish == "NY VÄRLD" and swedish != english, "Swedish catalog must resolve localized release strings.")
     _expect(service.text("objective.opening.salvage.title") == "BÄRGA DITT FÖRSTA SKROT", "Swedish catalog must localize the opening objective title.")
+    world.release_front_end.show_pause()
+    service.set_locale(&"sv")
+    _expect(_front_end_has_button_text(world.release_front_end.pause_panel, "SPARA VÄRLD"), "Changing to Swedish in pause settings must refresh the already-built pause actions.")
     _expect(service.set_locale(&"de"), "German locale must be selectable.")
     _expect(service.text("menu.settings") == "EINSTELLUNGEN", "German catalog must resolve release settings text.")
     _expect(service.text("objective.opening.salvage.title") == "BERGE DEIN ERSTES SCHROTTGUT", "German catalog must localize the opening objective title.")
+    _expect(_front_end_has_button_text(world.release_front_end.pause_panel, "WELT SPEICHERN"), "Changing to German in pause settings must refresh the already-built pause actions.")
+    world.release_front_end.hide_all()
     service.set_locale(&"en")
+
+
+func _front_end_has_button_text(root: Node, expected: String) -> bool:
+    for node in root.find_children("*", "Button", true, false):
+        if node is Button and (node as Button).text == expected:
+            return true
+    return false
 
 
 func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void:
