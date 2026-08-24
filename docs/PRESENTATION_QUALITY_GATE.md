@@ -25,6 +25,12 @@ aligned to the approach-facing block surfaces. Exact Windows capture at
 maintained architecture without obscuring its windows; broader human region
 acceptance remains open.
 
+The Municipal Glasshouse review now uses a quieter translucent-pane emission
+and review-only key so the crop beds, frame ribs and irrigation header retain
+depth instead of blooming into a pale central wash. Exact Windows capture at
+1280×720 on page 7/14 confirms the climate volume remains readable; broader
+human region acceptance remains open.
+
 The current visual state is explicitly classified as **pre-alpha production prototype** until the following gates are met.
 
 The exact merged Windows export was live-reviewed after the latest core-gallery

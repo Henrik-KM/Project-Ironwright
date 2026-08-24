@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Municipal Glasshouse material/readability pass
+
+- reduced the translucent facade and roof emission plus the review-only key
+  energy so the greenhouse frame, crop beds and irrigation header remain
+  separated at compact export scale;
+- kept runtime lighting, climate motion, service hardware and region contracts
+  unchanged; exact Windows export review passed on 2026-08-24 at 1280×720 on
+  page 7/14.
+
 ## Focused East Tenements facade-depth pass
 
 - added authored floor bands and a central approach-facing facade spine to
