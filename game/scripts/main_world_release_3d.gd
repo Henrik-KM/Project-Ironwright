@@ -1200,7 +1200,10 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	elif presentation_review_page == 5:
 		compact_region_light_scale = 0.62
 	elif presentation_review_page == 6:
-		compact_region_light_scale = 0.64
+		# Glasshouse panes and the irrigation header are translucent and metallic;
+		# keep the compact review key below the bloom threshold so the crop beds
+		# and frame hierarchy remain visible without changing runtime lighting.
+		compact_region_light_scale = 0.52
 	elif presentation_review_page == 7:
 		compact_region_light_scale = 0.58
 	elif presentation_review_page == 8:

@@ -528,12 +528,12 @@ func _dress_greenhouse(root: Node3D) -> void:
     # bounded presentation layer; it adds no collision, routing or simulation.
     var cold_glass := StandardMaterial3D.new()
     cold_glass.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-    cold_glass.albedo_color = Color(0.10, 0.30, 0.32, 0.13)
+    cold_glass.albedo_color = Color(0.10, 0.30, 0.32, 0.09)
     cold_glass.metallic = 0.12
     cold_glass.roughness = 0.22
     cold_glass.emission_enabled = true
     cold_glass.emission = Color("4fa9a6")
-    cold_glass.emission_energy_multiplier = 0.10
+    cold_glass.emission_energy_multiplier = 0.04
     cold_glass.cull_mode = BaseMaterial3D.CULL_DISABLED
     var greenhouse_detail := Node3D.new()
     greenhouse_detail.name = "HighDefinitionGreenhouseDressing"
@@ -607,7 +607,7 @@ func _dress_greenhouse(root: Node3D) -> void:
     var service_metal := _textured_material(&"metal", Color("2f3b3c"), 0.62, 0.5)
     var service_rust := _textured_material(&"rust", Color("754936"), 0.38, 0.7)
     var service_concrete := _textured_material(&"concrete", Color("59605d"), 0.0, 0.72)
-    var service_cyan := _emissive_material(Color("6fe5dd"), 0.72)
+    var service_cyan := _emissive_material(Color("6fe5dd"), 0.48)
     # A restrained service court gives the Glasshouse a legible civic-climate
     # identity while remaining presentation-only. It is not an operation queue,
     # inventory surface or player-managed production system.
