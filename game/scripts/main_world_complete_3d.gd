@@ -615,8 +615,24 @@ func _on_region_discovered(region_id: StringName, display_name: String) -> void:
     hud.push_notification("REGION DISCOVERED · %s · PHYSICAL ROUTES NOW KNOWN" % display_name.to_upper())
 
 
-func _on_story_record_unlocked(_record_id: StringName, display_name: String, description: String) -> void:
-    hud.push_notification("TOWN RECORD · %s\n%s" % [display_name.to_upper(), description])
+func _on_story_record_unlocked(record_id: StringName, display_name: String, description: String) -> void:
+    var localized_name := display_name
+    var localized_description := description
+    var locale_service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if locale_service != null:
+        var record_key := String(record_id).replace("story.", "").replace(".", "_")
+        var name_key := "story.record.%s.name" % record_key
+        var description_key := "story.record.%s.description" % record_key
+        var name_candidate := locale_service.text(name_key)
+        var description_candidate := locale_service.text(description_key)
+        if name_candidate != name_key:
+            localized_name = name_candidate
+        if description_candidate != description_key:
+            localized_description = description_candidate
+    var notification := "TOWN RECORD · %s\n%s" % [localized_name.to_upper(), localized_description]
+    if locale_service != null:
+        notification = locale_service.text("notification.town_record", [localized_name.to_upper(), localized_description])
+    hud.push_notification(notification)
 
 
 func _on_story_thread_advanced(_thread_id: StringName, display_name: String, stage_count: int, description: String) -> void:

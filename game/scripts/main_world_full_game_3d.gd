@@ -369,7 +369,16 @@ func _restore_extension_data(extensions: Variant) -> void:
 
 
 func _on_technology_unlocked(technology_id: StringName, display_name: String, effects: Array) -> void:
-    hud.push_notification("TECHNOLOGY ONLINE · %s" % display_name.to_upper())
+    var localized_name := display_name
+    var locale_service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if locale_service != null:
+        var technology_key := "technology.name.%s" % String(technology_id).replace(".", "_")
+        var name_candidate := locale_service.text(technology_key)
+        if name_candidate != technology_key:
+            localized_name = name_candidate
+        hud.push_notification(locale_service.text("notification.technology_online", [localized_name.to_upper()]))
+        return
+    hud.push_notification("TECHNOLOGY ONLINE · %s" % localized_name.to_upper())
 
 
 func _on_phase_changed(phase_id: StringName, display_name: String) -> void:

@@ -20,6 +20,16 @@
 - exact Windows fresh-world exports passed on 2026-08-24 at 1280×720 in both
   German and Swedish with the opening machine-report stack visually inspected.
 
+## Focused endgame machine-report localization pass
+
+- localized stable technology names, resource-outpost roles, site names and
+  integrity reports at the release presentation boundary while preserving
+  canonical English run events for persistence and diagnostics;
+- added German regression coverage for the technology and outpost report
+  templates;
+- exact Windows export review passed on 2026-08-24 at 1280×720 with the
+  completed Severance overlay and visible German machine report.
+
 ## Focused Observatory Ridge survey-readability pass
 
 - toned the exact-review dish into a restrained blue-violet material range,

@@ -48,6 +48,13 @@ its canonical save text. Exact Windows captures at 1280×720 on 2026-08-24
 confirmed consistent German and Swedish opening reports; broader gameplay
 prose localization remains open.
 
+The final-protocol machine-report stack now follows the same boundary. Stable
+technology names, resource-outpost roles, site names and integrity reports are
+localized in the exact German Windows export while canonical run events remain
+English for persistence and diagnostics. Exact capture at 1280×720 on
+2026-08-24 confirmed the completed Severance overlay with a consistent German
+machine report; broader gameplay prose localization remains open.
+
 The final-protocol review now enters the complete-game milestone state and
 clears the opening salvage beacon when the late-run crisis starts and after
 victory, so neither the HUD nor the world-space guidance layer contradicts
