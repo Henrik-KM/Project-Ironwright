@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Observatory Ridge survey-readability pass
+
+- toned the exact-review dish into a restrained blue-violet material range,
+  separated dish ribs and actuators, and added a bounded survey service deck
+  with approach consoles and signal readouts;
+- kept the authored observatory scene, runtime lighting ownership, collision,
+  navigation, ecology and operation contracts unchanged;
+- exact Windows export review passed on 2026-08-24 at 1280×720 on page 12/14.
+
 ## Focused Buried Laboratories containment-depth pass
 
 - added a review-only dark containment gantry, transfer rails, vessel collars,

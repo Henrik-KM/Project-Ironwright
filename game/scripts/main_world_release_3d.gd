@@ -1145,7 +1145,86 @@ func _create_observatory_presentation_review_actor(landmark: RegionLandmark3D) -
 	var authored_scene := OBSERVATORY_PRESENTATION_REVIEW_SCENE.instantiate()
 	authored_scene.name = "ObservatoryPresentationReviewModel"
 	review_actor.add_child(authored_scene)
+	_tune_observatory_presentation_review_materials(authored_scene)
+	_dress_observatory_presentation_review_actor(review_actor)
 	return review_actor
+
+
+func _tune_observatory_presentation_review_materials(authored_scene: Node) -> void:
+	var dish_material := ModelKit3D.material(Color("102544"), 0.12, 0.84)
+	var dish_rim_material := ModelKit3D.material(Color("3d5b61"), 0.68, 0.46)
+	var actuator_material := ModelKit3D.material(Color("82452f"), 0.28, 0.66)
+	var signal_material := ModelKit3D.material(Color("124d58"), 0.32, 0.34, Color("58dfe3"), 0.92)
+	for child in authored_scene.find_children("*", "MeshInstance3D", true, false):
+		if not child is MeshInstance3D:
+			continue
+		var mesh := child as MeshInstance3D
+		var node_name := mesh.name.to_lower()
+		if node_name.contains("dishrib") or node_name.contains("dishrim"):
+			mesh.material_override = dish_rim_material
+		elif node_name.contains("dishbrace") or node_name.contains("dishactuator"):
+			mesh.material_override = actuator_material
+		elif node_name.contains("dish"):
+			mesh.material_override = dish_material
+		elif node_name.contains("feedsignal"):
+			mesh.material_override = signal_material
+
+
+func _dress_observatory_presentation_review_actor(review_actor: Node3D) -> void:
+	var dressing := Node3D.new()
+	dressing.name = "ObservatorySurveyServiceReviewDressing"
+	review_actor.add_child(dressing)
+	var base_material := ModelKit3D.material(Color("17262c"), 0.72, 0.44)
+	var edge_material := ModelKit3D.material(Color("455b5e"), 0.72, 0.42)
+	var console_material := ModelKit3D.material(Color("29383a"), 0.6, 0.48)
+	var cyan_signal := ModelKit3D.material(Color("14515a"), 0.34, 0.32, Color("56e0e4"), 1.0)
+	var warm_signal := ModelKit3D.material(Color("75402f"), 0.28, 0.62, Color("d47b48"), 0.46)
+	ModelKit3D.add_beveled_box(
+		dressing,
+		Vector3(9.8, 0.3, 5.8),
+		Vector3(0.0, 0.18, 0.0),
+		base_material,
+		Vector3.ZERO,
+		"ObservatorySurveyServiceDeck",
+		0.16
+	)
+	for side in [-1.0, 1.0]:
+		ModelKit3D.add_cylinder(
+			dressing,
+			0.11,
+			2.6,
+			Vector3(side * 4.1, 1.3, -1.85),
+			edge_material,
+			Vector3.ZERO,
+			"ObservatoryServiceDeckPost"
+		)
+		var console := ModelKit3D.add_beveled_box(
+			dressing,
+			Vector3(2.2, 1.05, 0.92),
+			Vector3(side * 2.25, 0.92, -2.0),
+			console_material,
+			Vector3.ZERO,
+			"ObservatoryApproachConsole",
+			0.18
+		)
+		ModelKit3D.add_surface_panel(
+			console,
+			Vector3(1.35, 0.5, 0.1),
+			Vector3(0.0, 0.18, -0.51),
+			console_material,
+			cyan_signal,
+			Vector3.ZERO,
+			"ObservatoryApproachReadout"
+		)
+	ModelKit3D.add_beveled_box(
+		dressing,
+		Vector3(8.6, 0.14, 0.16),
+		Vector3(0.0, 2.55, -2.0),
+		warm_signal,
+		Vector3.ZERO,
+		"ObservatoryApproachWarningRail",
+		0.18
+	)
 
 
 func _create_buried_labs_presentation_review_actor(landmark: RegionLandmark3D) -> Node3D:
@@ -1348,7 +1427,9 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	elif presentation_review_page == 10:
 		compact_region_light_scale = 0.58
 	elif presentation_review_page == 11:
-		compact_region_light_scale = 0.54
+		# The blue-violet survey dish is broad and shallow; keep the exact review
+		# key restrained enough that its ribs and feed hardware stay legible.
+		compact_region_light_scale = 0.40
 	elif presentation_review_page == 12:
 		compact_region_light_scale = 0.60
 	elif presentation_review_page == 13:

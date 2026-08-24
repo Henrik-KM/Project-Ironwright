@@ -4,6 +4,12 @@
 
 The current build is not release-ready merely because its systemic gameplay path is complete. The native presentation must be judged against the actual shipped frame, not against internal implementation breadth.
 
+The Observatory Ridge review now keeps the dish in a restrained blue-violet
+range, separates its ribs and actuators, and exposes a bounded survey service
+deck with approach consoles and signal readouts. Exact Windows capture at
+1280×720 on page 12/14 confirms the survey instrument reads without the former
+white-disk bloom; broader human region acceptance remains open.
+
 The Buried Laboratories review now carries a restrained dark containment
 gantry, transfer rails, vessel collars, service walkway and instrument
 consoles around the authored vessels; the broad enclosure walls are toned down
