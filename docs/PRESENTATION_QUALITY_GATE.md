@@ -2,6 +2,15 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The organic gallery received a focused material-separation pass on 2026-08-24.
+Authored shell plates, ribs, spines and socket hardware now lift from the
+family tint while membranes and vascular details retain a distinct living
+response; the compact organic review key is also flatter and stronger so
+normal detail is not crushed into black bands. Exact Windows capture at
+1280×720 on page 3/14 confirms the late-organic roster remains judgeable;
+broader human art acceptance, target-hardware performance and long-run release
+gates remain open.
+
 The current build is not release-ready merely because its systemic gameplay path is complete. The native presentation must be judged against the actual shipped frame, not against internal implementation breadth.
 
 The casualty-recovery operation boundary was re-reviewed on 2026-08-24 in the

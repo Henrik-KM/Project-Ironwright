@@ -239,12 +239,12 @@ func _texture_mesh(mesh_instance: MeshInstance3D) -> void:
         var authored_path := str(mesh_instance.get_path()).to_lower()
         var authored_tint := _organic_family_tint_for_mesh(mesh_instance, authored_path)
         if authored_tint != Color.WHITE:
-            # Keep the release normal/texture pass, but preserve the authored
-            # species palette instead of collapsing every organic family into
-            # one magenta membrane value. A single tint per family keeps the
-            # roster legible while the source material still separates wet
-            # shell, plate, membrane, bone and signal details.
-            material.albedo_color = authored_tint
+            # Keep the release normal/texture pass and species palette, but do
+            # not flatten an authored creature into one dark colour band. The
+            # compact gallery is a real production gate: plates, ribs and
+            # spines need to catch the key as structural anatomy, while
+            # membranes and vascular details need a separate living lift.
+            material.albedo_color = _organic_detail_tint(mesh_instance, authored_tint, category)
     mesh_instance.material_override = material
     mesh_instance.visibility_range_end = 250.0
     mesh_instance.set_meta(&"release_material_family", category)
@@ -321,6 +321,17 @@ func _organic_family_tint_for_mesh(mesh_instance: MeshInstance3D, path_text: Str
             return AUTHORED_ORGANIC_TINTS.get(family, Color.WHITE)
         current = current.get_parent()
     return _organic_family_tint(path_text)
+
+
+func _organic_detail_tint(mesh_instance: MeshInstance3D, family_tint: Color, category: StringName) -> Color:
+    var detail_name := String(mesh_instance.name).to_lower()
+    if category == &"membrane" or _contains_any(detail_name, ["membrane", "fan", "gill", "fin", "wing", "mantle", "spore", "vein"]):
+        return family_tint.lightened(0.16)
+    if _contains_any(detail_name, ["plate", "rib", "ridge", "spine", "hook", "knuckle", "fastener", "bone", "frame", "ray", "cap"]):
+        return family_tint.lerp(Color("d9c59b"), 0.48)
+    if _contains_any(detail_name, ["eye", "oculus", "resonator", "siphon", "tendon"]):
+        return family_tint.lightened(0.22)
+    return family_tint.darkened(0.06)
 
 
 func _uv_scale(category: StringName) -> Vector3:
