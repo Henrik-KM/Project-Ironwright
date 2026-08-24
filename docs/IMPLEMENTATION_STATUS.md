@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused friendly-roster material-separation pass
+
+- restrained the shared development-gallery key only on the friendly roster
+  page so bright sensors do not flatten copper oxide, brushed steel, rubber,
+  tool and service-face material breaks;
+- left all tactical/runtime lighting unchanged and added a commercial-release
+  regression assertion for the review-only key budget;
+- exact Windows export review passed on 2026-08-24 at 1280×720 with quieter
+  floor pools and stronger authored shell separation.
+
 ## Focused Root Cistern capstone-presentation depth pass
 
 - rebuilt the Root Cistern's basin spines as low radial root braces so the
