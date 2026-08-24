@@ -10,6 +10,16 @@
   and completed Severance protocol states; broader professional localization
   remains open.
 
+## Focused run-variation report localization pass
+
+- localized the release survival-profile report, world-condition name and
+  authored weather description for all five deterministic run variants across
+  English, Swedish and German;
+- kept the persisted run event log canonical in English while translating its
+  presentation boundary, so save/load and diagnostics remain stable;
+- exact Windows fresh-world exports passed on 2026-08-24 at 1280×720 in both
+  German and Swedish with the opening machine-report stack visually inspected.
+
 ## Focused Observatory Ridge survey-readability pass
 
 - toned the exact-review dish into a restrained blue-violet material range,
