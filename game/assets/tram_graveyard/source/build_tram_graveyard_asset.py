@@ -21,14 +21,16 @@ OUTPUT_PATH = SOURCE_DIR / "tram_graveyard.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Tram weathered teal", "pbrMetallicRoughness": {"baseColorFactor": [0.035, 0.09, 0.11, 1.0], "metallicFactor": 0.28, "roughnessFactor": 0.78}},
+        {"name": "Tram weathered teal", "pbrMetallicRoughness": {"baseColorFactor": [0.085, 0.22, 0.24, 1.0], "metallicFactor": 0.28, "roughnessFactor": 0.78}},
         {"name": "Tram oxidized iron", "pbrMetallicRoughness": {"baseColorFactor": [0.28, 0.065, 0.018, 1.0], "metallicFactor": 0.28, "roughnessFactor": 0.76}},
         {"name": "Tram dark undercarriage", "pbrMetallicRoughness": {"baseColorFactor": [0.045, 0.065, 0.075, 1.0], "metallicFactor": 0.74, "roughnessFactor": 0.42}},
         {"name": "Tram cold window", "pbrMetallicRoughness": {"baseColorFactor": [0.018, 0.10, 0.15, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.38}, "emissiveFactor": [0.0, 0.12, 0.20]},
         {"name": "Tram service amber", "pbrMetallicRoughness": {"baseColorFactor": [0.42, 0.12, 0.018, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.50}, "emissiveFactor": [0.34, 0.06, 0.006]},
-        {"name": "Tram concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.07, 0.09, 0.09, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.94}},
+        {"name": "Tram concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.12, 0.16, 0.16, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.94}},
         {"name": "Tram organic seepage", "pbrMetallicRoughness": {"baseColorFactor": [0.22, 0.045, 0.10, 1.0], "metallicFactor": 0.02, "roughnessFactor": 0.86}, "emissiveFactor": [0.30, 0.018, 0.08]},
         {"name": "Tram ceramic insulator", "pbrMetallicRoughness": {"baseColorFactor": [0.12, 0.16, 0.14, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.68}},
+        {"name": "Tram maintained side panel", "pbrMetallicRoughness": {"baseColorFactor": [0.075, 0.22, 0.24, 1.0], "metallicFactor": 0.32, "roughnessFactor": 0.58}},
+        {"name": "Tram yard deck", "pbrMetallicRoughness": {"baseColorFactor": [0.055, 0.085, 0.095, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.88}},
     ]
     meshes: list[dict] = []
 
@@ -37,10 +39,12 @@ def main() -> None:
         meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
-    tram, rust, dark, window, amber, concrete, organic, ceramic = range(8)
+    tram, rust, dark, window, amber, concrete, organic, ceramic, panel, deck = range(10)
     mesh_ids = {
         "Carriage": mesh("Carriage", add_beveled_box(builder, (8.6, 3.25, 2.45), tram, 0.18)),
         "CarriageRoof": mesh("CarriageRoof", add_beveled_box(builder, (8.95, 0.24, 2.72), rust, 0.07)),
+        "YardDeck": mesh("YardDeck", add_beveled_box(builder, (18.0, 0.18, 14.0), deck, 0.05)),
+        "CarriageSidePanel": mesh("CarriageSidePanel", add_beveled_box(builder, (2.15, 0.62, 0.10), panel, 0.025)),
         "Window": mesh("Window", add_beveled_box(builder, (1.35, 0.82, 0.10), window, 0.035)),
         "WindowFrameVertical": mesh("WindowFrameVertical", add_beveled_box(builder, (0.10, 0.96, 0.14), rust, 0.025)),
         "WindowFrameHorizontal": mesh("WindowFrameHorizontal", add_beveled_box(builder, (1.52, 0.10, 0.14), rust, 0.025)),
@@ -112,6 +116,11 @@ def main() -> None:
         carriage_root = add_node(prefix, extras={"surface": "damaged_tram_carriage"}, translation=position, rotation=(0.0, yaw, 0.0), parent=parent)
         add_node(prefix + "Body", mesh_ids["Carriage"], (0.0, 1.95, 0.0), parent=carriage_root)
         add_node(prefix + "Roof", mesh_ids["CarriageRoof"], (0.0, 3.62, 0.0), parent=carriage_root)
+        # The brighter lower side panels restore carriage mass at review
+        # distance while retaining the weathered dark body as the main shell.
+        for side_name, side_z in (("Front", 1.34), ("Rear", -1.34)):
+            for index, x in enumerate((-2.65, 0.0, 2.65)):
+                add_node(prefix + "SidePanel" + side_name + str(index), mesh_ids["CarriageSidePanel"], (x, 1.18, side_z), extras={"surface": "maintained_carriage_panel"}, parent=carriage_root)
         add_node(prefix + "RoofVent0", mesh_ids["RoofVent"], (-2.4, 3.82, 0.0), parent=carriage_root)
         add_node(prefix + "RoofVent1", mesh_ids["RoofVent"], (2.0, 3.82, 0.0), parent=carriage_root)
         add_node(prefix + "BeltRailFront", mesh_ids["BeltRail"], (0.0, 1.25, 1.40), parent=carriage_root)
@@ -147,6 +156,7 @@ def main() -> None:
     carriage("TramCarriageA", (-2.9, 0.0, 2.0), -0.035)
     carriage("TramCarriageB", (3.6, 0.0, -2.8), 0.08)
 
+    add_node("TramYardDeck", mesh_ids["YardDeck"], (0.0, 0.0, 0.0), extras={"surface": "rail_yard_deck"})
     pit = add_node("TramMaintenancePit", mesh_ids["Pit"], (0.0, 0.22, -5.3), extras={"socket_type": "maintenance_pit"})
     add_node("TramPitEdgeL", mesh_ids["PitEdge"], (-2.85, 0.28, -5.3), parent=pit)
     add_node("TramPitEdgeR", mesh_ids["PitEdge"], (2.85, 0.28, -5.3), parent=pit)
@@ -192,7 +202,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "tram.graveyard.v1",
-            "required_nodes": ["TramGraveyardModel", "TramCarriageA", "TramCarriageAFrontWindow0", "TramCarriageAFrontDoor", "TramCarriageAFrontHeadlampHousing", "TramCarriageABogiePlate0", "TramCarriageAPantograph", "TramMaintenancePit", "TramPitRung0", "TramSignalMast", "TramSignalHousing", "TramSignalLamp", "TramCableClamp0", "TramOrganicSeep0", "TramOrganicSeepTendril0_0", "ProductionAssetMarker"],
+            "required_nodes": ["TramGraveyardModel", "TramCarriageA", "TramCarriageAFrontWindow0", "TramCarriageAFrontDoor", "TramCarriageAFrontHeadlampHousing", "TramCarriageABogiePlate0", "TramCarriageAPantograph", "TramCarriageASidePanelFront0", "TramYardDeck", "TramMaintenancePit", "TramPitRung0", "TramSignalMast", "TramSignalHousing", "TramSignalLamp", "TramCableClamp0", "TramOrganicSeep0", "TramOrganicSeepTendril0_0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

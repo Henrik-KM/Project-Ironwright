@@ -14,6 +14,7 @@ const REMOTE_CAMERA_HEIGHT_EXPANSION := 5.5
 const REMOTE_CAMERA_DISTANCE_EXPANSION := 6.5
 const OBSERVATORY_PRESENTATION_REVIEW_SCENE: PackedScene = preload("res://assets/observatory/observatory.gltf")
 const BURIED_LABS_PRESENTATION_REVIEW_SCENE: PackedScene = preload("res://assets/buried_labs/buried_labs.gltf")
+const TRAM_GRAVEYARD_PRESENTATION_REVIEW_SCENE: PackedScene = preload("res://assets/tram_graveyard/tram_graveyard.gltf")
 
 static var pending_launch_mode: StringName = &"title"
 
@@ -703,6 +704,8 @@ func _start_presentation_review() -> void:
 			review_actor = _create_observatory_presentation_review_actor(landmark)
 		elif PRESENTATION_REVIEW_REGIONS[index] == &"region.buried_labs" and landmark != null:
 			review_actor = _create_buried_labs_presentation_review_actor(landmark)
+		elif PRESENTATION_REVIEW_REGIONS[index] == &"region.tram_graveyard" and landmark != null:
+			review_actor = _create_tram_graveyard_presentation_review_actor(landmark)
 		if review_actor != null:
 			landmark.set_presentation_detail_level(0)
 			landmark.set_map_emphasis(false)
@@ -894,7 +897,7 @@ func _show_presentation_review_page(page: int) -> void:
 	if is_region_page and release_world_art != null:
 		var selected_region_dressing := release_world_art.region_dressing_root(region_id)
 		if selected_region_dressing != null:
-			selected_region_dressing.visible = true
+			selected_region_dressing.visible = region_id != &"region.tram_graveyard"
 	for index in actors.size():
 		var actor := actors[index] as Node3D
 		if actor == null or not is_instance_valid(actor):
@@ -902,11 +905,16 @@ func _show_presentation_review_page(page: int) -> void:
 		actor.visible = true
 		_set_presentation_review_actor_lighting(actor, presentation_review_page == 0)
 		if is_region_page:
-			# Riverworks and Tram Graveyard place their service/focal face toward
-			# the opposite side of the shared review camera. Correct only those two
-			# authored orientations; other families keep their authored front.
-			if region_id == &"region.riverworks" or region_id == &"region.tram_graveyard":
+			# Riverworks keeps its opposite-side service face, while Tram Graveyard
+			# is explicitly front-facing for the dedicated carriage review actor.
+			# Other families keep their authored front.
+			if region_id == &"region.riverworks":
 				actor.rotation.y = PI
+			elif region_id == &"region.tram_graveyard":
+				# The carriage fronts and maintenance pit are authored toward the
+				# gallery camera. Keep the review instance front-facing so the rail
+				# identity reads as a connected yard instead of clipped roof fragments.
+				actor.rotation.y = 0.0
 			if actor.has_method("set_presentation_detail_level"):
 				actor.call("set_presentation_detail_level", 0)
 			var region_geometry := actor.get_node_or_null("PersistentRegionGeometry") as Node3D
@@ -988,7 +996,7 @@ func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3
 	if region_id == &"region.tram_graveyard":
 		# Lower the rail frame enough for the carriage sides, windows and
 		# undercarriages to read as depth rather than a stack of roof planes.
-		return Vector3(-8.0, 7.4, 13.8)
+		return Vector3(0.0, 8.2, 16.0)
 	if region_id == &"region.flood_market":
 		return Vector3(8.5, 9.4, 15.4)
 	if region_id == &"region.cathedral_quarter":
@@ -1120,6 +1128,17 @@ func _create_buried_labs_presentation_review_actor(landmark: RegionLandmark3D) -
 	return review_actor
 
 
+func _create_tram_graveyard_presentation_review_actor(landmark: RegionLandmark3D) -> Node3D:
+	var review_actor := Node3D.new()
+	review_actor.name = "TramGraveyardPresentationReviewActor"
+	add_child(review_actor)
+	review_actor.global_position = landmark.global_position
+	var authored_scene := TRAM_GRAVEYARD_PRESENTATION_REVIEW_SCENE.instantiate()
+	authored_scene.name = "TramGraveyardPresentationReviewModel"
+	review_actor.add_child(authored_scene)
+	return review_actor
+
+
 func _update_presentation_review_camera(delta: float) -> void:
 	if camera == null:
 		return
@@ -1169,7 +1188,10 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	elif presentation_review_page == 8:
 		compact_region_light_scale = 0.60
 	elif presentation_review_page == 9:
-		compact_region_light_scale = 0.56
+		# The rail carriages use a dark teal shell; retain enough review-only
+		# key to separate their bodies, windows and undercarriages from the slate
+		# backdrop without changing runtime lighting.
+		compact_region_light_scale = 0.68
 	elif presentation_review_page == 10:
 		compact_region_light_scale = 0.58
 	elif presentation_review_page == 11:

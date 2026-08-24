@@ -845,6 +845,14 @@ industrial silhouette and service hierarchy readable; landmark identity,
 collision, navigation, ecology and operation state remain unchanged. Broader
 human region acceptance remains outstanding.
 
+Tram Graveyard now also uses a dedicated exact-review actor for its authored
+carriage pair. A grounded yard deck and maintained lower side panels keep the
+windows, undercarriages, overhead line, signal mast and rails in one readable
+rail-yard composition; the sparse release dressing is hidden only on this
+review page. Runtime landmark, route, collision, navigation, ecology and
+operation state remain unchanged. Broader human region acceptance remains
+outstanding.
+
 ## Art production sequence
 
 The presentation milestones proceed in this order:

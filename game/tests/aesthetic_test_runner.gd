@@ -505,6 +505,7 @@ func _run_all() -> void:
                 var tram_carriage_roof := landmark.find_child("TramCarriageARoof", true, false) as MeshInstance3D
                 _expect(tram_carriage_body != null and tram_carriage_roof != null and _mesh_vertex_count(tram_carriage_body) >= 48 and _mesh_vertex_count(tram_carriage_roof) >= 48, "Tram authored carriage shell must retain beveled high-definition geometry.")
                 _expect(landmark.find_child("TramCarriageAFrontHeadlampHousing", true, false) != null and landmark.find_child("TramCarriageABogiePlate0", true, false) != null and landmark.find_child("TramCarriageAPantograph", true, false) != null, "Tram Graveyard must expose layered carriage service hardware.")
+                _expect(landmark.find_child("TramCarriageASidePanelFront0", true, false) != null and landmark.find_child("TramYardDeck", true, false) != null, "Tram Graveyard must expose maintained carriage side panels and a grounded rail-yard deck.")
                 _expect(landmark.find_child("TramPitRung0", true, false) != null and landmark.find_child("TramCableClamp0", true, false) != null and landmark.find_child("TramSignalHousing", true, false) != null, "Tram Graveyard must expose maintenance-pit and overhead service details.")
                 var tram_signal := landmark.find_child("TramSignalLamp", true, false) as Node3D
                 var tram_seep := landmark.find_child("TramOrganicSeep0", true, false) as Node3D
