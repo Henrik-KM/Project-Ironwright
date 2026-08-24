@@ -502,6 +502,7 @@ func _run_all() -> void:
             if landmark.region_kind == &"rail":
                 _expect(landmark.find_child("TramMaintenanceBay", true, false) != null, "Tram Graveyard must expose an authored maintenance bay.")
                 _expect(landmark.find_child("TramCarriageDoor", true, false) != null, "Tram Graveyard must expose a readable carriage door.")
+                _expect(landmark.find_child("TramWreckCarriage", true, false) != null and landmark.find_child("TramWreckCarriageRoof", true, false) != null, "Tram Graveyard must expose a banked wreck carriage with authored roof hardware.")
                 _expect(landmark.find_child("TramCarriageAFrontWindow0", true, false) != null and landmark.find_child("TramCarriageAFrontDoor", true, false) != null, "Tram Graveyard must expose approach-facing carriage hardware.")
                 _expect(landmark.find_child("TramInspectionPit", true, false) != null, "Tram Graveyard must expose a bounded inspection-pit signature.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/TramGraveyardAuthoredModel") != null, "Tram Graveyard must expose its authored carriage and maintenance landmark shell.")

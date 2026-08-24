@@ -1,5 +1,31 @@
 # Implementation status
 
+## Focused Tram Graveyard derailed-carriage high-definition pass
+
+- extended the authored Tram Graveyard glTF source with a smaller, banked and
+  pitched third carriage that has slewed into the side service apron, reusing
+  the established windows, doors, bogies, pantograph and roof hardware at a
+  deliberate wreck scale;
+- added stable manifest and aesthetic coverage for the new
+  `TramWreckCarriage` and `TramWreckCarriageRoof` nodes without changing route,
+  collision, operation, ecology or save contracts;
+- regenerated and reimported the asset, then exact-export reviewed page 10/14
+  at 1280×720; the yard now reads as a derailed carriage graveyard rather than
+  two clean parked vehicles.
+
+## Focused complete-game objective and ecology localization pass
+
+- moved every canonical late-run objective title, detail and action prompt
+  behind the selected English, Swedish or German catalog, including the full
+  Tier III–V, component, support-post, Root Cistern and final-protocol chain;
+- localized strategic ecology concentration/migration reports, enemy-tier
+  escalation reports and machine-witness prose without changing stable event
+  identifiers or saved mechanics;
+- added the non-saving `--complete-objective-review --locale=<locale>` exact
+  export fixture so the late-run objective can be reviewed in the actual
+  1280×720 tactical frame; the German capture confirmed the complete objective
+  card and bottom prompt remain localized and unclipped.
+
 ## Focused complete-game gameplay-report localization pass
 
 - moved the canonical runtime's salvage, fabrication, expedition, save/load,

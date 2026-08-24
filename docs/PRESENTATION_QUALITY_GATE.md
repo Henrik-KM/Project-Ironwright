@@ -2,6 +2,24 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The Tram Graveyard received a focused authored-model pass on 2026-08-24. The
+source glTF now includes a smaller banked and pitched third carriage with the
+same named service hardware as the main pair, while the bounded review dressing
+retains collapsed panels, broken glazing and fallen yard hardware. Exact
+Windows capture at 1280×720 on page 10/14 confirms the new carriage reads in
+the frame and the yard identity is more clearly derailed; broader human region
+acceptance remains open.
+
+The complete-game objective surface received a focused localization pass on
+2026-08-24. Tier III–V progression, component recovery, support-post, Root
+Cistern and final-protocol objectives now resolve title, detail and action
+prompt through the selected catalog, while strategic ecology and enemy-tier
+reports use the same boundary. Exact exported Windows review at 1280×720 in
+German used the non-saving `--complete-objective-review --locale=de` fixture;
+the late-run objective card and bottom prompt were fully visible and
+unclipped. Professional localization and broader full-run acceptance remain
+open.
+
 The canonical complete-game runtime received a focused gameplay-report
 localization pass on 2026-08-24. Salvage, fabrication, expedition, save/load,
 machine-society, region-discovery and final-protocol reports now resolve through
