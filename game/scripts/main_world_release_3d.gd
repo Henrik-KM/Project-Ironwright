@@ -1378,6 +1378,98 @@ func _create_tram_graveyard_presentation_review_actor(landmark: RegionLandmark3D
 	var authored_scene := TRAM_GRAVEYARD_PRESENTATION_REVIEW_SCENE.instantiate()
 	authored_scene.name = "TramGraveyardPresentationReviewModel"
 	review_actor.add_child(authored_scene)
+	# The authored carriage pair supplies the landmark identity. Add a bounded
+	# review-only wreck field around it so the exact frame communicates a graveyard
+	# rather than two clean parked cars. This has no collision, route, save or
+	# runtime-world ownership; it exists only on the development review actor.
+	var wreckage := Node3D.new()
+	wreckage.name = "TramGraveyardReviewWreckage"
+	review_actor.add_child(wreckage)
+	var rust := ModelKit3D.material(Color("684331"), 0.32, 0.82)
+	var soot := ModelKit3D.material(Color("252b2d"), 0.08, 0.94)
+	var dull_glass := ModelKit3D.material(Color("263c40"), 0.16, 0.42)
+	ModelKit3D.add_beveled_box(
+		wreckage,
+		Vector3(3.4, 0.30, 1.0),
+		Vector3(-6.8, 0.42, -3.9),
+		rust,
+		Vector3(0.18, 0.32, 0.28),
+		"TramReviewCollapsedPanelA",
+		0.18
+	)
+	ModelKit3D.add_beveled_box(
+		wreckage,
+		Vector3(2.8, 0.24, 0.82),
+		Vector3(6.6, 0.34, 3.8),
+		rust,
+		Vector3(-0.12, -0.54, -0.34),
+		"TramReviewCollapsedPanelB",
+		0.16
+	)
+	ModelKit3D.add_beveled_box(
+		wreckage,
+		Vector3(2.2, 0.16, 0.52),
+		Vector3(5.2, 0.26, -5.0),
+		dull_glass,
+		Vector3(0.08, 0.28, 0.42),
+		"TramReviewBrokenWindowGlass",
+		0.12
+	)
+	ModelKit3D.add_beveled_box(
+		wreckage,
+		Vector3(0.92, 0.48, 0.10),
+		Vector3(-4.35, 2.30, 3.38),
+		dull_glass,
+		Vector3(0.0, 0.0, -0.22),
+		"TramReviewBrokenFrontWindowA",
+		0.10
+	)
+	ModelKit3D.add_beveled_box(
+		wreckage,
+		Vector3(0.78, 0.42, 0.10),
+		Vector3(2.55, 2.26, -1.42),
+		dull_glass,
+		Vector3(0.0, 0.0, 0.18),
+		"TramReviewBrokenFrontWindowB",
+		0.10
+	)
+	ModelKit3D.add_beveled_box(
+		wreckage,
+		Vector3(3.0, 0.28, 0.78),
+		Vector3(-4.4, 0.36, -3.0),
+		rust,
+		Vector3(0.14, -0.24, 0.30),
+		"TramReviewCollapsedPanelC",
+		0.16
+	)
+	ModelKit3D.add_cylinder(
+		wreckage,
+		0.07,
+		3.1,
+		Vector3(-7.2, 1.0, 0.7),
+		soot,
+		Vector3(0.0, 0.0, 1.08),
+		"TramReviewBentServicePost"
+	)
+	ModelKit3D.add_cylinder(
+		wreckage,
+		0.055,
+		2.4,
+		Vector3(7.0, 0.82, -0.8),
+		rust,
+		Vector3(0.12, 0.0, -0.76),
+		"TramReviewFallenSignalPost"
+	)
+	for index in range(6):
+		var rubble_position := Vector3(-5.5 + float(index % 3) * 5.4, 0.18, -5.7 + float(index / 3) * 2.1)
+		ModelKit3D.add_sphere(
+			wreckage,
+			0.18 + float(index % 2) * 0.08,
+			rubble_position,
+			soot if index % 2 == 0 else rust,
+			Vector3(1.0, 0.7, 1.2),
+			"TramReviewRubble%02d" % index
+		)
 	return review_actor
 
 

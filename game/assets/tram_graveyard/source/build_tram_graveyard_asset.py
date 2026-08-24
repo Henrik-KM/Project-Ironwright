@@ -112,8 +112,8 @@ def main() -> None:
         nodes[parent].setdefault("children", []).append(len(nodes) - 1)
         return len(nodes) - 1
 
-    def carriage(prefix: str, position: tuple[float, float, float], yaw: float, parent: int = 0) -> int:
-        carriage_root = add_node(prefix, extras={"surface": "damaged_tram_carriage"}, translation=position, rotation=(0.0, yaw, 0.0), parent=parent)
+    def carriage(prefix: str, position: tuple[float, float, float], yaw: float, bank: float = 0.0, pitch: float = 0.0, parent: int = 0) -> int:
+        carriage_root = add_node(prefix, extras={"surface": "damaged_tram_carriage"}, translation=position, rotation=(pitch, yaw, bank), parent=parent)
         add_node(prefix + "Body", mesh_ids["Carriage"], (0.0, 1.95, 0.0), parent=carriage_root)
         add_node(prefix + "Roof", mesh_ids["CarriageRoof"], (0.0, 3.62, 0.0), parent=carriage_root)
         # The brighter lower side panels restore carriage mass at review
@@ -153,8 +153,8 @@ def main() -> None:
         add_node(prefix + "PantographInsulatorR", mesh_ids["PantographInsulator"], (1.0, 3.95, 0.0), parent=pantograph)
         return carriage_root
 
-    carriage("TramCarriageA", (-2.9, 0.0, 2.0), -0.035)
-    carriage("TramCarriageB", (3.6, 0.0, -2.8), 0.08)
+    carriage("TramCarriageA", (-2.9, 0.0, 2.0), -0.035, -0.055, 0.018)
+    carriage("TramCarriageB", (3.6, 0.0, -2.8), 0.08, 0.085, -0.014)
 
     add_node("TramYardDeck", mesh_ids["YardDeck"], (0.0, 0.0, 0.0), extras={"surface": "rail_yard_deck"})
     pit = add_node("TramMaintenancePit", mesh_ids["Pit"], (0.0, 0.22, -5.3), extras={"socket_type": "maintenance_pit"})
