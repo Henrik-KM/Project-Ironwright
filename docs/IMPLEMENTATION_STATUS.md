@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused opening-forge localization pass
+
+- localized the shared first-session HUD chrome and manual Heartforge panel
+  through the English, Swedish and German catalogs, including the production
+  engineer and Heartforge-tier actions added by the longer-game entrypoint;
+- refreshed the already-built forge, fixed close footer and input legend when
+  the release language changes, without changing fabrication callbacks,
+  progression costs, save state or input bindings;
+- added commercial-release coverage for the German forge title, explanation,
+  actions and close control; the remaining professional translation review is
+  still an external release gate.
+
 ## Focused organic presentation-review framing pass
 
 - widened the development-only early- and late-organic gallery rows and moved

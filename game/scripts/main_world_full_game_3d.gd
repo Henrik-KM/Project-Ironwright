@@ -162,9 +162,9 @@ func _extend_forge_interface() -> void:
     if box == null:
         return
     box.add_child(HSeparator.new())
-    hud._forge_button(box, "7  BUILD ENGINEER · 56 Scrap · 7.6 s", func() -> void: _start_manual_build(&"engineer"))
-    hud._forge_button(box, "8  UPGRADE ALL ENGINEERS", func() -> void: _start_manual_upgrade(&"engineer"))
-    hud._forge_button(box, "9  EVOLVE HEARTFORGE TIER · manual, loud, exposed", _start_heartforge_tier_upgrade)
+    hud._forge_button(box, "7  BUILD ENGINEER · 56 Scrap · 7.6 s", func() -> void: _start_manual_build(&"engineer"), "forge.build.engineer")
+    hud._forge_button(box, "8  UPGRADE ALL ENGINEERS", func() -> void: _start_manual_upgrade(&"engineer"), "forge.upgrade.engineer")
+    hud._forge_button(box, "9  EVOLVE HEARTFORGE TIER · manual, loud, exposed", _start_heartforge_tier_upgrade, "forge.evolve")
 
 
 func _open_evolution_hud() -> void:

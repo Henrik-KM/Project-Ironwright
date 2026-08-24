@@ -1230,10 +1230,13 @@ func _on_front_end_settings_applied(values: Dictionary) -> void:
 
 
 func _on_release_locale_changed(_locale: StringName) -> void:
+	if hud != null:
+		hud.refresh_localized_text()
 	if strategic_hud != null:
 		strategic_hud.refresh_localized_text()
 	if operations_hud != null:
 		operations_hud.refresh_localized_text()
+	refresh_input_legend()
 
 
 func _apply_release_settings() -> void:

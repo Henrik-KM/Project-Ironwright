@@ -32,9 +32,9 @@ func _extend_forge_interface() -> void:
         return
     var box := hud.forge_content_box
     box.add_child(HSeparator.new())
-    var engineer_build := hud._forge_button(box, "7  BUILD ENGINEER · 56 Scrap · 7.6 s", func() -> void: _start_manual_build(&"engineer"))
-    var engineer_upgrade := hud._forge_button(box, "8  UPGRADE ALL ENGINEERS", func() -> void: _start_manual_upgrade(&"engineer"))
-    var heartforge_upgrade := hud._forge_button(box, "9  EVOLVE HEARTFORGE TIER · manual, loud, exposed", _start_heartforge_tier_upgrade)
+    var engineer_build := hud._forge_button(box, "7  BUILD ENGINEER · 56 Scrap · 7.6 s", func() -> void: _start_manual_build(&"engineer"), "forge.build.engineer")
+    var engineer_upgrade := hud._forge_button(box, "8  UPGRADE ALL ENGINEERS", func() -> void: _start_manual_upgrade(&"engineer"), "forge.upgrade.engineer")
+    var heartforge_upgrade := hud._forge_button(box, "9  EVOLVE HEARTFORGE TIER · manual, loud, exposed", _start_heartforge_tier_upgrade, "forge.evolve")
     if hud is IronwrightBeautifulHUD3D:
         var beautiful := hud as IronwrightBeautifulHUD3D
         beautiful._style_button(engineer_build)

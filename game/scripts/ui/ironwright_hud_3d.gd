@@ -17,8 +17,10 @@ var prompt_panel: PanelContainer
 var resource_panel: PanelContainer
 var notification_panel: PanelContainer
 var objective_label: Label
+var objective_heading: Label
 var prompt_label: Label
 var resource_label: Label
+var reserve_heading: Label
 var focus_label: Label
 var operation_label: Label
 var player_bar: ProgressBar
@@ -31,15 +33,25 @@ var forge_panel: PanelContainer
 var forge_scroll: ScrollContainer
 var forge_content_box: VBoxContainer
 var forge_close_button: Button
+var forge_title: Label
+var forge_copy: Label
+var forge_buttons: Array[Button] = []
 var notification_label: Label
+var notification_heading: Label
 var map_banner: Label
 var help_label: Label
+var player_status_label: Label
+var companion_status_label: Label
+var focus_help_label: Label
 var operation_badge: PanelContainer
 var operation_badge_label: Label
 var ending_panel: PanelContainer
 var forge_open: bool = false
 var notifications: Array[String] = []
 var notification_ages: Array[float] = []
+var displayed_scrap: int = 24
+var displayed_rare_cores: int = 0
+var displayed_focus: StringName = &"defend"
 
 
 func _ready() -> void:
@@ -74,7 +86,7 @@ func _build_ui() -> void:
 
     objective_panel = _panel(Vector2(22, 22), Vector2(440, 148))
     objective_panel.name = "ObjectivePanel"
-    var objective_heading := _label(objective_panel, "CURRENT OBJECTIVE", 12, Color("87a4a5"))
+    objective_heading = _label(objective_panel, "CURRENT OBJECTIVE", 12, Color("87a4a5"))
     objective_heading.position = Vector2(18, 12)
     objective_heading.size = Vector2(400, 20)
     objective_label = _label(objective_panel, "FIRST LIGHT\nSurvive beside the Heartforge.", 19, Color("e5ece9"))
@@ -96,7 +108,7 @@ func _build_ui() -> void:
 
     resource_panel = _panel(Vector2(-406, 22), Vector2(384, 224), true)
     resource_panel.name = "ResourcePanel"
-    var reserve_heading := _label(resource_panel, "MATERIAL RESERVES", 12, Color("87a4a5"))
+    reserve_heading = _label(resource_panel, "MATERIAL RESERVES", 12, Color("87a4a5"))
     reserve_heading.position = Vector2(18, 10)
     reserve_heading.size = Vector2(344, 20)
     resource_label = _label(resource_panel, "SCRAP  24\nCOGNITION CORES  0", 21, Color("d9e1de"))
@@ -114,7 +126,7 @@ func _build_ui() -> void:
     notification_panel = _panel(Vector2(-446, 266), Vector2(424, 170), true)
     notification_panel.name = "NotificationToastPanel"
     notification_panel.visible = false
-    var notification_heading := _label(notification_panel, "MACHINE REPORTS", 12, Color("87a4a5"))
+    notification_heading = _label(notification_panel, "MACHINE REPORTS", 12, Color("87a4a5"))
     notification_heading.position = Vector2(18, 10)
     notification_heading.size = Vector2(388, 20)
     notification_label = _label(notification_panel, "", 15, Color("dce5e2"))
@@ -139,22 +151,22 @@ func _build_ui() -> void:
     player_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
     player_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
     _content_parent(health_panel).add_child(player_portrait)
-    var player_text := _label(health_panel, "MECHROMANCER · WEAK PISTOL", 14, Color("d9e1de"))
-    player_text.position = Vector2(96, 10)
-    player_text.size = Vector2(326, 22)
+    player_status_label = _label(health_panel, "MECHROMANCER · WEAK PISTOL", 14, Color("d9e1de"))
+    player_status_label.position = Vector2(96, 10)
+    player_status_label.size = Vector2(326, 22)
     player_bar = _progress(health_panel, Vector2(96, 34), Vector2(326, 18), Color("79d8dc"))
-    var companion_text := _label(health_panel, "BULWARK · PRIMARY PROTECTION", 14, Color("d9e1de"))
-    companion_text.position = Vector2(96, 61)
-    companion_text.size = Vector2(326, 22)
+    companion_status_label = _label(health_panel, "BULWARK · PRIMARY PROTECTION", 14, Color("d9e1de"))
+    companion_status_label.position = Vector2(96, 61)
+    companion_status_label.size = Vector2(326, 22)
     companion_bar = _progress(health_panel, Vector2(96, 87), Vector2(326, 16), Color("d6a665"))
 
     var focus_panel := _panel(Vector2(-520, -102), Vector2(498, 78), true, true)
     focus_panel.name = "CommandHelpPanel"
-    var focus_help := _label(focus_panel, "1 DEFEND    2 SALVAGE    3 EXPEDITION    T EVOLVE    O OUTPOSTS    M MAP    F FOLLOW", 14, Color("b8c5c2"))
-    focus_help.position = Vector2(16, 13)
-    focus_help.size = Vector2(466, 50)
-    focus_help.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-    focus_help.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    focus_help_label = _label(focus_panel, "1 DEFEND    2 SALVAGE    3 EXPEDITION    T EVOLVE    O OUTPOSTS    M MAP    F FOLLOW", 14, Color("b8c5c2"))
+    focus_help_label.position = Vector2(16, 13)
+    focus_help_label.size = Vector2(466, 50)
+    focus_help_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    focus_help_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
     var channel_panel := _panel(Vector2(-250, -188), Vector2(500, 72), true, true)
     channel_panel.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
@@ -244,27 +256,27 @@ func _build_forge_panel() -> PanelContainer:
     forge_content_box.add_theme_constant_override("separation", 10)
     forge_scroll.add_child(forge_content_box)
 
-    var title := Label.new()
-    title.text = "HEARTFORGE · MANUAL FABRICATION"
-    title.add_theme_font_size_override("font_size", 25)
-    title.add_theme_color_override("font_color", Color("e8ddd0"))
-    forge_content_box.add_child(title)
+    forge_title = Label.new()
+    forge_title.text = "HEARTFORGE · MANUAL FABRICATION"
+    forge_title.add_theme_font_size_override("font_size", 25)
+    forge_title.add_theme_color_override("font_color", Color("e8ddd0"))
+    forge_content_box.add_child(forge_title)
 
-    var copy := Label.new()
-    copy.text = "The Mechromancer must build every early machine personally. Fabrication takes time, emits noise, and disables the pistol. Automation is a later evolution."
-    copy.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-    copy.custom_minimum_size = Vector2(0, 64)
-    copy.add_theme_font_size_override("font_size", 15)
-    copy.add_theme_color_override("font_color", Color("aeb8b5"))
-    forge_content_box.add_child(copy)
+    forge_copy = Label.new()
+    forge_copy.text = "The Mechromancer must build every early machine personally. Fabrication takes time, emits noise, and disables the pistol. Automation is a later evolution."
+    forge_copy.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    forge_copy.custom_minimum_size = Vector2(0, 64)
+    forge_copy.add_theme_font_size_override("font_size", 15)
+    forge_copy.add_theme_color_override("font_color", Color("aeb8b5"))
+    forge_content_box.add_child(forge_copy)
 
-    _forge_button(forge_content_box, "1  BUILD SCRAPPER · 42 Scrap · 6.5 s", func() -> void: forge_build_selected.emit(&"salvager"))
-    _forge_button(forge_content_box, "2  BUILD WARDEN · 68 Scrap · 8.0 s", func() -> void: forge_build_selected.emit(&"guardian"))
-    _forge_button(forge_content_box, "3  BUILD PATHFINDER · 58 Scrap · 7.2 s", func() -> void: forge_build_selected.emit(&"scout"))
+    _forge_button(forge_content_box, "1  BUILD SCRAPPER · 42 Scrap · 6.5 s", func() -> void: forge_build_selected.emit(&"salvager"), "forge.build.scrapper")
+    _forge_button(forge_content_box, "2  BUILD WARDEN · 68 Scrap · 8.0 s", func() -> void: forge_build_selected.emit(&"guardian"), "forge.build.warden")
+    _forge_button(forge_content_box, "3  BUILD PATHFINDER · 58 Scrap · 7.2 s", func() -> void: forge_build_selected.emit(&"scout"), "forge.build.pathfinder")
     forge_content_box.add_child(HSeparator.new())
-    _forge_button(forge_content_box, "4  UPGRADE ALL SCRAPPERS", func() -> void: forge_upgrade_selected.emit(&"salvager"))
-    _forge_button(forge_content_box, "5  UPGRADE ALL WARDENS", func() -> void: forge_upgrade_selected.emit(&"guardian"))
-    _forge_button(forge_content_box, "6  UPGRADE ALL PATHFINDERS", func() -> void: forge_upgrade_selected.emit(&"scout"))
+    _forge_button(forge_content_box, "4  UPGRADE ALL SCRAPPERS", func() -> void: forge_upgrade_selected.emit(&"salvager"), "forge.upgrade.scrapper")
+    _forge_button(forge_content_box, "5  UPGRADE ALL WARDENS", func() -> void: forge_upgrade_selected.emit(&"guardian"), "forge.upgrade.warden")
+    _forge_button(forge_content_box, "6  UPGRADE ALL PATHFINDERS", func() -> void: forge_upgrade_selected.emit(&"scout"), "forge.upgrade.pathfinder")
 
     var footer := HBoxContainer.new()
     footer.name = "ForgeFooter"
@@ -287,14 +299,17 @@ func _build_forge_panel() -> PanelContainer:
     return panel
 
 
-func _forge_button(parent: VBoxContainer, text_value: String, callback: Callable) -> Button:
+func _forge_button(parent: VBoxContainer, text_value: String, callback: Callable, localization_key: String = "") -> Button:
     var button := Button.new()
     button.text = text_value
+    button.set_meta("localization_key", localization_key)
+    button.set_meta("localization_fallback", text_value)
     button.custom_minimum_size = Vector2(0, 48)
     button.add_theme_font_size_override("font_size", 16)
     button.focus_mode = Control.FOCUS_NONE
     button.pressed.connect(callback)
     parent.add_child(button)
+    forge_buttons.append(button)
     return button
 
 
@@ -442,11 +457,14 @@ func set_prompt(text_value: String) -> void:
 
 
 func set_resources(scrap: int, rare_cores: int) -> void:
-    resource_label.text = "SCRAP  %d\nCOGNITION CORES  %d" % [scrap, rare_cores]
+    displayed_scrap = scrap
+    displayed_rare_cores = rare_cores
+    _refresh_resource_text()
 
 
 func set_focus(focus: StringName) -> void:
-    focus_label.text = "FOCUS · %s" % String(focus).to_upper()
+    displayed_focus = focus
+    focus_label.text = _text("hud.focus", "FOCUS · {0}", [String(focus).to_upper()])
 
 
 func set_operation(text_value: String) -> void:
@@ -460,7 +478,7 @@ func set_operation_badge(text_value: String, active: bool, prefix: String = "ACT
     if not operation_badge.visible:
         operation_badge_label.text = ""
         return
-    operation_badge_label.text = "%s · %s · F FOLLOW" % [prefix, text_value.to_upper()]
+    operation_badge_label.text = _text("hud.active_operation", "{0} · {1} · F FOLLOW", [prefix, text_value.to_upper()])
 
 
 func set_player_health(current: float, maximum: float) -> void:
@@ -474,7 +492,7 @@ func set_companion_health(current: float, maximum: float) -> void:
 func show_channel(kind: StringName, progress: float, description: String) -> void:
     var panel := root_control.get_node("ChannelPanel") as PanelContainer
     panel.visible = true
-    forge_label.text = "%s · pistol offline" % description
+    forge_label.text = _text("hud.channel", "{0} · PISTOL OFFLINE", [description])
     forge_bar.value = clampf(progress, 0.0, 1.0) * 100.0
 
 
@@ -484,6 +502,7 @@ func hide_channel() -> void:
 
 
 func show_forge_menu() -> void:
+    refresh_localized_text()
     forge_open = true
     forge_backdrop.visible = true
     forge_panel.visible = true
@@ -526,6 +545,44 @@ func _refresh_notifications() -> void:
     for message in notifications:
         formatted.append("• %s" % message.replace("\n", "  "))
     notification_label.text = "\n\n".join(formatted)
+
+
+func refresh_localized_text() -> void:
+    if objective_heading == null:
+        return
+    objective_heading.text = _text("hud.current_objective", "CURRENT OBJECTIVE")
+    reserve_heading.text = _text("hud.material_reserves", "MATERIAL RESERVES")
+    notification_heading.text = _text("hud.machine_reports", "MACHINE REPORTS")
+    player_status_label.text = _text("hud.mechromancer_status", "MECHROMANCER · WEAK PISTOL")
+    companion_status_label.text = _text("hud.bulwark_status", "BULWARK · PRIMARY PROTECTION")
+    focus_help_label.text = _text("hud.command_help", "1 DEFEND    2 SALVAGE    3 EXPEDITION    T EVOLVE    O OUTPOSTS    M MAP    F FOLLOW")
+    _refresh_resource_text()
+    forge_title.text = _text("forge.title", "HEARTFORGE · MANUAL FABRICATION")
+    forge_copy.text = _text("forge.description", "The Mechromancer must build every early machine personally. Fabrication takes time, emits noise, and disables the pistol. Automation is a later evolution.")
+    forge_close_button.text = _text("forge.close", "ESC  CLOSE FORGE")
+    for button in forge_buttons:
+        if button == null or not is_instance_valid(button):
+            continue
+        var key := str(button.get_meta("localization_key", ""))
+        if key.is_empty():
+            continue
+        button.text = _text(key, str(button.get_meta("localization_fallback", button.text)))
+
+
+func _refresh_resource_text() -> void:
+    if resource_label == null:
+        return
+    resource_label.text = _text("hud.scrap_cores", "SCRAP  {0}\nCOGNITION CORES  {1}", [displayed_scrap, displayed_rare_cores])
+
+
+func _text(key: String, fallback: String, replacements: Array = []) -> String:
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service != null:
+        return service.text(key, replacements)
+    var result := fallback
+    for index in range(replacements.size()):
+        result = result.replace("{%d}" % index, str(replacements[index]))
+    return result
 
 
 func show_ending(victory: bool, detail: String, allow_continuation: bool = false) -> void:
