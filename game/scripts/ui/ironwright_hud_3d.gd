@@ -9,7 +9,7 @@ signal forge_closed
 signal expedition_authorized
 
 const NOTIFICATION_LIFETIME_SECONDS: float = 6.5
-const MAX_VISIBLE_NOTIFICATIONS: int = 3
+const MAX_VISIBLE_NOTIFICATIONS: int = 2
 
 var root_control: Control
 var objective_panel: PanelContainer
@@ -123,17 +123,19 @@ func _build_ui() -> void:
     operation_label.size = Vector2(344, 46)
     operation_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
-    notification_panel = _panel(Vector2(-446, 266), Vector2(424, 170), true)
+    notification_panel = _panel(Vector2(-446, 266), Vector2(424, 206), true)
     notification_panel.name = "NotificationToastPanel"
     notification_panel.visible = false
     notification_heading = _label(notification_panel, "MACHINE REPORTS", 12, Color("87a4a5"))
     notification_heading.position = Vector2(18, 10)
     notification_heading.size = Vector2(388, 20)
-    notification_label = _label(notification_panel, "", 15, Color("dce5e2"))
+    notification_label = _label(notification_panel, "", 14, Color("dce5e2"))
     notification_label.position = Vector2(18, 34)
-    notification_label.size = Vector2(388, 122)
+    notification_label.size = Vector2(388, 158)
     notification_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     notification_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+    notification_label.clip_text = true
+    notification_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 
     var health_panel := _panel(Vector2(22, -142), Vector2(440, 118), false, true)
     health_panel.name = "HealthPanel"
@@ -360,8 +362,10 @@ func apply_safe_layout(viewport_size: Vector2) -> void:
         focus_label.size.x = 294.0
         operation_label.size.x = 294.0
         notification_panel.size.x = 370.0
+        notification_panel.size.y = 206.0
         notification_panel.position.x = -392.0
         notification_label.size.x = 334.0
+        notification_label.size.y = 158.0
     else:
         objective_panel.size.x = 440.0
         objective_label.size.x = 400.0
@@ -371,8 +375,10 @@ func apply_safe_layout(viewport_size: Vector2) -> void:
         focus_label.size.x = 344.0
         operation_label.size.x = 344.0
         notification_panel.size.x = 424.0
+        notification_panel.size.y = 206.0
         notification_panel.position.x = -446.0
         notification_label.size.x = 388.0
+        notification_label.size.y = 158.0
     if ending_panel != null and is_instance_valid(ending_panel):
         _layout_ending_panel(viewport_size)
 
@@ -543,7 +549,7 @@ func _refresh_notifications() -> void:
         return
     var formatted: Array[String] = []
     for message in notifications:
-        formatted.append("• %s" % message.replace("\n", "  "))
+        formatted.append("• %s" % message)
     notification_label.text = "\n\n".join(formatted)
 
 
