@@ -59,13 +59,48 @@ def add_parabolic_dish(
     return _geometry(builder, positions, normals, indices, material)
 
 
+def add_torus(
+    builder: BufferBuilder,
+    major_radius: float,
+    minor_radius: float,
+    material: int,
+    major_segments: int = 64,
+    minor_segments: int = 10,
+) -> tuple[int, int, int, int]:
+    """Build a smooth service rim that makes the open dish silhouette legible."""
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+    for major in range(major_segments):
+        major_angle = math.tau * major / major_segments
+        major_cos = math.cos(major_angle)
+        major_sin = math.sin(major_angle)
+        for minor in range(minor_segments):
+            minor_angle = math.tau * minor / minor_segments
+            minor_cos = math.cos(minor_angle)
+            minor_sin = math.sin(minor_angle)
+            ring_radius = major_radius + minor_radius * minor_cos
+            positions.extend([ring_radius * major_cos, minor_radius * minor_sin, ring_radius * major_sin])
+            normals.extend([minor_cos * major_cos, minor_sin, minor_cos * major_sin])
+    for major in range(major_segments):
+        next_major = (major + 1) % major_segments
+        for minor in range(minor_segments):
+            next_minor = (minor + 1) % minor_segments
+            a = major * minor_segments + minor
+            b = next_major * minor_segments + minor
+            c = next_major * minor_segments + next_minor
+            d = major * minor_segments + next_minor
+            indices.extend([a, b, c, a, c, d])
+    return _geometry(builder, positions, normals, indices, material)
+
+
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Observatory weathered concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.07, 0.09, 0.10, 1.0], "metallicFactor": 0.06, "roughnessFactor": 0.92}},
-        {"name": "Observatory dark alloy", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.07, 0.09, 1.0], "metallicFactor": 0.46, "roughnessFactor": 0.58}},
-        {"name": "Observatory oxidized trim", "pbrMetallicRoughness": {"baseColorFactor": [0.28, 0.07, 0.018, 1.0], "metallicFactor": 0.26, "roughnessFactor": 0.76}},
-        {"name": "Observatory blue-violet dish", "pbrMetallicRoughness": {"baseColorFactor": [0.012, 0.024, 0.042, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.86}, "emissiveFactor": [0.0, 0.004, 0.010]},
+        {"name": "Observatory weathered concrete", "pbrMetallicRoughness": {"baseColorFactor": [0.11, 0.15, 0.16, 1.0], "metallicFactor": 0.06, "roughnessFactor": 0.92}},
+        {"name": "Observatory dark alloy", "pbrMetallicRoughness": {"baseColorFactor": [0.055, 0.13, 0.16, 1.0], "metallicFactor": 0.46, "roughnessFactor": 0.58}},
+        {"name": "Observatory oxidized trim", "pbrMetallicRoughness": {"baseColorFactor": [0.34, 0.085, 0.02, 1.0], "metallicFactor": 0.26, "roughnessFactor": 0.76}},
+        {"name": "Observatory blue-violet dish", "pbrMetallicRoughness": {"baseColorFactor": [0.045, 0.09, 0.18, 1.0], "metallicFactor": 0.14, "roughnessFactor": 0.68}, "emissiveFactor": [0.002, 0.012, 0.028]},
         {"name": "Observatory cyan signal", "pbrMetallicRoughness": {"baseColorFactor": [0.015, 0.12, 0.17, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.38}, "emissiveFactor": [0.0, 0.12, 0.18]},
         {"name": "Observatory warm console", "pbrMetallicRoughness": {"baseColorFactor": [0.38, 0.10, 0.015, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.52}, "emissiveFactor": [0.22, 0.04, 0.005]},
         {"name": "Observatory ridge signal", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.15, 0.18, 1.0], "metallicFactor": 0.16, "roughnessFactor": 0.42}, "emissiveFactor": [0.0, 0.08, 0.10]},
@@ -83,6 +118,7 @@ def main() -> None:
         "Control": mesh("Control", add_box(builder, (2.8, 2.4, 2.5), alloy)),
         "ControlCap": mesh("ControlCap", add_box(builder, (3.1, 0.18, 2.8), rust)),
         "Dish": mesh("Dish", add_parabolic_dish(builder, 3.0, 0.62, dish)),
+        "DishRimRing": mesh("DishRimRing", add_torus(builder, 3.0, 0.11, rust)),
         "DishRim": mesh("DishRim", add_box(builder, (6.5, 0.16, 0.22), rust)),
         "DishBrace": mesh("DishBrace", add_box(builder, (0.16, 3.5, 0.26), alloy)),
         "FeedArm": mesh("FeedArm", add_cylinder(builder, 0.16, 4.6, alloy, 16)),
@@ -167,6 +203,7 @@ def main() -> None:
     add_node("ObservatoryServiceCase", mesh_ids["ServiceCase"], (0.2, 0.9, -3.2), extras={"socket_type": "survey_service_case"})
 
     add_node("ObservatoryDish", mesh_ids["Dish"], (-0.4, 3.05, 1.0), scale=(1.0, 1.0, 0.82), rotation=(math.pi * 0.12, 0.0, 0.0), extras={"socket_type": "dish"})
+    add_node("ObservatoryDishRimRing", mesh_ids["DishRimRing"], (-0.4, 3.05, 1.0), scale=(1.0, 1.0, 0.82), rotation=(math.pi * 0.12, 0.0, 0.0), extras={"surface": "dish_rim_service_ring"})
     add_node("ObservatoryDishRim", mesh_ids["DishRim"], (-0.4, 3.15, -1.52), rotation=(0.0, 0.0, 0.0))
     for index, rotation_y in enumerate((0.0, math.pi * 0.33, -math.pi * 0.33)):
         add_node("ObservatoryDishRib%d" % index, mesh_ids["DishRib"], (-0.4, 3.18, 1.0), rotation=(math.pi * 0.12, rotation_y, 0.0), extras={"surface": "dish_structural_rib"})

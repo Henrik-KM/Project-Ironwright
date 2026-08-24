@@ -853,6 +853,13 @@ review page. Runtime landmark, route, collision, navigation, ecology and
 operation state remain unchanged. Broader human region acceptance remains
 outstanding.
 
+Observatory Ridge now also carries a continuous high-definition dish service
+rim, brighter controlled survey materials and a closer exact-review frame. The
+reflector, feed, mast, console, service platform and ridge gantry remain inside
+the 1280×720 page with clearer separation; runtime landmark, route, collision,
+navigation, ecology and operation state remain unchanged. Broader human region
+acceptance remains outstanding.
+
 ## Art production sequence
 
 The presentation milestones proceed in this order:

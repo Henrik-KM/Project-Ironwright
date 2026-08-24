@@ -304,6 +304,7 @@ AUTHORED_REGION_ASSETS = {
         "required": [
             "ObservatoryModel",
             "ObservatoryDish",
+            "ObservatoryDishRimRing",
             "ObservatoryDishRib0",
             "ObservatoryDishActuator",
             "ObservatoryFeedSignal",

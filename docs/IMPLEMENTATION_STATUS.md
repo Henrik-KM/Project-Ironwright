@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Observatory Ridge material-depth pass
+
+- raised the authored survey station's material separation and added a smooth
+  continuous dish service rim so the reflector, feed, mast, console and ridge
+  gantry read as one maintained instrument;
+- tightened the exact review frame without changing runtime camera, collision,
+  navigation, ecology or operation contracts;
+- exact Windows export review passed on 2026-08-24 at 1280×720.
+
 ## Focused Tram Graveyard shell and review pass
 
 - added a grounded authored rail-yard deck, maintained lower carriage panels
