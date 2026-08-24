@@ -1004,7 +1004,7 @@ func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3
 	if region_id == &"region.observatory_ridge":
 		# The authored dish is vertically dominant; give the review camera enough
 		# distance to keep the dish, mast, service ring and platform in one frame.
-		return Vector3(0.0, 10.2, 17.0)
+		return Vector3(0.0, 8.6, 14.8)
 	if region_id == &"region.buried_labs":
 		return Vector3(0.0, 10.2, 15.0)
 	if region_id == &"region.north_ruins":
