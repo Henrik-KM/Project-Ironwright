@@ -2522,6 +2522,9 @@ West Grid detour visibly selected.
 - added release regression coverage for the derived layer and a development-
   only exact-export review flag (`--mechromancer-evolution-review`); the fresh
   Windows export was live-reviewed beside the friendly roster;
+- added bounded secondary motion for the cognition node, signal pin, adaptive
+  sensor and heat vent through the existing presentation controller, with
+  regression coverage for pulse and sweep changes;
 - broader authored animation/audio, content breadth, performance, external
   playtest and final human acceptance remain commercial gates.
 
