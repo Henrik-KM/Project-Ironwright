@@ -11,6 +11,13 @@ the active strategic objective; the bottom action prompt names the same
 hold-the-Heartforge state. The release regression suite protects both
 transitions.
 
+The Cathedral Quarter review now carries a continuous high-definition iron rim
+and eight radial mullions around its rose window in both the authored landmark
+and the release-gallery facade. Exact Windows capture at 1280×720 on page
+11/14 confirms that the civic focal cue reads as a framed architectural
+assembly rather than a flat saturated disk; the broader human art-acceptance
+gate remains open.
+
 The current visual state is explicitly classified as **pre-alpha production prototype** until the following gates are met.
 
 The exact merged Windows export was live-reviewed after the latest core-gallery

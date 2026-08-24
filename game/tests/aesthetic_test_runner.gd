@@ -380,12 +380,14 @@ func _run_all() -> void:
                 var cathedral_door_post := landmark.find_child("CathedralDoorPostL", true, false) as Node3D
                 var cathedral_tower_slit := landmark.find_child("CathedralTowerSlit0", true, false) as Node3D
                 var cathedral_rose_latch := landmark.find_child("CathedralRoseLatch0", true, false) as Node3D
+                var cathedral_rose_rim := landmark.find_child("CathedralRoseRim", true, false) as MeshInstance3D
                 var cathedral_choir_rib := landmark.find_child("CathedralChoirRibL", true, false) as Node3D
                 var cathedral_bell := landmark.find_child("CathedralBell", true, false) as Node3D
                 var cathedral_clapper := landmark.find_child("CathedralBellClapper", true, false) as Node3D
                 var cathedral_vein_knuckle := landmark.find_child("CathedralOrganicVeinKnuckle17", true, false) as Node3D
                 _expect(cathedral_choir_signal != null and cathedral_bell != null, "Cathedral Quarter must expose named choir and bell motion sockets.")
-                _expect(cathedral_choir_ring != null and cathedral_door_post != null and cathedral_tower_slit != null and cathedral_rose_latch != null and cathedral_choir_rib != null and cathedral_clapper != null and cathedral_vein_knuckle != null, "Cathedral Quarter must expose secondary entry, tower, window, choir and bell hardware detail.")
+                _expect(cathedral_choir_ring != null and cathedral_door_post != null and cathedral_tower_slit != null and cathedral_rose_latch != null and cathedral_rose_rim != null and cathedral_choir_rib != null and cathedral_clapper != null and cathedral_vein_knuckle != null, "Cathedral Quarter must expose secondary entry, rose-window, tower, choir and bell hardware detail.")
+                _expect(cathedral_rose_rim != null and _mesh_vertex_count(cathedral_rose_rim) >= 384, "Cathedral rose-window rim must retain dense curved high-definition geometry.")
                 var cathedral_yard_plinth := landmark.find_child("CathedralChoirYardPlinth", true, false) as Node3D
                 var cathedral_yard_louver := landmark.find_child("CathedralChoirYardServiceLouver0", true, false) as Node3D
                 var cathedral_yard_crossbeam := landmark.find_child("CathedralChoirYardCrossbeam", true, false) as Node3D
@@ -395,7 +397,9 @@ func _run_all() -> void:
                 _expect(cathedral_yard_resonator != null and cathedral_yard_root != null, "Cathedral Quarter choir-yard hardware must retain resonator and organic anchor detail.")
                 var cathedral_release_detail := release_art.dressing_root.find_child("CathedralReleaseFacade", true, false) if release_art != null and release_art.dressing_root != null else null
                 _expect(cathedral_release_detail != null and cathedral_release_detail.find_child("CathedralReleaseNave", true, false) != null and cathedral_release_detail.find_child("CathedralReleaseTowerL", true, false) != null and cathedral_release_detail.find_child("CathedralReleaseTowerR", true, false) != null, "Cathedral Quarter release dressing must expose a shallow nave and paired civic towers.")
-                _expect(cathedral_release_detail != null and cathedral_release_detail.find_child("CathedralReleaseRoseFrame", true, false) != null and cathedral_release_detail.find_child("CathedralReleaseRoseGlass", true, false) != null, "Cathedral Quarter release dressing must expose a readable rose-window focal cue.")
+                var cathedral_release_rose_rim := cathedral_release_detail.find_child("CathedralReleaseRoseRim", true, false) as MeshInstance3D if cathedral_release_detail != null else null
+                _expect(cathedral_release_detail != null and cathedral_release_detail.find_child("CathedralReleaseRoseFrame", true, false) != null and cathedral_release_detail.find_child("CathedralReleaseRoseGlass", true, false) != null and cathedral_release_rose_rim != null, "Cathedral Quarter release dressing must expose a readable rose-window focal cue.")
+                _expect(cathedral_release_rose_rim != null and _mesh_vertex_count(cathedral_release_rose_rim) >= 384, "Cathedral release rose-window rim must retain dense curved high-definition geometry.")
                 if cathedral_choir_signal != null and cathedral_bell != null and cathedral_choir_ring != null and cathedral_vein_knuckle != null:
                     var choir_signal_before := cathedral_choir_signal.scale
                     var choir_ring_before := cathedral_choir_ring.scale

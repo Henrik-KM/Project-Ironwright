@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Cathedral rose-window depth pass
+
+- added a dense continuous iron rim and eight radial mullions to both the
+  authored Cathedral landmark and the nearer release-gallery facade, replacing
+  the flat saturated disk read at review distance;
+- preserved the Cathedral landmark, collision, navigation, ecology and
+  operation contracts while sharing the bounded torus primitive through the
+  release model kit;
+- exact Windows export review passed on 2026-08-24 at 1280×720 on page 11/14.
+
 ## Focused final-protocol guidance cleanup
 
 - cleared the first-session world-space salvage beacon as soon as a final
