@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused North Ruins archive-depth pass
+
+- refined the release-only archive fragments with darker civic/grime materials,
+  paired approach-side and rear records windows, mullions and capped stacks;
+- preserved the stable archive fragment, records shutter, service riser and
+  filing-rail node contracts, with commercial-release coverage for the new
+  approach-side anatomy;
+- exact exported Windows page 4/14 review passed, with no changes to archive
+  discovery, salvage, expedition, route, collision, ecology or operation state.
+
 ## Focused Municipal Glasshouse emission hierarchy pass
 
 - lowered the release-only growth, cold-glass and service-cyan emission

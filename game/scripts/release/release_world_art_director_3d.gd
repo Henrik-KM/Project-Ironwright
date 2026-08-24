@@ -1254,12 +1254,12 @@ func _dress_cistern(root: Node3D) -> void:
 
 
 func _dress_archive(root: Node3D) -> void:
-    var brick := _textured_material(&"brick", Color("504840"), 0.0, 0.82)
-    var grime := _textured_material(&"grime", Color("4b443c"), 0.0, 0.88)
+    var brick := _textured_material(&"brick", Color("5c5048"), 0.0, 0.82)
+    var grime := _textured_material(&"grime", Color("363b3a"), 0.0, 0.88)
     var archive_detail := Node3D.new()
     archive_detail.name = "HighDefinitionArchiveDressing"
     root.add_child(archive_detail)
-    var glass := ModelKit3D.material(Color("1b2c31"), 0.2, 0.34, Color("6dbac0"), 0.24)
+    var glass := ModelKit3D.material(Color("18333a"), 0.2, 0.38, Color("6dbac0"), 0.12)
     var service_metal := _textured_material(&"metal", Color("3d4546"), 0.64, 0.5)
     var paper := _textured_material(&"concrete", Color("6d6253"), 0.0, 0.92)
     for index in range(6):
@@ -1269,7 +1269,7 @@ func _dress_archive(root: Node3D) -> void:
         var fragment_material := brick if index % 2 == 0 else grime
         var fragment := ModelKit3D.add_beveled_box(
             archive_detail,
-            Vector3(4.0, height, 3.2),
+            Vector3(3.7, height, 2.9),
             position,
             fragment_material,
             rotation,
@@ -1289,6 +1289,24 @@ func _dress_archive(root: Node3D) -> void:
                 "ArchiveWindow%02d_%02d" % [index, bay_index],
                 0.1
             )
+            ModelKit3D.add_beveled_box(
+                fragment,
+                Vector3(1.42, minf(1.35, height * 0.22), 0.08),
+                Vector3(bay_x, height * 0.1, 1.48),
+                glass if bay_index != (index + 1) % 2 else paper,
+                Vector3.ZERO,
+                "ArchiveWindowFront%02d_%02d" % [index, bay_index],
+                0.1
+            )
+            ModelKit3D.add_beveled_box(
+                fragment,
+                Vector3(0.10, minf(1.42, height * 0.24), 0.12),
+                Vector3(bay_x - 0.78, height * 0.1, 1.52),
+                service_metal,
+                Vector3.ZERO,
+                "ArchiveWindowMullion%02d_%02d" % [index, bay_index],
+                0.05
+            )
         ModelKit3D.add_louvered_panel(
             fragment,
             Vector3(1.2, 1.05, 0.12),
@@ -1307,6 +1325,15 @@ func _dress_archive(root: Node3D) -> void:
             Vector3(0.0, 0.0, 0.02 * float(index % 2)),
             "ArchiveRoofSlab%02d" % index,
             0.18
+        )
+        ModelKit3D.add_beveled_box(
+            fragment,
+            Vector3(3.25, 0.12, 2.35),
+            Vector3(0.0, height * 0.5 + 0.20, 0.0),
+            brick,
+            Vector3(0.0, 0.0, 0.02 * float(index % 2)),
+            "ArchiveStackCap%02d" % index,
+            0.12
         )
         ModelKit3D.add_surface_panel(
             fragment,
