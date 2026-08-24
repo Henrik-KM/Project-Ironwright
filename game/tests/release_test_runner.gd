@@ -523,7 +523,12 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.player.find_child("MechromancerTierIVBioSensorLens", true, false) != null and world.player.find_child("MechromancerTierVProtocolClasp", true, false) != null, "Late progression must add adaptive sensing and protocol hardware without replacing the field-engineer silhouette.")
     world._show_presentation_review_page(1)
     await process_frame
-    _expect(world.presentation_review_camera_desired.z - world.presentation_review_camera_target.z <= 11.6, "Organic presentation pages must use a dedicated close detail frame for authored anatomy review.")
+    _expect(world.presentation_review_camera_desired.z - world.presentation_review_camera_target.z <= 12.8, "Organic presentation pages must use a dedicated close detail frame for authored anatomy review.")
+    var early_review_page: Array = world.presentation_review_pages[1]
+    if early_review_page.size() >= 2:
+        var first_early_actor := early_review_page[0] as Node3D
+        var second_early_actor := early_review_page[1] as Node3D
+        _expect(first_early_actor != null and second_early_actor != null and absf(second_early_actor.position.x - first_early_actor.position.x) >= 3.5, "Organic presentation rows must preserve a readable horizontal gap between authored families.")
     for page_index in range(3, world.presentation_review_pages.size()):
         world._show_presentation_review_page(page_index)
         await process_frame

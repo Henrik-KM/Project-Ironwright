@@ -22,6 +22,11 @@ func _run_all() -> void:
     if world == null:
         _finish()
         return
+    # The release export persists the player's language outside the save
+    # envelope. Keep this integration run deterministic after a live locale
+    # review and exercise the English authored-content contracts explicitly.
+    if world.localization_service != null:
+        world.localization_service.set_locale(&"en")
     var complete_world := world as IronwrightCompleteGameWorld3D
     _expect(complete_world != null and complete_world.story_archive_director != null, "The complete run must install the persisted Town Archive director.")
     if complete_world != null and complete_world.story_archive_director != null:

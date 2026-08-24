@@ -893,10 +893,10 @@ func _show_presentation_review_page(page: int) -> void:
 			# carry fine veins, membrane ribs, crown plates and threat sockets that
 			# collapse into one silhouette band at the old spacing. Keep the actor
 			# roots and gameplay scale untouched; only the bounded review fixture
-			# gets a closer two-row composition.
-			var spacing := 2.9 if presentation_review_page >= 1 else 4.2
+			# gets a wider two-row composition so every family remains judgeable.
+			var spacing := 3.58 if presentation_review_page >= 1 else 4.2
 			var centered_x := (float(row_position) - float(row_count - 1) * 0.5) * spacing
-			var row_z := 0.82 if row_index == 0 else -1.72
+			var row_z := 1.05 if row_index == 0 else -2.15
 			if presentation_review_page == 0:
 				row_z = 0.7 if row_index == 0 else -2.5
 			row_z += _presentation_review_depth_offset(actor)
@@ -926,7 +926,7 @@ func _show_presentation_review_page(page: int) -> void:
 		var core_target_height := 1.08 if presentation_review_page >= 1 else 1.45
 		var core_target_depth := -0.38 if presentation_review_page >= 1 else -0.7
 		presentation_review_camera_target = Vector3(0.0, core_target_height, core_target_depth)
-		presentation_review_camera_desired = Vector3(0.0, 4.45, 11.15) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5)
+		presentation_review_camera_desired = Vector3(0.0, 4.75, 12.35) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5)
 	_set_presentation_review_stage_for_page(is_region_page)
 	_update_presentation_review_camera(1.0)
 
