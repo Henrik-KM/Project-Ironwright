@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_ellipsoid, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "relay.gltf"
@@ -39,8 +39,10 @@ def main() -> None:
 
     chassis, ceramic, amber, cyan, rubber = range(5)
     mesh_ids = {
-        "Chassis": mesh("Chassis", add_box(builder, (1.22, 0.68, 1.42), chassis)),
-        "Core": mesh("Core", add_box(builder, (0.9, 0.28, 1.08), amber)),
+        # The signal frame shares the machine family's rounded protective
+        # envelope while the mast and dish retain their distinct silhouette.
+        "Chassis": mesh("Chassis", add_ellipsoid(builder, (0.61, 0.34, 0.71), chassis)),
+        "Core": mesh("Core", add_ellipsoid(builder, (0.45, 0.14, 0.54), amber)),
         "Face": mesh("Face", add_box(builder, (0.76, 0.28, 0.08), ceramic)),
         "HeatSink": mesh("HeatSink", add_box(builder, (0.8, 0.3, 0.14), ceramic)),
         "Corner": mesh("Corner", add_cylinder(builder, 0.1, 0.14, ceramic, 20)),

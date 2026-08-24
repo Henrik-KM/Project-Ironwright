@@ -5,6 +5,10 @@ scene from the shared Project Ironwright machine-mesh helpers. The silhouette
 communicates construction work through a material cradle, piston joints,
 welder and assembly arms, tool heads, forge coil and warm work glows.
 
+The chassis, internal core and front plate use smooth authored ellipsoidal
+envelopes while the cradle and construction hardware keep their role-specific
+edges and sockets.
+
 Stable nodes include `Chassis`, `ChassisCore`, `ChassisCornerCap`, `Sensor`,
 `OpticLens`, `MaterialCradle`, `PistonJoint`, `WelderArm`, `ToolHead`,
 `ForgeCoil`, `EngineerCradleLatch`, `EngineerForgeGuard`,

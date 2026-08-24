@@ -6,6 +6,10 @@ presentation-only guardian shell: broad field-steel armour, a protected
 autocannon breech, heat-exchanger louvers, counterweight, sensor mast and
 warm/cyan status hardware.
 
+The chassis, internal core and targeting plate use smooth authored ellipsoidal
+envelopes so close-camera light rolls across maintained armor instead of
+stopping at a repeated box edge.
+
 Stable presentation nodes include Chassis, ChassisCore, ChassisCornerCap,
 Sensor, OpticLens, WardenAutocannon, WeaponMuzzle, WardenHeatExchanger,
 WardenTargetingFace, WardenOpticShroud, WardenRecoilCollarLeft,

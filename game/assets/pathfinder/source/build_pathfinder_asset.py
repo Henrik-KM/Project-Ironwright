@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_ellipsoid, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "pathfinder.gltf"
@@ -40,9 +40,11 @@ def main() -> None:
 
     chassis, steel, oxide, green, cyan, rubber = range(6)
     mesh_ids = {
-        "Chassis": mesh("Chassis", add_beveled_box(builder, (1.18, 0.58, 1.38), chassis, 0.08)),
-        "Core": mesh("Core", add_beveled_box(builder, (0.94, 0.28, 1.1), oxide, 0.05)),
-        "Plate": mesh("Plate", add_beveled_box(builder, (1.04, 0.15, 0.13), steel, 0.03)),
+        # The scout frame is a compact rounded sensor carrier; keep the mast
+        # silhouette and all survey sockets unchanged.
+        "Chassis": mesh("Chassis", add_ellipsoid(builder, (0.59, 0.29, 0.69), chassis)),
+        "Core": mesh("Core", add_ellipsoid(builder, (0.47, 0.14, 0.55), oxide)),
+        "Plate": mesh("Plate", add_ellipsoid(builder, (0.52, 0.075, 0.065), steel, 14, 32)),
         "Corner": mesh("Corner", add_cylinder(builder, 0.1, 0.14, steel, 20)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.1, 0.68, rubber, 20)),
         "Foot": mesh("Foot", add_beveled_box(builder, (0.25, 0.11, 0.36), oxide, 0.028)),

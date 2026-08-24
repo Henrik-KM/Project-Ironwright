@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_ellipsoid, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "engineer.gltf"
@@ -40,9 +40,11 @@ def main() -> None:
 
     chassis, steel, oxide, amber, cyan, rubber = range(6)
     mesh_ids = {
-        "Chassis": mesh("Chassis", add_beveled_box(builder, (1.42, 0.7, 1.58), chassis, 0.1)),
-        "Core": mesh("Core", add_beveled_box(builder, (1.16, 0.34, 1.28), oxide, 0.055)),
-        "Plate": mesh("Plate", add_beveled_box(builder, (1.3, 0.18, 0.14), steel, 0.035)),
+        # Keep the construction machine's established envelope and sockets,
+        # but remove the repeated box read from its primary shell.
+        "Chassis": mesh("Chassis", add_ellipsoid(builder, (0.71, 0.35, 0.79), chassis)),
+        "Core": mesh("Core", add_ellipsoid(builder, (0.58, 0.17, 0.64), oxide)),
+        "Plate": mesh("Plate", add_ellipsoid(builder, (0.65, 0.09, 0.07), steel, 14, 32)),
         "Corner": mesh("Corner", add_cylinder(builder, 0.11, 0.15, steel, 20)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.11, 0.7, rubber, 20)),
         "Foot": mesh("Foot", add_beveled_box(builder, (0.27, 0.12, 0.4), oxide, 0.03)),

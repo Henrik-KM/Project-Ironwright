@@ -767,24 +767,27 @@ def validate_authored_robot_assets() -> None:
         for required in expected_clips:
             if required not in animation_names:
                 fail(f"{family} robot glTF is missing required animation clip: {required}")
-        if family == "bulwark":
-            source = (ROOT / "game/assets/bulwark/source/build_bulwark_asset.py").read_text(encoding="utf-8")
+        if family in {"bulwark", "warden", "scrapper", "pathfinder", "engineer", "relay"}:
+            source = (ROOT / f"game/assets/{family}/source/build_{family}_asset.py").read_text(encoding="utf-8")
             for token in [
-                "def add_ellipsoid(",
                 '"Chassis": mesh("Chassis", add_ellipsoid',
-                '"Plate": mesh("Plate", add_ellipsoid',
             ]:
                 if token not in source:
-                    fail(f"Bulwark source builder is missing rounded high-definition geometry: {token}")
+                    fail(f"{family} source builder is missing rounded high-definition geometry: {token}")
+            if family != "relay" and '"Plate": mesh("Plate", add_ellipsoid' not in source:
+                fail(f"{family} source builder is missing a rounded high-definition front plate.")
             mesh_by_name = {str(mesh.get("name")): mesh for mesh in gltf.get("meshes", [])}
-            for mesh_name, minimum_vertices in {"Chassis": 600, "Plate": 300}.items():
+            required_meshes = {"Chassis": 600}
+            if family != "relay":
+                required_meshes["Plate"] = 300
+            for mesh_name, minimum_vertices in required_meshes.items():
                 mesh = mesh_by_name.get(mesh_name)
                 if not mesh or not mesh.get("primitives"):
-                    fail(f"Bulwark glTF is missing the {mesh_name} mesh required for close-camera review.")
+                    fail(f"{family} glTF is missing the {mesh_name} mesh required for close-camera review.")
                 position_accessor_index = mesh["primitives"][0].get("attributes", {}).get("POSITION")
                 vertex_count = gltf.get("accessors", [])[position_accessor_index].get("count", 0) if position_accessor_index is not None else 0
                 if vertex_count < minimum_vertices:
-                    fail(f"Bulwark {mesh_name} mesh must retain at least {minimum_vertices} authored vertices.")
+                    fail(f"{family} {mesh_name} mesh must retain at least {minimum_vertices} authored vertices.")
 
 
 def validate_authored_region_assets() -> None:

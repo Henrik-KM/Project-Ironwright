@@ -5,6 +5,9 @@ scene from the shared Project Ironwright machine-mesh helpers. Its silhouette
 is a survey instrument: asymmetric fins, twin scout optics, protected sensor
 pod, tall mast, dish, hub and beacon ring.
 
+The chassis, internal core and front plate use smooth authored ellipsoidal
+envelopes while the sensor pod and mast preserve the survey-specific silhouette.
+
 Stable nodes include `Chassis`, `ChassisCore`, `ChassisCornerCap`, `Sensor`,
 `OpticLens`, `ScoutFin`, `BeaconRing`, `ScoutOptic`, `PathfinderSensorPod`,
 `PathfinderMastBraceLeft`, `PathfinderMastCollar`, `PathfinderDishRibLeft`,

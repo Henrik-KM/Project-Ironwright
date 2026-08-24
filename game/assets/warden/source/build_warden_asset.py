@@ -17,7 +17,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_ellipsoid, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "warden.gltf"
@@ -45,9 +45,12 @@ def main() -> None:
 
     chassis, steel, oxide, warm, cyan, rubber = range(6)
     mesh_ids = {
-        "Chassis": mesh("Chassis", add_beveled_box(builder, (1.8, 0.86, 1.76), chassis, 0.12)),
-        "Core": mesh("Core", add_beveled_box(builder, (1.48, 0.44, 1.42), oxide, 0.07)),
-        "Plate": mesh("Plate", add_beveled_box(builder, (1.55, 0.2, 0.16), steel, 0.045)),
+        # The guardian body is a protective envelope, not a crate. Preserve
+        # the named chassis and weapon sockets while giving close-camera light
+        # a continuous roll across the shell and targeting plate.
+        "Chassis": mesh("Chassis", add_ellipsoid(builder, (0.9, 0.43, 0.88), chassis)),
+        "Core": mesh("Core", add_ellipsoid(builder, (0.74, 0.22, 0.71), oxide)),
+        "Plate": mesh("Plate", add_ellipsoid(builder, (0.775, 0.1, 0.08), steel, 14, 32)),
         "SidePlate": mesh("SidePlate", add_beveled_box(builder, (0.22, 0.72, 1.34), steel, 0.045)),
         "Corner": mesh("Corner", add_cylinder(builder, 0.13, 0.18, oxide, 20)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.13, 0.74, rubber, 20)),
