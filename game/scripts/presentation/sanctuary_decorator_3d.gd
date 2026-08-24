@@ -75,7 +75,9 @@ func connect_story_archive(source: Node) -> void:
 
 
 func _create_materials() -> void:
-    warm_material = ModelKit3D.material(Color("7f4b28"), 0.18, 0.58, Color("ff9b43"), 2.8)
+    # Keep the inhabited bulbs amber and legible without clipping into white
+    # discs under the opening ACES/glow grade.
+    warm_material = ModelKit3D.material(Color("6a3b26"), 0.12, 0.64, Color("ff8a3b"), 0.78)
     cyan_material = ModelKit3D.material(Color("244c52"), 0.38, 0.34, Color("75e4e8"), 2.5)
     rust_material = ModelKit3D.material(Color("72462e"), 0.46, 0.72)
     dark_material = ModelKit3D.material(Color("20282a"), 0.78, 0.38)

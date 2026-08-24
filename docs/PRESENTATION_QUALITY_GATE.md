@@ -14,6 +14,13 @@ opening Heartforge through title-screen New World selection with the first
 scrap objective readable. This closes a shared review-stage distraction, but
 does not by itself constitute final human acceptance of the full art library.
 
+The opening sanctuary string-light pass now uses a restrained amber material
+budget instead of the former high-emission bulb surface. Exact exported Windows
+review confirms that the inhabited camp reads as warm points of light rather
+than clipped white discs, while the Heartforge and cool foreground retain their
+focal separation. This remains presentation-only and does not change camp
+geometry, interaction, lighting ownership or save state.
+
 The remote review gallery now also uses bounded per-family presentation framing:
 Riverworks and Tram Graveyard expose their authored service faces with a
 diagonal close frame, while North Ruins, West Grid, East Tenements, Municipal
