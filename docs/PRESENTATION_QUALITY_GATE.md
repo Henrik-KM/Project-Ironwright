@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The Tier V Heartforge crown received a focused silhouette and emission pass on
+2026-08-24. The sovereignty ring and beacon now sit lower and use a restrained
+warm budget so the late-game crown remains legible inside the 1280×720 tactical
+frame instead of blooming into the top edge; exact Windows review confirms the
+upper Heartforge, Mechromancer and Bulwark remain judgeable together. Broader
+human opening and full-run acceptance remains open.
+
 The opening machine-report HUD received a focused readability pass on
 2026-08-24. The exception stack now shows two bounded reports, preserves
 message line breaks and clips long detail within its dedicated panel instead
