@@ -14,6 +14,13 @@ opening Heartforge through title-screen New World selection with the first
 scrap objective readable. This closes a shared review-stage distraction, but
 does not by itself constitute final human acceptance of the full art library.
 
+The friendly-roster review page now attenuates actor-local sensor lamps while
+leaving their face accents readable. Exact Windows capture at 1280×720 confirms
+that the neutral floor no longer carries large competing light pools, so the
+robot shell materials and the Mechromancer silhouette remain the focal read.
+This is a review-only lighting correction; live tactical lamp energy is
+unchanged.
+
 The organic review fixture now widens the early- and late-family rows and gives
 them a slightly more distant bounded camera so the authored shells remain
 individually judgeable at compact Windows capture size. Exact review of the

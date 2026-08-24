@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused friendly-roster review-lighting pass
+
+- attenuated actor-local sensor lamps only on the development-friendly-roster
+  gallery page, keeping robot face lights readable while removing the large
+  soft floor pools that competed with the high-definition shell materials;
+- added commercial-release regression coverage for the review-only energy cap;
+  runtime tactical lighting and all robot behaviour remain unchanged;
+- exact Windows export review passed on 2026-08-24 at 1280×720 with cleaner
+  friendly silhouettes and preserved sensor accents.
+
 ## Focused organic roster model-detail pass
 
 - regenerated the seven shared late-organic family shells with distinct
