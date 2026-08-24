@@ -964,6 +964,11 @@ func _run_all() -> void:
     await process_frame
     for index in role_samples.size():
         _expect(_role_model_has_details(role_samples[index], role_names[index]), "The %s robot must expose a role-readable high-detail silhouette." % role_names[index])
+        var role_chassis := _find_named(role_samples[index], "Chassis") as MeshInstance3D
+        _expect(role_chassis != null and _mesh_vertex_count(role_chassis) >= 600, "The %s robot must retain a dense rounded chassis envelope." % role_names[index])
+        if role_names[index] != &"relay":
+            var role_plate := _find_named(role_samples[index], "ArmorPlate") as MeshInstance3D
+            _expect(role_plate != null and _mesh_vertex_count(role_plate) >= 300, "The %s robot must retain a dense rounded front plate." % role_names[index])
         if role_names[index] == &"salvager":
             _expect(_find_named(role_samples[index], "ScrapperAuthoredModel") != null, "The salvager must use the authored Scrapper model shell.")
             _expect(_find_named(role_samples[index], "ProductionAssetMarker") != null, "The authored Scrapper model must expose its production asset marker.")
@@ -1011,7 +1016,7 @@ func _run_all() -> void:
             await process_frame
             var scrapper_chassis := _find_named(scrapper_asset, "Chassis") as MeshInstance3D
             var scrapper_cargo := _find_named(scrapper_asset, "CargoBin") as MeshInstance3D
-            _expect(scrapper_chassis != null and scrapper_cargo != null and _mesh_vertex_count(scrapper_chassis) >= 48 and _mesh_vertex_count(scrapper_cargo) >= 48, "The authored Scrapper chassis and cargo bin must retain beveled high-definition manufactured edges.")
+            _expect(scrapper_chassis != null and scrapper_cargo != null and _mesh_vertex_count(scrapper_chassis) >= 600 and _mesh_vertex_count(scrapper_cargo) >= 48, "The authored Scrapper chassis and cargo bin must retain dense high-definition manufactured surfaces.")
             var scrapper_animation := role_samples[index].get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
             if scrapper_animation != null and scrapper_animation.animation_player != null:
                 _expect(_animation_player_track_count(scrapper_animation.animation_player, &"Idle") >= 6, "Scrapper Idle must carry hopper-latch and paired magnet-coil channels.")
@@ -1030,7 +1035,7 @@ func _run_all() -> void:
             await process_frame
             var pathfinder_chassis := _find_named(pathfinder_asset, "Chassis") as MeshInstance3D
             var pathfinder_sensor_pod := _find_named(pathfinder_asset, "PathfinderSensorPod") as MeshInstance3D
-            _expect(pathfinder_chassis != null and pathfinder_sensor_pod != null and _mesh_vertex_count(pathfinder_chassis) >= 48 and _mesh_vertex_count(pathfinder_sensor_pod) >= 48, "The authored Pathfinder chassis and sensor pod must retain beveled high-definition manufactured edges.")
+            _expect(pathfinder_chassis != null and pathfinder_sensor_pod != null and _mesh_vertex_count(pathfinder_chassis) >= 600 and _mesh_vertex_count(pathfinder_sensor_pod) >= 48, "The authored Pathfinder chassis and sensor pod must retain dense high-definition manufactured surfaces.")
             var pathfinder_animation := role_samples[index].get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
             if pathfinder_animation != null and pathfinder_animation.animation_player != null:
                 _expect(_animation_player_track_count(pathfinder_animation.animation_player, &"Idle") >= 6, "Pathfinder Idle must carry sensor-pod, mast-collar and signal-canister channels.")
@@ -1049,7 +1054,7 @@ func _run_all() -> void:
             await process_frame
             var engineer_chassis := _find_named(engineer_asset, "Chassis") as MeshInstance3D
             var engineer_cradle := _find_named(engineer_asset, "MaterialCradle") as MeshInstance3D
-            _expect(engineer_chassis != null and engineer_cradle != null and _mesh_vertex_count(engineer_chassis) >= 48 and _mesh_vertex_count(engineer_cradle) >= 48, "The authored Engineer chassis and material cradle must retain beveled high-definition manufactured edges.")
+            _expect(engineer_chassis != null and engineer_cradle != null and _mesh_vertex_count(engineer_chassis) >= 600 and _mesh_vertex_count(engineer_cradle) >= 48, "The authored Engineer chassis and material cradle must retain dense high-definition manufactured surfaces.")
             var engineer_animation := role_samples[index].get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
             if engineer_animation != null and engineer_animation.animation_player != null:
                 _expect(_animation_player_track_count(engineer_animation.animation_player, &"Idle") >= 7, "Engineer Idle must carry cradle-latch, forge-coil and paired spool channels.")
@@ -1076,7 +1081,7 @@ func _run_all() -> void:
     _expect(_find_named(authored_warden, "ShieldRibCore") != null and _find_named(authored_warden, "ShieldRibCornerCap") != null, "The Warden must expose a beveled protection-rib assembly.")
     var warden_chassis := _find_named(authored_warden, "Chassis") as MeshInstance3D
     var warden_breech := _find_named(authored_warden, "WardenBreech") as MeshInstance3D
-    _expect(warden_chassis != null and warden_breech != null and _mesh_vertex_count(warden_chassis) >= 48 and _mesh_vertex_count(warden_breech) >= 48, "The authored Warden chassis and breech must retain beveled high-definition manufactured edges.")
+    _expect(warden_chassis != null and warden_breech != null and _mesh_vertex_count(warden_chassis) >= 600 and _mesh_vertex_count(warden_breech) >= 48, "The authored Warden chassis and breech must retain dense high-definition manufactured surfaces.")
     var warden_animation := authored_warden.get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
     if warden_animation != null and warden_animation.animation_player != null:
         _expect(_animation_player_track_count(warden_animation.animation_player, &"Idle") >= 6, "Warden Idle must carry exchanger breathing and paired thermal-fin channels.")

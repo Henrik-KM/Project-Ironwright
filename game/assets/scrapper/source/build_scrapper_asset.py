@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_ellipsoid, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "scrapper.gltf"
@@ -40,9 +40,11 @@ def main() -> None:
 
     chassis, steel, oxide, cyan, warm, rubber = range(6)
     mesh_ids = {
-        "Chassis": mesh("Chassis", add_beveled_box(builder, (1.28, 0.64, 1.5), chassis, 0.09)),
-        "Core": mesh("Core", add_beveled_box(builder, (1.04, 0.3, 1.22), oxide, 0.055)),
-        "Plate": mesh("Plate", add_beveled_box(builder, (1.16, 0.16, 0.14), steel, 0.035)),
+        # The salvage frame carries a rounded load-bearing shell so its
+        # equipment reads as mounted machinery instead of a box with props.
+        "Chassis": mesh("Chassis", add_ellipsoid(builder, (0.64, 0.32, 0.75), chassis)),
+        "Core": mesh("Core", add_ellipsoid(builder, (0.52, 0.15, 0.61), oxide)),
+        "Plate": mesh("Plate", add_ellipsoid(builder, (0.58, 0.08, 0.07), steel, 14, 32)),
         "Corner": mesh("Corner", add_cylinder(builder, 0.11, 0.15, steel, 20)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.105, 0.7, rubber, 20)),
         "Foot": mesh("Foot", add_beveled_box(builder, (0.26, 0.12, 0.38), oxide, 0.03)),

@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused friendly-machine chassis family high-definition pass
+
+- replaced the repeated broad beveled-box shells on Warden, Scrapper,
+  Pathfinder, Engineer and Relay with smooth authored ellipsoidal chassis and
+  core envelopes, adding the same treatment to their front plates where the
+  role exposes one;
+- preserved each model's stable nodes, sockets, authored animation clips,
+  collision and role hardware, then live-reviewed the exact Windows friendly
+  roster and a fresh opening Heartforge frame at 1280x720; each machine still
+  reads by its weapon, cargo, sensor, fabrication or signal silhouette while
+  the broader production-art gate remains open.
+
 ## Focused Bulwark chassis high-definition pass
 
 - replaced the companion's broad crate-like chassis and flat armor plate with

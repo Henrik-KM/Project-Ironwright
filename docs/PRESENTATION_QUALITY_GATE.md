@@ -2,6 +2,15 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The remaining friendly machine family received a focused high-definition shell
+pass on 2026-08-24. Warden, Scrapper, Pathfinder, Engineer and Relay now use
+smooth authored ellipsoidal chassis/core envelopes and rounded front plates
+where appropriate, while their weapon, cargo, sensor, fabrication, mast and
+signal hardware stays distinct. Exact exported Windows review at 1280x720 on
+page 1/14 and a fresh opening Heartforge frame confirm the shared material
+language without collapsing role silhouettes; broader robot-roster and human
+art acceptance remain open.
+
 The Bulwark received a focused high-definition chassis pass on 2026-08-24.
 The dependency-free authored source and runtime glTF now use smooth ellipsoidal
 envelopes for the primary chassis and front armor plate, retaining the stable

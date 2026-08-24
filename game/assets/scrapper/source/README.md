@@ -5,6 +5,9 @@ scene from the shared Project Ironwright machine-mesh helpers. The silhouette
 is a visibly useful salvage machine: deep cargo hopper, strap and lip, paired
 dismantler arms, magnetic claws, intake head, salvage drum and protected sensor.
 
+The chassis, internal core and front plate use smooth authored ellipsoidal
+envelopes so the cargo and dismantler hardware reads as mounted machinery.
+
 Stable nodes include `Chassis`, `ChassisCore`, `ChassisCornerCap`, `Sensor`,
 `OpticLens`, `CargoBin`, `DismantlerTool`, `SalvageDrum`, `ScrapperIntake`,
 `ScrapperHopperRim`, `ScrapperDismantlerCollarLeft`, `ScrapperMagnetCoilRight`,
