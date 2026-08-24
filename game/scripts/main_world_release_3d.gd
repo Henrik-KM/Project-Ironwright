@@ -1156,7 +1156,126 @@ func _create_buried_labs_presentation_review_actor(landmark: RegionLandmark3D) -
 	var authored_scene := BURIED_LABS_PRESENTATION_REVIEW_SCENE.instantiate()
 	authored_scene.name = "BuriedLabsPresentationReviewModel"
 	review_actor.add_child(authored_scene)
+	_tone_buried_labs_presentation_review_walls(authored_scene)
+	_dress_buried_labs_presentation_review_actor(review_actor)
 	return review_actor
+
+
+func _tone_buried_labs_presentation_review_walls(authored_scene: Node) -> void:
+	var wall_material := ModelKit3D.material(Color("172a30"), 0.26, 0.72)
+	for child in authored_scene.find_children("*", "MeshInstance3D", true, false):
+		if not child is MeshInstance3D:
+			continue
+		var mesh := child as MeshInstance3D
+		var node_name := mesh.name.to_lower()
+		if node_name.contains("wall") or node_name.contains("containmenthall"):
+			mesh.material_override = wall_material
+
+
+func _dress_buried_labs_presentation_review_actor(review_actor: Node3D) -> void:
+	var dressing := Node3D.new()
+	dressing.name = "BuriedLabsContainmentReviewDressing"
+	review_actor.add_child(dressing)
+	var frame_dark := ModelKit3D.material(Color("121d22"), 0.82, 0.34)
+	var frame_edge := ModelKit3D.material(Color("435457"), 0.76, 0.42)
+	var service_metal := ModelKit3D.material(Color("29383b"), 0.62, 0.48)
+	var warning := ModelKit3D.material(Color("8b4b32"), 0.34, 0.62)
+	var cyan_signal := ModelKit3D.material(Color("15535b"), 0.42, 0.28, Color("62e6e7"), 1.35)
+	var violet_signal := ModelKit3D.material(Color("29204a"), 0.34, 0.32, Color("b978f0"), 1.0)
+
+	# A restrained outer frame turns the imported containment vessels into a
+	# maintained research bay instead of leaving the pale enclosure planes as
+	# the dominant silhouette at the exact review distance.
+	for side in [-1.0, 1.0]:
+		ModelKit3D.add_beveled_box(
+			dressing,
+			Vector3(0.34, 5.9, 0.34),
+			Vector3(side * 7.4, 2.9, 1.75),
+			frame_dark,
+			Vector3.ZERO,
+			"BuriedLabsOuterFramePost",
+			0.18
+		)
+		ModelKit3D.add_surface_panel(
+			dressing,
+			Vector3(0.58, 1.05, 0.12),
+			Vector3(side * 7.18, 2.2, 1.48),
+			frame_dark,
+			warning,
+			Vector3(0.0, PI * 0.5, 0.0),
+			"BuriedLabsOuterWarningPanel"
+		)
+	ModelKit3D.add_beveled_box(
+		dressing,
+		Vector3(15.0, 0.34, 0.34),
+		Vector3(0.0, 5.8, 1.75),
+		frame_edge,
+		Vector3.ZERO,
+		"BuriedLabsTransferGantry",
+		0.18
+	)
+	ModelKit3D.add_beveled_box(
+		dressing,
+		Vector3(14.2, 0.24, 0.22),
+		Vector3(0.0, 4.62, 1.75),
+		warning,
+		Vector3.ZERO,
+		"BuriedLabsTransferWarningRail",
+		0.18
+	)
+
+	# Keep the foreground readable as a service level, with one instrument
+	# console per vessel and a continuous containment lip around each core.
+	ModelKit3D.add_beveled_box(
+		dressing,
+		Vector3(14.2, 0.26, 2.15),
+		Vector3(0.0, 0.22, -2.55),
+		service_metal,
+		Vector3.ZERO,
+		"BuriedLabsServiceWalkway",
+		0.16
+	)
+	for vessel_index in range(3):
+		var vessel_x := -4.5 + float(vessel_index) * 4.5
+		ModelKit3D.add_torus(
+			dressing,
+			0.94,
+			0.075,
+			Vector3(vessel_x, 1.18, 0.0),
+			cyan_signal,
+			Vector3.ZERO,
+			"BuriedLabsContainmentCollar",
+			40,
+			8
+		)
+		var console := ModelKit3D.add_beveled_box(
+			dressing,
+			Vector3(2.55, 1.15, 0.78),
+			Vector3(vessel_x, 1.0, -2.28),
+			service_metal,
+			Vector3.ZERO,
+			"BuriedLabsSpecimenConsole",
+			0.18
+		)
+		ModelKit3D.add_surface_panel(
+			console,
+			Vector3(1.56, 0.52, 0.1),
+			Vector3(0.0, 0.18, -0.43),
+			frame_dark,
+			violet_signal,
+			Vector3.ZERO,
+			"BuriedLabsSpecimenReadout"
+		)
+		ModelKit3D.add_tapered_cylinder(
+			dressing,
+			0.07,
+			0.045,
+			3.0,
+			Vector3(vessel_x, 4.25, 0.0),
+			warning,
+			Vector3.ZERO,
+			"BuriedLabsExtractionDrop"
+		)
 
 
 func _create_tram_graveyard_presentation_review_actor(landmark: RegionLandmark3D) -> Node3D:
