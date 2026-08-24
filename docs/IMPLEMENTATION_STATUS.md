@@ -2,11 +2,12 @@
 
 ## Focused sanctuary warm-light calibration
 
-- lowered the authored Heartforge camp string-bulb emission and slightly
-  deepened its amber material so the opening ACES/glow grade preserves readable
-  warm points instead of clipping the bulbs into white discs;
-- added a native aesthetic regression check for the bounded bulb emission
-  budget;
+- lowered the authored Heartforge camp and release-dressing string-bulb
+  emission, and slightly deepened their amber material, so the opening
+  ACES/glow grade preserves readable warm points instead of clipping the bulbs
+  into white discs;
+- added native aesthetic and commercial-release regression checks for the
+  bounded bulb emission budget;
 - exact exported Windows fresh-world review confirmed the opening objective,
   Heartforge service layer and inhabited camp remain readable after the change;
 - kept the change presentation-only with no gameplay, interaction, lighting

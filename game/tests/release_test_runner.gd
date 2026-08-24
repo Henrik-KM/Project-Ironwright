@@ -578,6 +578,10 @@ func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.outpost_sites.size() >= 8, "Commercial release must contain at least eight bounded outpost sites.")
     var heartforge_detail := world.release_world_art.dressing_root.find_child("HighDefinitionHeartforgeDressing", true, false) if world.release_world_art.dressing_root != null else null
     _expect(heartforge_detail != null and heartforge_detail.find_child("HeartforgeBarrier00", true, false) != null and heartforge_detail.find_child("HeartforgeBarrierService00", true, false) != null, "The opening Heartforge perimeter must retain its authored barrier and service-detail dressing.")
+    var heartforge_release := world.release_world_art.dressing_root.find_child("HeartforgeReleaseDressing", true, false) if world.release_world_art.dressing_root != null else null
+    var string_light := heartforge_release.find_child("SanctuaryStringLight", true, false) as MeshInstance3D if heartforge_release != null else null
+    var string_light_material := string_light.get_active_material(0) as StandardMaterial3D if string_light != null and string_light.mesh != null and string_light.mesh.get_surface_count() > 0 else null
+    _expect(string_light_material != null and string_light_material.emission_energy_multiplier <= 0.9, "Release sanctuary string lights must retain a restrained amber emission budget.")
     var industrial_detail := world.release_world_art.dressing_root.find_child("HighDefinitionIndustrialDressing", true, false) if world.release_world_art.dressing_root != null else null
     _expect(industrial_detail != null, "The West Grid secondary industrial layer must be present.")
     _expect(industrial_detail != null and industrial_detail.find_child("SubstationTank00", true, false) != null, "The West Grid secondary industrial layer must retain its authored substation tanks.")
