@@ -66,6 +66,9 @@ def main() -> None:
         "HallDoorFrame": mesh("WestGridHallServiceDoorFrame", add_beveled_box(builder, (2.82, 3.1, 0.16), painted_iron, 0.04)),
         "HallLouver": mesh("WestGridHallLouver", add_beveled_box(builder, (0.18, 1.05, 2.1), ceramic, 0.025)),
         "HallLouverRail": mesh("WestGridHallLouverRail", add_beveled_box(builder, (2.3, 0.10, 0.12), rust, 0.02)),
+        "HallSkinRib": mesh("WestGridHallSkinRib", add_beveled_box(builder, (0.14, 2.4, 0.16), rust, 0.025)),
+        "HallSkinRail": mesh("WestGridHallSkinRail", add_beveled_box(builder, (8.8, 0.12, 0.16), painted_iron, 0.025)),
+        "HallSkinPlate": mesh("WestGridHallSkinPlate", add_beveled_box(builder, (0.84, 0.48, 0.10), ceramic, 0.035)),
         "RoofVent": mesh("WestGridRoofServiceVent", add_beveled_box(builder, (1.8, 0.48, 1.25), ceramic, 0.08)),
         "RoofVentCap": mesh("WestGridRoofServiceVentCap", add_beveled_box(builder, (2.1, 0.10, 1.5), rust, 0.03)),
         "RoofSignal": mesh("WestGridRoofServiceSignal", add_uv_sphere(builder, 0.14, signal, 14, 22)),
@@ -118,6 +121,15 @@ def main() -> None:
         add_node("WestGridHallLouver%d" % index, mesh_ids["HallLouver"], (x, 2.58, -0.16), extras={"surface": "hall_louver"})
     add_node("WestGridHallLouverRailTop", mesh_ids["HallLouverRail"], (-4.8, 3.16, -0.13), extras={"surface": "hall_louver_rail"})
     add_node("WestGridHallLouverRailBottom", mesh_ids["HallLouverRail"], (-4.8, 2.02, -0.13), extras={"surface": "hall_louver_rail"})
+    # Break the broad upper turbine-hall skin into maintained service bays.
+    # These are shallow authored ribs and inspection plates, presentation
+    # only, so the industrial facade gains depth without new collision.
+    for index, x in enumerate((-8.4, -6.6, -4.8, -3.0, -1.2)):
+        add_node("WestGridHallSkinRib%d" % index, mesh_ids["HallSkinRib"], (x, 5.0, -0.12), extras={"surface": "hall_skin_rib"})
+    add_node("WestGridHallSkinRailTop", mesh_ids["HallSkinRail"], (-4.8, 6.05, -0.12), extras={"surface": "hall_skin_rail"})
+    add_node("WestGridHallSkinRailBottom", mesh_ids["HallSkinRail"], (-4.8, 4.02, -0.12), extras={"surface": "hall_skin_rail"})
+    for index, x in enumerate((-7.5, -5.7, -3.9, -2.1)):
+        add_node("WestGridHallSkinPlate%d" % index, mesh_ids["HallSkinPlate"], (x, 5.2, -0.21), extras={"surface": "hall_skin_inspection_plate"})
     for index, (x, z) in enumerate(((-6.7, -1.7), (-2.8, -1.7))):
         add_node("WestGridRoofServiceVent%d" % index, mesh_ids["RoofVent"], (x, 6.76, z), extras={"surface": "roof_service_vent"})
         add_node("WestGridRoofServiceVentCap%d" % index, mesh_ids["RoofVentCap"], (x, 7.04, z), extras={"surface": "roof_service_vent_cap"})
@@ -164,7 +176,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "west.grid.substation.v1",
-            "required_nodes": ["WestGridModel", "WestGridTurbineHall", "WestGridWindowFrame0", "WestGridWindowMullion0", "WestGridHallServiceDoor", "WestGridHallServiceDoorFrame", "WestGridHallLouver0", "WestGridHallLouverRailTop", "WestGridRoofServiceVent0", "WestGridRoofServiceVentCap0", "WestGridRoofServiceSignal0", "WestGridServicePanel", "WestGridServicePanelLine0", "WestGridPressureTank0", "WestGridTankValve0", "WestGridTankLadder0", "WestGridTransformer0", "WestGridTransformerCap0", "WestGridTransformerBrace0", "WestGridPipeBridge", "WestGridPipeFlange0", "WestGridWarningHousing0", "WestGridWarningLight0", "WestGridOrganicCreep0", "WestGridOrganicTendril0_0", "ProductionAssetMarker"],
+            "required_nodes": ["WestGridModel", "WestGridTurbineHall", "WestGridWindowFrame0", "WestGridWindowMullion0", "WestGridHallServiceDoor", "WestGridHallServiceDoorFrame", "WestGridHallLouver0", "WestGridHallLouverRailTop", "WestGridHallSkinRib0", "WestGridHallSkinRailTop", "WestGridHallSkinPlate0", "WestGridRoofServiceVent0", "WestGridRoofServiceVentCap0", "WestGridRoofServiceSignal0", "WestGridServicePanel", "WestGridServicePanelLine0", "WestGridPressureTank0", "WestGridTankValve0", "WestGridTankLadder0", "WestGridTransformer0", "WestGridTransformerCap0", "WestGridTransformerBrace0", "WestGridPipeBridge", "WestGridPipeFlange0", "WestGridWarningHousing0", "WestGridWarningLight0", "WestGridOrganicCreep0", "WestGridOrganicTendril0_0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

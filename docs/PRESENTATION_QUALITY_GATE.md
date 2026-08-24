@@ -838,6 +838,13 @@ maintained, inhabited structures rather than two unbroken slabs; landmark
 identity, collision, navigation, ecology and operation state are unchanged.
 Broader human region acceptance remains outstanding.
 
+West Grid now also carries a bounded upper turbine-hall depth layer: vertical
+service ribs, maintenance rails and inspection plates break the formerly broad
+upper skin into maintained industrial bays. The exact 1280×720 page keeps the
+industrial silhouette and service hierarchy readable; landmark identity,
+collision, navigation, ecology and operation state remain unchanged. Broader
+human region acceptance remains outstanding.
+
 ## Art production sequence
 
 The presentation milestones proceed in this order:

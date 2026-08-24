@@ -316,6 +316,7 @@ func _run_all() -> void:
             if landmark.region_kind == &"industrial":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/WestGridAuthoredModel") != null, "West Grid must expose its authored turbine-hall and transformer-yard landmark shell.")
                 _expect(landmark.find_child("WestGridWindowFrame0", true, false) != null and landmark.find_child("WestGridWindowMullion0", true, false) != null, "West Grid must expose turbine-hall window framing and mullions.")
+                _expect(landmark.find_child("WestGridHallSkinRib0", true, false) != null and landmark.find_child("WestGridHallSkinRailTop", true, false) != null and landmark.find_child("WestGridHallSkinPlate0", true, false) != null, "West Grid must expose maintained upper hall skin ribs and inspection plates.")
                 _expect(landmark.find_child("WestGridTankValve0", true, false) != null and landmark.find_child("WestGridTankLadder0", true, false) != null, "West Grid must expose pressure-tank service hardware.")
                 _expect(landmark.find_child("WestGridTransformerCap0", true, false) != null and landmark.find_child("WestGridTransformerBrace0", true, false) != null, "West Grid must expose layered transformer-yard hardware.")
                 _expect(landmark.find_child("WestGridPipeFlange0", true, false) != null and landmark.find_child("WestGridWarningHousing0", true, false) != null, "West Grid must expose service-pipe and warning hardware.")

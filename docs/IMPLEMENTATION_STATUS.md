@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused West Grid hall-depth pass
+
+- broke the broad upper turbine-hall skin into authored vertical service ribs,
+  top/bottom maintenance rails and inspection plates;
+- preserved the industrial landmark, tank, transformer, pipe, collision,
+  navigation, ecology and operation contracts;
+- exact Windows export review passed on 2026-08-24 at 1280×720.
+
 ## Focused East Tenements facade-depth pass
 
 - rebuilt the approach-facing residential windows with recessed reveal bays,
