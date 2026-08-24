@@ -890,7 +890,10 @@ func _dress_rail(root: Node3D) -> void:
 
 func _dress_nest(root: Node3D) -> void:
     var chitin := _textured_material(&"chitin", Color("302028"), 0.05, 0.66)
-    var membrane := _textured_material(&"membrane", Color("6d173b"), 0.0, 0.62)
+    # Keep the Cathedral's biological takeover deep and vascular. The earlier
+    # hot-magenta membrane lift overpowered the brick nave and read as an
+    # emissive placeholder at the compact exact-review distance.
+    var membrane := _textured_material(&"membrane", Color("2d202d"), 0.0, 0.84)
     # The Cathedral Quarter needs a civic silhouette before its biological
     # takeover reads as a deliberate contrast. Keep the facade shallow and
     # front-facing so the authored nave remains visible without adding a solid
@@ -1015,8 +1018,6 @@ func _dress_nest(root: Node3D) -> void:
             Vector3(1.4, 0.8, 1.4),
             "BroodSac%02d" % index
         )
-
-
 func _dress_observatory(root: Node3D) -> void:
     var metal := _textured_material(&"metal", Color("3b474b"), 0.68, 0.42)
     var observatory_detail := Node3D.new()

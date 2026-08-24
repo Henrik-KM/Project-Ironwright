@@ -732,6 +732,8 @@ func _start_presentation_review() -> void:
 			review_actor = _create_buried_labs_presentation_review_actor(landmark)
 		elif PRESENTATION_REVIEW_REGIONS[index] == &"region.tram_graveyard" and landmark != null:
 			review_actor = _create_tram_graveyard_presentation_review_actor(landmark)
+		elif PRESENTATION_REVIEW_REGIONS[index] == &"region.cathedral_quarter" and landmark != null:
+			_apply_cathedral_presentation_material_overrides(landmark)
 		if review_actor != null:
 			landmark.set_presentation_detail_level(0)
 			landmark.set_map_emphasis(false)
@@ -1471,6 +1473,32 @@ func _create_tram_graveyard_presentation_review_actor(landmark: RegionLandmark3D
 			"TramReviewRubble%02d" % index
 		)
 	return review_actor
+
+
+func _apply_cathedral_presentation_material_overrides(landmark: Node) -> void:
+	# Cathedral Quarter's authored choir, spine and vein meshes are the organic
+	# takeover layer. Keep their geometry and authored landmark identity, but
+	# use a dry deep-violet material in the compact review frame so the civic
+	# brick nave remains legible beside them.
+	var organic_material := ModelKit3D.material(Color("241b24"), 0.0, 0.92)
+	_apply_cathedral_material_recursive(landmark, organic_material)
+
+
+func _apply_cathedral_material_recursive(node: Node, organic_material: Material) -> void:
+	for child in node.get_children():
+		if child is MeshInstance3D:
+			var identifier := "%s %s" % [String(child.name).to_lower(), String(child.get_path()).to_lower()]
+			if _contains_any_text(identifier, ["choir", "spine", "vein"]):
+				(child as MeshInstance3D).material_override = organic_material
+		if child.get_child_count() > 0:
+			_apply_cathedral_material_recursive(child, organic_material)
+
+
+func _contains_any_text(text: String, tokens: Array[String]) -> bool:
+	for token in tokens:
+		if token in text:
+			return true
+	return false
 
 
 func _update_presentation_review_camera(delta: float) -> void:

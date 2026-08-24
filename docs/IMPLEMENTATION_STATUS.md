@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Cathedral Quarter brood-material hierarchy pass
+
+- lowered the authored Cathedral membrane response and applied a review-only
+  deep-violet override to named choir, spine and vein meshes so the organic
+  takeover supports rather than overpowers the civic nave;
+- restrained Cathedral-specific brood dressing materials and emission without
+  changing runtime collision, routes, save state or ecology ownership;
+- exact Windows export review passed at 1280×720 on presentation page 11/14;
+  the Cathedral silhouette, rose window and biological takeover now read
+  together.
+
 ## Focused Tram Graveyard wreck-condition pass
 
 - added restrained bank angles to the two authored carriage roots while

@@ -61,7 +61,7 @@ def main() -> None:
         {"name": "Cathedral oxidized iron", "pbrMetallicRoughness": {"baseColorFactor": [0.16, 0.045, 0.015, 1.0], "metallicFactor": 0.28, "roughnessFactor": 0.76}},
         {"name": "Cathedral cold glass", "pbrMetallicRoughness": {"baseColorFactor": [0.015, 0.09, 0.15, 1.0], "metallicFactor": 0.06, "roughnessFactor": 0.38}, "emissiveFactor": [0.0, 0.10, 0.18]},
         {"name": "Cathedral rose glass", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.025, 0.08, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.42}, "emissiveFactor": [0.16, 0.0, 0.05]},
-        {"name": "Cathedral organic membrane", "pbrMetallicRoughness": {"baseColorFactor": [0.10, 0.010, 0.035, 1.0], "metallicFactor": 0.01, "roughnessFactor": 0.92}, "emissiveFactor": [0.08, 0.0, 0.02]},
+        {"name": "Cathedral organic membrane", "pbrMetallicRoughness": {"baseColorFactor": [0.055, 0.018, 0.030, 1.0], "metallicFactor": 0.01, "roughnessFactor": 0.96}, "emissiveFactor": [0.015, 0.0, 0.006]},
         {"name": "Cathedral warm votive", "pbrMetallicRoughness": {"baseColorFactor": [0.40, 0.10, 0.015, 1.0], "metallicFactor": 0.06, "roughnessFactor": 0.52}, "emissiveFactor": [0.32, 0.06, 0.006]},
     ]
     meshes: list[dict] = []
