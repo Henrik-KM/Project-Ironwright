@@ -831,6 +831,13 @@ veins and anatomy hardware easier to judge. This remains a presentation-only
 review change; runtime actor scale, collision, animation and camera behaviour
 are unchanged. Broader hostile-family human acceptance remains outstanding.
 
+East Tenements now also carries a facade-depth correction in the authored
+landmark: approach-facing windows have recessed reveal bays, beveled jambs and
+central mullions. The 1280×720 exact page reads the residential blocks as
+maintained, inhabited structures rather than two unbroken slabs; landmark
+identity, collision, navigation, ecology and operation state are unchanged.
+Broader human region acceptance remains outstanding.
+
 ## Art production sequence
 
 The presentation milestones proceed in this order:

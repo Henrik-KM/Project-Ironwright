@@ -55,6 +55,9 @@ def main() -> None:
         "Marker": mesh("TenementMarker", add_beveled_box(builder, (0.7, 0.08, 0.7), rust, 0.025)),
         "WindowLintel": mesh("TenementWindowLintel", add_beveled_box(builder, (1.22, 0.10, 0.14), iron, 0.025)),
         "WindowSill": mesh("TenementWindowSill", add_beveled_box(builder, (1.28, 0.10, 0.18), rust, 0.03)),
+        "WindowReveal": mesh("TenementWindowReveal", add_beveled_box(builder, (1.38, 1.52, 0.08), concrete, 0.025)),
+        "WindowJamb": mesh("TenementWindowJamb", add_beveled_box(builder, (0.12, 1.38, 0.16), concrete, 0.025)),
+        "WindowMullion": mesh("TenementWindowMullion", add_beveled_box(builder, (0.08, 1.16, 0.12), iron, 0.018)),
         "BalconyBrace": mesh("TenementBalconyBrace", add_beveled_box(builder, (0.14, 1.05, 0.14), rust, 0.025)),
         "LaundryLine": mesh("TenementLaundryLine", add_cylinder(builder, 0.03, 2.4, iron, 10)),
         "TankValve": mesh("TenementTankValve", add_cylinder(builder, 0.12, 0.18, rust, 16)),
@@ -105,10 +108,20 @@ def main() -> None:
             add_node("TenementWindow%d_%d" % (index, level), mesh_ids["Window"], (x, 1.65 + float(level) * 2.25, -2.42), extras={"socket_type": "residential_window"})
     for index, x in enumerate((-6.8, -3.2)):
         for level in range(3):
-            add_node("TenementFrontWindowL%d_%d" % (index, level), mesh_ids["Window"], (x, 1.65 + float(level) * 2.25, 2.50), extras={"socket_type": "approach_window"})
+            window_y = 1.65 + float(level) * 2.25
+            add_node("TenementFrontWindowRevealL%d_%d" % (index, level), mesh_ids["WindowReveal"], (x, window_y, 2.42), extras={"surface": "window_reveal"})
+            add_node("TenementFrontWindowL%d_%d" % (index, level), mesh_ids["Window"], (x, window_y, 2.50), extras={"socket_type": "approach_window"})
+            add_node("TenementFrontWindowJambL%d_%d" % (index, level), mesh_ids["WindowJamb"], (x - 0.60, window_y, 2.58), extras={"surface": "window_jamb"})
+            add_node("TenementFrontWindowJambL%d_%dR" % (index, level), mesh_ids["WindowJamb"], (x + 0.60, window_y, 2.58), extras={"surface": "window_jamb"})
+            add_node("TenementFrontWindowMullionL%d_%d" % (index, level), mesh_ids["WindowMullion"], (x, window_y, 2.60), extras={"surface": "window_mullion"})
     for index, x in enumerate((3.2, 6.8)):
         for level in range(3):
-            add_node("TenementFrontWindowR%d_%d" % (index, level), mesh_ids["Window"], (x, 1.65 + float(level) * 2.25, 4.90), extras={"socket_type": "approach_window"})
+            window_y = 1.65 + float(level) * 2.25
+            add_node("TenementFrontWindowRevealR%d_%d" % (index, level), mesh_ids["WindowReveal"], (x, window_y, 4.82), extras={"surface": "window_reveal"})
+            add_node("TenementFrontWindowR%d_%d" % (index, level), mesh_ids["Window"], (x, window_y, 4.90), extras={"socket_type": "approach_window"})
+            add_node("TenementFrontWindowJambR%d_%d" % (index, level), mesh_ids["WindowJamb"], (x - 0.60, window_y, 4.98), extras={"surface": "window_jamb"})
+            add_node("TenementFrontWindowJambR%d_%dR" % (index, level), mesh_ids["WindowJamb"], (x + 0.60, window_y, 4.98), extras={"surface": "window_jamb"})
+            add_node("TenementFrontWindowMullionR%d_%d" % (index, level), mesh_ids["WindowMullion"], (x, window_y, 5.00), extras={"surface": "window_mullion"})
     for index, x in enumerate((-6.8, -3.2)):
         for level in range(3):
             window_y = 1.65 + float(level) * 2.25
@@ -162,7 +175,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "tenement.east_blocks.v1",
-            "required_nodes": ["TenementModel", "TenementBlockL", "TenementFrontWindowL0_0", "TenementFrontWindowLintelL0_0", "TenementFrontWindowSillL0_0", "TenementBlockLEdgeL", "TenementBalcony0", "TenementBalconyBrace0_L", "TenementFireEscapeLadder", "TenementRoofWaterTank", "TenementTankValve", "TenementLaundryLine0", "TenementLightHousingL", "TenementOrganicCreep0", "TenementOrganicTendril0_0", "ProductionAssetMarker"],
+            "required_nodes": ["TenementModel", "TenementBlockL", "TenementFrontWindowL0_0", "TenementFrontWindowRevealL0_0", "TenementFrontWindowJambL0_0", "TenementFrontWindowMullionL0_0", "TenementFrontWindowLintelL0_0", "TenementFrontWindowSillL0_0", "TenementBlockLEdgeL", "TenementBalcony0", "TenementBalconyBrace0_L", "TenementFireEscapeLadder", "TenementRoofWaterTank", "TenementTankValve", "TenementLaundryLine0", "TenementLightHousingL", "TenementOrganicCreep0", "TenementOrganicTendril0_0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
