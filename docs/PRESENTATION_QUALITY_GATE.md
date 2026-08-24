@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The inherited full-game foundation surface received a focused localization
+pass on 2026-08-24. Heartforge evolution, outpost authorization and rebuild,
+run-phase, restore, milestone and full-game objective copy now resolve through
+the selected catalog. Exact exported Windows review at 1280×720 in German used
+the complete-run fixture and confirmed the objective card, status chrome and
+machine reports render localized in the live frame. Professional localization
+and broader full-run acceptance remain open.
+
 The Tram Graveyard received a focused authored-model pass on 2026-08-24. The
 source glTF now includes a smaller banked and pitched third carriage with the
 same named service hardware as the main pair, while the bounded review dressing
