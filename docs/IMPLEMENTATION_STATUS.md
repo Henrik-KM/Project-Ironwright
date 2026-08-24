@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused full-game foundation localization pass
+
+- moved inherited Heartforge evolution, outpost authorization, haul/rebuild,
+  foundation milestone, run-phase and restore reports behind the selected
+  English, Swedish or German catalog;
+- moved the canonical full-game formation, Heartforge, engineer, outpost,
+  autonomous-growth and long-run objective chain behind the same boundary;
+- added release assertions and exact Windows export review at 1280×720 in
+  German; the complete-run objective and full-game status chrome rendered
+  localized in the live frame.
+
 ## Focused Tram Graveyard derailed-carriage high-definition pass
 
 - extended the authored Tram Graveyard glTF source with a smaller, banked and

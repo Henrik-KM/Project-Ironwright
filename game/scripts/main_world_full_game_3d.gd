@@ -15,7 +15,7 @@ func _ready() -> void:
     _setup_full_game_services()
     _extend_forge_interface()
     run_state.log_event("Full-game progression is active. The North Ruins are now the beginning rather than the ending.")
-    hud.push_notification("MACHINE SOCIETY AWAKENING · T EVOLUTION · O OUTPOSTS AFTER DISCOVERY")
+    hud.push_notification(_localized_runtime_text("notification.full_game.machine_society_awakened", "MACHINE SOCIETY AWAKENING · T EVOLUTION · O OUTPOSTS AFTER DISCOVERY"))
 
 
 func _process(delta: float) -> void:
@@ -202,24 +202,24 @@ func _purchase_technology(technology_id: StringName) -> void:
     if technology_id == &"":
         return
     if progression.purchase(technology_id):
-        hud.push_notification("EVOLUTION AUTHORIZED · %s" % str(progression.technology(technology_id).get("display_name", String(technology_id))).to_upper())
+        hud.push_notification(_localized_runtime_text("notification.evolution.authorized", "EVOLUTION AUTHORIZED · {0}", [str(progression.technology(technology_id).get("display_name", String(technology_id))).to_upper()]))
         _close_strategic_hud()
     else:
-        hud.push_notification("EVOLUTION UNAVAILABLE · REQUIREMENTS OR MATERIAL RESERVES ARE INSUFFICIENT")
+        hud.push_notification(_localized_runtime_text("notification.evolution.unavailable", "EVOLUTION UNAVAILABLE · REQUIREMENTS OR MATERIAL RESERVES ARE INSUFFICIENT"))
 
 
 func _start_heartforge_tier_upgrade() -> void:
     if not forge_in_range or player.is_channeling():
-        hud.push_notification("MOVE TO THE HEARTFORGE ASSEMBLY PLATE FIRST")
+        hud.push_notification(_localized_runtime_text("notification.forge.move_first", "MOVE TO THE HEARTFORGE ASSEMBLY PLATE FIRST"))
         return
     var technology_id := StringName("tech.heartforge.tier_%d" % (progression.heartforge_tier + 1))
     if not progression.can_purchase(technology_id):
         var technology := progression.technology(technology_id)
         var cost: Dictionary = technology.get("cost", {})
-        hud.push_notification("HEARTFORGE EVOLUTION LOCKED · NEED PREREQUISITES, %d SCRAP AND %d COGNITION CORE" % [
+        hud.push_notification(_localized_runtime_text("notification.evolution.locked", "HEARTFORGE EVOLUTION LOCKED · NEED PREREQUISITES, {0} SCRAP AND {1} COGNITION CORE", [
             int(cost.get("scrap", 0)),
             int(cost.get("rare_cores", 0)),
-        ])
+        ]))
         return
     _close_forge_menu()
     heartforge.set_operation(&"heartforge_evolution")
@@ -243,9 +243,9 @@ func _on_channel_completed(kind: StringName, target: Node, metadata: Dictionary)
     heartforge.set_operation(&"")
     var technology_id := StringName(str(metadata.get("technology_id", "")))
     if progression.purchase(technology_id):
-        hud.push_notification("HEARTFORGE TIER %d ONLINE · ENGINEER AND OUTPOST PROTOCOLS AVAILABLE" % progression.heartforge_tier)
+        hud.push_notification(_localized_runtime_text("notification.evolution.tier_online", "HEARTFORGE TIER {0} ONLINE · ENGINEER AND OUTPOST PROTOCOLS AVAILABLE", [progression.heartforge_tier]))
     else:
-        hud.push_notification("HEARTFORGE EVOLUTION FAILED · REQUIRED MATERIAL WAS NO LONGER AVAILABLE")
+        hud.push_notification(_localized_runtime_text("notification.evolution.failed", "HEARTFORGE EVOLUTION FAILED · REQUIRED MATERIAL WAS NO LONGER AVAILABLE"))
     player.input_enabled = true
 
 
@@ -256,36 +256,36 @@ func _on_channel_cancelled(kind: StringName, target: Node, metadata: Dictionary)
     hud.hide_channel()
     heartforge.set_operation(&"")
     player.input_enabled = true
-    hud.push_notification("HEARTFORGE EVOLUTION INTERRUPTED · NO MATERIAL CONSUMED")
+    hud.push_notification(_localized_runtime_text("notification.evolution.interrupted", "HEARTFORGE EVOLUTION INTERRUPTED · NO MATERIAL CONSUMED"))
 
 
 func _authorize_outpost_build(site_id: StringName, role: StringName) -> void:
     if outpost_director.authorize_build(site_id, role):
         _close_strategic_hud()
         follow_operation = true
-        hud.push_notification("OUTPOST PROJECT AUTHORIZED · BUILDERS AND ESCORT ARE LEAVING PHYSICALLY")
+        hud.push_notification(_localized_runtime_text("notification.outpost.authorized", "OUTPOST PROJECT AUTHORIZED · BUILDERS AND ESCORT ARE LEAVING PHYSICALLY"))
     else:
-        hud.push_notification("OUTPOST BUILD UNAVAILABLE · CHECK SITE, ROLE TECHNOLOGY, SCRAP, ENGINEER, WARDEN AND ACTIVE OPERATIONS")
+        hud.push_notification(_localized_runtime_text("notification.outpost.build_unavailable", "OUTPOST BUILD UNAVAILABLE · CHECK SITE, ROLE TECHNOLOGY, SCRAP, ENGINEER, WARDEN AND ACTIVE OPERATIONS"))
 
 
 func _authorize_outpost_upgrade(site_id: StringName) -> void:
     if outpost_director.authorize_upgrade(site_id):
         _close_strategic_hud()
         follow_operation = true
-        hud.push_notification("OUTPOST UPGRADE AUTHORIZED · THE PROTECTED TEAM WILL TRAVEL, REBUILD AND RETURN")
+        hud.push_notification(_localized_runtime_text("notification.outpost.upgrade_authorized", "OUTPOST UPGRADE AUTHORIZED · THE PROTECTED TEAM WILL TRAVEL, REBUILD AND RETURN"))
     else:
-        hud.push_notification("OUTPOST UPGRADE UNAVAILABLE · CHECK HEARTFORGE TIER, SCRAP, ENGINEER, ESCORT AND ACTIVE OPERATIONS")
+        hud.push_notification(_localized_runtime_text("notification.outpost.upgrade_unavailable", "OUTPOST UPGRADE UNAVAILABLE · CHECK HEARTFORGE TIER, SCRAP, ENGINEER, ESCORT AND ACTIVE OPERATIONS"))
 
 
 func _authorize_adaptation(_adaptation_id: StringName) -> void:
-    hud.push_notification("ADAPTIVE DEFENCE IS UNAVAILABLE BEFORE HEARTFORGE TIER IV")
+    hud.push_notification(_localized_runtime_text("notification.outpost.adaptive_locked", "ADAPTIVE DEFENCE IS UNAVAILABLE BEFORE HEARTFORGE TIER IV"))
 
 
 func _on_expedition_returned() -> void:
     if not run_state.expedition_core_recovered:
         return
     var discovered_count := outpost_director.discover_sites_by(&"expedition.north_ruins")
-    hud.push_notification("COGNITION CORE RETURNED · %d VIABLE OUTPOST FOUNDATIONS DISCOVERED" % discovered_count)
+    hud.push_notification(_localized_runtime_text("notification.outpost.core_returned", "COGNITION CORE RETURNED · {0} VIABLE OUTPOST FOUNDATIONS DISCOVERED", [discovered_count]))
     run_state.log_event("North Ruins data revealed fixed foundations for autonomous support posts. The run continues.")
 
 
@@ -307,13 +307,13 @@ func _update_objective() -> void:
         super._update_objective()
         return
     if not progression.has_technology(&"tech.machine.group_coordination"):
-        hud.set_objective("UNDERSTAND THE FORMATION", "Press T and authorize Group Coordination. Major Heartforge evolution requires a proven coordinated machine doctrine.")
+        hud.set_objective(_localized_runtime_text("objective.full_game.formation.title", "UNDERSTAND THE FORMATION"), _localized_runtime_text("objective.full_game.formation.detail", "Press T and authorize Group Coordination. Major Heartforge evolution requires a proven coordinated machine doctrine."))
         return
     if progression.heartforge_tier < 2:
-        hud.set_objective("EVOLVE THE HEARTFORGE", "Recover enough Scrap, return to the forge, press %s, then choose 9. The rebuild is loud and disables the pistol." % _input_binding_hint(&"iw_interact", "E"))
+        hud.set_objective(_localized_runtime_text("objective.full_game.heartforge.title", "EVOLVE THE HEARTFORGE"), _localized_runtime_text("objective.full_game.heartforge.detail", "Recover enough Scrap, return to the forge, press {0}, then choose 9. The rebuild is loud and disables the pistol.", [_input_binding_hint(&"iw_interact", "E")]))
         return
     if autonomy_director.count_robots(&"engineer") < 1:
-        hud.set_objective("FORGE AN ENGINEER", "At the Heartforge, press %s and choose 7. Outposts are never placed manually; this machine constructs them under escort." % _input_binding_hint(&"iw_interact", "E"))
+        hud.set_objective(_localized_runtime_text("objective.full_game.engineer.title", "FORGE AN ENGINEER"), _localized_runtime_text("objective.full_game.engineer.detail", "At the Heartforge, press {0} and choose 7. Outposts are never placed manually; this machine constructs them under escort.", [_input_binding_hint(&"iw_interact", "E")]))
         return
     var functioning := 0
     var highest_tier := 0
@@ -322,16 +322,16 @@ func _update_objective() -> void:
             functioning += 1
             highest_tier = maxi(highest_tier, site.outpost.tier)
     if functioning == 0:
-        hud.set_objective("AUTHORIZE AN OUTPOST", "Press O. Choose one discovered site and strategic role; machines handle team, route, construction, repair and rebuilding.")
+        hud.set_objective(_localized_runtime_text("objective.full_game.outpost.title", "AUTHORIZE AN OUTPOST"), _localized_runtime_text("objective.full_game.outpost.detail", "Press O. Choose one discovered site and strategic role; machines handle team, route, construction, repair and rebuilding."))
     elif highest_tier < 2:
-        hud.set_objective("PROVE AUTONOMOUS GROWTH", "Press O and authorize a tier 2 upgrade. Another protected physical construction operation will travel to the site.")
+        hud.set_objective(_localized_runtime_text("objective.full_game.growth.title", "PROVE AUTONOMOUS GROWTH"), _localized_runtime_text("objective.full_game.growth.detail", "Press O and authorize a tier 2 upgrade. Another protected physical construction operation will travel to the site."))
     else:
-        hud.set_objective("THE LONG RUN BEGINS", "The first autonomous network is operational. Continue evolving machines, Heartforge and doctrine while the organic world keeps pressing inward.")
+        hud.set_objective(_localized_runtime_text("objective.full_game.long_run.title", "THE LONG RUN BEGINS"), _localized_runtime_text("objective.full_game.long_run.detail", "The first autonomous network is operational. Continue evolving machines, Heartforge and doctrine while the organic world keeps pressing inward."))
 
 
 func _save_game() -> void:
     if player.is_channeling():
-        hud.push_notification("SAVE DEFERRED · FINISH THE ACTIVE MANUAL CHANNEL")
+        hud.push_notification(_localized_runtime_text("notification.save.deferred", "SAVE DEFERRED · FINISH THE ACTIVE MANUAL CHANNEL"))
         return
     super._save_game()
 
@@ -365,7 +365,7 @@ func _restore_extension_data(extensions: Variant) -> void:
     autonomy_director.restore_from_dictionary(data.get("autonomy", {}))
     outpost_director.restore_from_dictionary(data.get("outposts", {}))
     full_game_milestone_complete = bool(data.get("foundation_milestone_complete", false))
-    hud.push_notification("FULL-GAME STATE RESTORED · PROGRESSION, DISCOVERIES AND OUTPOSTS RETAINED")
+    hud.push_notification(_localized_runtime_text("notification.full_game.state_restored", "FULL-GAME STATE RESTORED · PROGRESSION, DISCOVERIES AND OUTPOSTS RETAINED"))
 
 
 func _on_technology_unlocked(technology_id: StringName, display_name: String, effects: Array) -> void:
@@ -378,11 +378,11 @@ func _on_technology_unlocked(technology_id: StringName, display_name: String, ef
             localized_name = name_candidate
         hud.push_notification(locale_service.text("notification.technology_online", [localized_name.to_upper()]))
         return
-    hud.push_notification("TECHNOLOGY ONLINE · %s" % localized_name.to_upper())
+    hud.push_notification(_localized_runtime_text("notification.technology_online", "TECHNOLOGY ONLINE · {0}", [localized_name.to_upper()]))
 
 
 func _on_phase_changed(phase_id: StringName, display_name: String) -> void:
-    hud.push_notification("RUN PHASE · %s" % display_name.to_upper())
+    hud.push_notification(_localized_runtime_text("notification.run_phase", "RUN PHASE · {0}", [display_name.to_upper()]))
 
 
 func _on_heartforge_tier_changed(tier: int) -> void:
@@ -393,7 +393,7 @@ func _on_heartforge_tier_changed(tier: int) -> void:
 
 
 func _on_outpost_operation_changed(kind: StringName, state: StringName, detail: String) -> void:
-    hud.push_notification("%s · %s\n%s" % [String(kind).to_upper(), String(state).to_upper(), detail])
+    hud.push_notification(_localized_runtime_text("notification.operation.updated", "{0} · {1}\n{2}", [String(kind).to_upper(), String(state).to_upper(), detail]))
     var release_audio := get_node_or_null("ReleaseAudioDirector") as ReleaseAudioDirector3D
     if release_audio != null:
         var anchor := heartforge.global_position if heartforge != null else Vector3.ZERO
@@ -417,11 +417,11 @@ func _on_outpost_changed(outpost: Outpost3D) -> void:
 
 
 func _on_outpost_destroyed(outpost: Outpost3D) -> void:
-    hud.push_notification("OUTPOST DESTROYED · AUTONOMOUS REBUILD WILL USE SCRAP AND AN ESCORTED ENGINEER TEAM WHEN AVAILABLE")
+    hud.push_notification(_localized_runtime_text("notification.outpost.destroyed", "OUTPOST DESTROYED · AUTONOMOUS REBUILD WILL USE SCRAP AND AN ESCORTED ENGINEER TEAM WHEN AVAILABLE"))
 
 
 func _on_outpost_haul_returned(amount: int) -> void:
-    hud.push_notification("OUTPOST HAUL RETURNED · %d SCRAP PHYSICALLY DELIVERED" % amount)
+    hud.push_notification(_localized_runtime_text("notification.outpost.haul_returned", "OUTPOST HAUL RETURNED · {0} SCRAP PHYSICALLY DELIVERED", [amount]))
 
 
 func _check_full_game_foundation_milestone() -> void:
@@ -430,6 +430,6 @@ func _check_full_game_foundation_milestone() -> void:
     for site in outpost_director.discovered_sites():
         if site.has_functioning_outpost() and site.outpost.tier >= 2 and outpost_director.operation.is_empty():
             full_game_milestone_complete = true
-            hud.push_notification("FULL-GAME FOUNDATION COMPLETE · PROGRESSION AND A TIER 2 AUTONOMOUS OUTPOST ARE OPERATIONAL")
+            hud.push_notification(_localized_runtime_text("notification.outpost.foundation_complete", "FULL-GAME FOUNDATION COMPLETE · PROGRESSION AND A TIER 2 AUTONOMOUS OUTPOST ARE OPERATIONAL"))
             run_state.log_event("The first autonomous tier 2 outpost is operational. Play continues without a forced ending.")
             return
