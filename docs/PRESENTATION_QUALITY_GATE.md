@@ -348,7 +348,7 @@ The central town's repeated street debris now carries a bounded high-definition 
 
 Remote Tram Graveyard release dressing now carries the same model grammar: six derailed-car shells use beveled massing, broken window bands, service panels, roof vents and bogie/axle hardware instead of isolated boxes. The detail is presentation-only and preserves the existing rail encounter, salvage, routing and operation contracts.
 
-Remote North Ruins release dressing now carries the same model grammar as well: six archive fragments use beveled shells, records window bays, louvered shutters, roof slabs, service risers and filing rails instead of isolated block masses. The detail is presentation-only and preserves the existing archive landmark, route, ecology and operation contracts.
+Remote North Ruins release dressing now carries the same model grammar as well: six archive fragments use darker beveled shells, paired approach-side and rear records windows, mullions, capped stacks, louvered shutters, roof slabs, service risers and filing rails instead of isolated block masses. Exact exported Windows page 4/14 review confirms the approach bays and service faces remain readable beside the civic archive facade. The detail is presentation-only and preserves the existing archive landmark, route, ecology and operation contracts.
 
 Remote Flood Market release dressing now carries the same model grammar as well: nine stall shells use beveled counters, textured membrane canopies with normal relief, canopy posts, display crates and layered organic awnings instead of isolated concrete boxes and spheres. The detail is presentation-only and preserves the existing market landmark, salvage, route, ecology and operation contracts.
 
