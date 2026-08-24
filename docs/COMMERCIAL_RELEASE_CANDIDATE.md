@@ -176,6 +176,10 @@ The release candidate supports keyboard and mouse plus a standard gamepad input 
 
 Controller bindings cover movement, interaction, cancellation, pause, follow camera, command map, evolution, outposts, long-range operations, final protocols and the three macro machine focuses. Controller input is registered at runtime and protected against early-scene initialization order.
 
+Keyboard and mouse command access remains available in the same release shell:
+`T` opens Heartforge evolution and `O` opens autonomous outpost projects, while
+the existing `P` operations and `V` final-protocol paths remain intact.
+
 Damage can produce optional controller vibration. The response scales with the proportion of health lost and can be disabled.
 
 Accessibility settings include:
