@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Municipal Glasshouse emission hierarchy pass
+
+- lowered the release-only growth, cold-glass and service-cyan emission
+  budgets so the climate structure remains transparent and readable instead
+  of clipping into a white-blue block;
+- added commercial-release coverage for the restrained growth-light and pane
+  emission budgets;
+- added a service-signal emission regression and exact exported Windows page
+  7/14 review passed, with the change remaining presentation-only and
+  preserving growth, climate, route, collision, ecology and operation
+  ownership.
+
 ## Focused Tram Graveyard carriage-depth pass
 
 - replaced the release-only background wreck slabs with smaller, darker

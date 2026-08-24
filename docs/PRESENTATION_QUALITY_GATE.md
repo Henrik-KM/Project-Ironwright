@@ -90,6 +90,13 @@ distance while preserving the interior growth beds, service hardware and
 presentation-only scope. Exact exported Windows review confirmed that the
 added panes improve depth without obscuring the cultivation identity.
 
+The Glasshouse release material pass now keeps its green growth emitters,
+cold-glass panes and cyan climate service hardware under a restrained shared
+budget. This restores frame, bed and enclosure separation in the exact review
+camera; exact exported Windows page 7/14 review confirms the greenhouse's cold
+cultivated identity without the former cyan wash. No runtime growth, climate,
+route, collision, ecology or operation state changes.
+
 The Observatory Ridge release dressing now also carries a bounded instrument
 array around its primary survey dish, with beaconed pylons, crossbars, a relay
 mast and a small operator-facing control pod. This reinforces the survey

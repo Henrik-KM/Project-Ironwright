@@ -590,6 +590,21 @@ func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
     _expect(industrial_detail != null and industrial_detail.find_child("GridPipeFlange00", true, false) != null, "The West Grid pipe run must retain authored flange hardware.")
     var greenhouse_detail := world.release_world_art.dressing_root.find_child("HighDefinitionGreenhouseDressing", true, false) if world.release_world_art.dressing_root != null else null
     _expect(greenhouse_detail != null and greenhouse_detail.find_child("GlasshouseFrame00", true, false) != null and greenhouse_detail.find_child("ClimateVent", true, false) != null and greenhouse_detail.find_child("GlasshouseOvergrowth00", true, false) != null, "The Municipal Glasshouse secondary layer must retain authored frame, climate and overgrowth detail.")
+    var greenhouse_growth_material: StandardMaterial3D
+    var greenhouse_growth_node := greenhouse_detail.find_child("MyceliumGlow00", true, false) if greenhouse_detail != null else null
+    if greenhouse_growth_node is MeshInstance3D:
+        greenhouse_growth_material = (greenhouse_growth_node as MeshInstance3D).material_override as StandardMaterial3D
+    var greenhouse_pane_material: StandardMaterial3D
+    var greenhouse_pane_node := greenhouse_detail.find_child("GlasshouseFacadePane00Core", true, false) if greenhouse_detail != null else null
+    if greenhouse_pane_node is MeshInstance3D:
+        greenhouse_pane_material = (greenhouse_pane_node as MeshInstance3D).material_override as StandardMaterial3D
+    var greenhouse_service_signal: StandardMaterial3D
+    var greenhouse_service_signal_node := greenhouse_detail.find_child("GlasshouseTankSignal", true, false) if greenhouse_detail != null else null
+    if greenhouse_service_signal_node is MeshInstance3D:
+        greenhouse_service_signal = (greenhouse_service_signal_node as MeshInstance3D).material_override as StandardMaterial3D
+    _expect(greenhouse_growth_material != null and greenhouse_growth_material.emission_energy_multiplier <= 0.9, "Municipal Glasshouse growth lights must retain a restrained green emission budget.")
+    _expect(greenhouse_pane_material != null and greenhouse_pane_material.emission_energy_multiplier <= 0.15, "Municipal Glasshouse cold glass must retain a restrained cyan emission budget.")
+    _expect(greenhouse_service_signal != null and greenhouse_service_signal.emission_energy_multiplier <= 0.8, "Municipal Glasshouse service signals must retain a restrained cyan emission budget.")
     var greenhouse_service := greenhouse_detail.find_child("HighDefinitionGreenhouseServiceLayer", true, false) if greenhouse_detail != null else null
     _expect(greenhouse_service != null and greenhouse_service.find_child("GlasshouseServiceWalkway", true, false) != null and greenhouse_service.find_child("GlasshouseClimateConsole", true, false) != null and greenhouse_service.find_child("GlasshouseIrrigationHeader", true, false) != null, "The Municipal Glasshouse must retain its bounded service walkway, climate console and irrigation header.")
     var riverworks := world.region_director.get_landmark(&"region.riverworks")
