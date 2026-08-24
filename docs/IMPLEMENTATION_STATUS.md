@@ -1,5 +1,22 @@
 # Implementation status
 
+## Focused strategic-command localization pass
+
+- routed strategic evolution, adaptive-defence, autonomous-outpost and
+  long-range-operation chrome through stable English, Swedish and German
+  localization keys, including navigation, close and authorization actions;
+- connected the release localization service to refresh already-open command
+  panels after a locale change, matching the existing pause-panel behaviour;
+- added commercial-release coverage for evolution, outpost, operations and
+  final-protocol title/action refresh without changing strategic state,
+  operation data, save state or controller contracts;
+- exact exported Windows review passed on 2026-08-24 using the dynamic physical
+  operation review: the command panel rendered Swedish, then the same export's
+  real settings flow applied German and the reopened operation panel rendered
+  the German title, authorization and close actions;
+- authored operation and archive prose remains in the professional translation
+  gate.
+
 ## Focused live-locale pause refresh pass
 
 - assigned stable localization keys to release title, pause and settings
