@@ -46,7 +46,7 @@ func _extend_forge_interface() -> void:
 func _start_manual_build(archetype: StringName) -> void:
     if archetype == &"engineer" and (progression == null or not progression.has_effect(&"engineer_build_available")):
         if hud != null:
-            hud.push_notification("ENGINEER FRAME LOCKED · EVOLVE THE HEARTFORGE TO TIER 2")
+            hud.push_notification(_localized_runtime_text("notification.engineer.locked", "ENGINEER FRAME LOCKED · EVOLVE THE HEARTFORGE TO TIER 2"))
         return
     super._start_manual_build(archetype)
 
@@ -54,7 +54,7 @@ func _start_manual_build(archetype: StringName) -> void:
 func _start_manual_upgrade(archetype: StringName) -> void:
     if archetype == &"engineer" and (progression == null or not progression.has_effect(&"engineer_build_available")):
         if hud != null:
-            hud.push_notification("ENGINEER UPGRADES LOCKED · EVOLVE THE HEARTFORGE TO TIER 2")
+            hud.push_notification(_localized_runtime_text("notification.engineer.upgrades_locked", "ENGINEER UPGRADES LOCKED · EVOLVE THE HEARTFORGE TO TIER 2"))
         return
     super._start_manual_upgrade(archetype)
 

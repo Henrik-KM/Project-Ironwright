@@ -145,7 +145,7 @@ func _setup_vertical_slice_presentation() -> void:
 		hud.notifications.clear()
 		hud.notification_ages.clear()
 		hud._refresh_notifications()
-		hud.push_notification("HEARTFORGE DISTRICT · KEEP THE BULWARK CLOSE")
+		hud.push_notification(_localized_runtime_text("notification.heartforge.district", "HEARTFORGE DISTRICT · KEEP THE BULWARK CLOSE"))
 	run_state.log_event("Presentation status: pre-alpha production prototype. The Heartforge district is the current representative vertical slice.")
 	run_state.log_event("The Heartforge district now uses the representative vertical presentation slice. The remainder of the world inherits this quality only after the slice passes human review.")
 
@@ -1829,7 +1829,7 @@ func _handle_controller_actions() -> void:
 		_handle_context_interaction()
 	elif Input.is_action_just_pressed(&"iw_follow"):
 		follow_operation = not follow_operation
-		hud.push_notification("FOLLOWING ACTIVE MACHINE GROUP" if follow_operation else "CAMERA RETURNED TO THE MECHROMANCER")
+		hud.push_notification(_localized_runtime_text("notification.follow.active" if follow_operation else "notification.follow.returned", "FOLLOWING ACTIVE MACHINE GROUP" if follow_operation else "CAMERA RETURNED TO THE MECHROMANCER"))
 	elif Input.is_action_just_pressed(&"iw_map"):
 		map_mode = not map_mode
 		hud.show_map_banner(map_mode)
@@ -1912,7 +1912,7 @@ func _on_heartforge_destroyed() -> void:
 		run_state.record_scrap_spend(loss, "continuity recovery")
 		run_state.scrap_changed.emit(run_state.scrap)
 		run_state.log_event("Distributed Continuity rebuilt the Heartforge after catastrophic failure. The one-use reserve is gone.")
-		hud.push_notification("DISTRIBUTED CONTINUITY CONSUMED · HEARTFORGE RECOVERED AT 48% · %d SCRAP LOST" % loss)
+		hud.push_notification(_localized_runtime_text("notification.continuity.consumed", "DISTRIBUTED CONTINUITY CONSUMED · HEARTFORGE RECOVERED AT 48% · {0} SCRAP LOST", [loss]))
 		return
 	if endgame_director != null and not endgame_director.active_protocol.is_empty():
 		endgame_director.fail_active_protocol("The Heartforge failed before the final protocol completed.")

@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused complete-game gameplay-report localization pass
+
+- moved the canonical runtime's salvage, fabrication, expedition, save/load,
+  machine-society, region-discovery and final-protocol reports behind the
+  release localization service instead of emitting raw English strings;
+- added parity-preserving English, Swedish and German catalog entries plus
+  release assertions for parameter replacement and final-protocol wording;
+- exact Windows export review at 1280×720 in German showed localized machine
+  reports, bottom guidance and Heartforge status together in the live frame.
+
 ## Focused Tier V Heartforge crown readability pass
 
 - lowered and dimmed the Tier V sovereignty crown and beacon so the late-game
