@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Buried Laboratories containment-depth pass
+
+- added a review-only dark containment gantry, transfer rails, vessel collars,
+  service walkway and one instrument console per vessel around the existing
+  authored laboratory model;
+- toned the broad review enclosure walls so the vessels, extraction hardware
+  and containment silhouette remain separated at compact export scale;
+- exact Windows export review passed on 2026-08-24 at 1280×720 on page 13/14.
+
 ## Fresh-world locale evidence
 
 - exact merged Windows export review passed on 2026-08-24 at 1024×576 in

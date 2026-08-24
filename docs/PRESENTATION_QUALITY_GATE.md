@@ -4,6 +4,14 @@
 
 The current build is not release-ready merely because its systemic gameplay path is complete. The native presentation must be judged against the actual shipped frame, not against internal implementation breadth.
 
+The Buried Laboratories review now carries a restrained dark containment
+gantry, transfer rails, vessel collars, service walkway and instrument
+consoles around the authored vessels; the broad enclosure walls are toned down
+in the review fixture so the containment silhouette remains legible. Exact
+Windows capture at 1280×720 on page 13/14 confirms the research identity reads
+as maintained equipment rather than a sparse placeholder; broader human
+region acceptance remains open.
+
 The merged build's fresh-world German opening was captured at 1024×576 on
 2026-08-24. The opening objective, salvage route, Mechromancer/Bulwark cards,
 resource readout and bottom route prompt remain visible together; Swedish and
