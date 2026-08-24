@@ -14,6 +14,14 @@ opening Heartforge through title-screen New World selection with the first
 scrap objective readable. This closes a shared review-stage distraction, but
 does not by itself constitute final human acceptance of the full art library.
 
+The organic review fixture now widens the early- and late-family rows and gives
+them a slightly more distant bounded camera so the authored shells remain
+individually judgeable at compact Windows capture size. Exact review of the
+fresh export confirms separated silhouettes on pages 2 and 3 while preserving
+the same runtime actor roots, scale, collision and animation contracts. This
+improves evidence quality for the remaining human art-acceptance gate; it does
+not claim that gate is complete.
+
 The opening sanctuary string-light pass now uses a restrained amber material
 budget in both the camp decorator and release dressing instead of the former
 high-emission bulb surfaces. Exact exported Windows review confirms that the

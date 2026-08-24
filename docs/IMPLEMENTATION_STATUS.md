@@ -1,5 +1,22 @@
 # Implementation status
 
+## Focused organic presentation-review framing pass
+
+- widened the development-only early- and late-organic gallery rows and moved
+  the review camera back slightly so authored anatomy and family silhouettes do
+  not collapse into overlapping bands at the compact Windows export size;
+- kept actor roots, runtime scale, collision, animation, ecology and gameplay
+  untouched; the change is limited to the non-saving presentation fixture;
+- added a release assertion for the minimum horizontal family gap and the
+  updated bounded camera distance;
+- made the complete-game integration runner reset its presentation locale to
+  English before authored-content assertions, so live Swedish/German review
+  sessions cannot contaminate deterministic end-to-end coverage;
+- fresh exact Windows export review passed on 2026-08-24 for pages 1–3 and
+  representative North Ruins, West Grid, East Tenements, Riverworks and Root
+  Cistern pages, with the organic rows visibly separated and the remote
+  landmarks readable.
+
 ## Focused strategic-command explanatory localization pass
 
 - externalized adaptive-defence, evolution, outpost, recap, archive,
