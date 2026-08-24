@@ -653,6 +653,10 @@ func _run_all() -> void:
                 _expect(landmark.find_child("TenementFireEscapeLadder", true, false) != null, "East Tenements must expose a readable fire-escape route signature.")
                 _expect(landmark.find_child("TenementRoofWaterTank", true, false) != null, "East Tenements must expose a rooftop service identity.")
                 _expect(landmark.find_child("TenementFrontWindowL0_0", true, false) != null and landmark.find_child("TenementBlockLEdgeL", true, false) != null, "East Tenements must expose approach-facing windows and facade edge breaks.")
+                var tenement_facade_band := landmark.find_child("TenementFacadeBandL0", true, false) as MeshInstance3D
+                var tenement_facade_pillar := landmark.find_child("TenementFacadePillarL", true, false) as MeshInstance3D
+                _expect(tenement_facade_band != null and tenement_facade_pillar != null, "East Tenements must expose authored floor bands and a central approach-facing facade spine.")
+                _expect(tenement_facade_band != null and _mesh_vertex_count(tenement_facade_band) >= 48 and tenement_facade_pillar != null and _mesh_vertex_count(tenement_facade_pillar) >= 48, "East Tenements facade bands and spine must retain beveled high-definition geometry.")
                 _expect(landmark.find_child("TenementFrontWindowRevealL0_0", true, false) != null and landmark.find_child("TenementFrontWindowJambL0_0", true, false) != null and landmark.find_child("TenementFrontWindowMullionL0_0", true, false) != null, "East Tenements must expose recessed window bays with vertical frame hardware.")
                 _expect(landmark.find_child("TenementFrontWindowLintelL0_0", true, false) != null and landmark.find_child("TenementFrontWindowSillL0_0", true, false) != null, "East Tenements must expose approach-facing window framing detail.")
                 _expect(landmark.find_child("TenementBalconyBrace0_L", true, false) != null and landmark.find_child("TenementTankValve", true, false) != null, "East Tenements must expose structural balcony and roof-tank service detail.")

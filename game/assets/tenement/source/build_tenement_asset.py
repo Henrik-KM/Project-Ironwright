@@ -42,6 +42,8 @@ def main() -> None:
         "Floor": mesh("TenementFloor", add_beveled_box(builder, (18.0, 0.16, 14.0), concrete, 0.04)),
         "Block": mesh("TenementBlock", add_beveled_box(builder, (6.0, 9.0, 4.7), brick, 0.20)),
         "BlockEdge": mesh("TenementBlockEdge", add_beveled_box(builder, (0.28, 9.0, 4.9), concrete, 0.07)),
+        "FacadeBand": mesh("TenementFacadeBand", add_beveled_box(builder, (5.55, 0.14, 0.18), iron, 0.03)),
+        "FacadePillar": mesh("TenementFacadePillar", add_beveled_box(builder, (0.18, 8.45, 0.20), concrete, 0.03)),
         "Window": mesh("TenementWindow", add_beveled_box(builder, (1.05, 1.25, 0.08), window, 0.03)),
         "Balcony": mesh("TenementBalcony", add_beveled_box(builder, (3.0, 0.20, 1.35), iron, 0.06)),
         "Rail": mesh("TenementRail", add_cylinder(builder, 0.07, 3.0, rust, 12)),
@@ -100,6 +102,24 @@ def main() -> None:
     add_node("TenementFloor", mesh_ids["Floor"], (0.0, 0.08, 0.0), extras={"socket_type": "residential_floor"})
     add_node("TenementBlockL", mesh_ids["Block"], (-5.0, 4.5, 0.0), extras={"socket_type": "residential_block"})
     add_node("TenementBlockR", mesh_ids["Block"], (5.0, 4.5, 2.4), rotation=(0.0, -0.03, 0.0), extras={"socket_type": "residential_block"})
+    # Continuous floor bands and a central facade spine break the broad
+    # approach-facing brick planes into maintained residential bays without
+    # changing the authored block collision or route geometry.
+    for block_x, front_z, side_name in ((-5.0, 2.50, "L"), (5.0, 4.90, "R")):
+        for band_index in range(4):
+            band_y = 0.62 + float(band_index) * 2.25
+            add_node(
+                "TenementFacadeBand%s%d" % (side_name, band_index),
+                mesh_ids["FacadeBand"],
+                (block_x, band_y, front_z + 0.08),
+                extras={"surface": "facade_floor_band"},
+            )
+        add_node(
+            "TenementFacadePillar%s" % side_name,
+            mesh_ids["FacadePillar"],
+            (block_x, 4.5, front_z + 0.10),
+            extras={"surface": "facade_vertical_spine"},
+        )
     # The tactical camera approaches from positive Z. Keep the original rear
     # windows for route continuity and add a restrained front-facing set so
     # the residential identity reads from the shipped approach frame.
@@ -175,7 +195,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "tenement.east_blocks.v1",
-            "required_nodes": ["TenementModel", "TenementBlockL", "TenementFrontWindowL0_0", "TenementFrontWindowRevealL0_0", "TenementFrontWindowJambL0_0", "TenementFrontWindowMullionL0_0", "TenementFrontWindowLintelL0_0", "TenementFrontWindowSillL0_0", "TenementBlockLEdgeL", "TenementBalcony0", "TenementBalconyBrace0_L", "TenementFireEscapeLadder", "TenementRoofWaterTank", "TenementTankValve", "TenementLaundryLine0", "TenementLightHousingL", "TenementOrganicCreep0", "TenementOrganicTendril0_0", "ProductionAssetMarker"],
+            "required_nodes": ["TenementModel", "TenementBlockL", "TenementFrontWindowL0_0", "TenementFrontWindowRevealL0_0", "TenementFrontWindowJambL0_0", "TenementFrontWindowMullionL0_0", "TenementFrontWindowLintelL0_0", "TenementFrontWindowSillL0_0", "TenementBlockLEdgeL", "TenementFacadeBandL0", "TenementFacadePillarL", "TenementBalcony0", "TenementBalconyBrace0_L", "TenementFireEscapeLadder", "TenementRoofWaterTank", "TenementTankValve", "TenementLaundryLine0", "TenementLightHousingL", "TenementOrganicCreep0", "TenementOrganicTendril0_0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
