@@ -31,6 +31,11 @@ func _run_all() -> void:
     if world == null:
         _finish()
         return
+    # The UX assertions below intentionally use the canonical English copy;
+    # keep them deterministic even when a preceding live export review has
+    # persisted another supported release locale in user:// settings.
+    if world.localization_service != null:
+        world.localization_service.set_locale(&"en")
 
     var hud := world.hud as IronwrightBeautifulHUD3D
     _expect(hud != null, "The production scene must use the cinematic HUD.")

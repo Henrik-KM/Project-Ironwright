@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused opening-objective localization pass
+
+- routed first-session guidance labels, objective titles/details and route
+  prompts through the release localization service, with explicit fallbacks
+  for non-release scenes;
+- added matching English, Swedish and German catalog entries plus parity and
+  locale-resolution coverage for the opening objective;
+- exact exported Windows fresh-world review of the selected locale remains a
+  required release check, with no gameplay, route, interaction or save-state
+  changes in this pass.
+
 ## Focused North Ruins archive-depth pass
 
 - refined the release-only archive fragments with darker civic/grime materials,

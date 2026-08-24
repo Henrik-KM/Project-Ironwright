@@ -87,6 +87,25 @@
     "release.content_optional": "Optionale Operation",
     "release.content_discovered": "Stadtteil entdeckt",
     "release.first_victory": "ERSTER SIEG",
-    "release.post_victory": "Die Zuflucht bleibt nach dem ersten Sieg spielbar."
+    "release.post_victory": "Die Zuflucht bleibt nach dem ersten Sieg spielbar.",
+    "guidance.salvage": "WRACK BERGEN",
+    "guidance.salvage.hold": "HALTE {0} · LAUT",
+    "guidance.heartforge": "HERZSCHMIEDE",
+    "guidance.heartforge.build": "DRÜCKE {0} · SCHROTTER BAUEN",
+    "guidance.heartforge.escort": "DRÜCKE {0} · ESKORTGRUPPE BAUEN",
+    "objective.opening.salvage.title": "BERGE DEIN ERSTES SCHROTTGUT",
+    "objective.opening.salvage.detail": "Folge den bernsteinfarbenen Bodenlichtern zum markierten städtischen Wrack ({0}). Halte {1}, um es zu zerlegen; die Pistole wird deaktiviert und der Lärm zieht Organismen an.",
+    "objective.opening.scrapper.title": "BAUE DEINEN ERSTEN SCHROTTER",
+    "objective.opening.scrapper.detail": "Kehre über die cyanfarbene Route zur Herzschmiede ({0}) zurück. Drücke {1} an der Montageplatte und wähle Schrotter bauen. Die Fertigung ist laut und macht dich vom Bulwark abhängig.",
+    "objective.opening.autonomy.title": "LASS DEN SCHROTTER ÜBERNEHMEN",
+    "objective.opening.autonomy.detail": "Drücke 2, um den Bergungsfokus zu setzen. Die Maschinen wählen ein Wrack, bilden eine geschützte Gruppe, reisen physisch dorthin, bergen Schrott und kehren ohne Einzelbefehle zurück.",
+    "objective.opening.expedition.title": "BEREITE DIE GRUPPE FÜR DIE NORDRUINEN VOR",
+    "objective.opening.expedition.detail": "Kehre zur Schmiede zurück und fertige manuell einen Wächter und einen Pfadfinder. Der Wächter schützt gefährdete Maschinen; der Pfadfinder hält die Expedition zusammen.",
+    "prompt.opening.route": "FOLGE DER BERNSTEINFARBENEN ROUTE · BLEIB IM SCHUTZ DES BULWARK",
+    "prompt.opening.salvage": "HALTE {0} · ZERLEGE DAS MARKIERTE WRACK · PISTOLE AUS · LÄRM ZIEHT ORGANISMEN AN",
+    "prompt.opening.forge": "DRÜCKE {0} · ÖFFNE DIE HERZSCHMIEDE · BAUE SCHROTTER",
+    "prompt.opening.return": "FOLGE DER CYANFARBENEN ROUTE ZUR HERZSCHMIEDE",
+    "prompt.opening.autonomy": "DRÜCKE 2 · AUTONOME ROUTINEBERGUNG AUTORISIEREN",
+    "prompt.opening.escort": "DRÜCKE {0} · BAUE DEN FEHLENDEN WÄCHTER ODER PFADFINDER"
   }
 }

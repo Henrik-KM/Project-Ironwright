@@ -72,65 +72,75 @@ func _update_first_session_guidance() -> void:
             return
         objective_guidance.set_guidance(
             wreck,
-            "SALVAGE WRECK",
-            "HOLD %s · LOUD" % interact_hint,
+            _localized_release_text("guidance.salvage", "SALVAGE WRECK"),
+            _localized_release_text("guidance.salvage.hold", "HOLD {0} · LOUD", [interact_hint]),
             Color("f2b365")
         )
         hud.set_objective(
-            "RECOVER YOUR FIRST SCRAP",
-            "Follow the amber ground lights to the highlighted municipal wreck (%s). Hold %s to dismantle it; the pistol goes offline and the noise attracts organisms." % [objective_guidance.route_summary(), interact_hint]
+            _localized_release_text("objective.opening.salvage.title", "RECOVER YOUR FIRST SCRAP"),
+            _localized_release_text("objective.opening.salvage.detail", "Follow the amber ground lights to the highlighted municipal wreck ({0}). Hold {1} to dismantle it; the pistol goes offline and the noise attracts organisms.", [objective_guidance.route_summary(), interact_hint])
         )
         if nearest_salvage == null:
-            hud.set_prompt("FOLLOW THE AMBER ROUTE · STAY WITHIN THE BULWARK'S PROTECTION")
+            hud.set_prompt(_localized_release_text("prompt.opening.route", "FOLLOW THE AMBER ROUTE · STAY WITHIN THE BULWARK'S PROTECTION"))
         else:
-            hud.set_prompt("HOLD %s · DISMANTLE THE HIGHLIGHTED WRECK · PISTOL OFFLINE · NOISE ATTRACTS ORGANISMS" % interact_hint)
+            hud.set_prompt(_localized_release_text("prompt.opening.salvage", "HOLD {0} · DISMANTLE THE HIGHLIGHTED WRECK · PISTOL OFFLINE · NOISE ATTRACTS ORGANISMS", [interact_hint]))
         return
 
     if autonomy_director.count_robots(&"salvager") < 1:
         objective_guidance.set_guidance(
             heartforge,
-            "HEARTFORGE",
-            "PRESS %s · BUILD SCRAPPER" % interact_hint,
+            _localized_release_text("guidance.heartforge", "HEARTFORGE"),
+            _localized_release_text("guidance.heartforge.build", "PRESS {0} · BUILD SCRAPPER", [interact_hint]),
             Color("72dce1")
         )
         hud.set_objective(
-            "BUILD YOUR FIRST SCRAPPER",
-            "Return along the cyan route to the Heartforge (%s). Press %s at the assembly plate and choose Build Scrapper. Fabrication is loud and leaves you dependent on the Bulwark." % [objective_guidance.route_summary(), interact_hint]
+            _localized_release_text("objective.opening.scrapper.title", "BUILD YOUR FIRST SCRAPPER"),
+            _localized_release_text("objective.opening.scrapper.detail", "Return along the cyan route to the Heartforge ({0}). Press {1} at the assembly plate and choose Build Scrapper. Fabrication is loud and leaves you dependent on the Bulwark.", [objective_guidance.route_summary(), interact_hint])
         )
         if forge_in_range:
-            hud.set_prompt("PRESS %s · OPEN THE HEARTFORGE · BUILD SCRAPPER" % interact_hint)
+            hud.set_prompt(_localized_release_text("prompt.opening.forge", "PRESS {0} · OPEN THE HEARTFORGE · BUILD SCRAPPER", [interact_hint]))
         else:
-            hud.set_prompt("FOLLOW THE CYAN ROUTE BACK TO THE HEARTFORGE")
+            hud.set_prompt(_localized_release_text("prompt.opening.return", "FOLLOW THE CYAN ROUTE BACK TO THE HEARTFORGE"))
         return
 
     if run_state.autonomous_scrap_recovered < 30:
         objective_guidance.clear_guidance()
         hud.set_objective(
-            "LET THE SCRAPPER TAKE OVER",
-            "Press 2 to set Salvage focus. The machines choose a wreck, form a protected group, travel there physically, recover Scrap, and return without individual orders."
+            _localized_release_text("objective.opening.autonomy.title", "LET THE SCRAPPER TAKE OVER"),
+            _localized_release_text("objective.opening.autonomy.detail", "Press 2 to set Salvage focus. The machines choose a wreck, form a protected group, travel there physically, recover Scrap, and return without individual orders.")
         )
         if autonomy_director.salvage_operation.is_empty():
-            hud.set_prompt("PRESS 2 · AUTHORIZE ROUTINE MACHINE SALVAGE")
+            hud.set_prompt(_localized_release_text("prompt.opening.autonomy", "PRESS 2 · AUTHORIZE ROUTINE MACHINE SALVAGE"))
         return
 
     if autonomy_director.count_robots(&"guardian") < 1 or autonomy_director.count_robots(&"scout") < 1:
         objective_guidance.set_guidance(
             heartforge,
-            "HEARTFORGE",
-            "PRESS %s · BUILD ESCORT GROUP" % interact_hint,
+            _localized_release_text("guidance.heartforge", "HEARTFORGE"),
+            _localized_release_text("guidance.heartforge.escort", "PRESS {0} · BUILD ESCORT GROUP", [interact_hint]),
             Color("72dce1")
         )
         hud.set_objective(
-            "PREPARE THE NORTH RUINS GROUP",
-            "Return to the forge and manually fabricate one Warden and one Pathfinder. The Warden protects vulnerable machines; the Pathfinder keeps the expedition coherent."
+            _localized_release_text("objective.opening.expedition.title", "PREPARE THE NORTH RUINS GROUP"),
+            _localized_release_text("objective.opening.expedition.detail", "Return to the forge and manually fabricate one Warden and one Pathfinder. The Warden protects vulnerable machines; the Pathfinder keeps the expedition coherent.")
         )
         if forge_in_range:
-            hud.set_prompt("PRESS %s · BUILD THE MISSING WARDEN OR PATHFINDER" % interact_hint)
+            hud.set_prompt(_localized_release_text("prompt.opening.escort", "PRESS {0} · BUILD THE MISSING WARDEN OR PATHFINDER", [interact_hint]))
         else:
-            hud.set_prompt("FOLLOW THE CYAN ROUTE TO THE HEARTFORGE")
+            hud.set_prompt(_localized_release_text("prompt.opening.return", "FOLLOW THE CYAN ROUTE BACK TO THE HEARTFORGE"))
         return
 
     objective_guidance.clear_guidance()
+
+
+func _localized_release_text(key: String, fallback: String, replacements: Array = []) -> String:
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service != null:
+        return service.text(key, replacements)
+    var result := fallback
+    for index in range(replacements.size()):
+        result = result.replace("{%d}" % index, str(replacements[index]))
+    return result
 
 
 func _opening_salvage_target() -> SalvagePile3D:
