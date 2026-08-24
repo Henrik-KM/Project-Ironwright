@@ -675,6 +675,13 @@ preserves the rail identity, landmark geometry, collision, route, discovery and
 operation ownership; consecutive exact exported Tram Graveyard review is
 complete.
 
+Tram Graveyard's release dressing now also uses smaller, darker carriage shells
+with paired window bands, belt rails, roof plates, service doors, vents, bogie
+plates and axles. The page 10/14 camera is lowered just enough for the rail
+identity to read through the carriage sides instead of presenting a stack of
+orange roof slabs. This remains presentation-only; landmark geometry,
+collision, route, discovery and operation ownership are unchanged.
+
 The Cathedral Quarter shell now also uses a deeper weathered-stone, soot-brick,
 oxidized-iron and cold/rose-glass palette with restrained votive and organic
 emission so the nave and tower separate from the choir, rose window and

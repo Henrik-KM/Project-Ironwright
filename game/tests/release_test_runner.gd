@@ -393,6 +393,7 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
     _expect(rail_dressing != null, "Release rail dressing must expose a bounded high-definition carriage layer.")
     if rail_dressing != null:
         _expect(rail_dressing.find_child("DerailedTram00", true, false) != null and rail_dressing.find_child("TramWindow00_00", true, false) != null, "Release rail dressing must expose layered carriage shell and window detail.")
+        _expect(rail_dressing.find_child("TramRoofPlate00", true, false) != null and rail_dressing.find_child("TramBeltRail00_Front", true, false) != null and rail_dressing.find_child("TramWindow00_00_Front", true, false) != null, "Release rail dressing must expose paired carriage shell sides, roof plate and belt rails.")
         _expect(rail_dressing.find_child("TramServicePanel00", true, false) != null and rail_dressing.find_child("TramRoofVent00", true, false) != null, "Release rail dressing must expose service and roof hardware.")
         _expect(rail_dressing.find_child("TramBogiePlate00_00", true, false) != null and rail_dressing.find_child("TramAxle00_00", true, false) != null, "Release rail dressing must expose readable undercarriage detail.")
     var archive_dressing := world.release_world_art.dressing_root.find_child("HighDefinitionArchiveDressing", true, false) if world.release_world_art.dressing_root != null else null
