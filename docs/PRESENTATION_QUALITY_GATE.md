@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The canonical complete-game runtime received a focused gameplay-report
+localization pass on 2026-08-24. Salvage, fabrication, expedition, save/load,
+machine-society, region-discovery and final-protocol reports now resolve through
+the selected English, Swedish or German catalog rather than bypassing the
+release boundary with raw English. Exact Windows review at 1280×720 in German
+confirmed localized machine reports, Heartforge status and route guidance in
+the same opening frame; professional localization review remains open.
+
 The Tier V Heartforge crown received a focused silhouette and emission pass on
 2026-08-24. The sovereignty ring and beacon now sit lower and use a restrained
 warm budget so the late-game crown remains legible inside the 1280×720 tactical

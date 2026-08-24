@@ -34,8 +34,8 @@ func _ready() -> void:
     progression.set_context_provider(Callable(self, "_progression_context"))
     refresh_input_legend()
     run_state.log_event("The complete systemic run is active. Survive, expand autonomy, recover the root components, and choose how the town ends.")
-    hud.push_notification("TOWN NETWORKS OPEN · P LONG-RANGE OPERATIONS · V FINAL PROTOCOLS")
-    hud.push_notification("BULWARK ONLINE · THE HEARTFORGE HAS A PERSONAL GUARD")
+    hud.push_notification(_localized_text("notification.complete.systems_online", "TOWN NETWORKS OPEN · P LONG-RANGE OPERATIONS · V FINAL PROTOCOLS"))
+    hud.push_notification(_localized_text("notification.complete.bulwark_online", "BULWARK ONLINE · THE HEARTFORGE HAS A PERSONAL GUARD"))
 
 
 func _process(delta: float) -> void:
@@ -89,7 +89,7 @@ func _unhandled_input(event: InputEvent) -> void:
             sanctuary_continuation = true
             game_ended = false
             hud.dismiss_ending()
-            hud.push_notification("SANCTUARY CONTINUES · THE FIRST ARCHIVE IS NOW AVAILABLE THROUGH P")
+            hud.push_notification(_localized_text("notification.complete.sanctuary_continues", "SANCTUARY CONTINUES · THE FIRST ARCHIVE IS NOW AVAILABLE THROUGH P"))
             return
 
         if not paused and not game_ended and not hud.forge_open and not strategic_hud.is_open():
@@ -299,7 +299,7 @@ func _start_dynamic_operation_review() -> void:
     _ensure_region_salvage(&"region.west_grid")
     operations_hud.open_operations()
     player.input_enabled = false
-    hud.push_notification("WORLD-STATE RESPONSE OFFER · PRESSURE HAS BECOME A CHOICE")
+    hud.push_notification(_localized_text("notification.complete.response_offer", "WORLD-STATE RESPONSE OFFER · PRESSURE HAS BECOME A CHOICE"))
 
 
 func _start_adaptive_defense_review() -> void:
@@ -337,7 +337,7 @@ func _start_authored_operation_review() -> void:
     # progression-gated offer list on the next frame.
     set_process(false)
     player.input_enabled = false
-    hud.push_notification("AUTHORED OPERATION REVIEW · THE WEST GRID BRIEFING IS READY")
+    hud.push_notification(_localized_text("notification.complete.operation_review", "AUTHORED OPERATION REVIEW · THE WEST GRID BRIEFING IS READY"))
 
 
 func _start_route_memory_review() -> void:
@@ -366,7 +366,7 @@ func _start_route_memory_review() -> void:
     }
     operations_hud.open_operations()
     player.input_enabled = false
-    hud.push_notification("ROUTE MEMORY REVIEW · THE CLEAREST AUTHORED DETOUR IS PROPOSED")
+    hud.push_notification(_localized_text("notification.complete.route_memory_review", "ROUTE MEMORY REVIEW · THE CLEAREST AUTHORED DETOUR IS PROPOSED"))
 
 
 func _start_casualty_recovery_review() -> void:
@@ -449,13 +449,13 @@ func _authorize_adaptation(adaptation_id: StringName) -> void:
 
 func _initiate_protocol(protocol_id: StringName) -> void:
     if protocol_id == &"":
-        hud.push_notification("FINAL PROTOCOL LOCKED · COMPLETE THE ROOT CISTERN CHAIN AND TIER 5 RESEARCH")
+        hud.push_notification(_localized_text("notification.final_protocol.locked", "FINAL PROTOCOL LOCKED · COMPLETE THE ROOT CISTERN CHAIN AND TIER 5 RESEARCH"))
         return
     if endgame_director.initiate(protocol_id):
         _close_operations_hud()
-        hud.push_notification("FINAL PROTOCOL INITIATED · THE RESPONSE IS CAUSAL AND IRREVERSIBLE")
+        hud.push_notification(_localized_text("notification.final_protocol.initiated", "FINAL PROTOCOL INITIATED · THE RESPONSE IS CAUSAL AND IRREVERSIBLE"))
     else:
-        hud.push_notification("FINAL PROTOCOL UNAVAILABLE · CHECK RESEARCH, COMPONENTS, OUTPOSTS, SCRAP, CORES AND ACTIVE OPERATIONS")
+        hud.push_notification(_localized_text("notification.final_protocol.unavailable", "FINAL PROTOCOL UNAVAILABLE · CHECK RESEARCH, COMPONENTS, OUTPOSTS, SCRAP, CORES AND ACTIVE OPERATIONS"))
 
 
 func _update_camera(delta: float) -> void:
@@ -493,7 +493,7 @@ func _on_heartforge_destroyed() -> void:
         run_state.record_scrap_spend(180, "continuity recovery")
         run_state.scrap_changed.emit(run_state.scrap)
         run_state.log_event("Distributed Continuity rebuilt the Heartforge after catastrophic failure. The one-use reserve is gone.")
-        hud.push_notification("DISTRIBUTED CONTINUITY CONSUMED · HEARTFORGE RECOVERED AT 48% · 180 SCRAP LOST")
+        hud.push_notification(_localized_text("notification.continuity.consumed", "DISTRIBUTED CONTINUITY CONSUMED · HEARTFORGE RECOVERED AT 48% · {0} SCRAP LOST", [180]))
         return
     if endgame_director != null and not endgame_director.active_protocol.is_empty():
         endgame_director.fail_active_protocol("The Heartforge failed before the final protocol completed.")
@@ -645,7 +645,7 @@ func _update_complete_game_objective() -> void:
 
 func _on_region_discovered(region_id: StringName, display_name: String) -> void:
     _ensure_region_salvage(region_id)
-    hud.push_notification("REGION DISCOVERED · %s · PHYSICAL ROUTES NOW KNOWN" % display_name.to_upper())
+    hud.push_notification(_localized_text("notification.region.discovered", "REGION DISCOVERED · {0} · PHYSICAL ROUTES NOW KNOWN", [display_name.to_upper()]))
 
 
 func _on_story_record_unlocked(record_id: StringName, display_name: String, description: String) -> void:
@@ -669,7 +669,7 @@ func _on_story_record_unlocked(record_id: StringName, display_name: String, desc
 
 
 func _on_story_thread_advanced(_thread_id: StringName, display_name: String, stage_count: int, description: String) -> void:
-    hud.push_notification("STORY THREAD ADVANCED · %s · %d CLUES\n%s" % [display_name.to_upper(), stage_count, description])
+    hud.push_notification(_localized_text("notification.story.thread_advanced", "STORY THREAD ADVANCED · {0} · {1} CLUES\n{2}", [display_name.to_upper(), stage_count, description]))
 
 
 func _open_story_archive() -> void:
@@ -842,14 +842,14 @@ func _on_long_operation_returned(operation_id: StringName, display_name: String,
         var witness := _machine_witness_identity()
         var moment := "%s brought the group home through the same streets it learned on; the Heartforge answers with a warmer signal." % witness
         run_state.log_event("MACHINE WITNESS · %s" % moment)
-        hud.push_notification("MACHINE WITNESS · %s" % moment.to_upper())
+        hud.push_notification(_localized_text("notification.machine.witness", "MACHINE WITNESS · {0}", [moment.to_upper()]))
         if story_archive_director != null:
             story_archive_director.record_machine_witness(&"machine.first_return")
     progression._evaluate_automatic_technologies()
 
 
 func _on_component_recovered(component_id: StringName) -> void:
-    hud.push_notification("UNIQUE BIOLOGICAL COMPONENT RECOVERED · %s" % String(component_id).replace("component.", "").replace("_", " ").to_upper())
+    hud.push_notification(_localized_text("notification.component.recovered", "UNIQUE BIOLOGICAL COMPONENT RECOVERED · {0}", [String(component_id).replace("component.", "").replace("_", " ").to_upper()]))
 
 
 func _on_machine_recovered(record: Dictionary) -> void:
@@ -872,12 +872,12 @@ func _on_site_discovery_requested(site_id: StringName) -> void:
 
 func _on_autonomous_machine_built(archetype: StringName, level: int, reason: String) -> void:
     var identity := _machine_identity_for_archetype(archetype)
-    hud.push_notification("AUTONOMOUS REPLACEMENT · LEVEL %d %s · %s" % [level, identity.to_upper(), String(archetype).to_upper()])
+    hud.push_notification(_localized_text("notification.machine.autonomous_replacement", "AUTONOMOUS REPLACEMENT · LEVEL {0} {1} · {2}", [level, identity.to_upper(), String(archetype).to_upper()]))
     if not bool(machine_relationship_moments.get("first_replacement", false)):
         machine_relationship_moments["first_replacement"] = true
         var moment := "%s took its place without a queue or command; the machine society is beginning to remember what the town needs." % identity
         run_state.log_event("MACHINE WITNESS · %s" % moment)
-        hud.push_notification("MACHINE WITNESS · %s" % moment.to_upper())
+        hud.push_notification(_localized_text("notification.machine.witness", "MACHINE WITNESS · {0}", [moment.to_upper()]))
         if story_archive_director != null:
             story_archive_director.record_machine_witness(&"machine.first_replacement")
 
@@ -913,7 +913,7 @@ func _on_complete_game_noise(position: Vector3, radius: float, intensity: float,
 
 
 func _on_endgame_started(protocol_id: StringName, display_name: String) -> void:
-    hud.push_notification("FINAL PROTOCOL · %s · ORGANIC PRESSURE IS CONVERGING" % display_name.to_upper())
+    hud.push_notification(_localized_text("notification.final_protocol.converging", "FINAL PROTOCOL · {0} · ORGANIC PRESSURE IS CONVERGING", [display_name.to_upper()]))
 
 
 func _on_endgame_progress(protocol_id: StringName, progress: float, detail: String) -> void:
@@ -947,7 +947,7 @@ func _on_endgame_completed(protocol_id: StringName, display_name: String, ending
 
 
 func _on_endgame_failed(protocol_id: StringName, reason: String) -> void:
-    hud.push_notification("FINAL PROTOCOL FAILED · %s" % reason.to_upper())
+    hud.push_notification(_localized_text("notification.final_protocol.failed", "FINAL PROTOCOL FAILED · {0}", [reason.to_upper()]))
 
 
 func _functioning_outpost_count() -> int:
@@ -1019,7 +1019,7 @@ func _restore_extension_data(extensions: Variant) -> void:
         _ensure_region_salvage(StringName(str(region_data.get("id", ""))))
     story_archive_director.reconcile_discovered_state()
     progression._evaluate_automatic_technologies()
-    hud.push_notification("COMPLETE RUN STATE RESTORED · REGIONS, OPERATIONS, ECOLOGY, MACHINE SOCIETY AND ENDGAME RETAINED")
+    hud.push_notification(_localized_text("notification.complete.state_restored", "COMPLETE RUN STATE RESTORED · REGIONS, OPERATIONS, ECOLOGY, MACHINE SOCIETY AND ENDGAME RETAINED"))
 
 
 func _serialize_stringname_dictionary(source: Dictionary) -> Dictionary:

@@ -88,7 +88,7 @@ func _unhandled_input(event: InputEvent) -> void:
         else:
             paused = not paused
             get_tree().paused = paused
-            hud.push_notification("PAUSED" if paused else "RESUMED")
+            hud.push_notification(_localized_runtime_text("notification.pause.paused" if paused else "notification.pause.resumed", "PAUSED" if paused else "RESUMED"))
         return
 
     if paused:
@@ -126,7 +126,7 @@ func _unhandled_input(event: InputEvent) -> void:
             hud.show_map_banner(map_mode)
         KEY_F:
             follow_operation = not follow_operation
-            hud.push_notification("FOLLOWING ACTIVE MACHINE GROUP" if follow_operation else "CAMERA RETURNED TO THE MECHROMANCER")
+            hud.push_notification(_localized_runtime_text("notification.follow.active" if follow_operation else "notification.follow.returned", "FOLLOWING ACTIVE MACHINE GROUP" if follow_operation else "CAMERA RETURNED TO THE MECHROMANCER"))
         KEY_F5:
             _save_game()
         KEY_F9:
@@ -237,7 +237,7 @@ func _connect_systems() -> void:
 
     autonomy_director.operation_changed.connect(_on_operation_changed)
     autonomy_director.robot_registered.connect(_on_robot_registered)
-    autonomy_director.expedition_core_secured.connect(func() -> void: hud.push_notification("COGNITION CORE SECURED · THE GROUP IS TURNING HOME"))
+    autonomy_director.expedition_core_secured.connect(func() -> void: hud.push_notification(_localized_runtime_text("notification.expedition.core_secured", "COGNITION CORE SECURED · THE GROUP IS TURNING HOME")))
     autonomy_director.expedition_returned.connect(_on_expedition_returned)
 
     hud.forge_build_selected.connect(_start_manual_build)
@@ -371,11 +371,11 @@ func _handle_context_interaction() -> void:
 
 func _start_manual_build(archetype: StringName) -> void:
     if not forge_in_range or player.is_channeling():
-        hud.push_notification("MOVE TO THE HEARTFORGE ASSEMBLY PLATE FIRST")
+        hud.push_notification(_localized_runtime_text("notification.forge.move_first", "MOVE TO THE HEARTFORGE ASSEMBLY PLATE FIRST"))
         return
     var cost := run_state.build_cost(archetype)
     if not run_state.spend_scrap(cost):
-        hud.push_notification("INSUFFICIENT SCRAP · %d REQUIRED" % cost)
+        hud.push_notification(_localized_runtime_text("notification.forge.insufficient_scrap", "INSUFFICIENT SCRAP · {0} REQUIRED", [cost]))
         return
     _close_forge_menu()
     heartforge.set_operation(&"forge_build")
@@ -396,7 +396,7 @@ func _start_manual_upgrade(archetype: StringName) -> void:
         return
     var cost := run_state.upgrade_cost(archetype)
     if not run_state.can_upgrade(archetype):
-        hud.push_notification("UPGRADE LOCKED · NEED %d SCRAP AND %d RARE CORE" % [int(cost.get("scrap", 0)), int(cost.get("cores", 0))])
+        hud.push_notification(_localized_runtime_text("notification.forge.upgrade_locked", "UPGRADE LOCKED · NEED {0} SCRAP AND {1} RARE CORE", [int(cost.get("scrap", 0)), int(cost.get("cores", 0))]))
         return
     _close_forge_menu()
     heartforge.set_operation(&"forge_upgrade")
@@ -420,9 +420,9 @@ func _close_forge_menu() -> void:
 func _authorize_expedition() -> void:
     run_state.set_focus(RunState3D.FOCUS_EXPEDITION)
     if autonomy_director.authorize_north_expedition():
-        hud.push_notification("NORTH RUINS EXPEDITION AUTHORIZED · F TO FOLLOW")
+        hud.push_notification(_localized_runtime_text("notification.expedition.authorized", "NORTH RUINS EXPEDITION AUTHORIZED · F TO FOLLOW"))
     else:
-        hud.push_notification("EXPEDITION NEEDS 1 PATHFINDER, 1 WARDEN, AND 1 SCRAPPER")
+        hud.push_notification(_localized_runtime_text("notification.expedition.requirements", "EXPEDITION NEEDS 1 PATHFINDER, 1 WARDEN, AND 1 SCRAPPER"))
 
 
 func _on_channel_started(kind: StringName, duration: float, description: String) -> void:
@@ -458,11 +458,11 @@ func _on_channel_cancelled(kind: StringName, target: Node, metadata: Dictionary)
     heartforge.set_operation(&"")
     if kind == &"forge_build":
         run_state.refund_scrap(int(metadata.get("cost", 0)))
-        hud.push_notification("FABRICATION INTERRUPTED · SCRAP RETURNED")
+        hud.push_notification(_localized_runtime_text("notification.channel.fabrication_interrupted", "FABRICATION INTERRUPTED · SCRAP RETURNED"))
     elif kind == &"forge_upgrade":
-        hud.push_notification("UPGRADE INTERRUPTED")
+        hud.push_notification(_localized_runtime_text("notification.channel.upgrade_interrupted", "UPGRADE INTERRUPTED"))
     elif kind == &"manual_salvage":
-        hud.push_notification("SALVAGE ABANDONED · THE NOISE REMAINS")
+        hud.push_notification(_localized_runtime_text("notification.channel.salvage_abandoned", "SALVAGE ABANDONED · THE NOISE REMAINS"))
     player.input_enabled = true
 
 
@@ -512,7 +512,7 @@ func _on_heartforge_destroyed() -> void:
 
 func _on_heartforge_health_changed(current: float, maximum: float) -> void:
     if current / maximum < 0.35:
-        hud.push_notification("HEARTFORGE INTEGRITY CRITICAL")
+        hud.push_notification(_localized_runtime_text("notification.heartforge.critical", "HEARTFORGE INTEGRITY CRITICAL"))
 
 
 func _on_companion_health_changed(robot: RobotUnit3D, current: float, maximum: float) -> void:
@@ -522,7 +522,7 @@ func _on_companion_health_changed(robot: RobotUnit3D, current: float, maximum: f
 
 func _on_companion_destroyed(robot: RobotUnit3D) -> void:
     hud.set_companion_health(0.0, robot.maximum_health)
-    hud.push_notification("BULWARK DISABLED · RETREAT. THE PISTOL CANNOT HOLD THE STREET ALONE.")
+    hud.push_notification(_localized_runtime_text("notification.bulwark.disabled", "BULWARK DISABLED · RETREAT. THE PISTOL CANNOT HOLD THE STREET ALONE."))
 
 
 func _on_enemy_killed(enemy: OrganicEnemy3D, killer: Node) -> void:
@@ -618,7 +618,7 @@ func refresh_input_legend() -> void:
 
 func _save_game() -> void:
     if player.is_channeling():
-        hud.push_notification("SAVE DEFERRED · FINISH THE ACTIVE MANUAL CHANNEL")
+        hud.push_notification(_localized_runtime_text("notification.save.deferred", "SAVE DEFERRED · FINISH THE ACTIVE MANUAL CHANNEL"))
         return
     var snapshot := {
         "foundation": {
@@ -658,22 +658,22 @@ func _save_game() -> void:
                 "health": enemy.current_health,
             })
     if save_service == null or not save_service.write_snapshot(snapshot):
-        hud.push_notification("SAVE FAILED · %s" % (save_service.last_error if save_service != null else "SERVICE UNAVAILABLE"))
+        hud.push_notification(_localized_runtime_text("notification.save.failed", "SAVE FAILED · {0}", [save_service.last_error if save_service != null else "SERVICE UNAVAILABLE"]))
         return
-    hud.push_notification("WORLD SAVED TRANSACTIONALLY · BACKUPS ROTATED · ACTOR POSITIONS RETAINED")
+    hud.push_notification(_localized_runtime_text("notification.save.saved", "WORLD SAVED TRANSACTIONALLY · BACKUPS ROTATED · ACTOR POSITIONS RETAINED"))
 
 
 func _load_game() -> void:
     if save_service == null:
-        hud.push_notification("SAVE INVALID · SERVICE UNAVAILABLE")
+        hud.push_notification(_localized_runtime_text("notification.save.service_unavailable", "SAVE INVALID · SERVICE UNAVAILABLE"))
         return
     var snapshot: Dictionary = save_service.read_snapshot()
     if snapshot.is_empty():
-        hud.push_notification("NO VALID SAVE FOUND · %s" % save_service.last_error)
+        hud.push_notification(_localized_runtime_text("notification.save.no_valid_save", "NO VALID SAVE FOUND · {0}", [save_service.last_error]))
         return
     var data: Dictionary = snapshot.get("foundation", {})
     if data.is_empty():
-        hud.push_notification("SAVE INVALID · FOUNDATION MISSING")
+        hud.push_notification(_localized_runtime_text("notification.save.foundation_missing", "SAVE INVALID · FOUNDATION MISSING"))
         return
     _clear_runtime_entities()
     run_state.restore_from_dictionary(data.get("run_state", {}))
@@ -711,7 +711,17 @@ func _load_game() -> void:
     _update_hud_from_state()
     _restore_extension_data(snapshot.get("extensions", {}))
     var migrated_note := " · LEGACY SAVE MIGRATED" if bool(snapshot.get("migrated_from_legacy", false)) else ""
-    hud.push_notification("WORLD LOADED TRANSACTIONALLY%s" % migrated_note)
+    hud.push_notification(_localized_runtime_text("notification.save.loaded", "WORLD LOADED TRANSACTIONALLY{0}", [migrated_note]))
+
+
+func _localized_runtime_text(key: String, fallback: String, replacements: Array = []) -> String:
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service != null:
+        return service.text(key, replacements)
+    var result := fallback
+    for index in range(replacements.size()):
+        result = result.replace("{%d}" % index, str(replacements[index]))
+    return result
 
 
 func _save_extension_data() -> Dictionary:
