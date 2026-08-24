@@ -779,6 +779,7 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     var player_authored_mesh := _find_first_mesh(world.player.get_node_or_null("MechromancerModel") if world.player != null else null)
     _expect(player_authored_mesh != null and player_authored_mesh.get_meta(&"release_material_family", &"") == &"", "The authored Mechromancer shell must preserve its source material families instead of receiving a flattened release metal override.")
     var player_model := world.player.get_node_or_null("MechromancerModel") if world.player != null else null
+    _expect(player_model != null and player_model.find_child("ChestShell", true, false) != null and player_model.find_child("ChestArmorPlate", true, false) != null, "The Mechromancer must expose the layered curved chest shell and breastplate in the live authored model.")
     var player_leather := _find_mesh_named(player_model, "FieldPack")
     var player_coat := _find_mesh_named(player_model, "Torso")
     var player_lamp := _find_mesh_named(player_model, "LampCore")

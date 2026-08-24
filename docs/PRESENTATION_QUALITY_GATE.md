@@ -2,6 +2,15 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The Mechromancer received a focused high-definition chest pass on 2026-08-24.
+The canonical Blender source and runtime glTF now carry a shallow curved coat
+shell, a layered metal breastplate, seam hardware and a central latch; scarf
+and sidearm rings also use denser curved tessellation. Exact exported Windows
+review at 1280x720 on page 1/14 confirms the new authored chest detail in the
+friendly roster, and the source portrait shows the continuous breastplate
+highlight at close distance. Broader friendly-roster and human art acceptance
+remain open.
+
 The late-organic family shells received a focused high-definition pass on
 2026-08-24. The shared torso shell source now carries a deeper close-camera
 surface, and the Carrion Bell's resonator is an original dense curved ring

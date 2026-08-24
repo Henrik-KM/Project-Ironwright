@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused Mechromancer chest high-definition pass
+
+- added a shallow curved chest shell and a layered metal breastplate to the
+  canonical Blender-authored field-engineer model, keeping the face, hood,
+  coat tails, pack, pistol/tool sockets, collision and animation clips stable;
+- increased the authored torus resolution for the scarf collar and sidearm
+  trigger guard, and mirrored the new shell primitives in the dependency-free
+  fallback builder;
+- exported and live-reviewed the exact Windows friendly-roster page at
+  1280x720, with the updated curved breastplate also verified in the shared
+  authored portrait; the broader friendly-roster and human art-acceptance gate
+  remains open.
+
 ## Focused late-organic shell and resonator high-definition pass
 
 - deepened the shared authored organic-family shell mesh used by the seven
