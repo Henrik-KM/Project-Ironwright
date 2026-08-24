@@ -816,6 +816,13 @@ spines into low radial anchors. This is presentation-only geometry: landmark
 identity, stable sockets, collision ownership, LOD behaviour and endgame state
 remain unchanged. Exact Windows review is required before the pass is accepted.
 
+The friendly-roster review now also uses a quieter shared key, in addition to
+the existing actor-lamp attenuation, so bright cyan sensors do not erase the
+steel, copper, rubber and service-hardware breaks in the exact gallery frame.
+This is a review-only lighting adjustment; tactical/runtime lighting remains
+unchanged. Exact Windows review passed at 1280×720, while broader human art
+acceptance remains outstanding.
+
 ## Art production sequence
 
 The presentation milestones proceed in this order:

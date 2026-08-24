@@ -1186,7 +1186,12 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	# than the manufactured roster to keep wet materials and anatomy breaks
 	# judgeable at the supported compact export size. Runtime lighting is untouched.
 	var organic_gallery_light_scale := 1.38 if presentation_review_page >= 1 and presentation_review_page <= 2 else 1.0
-	var review_light_scale := compact_region_light_scale * organic_gallery_light_scale
+	# Friendly authored shells carry bright cyan sensors and pale steel. The
+	# roster page needs a slightly quieter shared key so copper oxide, rubber,
+	# brushed steel and protected tool hardware retain their material breaks.
+	# This is review-only; tactical lighting remains unchanged.
+	var friendly_roster_light_scale := 0.72 if presentation_review_page == 0 else 1.0
+	var review_light_scale := compact_region_light_scale * organic_gallery_light_scale * friendly_roster_light_scale
 	var organic_page := presentation_review_page >= 1 and presentation_review_page <= 2
 	if organic_fill != null:
 		organic_fill.visible = organic_page
