@@ -913,7 +913,11 @@ func _show_presentation_review_page(page: int) -> void:
 			if region_geometry != null:
 				region_geometry.visible = true
 		else:
-			actor.rotation.y = PI
+			# The roster page is an authored model review, so show the
+			# Mechromancer's field-engineer face and protected front hardware
+			# instead of repeating the live third-person rear angle. Friendly
+			# robots retain their established presentation orientation.
+			actor.rotation.y = 0.0 if presentation_review_page == 0 and index == 0 else PI
 			var row_index := 0 if index < mini(4, actors.size()) else 1
 			var row_count := mini(4, actors.size()) if row_index == 0 else actors.size() - mini(4, actors.size())
 			var row_position := index if row_index == 0 else index - mini(4, actors.size())
