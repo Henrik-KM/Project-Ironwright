@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The opening machine-report HUD received a focused readability pass on
+2026-08-24. The exception stack now shows two bounded reports, preserves
+message line breaks and clips long detail within its dedicated panel instead
+of flattening three reports into an overlong paragraph across the playable
+frame. Exact Windows capture at 1280×720 on the Heartforge progression review
+confirms the objective, reserves, cast and report affordance remain distinct;
+broader human opening acceptance remains open.
+
 Cathedral Quarter received a focused brood-material hierarchy pass on
 2026-08-24. The authored choir, spine and vein meshes now use a dry deep-violet
 organic response in the compact review frame, while the source membrane and

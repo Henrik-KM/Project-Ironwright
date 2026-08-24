@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused opening machine-report HUD readability pass
+
+- bounded the transient machine-report stack to two visible reports while
+  retaining the existing diagnostic/log paths for full event detail;
+- preserved report line breaks, added a fixed readable panel height and clipped
+  overlong detail with ellipsis so alerts cannot spill into the tactical frame;
+- exact Windows export review passed at 1280×720 on the Heartforge progression
+  frame, and the 800×520 first-session UX runner passed.
+
 ## Focused Cathedral Quarter brood-material hierarchy pass
 
 - lowered the authored Cathedral membrane response and applied a review-only
