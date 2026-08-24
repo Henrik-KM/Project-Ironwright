@@ -396,10 +396,11 @@ func _dress_heartforge_district() -> void:
             )
         ModelKit3D.add_cylinder(heartforge_detail, 0.08, 2.6, position + Vector3.UP * 1.3, dark_metal, Vector3.ZERO, "CablePost")
         ModelKit3D.add_cylinder(heartforge_detail, 0.11, 0.18, position + Vector3.UP * 2.58, plate_metal, Vector3.ZERO, "CablePostCap")
+    var string_light_material := _emissive_material(Color("ff8a3b"), 0.78)
     for index in range(16):
         var angle := TAU * float(index) / 16.0
         var radius := 7.2 + float(index % 3) * 1.4
-        ModelKit3D.add_sphere(root, 0.055, Vector3(cos(angle) * radius, 2.5 + sin(float(index) * 0.7) * 0.35, sin(angle) * radius), _emissive_material(Color("ffbd71"), 4.0), Vector3.ONE, "SanctuaryStringLight")
+        ModelKit3D.add_sphere(root, 0.055, Vector3(cos(angle) * radius, 2.5 + sin(float(index) * 0.7) * 0.35, sin(angle) * radius), string_light_material, Vector3.ONE, "SanctuaryStringLight")
     regions_dressed += 1
 
 
