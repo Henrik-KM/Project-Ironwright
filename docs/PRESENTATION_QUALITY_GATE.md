@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The Tram Graveyard review actor received a focused wreck-condition pass on
+2026-08-24. The two authored carriage roots now carry a restrained bank, and
+the exact review-only yard adds grounded collapsed panels, broken window
+inserts, a fallen service post and bounded rubble so the frame reads as a
+derailed graveyard rather than two clean parked cars. Exact Windows capture at
+1280×720 on page 10/14 confirms the rail identity and wreck condition; broader
+human region acceptance remains open.
+
 The Cistern Apex final-threat shell received a focused crown-silhouette pass on
 2026-08-24. Its nine stable crown-spine sockets now use smooth tapered thorn
 geometry, reducing the manufactured-bar read without changing authored

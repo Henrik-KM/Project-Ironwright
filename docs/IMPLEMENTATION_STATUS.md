@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Tram Graveyard wreck-condition pass
+
+- added restrained bank angles to the two authored carriage roots while
+  preserving stable names, sockets and the landmark contract;
+- added presentation-only collapsed panels, broken front-window inserts,
+  fallen service hardware and bounded rubble to the exact review actor;
+- exact Windows export review passed at 1280×720 on presentation page 10/14;
+  the rail landmark now reads as a derailed graveyard rather than clean parked
+  cars.
+
 ## Focused Cistern Apex crown-silhouette pass
 
 - regenerated the original Cistern Apex shell with smooth tapered crown spines
