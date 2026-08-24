@@ -27,8 +27,8 @@ def build() -> None:
         {"name": "Heartforge iron shell", "pbrMetallicRoughness": {"baseColorFactor": [0.14, 0.18, 0.19, 1.0], "metallicFactor": 0.78, "roughnessFactor": 0.42}},
         {"name": "Heartforge cladding", "pbrMetallicRoughness": {"baseColorFactor": [0.28, 0.34, 0.35, 1.0], "metallicFactor": 0.7, "roughnessFactor": 0.38}},
         {"name": "Heartforge weathered copper", "pbrMetallicRoughness": {"baseColorFactor": [0.36, 0.18, 0.095, 1.0], "metallicFactor": 0.48, "roughnessFactor": 0.66}},
-        {"name": "Heartforge thermal core", "pbrMetallicRoughness": {"baseColorFactor": [0.48, 0.16, 0.035, 1.0], "metallicFactor": 0.24, "roughnessFactor": 0.34}, "emissiveFactor": [1.0, 0.18, 0.025]},
-        {"name": "Heartforge service cyan", "pbrMetallicRoughness": {"baseColorFactor": [0.035, 0.28, 0.3, 1.0], "metallicFactor": 0.28, "roughnessFactor": 0.24}, "emissiveFactor": [0.1, 0.78, 0.82]},
+        {"name": "Heartforge thermal core", "pbrMetallicRoughness": {"baseColorFactor": [0.48, 0.16, 0.035, 1.0], "metallicFactor": 0.24, "roughnessFactor": 0.34}, "emissiveFactor": [0.18, 0.03, 0.006]},
+        {"name": "Heartforge service cyan", "pbrMetallicRoughness": {"baseColorFactor": [0.035, 0.28, 0.3, 1.0], "metallicFactor": 0.28, "roughnessFactor": 0.24}, "emissiveFactor": [0.03, 0.3, 0.34]},
     ]
     meshes: list[dict] = []
 

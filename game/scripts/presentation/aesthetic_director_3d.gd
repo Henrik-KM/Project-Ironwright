@@ -84,8 +84,11 @@ func _polish_environment() -> void:
     sky_material.sky_horizon_color = Color("a27c69")
     sky_material.ground_horizon_color = Color("665b53")
     sky_material.ground_bottom_color = Color("1c2328")
-    sky_material.sun_angle_max = 18.0
-    sky_material.sun_curve = 0.11
+    # Keep the blue-hour sun as a small atmospheric source. A broad disk
+    # reads as a white UI-like plate in the tactical camera and overwhelms
+    # the Heartforge's warm focal hierarchy.
+    sky_material.sun_angle_max = 4.0
+    sky_material.sun_curve = 0.08
     var sky := Sky.new()
     sky.sky_material = sky_material
 

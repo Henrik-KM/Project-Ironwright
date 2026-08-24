@@ -5,6 +5,8 @@ signal health_changed(current: float, maximum: float)
 signal destroyed
 
 const AUTHORED_HEARTFORGE_MODEL_SCENE: PackedScene = preload("res://assets/heartforge/heartforge.gltf")
+const RESTING_CORE_LIGHT_ENERGY: float = 1.8
+const ACTIVE_CORE_LIGHT_ENERGY: float = 2.8
 
 @export var maximum_health: float = 520.0
 var current_health: float = 520.0
@@ -56,7 +58,7 @@ func is_alive() -> bool:
 func set_operation(kind: StringName) -> void:
     active_operation = kind
     if _core_light != null:
-        _core_light.light_energy = 5.6 if kind != &"" else 3.6
+        _core_light.light_energy = ACTIVE_CORE_LIGHT_ENERGY if kind != &"" else RESTING_CORE_LIGHT_ENERGY
 
 
 func set_adaptation_profile(next_profile: StringName) -> void:
@@ -254,6 +256,7 @@ func _build_visuals() -> void:
     var authored_model := AUTHORED_HEARTFORGE_MODEL_SCENE.instantiate()
     authored_model.name = "HeartforgeAuthoredModel"
     _model_root.add_child(authored_model)
+    _retune_authored_materials(authored_model)
     var legacy_shell := Node3D.new()
     legacy_shell.name = "LegacyProceduralHeartforgeShell"
     for child in _model_root.get_children():
@@ -265,8 +268,8 @@ func _build_visuals() -> void:
 
     # The core remains the warm focal source, but its ground influence is
     # bounded so the Heartforge does not flatten the surrounding paving.
-    _core_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 2.1, 0.0), Color("ff7d32"), 3.6, 16.0)
-    ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.2, 3.15), Color("62e1e7"), 1.4, 7.0)
+    _core_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 2.1, 0.0), Color("ff7d32"), RESTING_CORE_LIGHT_ENERGY, 13.0)
+    ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.2, 3.15), Color("62e1e7"), 0.9, 6.0)
 
     _damage_visual_root = Node3D.new()
     _damage_visual_root.name = "HeartforgeDamagePresentation"
@@ -317,12 +320,36 @@ func _refresh_damage_presentation() -> void:
             leak.visible = visibility > 0.25
 
 
+func _retune_authored_materials(authored_model: Node3D) -> void:
+    # The imported shell supplies authored emissive materials, while runtime
+    # progression supplies the crown and local lights. Keep the combined
+    # focal energy legible under the opening ACES/glow grade instead of
+    # allowing the shell to collapse into a white patch at tactical distance.
+    for raw_node in authored_model.find_children("*", "MeshInstance3D", true, false):
+        var mesh_instance := raw_node as MeshInstance3D
+        if mesh_instance == null or mesh_instance.mesh == null:
+            continue
+        var node_name := String(mesh_instance.name).to_lower()
+        var emission_ceiling := 0.72
+        if node_name.contains("furnace") or node_name.contains("thermal"):
+            emission_ceiling = 0.25
+        elif node_name.contains("louver") or node_name.contains("lens") or node_name.contains("plateglow"):
+            emission_ceiling = 0.38
+        for surface_index in range(mesh_instance.mesh.get_surface_count()):
+            var source_material := mesh_instance.get_active_material(surface_index) as StandardMaterial3D
+            if source_material == null or not source_material.emission_enabled:
+                continue
+            var tuned_material := source_material.duplicate() as StandardMaterial3D
+            tuned_material.emission_energy_multiplier = minf(tuned_material.emission_energy_multiplier, emission_ceiling)
+            mesh_instance.set_surface_override_material(surface_index, tuned_material)
+
+
 func _build_adaptive_geometry(tier: int) -> void:
     var iron := ModelKit3D.material(Color("394143"), 0.78, 0.42)
     var dark := ModelKit3D.material(Color("1b2425"), 0.74, 0.5)
     var rust := ModelKit3D.material(Color("805034"), 0.42, 0.72)
-    var heat := ModelKit3D.material(Color("9e4f18"), 0.24, 0.42, Color("ff7b2f"), 3.4)
-    var cyan := ModelKit3D.material(Color("28595c"), 0.38, 0.34, Color("70e9ee"), 2.5)
+    var heat := ModelKit3D.material(Color("9e4f18"), 0.24, 0.42, Color("ff7b2f"), 2.0)
+    var cyan := ModelKit3D.material(Color("28595c"), 0.38, 0.34, Color("70e9ee"), 1.25)
 
     if tier >= 2:
         for side in [-1.0, 1.0]:
@@ -345,7 +372,21 @@ func _build_adaptive_geometry(tier: int) -> void:
         ModelKit3D.add_beveled_box(_adaptive_geometry, Vector3(5.7, 0.28, 0.34), Vector3(0.0, 4.4, 0.0), iron, Vector3.ZERO, "Tier4SignalCrossbar", 0.08)
 
     if tier >= 5:
-        ModelKit3D.add_cylinder(_adaptive_geometry, 2.9, 0.18, Vector3(0.0, 4.72, 0.0), heat, Vector3.ZERO, "Tier5SovereigntyCrown")
+        # The sovereignty crown is a ring, not a filled plate. A solid
+        # cylinder reads as a pale disc from the tactical camera and hides
+        # the reactor silhouette beneath it.
+        var crown_heat := ModelKit3D.material(Color("6e3419"), 0.3, 0.5, Color("ff7b2f"), 0.72)
+        var crown_mesh := TorusMesh.new()
+        crown_mesh.inner_radius = 2.28
+        crown_mesh.outer_radius = 2.9
+        crown_mesh.rings = 20
+        crown_mesh.ring_segments = 64
+        var crown := MeshInstance3D.new()
+        crown.name = "Tier5SovereigntyCrown"
+        crown.mesh = crown_mesh
+        crown.material_override = crown_heat
+        crown.position = Vector3(0.0, 4.72, 0.0)
+        _adaptive_geometry.add_child(crown)
         for angle_index in range(8):
             var angle := TAU * float(angle_index) / 8.0
             var crown_position := Vector3(cos(angle) * 2.72, 4.9, sin(angle) * 2.72)
