@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused strategic keyboard-command recovery pass
+
+- restored the established `T` evolution and `O` outpost keyboard commands in
+  the release InputMap alongside their existing gamepad bindings;
+- added commercial-release coverage for the live key events, preserving the
+  existing `P` operations and `V` final-protocol keyboard paths;
+- exact exported Windows review passed on 2026-08-24 in the persisted German
+  locale: `T` visibly opened the Evolution panel and `O` visibly opened the
+  Autonomous Outpost panel, with the localized title and action chrome intact;
+- this is an accessibility and input-availability correction only: no command
+  state, progression gate, save schema or recurring player task changed.
+
 ## Focused strategic-command localization pass
 
 - routed strategic evolution, adaptive-defence, autonomous-outpost and

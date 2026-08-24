@@ -262,6 +262,18 @@ func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void
                 has_keyboard_event = true
         _expect(has_keyboard_event, "Keyboard movement action %s needs a live key binding." % String(movement_action))
 
+    var strategic_keyboard_bindings := {
+        &"iw_evolution": KEY_T,
+        &"iw_outposts": KEY_O,
+    }
+    for action in strategic_keyboard_bindings:
+        var expected_key: Key = strategic_keyboard_bindings[action]
+        var has_expected_key := false
+        for event in InputMap.action_get_events(action):
+            if event is InputEventKey and (event as InputEventKey).keycode == expected_key:
+                has_expected_key = true
+        _expect(has_expected_key, "Strategic action %s needs its default keyboard command key." % String(action))
+
     var keyboard_position_before := world.player.global_position
     Input.action_press(&"iw_move_up")
     for _frame in range(12):

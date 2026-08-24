@@ -24,6 +24,10 @@ const DEFAULT_CONTROLLER_BINDINGS: Dictionary = {
     "iw_move_right": JOY_BUTTON_DPAD_RIGHT,
     "iw_interact": JOY_BUTTON_A,
 }
+const DEFAULT_STRATEGIC_KEY_BINDINGS: Dictionary = {
+    "iw_evolution": KEY_T,
+    "iw_outposts": KEY_O,
+}
 const SUPPORTED_COLORBLIND_MODES: Array[StringName] = [&"off", &"deuteranopia", &"protanopia", &"tritanopia"]
 
 var settings: Dictionary = {}
@@ -286,6 +290,8 @@ func ensure_input_map() -> void:
     _ensure_action(&"iw_focus_salvage")
     _ensure_action(&"iw_focus_expedition")
 
+    for action in DEFAULT_STRATEGIC_KEY_BINDINGS:
+        _add_key_once(action, int(DEFAULT_STRATEGIC_KEY_BINDINGS[action]) as Key)
     _add_axis_once(&"iw_move_left", JOY_AXIS_LEFT_X, -1.0)
     _add_axis_once(&"iw_move_right", JOY_AXIS_LEFT_X, 1.0)
     _add_axis_once(&"iw_move_up", JOY_AXIS_LEFT_Y, -1.0)
@@ -311,6 +317,16 @@ func ensure_input_map() -> void:
 func _ensure_action(action: StringName) -> void:
     if not InputMap.has_action(action):
         InputMap.add_action(action, 0.22)
+
+
+func _add_key_once(action: StringName, keycode: Key) -> void:
+    for existing in InputMap.action_get_events(action):
+        if existing is InputEventKey and (existing as InputEventKey).keycode == keycode:
+            return
+    var event := InputEventKey.new()
+    event.keycode = keycode
+    event.physical_keycode = keycode
+    InputMap.action_add_event(action, event)
 
 
 func _add_button_once(action: StringName, button_index: int) -> void:
