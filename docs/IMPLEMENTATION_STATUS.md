@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused endgame-surface localization pass
+
+- localized the active final-protocol objective, intervention prompt,
+  sanctuary status badge, victory headings, continuation/restart prompts and
+  both authored protocol endings across English, Swedish and German;
+- added release assertions for the German active and completion surfaces;
+- exact Windows export review passed on 2026-08-24 in German for the active
+  and completed Severance protocol states; broader professional localization
+  remains open.
+
 ## Focused Observatory Ridge survey-readability pass
 
 - toned the exact-review dish into a restrained blue-violet material range,

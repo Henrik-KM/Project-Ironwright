@@ -598,8 +598,16 @@ func _update_complete_game_objective() -> void:
         hud.set_objective("INITIATE THE FINAL PROTOCOL", "Press V, choose an available protocol, and deliberately provoke the final ecological response when the Heartforge and machine society are ready.")
         hud.set_prompt("PRESS V · REVIEW IRREVERSIBLE FINAL PROTOCOLS")
     else:
-        hud.set_objective("HOLD THE HEARTFORGE", "%s. Routine machines and outposts continue acting autonomously; intervene only where the final response breaks through." % endgame_director.status_summary())
-        hud.set_prompt("HOLD THE HEARTFORGE · INTERVENE ONLY IF THE FINAL RESPONSE BREAKS THROUGH")
+        var locale_service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+        var objective_title := "HOLD THE HEARTFORGE"
+        var objective_detail := "%s. Routine machines and outposts continue acting autonomously; intervene only where the final response breaks through." % endgame_director.status_summary()
+        var objective_prompt := "HOLD THE HEARTFORGE · INTERVENE ONLY IF THE FINAL RESPONSE BREAKS THROUGH"
+        if locale_service != null:
+            objective_title = locale_service.text("objective.endgame.active.title")
+            objective_detail = locale_service.text("objective.endgame.active.detail", [endgame_director.status_summary()])
+            objective_prompt = locale_service.text("objective.endgame.active.prompt")
+        hud.set_objective(objective_title, objective_detail)
+        hud.set_prompt(objective_prompt)
 
 
 func _on_region_discovered(region_id: StringName, display_name: String) -> void:
@@ -787,7 +795,25 @@ func _on_endgame_completed(protocol_id: StringName, display_name: String, ending
     first_victory_achieved = true
     sanctuary_continuation = false
     game_ended = true
-    hud.show_ending(true, "FIRST VICTORY · %s\n\n%s\n\nThe run reached a complete systemic conclusion without a recurring timed-wave loop." % [display_name, ending], true)
+    var protocol_key := String(protocol_id).replace("protocol.", "")
+    var localized_name := display_name
+    var localized_ending := ending
+    var locale_service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if locale_service != null:
+        var name_key := "endgame.%s.name" % protocol_key
+        var ending_key := "endgame.%s.ending" % protocol_key
+        var localized_name_candidate := locale_service.text(name_key)
+        var localized_ending_candidate := locale_service.text(ending_key)
+        if localized_name_candidate != name_key:
+            localized_name = localized_name_candidate
+        if localized_ending_candidate != ending_key:
+            localized_ending = localized_ending_candidate
+    var localized_detail := "FIRST VICTORY · %s\n\n%s\n\nThe run reached a complete systemic conclusion without a recurring timed-wave loop." % [localized_name, localized_ending]
+    if locale_service != null:
+        localized_detail = locale_service.text("hud.ending.first_victory_detail", [localized_name, localized_ending])
+    # Keep the live completion surface in the selected locale even though the
+    # simulation director still owns canonical English data for saves/logs.
+    hud.show_ending(true, localized_detail, true)
 
 
 func _on_endgame_failed(protocol_id: StringName, reason: String) -> void:
