@@ -1277,9 +1277,9 @@
         "roughnessFactor": 0.34
       },
       "emissiveFactor": [
-        1.0,
         0.18,
-        0.025
+        0.03,
+        0.006
       ]
     },
     {
@@ -1295,9 +1295,9 @@
         "roughnessFactor": 0.24
       },
       "emissiveFactor": [
-        0.1,
-        0.78,
-        0.82
+        0.03,
+        0.3,
+        0.34
       ]
     }
   ],

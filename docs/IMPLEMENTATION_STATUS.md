@@ -3648,3 +3648,22 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   adds no player task or recurring management burden;
 - exact exported North Ruins review is required before this region-family
   acceptance item is considered closed.
+
+## Focused Heartforge focal-light hierarchy milestone
+
+- bounded the authored Heartforge shell's imported thermal/service emission and
+  lowered the runtime core and service lights so the Tier V crown remains a
+  warm, readable focal signal instead of collapsing the upper frame into a
+  white patch under the opening ACES/glow grade;
+- lowered the progression crown's runtime heat/cyan emission while preserving
+  its authored tier geometry and restrained motion; operation state still
+  raises the Heartforge key within the same bounded budget;
+- replaced the Tier V solid crown plate with an open toroidal ring so the
+  tactical camera retains the reactor silhouette and the crown reads as
+  manufactured hardware rather than a pale disc;
+- corrected the shared blue-hour sky sun from an oversized 18-degree disk to a
+  restrained 4-degree source so the exact opening frame no longer carries a
+  dominant white atmospheric plate;
+- added aesthetic regression coverage for the imported emission peak and
+  resting light budget; exact exported live review remains required for
+  acceptance.

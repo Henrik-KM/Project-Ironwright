@@ -711,12 +711,33 @@ func _run_all() -> void:
         _expect(heartforge.find_child("HeartforgeCoolantPipeLeft", true, false) != null and heartforge.find_child("HeartforgeServiceLatchLeft", true, false) != null and heartforge.find_child("HeartforgeConduitClipLeft", true, false) != null, "The authored Heartforge must expose layered coolant routing and service-latch hardware.")
         _expect(heartforge.find_child("HeartforgeThermalShroud00", true, false) != null and heartforge.find_child("HeartforgeThermalShroudCap00", true, false) != null and heartforge.find_child("ForgeBenchBraceLeft", true, false) != null, "The Heartforge focal and fabrication surfaces must expose manufactured shrouds and bench bracing.")
         _expect(_find_named(heartforge, "HeartforgeFoundationBolt00") != null, "The authored Heartforge must expose anchored foundation hardware.")
+        var authored_heartforge := heartforge.find_child("HeartforgeAuthoredModel", true, false) as Node3D
+        var authored_emission_peak := 0.0
+        if authored_heartforge != null:
+            for raw_mesh in authored_heartforge.find_children("*", "MeshInstance3D", true, false):
+                var mesh_instance := raw_mesh as MeshInstance3D
+                if mesh_instance == null or mesh_instance.mesh == null:
+                    continue
+                for surface_index in range(mesh_instance.mesh.get_surface_count()):
+                    var material := mesh_instance.get_active_material(surface_index) as StandardMaterial3D
+                    if material != null and material.emission_enabled:
+                        authored_emission_peak = maxf(authored_emission_peak, material.emission_energy_multiplier)
+        _expect(authored_emission_peak <= 0.91, "The authored Heartforge shell must cap thermal/service emission so the focal machinery retains material separation.")
+        heartforge.set_operation(&"")
+        var heartforge_lights := heartforge.find_children("*", "OmniLight3D", true, false)
+        var strongest_heartforge_light := 0.0
+        for raw_light in heartforge_lights:
+            strongest_heartforge_light = maxf(strongest_heartforge_light, (raw_light as OmniLight3D).light_energy)
+        _expect(strongest_heartforge_light <= Heartforge3D.RESTING_CORE_LIGHT_ENERGY + 0.01, "The resting Heartforge light must preserve a warm focal key without flattening the district.")
         heartforge.set_progression_tier(5)
         _expect(heartforge.find_child("AdaptiveHeartforgeGeometry", true, false) != null, "Heartforge progression must own a dedicated adaptive geometry layer.")
         _expect(heartforge.find_child("Tier2Buttress", true, false) != null, "Tier 2 Heartforge geometry must add structural buttresses.")
         _expect(heartforge.find_child("Tier3SignalConduit", true, false) != null, "Tier 3 Heartforge geometry must add signal conduits.")
         _expect(heartforge.find_child("Tier4SignalMast", true, false) != null, "Tier 4 Heartforge geometry must add the signal mast.")
-        _expect(heartforge.find_child("Tier5SovereigntyCrown", true, false) != null, "Tier 5 Heartforge geometry must culminate in a readable crown.")
+        var crown := heartforge.find_child("Tier5SovereigntyCrown", true, false) as MeshInstance3D
+        _expect(crown != null and crown.mesh is TorusMesh, "Tier 5 Heartforge geometry must culminate in a readable open crown ring rather than a filled plate.")
+        var crown_material := crown.material_override as StandardMaterial3D if crown != null else null
+        _expect(crown_material != null and crown_material.emission_energy_multiplier <= 0.73, "The Tier 5 crown ring must retain a restrained warm accent instead of becoming the brightest surface in the tactical frame.")
         if heartforge_presentation != null:
             var settings_service := get_first_node_in_group("release_settings_service") as ReleaseSettingsService3D
             var previous_reduced_motion := bool(settings_service.get_value(&"reduced_motion", false)) if settings_service != null else false
@@ -762,6 +783,9 @@ func _run_all() -> void:
         _expect(environment.ambient_light_energy >= 0.45, "The overhaul must remain readable rather than pitch-black.")
         _expect(environment.fog_density <= 0.015, "Fog may shape depth but must not crush visibility.")
         _expect(environment.tonemap_mode == Environment.TONE_MAPPER_ACES, "ACES tonemapping should provide stable cinematic contrast.")
+        if environment.sky != null and environment.sky.sky_material is ProceduralSkyMaterial:
+            var sky_material := environment.sky.sky_material as ProceduralSkyMaterial
+            _expect(sky_material.sun_angle_max <= 7.0, "The blue-hour sun disk must remain a restrained atmospheric accent instead of a white tactical-frame plate.")
 
     var player := get_first_node_in_group("player_character") as Node3D
     _expect(player != null, "The aesthetic test needs the Mechromancer.")
