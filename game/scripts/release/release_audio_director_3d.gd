@@ -48,6 +48,8 @@ var last_operation_signature: StringName = &""
 var spatial_operation_reports: Array[AudioStreamPlayer3D] = []
 var attack_warning_clock: float = 0.0
 var attack_warning_count: int = 0
+var last_heartforge_tier: int = 1
+var heartforge_tier_cue_count: int = 0
 
 
 func configure(
@@ -75,6 +77,7 @@ func _ready() -> void:
     _build_caption_ui()
     _connect_existing_nodes()
     get_tree().node_added.connect(_on_node_added)
+    last_heartforge_tier = progression.heartforge_tier if progression != null else 1
     _switch_music(&"embers", true)
 
 
@@ -269,6 +272,10 @@ func notify_victory() -> void:
 
 
 func _connect_existing_nodes() -> void:
+    if progression != null:
+        var tier_callback := Callable(self, "_on_heartforge_tier_changed")
+        if not progression.heartforge_tier_changed.is_connected(tier_callback):
+            progression.heartforge_tier_changed.connect(tier_callback)
     for node in get_tree().get_nodes_in_group(&"player_character"):
         _connect_actor(node)
     for node in get_tree().get_nodes_in_group(&"organic_enemies"):
@@ -314,6 +321,17 @@ func _on_channel_started(kind: StringName, duration: float, description: String)
         play_effect(&"salvage", "audio.caption.salvage", 0.02, -3.0)
     elif kind in [&"forge_build", &"forge_upgrade", &"heartforge_evolution"]:
         play_effect(&"forge", "audio.caption.forge", 0.015, -2.0)
+
+
+func _on_heartforge_tier_changed(tier: int) -> void:
+    if tier <= last_heartforge_tier:
+        return
+    last_heartforge_tier = tier
+    heartforge_tier_cue_count += 1
+    var pitch := lerpf(0.9, 1.08, clampf(float(tier - 2) / 3.0, 0.0, 1.0))
+    play_effect(&"forge", "audio.caption.heartforge_tier", 0.012, -1.0, pitch)
+    if tier >= 4:
+        _switch_music(&"sovereignty")
 
 
 func _on_organic_attack(enemy: OrganicEnemy3D, target: Node) -> void:
