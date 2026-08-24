@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The late-organic family shells received a focused high-definition pass on
+2026-08-24. The shared torso shell source now carries a deeper close-camera
+surface, and the Carrion Bell's resonator is an original dense curved ring
+rather than a flat cylinder lip. Exact exported Windows review at 1280×720 on
+page 3/14 confirms the signal-organ's ring reads as a distinct threat feature;
+broader hostile-family art acceptance remains open.
+
 The inherited full-game foundation surface received a focused localization
 pass on 2026-08-24. Heartforge evolution, outpost authorization and rebuild,
 run-phase, restore, milestone and full-game objective copy now resolve through

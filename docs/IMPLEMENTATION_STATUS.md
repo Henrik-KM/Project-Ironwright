@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused late-organic shell and resonator high-definition pass
+
+- deepened the shared authored organic-family shell mesh used by the seven
+  late-family glTF assets without changing stable sockets, animation clips,
+  collision, tier data or ecology ownership;
+- replaced the Carrion Bell's flat resonator lip with an original dense torus
+  mesh so its signal-organ identity reads as a living instrument at compact
+  review distance;
+- added runtime vertex-density coverage and exact Windows page 3/14 review;
+  the resonator ring now reads as a distinct circular threat feature while
+  the broader late-family art-acceptance gate remains open.
+
 ## Focused full-game foundation localization pass
 
 - moved inherited Heartforge evolution, outpost authorization, haul/rebuild,

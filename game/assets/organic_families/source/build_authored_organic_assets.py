@@ -171,6 +171,51 @@ def add_convex_sheet(
     return _geometry(builder, positions, normals, indices, material)
 
 
+def add_torus(
+    builder: BufferBuilder,
+    major_radius: float,
+    minor_radius: float,
+    material: int,
+    major_segments: int = 36,
+    minor_segments: int = 10,
+) -> tuple[int, int, int, int]:
+    """Build a smooth resonator ring around a living signal core."""
+    major_segments = max(24, major_segments)
+    minor_segments = max(8, minor_segments)
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+    for major_index in range(major_segments):
+        major_angle = math.tau * major_index / major_segments
+        major_cosine = math.cos(major_angle)
+        major_sine = math.sin(major_angle)
+        for minor_index in range(minor_segments):
+            minor_angle = math.tau * minor_index / minor_segments
+            minor_cosine = math.cos(minor_angle)
+            minor_sine = math.sin(minor_angle)
+            ring_radius = major_radius + minor_radius * minor_cosine
+            positions.extend([
+                ring_radius * major_cosine,
+                minor_radius * minor_sine,
+                ring_radius * major_sine,
+            ])
+            normals.extend([
+                minor_cosine * major_cosine,
+                minor_sine,
+                minor_cosine * major_sine,
+            ])
+    for major_index in range(major_segments):
+        next_major = (major_index + 1) % major_segments
+        for minor_index in range(minor_segments):
+            next_minor = (minor_index + 1) % minor_segments
+            a = major_index * minor_segments + minor_index
+            b = next_major * minor_segments + minor_index
+            c = next_major * minor_segments + next_minor
+            d = major_index * minor_segments + next_minor
+            indices.extend([a, b, c, a, c, d])
+    return _geometry(builder, positions, normals, indices, material)
+
+
 def build_family(name: str, spec: dict) -> None:
     builder = BufferBuilder()
     wet, shell, membrane, bone, eye, tendon = range(6)
@@ -198,7 +243,14 @@ def build_family(name: str, spec: dict) -> None:
         # light instead of hiding the issue behind a material-only pass.
         "Core": mesh("Core", add_uv_sphere(builder, 0.62, wet, 24, 36)),
         "Segment": mesh("Segment", add_uv_sphere(builder, 0.48, shell, 24, 36)),
+        # The torso ribs are the dominant close-gallery surface. A thin sheet
+        # made them read as repeated manufactured bars at 1280x720, even
+        # though the family-specific sockets were present. Keep the original
+        # Plate mesh for narrow crowns and fins, but give the shared torso
+        # layer a deeper convex shell with a softer perimeter and more useful
+        # highlight rolloff.
         "Plate": mesh("Plate", add_convex_sheet(builder, (1.52, 0.16, 0.28), shell, rings=5, sides=24)),
+        "ShellPlate": mesh("ShellPlate", add_convex_sheet(builder, (1.52, 0.24, 0.54), shell, rings=7, sides=32)),
         "Membrane": mesh("Membrane", add_convex_sheet(builder, (1.26, 0.045, 1.08), membrane, rings=6, sides=28)),
         "Bone": mesh("Bone", add_cylinder(builder, 0.09, 0.86, bone, 24)),
         "LongBone": mesh("LongBone", add_cylinder(builder, 0.065, 1.35, bone, 24)),
@@ -209,7 +261,7 @@ def build_family(name: str, spec: dict) -> None:
         "FineVein": mesh("FineVein", add_cylinder(builder, 0.026, 1.22, bone, 24)),
         "SurfaceVein": mesh("SurfaceVein", add_cylinder(builder, 0.024, 0.88, tendon, 24)),
         "Ridge": mesh("Ridge", add_beveled_box(builder, (1.24, 0.07, 0.10), bone, 0.018)),
-        "ResonatorRing": mesh("ResonatorRing", add_cylinder(builder, 0.11, 0.07, bone, 24)),
+        "ResonatorRing": mesh("ResonatorRing", add_torus(builder, 0.19, 0.035, bone)),
         "RootKnuckle": mesh("RootKnuckle", add_uv_sphere(builder, 0.14, bone, 24, 36)),
         "WingFrame": mesh("WingFrame", add_cylinder(builder, 0.045, 1.58, bone, 24)),
         "MembraneRib": mesh("MembraneRib", add_cylinder(builder, 0.03, 0.82, bone, 24)),
@@ -261,7 +313,7 @@ def build_family(name: str, spec: dict) -> None:
         segment_width = max(0.72, float(segment_scale[0]) - index * segment_taper)
         segment_depth = max(0.78, float(segment_scale[2]) - index * segment_taper * 0.8)
         add_node(f"TorsoSegment{index}", mesh_ids["Segment"], (0.0, 0.89 - index * 0.018, z), scale=(segment_width, segment_scale[1], segment_depth), parent=torso)
-        add_node(f"{name.capitalize()}ThoraxRib", mesh_ids["Plate"], (0.0, 1.37 - index * 0.035, z), rotation=(0.0, 0.0, 0.03 * (index - 1)), scale=(1.0, 1.0, 0.74), parent=torso, extras={"surface": "layered_shell_break"} if index == 1 else None)
+        add_node(f"{name.capitalize()}ThoraxRib", mesh_ids["ShellPlate"], (0.0, 1.37 - index * 0.035, z), rotation=(0.0, 0.0, 0.03 * (index - 1)), scale=(1.0, 1.0, 0.74), parent=torso, extras={"surface": "layered_shell_break"} if index == 1 else None)
         add_node("ThoraxFastener", mesh_ids["Fastener"], (-0.56, 1.18, z), parent=torso)
         add_node("ThoraxFastener", mesh_ids["Fastener"], (0.56, 1.18, z), parent=torso)
         # Paired surface veins break up the shared torso kit at close camera
@@ -271,7 +323,7 @@ def build_family(name: str, spec: dict) -> None:
         for side in (-1.0, 1.0):
             suffix = "L" if side < 0.0 else "R"
             add_node(f"{name.capitalize()}TorsoSurfaceVein{index}{suffix}", mesh_ids["SurfaceVein"], (side * 0.31, 1.19, z - 0.54), rotation=(0.0, 0.0, side * 0.08), scale=(1.0, 1.0, 0.72), parent=torso, extras={"surface": "vascular_surface_detail"})
-    dorsal = add_node("OrganicDorsalPlate", mesh_ids["Plate"], (-0.12, 1.54, 0.18), rotation=(0.0, 0.0, -0.04), scale=(1.08, 1.0, 1.4), extras={"surface": "beveled_layered_shell_break"})
+    dorsal = add_node("OrganicDorsalPlate", mesh_ids["ShellPlate"], (-0.12, 1.54, 0.18), rotation=(0.0, 0.0, -0.04), scale=(1.08, 1.0, 1.4), extras={"surface": "beveled_layered_shell_break"})
 
     if name == "roofleaper":
         add_node("RoofleaperCrown", mesh_ids["Soft"], (0.0, 1.3, -1.02), scale=(1.15, 0.82, 1.05), extras={"socket_type": "crown"})

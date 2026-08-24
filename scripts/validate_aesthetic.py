@@ -596,7 +596,7 @@ def validate_shared_organic_source_tessellation() -> None:
     for relative, (ring_floor, side_floor, cylinder_floor) in SHARED_ORGANIC_SOURCE_TESSELLATION.items():
         source_path = ROOT / relative
         source_text = source_path.read_text(encoding="utf-8")
-        if "def add_convex_sheet(" not in source_text or '"Plate": mesh("Plate", add_convex_sheet' not in source_text or '"Membrane": mesh("Membrane", add_convex_sheet' not in source_text:
+        if "def add_convex_sheet(" not in source_text or '"Plate": mesh("Plate", add_convex_sheet' not in source_text or '"Membrane": mesh("Membrane", add_convex_sheet' not in source_text or "def add_torus(" not in source_text or '"ResonatorRing": mesh("ResonatorRing", add_torus' not in source_text:
             fail("shared organic source builder must use the convex close-camera sheet kit for plates and membranes.")
         tree = ast.parse(source_text, filename=str(source_path))
         mesh_assignment = next(
