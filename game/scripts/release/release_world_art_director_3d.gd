@@ -954,13 +954,24 @@ func _dress_nest(root: Node3D) -> void:
         Vector3(PI * 0.5, 0.0, 0.0),
         "CathedralReleaseRoseGlass"
     )
-    for spoke_index in range(6):
-        var spoke_angle := TAU * float(spoke_index) / 6.0
+    ModelKit3D.add_torus(
+        cathedral_facade,
+        0.91,
+        0.09,
+        Vector3(0.0, 3.25, facade_z + 0.73),
+        brick_dark,
+        Vector3(PI * 0.5, 0.0, 0.0),
+        "CathedralReleaseRoseRim",
+        48,
+        8
+    )
+    for spoke_index in range(8):
+        var spoke_angle := TAU * float(spoke_index) / 8.0
         ModelKit3D.add_cylinder(
             cathedral_facade,
             0.045,
-            1.45,
-            Vector3(cos(spoke_angle) * 0.34, 3.25 + sin(spoke_angle) * 0.34, facade_z + 0.7),
+            1.7,
+            Vector3(cos(spoke_angle) * 0.34, 3.25 + sin(spoke_angle) * 0.34, facade_z + 0.76),
             brick_dark,
             Vector3(PI * 0.5, 0.0, spoke_angle),
             "CathedralReleaseRoseSpoke%02d" % spoke_index

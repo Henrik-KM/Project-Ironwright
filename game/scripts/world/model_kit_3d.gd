@@ -86,6 +86,59 @@ static func add_cylinder(
     return add_tapered_cylinder(parent, radius, radius, height, position, mat, rotation, name_hint)
 
 
+static func add_torus(
+        parent: Node3D,
+        major_radius: float,
+        minor_radius: float,
+        position: Vector3,
+        mat: Material,
+        rotation: Vector3 = Vector3.ZERO,
+        name_hint: String = "Torus",
+        major_segments: int = 48,
+        minor_segments: int = 8
+    ) -> MeshInstance3D:
+    var vertices := PackedVector3Array()
+    var normals := PackedVector3Array()
+    var indices := PackedInt32Array()
+    var safe_major_segments := maxi(12, major_segments)
+    var safe_minor_segments := maxi(6, minor_segments)
+    for major_index in range(safe_major_segments):
+        var major_angle := TAU * float(major_index) / float(safe_major_segments)
+        var major_cos := cos(major_angle)
+        var major_sin := sin(major_angle)
+        for minor_index in range(safe_minor_segments):
+            var minor_angle := TAU * float(minor_index) / float(safe_minor_segments)
+            var minor_cos := cos(minor_angle)
+            var minor_sin := sin(minor_angle)
+            var ring_radius := major_radius + minor_radius * minor_cos
+            vertices.append(Vector3(ring_radius * major_cos, minor_radius * minor_sin, ring_radius * major_sin))
+            normals.append(Vector3(minor_cos * major_cos, minor_sin, minor_cos * major_sin))
+    for major_index in range(safe_major_segments):
+        var next_major := (major_index + 1) % safe_major_segments
+        for minor_index in range(safe_minor_segments):
+            var next_minor := (minor_index + 1) % safe_minor_segments
+            var a := major_index * safe_minor_segments + minor_index
+            var b := next_major * safe_minor_segments + minor_index
+            var c := next_major * safe_minor_segments + next_minor
+            var d := major_index * safe_minor_segments + next_minor
+            indices.append_array(PackedInt32Array([a, b, c, a, c, d]))
+    var arrays := []
+    arrays.resize(Mesh.ARRAY_MAX)
+    arrays[Mesh.ARRAY_VERTEX] = vertices
+    arrays[Mesh.ARRAY_NORMAL] = normals
+    arrays[Mesh.ARRAY_INDEX] = indices
+    var mesh := ArrayMesh.new()
+    mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+    var instance := MeshInstance3D.new()
+    instance.name = name_hint
+    instance.mesh = mesh
+    instance.material_override = mat
+    instance.position = position
+    instance.rotation = rotation
+    parent.add_child(instance)
+    return instance
+
+
 static func add_tapered_cylinder(
         parent: Node3D,
         top_radius: float,

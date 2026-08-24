@@ -12,10 +12,45 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "cathedral.gltf"
+
+
+def add_torus(
+    builder: BufferBuilder,
+    major_radius: float,
+    minor_radius: float,
+    material: int,
+    major_segments: int = 48,
+    minor_segments: int = 8,
+) -> tuple[int, int, int, int]:
+    """Build a dense circular iron rim for the front rose-window silhouette."""
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+    for major in range(major_segments):
+        major_angle = math.tau * major / major_segments
+        major_cos = math.cos(major_angle)
+        major_sin = math.sin(major_angle)
+        for minor in range(minor_segments):
+            minor_angle = math.tau * minor / minor_segments
+            minor_cos = math.cos(minor_angle)
+            minor_sin = math.sin(minor_angle)
+            ring_radius = major_radius + minor_radius * minor_cos
+            positions.extend([ring_radius * major_cos, minor_radius * minor_sin, ring_radius * major_sin])
+            normals.extend([minor_cos * major_cos, minor_sin, minor_cos * major_sin])
+    for major in range(major_segments):
+        next_major = (major + 1) % major_segments
+        for minor in range(minor_segments):
+            next_minor = (minor + 1) % minor_segments
+            a = major * minor_segments + minor
+            b = next_major * minor_segments + minor
+            c = next_major * minor_segments + next_minor
+            d = major * minor_segments + next_minor
+            indices.extend([a, b, c, a, c, d])
+    return _geometry(builder, positions, normals, indices, material)
 
 
 def main() -> None:
@@ -60,6 +95,7 @@ def main() -> None:
         "DoorLintel": mesh("DoorLintel", add_beveled_box(builder, (3.5, 0.18, 0.22), iron, 0.12)),
         "TowerSlit": mesh("TowerSlit", add_beveled_box(builder, (0.18, 0.82, 0.12), blue_glass, 0.12)),
         "WindowLatch": mesh("WindowLatch", add_uv_sphere(builder, 0.075, iron, 14, 20)),
+        "RoseRim": mesh("RoseWindowRim", add_torus(builder, 1.42, 0.10, iron)),
         "ChoirRib": mesh("ChoirRib", add_cylinder(builder, 0.055, 2.4, iron, 18)),
         "ChoirRing": mesh("ChoirRing", add_cylinder(builder, 0.24, 0.08, rose_glass, 24)),
         "BellClapper": mesh("BellClapper", add_cylinder(builder, 0.075, 0.72, iron, 18)),
@@ -119,7 +155,8 @@ def main() -> None:
 
     add_node("CathedralRoseWindow", mesh_ids["Glass"], (0.0, 3.15, -2.08), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "rose_window"})
     add_node("CathedralRoseCore", mesh_ids["Rose"], (0.0, 3.15, -2.20), rotation=(math.pi * 0.5, 0.0, 0.0))
-    for index, angle in enumerate((0.0, math.pi * 0.25, math.pi * 0.5, math.pi * 0.75)):
+    add_node("CathedralRoseRim", mesh_ids["RoseRim"], (0.0, 3.15, -2.34), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "rose_window_rim"})
+    for index, angle in enumerate((0.0, math.pi * 0.25, math.pi * 0.5, math.pi * 0.75, math.pi, math.pi * 1.25, math.pi * 1.5, math.pi * 1.75)):
         add_node("CathedralRoseRib%d" % index, mesh_ids["Rib"], (math.cos(angle) * 0.78, 3.15 + math.sin(angle) * 0.78, -2.32), rotation=(0.0, 0.0, angle), extras={"socket_type": "rose_frame"})
         add_node("CathedralRoseLatch%d" % index, mesh_ids["WindowLatch"], (math.cos(angle) * 1.02, 3.15 + math.sin(angle) * 1.02, -2.36), extras={"surface": "rose_window_latch"})
 
@@ -161,7 +198,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "cathedral.quarter.v1",
-            "required_nodes": ["CathedralModel", "CathedralNave", "CathedralRoseWindow", "CathedralDoorPostL", "CathedralTowerSlit0", "CathedralRoseLatch0", "CathedralChoirCore", "CathedralChoirSignal", "CathedralChoirSignalRing", "CathedralChoirRibL", "CathedralBell", "CathedralBellClapper", "CathedralOrganicVeinKnuckle17", "ProductionAssetMarker"],
+            "required_nodes": ["CathedralModel", "CathedralNave", "CathedralRoseWindow", "CathedralRoseRim", "CathedralDoorPostL", "CathedralTowerSlit0", "CathedralRoseLatch0", "CathedralChoirCore", "CathedralChoirSignal", "CathedralChoirSignalRing", "CathedralChoirRibL", "CathedralBell", "CathedralBellClapper", "CathedralOrganicVeinKnuckle17", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

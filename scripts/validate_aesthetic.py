@@ -287,6 +287,7 @@ AUTHORED_REGION_ASSETS = {
             "CathedralDoorPostL",
             "CathedralTowerSlit0",
             "CathedralRoseWindow",
+            "CathedralRoseRim",
             "CathedralRoseLatch0",
             "CathedralChoirCore",
             "CathedralChoirSignal",
