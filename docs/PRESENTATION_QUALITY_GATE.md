@@ -37,6 +37,15 @@ Swedish and German catalogs. Exact exported Windows review must confirm a
 fresh-world opening in each selected locale; this is copy/presentation work
 only and does not alter gameplay or persistence.
 
+The compact opening HUD now places the resource/focus and Mechromancer/Bulwark
+health cards explicitly within the real export viewport. The prior anchored
+layout could resolve those cards off-screen during the first compact layout
+pass, leaving the objective and route prompt visible but removing important
+tactical context. A fresh exact Windows export at 1024×576 was reviewed on
+2026-08-24 with all four opening HUD surfaces visible in-world. This is a
+viewport-layout correction only; the first-session regression runner now checks
+the same rectangles inside an 800×520 test viewport.
+
 The release front end now keeps stable localization keys on title, pause and
 settings actions, so changing language from an active pause menu refreshes the
 already-built pause actions immediately instead of leaving the prior locale in
