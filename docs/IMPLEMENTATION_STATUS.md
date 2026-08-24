@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Root Cistern capstone-presentation depth pass
+
+- rebuilt the Root Cistern's basin spines as low radial root braces so the
+  authored approach view no longer places tall foreground stakes across the
+  capstone core;
+- added a grounded core collar and six radial root braces around the layered
+  apex, preserving the existing landmark, socket, LOD, animation and
+  collision contracts while making the final organic-machine silhouette read
+  as one anchored structure;
+- exact Windows export review is required before this pass can be accepted.
+
 ## Focused Mechromancer roster-review framing pass
 
 - show the Mechromancer's authored front-facing field-engineer silhouette on

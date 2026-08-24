@@ -578,7 +578,9 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     if page.size() == 1:
         var actor := page[0] as Node3D
         _expect(actor != null and actor.visible, "Root Cistern presentation review actor must be visible on the final remote page.")
+        _expect(actor != null and is_equal_approx(actor.rotation.y, PI / 6.0), "Root Cistern presentation review must use the between-pylons capstone framing angle.")
         _expect(actor != null and actor.find_children("*", "MeshInstance3D", true, false).size() > 20, "Root Cistern presentation review actor must retain its authored high-definition mesh hierarchy.")
+        _expect(actor != null and actor.find_child("RootCisternCoreCollar", true, false) != null and actor.find_child("RootCisternCoreRoot0", true, false) != null, "Root Cistern presentation review must retain the grounded collar and radial root-brace detail.")
         var review_basin := actor.find_child("RootCisternBasin", true, false) as MeshInstance3D
         var review_basin_material := review_basin.material_override as StandardMaterial3D if review_basin != null else null
         _expect(review_basin_material != null and review_basin_material.albedo_color.r < 0.20 and review_basin_material.albedo_color.g < 0.35, "Root Cistern presentation review must retain the dark basin treatment used by the persistent landmark.")
