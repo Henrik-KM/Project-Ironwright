@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Mechromancer roster-review framing pass
+
+- show the Mechromancer's authored front-facing field-engineer silhouette on
+  the friendly roster review page, exposing the face, coat, sidearm/tool and
+  protected field hardware while leaving the live third-person camera angle
+  unchanged;
+- added commercial-release coverage for the review-only player orientation;
+- exact Windows export review passed on 2026-08-24 at 1280×720 with the player
+  model's face and material-separated equipment readable beside the robots.
+
 ## Focused friendly-roster review-lighting pass
 
 - attenuated actor-local sensor lamps only on the development-friendly-roster

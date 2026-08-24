@@ -21,6 +21,12 @@ robot shell materials and the Mechromancer silhouette remain the focal read.
 This is a review-only lighting correction; live tactical lamp energy is
 unchanged.
 
+The same roster page now presents the Mechromancer from the authored front,
+exposing the human field-engineer face, coat, sidearm/tool and protected
+hardware instead of the rear tactical angle used during live play. Exact
+Windows review at 1280×720 confirms the player model's material separation
+beside the friendly machines; the runtime camera orientation remains unchanged.
+
 The organic review fixture now widens the early- and late-family rows and gives
 them a slightly more distant bounded camera so the authored shells remain
 individually judgeable at compact Windows capture size. Exact review of the

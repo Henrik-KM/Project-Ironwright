@@ -518,6 +518,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     world._show_presentation_review_page(0)
     await process_frame
     _expect(world.presentation_review_camera_desired.z - world.presentation_review_camera_target.z <= 13.3, "Core presentation pages must use a closer roster framing for authored detail review.")
+    _expect(absf(world.player.rotation.y) <= 0.05, "The friendly roster review must show the Mechromancer's authored field-engineer front rather than the rear tactical camera angle.")
     var friendly_lamp_count := 0
     var friendly_lamp_max_energy := 0.0
     for friendly_actor in world.presentation_review_pages[0]:
