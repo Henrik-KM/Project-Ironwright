@@ -29,6 +29,12 @@ Swedish and German catalogs. Exact exported Windows review must confirm a
 fresh-world opening in each selected locale; this is copy/presentation work
 only and does not alter gameplay or persistence.
 
+The release front end now keeps stable localization keys on title, pause and
+settings actions, so changing language from an active pause menu refreshes the
+already-built pause actions immediately instead of leaving the prior locale in
+place. Commercial-release coverage protects the Swedish and German refresh
+paths.
+
 Cathedral Quarter's release brood sacs now use layered shell-and-ridge anatomy
 instead of a ring of flat proxy spheres. Exact exported Windows page 11/14
 review confirms that the biological takeover reads as grouped organic plates

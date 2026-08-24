@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused live-locale pause refresh pass
+
+- assigned stable localization keys to release title, pause and settings
+  actions so an already-built pause surface refreshes correctly after a
+  language change;
+- added commercial-release coverage for Swedish and German pause action
+  refresh, preserving the existing callbacks and modal flow;
+- this is a release UI correctness fix only: no gameplay, save-state or
+  accessibility control contracts changed.
+
 ## Focused opening-objective localization pass
 
 - routed first-session guidance labels, objective titles/details and route
