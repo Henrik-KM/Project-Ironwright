@@ -81,17 +81,17 @@ func _on_tier_ecology_report(message: String) -> void:
 
 
 func _on_tier_first_observed(tier: int, display_name: String) -> void:
-	hud.push_notification("NEW ENEMY TIER CONFIRMED · TIER %d %s\nMachine intelligence reports increasingly purposeful behavior." % [tier, display_name.to_upper()])
+	hud.push_notification(_localized_text("notification.tier.first_observed", "NEW ENEMY TIER CONFIRMED · TIER {0} {1}\nMACHINE INTELLIGENCE REPORTS INCREASINGLY PURPOSEFUL BEHAVIOR.", [tier, display_name.to_upper()]))
 	if release_audio != null and tier >= 3:
 		release_audio.notify_danger()
 
 
 func _on_tier_saturation_transferred(from_tier: int, to_tier: int, transferred_rate: float) -> void:
-	hud.push_notification("ECOLOGICAL ESCALATION · TIER %d SATURATED\nFuture reproductive capacity is shifting toward Tier %d organisms." % [from_tier, to_tier])
+	hud.push_notification(_localized_text("notification.tier.saturated", "ECOLOGICAL ESCALATION · TIER {0} SATURATED\nFUTURE REPRODUCTIVE CAPACITY IS SHIFTING TOWARD TIER {1} ORGANISMS.", [from_tier, to_tier]))
 
 
 func _on_tier_nest_cleared(nest_id: StringName, display_name: String) -> void:
-	hud.push_notification("BROOD SITE CLEARED · %s\nLong-term replenishment has fallen." % display_name.to_upper())
+	hud.push_notification(_localized_text("notification.tier.nest_cleared", "BROOD SITE CLEARED · {0}\nLONG-TERM REPLENISHMENT HAS FALLEN.", [display_name.to_upper()]))
 
 
 func _spawn_enemy(position: Vector3, species: StringName) -> OrganicEnemy3D:

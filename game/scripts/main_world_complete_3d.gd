@@ -588,48 +588,47 @@ func _update_complete_game_objective() -> void:
         return
 
     if not long_operation_director.has_completed(&"operation.west_grid_survey"):
-        hud.set_objective("SURVEY THE WEST GRID", "Press P and authorize the first long-range operation. The group travels through real streets, works under pressure, and delivers only after returning.")
-        hud.set_prompt("PRESS P · REVIEW AVAILABLE LONG-RANGE OPERATIONS")
+        _set_complete_objective("objective.complete.survey.title", "SURVEY THE WEST GRID", "objective.complete.survey.detail", "Press P and authorize the first long-range operation. The group travels through real streets, works under pressure, and delivers only after returning.", [], "objective.complete.survey.prompt", "PRESS P · REVIEW AVAILABLE LONG-RANGE OPERATIONS")
         return
     if progression.heartforge_tier < 3:
-        hud.set_objective("EVOLVE THE HEARTFORGE TO TIER III", "Return to the forge, press %s, and choose 9. The West Grid archive now permits deeper autonomy and ordinary machine replacement research." % _input_binding_hint(&"iw_interact", "E"))
+        var tier_three_hint := _input_binding_hint(&"iw_interact", "E")
+        _set_complete_objective("objective.complete.tier3.title", "EVOLVE THE HEARTFORGE TO TIER III", "objective.complete.tier3.detail", "Return to the forge, press {0}, and choose 9. The West Grid archive now permits deeper autonomy and ordinary machine replacement research.", [tier_three_hint], "objective.complete.tier3.prompt", "PRESS {0} · EVOLVE THE HEARTFORGE TO TIER III")
         return
     if not progression.has_technology(&"tech.machine.forge_assistance"):
-        hud.set_objective("REMOVE ORDINARY REPLACEMENT WORK", "Press T and authorize Forge Assistance. The machine society will then replace missing ordinary frames without a maintained production queue.")
+        _set_complete_objective("objective.complete.forge_assistance.title", "REMOVE ORDINARY REPLACEMENT WORK", "objective.complete.forge_assistance.detail", "Press T and authorize Forge Assistance. The machine society will then replace missing ordinary frames without a maintained production queue.", [], "objective.complete.forge_assistance.prompt", "PRESS T · AUTHORIZE FORGE ASSISTANCE")
         return
     if not long_operation_director.has_completed(&"operation.flood_market_recovery"):
-        hud.set_objective("RECOVER THE VITAL MEMBRANE", "Press P to authorize the Flood Market operation. The recovered biological component is required for later Heartforge evolution.")
+        _set_complete_objective("objective.complete.vital_membrane.title", "RECOVER THE VITAL MEMBRANE", "objective.complete.vital_membrane.detail", "Press P to authorize the Flood Market operation. The recovered biological component is required for later Heartforge evolution.", [], "objective.complete.vital_membrane.prompt", "PRESS P · AUTHORIZE THE FLOOD MARKET OPERATION")
         return
     if _functioning_outpost_count() < 2:
-        hud.set_objective("ESTABLISH A SECOND SUPPORT POST", "Press O and authorize another bounded outpost. Machines choose the Engineer, escort, route, construction, repair and rebuilding.")
+        _set_complete_objective("objective.complete.support_post.title", "ESTABLISH A SECOND SUPPORT POST", "objective.complete.support_post.detail", "Press O and authorize another bounded outpost. Machines choose the Engineer, escort, route, construction, repair and rebuilding.", [], "objective.complete.support_post.prompt", "PRESS O · AUTHORIZE ANOTHER AUTONOMOUS OUTPOST")
         return
     if not long_operation_director.has_completed(&"operation.cathedral_brood_suppression"):
-        hud.set_objective("SILENCE THE CATHEDRAL BROOD", "Press P. This suppression operation requires two functioning outposts and a heavily escorted physical group.")
+        _set_complete_objective("objective.complete.cathedral.title", "SILENCE THE CATHEDRAL BROOD", "objective.complete.cathedral.detail", "Press P. This suppression operation requires two functioning outposts and a heavily escorted physical group.", [], "objective.complete.cathedral.prompt", "PRESS P · REVIEW THE CATHEDRAL OPERATION")
         return
     if progression.heartforge_tier < 4:
-        hud.set_objective("EVOLVE THE HEARTFORGE TO TIER IV", "Return to the forge and choose 9. The Vital Membrane and Choral Gland permit adaptive multi-region awareness.")
+        _set_complete_objective("objective.complete.tier4.title", "EVOLVE THE HEARTFORGE TO TIER IV", "objective.complete.tier4.detail", "Return to the forge and choose 9. The Vital Membrane and Choral Gland permit adaptive multi-region awareness.", [], "objective.complete.tier4.prompt", "PRESS 9 · EVOLVE THE HEARTFORGE TO TIER IV")
         return
     if not long_operation_director.has_completed(&"operation.buried_lab_excavation"):
-        hud.set_objective("EXCAVATE THE GENOME PRISM", "Press P to send the Engineer-led excavation group to the Buried Laboratories.")
+        _set_complete_objective("objective.complete.genome.title", "EXCAVATE THE GENOME PRISM", "objective.complete.genome.detail", "Press P to send the Engineer-led excavation group to the Buried Laboratories.", [], "objective.complete.genome.prompt", "PRESS P · AUTHORIZE THE LABORATORY EXCAVATION")
         return
     if _functioning_outpost_count() < 3:
-        hud.set_objective("PREPARE THREE REMOTE SUPPORT NODES", "Use O to maintain three functioning autonomous outposts before mapping the Root Cistern.")
+        _set_complete_objective("objective.complete.support_three.title", "PREPARE THREE REMOTE SUPPORT NODES", "objective.complete.support_three.detail", "Use O to maintain three functioning autonomous outposts before mapping the Root Cistern.", [], "objective.complete.support_three.prompt", "PRESS O · REVIEW AUTONOMOUS SUPPORT POSTS")
         return
     if not long_operation_director.has_completed(&"operation.root_cistern_mapping"):
-        hud.set_objective("MAP THE ROOT CISTERN", "Press P. This final deep expedition identifies where the Heartforge can reach the coordinating organic signal.")
+        _set_complete_objective("objective.complete.root_cistern.title", "MAP THE ROOT CISTERN", "objective.complete.root_cistern.detail", "Press P. This final deep expedition identifies where the Heartforge can reach the coordinating organic signal.", [], "objective.complete.root_cistern.prompt", "PRESS P · AUTHORIZE THE ROOT CISTERN EXPEDITION")
         return
     if progression.heartforge_tier < 5:
-        hud.set_objective("EVOLVE THE HEARTFORGE TO TIER V", "Return to the forge and choose 9. The recovered components can now be integrated into a final-protocol lattice.")
+        _set_complete_objective("objective.complete.tier5.title", "EVOLVE THE HEARTFORGE TO TIER V", "objective.complete.tier5.detail", "Return to the forge and choose 9. The recovered components can now be integrated into a final-protocol lattice.", [], "objective.complete.tier5.prompt", "PRESS 9 · EVOLVE THE HEARTFORGE TO TIER V")
         return
     if not progression.has_technology(&"tech.endgame.severance") and not progression.has_technology(&"tech.endgame.containment"):
-        hud.set_objective("CHOOSE WHAT THE TOWN BECOMES", "Press T and research Severance, Containment, or both. This is a strategic ending choice, not a recurring wave upgrade.")
+        _set_complete_objective("objective.complete.ending_choice.title", "CHOOSE WHAT THE TOWN BECOMES", "objective.complete.ending_choice.detail", "Press T and research Severance, Containment, or both. This is a strategic ending choice, not a recurring wave upgrade.", [], "objective.complete.ending_choice.prompt", "PRESS T · RESEARCH THE FINAL PROTOCOLS")
         return
     if endgame_director.completed_protocol != &"":
-        hud.set_objective("FIRST VICTORY", "The final protocol completed. The surviving machine sanctuary continues beyond the first victory.")
+        _set_complete_objective("objective.complete.victory.title", "FIRST VICTORY", "objective.complete.victory.detail", "The final protocol completed. The surviving machine sanctuary continues beyond the first victory.", [], "objective.complete.victory.prompt", "PRESS P · REVIEW THE CONTINUING SANCTUARY")
         return
     if endgame_director.active_protocol.is_empty():
-        hud.set_objective("INITIATE THE FINAL PROTOCOL", "Press V, choose an available protocol, and deliberately provoke the final ecological response when the Heartforge and machine society are ready.")
-        hud.set_prompt("PRESS V · REVIEW IRREVERSIBLE FINAL PROTOCOLS")
+        _set_complete_objective("objective.complete.initiate.title", "INITIATE THE FINAL PROTOCOL", "objective.complete.initiate.detail", "Press V, choose an available protocol, and deliberately provoke the final ecological response when the Heartforge and machine society are ready.", [], "objective.complete.initiate.prompt", "PRESS V · REVIEW IRREVERSIBLE FINAL PROTOCOLS")
     else:
         var locale_service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
         var objective_title := "HOLD THE HEARTFORGE"
@@ -742,6 +741,17 @@ func _localized_text(key: String, fallback: String, replacements: Array = []) ->
     return result
 
 
+func _set_complete_objective(title_key: String, title_fallback: String, detail_key: String, detail_fallback: String, replacements: Array = [], prompt_key: String = "", prompt_fallback: String = "") -> void:
+    if hud == null:
+        return
+    hud.set_objective(
+        _localized_text(title_key, title_fallback, replacements),
+        _localized_text(detail_key, detail_fallback, replacements)
+    )
+    if not prompt_key.is_empty():
+        hud.set_prompt(_localized_text(prompt_key, prompt_fallback, replacements))
+
+
 func _localized_region_name(region_id: StringName) -> String:
     var fallback := String(region_id).trim_prefix("region.").replace("_", " ")
     var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
@@ -842,7 +852,7 @@ func _on_long_operation_returned(operation_id: StringName, display_name: String,
         var witness := _machine_witness_identity()
         var moment := "%s brought the group home through the same streets it learned on; the Heartforge answers with a warmer signal." % witness
         run_state.log_event("MACHINE WITNESS · %s" % moment)
-        hud.push_notification(_localized_text("notification.machine.witness", "MACHINE WITNESS · {0}", [moment.to_upper()]))
+        hud.push_notification(_localized_text("notification.machine.witness.return", "MACHINE WITNESS · {0} BROUGHT THE GROUP HOME THROUGH THE SAME STREETS IT LEARNED ON; THE HEARTFORGE ANSWERS WITH A WARMER SIGNAL.", [witness.to_upper()]))
         if story_archive_director != null:
             story_archive_director.record_machine_witness(&"machine.first_return")
     progression._evaluate_automatic_technologies()
@@ -877,7 +887,7 @@ func _on_autonomous_machine_built(archetype: StringName, level: int, reason: Str
         machine_relationship_moments["first_replacement"] = true
         var moment := "%s took its place without a queue or command; the machine society is beginning to remember what the town needs." % identity
         run_state.log_event("MACHINE WITNESS · %s" % moment)
-        hud.push_notification(_localized_text("notification.machine.witness", "MACHINE WITNESS · {0}", [moment.to_upper()]))
+        hud.push_notification(_localized_text("notification.machine.witness.replacement", "MACHINE WITNESS · {0} TOOK ITS PLACE WITHOUT A QUEUE OR COMMAND; THE MACHINE SOCIETY IS BEGINNING TO REMEMBER WHAT THE TOWN NEEDS.", [identity.to_upper()]))
         if story_archive_director != null:
             story_archive_director.record_machine_witness(&"machine.first_replacement")
 
@@ -900,7 +910,23 @@ func _machine_witness_identity() -> String:
 
 
 func _on_ecology_report(message: String) -> void:
-    hud.push_notification(message.to_upper())
+    hud.push_notification(_localized_ecology_report(message))
+
+
+func _localized_ecology_report(message: String) -> String:
+    var concentration_prefix := "Organic activity is concentrating around "
+    if message.begins_with(concentration_prefix):
+        var after_marker := message.find(" after ", concentration_prefix.length())
+        if after_marker > concentration_prefix.length():
+            var landmark := message.substr(concentration_prefix.length(), after_marker - concentration_prefix.length()).trim_suffix(".")
+            var source := message.substr(after_marker + 7).trim_suffix(".").replace("_", " ")
+            return _localized_text("notification.ecology.concentrating", "ORGANIC ACTIVITY CONCENTRATING AROUND {0} AFTER {1}", [landmark.to_upper(), source.to_upper()])
+    var migration_prefix := "A hunting migration has left "
+    var migration_marker := message.find(" and entered the connecting streets.")
+    if message.begins_with(migration_prefix) and migration_marker > migration_prefix.length():
+        var source_region := message.substr(migration_prefix.length(), migration_marker - migration_prefix.length())
+        return _localized_text("notification.ecology.migration", "HUNTING MIGRATION LEFT {0} · ENTERING CONNECTING STREETS", [source_region.to_upper()])
+    return message.to_upper()
 
 
 func _on_complete_game_noise(position: Vector3, radius: float, intensity: float, source_kind: StringName) -> void:

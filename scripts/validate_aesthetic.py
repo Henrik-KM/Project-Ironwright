@@ -332,6 +332,8 @@ AUTHORED_REGION_ASSETS = {
         "required": [
             "TramGraveyardModel",
             "TramCarriageA",
+            "TramWreckCarriage",
+            "TramWreckCarriageRoof",
             "TramCarriageADoor",
             "TramCarriageAFrontWindow0",
             "TramCarriageAFrontDoor",

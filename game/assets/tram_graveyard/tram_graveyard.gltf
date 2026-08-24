@@ -19,37 +19,38 @@
         1,
         55,
         109,
-        110,
-        113,
-        114,
-        120,
-        121,
-        122,
-        123,
-        124,
-        125,
-        126,
-        127,
-        128,
-        129,
-        130,
-        131,
-        132,
-        133,
-        134,
-        135,
-        136,
-        137,
-        141,
-        142,
-        143,
-        144,
-        145,
-        146,
-        149,
-        152,
-        155,
-        156
+        163,
+        164,
+        167,
+        168,
+        174,
+        175,
+        176,
+        177,
+        178,
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186,
+        187,
+        188,
+        189,
+        190,
+        191,
+        195,
+        196,
+        197,
+        198,
+        199,
+        200,
+        203,
+        206,
+        209,
+        210
       ],
       "extras": {
         "ironwright_asset_id": "tram.graveyard.v1",
@@ -1332,6 +1333,648 @@
       "mesh": 29
     },
     {
+      "name": "TramWreckCarriage",
+      "translation": [
+        6.1,
+        0.0,
+        2.0
+      ],
+      "rotation": [
+        -0.03280553580068975,
+        -0.27947461934650586,
+        0.13141804130248494,
+        0.9505509099370606
+      ],
+      "scale": [
+        0.64,
+        0.68,
+        0.74
+      ],
+      "extras": {
+        "surface": "damaged_tram_carriage"
+      },
+      "children": [
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120,
+        121,
+        122,
+        123,
+        124,
+        125,
+        126,
+        127,
+        128,
+        129,
+        130,
+        131,
+        132,
+        133,
+        134,
+        135,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144,
+        145,
+        146,
+        147,
+        148,
+        149,
+        150,
+        151,
+        152,
+        153,
+        154,
+        155,
+        156,
+        157,
+        158
+      ]
+    },
+    {
+      "name": "TramWreckCarriageBody",
+      "translation": [
+        0.0,
+        1.95,
+        0.0
+      ],
+      "mesh": 0
+    },
+    {
+      "name": "TramWreckCarriageRoof",
+      "translation": [
+        0.0,
+        3.62,
+        0.0
+      ],
+      "mesh": 1
+    },
+    {
+      "name": "TramWreckCarriageSidePanelFront0",
+      "translation": [
+        -2.65,
+        1.18,
+        1.34
+      ],
+      "mesh": 3,
+      "extras": {
+        "surface": "maintained_carriage_panel"
+      }
+    },
+    {
+      "name": "TramWreckCarriageSidePanelFront1",
+      "translation": [
+        0.0,
+        1.18,
+        1.34
+      ],
+      "mesh": 3,
+      "extras": {
+        "surface": "maintained_carriage_panel"
+      }
+    },
+    {
+      "name": "TramWreckCarriageSidePanelFront2",
+      "translation": [
+        2.65,
+        1.18,
+        1.34
+      ],
+      "mesh": 3,
+      "extras": {
+        "surface": "maintained_carriage_panel"
+      }
+    },
+    {
+      "name": "TramWreckCarriageSidePanelRear0",
+      "translation": [
+        -2.65,
+        1.18,
+        -1.34
+      ],
+      "mesh": 3,
+      "extras": {
+        "surface": "maintained_carriage_panel"
+      }
+    },
+    {
+      "name": "TramWreckCarriageSidePanelRear1",
+      "translation": [
+        0.0,
+        1.18,
+        -1.34
+      ],
+      "mesh": 3,
+      "extras": {
+        "surface": "maintained_carriage_panel"
+      }
+    },
+    {
+      "name": "TramWreckCarriageSidePanelRear2",
+      "translation": [
+        2.65,
+        1.18,
+        -1.34
+      ],
+      "mesh": 3,
+      "extras": {
+        "surface": "maintained_carriage_panel"
+      }
+    },
+    {
+      "name": "TramWreckCarriageRoofVent0",
+      "translation": [
+        -2.4,
+        3.82,
+        0.0
+      ],
+      "mesh": 30
+    },
+    {
+      "name": "TramWreckCarriageRoofVent1",
+      "translation": [
+        2.0,
+        3.82,
+        0.0
+      ],
+      "mesh": 30
+    },
+    {
+      "name": "TramWreckCarriageBeltRailFront",
+      "translation": [
+        0.0,
+        1.25,
+        1.4
+      ],
+      "mesh": 10
+    },
+    {
+      "name": "TramWreckCarriageBeltRailRear",
+      "translation": [
+        0.0,
+        1.25,
+        -1.4
+      ],
+      "mesh": 10
+    },
+    {
+      "name": "TramWreckCarriageDoor",
+      "translation": [
+        0.0,
+        1.52,
+        -1.28
+      ],
+      "mesh": 7,
+      "extras": {
+        "socket_type": "carriage_door"
+      }
+    },
+    {
+      "name": "TramWreckCarriageDoorTrim",
+      "translation": [
+        0.0,
+        2.54,
+        -1.36
+      ],
+      "mesh": 8
+    },
+    {
+      "name": "TramWreckCarriageDoorHandle",
+      "translation": [
+        0.0,
+        1.48,
+        -1.49
+      ],
+      "mesh": 9,
+      "extras": {
+        "socket_type": "carriage_handle"
+      }
+    },
+    {
+      "name": "TramWreckCarriageFrontDoorHandle",
+      "translation": [
+        0.0,
+        1.48,
+        1.49
+      ],
+      "mesh": 9,
+      "extras": {
+        "socket_type": "approach_handle"
+      }
+    },
+    {
+      "name": "TramWreckCarriageWindow0",
+      "translation": [
+        -2.75,
+        2.3,
+        -1.27
+      ],
+      "mesh": 4,
+      "extras": {
+        "socket_type": "carriage_window"
+      }
+    },
+    {
+      "name": "TramWreckCarriageFrontWindow0",
+      "translation": [
+        -2.75,
+        2.3,
+        1.27
+      ],
+      "mesh": 4,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TramWreckCarriageWindowFrameFront0",
+      "translation": [
+        -3.45,
+        2.3,
+        1.38
+      ],
+      "mesh": 5
+    },
+    {
+      "name": "TramWreckCarriageWindowFrameRear0",
+      "translation": [
+        -2.05,
+        2.3,
+        1.38
+      ],
+      "mesh": 5
+    },
+    {
+      "name": "TramWreckCarriageWindowSill0",
+      "translation": [
+        -2.75,
+        1.82,
+        1.38
+      ],
+      "mesh": 6
+    },
+    {
+      "name": "TramWreckCarriageWindow1",
+      "translation": [
+        -0.92,
+        2.3,
+        -1.27
+      ],
+      "mesh": 4,
+      "extras": {
+        "socket_type": "carriage_window"
+      }
+    },
+    {
+      "name": "TramWreckCarriageFrontWindow1",
+      "translation": [
+        -0.92,
+        2.3,
+        1.27
+      ],
+      "mesh": 4,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TramWreckCarriageWindowFrameFront1",
+      "translation": [
+        -1.62,
+        2.3,
+        1.38
+      ],
+      "mesh": 5
+    },
+    {
+      "name": "TramWreckCarriageWindowFrameRear1",
+      "translation": [
+        -0.22000000000000008,
+        2.3,
+        1.38
+      ],
+      "mesh": 5
+    },
+    {
+      "name": "TramWreckCarriageWindowSill1",
+      "translation": [
+        -0.92,
+        1.82,
+        1.38
+      ],
+      "mesh": 6
+    },
+    {
+      "name": "TramWreckCarriageWindow2",
+      "translation": [
+        0.92,
+        2.3,
+        -1.27
+      ],
+      "mesh": 4,
+      "extras": {
+        "socket_type": "carriage_window"
+      }
+    },
+    {
+      "name": "TramWreckCarriageFrontWindow2",
+      "translation": [
+        0.92,
+        2.3,
+        1.27
+      ],
+      "mesh": 4,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TramWreckCarriageWindowFrameFront2",
+      "translation": [
+        0.22000000000000008,
+        2.3,
+        1.38
+      ],
+      "mesh": 5
+    },
+    {
+      "name": "TramWreckCarriageWindowFrameRear2",
+      "translation": [
+        1.62,
+        2.3,
+        1.38
+      ],
+      "mesh": 5
+    },
+    {
+      "name": "TramWreckCarriageWindowSill2",
+      "translation": [
+        0.92,
+        1.82,
+        1.38
+      ],
+      "mesh": 6
+    },
+    {
+      "name": "TramWreckCarriageWindow3",
+      "translation": [
+        2.75,
+        2.3,
+        -1.27
+      ],
+      "mesh": 4,
+      "extras": {
+        "socket_type": "carriage_window"
+      }
+    },
+    {
+      "name": "TramWreckCarriageFrontWindow3",
+      "translation": [
+        2.75,
+        2.3,
+        1.27
+      ],
+      "mesh": 4,
+      "extras": {
+        "socket_type": "approach_window"
+      }
+    },
+    {
+      "name": "TramWreckCarriageWindowFrameFront3",
+      "translation": [
+        2.05,
+        2.3,
+        1.38
+      ],
+      "mesh": 5
+    },
+    {
+      "name": "TramWreckCarriageWindowFrameRear3",
+      "translation": [
+        3.45,
+        2.3,
+        1.38
+      ],
+      "mesh": 5
+    },
+    {
+      "name": "TramWreckCarriageWindowSill3",
+      "translation": [
+        2.75,
+        1.82,
+        1.38
+      ],
+      "mesh": 6
+    },
+    {
+      "name": "TramWreckCarriageFrontDoor",
+      "translation": [
+        0.0,
+        1.52,
+        1.28
+      ],
+      "mesh": 7,
+      "extras": {
+        "socket_type": "approach_door"
+      }
+    },
+    {
+      "name": "TramWreckCarriageFrontDoorTrim",
+      "translation": [
+        0.0,
+        2.54,
+        1.36
+      ],
+      "mesh": 8
+    },
+    {
+      "name": "TramWreckCarriageFrontHeadlampHousing",
+      "translation": [
+        0.0,
+        2.84,
+        1.48
+      ],
+      "mesh": 31
+    },
+    {
+      "name": "TramWreckCarriageFrontHeadlampLens",
+      "translation": [
+        0.0,
+        2.84,
+        1.6
+      ],
+      "mesh": 32,
+      "extras": {
+        "socket_type": "approach_service_light"
+      }
+    },
+    {
+      "name": "TramWreckCarriageFrontServiceLamp",
+      "translation": [
+        0.0,
+        3.05,
+        1.42
+      ],
+      "mesh": 35,
+      "extras": {
+        "socket_type": "approach_service_light"
+      }
+    },
+    {
+      "name": "TramWreckCarriageLowerPanelFront",
+      "translation": [
+        0.0,
+        0.98,
+        1.37
+      ],
+      "mesh": 11
+    },
+    {
+      "name": "TramWreckCarriageLowerPanelRear",
+      "translation": [
+        0.0,
+        0.98,
+        -1.37
+      ],
+      "mesh": 11
+    },
+    {
+      "name": "TramWreckCarriageUndercarriage",
+      "translation": [
+        0.0,
+        0.45,
+        0.0
+      ],
+      "mesh": 12
+    },
+    {
+      "name": "TramWreckCarriageBogiePlate0",
+      "translation": [
+        -2.55,
+        0.7,
+        0.0
+      ],
+      "mesh": 13
+    },
+    {
+      "name": "TramWreckCarriageWheel0",
+      "translation": [
+        -2.55,
+        0.28,
+        -0.62
+      ],
+      "mesh": 14,
+      "rotation": [
+        0.7071067811865476,
+        0.0,
+        0.0,
+        0.7071067811865476
+      ]
+    },
+    {
+      "name": "TramWreckCarriageBogiePlate1",
+      "translation": [
+        2.55,
+        0.7,
+        0.0
+      ],
+      "mesh": 13
+    },
+    {
+      "name": "TramWreckCarriageWheel1",
+      "translation": [
+        2.55,
+        0.28,
+        -0.62
+      ],
+      "mesh": 14,
+      "rotation": [
+        0.7071067811865476,
+        0.0,
+        0.0,
+        0.7071067811865476
+      ]
+    },
+    {
+      "name": "TramWreckCarriagePantograph",
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "extras": {
+        "socket_type": "roof_power_pickup"
+      },
+      "children": [
+        159,
+        160,
+        161,
+        162
+      ]
+    },
+    {
+      "name": "TramWreckCarriagePantographArmL",
+      "translation": [
+        -0.82,
+        4.13,
+        0.0
+      ],
+      "mesh": 28,
+      "rotation": [
+        0.0,
+        0.0,
+        -0.09983341664682815,
+        0.9950041652780258
+      ]
+    },
+    {
+      "name": "TramWreckCarriagePantographArmR",
+      "translation": [
+        0.82,
+        4.13,
+        0.0
+      ],
+      "mesh": 28,
+      "rotation": [
+        0.0,
+        0.0,
+        0.09983341664682815,
+        0.9950041652780258
+      ]
+    },
+    {
+      "name": "TramWreckCarriagePantographInsulatorL",
+      "translation": [
+        -1.0,
+        3.95,
+        0.0
+      ],
+      "mesh": 29
+    },
+    {
+      "name": "TramWreckCarriagePantographInsulatorR",
+      "translation": [
+        1.0,
+        3.95,
+        0.0
+      ],
+      "mesh": 29
+    },
+    {
       "name": "TramYardDeck",
       "translation": [
         0.0,
@@ -1355,13 +1998,13 @@
         "socket_type": "maintenance_pit"
       },
       "children": [
-        111,
-        112,
-        115,
-        116,
-        117,
-        118,
-        119
+        165,
+        166,
+        169,
+        170,
+        171,
+        172,
+        173
       ]
     },
     {
@@ -1649,9 +2292,9 @@
         "socket_type": "signal_mast"
       },
       "children": [
-        138,
-        139,
-        140
+        192,
+        193,
+        194
       ]
     },
     {
@@ -1776,8 +2419,8 @@
         "socket_type": "organic_seepage"
       },
       "children": [
-        147,
-        148
+        201,
+        202
       ]
     },
     {
@@ -1827,8 +2470,8 @@
         "socket_type": "organic_seepage"
       },
       "children": [
-        150,
-        151
+        204,
+        205
       ]
     },
     {
@@ -1878,8 +2521,8 @@
         "socket_type": "organic_seepage"
       },
       "children": [
-        153,
-        154
+        207,
+        208
       ]
     },
     {

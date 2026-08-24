@@ -500,6 +500,7 @@ func _connect_release_services() -> void:
 
 func _finish_release_boot() -> void:
 	settings_service.apply_accessibility_to_tree(self)
+	_apply_command_line_locale_override()
 	var mode := pending_launch_mode
 	pending_launch_mode = &"title"
 	if _is_headless_release():
@@ -515,6 +516,9 @@ func _finish_release_boot() -> void:
 	elif _has_adaptive_defense_review_flag():
 		_start_release_world()
 		call_deferred("_start_adaptive_defense_review")
+	elif _has_complete_objective_review_flag():
+		_start_release_world()
+		call_deferred("_start_complete_objective_review")
 	elif _has_endgame_protocol_review_flag():
 		_start_release_world()
 		call_deferred("_start_endgame_protocol_review")
@@ -605,6 +609,30 @@ func _has_adaptive_defense_review_flag() -> bool:
 		if str(argument) == "--adaptive-defense-review":
 			return true
 	return false
+
+
+func _has_complete_objective_review_flag() -> bool:
+	for argument in OS.get_cmdline_args():
+		if str(argument) == "--complete-objective-review":
+			return true
+	for argument in OS.get_cmdline_user_args():
+		if str(argument) == "--complete-objective-review":
+			return true
+	return false
+
+
+func _apply_command_line_locale_override() -> void:
+	if localization_service == null:
+		return
+	var arguments: Array = OS.get_cmdline_args()
+	arguments.append_array(OS.get_cmdline_user_args())
+	for argument in arguments:
+		var raw := str(argument)
+		if not raw.begins_with("--locale="):
+			continue
+		var locale := StringName(raw.get_slice("=", 1).to_lower())
+		if localization_service.set_locale(locale):
+			return
 
 
 func _has_endgame_protocol_review_flag() -> bool:
@@ -835,6 +863,58 @@ func _start_endgame_protocol_review() -> void:
 			hud.push_notification("FINAL PROTOCOL REVIEW · SEVERANCE LATTICE ACTIVE · VICTORY RESOLUTION IN 8 SECONDS")
 		if run_state != null:
 			run_state.log_event("Endgame protocol review mode: active Severance lattice will resolve through the ordinary victory path.")
+
+
+func _start_complete_objective_review() -> void:
+	# Non-saving fixture for exact exported review of the canonical late-run
+	# objective surface. It reaches the same state through stable progression,
+	# operation and outpost contracts, then leaves the final protocol idle so
+	# the player-facing objective can be judged in the selected locale.
+	if progression != null:
+		progression.set_heartforge_tier(5)
+		for technology_id in [&"tech.machine.forge_assistance", &"tech.endgame.severance"]:
+			if technology_id not in progression.unlocked_technologies:
+				progression.unlocked_technologies.append(technology_id)
+		progression.unlocked_effects[&"unlock_final_protocol_research"] = true
+		progression.progression_changed.emit()
+	if long_operation_director != null:
+		long_operation_director.completed_operations = [
+			&"operation.west_grid_survey",
+			&"operation.flood_market_recovery",
+			&"operation.cathedral_brood_suppression",
+			&"operation.buried_lab_excavation",
+			&"operation.root_cistern_mapping",
+		]
+		long_operation_director.recovered_components = [
+			&"component.vital_membrane",
+			&"component.choral_gland",
+			&"component.genome_prism",
+			&"component.root_map",
+		]
+	if run_state != null:
+		run_state.scrap = 1200
+		run_state.rare_cores = 8
+		run_state.manual_scrap_recovered = 20
+		run_state.autonomous_scrap_recovered = 30
+		run_state.expedition_core_recovered = true
+		full_game_milestone_complete = true
+	if autonomy_director != null:
+		_spawn_robot(&"salvager", heartforge.global_position + Vector3(0.0, 0.0, 3.8), 1)
+		_spawn_robot(&"guardian", heartforge.global_position + Vector3(3.0, 0.0, 2.0), 1)
+		_spawn_robot(&"scout", heartforge.global_position + Vector3(-3.0, 0.0, 2.0), 1)
+	if outpost_director != null:
+		for index in range(mini(3, outpost_director.sites.size())):
+			var site := outpost_director.sites[index] as OutpostSite3D
+			if site == null:
+				continue
+			site.set_discovered(true)
+			if not site.has_outpost():
+				outpost_director._spawn_outpost(site, site.recommended_role, 1)
+	if region_director != null:
+		region_director.discover_region(&"region.root_cistern")
+	if hud != null:
+		hud.push_notification(_localized_runtime_text("notification.complete.response_offer", "WORLD-STATE RESPONSE OFFER · PRESSURE HAS BECOME A CHOICE"))
+	call_deferred("_update_complete_game_objective")
 
 
 func _create_presentation_review_stage() -> void:

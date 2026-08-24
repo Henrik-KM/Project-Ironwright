@@ -6,6 +6,8 @@
   "required_nodes": [
     "TramGraveyardModel",
     "TramCarriageA",
+    "TramWreckCarriage",
+    "TramWreckCarriageRoof",
     "TramCarriageADoor",
     "TramCarriageAFrontWindow0",
     "TramCarriageAFrontDoor",
