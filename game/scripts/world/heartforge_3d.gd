@@ -375,7 +375,7 @@ func _build_adaptive_geometry(tier: int) -> void:
         # The sovereignty crown is a ring, not a filled plate. A solid
         # cylinder reads as a pale disc from the tactical camera and hides
         # the reactor silhouette beneath it.
-        var crown_heat := ModelKit3D.material(Color("6e3419"), 0.3, 0.5, Color("ff7b2f"), 0.72)
+        var crown_heat := ModelKit3D.material(Color("6e3419"), 0.3, 0.5, Color("ff7b2f"), 0.54)
         var crown_mesh := TorusMesh.new()
         crown_mesh.inner_radius = 2.28
         crown_mesh.outer_radius = 2.9
@@ -385,13 +385,16 @@ func _build_adaptive_geometry(tier: int) -> void:
         crown.name = "Tier5SovereigntyCrown"
         crown.mesh = crown_mesh
         crown.material_override = crown_heat
-        crown.position = Vector3(0.0, 4.72, 0.0)
+        crown.position = Vector3(0.0, 4.46, 0.0)
         _adaptive_geometry.add_child(crown)
         for angle_index in range(8):
             var angle := TAU * float(angle_index) / 8.0
-            var crown_position := Vector3(cos(angle) * 2.72, 4.9, sin(angle) * 2.72)
+            var crown_position := Vector3(cos(angle) * 2.72, 4.64, sin(angle) * 2.72)
             ModelKit3D.add_beveled_box(_adaptive_geometry, Vector3(0.24, 0.78, 0.52), crown_position, cyan, Vector3(0.0, -angle, 0.0), "Tier5CrownFin", 0.08)
-        ModelKit3D.add_cylinder(_adaptive_geometry, 0.34, 1.15, Vector3(0.0, 5.15, 0.0), heat, Vector3.ZERO, "Tier5CrownBeacon")
+        # Keep the Tier V beacon legible as a status accent without turning it
+        # into a clipped white source at the top of the opening tactical frame.
+        var crown_beacon_heat := ModelKit3D.material(Color("8b451c"), 0.26, 0.48, Color("ff7b2f"), 0.78)
+        ModelKit3D.add_cylinder(_adaptive_geometry, 0.34, 0.92, Vector3(0.0, 4.82, 0.0), crown_beacon_heat, Vector3.ZERO, "Tier5CrownBeacon")
 
 
 func _build_adaptation_detail(profile: StringName) -> void:

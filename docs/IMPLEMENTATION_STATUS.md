@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Tier V Heartforge crown readability pass
+
+- lowered and dimmed the Tier V sovereignty crown and beacon so the late-game
+  Heartforge silhouette remains inside the opening tactical frame instead of
+  blooming against its top edge;
+- added an aesthetic regression assertion for the crown beacon emission budget;
+- exact Windows export review passed at 1280×720 on the Heartforge progression
+  frame, with the upper crown still legible and the Mechromancer/Bulwark pair
+  remaining readable below it.
+
 ## Focused opening machine-report HUD readability pass
 
 - bounded the transient machine-report stack to two visible reports while

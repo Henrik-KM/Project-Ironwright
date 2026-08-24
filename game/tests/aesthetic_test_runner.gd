@@ -761,6 +761,9 @@ func _run_all() -> void:
             if settings_service != null:
                 settings_service.set_value(&"reduced_motion", false, false)
             var beacon := heartforge.find_child("Tier5CrownBeacon", true, false) as Node3D
+            var beacon_mesh := beacon as MeshInstance3D
+            var beacon_material := beacon_mesh.material_override as StandardMaterial3D if beacon_mesh != null else null
+            _expect(beacon_material != null and beacon_material.emission_energy_multiplier <= 0.8, "The Tier 5 crown beacon must retain a restrained warm accent instead of clipping the opening frame.")
             var beacon_scale_before := beacon.scale if beacon != null else Vector3.ONE
             heartforge_presentation.progression_time = 0.0
             heartforge_presentation._process(0.0)
