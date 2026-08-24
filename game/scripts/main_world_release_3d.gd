@@ -491,6 +491,9 @@ func _finish_release_boot() -> void:
 	pending_launch_mode = &"title"
 	if _is_headless_release():
 		_start_release_world()
+	elif _has_heartforge_progression_review_flag():
+		_start_release_world()
+		call_deferred("_start_heartforge_progression_review")
 	elif _has_mechromancer_evolution_review_flag():
 		_start_release_world()
 		call_deferred("_start_mechromancer_evolution_review")
@@ -531,6 +534,16 @@ func _has_mechromancer_evolution_review_flag() -> bool:
 			return true
 	for argument in OS.get_cmdline_user_args():
 		if str(argument) == "--mechromancer-evolution-review":
+			return true
+	return false
+
+
+func _has_heartforge_progression_review_flag() -> bool:
+	for argument in OS.get_cmdline_args():
+		if str(argument) == "--heartforge-progression-review":
+			return true
+	for argument in OS.get_cmdline_user_args():
+		if str(argument) == "--heartforge-progression-review":
 			return true
 	return false
 
@@ -662,6 +675,23 @@ func _start_mechromancer_evolution_review() -> void:
 	_start_presentation_review()
 	if presentation_review_label != null:
 		presentation_review_label.text = "MECHROMANCER EVOLUTION REVIEW  ·  HEARTFORGE TIER V\nTIER II FIELD RIG  ·  TIER III COGNITION LATTICE  ·  TIER IV BIO-SENSOR  ·  TIER V PROTOCOL HARDWARE"
+
+
+func _start_heartforge_progression_review() -> void:
+	if progression != null:
+		progression.set_heartforge_tier(5)
+		for effect_id in [
+			&"unlock_machine_society",
+			&"unlock_adaptive_defence",
+			&"unlock_final_protocol_research",
+			&"machine_signal_lattice",
+		]:
+			progression.unlocked_effects[effect_id] = true
+		progression.progression_changed.emit()
+	if hud != null:
+		hud.push_notification("HEARTFORGE PROGRESSION REVIEW · TIER V CROWN ACTIVE")
+	if run_state != null:
+		run_state.log_event("Heartforge progression review mode: Tier V authored hardware and presentation motion are active in the opening tactical frame.")
 
 
 func _create_presentation_review_stage() -> void:
