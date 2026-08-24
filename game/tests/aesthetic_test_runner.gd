@@ -1222,6 +1222,8 @@ func _run_all() -> void:
             &"carrionbell":
                 _expect(_find_named(enemy_samples[index], "CarrionbellResonatorRing") != null, "The Carrion Bell must expose a raised resonator lip for its signal anatomy.")
                 _expect(_find_named(enemy_samples[index], "CarrionbellResonatorCore") != null and _find_named(enemy_samples[index], "CarrionbellBellRib0") != null, "The Carrion Bell must expose a layered resonator core and bell ribs.")
+                var resonator_ring_mesh := _find_first_mesh(_find_named(enemy_samples[index], "CarrionbellResonatorRing") as Node3D)
+                _expect(resonator_ring_mesh != null and _mesh_vertex_count(resonator_ring_mesh) >= 240, "The Carrion Bell resonator must use a dense curved ring mesh rather than a flat cylinder lip.")
             &"rootweaver":
                 _expect(_find_named(enemy_samples[index], "RootweaverKnuckleL") != null and _find_named(enemy_samples[index], "RootweaverKnuckleR") != null, "The Rootweaver must expose joint detail where its route arms meet the body.")
                 _expect(_find_named(enemy_samples[index], "RootweaverCrownPlate0") != null and _find_named(enemy_samples[index], "RootweaverRootSpineR") != null, "The Rootweaver must expose crown plating and layered route spines.")
