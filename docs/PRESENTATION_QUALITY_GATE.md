@@ -810,6 +810,12 @@ outstanding.
 
 Automated presence tests only prove the slice exists technically. Actual screenshot/gameplay review decides whether it clears the visual bar. The exact exported presentation gallery now exposes all eleven remote-region landmarks, including the undiscovered Root Cistern page populated with its authored basin, core, signal pylons and root hardware instead of presenting a blank slate; formal human acceptance remains outstanding.
 
+The latest Root Cistern capstone pass grounds the layered core with an authored
+collar and six radial root braces, and turns the basin's former tall foreground
+spines into low radial anchors. This is presentation-only geometry: landmark
+identity, stable sockets, collision ownership, LOD behaviour and endgame state
+remain unchanged. Exact Windows review is required before the pass is accepted.
+
 ## Art production sequence
 
 The presentation milestones proceed in this order:

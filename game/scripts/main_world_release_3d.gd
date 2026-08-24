@@ -1045,6 +1045,11 @@ func _create_root_cistern_presentation_review_actor(landmark: RegionLandmark3D) 
 	review_actor.name = "RootCisternPresentationReviewActor"
 	add_child(review_actor)
 	review_actor.global_position = landmark.global_position
+	# The six signal pylons form a ring around the capstone. Rotate only this
+	# development review instance so the approach camera reads between pylons
+	# instead of placing one directly over the core; runtime landmark orientation
+	# and all gameplay spatial contracts remain unchanged.
+	review_actor.rotation.y = PI / 6.0
 	var authored_scene := ROOT_CISTERN_PRESENTATION_REVIEW_SCENE.instantiate()
 	authored_scene.name = "RootCisternPresentationReviewModel"
 	review_actor.add_child(authored_scene)
@@ -1122,7 +1127,7 @@ func _update_presentation_review_camera(delta: float) -> void:
 	var desired := presentation_review_camera_desired
 	camera.global_position = camera.global_position.lerp(desired, 1.0 - exp(-delta * 5.0))
 	var core_review_fov := 42.0 if presentation_review_page >= 1 else 43.0
-	camera.fov = 46.0 if presentation_review_page == 12 else (48.0 if presentation_review_page == 11 else (52.0 if presentation_review_page >= 3 else core_review_fov))
+	camera.fov = 44.0 if presentation_review_page == 13 else (46.0 if presentation_review_page == 12 else (48.0 if presentation_review_page == 11 else (52.0 if presentation_review_page >= 3 else core_review_fov)))
 	camera.look_at(target, Vector3.UP)
 
 
