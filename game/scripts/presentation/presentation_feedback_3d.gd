@@ -3,6 +3,7 @@ extends Node
 ## Actor silhouette polish, authored animation registration and transient VFX.
 
 const MECHROMANCER_PRESENTATION := preload("res://scripts/presentation/mechromancer_presentation_3d.gd")
+const HEARTFORGE_PRESENTATION := preload("res://scripts/presentation/heartforge_presentation_3d.gd")
 
 var world: Node3D
 var player: Node3D
@@ -101,12 +102,24 @@ func _camera_shake_scale() -> float:
 
 
 func _attach_existing_actors() -> void:
+    _attach_heartforge_presentation()
     for actor in get_tree().get_nodes_in_group(&"player_character"):
         _polish_actor(actor)
     for actor in get_tree().get_nodes_in_group(&"friendly_robots"):
         _polish_actor(actor)
     for actor in get_tree().get_nodes_in_group(&"organic_enemies"):
         _polish_actor(actor)
+
+
+func _attach_heartforge_presentation() -> void:
+    if heartforge == null or not is_instance_valid(heartforge) or not heartforge is Heartforge3D:
+        return
+    if heartforge.get_node_or_null("HeartforgePresentation3D") != null:
+        return
+    var presentation := HEARTFORGE_PRESENTATION.new() as HeartforgePresentation3D
+    presentation.name = "HeartforgePresentation3D"
+    presentation.configure(heartforge as Heartforge3D)
+    heartforge.add_child(presentation)
 
 
 func _on_node_added(node: Node) -> void:

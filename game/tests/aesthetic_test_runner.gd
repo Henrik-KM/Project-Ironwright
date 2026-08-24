@@ -698,6 +698,8 @@ func _run_all() -> void:
     var heartforge := world.get_node_or_null("Heartforge") as Heartforge3D
     _expect(heartforge != null, "The aesthetic test needs the Heartforge progression model.")
     if heartforge != null:
+        var heartforge_presentation := heartforge.get_node_or_null("HeartforgePresentation3D") as HeartforgePresentation3D
+        _expect(heartforge_presentation != null, "The Heartforge must receive authored progression presentation.")
         _expect(heartforge.find_child("HeartforgeAuthoredModel", true, false) != null, "The Heartforge must use the authored production shell.")
         _expect(_find_named(heartforge, "ProductionAssetMarker") != null, "The authored Heartforge must expose its production asset marker.")
         _expect(heartforge.find_child("CoreCladdingDetail", true, false) != null, "The Heartforge must expose a layered high-definition core cladding detail.")
@@ -715,6 +717,26 @@ func _run_all() -> void:
         _expect(heartforge.find_child("Tier3SignalConduit", true, false) != null, "Tier 3 Heartforge geometry must add signal conduits.")
         _expect(heartforge.find_child("Tier4SignalMast", true, false) != null, "Tier 4 Heartforge geometry must add the signal mast.")
         _expect(heartforge.find_child("Tier5SovereigntyCrown", true, false) != null, "Tier 5 Heartforge geometry must culminate in a readable crown.")
+        if heartforge_presentation != null:
+            var settings_service := get_first_node_in_group("release_settings_service") as ReleaseSettingsService3D
+            var previous_reduced_motion := bool(settings_service.get_value(&"reduced_motion", false)) if settings_service != null else false
+            if settings_service != null:
+                settings_service.set_value(&"reduced_motion", false, false)
+            var beacon := heartforge.find_child("Tier5CrownBeacon", true, false) as Node3D
+            var beacon_scale_before := beacon.scale if beacon != null else Vector3.ONE
+            heartforge_presentation.progression_time = 0.0
+            heartforge_presentation._process(0.0)
+            heartforge_presentation.progression_time = 0.8
+            heartforge_presentation._process(0.0)
+            var beacon_scale_after := beacon.scale if beacon != null else Vector3.ONE
+            _expect(beacon != null and not beacon_scale_before.is_equal_approx(beacon_scale_after), "Tier 5 Heartforge hardware must carry restrained progression-state motion.")
+            if settings_service != null:
+                settings_service.set_value(&"reduced_motion", true, false)
+                var reduced_motion_scale := beacon.scale if beacon != null else Vector3.ONE
+                heartforge_presentation.progression_time = 1.6
+                heartforge_presentation._process(0.0)
+                _expect(beacon != null and reduced_motion_scale.is_equal_approx(beacon.scale), "Heartforge progression motion must pause when reduced motion is enabled.")
+                settings_service.set_value(&"reduced_motion", previous_reduced_motion, false)
         heartforge.set_adaptation_profile(&"adaptation.anchored_shell")
         _expect(heartforge.find_child("HeartforgeAdaptationDetail", true, false) != null, "The adaptive Heartforge must expose a visible authored retrofit detail layer.")
         _expect(heartforge.find_child("AnchorShellBrace", true, false) != null and heartforge.find_child("AnchorShellSignalRing", true, false) != null, "The anchored-shell response must expose structural braces and a signal ring.")

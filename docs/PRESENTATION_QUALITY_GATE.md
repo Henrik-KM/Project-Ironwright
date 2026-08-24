@@ -483,6 +483,15 @@ through the existing Mechromancer presentation controller, keeping progression
 readable without replacing the imported body/equipment clips. Broader full-run
 human acceptance remains outstanding.
 
+The Heartforge progression layer now follows the same rule. Its focal signal
+lenses, relay housings, signal crossbar and Tier V crown beacon receive bounded
+low-frequency motion from a presentation-only controller. This makes the
+machine's visible evolution feel active while preserving the authored shell,
+collision, tier state, operation state and reduced-motion accessibility setting.
+The exact Windows tactical frame can be inspected with
+`--heartforge-progression-review` alongside the existing Mechromancer evolution
+review entrypoint.
+
 The six-role machine kit now also removes the remaining flat role inserts:
 Warden counterweight, Scrapper dismantler claws, Pathfinder survey wings and
 Engineer clamp hardware use beveled forms, with the nearby forge pump/control

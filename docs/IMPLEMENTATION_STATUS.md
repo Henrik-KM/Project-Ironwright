@@ -2525,6 +2525,9 @@ West Grid detour visibly selected.
 - added bounded secondary motion for the cognition node, signal pin, adaptive
   sensor and heat vent through the existing presentation controller, with
   regression coverage for pulse and sweep changes;
+- added the same bounded secondary motion for Heartforge focal and progression
+  hardware through a presentation-only controller, with regression coverage
+  for the Tier V crown beacon response and reduced-motion compatibility;
 - broader authored animation/audio, content breadth, performance, external
   playtest and final human acceptance remain commercial gates.
 
