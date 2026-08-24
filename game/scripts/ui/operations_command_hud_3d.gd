@@ -302,10 +302,10 @@ func _refresh() -> void:
 
     if mode == &"recap":
         title_label.text = _text("command.recap.title", "WORLD RECAP")
-        status_label.text = "%s\nA short strategic readout for returning to a persistent world." % current_operation_status
+        status_label.text = "%s\n%s" % [current_operation_status, _text("command.recap.status", "A short strategic readout for returning to a persistent world.")]
         selection_label.text = _text("command.recap.selection", "RETURNING TO THE HEARTFORGE")
         description_label.text = str(items[0].get("description", ""))
-        requirements_label.text = "NEXT AVAILABLE MAJOR CHOICES\n%s\n\nPress ESC, P, L or V to close." % str(items[0].get("recap_choices", "Continue the current objective."))
+        requirements_label.text = "%s\n%s\n\n%s" % [_text("command.recap.choices", "NEXT AVAILABLE MAJOR CHOICES"), str(items[0].get("recap_choices", "Continue the current objective.")), _text("command.recap.close_hint", "Press ESC, P, L or V to close.")]
         previous_button.visible = false
         next_button.visible = false
         authorize_button.visible = false
@@ -313,23 +313,23 @@ func _refresh() -> void:
 
     if mode == &"endgame":
         title_label.text = _text("command.endgame.title", "FINAL PROTOCOLS")
-        status_label.text = "%s\nThe final crisis is player-triggered and causal. No recurring wave schedule exists." % endgame_status
+        status_label.text = "%s\n%s" % [endgame_status, _text("command.endgame.status", "The final crisis is player-triggered and causal. No recurring wave schedule exists.")]
     elif mode == &"archive":
         title_label.text = _text("command.archive.title", "TOWN ARCHIVE")
         var thread_count := items.filter(func(item: Dictionary) -> bool: return str(item.get("kind", "")) == "story_thread").size()
         var record_count := items.size() - thread_count
-        status_label.text = "%d story thread%s · %d record%s recovered from physical discoveries.\nThreads assemble from what the machines actually found; this history is optional and never creates another maintenance task." % [thread_count, "" if thread_count == 1 else "s", record_count, "" if record_count == 1 else "s"]
+        status_label.text = _text("command.archive.status", "{0} story thread{1} · {2} record{3} recovered from physical discoveries.\nThreads assemble from what the machines actually found; this history is optional and never creates another maintenance task.", [thread_count, "" if thread_count == 1 else "s", record_count, "" if record_count == 1 else "s"])
     else:
         title_label.text = _text("command.operations.title", "LONG-RANGE OPERATIONS")
         var operation_status := current_operation_status
         if not items.is_empty() and operation_status.to_lower().contains("no long-range operation"):
             operation_status = _text("command.operations.ready", "A physical operation is ready to authorize.")
-        status_label.text = "%s\nEvery group travels through the same persistent world and delivers rewards only after returning." % operation_status
+        status_label.text = "%s\n%s" % [operation_status, _text("command.operations.status", "Every group travels through the same persistent world and delivers rewards only after returning.")]
 
     if items.is_empty():
         selection_label.text = _text("command.archive.empty", "NO RECORDS RECOVERED") if mode == &"archive" else (_text("command.operations.empty", "NO OPERATION AVAILABLE") if mode == &"operations" else _text("command.endgame.locked", "FINAL PROTOCOL LOCKED"))
         description_label.text = _empty_state_text()
-        requirements_label.text = "Explore and complete real discoveries to recover the town's remaining records." if mode == &"archive" else "Continue the current strategic objective. The screen becomes actionable only when a real choice exists."
+        requirements_label.text = _text("command.archive.empty_requirements", "Explore and complete real discoveries to recover the town's remaining records.") if mode == &"archive" else _text("command.empty_requirements", "Continue the current strategic objective. The screen becomes actionable only when a real choice exists.")
         authorize_button.visible = mode != &"archive"
         authorize_button.text = _text("command.operations.empty", "NO OPERATION AVAILABLE") if mode == &"operations" else _text("command.endgame.locked", "FINAL PROTOCOL LOCKED")
         authorize_button.disabled = true
@@ -340,40 +340,37 @@ func _refresh() -> void:
     description_label.text = str(item.get("description", ""))
     if mode == &"archive":
         authorize_button.visible = false
-        var kind_label := "STORY THREAD" if str(item.get("kind", "")) == "story_thread" else "PHYSICAL RECORD"
-        requirements_label.text = "%s · SOURCE: %s\nARC: %s · Press L or ESC to close." % [kind_label, str(item.get("source_name", "Unknown")).to_upper(), str(item.get("arc", "town_history")).replace("_", " ").to_upper()]
+        var kind_label := _text("command.archive.story_thread", "STORY THREAD") if str(item.get("kind", "")) == "story_thread" else _text("command.archive.physical_record", "PHYSICAL RECORD")
+        requirements_label.text = "%s · %s %s\n%s %s · %s" % [kind_label, _text("command.archive.source", "SOURCE:"), str(item.get("source_name", "Unknown")).to_upper(), _text("command.archive.arc", "ARC:"), str(item.get("arc", "town_history")).replace("_", " ").to_upper(), _text("command.archive.close_hint", "Press L or ESC to close.")]
         return
     authorize_button.visible = true
     authorize_button.disabled = operation_active and mode == &"operations"
     if mode == &"endgame":
         authorize_button.text = _text("command.endgame.authorize", "INITIATE IRREVERSIBLE PROTOCOL")
-        requirements_label.text = "Cost: %d Scrap · %d Cognition Core%s · Duration: %d s\nStarting this deliberately provokes the final ecological response." % [
+        requirements_label.text = _text("command.endgame.requirements", "Cost: {0} Scrap · {1} Cognition Core{2} · Duration: {3} s\nStarting this deliberately provokes the final ecological response.", [
             int(item.get("scrap_cost", 0)),
             int(item.get("rare_core_cost", 0)),
             "" if int(item.get("rare_core_cost", 0)) == 1 else "s",
             int(round(float(item.get("duration_seconds", 0.0)))),
-        ]
+        ])
     else:
         authorize_button.text = _text("command.operations.active", "OPERATION ACTIVE · FOLLOW WITH F")
         if not operation_active:
             authorize_button.text = _text("command.operations.authorize", "AUTHORIZE PHYSICAL OPERATION")
-        var operation_prefix := "ACTIVE GROUP · F TO FOLLOW\n" if operation_active else ""
-        requirements_label.text = "%s%s\nCost: %d Scrap · Team: %s · Work exposure: %d s · Threat %.1f" % [
+        var operation_prefix := _text("command.operations.active_prefix", "ACTIVE GROUP · F TO FOLLOW\n") if operation_active else ""
+        requirements_label.text = "%s%s\n%s" % [
             operation_prefix,
             str(item.get("route_brief", "Route: physical route preview unavailable")),
-            int(item.get("scrap_cost", 0)),
-            ", ".join(item.get("team_roles", [])),
-            int(round(float(item.get("work_seconds", 0.0)))),
-            float(item.get("threat_level", 1.0)),
+            _text("command.operations.requirements", "Cost: {0} Scrap · Team: {1} · Work exposure: {2} s · Threat {3}", [int(item.get("scrap_cost", 0)), ", ".join(item.get("team_roles", [])), int(round(float(item.get("work_seconds", 0.0)))), float(item.get("threat_level", 1.0))]),
         ]
 
 
 func _empty_state_text() -> String:
     if mode == &"archive":
-        return "No town records have been recovered yet. The first record is preserved at the Heartforge; later records emerge from physical regional discoveries and the post-victory archive."
+        return _text("command.archive.empty_detail", "No town records have been recovered yet. The first record is preserved at the Heartforge; later records emerge from physical regional discoveries and the post-victory archive.")
     if mode == &"endgame":
-        return "Recover the required biological components, map the Root Cistern, evolve the Heartforge to tier 5, and authorize an endgame technology. Until then, no final decision is being hidden."
-    return "Complete the current Heartforge, outpost, or technology prerequisite. Routine salvage, repair, rebuilding, and replacement continue without opening another management task."
+        return _text("command.endgame.empty_detail", "Recover the required biological components, map the Root Cistern, evolve the Heartforge to tier 5, and authorize an endgame technology. Until then, no final decision is being hidden.")
+    return _text("command.operations.empty_detail", "Complete the current Heartforge, outpost, or technology prerequisite. Routine salvage, repair, rebuilding, and replacement continue without opening another management task.")
 
 
 func refresh_localized_text() -> void:

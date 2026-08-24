@@ -328,10 +328,10 @@ func _refresh_adaptation() -> void:
     title_label.text = _text("command.adaptive.title", "ADAPTIVE DEFENCE · HEARTFORGE TIER {0}", [heartforge_tier])
     secondary_button.visible = false
     if adaptations.is_empty():
-        summary_label.text = "No structural proposal is waiting. Machines continue ordinary defence without opening a maintenance task."
+        summary_label.text = _text("command.adaptive.empty_summary", "No structural proposal is waiting. Machines continue ordinary defence without opening a maintenance task.")
         selection_label.text = _text("command.no_proposal", "NO PROPOSAL")
         detail_label.text = adaptation_summary
-        cost_label.text = "Status: the architect will speak only when a real structural decision exists."
+        cost_label.text = _text("command.adaptive.empty_status", "Status: the architect will speak only when a real structural decision exists.")
         primary_button.text = _text("command.no_proposal", "NO PROPOSAL")
         primary_button.disabled = true
         return
@@ -340,16 +340,18 @@ func _refresh_adaptation() -> void:
     primary_button.disabled = false
     var adaptation := adaptations[selected_index]
     selection_label.text = str(adaptation.get("display_name", "Unknown response")).to_upper()
-    detail_label.text = "%s\n\nProblem addressed: %s\n\nTrade-off: %s" % [
+    detail_label.text = "%s\n\n%s\n%s\n%s\n%s" % [
         str(adaptation.get("description", "")),
+        _text("command.problem_label", "Problem addressed:"),
         str(adaptation.get("problem", "")),
+        _text("command.tradeoff_label", "Trade-off:"),
         str(adaptation.get("tradeoff", "")),
     ]
     var cost: Dictionary = adaptation.get("cost", {})
-    cost_label.text = "Machine construction: %.1f seconds · Cost: %d Scrap · geometry and repair remain delegated" % [
+    cost_label.text = _text("command.adaptive.cost", "Machine construction: {0} seconds · Cost: {1} Scrap · geometry and repair remain delegated", [
         float(adaptation.get("build_seconds", 12.0)),
         int(cost.get("scrap", 0)),
-    ]
+    ])
 
 
 func _refresh_evolution() -> void:
@@ -357,43 +359,45 @@ func _refresh_evolution() -> void:
     secondary_button.visible = false
 
     if technologies.is_empty():
-        summary_label.text = "No strategic decision is required at this moment. The machines will continue routine work without opening another management task."
+        summary_label.text = _text("command.evolution.empty_summary", "No strategic decision is required at this moment. The machines will continue routine work without opening another management task.")
         selection_label.text = _text("command.no_evolution", "NO EVOLUTION AVAILABLE")
-        detail_label.text = "Continue the current objective. Recover Scrap, fabricate the required machine class, complete a physical expedition, or meet the next Heartforge prerequisite. The interface will become actionable only when a real choice exists."
-        cost_label.text = "Status: locked by world progress — not by a hidden menu selection."
+        detail_label.text = _text("command.evolution.empty_detail", "Continue the current objective. Recover Scrap, fabricate the required machine class, complete a physical expedition, or meet the next Heartforge prerequisite. The interface will become actionable only when a real choice exists.")
+        cost_label.text = _text("command.evolution.locked_status", "Status: locked by world progress — not by a hidden menu selection.")
         primary_button.text = _text("command.no_evolution", "NO EVOLUTION AVAILABLE")
         primary_button.disabled = true
         return
 
-    summary_label.text = "Choose one consequential technology. Routine execution remains delegated to the machines. Scrap %d · Cognition Cores %d · Active doctrine: %s" % [scrap, rare_cores, doctrine_name]
+    summary_label.text = _text("command.evolution.summary", "Choose one consequential technology. Routine execution remains delegated to the machines. Scrap {0} · Cognition Cores {1} · Active doctrine: {2}", [scrap, rare_cores, doctrine_name])
     primary_button.text = _text("command.authorize_evolution", "AUTHORIZE EVOLUTION")
     primary_button.disabled = false
     var technology := technologies[selected_index]
     selection_label.text = str(technology.get("display_name", "Unknown technology")).to_upper()
-    detail_label.text = "%s\n\nBranch: %s\nEffects: %s" % [
+    detail_label.text = "%s\n\n%s %s\n%s %s" % [
         str(technology.get("description", "")),
+        _text("command.branch_label", "Branch:"),
         str(technology.get("branch", "unknown")).capitalize(),
+        _text("command.effects_label", "Effects:"),
         ", ".join(technology.get("effects", [])),
     ]
     var cost: Dictionary = technology.get("cost", {})
-    cost_label.text = "Cost: %d Scrap · %d Cognition Core%s" % [
+    cost_label.text = _text("command.evolution.cost", "Cost: {0} Scrap · {1} Cognition Core{2}", [
         int(cost.get("scrap", 0)),
         int(cost.get("rare_cores", 0)),
         "" if int(cost.get("rare_cores", 0)) == 1 else "s",
-    ]
+    ])
 
 
 func _refresh_outposts() -> void:
     title_label.text = _text("command.outposts.title", "AUTONOMOUS OUTPOST PROJECTS · HEARTFORGE TIER {0}", [heartforge_tier])
-    summary_label.text = "Choose a discovered fixed site and strategic role. Machines choose builders, escorts, route, construction, repair, hauling, and rebuilding."
+    summary_label.text = _text("command.outposts.summary", "Choose a discovered fixed site and strategic role. Machines choose builders, escorts, route, construction, repair, hauling, and rebuilding.")
     primary_button.text = _text("command.outposts.build", "AUTHORIZE AUTONOMOUS BUILD")
     secondary_button.text = _text("command.outposts.upgrade", "AUTHORIZE AUTONOMOUS UPGRADE")
     secondary_button.visible = true
 
     if heartforge_tier < 2:
         selection_label.text = _text("command.outposts.locked", "PROTOCOLS LOCKED")
-        detail_label.text = "Autonomous outposts unlock at Heartforge Tier 2. Recover a Cognition Core and authorize the next Heartforge evolution before asking machines to establish a fixed support site."
-        cost_label.text = "Status: locked by Heartforge progression · no site placement or worker management is available."
+        detail_label.text = _text("command.outposts.locked_detail", "Autonomous outposts unlock at Heartforge Tier 2. Recover a Cognition Core and authorize the next Heartforge evolution before asking machines to establish a fixed support site.")
+        cost_label.text = _text("command.outposts.locked_status", "Status: locked by Heartforge progression · no site placement or worker management is available.")
         primary_button.text = _text("command.outposts.locked", "OUTPOST PROTOCOLS LOCKED")
         primary_button.disabled = true
         secondary_button.text = _text("command.outposts.locked", "OUTPOST PROTOCOLS LOCKED")
@@ -402,8 +406,8 @@ func _refresh_outposts() -> void:
 
     if sites.is_empty():
         selection_label.text = _text("command.outposts.no_sites", "NO DISCOVERED SITES")
-        detail_label.text = "Pathfinders must discover viable foundations through physical excursions. Outposts cannot be placed freely and do not claim territory."
-        cost_label.text = "Status: no site decision exists yet. %s" % operation_summary
+        detail_label.text = _text("command.outposts.no_sites_detail", "Pathfinders must discover viable foundations through physical excursions. Outposts cannot be placed freely and do not claim territory.")
+        cost_label.text = _text("command.outposts.no_sites_status", "Status: no site decision exists yet. {0}", [operation_summary])
         primary_button.text = _text("command.outposts.no_build", "NO BUILD SITE AVAILABLE")
         primary_button.disabled = true
         secondary_button.text = _text("command.outposts.no_upgrade", "NO OUTPOST TO UPGRADE")
@@ -413,16 +417,19 @@ func _refresh_outposts() -> void:
     var site := sites[selected_index]
     selection_label.text = str(site.get("display_name", "Unknown site")).to_upper()
     var chosen_role := selected_role()
-    detail_label.text = "%s\n\nSelected role: %s\n%s\n\nCurrent activity: %s\n\nUse , and . to change role." % [
+    detail_label.text = "%s\n\n%s %s\n%s\n\n%s %s\n\n%s" % [
         str(site.get("status", "")),
+        _text("command.role_label", "Selected role:"),
         String(chosen_role).capitalize(),
         _role_description(chosen_role),
+        _text("command.activity_label", "Current activity:"),
         operation_summary,
+        _text("command.role_hint", "Use , and . to change role."),
     ]
     var has_outpost := bool(site.get("has_outpost", false))
     var alive := bool(site.get("alive", false))
     var tier := int(site.get("tier", 0))
-    cost_label.text = "Construction requires Scrap, a free Engineer, a Warden escort, and route capacity. Destroyed posts rebuild automatically when those conditions return."
+    cost_label.text = _text("command.outposts.cost", "Construction requires Scrap, a free Engineer, a Warden escort, and route capacity. Destroyed posts rebuild automatically when those conditions return.")
     primary_button.disabled = heartforge_tier < 2 or has_outpost
     secondary_button.disabled = not alive or tier >= mini(3, heartforge_tier)
 
@@ -430,13 +437,13 @@ func _refresh_outposts() -> void:
 func _role_description(value: StringName) -> String:
     match value:
         &"defence":
-            return "Automatically attacks nearby organisms and creates a proxy defensive screen away from the Heartforge."
+            return _text("command.role.defence", "Automatically attacks nearby organisms and creates a proxy defensive screen away from the Heartforge.")
         &"scout":
-            return "Extends early warning and reports organic contacts without creating a permanent management task."
+            return _text("command.role.scout", "Extends early warning and reports organic contacts without creating a permanent management task.")
         &"repair":
-            return "Repairs friendly machines passing through its service radius during remote operations."
+            return _text("command.role.repair", "Repairs friendly machines passing through its service radius during remote operations.")
         _:
-            return "Recovers local Scrap into forward storage; protected haulers physically carry it to the Heartforge."
+            return _text("command.role.recovery", "Recovers local Scrap into forward storage; protected haulers physically carry it to the Heartforge.")
 
 
 func refresh_localized_text() -> void:
