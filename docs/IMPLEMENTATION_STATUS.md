@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused early-organic material separation pass
+
+- lifted the structural shell, ridge, membrane and bone albedo separation on
+  Skitterling, Razorhound, Burrower, Sporecaster and Veilstalker while keeping
+  their wet flesh bases dark enough to preserve the hostile organic identity;
+- regenerated all five dependency-free glTFs and live-reviewed the exact
+  Windows page 2/14 plus a fresh opening Heartforge frame at 1280x720; shell
+  plates and membranes now read at compact review distance, while the broader
+  hostile-family and production-art gates remain open.
+
 ## Focused friendly-machine chassis family high-definition pass
 
 - replaced the repeated broad beveled-box shells on Warden, Scrapper,

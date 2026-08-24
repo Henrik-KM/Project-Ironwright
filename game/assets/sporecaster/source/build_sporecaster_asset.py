@@ -21,10 +21,10 @@ OUTPUT_PATH = SOURCE_DIR / "sporecaster.gltf"
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Sporecaster wet flesh", "pbrMetallicRoughness": {"baseColorFactor": [0.055, 0.07, 0.075, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.34}},
-        {"name": "Sporecaster shell", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.20, 0.18, 1.0], "metallicFactor": 0.15, "roughnessFactor": 0.44}},
-        {"name": "Sporecaster membrane", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.035, 0.11, 0.88], "metallicFactor": 0.0, "roughnessFactor": 0.36}, "emissiveFactor": [0.05, 0.004, 0.025]},
-        {"name": "Sporecaster bone", "pbrMetallicRoughness": {"baseColorFactor": [0.49, 0.42, 0.31, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.57}},
+        {"name": "Sporecaster wet flesh", "pbrMetallicRoughness": {"baseColorFactor": [0.09, 0.12, 0.13, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.34}},
+        {"name": "Sporecaster shell", "pbrMetallicRoughness": {"baseColorFactor": [0.26, 0.29, 0.27, 1.0], "metallicFactor": 0.15, "roughnessFactor": 0.44}},
+        {"name": "Sporecaster membrane", "pbrMetallicRoughness": {"baseColorFactor": [0.25, 0.045, 0.14, 0.88], "metallicFactor": 0.0, "roughnessFactor": 0.36}, "emissiveFactor": [0.05, 0.004, 0.025]},
+        {"name": "Sporecaster bone", "pbrMetallicRoughness": {"baseColorFactor": [0.56, 0.46, 0.32, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.57}},
         {"name": "Sporecaster spore eye", "pbrMetallicRoughness": {"baseColorFactor": [0.48, 0.17, 0.025, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.23}, "emissiveFactor": [1.0, 0.16, 0.02]},
         {"name": "Sporecaster tendon", "pbrMetallicRoughness": {"baseColorFactor": [0.32, 0.11, 0.16, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.52}},
     ]

@@ -214,6 +214,14 @@ LEGACY_ORGANIC_SOURCE_TESSELLATION_FLOORS = {
     "veilstalker": ("game/assets/veilstalker/source/build_veilstalker_asset.py", 16, 24),
 }
 
+EARLY_ORGANIC_MATERIAL_FAMILIES = (
+    "skitterling",
+    "razorhound",
+    "burrower",
+    "sporecaster",
+    "veilstalker",
+)
+
 MECHROMANCER_SOURCE_TESSELLATION_FLOORS = {
     "HERO_CURVE_VERTICES": 24,
     "HERO_SPHERE_SEGMENTS": 32,
@@ -744,6 +752,18 @@ def validate_authored_organic_assets() -> None:
                 fail(f"{family} glTF is missing required animation clip: {required}")
 
 
+def validate_early_organic_materials() -> None:
+    for family in EARLY_ORGANIC_MATERIAL_FAMILIES:
+        gltf_path = ROOT / f"game/assets/{family}/{family}.gltf"
+        gltf = json.loads(gltf_path.read_text(encoding="utf-8"))
+        materials = gltf.get("materials", [])
+        if len(materials) < 2:
+            fail(f"{family} glTF must expose a wet base and a structural shell material.")
+        shell_factor = materials[1].get("pbrMetallicRoughness", {}).get("baseColorFactor", [])
+        if len(shell_factor) < 3 or max(float(channel) for channel in shell_factor[:3]) < 0.24:
+            fail(f"{family} structural shell material is too dark for compact tactical review.")
+
+
 def validate_authored_robot_assets() -> None:
     for family, expected_clips in FRIENDLY_ROBOT_FAMILIES.items():
         manifest_path = ROOT / f"game/data/{family}_asset_manifest.json"
@@ -828,6 +848,7 @@ def main() -> int:
         validate_actor_animation_breadth()
         validate_authored_robot_assets()
         validate_authored_organic_assets()
+        validate_early_organic_materials()
         validate_authored_region_assets()
 
         main_scene = (ROOT / "game/scenes/main_3d.tscn").read_text(encoding="utf-8")
