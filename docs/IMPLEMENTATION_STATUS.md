@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused casualty-recovery operation localization pass
+
+- localized the post-authorization active objective, operation badge,
+  authorization report, outbound formation report and recovery-state messages
+  across English, Swedish and German;
+- preserved stable operation identifiers and canonical event text for
+  persistence and diagnostics while localizing the release presentation
+  boundary;
+- exact Windows export review passed on 2026-08-24 at 1280×720 in the German
+  casualty-recovery fixture after clicking physical-operation authorization;
+  broader professional localization remains open.
+
 ## Focused endgame-surface localization pass
 
 - localized the active final-protocol objective, intervention prompt,

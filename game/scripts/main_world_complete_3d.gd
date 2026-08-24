@@ -52,9 +52,9 @@ func _process(delta: float) -> void:
         hud.set_operation(protocol_status)
         hud.set_operation_badge(protocol_status, true, "FINAL PROTOCOL")
     elif not long_operation_director.active_operation.is_empty():
-        var operation_status := long_operation_director.operation_summary()
+        var operation_status := _localized_long_operation_summary()
         hud.set_operation(operation_status)
-        hud.set_operation_badge(operation_status, true)
+        hud.set_operation_badge(operation_status, true, _localized_text("hud.active_operation_prefix", "ACTIVE OPERATION"))
     else:
         hud.set_operation("No remote operation")
         hud.set_operation_badge("", false)
@@ -373,7 +373,7 @@ func _start_casualty_recovery_review() -> void:
     long_operation_director._sync_casualty_recovery_marker()
     operations_hud.open_operations()
     player.input_enabled = false
-    hud.push_notification("FIELD CASUALTY SIGNAL · RECOVERY IS A STRATEGIC CHOICE")
+    hud.push_notification(_localized_text("notification.field_casualty", "FIELD CASUALTY SIGNAL · RECOVERY IS A STRATEGIC CHOICE"))
 
 
 func world_role_count(role: StringName) -> int:
@@ -404,14 +404,14 @@ func _close_operations_hud() -> void:
 
 func _authorize_long_operation(operation_id: StringName) -> void:
     if operation_id == &"":
-        hud.push_notification("NO LONG-RANGE OPERATION IS CURRENTLY AVAILABLE")
+        hud.push_notification(_localized_text("notification.long_operation.none", "NO LONG-RANGE OPERATION IS CURRENTLY AVAILABLE"))
         return
     if long_operation_director.authorize(operation_id):
         _close_operations_hud()
         follow_operation = true
-        hud.push_notification("LONG-RANGE OPERATION AUTHORIZED · FOLLOWS REAL STREETS · F TO TOGGLE FOLLOW")
+        hud.push_notification(_localized_text("notification.long_operation.authorized", "LONG-RANGE OPERATION AUTHORIZED · FOLLOWS REAL STREETS · F TO TOGGLE FOLLOW"))
     else:
-        hud.push_notification("OPERATION UNAVAILABLE · CHECK HEARTFORGE TIER, OUTPOSTS, SCRAP, TEAM COMPOSITION AND ACTIVE OPERATIONS")
+        hud.push_notification(_localized_text("notification.long_operation.unavailable", "OPERATION UNAVAILABLE · CHECK HEARTFORGE TIER, OUTPOSTS, SCRAP, TEAM COMPOSITION AND ACTIVE OPERATIONS"))
 
 
 func _authorize_adaptation(adaptation_id: StringName) -> void:
@@ -540,12 +540,20 @@ func _update_complete_game_objective() -> void:
         return
 
     if not long_operation_director.active_operation.is_empty():
-        var active_operation_status := long_operation_director.operation_summary()
+        var active_operation_status := _localized_long_operation_summary()
+        var locale_service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+        var objective_title := "FOLLOW THE ACTIVE MACHINE GROUP"
+        var objective_detail := "%s. Press F to follow the physical formation or P to review its route, state and recovery affordance." % active_operation_status
+        var objective_prompt := "F FOLLOW ACTIVE MACHINE GROUP · P REVIEW OPERATION STATUS"
+        if locale_service != null:
+            objective_title = locale_service.text("objective.active_operation.title")
+            objective_detail = locale_service.text("objective.active_operation.detail", [active_operation_status])
+            objective_prompt = locale_service.text("objective.active_operation.prompt")
         hud.set_objective(
-            "FOLLOW THE ACTIVE MACHINE GROUP",
-            "%s. Press F to follow the physical formation or P to review its route, state and recovery affordance." % active_operation_status
+            objective_title,
+            objective_detail
         )
-        hud.set_prompt("F FOLLOW ACTIVE MACHINE GROUP · P REVIEW OPERATION STATUS")
+        hud.set_prompt(objective_prompt)
         var guidance := get_node_or_null("ObjectiveGuidance")
         if guidance != null and guidance.has_method(&"clear_guidance"):
             guidance.call(&"clear_guidance")
@@ -699,8 +707,72 @@ func _ensure_region_salvage(region_id: StringName) -> void:
     _spawn_salvage(center + Vector3(-8.0, 0.0, -4.0), 135, "%s structural salvage" % region_name)
 
 
+func _localized_text(key: String, fallback: String, replacements: Array = []) -> String:
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service != null:
+        return service.text(key, replacements)
+    var result := fallback
+    for index in range(replacements.size()):
+        result = result.replace("{%d}" % index, str(replacements[index]))
+    return result
+
+
+func _localized_region_name(region_id: StringName) -> String:
+    var fallback := String(region_id).trim_prefix("region.").replace("_", " ")
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service == null:
+        return fallback
+    var key := "world.region.%s" % String(region_id).trim_prefix("region.")
+    var localized := service.text(key)
+    return fallback if localized == key else localized
+
+
+func _localized_operation_name(operation_id: StringName, fallback: String) -> String:
+    if long_operation_director == null:
+        return fallback
+    var entry := long_operation_director.operation(operation_id)
+    if entry.is_empty():
+        return fallback
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service == null:
+        return str(entry.get("display_name", fallback))
+    var key_base := String(operation_id)
+    var replacements: Array = []
+    var template_id := str(entry.get("dynamic_template_id", ""))
+    if not template_id.is_empty():
+        var template_key := template_id.trim_prefix("dynamic.")
+        key_base = "operation.dynamic.%s" % template_key
+        replacements.append(_localized_region_name(StringName(str(entry.get("localization_region_id", entry.get("region_id", ""))))))
+        if template_key == "machine_recovery":
+            replacements.push_front(str(entry.get("localization_machine_name", "disabled machine")))
+    var key := "%s.name" % key_base
+    var localized := service.text(key, replacements)
+    return str(entry.get("display_name", fallback)) if localized == key else localized
+
+
+func _localized_long_operation_summary() -> String:
+    if long_operation_director == null or long_operation_director.active_operation.is_empty():
+        return _localized_text("hud.operation.none", "No long-range operation")
+    var entry: Dictionary = long_operation_director.active_operation.get("data", {})
+    var operation_id := StringName(str(long_operation_director.active_operation.get("id", "operation")))
+    var fallback_name := str(entry.get("display_name", "Operation"))
+    var operation_name := _localized_operation_name(operation_id, fallback_name)
+    var state := String(long_operation_director.active_operation.get("state", "unknown"))
+    var localized_state := _localized_text("operation.state.%s" % state, state.capitalize())
+    return _localized_text("hud.operation.summary", "%s · %s", [operation_name, localized_state])
+
+
+func _localized_long_operation_report(operation_id: StringName, state: StringName, detail: String) -> String:
+    var operation_name := _localized_operation_name(operation_id, String(operation_id).replace("operation.", "").replace("_", " "))
+    var key := "notification.long_operation.%s" % String(state)
+    var localized := _localized_text(key, "", [operation_name])
+    if not localized.is_empty() and localized != key:
+        return localized
+    return "%s · %s\n%s" % [operation_name.to_upper(), String(state).to_upper(), detail]
+
+
 func _on_long_operation_changed(operation_id: StringName, state: StringName, detail: String) -> void:
-    hud.push_notification("%s · %s\n%s" % [String(operation_id).replace("operation.", "").replace("_", " ").to_upper(), String(state).to_upper(), detail])
+    hud.push_notification(_localized_long_operation_report(operation_id, state, detail))
     var release_audio := get_node_or_null("ReleaseAudioDirector") as ReleaseAudioDirector3D
     if release_audio != null:
         var anchor := heartforge.global_position if heartforge != null else Vector3.ZERO
@@ -722,7 +794,7 @@ func _on_adaptation_completed(_adaptation_id: StringName, display_name: String) 
 
 
 func _on_long_operation_returned(operation_id: StringName, display_name: String, rewards: Dictionary) -> void:
-    hud.push_notification("OPERATION COMPLETE · %s · REWARDS DELIVERED PHYSICALLY" % display_name.to_upper())
+    hud.push_notification(_localized_text("notification.long_operation.returned", "OPERATION COMPLETE · %s · REWARDS DELIVERED PHYSICALLY", [_localized_operation_name(operation_id, display_name)]))
     if not bool(machine_relationship_moments.get("first_return", false)):
         machine_relationship_moments["first_return"] = true
         var witness := _machine_witness_identity()
@@ -746,7 +818,7 @@ func _on_machine_recovered(record: Dictionary) -> void:
     robot.current_health = robot.maximum_health * 0.68
     robot.health_changed.emit(robot, robot.current_health, robot.maximum_health)
     var identity := robot.display_identity()
-    hud.push_notification("MACHINE RECOVERED · %s · RETURNED DAMAGED BUT ALIVE" % identity.to_upper())
+    hud.push_notification(_localized_text("notification.machine_recovered", "MACHINE RECOVERED · %s · RETURNED DAMAGED BUT ALIVE", [identity.to_upper()]))
     run_state.log_event("MACHINE WITNESS · %s returned from a field casualty beacon and rejoined the Heartforge." % identity)
     if story_archive_director != null:
         story_archive_director.record_machine_witness(&"machine.first_recovery")

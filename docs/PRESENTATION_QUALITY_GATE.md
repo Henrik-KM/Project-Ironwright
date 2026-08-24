@@ -4,6 +4,13 @@
 
 The current build is not release-ready merely because its systemic gameplay path is complete. The native presentation must be judged against the actual shipped frame, not against internal implementation breadth.
 
+The casualty-recovery operation boundary was re-reviewed on 2026-08-24 in the
+exact German Windows export at 1280×720. After authorizing a physical recovery,
+the active objective, operation badge, authorization report and outbound
+formation report all remained localized, while stable operation and event
+identifiers stayed canonical for persistence and diagnostics. Broader
+professional localization and human acceptance remain open.
+
 The final-protocol German export was re-reviewed on 2026-08-24 after the
 endgame completion slice exposed mixed-language copy. The active objective,
 intervention prompt, sanctuary damage badge, victory title, protocol name,
