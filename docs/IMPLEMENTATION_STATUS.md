@@ -18,6 +18,15 @@
   export commands now select the Dummy audio driver so automated coverage is
   silent by default.
 
+## Focused East Tenements cloth-material pass
+
+- varied the authored and release-dressing laundry panels across three muted
+  weathered fabric tones with deterministic size variation, removing the
+  repeated bright-card read while retaining balcony, clothesline and route
+  sockets. Silent exact 1280x720 page 6/14 review confirms the residential
+  panels now sit behind the brick, window and fire-escape hierarchy; release
+  coverage verifies the varied cloth palette.
+
 ## Focused Observatory dish hardware pass
 
 - rebuilt the three exposed Observatory dish ribs as dense round structural

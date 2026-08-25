@@ -26,7 +26,12 @@ def main() -> None:
         {"name": "Tenement iron", "pbrMetallicRoughness": {"baseColorFactor": [0.06, 0.09, 0.11, 1.0], "metallicFactor": 0.72, "roughnessFactor": 0.44}},
         {"name": "Tenement rust", "pbrMetallicRoughness": {"baseColorFactor": [0.52, 0.20, 0.07, 1.0], "metallicFactor": 0.38, "roughnessFactor": 0.68}, "emissiveFactor": [0.12, 0.02, 0.005]},
         {"name": "Tenement window", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.13, 0.18, 1.0], "metallicFactor": 0.10, "roughnessFactor": 0.26}, "emissiveFactor": [0.015, 0.10, 0.15]},
-        {"name": "Tenement cloth", "pbrMetallicRoughness": {"baseColorFactor": [0.33, 0.10, 0.18, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.92}},
+        # Residential cloth should read as weathered, sun-faded fabric rather
+        # than a repeated emissive-looking pink card. The three restrained
+        # tones are assigned deterministically to the hanging panels below.
+        {"name": "Tenement cloth faded brick", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.15, 0.13, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.94}},
+        {"name": "Tenement cloth washed teal", "pbrMetallicRoughness": {"baseColorFactor": [0.08, 0.20, 0.22, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.94}},
+        {"name": "Tenement cloth sun-bleached", "pbrMetallicRoughness": {"baseColorFactor": [0.34, 0.28, 0.20, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.95}},
         {"name": "Tenement organic", "pbrMetallicRoughness": {"baseColorFactor": [0.20, 0.035, 0.13, 1.0], "metallicFactor": 0.01, "roughnessFactor": 0.86}, "emissiveFactor": [0.28, 0.01, 0.08]},
         {"name": "Tenement tank", "pbrMetallicRoughness": {"baseColorFactor": [0.08, 0.13, 0.14, 1.0], "metallicFactor": 0.22, "roughnessFactor": 0.62}},
     ]
@@ -37,7 +42,7 @@ def main() -> None:
         meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
-    brick, concrete, iron, rust, window, cloth, organic, tank = range(8)
+    brick, concrete, iron, rust, window, cloth, cloth_teal, cloth_cream, organic, tank = range(10)
     mesh_ids = {
         "Floor": mesh("TenementFloor", add_beveled_box(builder, (18.0, 0.16, 14.0), concrete, 0.04)),
         "Block": mesh("TenementBlock", add_beveled_box(builder, (6.0, 9.0, 4.7), brick, 0.20)),
@@ -51,6 +56,8 @@ def main() -> None:
         "Tank": mesh("TenementWaterTank", add_cylinder(builder, 1.15, 2.2, tank, 24)),
         "TankCap": mesh("TenementTankCap", add_cylinder(builder, 1.28, 0.16, rust, 24)),
         "Cloth": mesh("TenementCloth", add_beveled_box(builder, (1.35, 1.15, 0.06), cloth, 0.025)),
+        "ClothTeal": mesh("TenementClothTeal", add_beveled_box(builder, (1.22, 1.28, 0.06), cloth_teal, 0.025)),
+        "ClothCream": mesh("TenementClothCream", add_beveled_box(builder, (1.42, 1.05, 0.06), cloth_cream, 0.025)),
         "Creep": mesh("TenementOrganicCreep", add_uv_sphere(builder, 0.52, organic, 18, 28)),
         "Light": mesh("TenementWindowLight", add_uv_sphere(builder, 0.13, rust, 16, 24)),
         "Cable": mesh("TenementCable", add_cylinder(builder, 0.045, 5.2, rust, 10)),
@@ -168,8 +175,16 @@ def main() -> None:
     add_node("TenementRoofWaterTank", mesh_ids["Tank"], (5.8, 10.4, 2.6), extras={"socket_type": "roof_water_tank"})
     add_node("TenementRoofWaterTankCap", mesh_ids["TankCap"], (5.8, 11.55, 2.6), parent=0)
     add_node("TenementTankValve", mesh_ids["TankValve"], (5.8, 10.4, 1.35), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "tank_service_valve"})
+    hanging_cloth_meshes = [mesh_ids["Cloth"], mesh_ids["ClothTeal"], mesh_ids["ClothCream"]]
     for index, (x, y, z) in enumerate(((-4.2, 2.35, 3.9), (0.8, 4.55, 6.0), (5.1, 1.4, -2.9))):
-        add_node("TenementHangingCloth%d" % index, mesh_ids["Cloth"], (x, y, z), rotation=(0.0, 0.04 * float(index - 1), 0.06 * float(index - 1)), extras={"socket_type": "hanging_cloth"})
+        add_node(
+            "TenementHangingCloth%d" % index,
+            hanging_cloth_meshes[index % len(hanging_cloth_meshes)],
+            (x, y, z),
+            rotation=(0.0, 0.04 * float(index - 1), 0.06 * float(index - 1)),
+            scale=(1.0, 1.0 + 0.06 * float(index % 2), 1.0),
+            extras={"socket_type": "hanging_cloth", "material_variation": index},
+        )
         add_node("TenementLaundryLine%d" % index, mesh_ids["LaundryLine"], (x, y + 0.68, z), rotation=(0.0, 0.0, math.pi * 0.5), extras={"surface": "laundry_line"})
     add_node("TenementServiceCable", mesh_ids["Cable"], (7.4, 7.0, 2.8), rotation=(0.0, 0.0, math.pi * 0.5), extras={"socket_type": "service_cable"})
     add_node("TenementWindowLight", mesh_ids["Light"], (-3.0, 5.25, -2.50), extras={"socket_type": "window_light"})
