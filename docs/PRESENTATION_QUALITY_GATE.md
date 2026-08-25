@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Cathedral Quarter received a focused front-gable pass on 2026-08-25. The
+release facade now carries a shallow front gable and central cross, while the
+rose-glass emission is restrained so the civic silhouette remains legible beside
+the organic takeover. Exact silent 1280x720 page 11/14 review is required to
+confirm the revised hierarchy; broader human Cathedral, region and production-
+art acceptance remain open.
+
 East Tenements received a focused laundry-dressing correction on 2026-08-25.
 The encounter vignette's repeated saturated cards now use varied weathered
 cloth tones, beveled panel volume and restrained lower hems, so the residential

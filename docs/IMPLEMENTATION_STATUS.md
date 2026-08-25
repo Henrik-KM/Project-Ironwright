@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused Cathedral gable-facade pass
+
+- added a shallow front gable and central cross to the Cathedral Quarter release
+  facade and reduced the rose-glass lift so the civic silhouette survives the
+  biological takeover at remote review distance;
+- the aesthetic suite now guards the release-gable hardware; exact silent page
+  11/14 review will confirm the improved church read.
+
 ## Focused East Tenements laundry-dressing pass
 
 - replaced the encounter vignette's saturated laundry cards with varied
