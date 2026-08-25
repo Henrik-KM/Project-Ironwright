@@ -2,6 +2,11 @@
 
 ## Focused Heartforge focal-model high-definition pass
 
+- refined the Rootweaver's spore fan with a raised authored cant and aligned
+  ribs so its route-control membrane reads as an elevated fan rather than a
+  horizontal disc; regenerated the dependency-free glTF while preserving the
+  spore socket, animation channels, tier anatomy and attack ownership.
+
 - refined the Miremaw's paired water fins with opposing authored pitch so its
   amphibious membrane silhouette reads as lifted fins rather than horizontal
   discs; regenerated the dependency-free glTF while preserving fin sockets,

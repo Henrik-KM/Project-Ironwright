@@ -462,9 +462,10 @@ def build_family(name: str, spec: dict) -> None:
         add_node("RootweaverCrown", mesh_ids["Soft"], (0.0, 1.55, -0.42), scale=(1.28, 1.2, 1.18), extras={"socket_type": "crown_oculi"})
         add_node("RootweaverCrownPlate0", mesh_ids["Plate"], (-0.36, 1.92, -0.44), rotation=(0.0, -0.22, -0.08), scale=(0.72, 1.0, 0.84), extras={"surface": "crown_plate"})
         add_node("RootweaverCrownPlate1", mesh_ids["Plate"], (0.36, 1.92, -0.44), rotation=(0.0, 0.22, 0.08), scale=(0.72, 1.0, 0.84), extras={"surface": "crown_plate"})
-        add_node("RootweaverSporeFan", mesh_ids["Membrane"], (0.0, 1.76, 0.24), rotation=(0.0, 0.0, 1.5708), scale=(1.0, 1.0, 1.24), extras={"socket_type": "spore_fan"})
-        add_node("RootweaverSporeRib0", mesh_ids["MembraneRib"], (-0.38, 1.76, 0.24), rotation=(0.0, -0.18, -0.46), scale=(0.78, 1.0, 0.84), extras={"surface": "spore_fan_rib"})
-        add_node("RootweaverSporeRib1", mesh_ids["MembraneRib"], (0.38, 1.76, 0.24), rotation=(0.0, 0.18, 0.46), scale=(0.78, 1.0, 0.84), extras={"surface": "spore_fan_rib"})
+        fan_pitch = 0.24
+        add_node("RootweaverSporeFan", mesh_ids["Membrane"], (0.0, 1.76, 0.24), rotation=(fan_pitch, 0.0, 1.5708), scale=(1.0, 1.0, 1.24), extras={"socket_type": "spore_fan"})
+        add_node("RootweaverSporeRib0", mesh_ids["MembraneRib"], (-0.38, 1.76, 0.24), rotation=(fan_pitch, -0.18, -0.46), scale=(0.78, 1.0, 0.84), extras={"surface": "spore_fan_rib"})
+        add_node("RootweaverSporeRib1", mesh_ids["MembraneRib"], (0.38, 1.76, 0.24), rotation=(fan_pitch, 0.18, 0.46), scale=(0.78, 1.0, 0.84), extras={"surface": "spore_fan_rib"})
         for side in (-1.0, 1.0):
             suffix = "L" if side < 0 else "R"
             add_node(f"RootweaverArm{suffix}", mesh_ids["LongBone"], (side * 0.82, 0.95, -0.2), rotation=(0.0, side * 0.2, side * 0.8), scale=(1.0, 1.0, 1.28), extras={"socket_type": "root_arm"})
@@ -605,22 +606,22 @@ def build_family(name: str, spec: dict) -> None:
         # transitions while giving the close release camera living secondary
         # anatomy to read between the broad torso beats.
         idle_channels.extend([
-            ("RootweaverSporeFan", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.0, 1.48)) + quat((0.0, 0.0, 1.66)) + quat((0.0, 0.0, 1.48))),
-            ("RootweaverSporeRib0", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.18, -0.46)) + quat((0.04, -0.18, -0.42)) + quat((0.0, -0.18, -0.46))),
-            ("RootweaverSporeRib1", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.18, 0.46)) + quat((-0.04, 0.18, 0.42)) + quat((0.0, 0.18, 0.46))),
+            ("RootweaverSporeFan", "rotation", [0.0, 0.8, 1.6], quat((0.24, 0.0, 1.48)) + quat((0.30, 0.0, 1.66)) + quat((0.24, 0.0, 1.48))),
+            ("RootweaverSporeRib0", "rotation", [0.0, 0.8, 1.6], quat((0.24, -0.18, -0.46)) + quat((0.28, -0.18, -0.42)) + quat((0.24, -0.18, -0.46))),
+            ("RootweaverSporeRib1", "rotation", [0.0, 0.8, 1.6], quat((0.24, 0.18, 0.46)) + quat((0.20, 0.18, 0.42)) + quat((0.24, 0.18, 0.46))),
         ])
         walk_channels.extend([
             ("RootweaverArmL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.2, -0.8)) + quat((0.14, -0.24, -0.72)) + quat((0.0, -0.2, -0.8))),
             ("RootweaverArmR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.2, 0.8)) + quat((-0.14, 0.24, 0.72)) + quat((0.0, 0.2, 0.8))),
         ])
         attack_channels.extend([
-            ("RootweaverSporeFan", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.0, 1.57)) + quat((0.0, 0.0, 1.22)) + quat((0.0, 0.0, 1.57))),
-            ("RootweaverSporeRib0", "rotation", [0.0, 0.24, 0.48], quat((0.0, -0.18, -0.46)) + quat((0.18, -0.2, -0.34)) + quat((0.0, -0.18, -0.46))),
-            ("RootweaverSporeRib1", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.18, 0.46)) + quat((-0.18, 0.2, 0.34)) + quat((0.0, 0.18, 0.46))),
+            ("RootweaverSporeFan", "rotation", [0.0, 0.24, 0.48], quat((0.24, 0.0, 1.57)) + quat((0.12, 0.0, 1.22)) + quat((0.24, 0.0, 1.57))),
+            ("RootweaverSporeRib0", "rotation", [0.0, 0.24, 0.48], quat((0.24, -0.18, -0.46)) + quat((0.18, -0.2, -0.34)) + quat((0.24, -0.18, -0.46))),
+            ("RootweaverSporeRib1", "rotation", [0.0, 0.24, 0.48], quat((0.24, 0.18, 0.46)) + quat((-0.18, 0.2, 0.34)) + quat((0.24, 0.18, 0.46))),
             ("RootweaverRootSpineL", "rotation", [0.0, 0.24, 0.48], quat((0.0, -0.28, -0.4)) + quat((0.12, -0.34, -0.48)) + quat((0.0, -0.28, -0.4))),
         ])
         feed_channels.extend([
-            ("RootweaverSporeFan", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.0, 1.57)) + quat((0.0, 0.0, 1.34)) + quat((0.0, 0.0, 1.57))),
+            ("RootweaverSporeFan", "rotation", [0.0, 0.3, 0.6], quat((0.24, 0.0, 1.57)) + quat((0.16, 0.0, 1.34)) + quat((0.24, 0.0, 1.57))),
             ("RootweaverArmL", "rotation", [0.0, 0.3, 0.6], quat((0.0, -0.2, -0.8)) + quat((0.16, -0.28, -0.68)) + quat((0.0, -0.2, -0.8))),
             ("RootweaverArmR", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.2, 0.8)) + quat((0.16, 0.28, 0.68)) + quat((0.0, 0.2, 0.8))),
         ])
