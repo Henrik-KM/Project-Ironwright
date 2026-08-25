@@ -53,6 +53,45 @@ def add_torus(
     return _geometry(builder, positions, normals, indices, material)
 
 
+def add_gable_prism(
+    builder: BufferBuilder,
+    half_width: float,
+    height: float,
+    depth: float,
+    material: int,
+) -> tuple[int, int, int, int]:
+    """Build a compact triangular nave gable with a closed stone volume."""
+    half_width = max(0.001, float(half_width))
+    height = max(0.001, float(height))
+    half_depth = max(0.001, float(depth) * 0.5)
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+
+    def add_face(points: Sequence[Sequence[float]], normal: Sequence[float]) -> None:
+        start = len(positions) // 3
+        for point in points:
+            positions.extend(point)
+            normals.extend(normal)
+        indices.extend([start, start + 1, start + 2])
+
+    front_left = (-half_width, 0.0, -half_depth)
+    front_right = (half_width, 0.0, -half_depth)
+    front_peak = (0.0, height, -half_depth)
+    back_left = (-half_width, 0.0, half_depth)
+    back_right = (half_width, 0.0, half_depth)
+    back_peak = (0.0, height, half_depth)
+    add_face((front_left, front_peak, front_right), (0.0, 0.0, -1.0))
+    add_face((back_left, back_right, back_peak), (0.0, 0.0, 1.0))
+    add_face((front_left, back_left, back_peak), (-0.87, 0.0, 0.5))
+    add_face((front_left, back_peak, front_peak), (-0.87, 0.0, 0.5))
+    add_face((front_right, front_peak, back_peak), (0.87, 0.0, 0.5))
+    add_face((front_right, back_peak, back_right), (0.87, 0.0, 0.5))
+    add_face((front_left, front_right, back_right), (0.0, -1.0, 0.0))
+    add_face((front_left, back_right, back_left), (0.0, -1.0, 0.0))
+    return _geometry(builder, positions, normals, indices, material)
+
+
 def main() -> None:
     builder = BufferBuilder()
     materials = [
@@ -74,6 +113,7 @@ def main() -> None:
     stone, brick, iron, blue_glass, rose_glass, membrane, warm = range(7)
     mesh_ids = {
         "NaveWall": mesh("NaveWall", add_beveled_box(builder, (12.0, 2.8, 0.50), stone, 0.16)),
+        "NaveGable": mesh("NaveGable", add_gable_prism(builder, 5.8, 3.25, 0.62, stone)),
         "NaveSide": mesh("NaveSide", add_beveled_box(builder, (0.55, 2.8, 6.0), stone, 0.14)),
         "NaveCap": mesh("NaveCap", add_beveled_box(builder, (12.6, 0.32, 0.34), iron, 0.12)),
         "Brick": mesh("Brick", add_beveled_box(builder, (2.2, 1.1, 0.22), brick, 0.12)),
@@ -137,6 +177,7 @@ def main() -> None:
         return len(nodes) - 1
 
     add_node("CathedralNave", mesh_ids["NaveWall"], (0.0, 1.45, -1.85), extras={"surface": "weathered_nave_facade"})
+    add_node("CathedralNaveGable", mesh_ids["NaveGable"], (0.0, 2.72, -1.84), extras={"surface": "weathered_nave_gable"})
     add_node("CathedralNaveRearWall", mesh_ids["NaveWall"], (0.0, 1.45, 4.15), extras={"surface": "weathered_nave_rear"})
     add_node("CathedralNaveSideL", mesh_ids["NaveSide"], (-5.72, 1.45, 1.15))
     add_node("CathedralNaveSideR", mesh_ids["NaveSide"], (5.72, 1.45, 1.15))

@@ -1,5 +1,12 @@
 # Implementation status
 
+## Focused Cathedral nave-gable silhouette pass
+
+- added a closed authored stone gable above the existing Cathedral Quarter
+  nave, framing the rose-window focal assembly and restoring a readable civic
+  roofline in the exact remote review frame; existing sockets, choir hardware,
+  collision, navigation and runtime region logic remain unchanged.
+
 ## Focused Observatory survey-bowl readability pass
 
 - deepened the authored Observatory Ridge reflector bowl, raised the
