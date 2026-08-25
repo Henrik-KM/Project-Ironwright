@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Observatory Ridge received a focused hardware pass on 2026-08-25. Its three
+exposed dish ribs now use dense round structural rods rather than beveled
+rectangular bars; silent exact 1280x720 page 12/14 review confirms the survey
+reflector support reads as rounded hardware while preserving the authored
+landmark footprint and motion sockets. Broader human remote-facility
+acceptance remains open.
+
 The late-organic roster received a focused surface pass on 2026-08-25. The
 shared torso shell layer now uses a dense scalloped organic lobe, while
 Broodmass thorax ribs use rounded capsule struts with separate convex dorsal

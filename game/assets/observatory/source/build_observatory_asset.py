@@ -131,7 +131,10 @@ def main() -> None:
         "Rail": mesh("Rail", add_cylinder(builder, 0.06, 2.1, rust, 12)),
         "Window": mesh("Window", add_box(builder, (0.92, 0.72, 0.08), cyan)),
         "ServiceCase": mesh("ServiceCase", add_box(builder, (1.1, 0.72, 0.78), rust)),
-        "DishRib": mesh("DishRib", add_box(builder, (0.10, 0.12, 5.5), rust)),
+        # The dish ribs are exposed in the remote review silhouette. Rounded
+        # rods keep the same structural span while avoiding a row of flat
+        # manufactured bars across the surviving survey apparatus.
+        "DishRib": mesh("DishRib", add_cylinder(builder, 0.075, 5.5, rust, 24)),
         "DishActuator": mesh("DishActuator", add_cylinder(builder, 0.22, 0.28, alloy, 20)),
         "FeedCollar": mesh("FeedCollar", add_cylinder(builder, 0.38, 0.16, cyan, 24)),
         "WindowFrame": mesh("ObservatoryWindowFrame", add_box(builder, (1.14, 0.10, 0.94), alloy)),
