@@ -69,6 +69,8 @@ var presentation_review_capture_frames: int = 0
 var endgame_protocol_review_active: bool = false
 var endgame_protocol_review_clock: float = 0.0
 var endgame_protocol_review_completed: bool = false
+var endgame_protocol_review_capture_path: String = ""
+var endgame_protocol_review_capture_frames: int = 0
 
 
 func _ready() -> void:
@@ -109,6 +111,16 @@ func _process(delta: float) -> void:
 		if endgame_protocol_review_clock >= 8.0 and endgame_director != null and not endgame_director.active_protocol.is_empty():
 			endgame_protocol_review_completed = true
 			endgame_director._complete_active_protocol()
+	if endgame_protocol_review_completed and not endgame_protocol_review_capture_path.is_empty():
+		endgame_protocol_review_capture_frames += 1
+		if endgame_protocol_review_capture_frames == 30:
+			var review_image := get_viewport().get_texture().get_image()
+			var capture_error := review_image.save_png(endgame_protocol_review_capture_path)
+			if capture_error == OK:
+				print("Endgame protocol review screenshot written to %s" % endgame_protocol_review_capture_path)
+			else:
+				push_error("Endgame protocol review screenshot failed: %s" % capture_error)
+			endgame_protocol_review_capture_path = ""
 	if release_started:
 		_handle_controller_actions()
 	if release_front_end != null and release_front_end.is_modal_open():
@@ -725,6 +737,18 @@ func _has_endgame_protocol_review_flag() -> bool:
 	return false
 
 
+func _endgame_protocol_review_capture_argument() -> String:
+	var arguments: Array = OS.get_cmdline_args()
+	arguments.append_array(OS.get_cmdline_user_args())
+	for index in arguments.size():
+		var argument := str(arguments[index])
+		if argument.begins_with("--endgame-protocol-review-screenshot="):
+			return argument.get_slice("=", 1)
+		if argument == "--endgame-protocol-review-screenshot" and index + 1 < arguments.size():
+			return str(arguments[index + 1])
+	return ""
+
+
 func _has_route_memory_review_flag() -> bool:
 	for argument in OS.get_cmdline_args():
 		if str(argument) == "--route-memory-review":
@@ -910,6 +934,8 @@ func _start_endgame_protocol_review() -> void:
 	endgame_protocol_review_active = true
 	endgame_protocol_review_clock = 0.0
 	endgame_protocol_review_completed = false
+	endgame_protocol_review_capture_path = _endgame_protocol_review_capture_argument()
+	endgame_protocol_review_capture_frames = 0
 	if progression != null:
 		progression.set_heartforge_tier(5)
 		for technology_id in [&"tech.machine.forge_assistance", &"tech.endgame.severance", &"tech.endgame.containment"]:
