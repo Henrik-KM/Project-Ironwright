@@ -730,6 +730,10 @@ func _run_all() -> void:
         _expect(heartforge.find_child("HeartforgeThermalShroud00", true, false) != null and heartforge.find_child("HeartforgeThermalShroudCap00", true, false) != null and heartforge.find_child("ForgeBenchBraceLeft", true, false) != null, "The Heartforge focal and fabrication surfaces must expose manufactured shrouds and bench bracing.")
         _expect(_find_named(heartforge, "HeartforgeFoundationBolt00") != null, "The authored Heartforge must expose anchored foundation hardware.")
         var authored_heartforge := heartforge.find_child("HeartforgeAuthoredModel", true, false) as Node3D
+        var authored_housing := heartforge.find_child("CoreHousingShell", true, false) as MeshInstance3D
+        var authored_furnace := heartforge.find_child("FurnaceCore", true, false) as MeshInstance3D
+        _expect(authored_housing != null and _mesh_vertex_count(authored_housing) >= 900, "The Heartforge reactor housing must retain a dense smooth focal envelope.")
+        _expect(authored_furnace != null and _mesh_vertex_count(authored_furnace) >= 900, "The Heartforge furnace must retain a dense smooth focal envelope.")
         var authored_emission_peak := 0.0
         if authored_heartforge != null:
             for raw_mesh in authored_heartforge.find_children("*", "MeshInstance3D", true, false):
