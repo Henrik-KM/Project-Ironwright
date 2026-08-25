@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused friendly-role silhouette pass
+
+- added raised hopper rails and a work-facing intake deck to the Scrapper,
+  shoulder protection and weapon rails to the Warden, and a maintained survey
+  console and dense dish rim to the Pathfinder; regenerated the three authored
+  glTFs and added aesthetic contract checks so each support role keeps a
+  distinct readable front/upper silhouette without changing sockets, collision,
+  animation ownership or autonomy workload.
+
 ## Focused late-organic lobe-silhouette pass
 
 - replaced the shared late-family membrane ellipsoid with a dense tapered

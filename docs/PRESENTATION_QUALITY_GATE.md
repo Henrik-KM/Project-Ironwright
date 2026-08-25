@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The friendly machine roster received a focused role-silhouette pass on
+2026-08-25. Scrapper now carries raised hopper rails and a work-facing intake
+deck, Warden carries shoulder protection and weapon rails, and Pathfinder
+carries a maintained survey console and dense dish rim. The regenerated
+high-definition shells retain stable sockets, clips, collision and autonomy
+ownership; the changes remain presentation-only. Silent roster review is still
+required before broader human robot-roster acceptance can close.
+
 The late-organic family received a focused lobe-silhouette pass on 2026-08-25.
 The shared membrane primitive now uses a dense tapered organic lobe with a
 restrained scalloped perimeter and continuous convex edge highlight instead of

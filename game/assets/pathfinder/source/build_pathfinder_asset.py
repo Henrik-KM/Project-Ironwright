@@ -68,6 +68,10 @@ def main() -> None:
         "SignalCanister": mesh("SignalCanister", add_cylinder(builder, 0.08, 0.2, green, 24)),
         "SensorWing": mesh("SensorWing", add_beveled_box(builder, (0.12, 0.22, 0.42), steel, 0.025)),
         "SurveyLens": mesh("SurveyLens", add_uv_sphere(builder, 0.07, cyan, 12, 16)),
+        # A compact survey console and dense dish rim make the scout's upper
+        # instrument stack read as one maintained device at distance.
+        "SurveyConsole": mesh("SurveyConsole", add_beveled_box(builder, (0.5, 0.16, 0.22), steel, 0.025)),
+        "DishRim": mesh("DishRim", add_cylinder(builder, 0.34, 0.06, steel, 32)),
     }
 
     nodes: list[dict] = [{
@@ -120,11 +124,13 @@ def main() -> None:
     add_node("PathfinderSensorRail", mesh_ids["SensorRail"], (0.0, 1.55, -0.13))
     add_node("PathfinderSensorWing", mesh_ids["SensorWing"], (-0.34, 1.45, -0.08), rotation=(0.0, 0.0, -0.12))
     add_node("PathfinderSensorWing", mesh_ids["SensorWing"], (0.34, 1.45, -0.08), rotation=(0.0, 0.0, 0.12))
+    add_node("PathfinderSurveyConsole", mesh_ids["SurveyConsole"], (0.0, 1.68, -0.34), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("Antenna", mesh_ids["Mast"], (0.0, 1.92, 0.12), extras={"socket_type": "survey_mast"})
     add_node("PathfinderMastBraceLeft", mesh_ids["MastBrace"], (-0.18, 2.22, 0.12), rotation=(0.0, 0.0, -0.18))
     add_node("PathfinderMastBraceRight", mesh_ids["MastBrace"], (0.18, 2.22, 0.12), rotation=(0.0, 0.0, 0.18))
     add_node("PathfinderMastCollar", mesh_ids["MastCollar"], (0.0, 2.5, 0.12), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("PathfinderDish", mesh_ids["Dish"], (0.0, 2.78, 0.12))
+    add_node("PathfinderDishRim", mesh_ids["DishRim"], (0.0, 2.78, -0.16), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("PathfinderDishHub", mesh_ids["DishHub"], (0.0, 2.78, -0.12))
     add_node("PathfinderDishRibLeft", mesh_ids["DishRib"], (-0.18, 2.78, 0.1), rotation=(0.0, 0.0, math.pi * 0.5))
     add_node("PathfinderDishRibRight", mesh_ids["DishRib"], (0.18, 2.78, 0.1), rotation=(0.0, 0.0, math.pi * 0.5))
@@ -210,7 +216,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "pathfinder.scout.v1",
-            "required_nodes": ["PathfinderModel", "Sensor", "OpticLens", "ScoutFin", "BeaconRing", "ScoutOptic", "PathfinderSensorPod", "PathfinderMastBraceLeft", "PathfinderMastCollar", "PathfinderDishRibLeft", "PathfinderSignalCanister", "ProductionAssetMarker"],
+            "required_nodes": ["PathfinderModel", "Sensor", "OpticLens", "ScoutFin", "BeaconRing", "ScoutOptic", "PathfinderSensorPod", "PathfinderSurveyConsole", "PathfinderMastBraceLeft", "PathfinderMastCollar", "PathfinderDishRim", "PathfinderDishRibLeft", "PathfinderSignalCanister", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Survey", "Hit", "Retreat", "Death"],
         },
     }
