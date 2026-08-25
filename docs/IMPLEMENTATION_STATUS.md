@@ -2,6 +2,11 @@
 
 ## Focused Heartforge focal-model high-definition pass
 
+- refined the Roofleaper's ambush wing pair with opposing authored pitch so its
+  raised membranes and spars read as a lifted V-shaped silhouette; regenerated
+  the dependency-free glTF from the source builder and preserved wing sockets,
+  animation channels, tier anatomy and attack ownership.
+
 - refined the Glassmoth's luminous wing pair with opposing authored pitch,
   dense curved membranes and a cool teal threat-light identity; regenerated its
   dependency-free glTF from the source builder and silently live-reviewed the
