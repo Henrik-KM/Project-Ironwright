@@ -928,7 +928,7 @@ func _dress_nest(root: Node3D) -> void:
     root.add_child(cathedral_facade)
     var brick := _textured_material(&"brick", Color("70453b"), 0.0, 0.78)
     var brick_dark := _textured_material(&"brick", Color("3c2a2b"), 0.08, 0.86)
-    var stained_glass := ModelKit3D.material(Color("312c4b"), 0.18, 0.28, Color("c653a8"), 1.1)
+    var stained_glass := ModelKit3D.material(Color("312c4b"), 0.18, 0.28, Color("c653a8"), 0.55)
     # Release gallery cameras approach the landmark from positive Z. Keep the
     # civic layer on the near face and slightly forward of the authored nest
     # frame so the nave reads before the biological shell.
@@ -941,6 +941,45 @@ func _dress_nest(root: Node3D) -> void:
         Vector3.ZERO,
         "CathedralReleaseNave",
         0.2
+    )
+    # A shallow front gable restores the civic silhouette at exact review
+    # distance. Keep it as dressing rather than a solid building volume so it
+    # cannot create a route blocker or a second simulation landmark.
+    ModelKit3D.add_beveled_box(
+        cathedral_facade,
+        Vector3(3.8, 0.18, 0.24),
+        Vector3(-1.6, 4.58, facade_z + 0.08),
+        brick_dark,
+        Vector3(0.0, 0.0, 0.52),
+        "CathedralReleaseGableL",
+        0.14
+    )
+    ModelKit3D.add_beveled_box(
+        cathedral_facade,
+        Vector3(3.8, 0.18, 0.24),
+        Vector3(1.6, 4.58, facade_z + 0.08),
+        brick_dark,
+        Vector3(0.0, 0.0, -0.52),
+        "CathedralReleaseGableR",
+        0.14
+    )
+    ModelKit3D.add_beveled_box(
+        cathedral_facade,
+        Vector3(0.14, 0.9, 0.16),
+        Vector3(0.0, 5.12, facade_z + 0.15),
+        brick_dark,
+        Vector3.ZERO,
+        "CathedralReleaseGableCrossV",
+        0.12
+    )
+    ModelKit3D.add_beveled_box(
+        cathedral_facade,
+        Vector3(0.52, 0.14, 0.16),
+        Vector3(0.0, 5.22, facade_z + 0.15),
+        brick_dark,
+        Vector3.ZERO,
+        "CathedralReleaseGableCrossH",
+        0.12
     )
     ModelKit3D.add_beveled_box(
         nave,
