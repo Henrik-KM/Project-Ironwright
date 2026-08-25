@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused tactical HUD empty-state pass
+
+- collapsed the unused operation-status row and reduced the resource card when
+  no remote operation is active; live operations and final-protocol statuses
+  restore the full row. Silent fresh-world 1280x720 capture confirms the
+  opening tactical frame gives more room to the Mechromancer, Bulwark and
+  Heartforge without hiding actionable status, with first-session geometry
+  coverage added for both empty and active states.
+
 ## Focused Observatory dish hardware pass
 
 - rebuilt the three exposed Observatory dish ribs as dense round structural

@@ -98,6 +98,10 @@ func _run_all() -> void:
     _expect(hud.resource_label.position.y + hud.resource_label.size.y < hud.focus_label.position.y, "Resource values must not collide with machine focus text.")
     _expect(hud.focus_label.position.y + hud.focus_label.size.y <= hud.operation_label.position.y, "Machine focus must not collide with operation status.")
     _expect(hud.prompt_panel != hud.objective_panel, "Immediate interactions must have a dedicated panel separate from the persistent objective.")
+    hud.set_operation("No remote operation")
+    _expect(not hud.operation_label.visible and hud.resource_panel.size.y <= 140.0, "The empty operation state must collapse its unused status line instead of keeping a full dashboard card open.")
+    hud.set_operation("Stabilize West Grid · Outbound")
+    _expect(hud.operation_label.visible and hud.resource_panel.size.y >= 170.0, "A live operation must restore the operation status line and its readable panel height.")
 
     var strategic := world.strategic_hud
     strategic.update_progression([], "Embers", 1, world.run_state.scrap, world.run_state.rare_cores)
