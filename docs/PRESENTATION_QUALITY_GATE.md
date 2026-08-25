@@ -165,6 +165,13 @@ review confirms the research landmark reads more deliberately at the remote
 camera distance while preserving its stable sockets and operation contract;
 broader human region and production-art acceptance remain open.
 
+West Grid received a focused transformer readability pass on 2026-08-25. Each
+authored transformer now exposes four ceramic bushings with oxidized service
+caps, giving the paired yard a readable electrical silhouette without adding
+player-managed work. Exact silent page 5/14 review confirms the added detail at
+the remote landmark distance; broader human region and production-art
+acceptance remain open.
+
 West Grid received a focused high-definition focal pass on 2026-08-25. The
 turbine hall now exposes a rounded ceramic access housing, inset steel face,
 dense oxidized collar, cross-braced hub and six maintenance fasteners on its

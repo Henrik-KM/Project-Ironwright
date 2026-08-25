@@ -94,6 +94,8 @@ def main() -> None:
         "TankLadder": mesh("WestGridTankLadder", add_cylinder(builder, 0.055, 2.8, painted_iron, 12)),
         "TransformerCap": mesh("WestGridTransformerCap", add_beveled_box(builder, (2.62, 0.12, 2.2), ceramic, 0.03)),
         "TransformerBrace": mesh("WestGridTransformerBrace", add_beveled_box(builder, (0.10, 0.12, 2.05), rust, 0.025)),
+        "TransformerBushing": mesh("WestGridTransformerBushing", add_cylinder(builder, 0.14, 0.72, ceramic, 24)),
+        "TransformerBushingCap": mesh("WestGridTransformerBushingCap", add_cylinder(builder, 0.20, 0.10, rust, 24)),
         "PipeFlange": mesh("WestGridPipeFlange", add_cylinder(builder, 0.17, 0.14, rust, 18)),
         "WarningHousing": mesh("WestGridWarningHousing", add_cylinder(builder, 0.12, 0.16, painted_iron, 16)),
         "OrganicTendril": mesh("WestGridOrganicTendril", add_cylinder(builder, 0.05, 0.84, organic, 14)),
@@ -213,6 +215,12 @@ def main() -> None:
         for fin_index in range(4):
             add_node("WestGridTransformerFin%d_%d" % (index, fin_index), mesh_ids["Fin"], (-0.82 + float(fin_index) * 0.55, 0.02, -1.05), parent=transformer)
         add_node("WestGridTransformerBrace%d" % index, mesh_ids["TransformerBrace"], (0.0, 0.88, -1.08), parent=transformer, extras={"surface": "transformer_brace"})
+        # Four ceramic bushings turn each transformer into a readable power
+        # device at distance, with small oxidized caps carrying service detail
+        # without adding a new gameplay interaction.
+        for bushing_index, bushing_x in enumerate((-0.78, -0.26, 0.26, 0.78)):
+            add_node("WestGridTransformerBushing%d_%d" % (index, bushing_index), mesh_ids["TransformerBushing"], (bushing_x, 1.32, 0.0), parent=transformer, extras={"surface": "transformer_bushing"})
+            add_node("WestGridTransformerBushingCap%d_%d" % (index, bushing_index), mesh_ids["TransformerBushingCap"], (bushing_x, 1.72, 0.0), parent=transformer, extras={"surface": "transformer_bushing_cap"})
     add_node("WestGridPipeBridge", mesh_ids["Rail"], (0.0, 4.1, 2.8), rotation=(0.0, 0.0, math.pi * 0.5), extras={"socket_type": "pipe_bridge"})
     for index, x in enumerate((-5.8, -2.0, 1.8, 5.6)):
         add_node("WestGridPipeSupport%d" % index, mesh_ids["Rail"], (x, 2.0, 2.8))
