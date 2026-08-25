@@ -20,6 +20,7 @@ func _polish_environment() -> void:
     # district geometry in the lower frame without flattening the Heartforge
     # key, practical lights, or the amber route contrast.
     environment_node.environment.ambient_light_energy = maxf(0.52, environment_node.environment.ambient_light_energy)
+    environment_node.environment.set_meta(&"opening_ambient_floor", 0.52)
     environment_node.environment.fog_density = minf(0.013, environment_node.environment.fog_density)
 
 

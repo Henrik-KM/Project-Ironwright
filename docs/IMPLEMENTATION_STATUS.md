@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused late-organic lobe-silhouette pass
+
+- replaced the shared late-family membrane ellipsoid with a dense tapered
+  organic lobe that carries a restrained scalloped edge, leading-edge taper
+  and continuous convex highlight; regenerated all seven dependency-free
+  glTFs and silently live-reviewed the exact page 3/14 gallery frame plus a
+  three-second runtime capture while preserving every socket, animation clip,
+  tier contract and runtime ownership.
+
 ## Focused Heartforge focal-model high-definition pass
 
 - lifted the opening-only ambient floor enough to recover readable wet road and
