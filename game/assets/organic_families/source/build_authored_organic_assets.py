@@ -207,7 +207,7 @@ def add_organic_lobe(
         return index
 
     for sign in (1.0, -1.0):
-        center = add_vertex((0.0, sign * half_thickness, -half_depth * 0.22), (0.0, sign, 0.0))
+        center = add_vertex((0.0, sign * half_thickness * 1.45, -half_depth * 0.18), (0.0, sign, 0.0))
         ring_indices: list[list[int]] = []
         for ring in range(1, rings + 1):
             radius = ring / rings
@@ -216,16 +216,17 @@ def add_organic_lobe(
                 angle = math.tau * side / sides
                 cosine = math.cos(angle)
                 sine = math.sin(angle)
-                scallop = 1.0 + 0.065 * math.cos(float(lobes) * angle)
+                scallop = 1.0 + 0.12 * math.cos(float(lobes) * angle)
                 # The front edge is slightly longer and sharper, like a
                 # living fin or leaf, while the rear edge stays broad enough
                 # to catch a readable rim highlight.
-                leading_edge = 1.0 + 0.18 * max(0.0, -sine)
+                leading_edge = 1.0 + 0.34 * max(0.0, -sine)
                 x = half_width * radius * cosine * scallop
-                z = half_depth * radius * sine * leading_edge - half_depth * 0.22 * (1.0 - radius)
-                crown = 0.32 + 0.68 * (1.0 - radius * radius)
-                y = sign * half_thickness * crown
-                y += sign * half_thickness * 0.045 * math.sin(float(lobes) * angle) * radius
+                z = half_depth * radius * sine * leading_edge - half_depth * 0.18 * (1.0 - radius)
+                crown = 0.26 + 0.74 * (1.0 - radius * radius)
+                fold = half_thickness * 0.72 * abs(cosine) * (1.0 - radius * 0.22)
+                y = sign * (half_thickness * crown + fold)
+                y += sign * half_thickness * 0.10 * math.sin(float(lobes) * angle) * radius
                 current.append(add_vertex(
                     (x, y, z),
                     (sign * 0.8 * radius * cosine, sign, sign * 0.95 * radius * sine),
@@ -257,8 +258,8 @@ def add_organic_lobe(
         angle = math.tau * side / sides
         cosine = math.cos(angle)
         sine = math.sin(angle)
-        scallop = 1.0 + 0.065 * math.cos(float(lobes) * angle)
-        leading_edge = 1.0 + 0.18 * max(0.0, -sine)
+        scallop = 1.0 + 0.12 * math.cos(float(lobes) * angle)
+        leading_edge = 1.0 + 0.34 * max(0.0, -sine)
         x = half_width * cosine * scallop
         z = half_depth * sine * leading_edge
         rim_front.append(add_vertex((x, half_thickness * 0.32, z), (cosine, 0.0, sine)))
@@ -515,12 +516,12 @@ def build_family(name: str, spec: dict) -> None:
         # layer a rounded ellipsoidal shell with a softer biological highlight
         # rolloff.
         "Plate": mesh("Plate", add_convex_sheet(builder, (1.52, 0.16, 0.28), shell, rings=5, sides=24)),
-        "ShellPlate": mesh("ShellPlate", add_ellipsoid(builder, (0.76, 0.13, 0.28), shell, rings=18, sides=36)),
+        "ShellPlate": mesh("ShellPlate", add_organic_lobe(builder, (0.76, 0.13, 0.28), shell, lobes=3, rings=8, sides=36)),
         # The membrane layer is the largest shared silhouette on the late
         # family gallery page. A symmetric ellipsoid still read as a stack of
         # repeated dishes, so use a tapered scalloped lobe with a living rim
         # highlight while retaining the same mesh/socket contract.
-        "Membrane": mesh("Membrane", add_organic_lobe(builder, (1.26, 0.22, 1.08), membrane, lobes=3, rings=8, sides=36)),
+        "Membrane": mesh("Membrane", add_organic_lobe(builder, (1.26, 0.30, 1.08), membrane, lobes=3, rings=8, sides=36)),
         "WingMembrane": mesh("WingMembrane", add_swept_wing_membrane(builder, (1.38, 0.18, 1.08), membrane)),
         "Bone": mesh("Bone", add_capsule(builder, 0.09, 0.86, bone, 24)),
         "LongBone": mesh("LongBone", add_capsule(builder, 0.065, 1.35, bone, 24)),

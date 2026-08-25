@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The late-organic roster received a focused surface pass on 2026-08-25. The
+shared torso shell layer now uses a dense scalloped organic lobe, while
+Broodmass thorax ribs use rounded capsule struts with separate convex dorsal
+and maw plates. Silent exact 1280x720 page 3/14 review confirms the repeated
+late-family layers now carry organic edge variation and Broodmass no longer
+reads as a stack of manufactured flat bars; broader human hostile-family and
+production-art acceptance remain open.
+
 The Glassmoth flight silhouette received a focused follow-up pass on
 2026-08-25. Its paired wings now carry a stronger pitch and reduced depth
 overlap, while the Sporecaster gill fan is tightened in depth; silent page

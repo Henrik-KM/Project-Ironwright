@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused late-organic surface pass
+
+- replaced the repeated late-family torso shell layer with a dense scalloped
+  organic lobe, and rebuilt Broodmass thorax ribs as rounded capsule struts
+  while retaining separate convex plates for its dorsal and maw surfaces;
+  regenerated the seven shared late shells plus Broodmass and Apex, with
+  stable sockets, clips, collision and ecology ownership. Silent exact
+  1280x720 page 3/14 review confirms the repeated torso layers now carry
+  organic edge variation and the Broodmass rib row no longer presents as a
+  stack of manufactured flat bars.
+
 ## Focused Glassmoth flight-silhouette pass
 
 - pitched and separated the paired Glassmoth wings in the authored family

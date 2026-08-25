@@ -918,7 +918,7 @@
       "scale": [
         0.18,
         1.48,
-        0.78
+        0.42
       ],
       "extras": {
         "surface": "dorsal_membrane"
@@ -1148,7 +1148,7 @@
       "scale": [
         0.18,
         1.48,
-        0.78
+        0.42
       ],
       "extras": {
         "surface": "dorsal_membrane"

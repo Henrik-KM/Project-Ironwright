@@ -13,6 +13,8 @@ from typing import Sequence
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
 from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "organic_families" / "source"))
+from build_authored_organic_assets import add_capsule, add_convex_sheet  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "broodmass.gltf"
@@ -88,7 +90,11 @@ def main() -> None:
         "Core": mesh("Core", add_uv_sphere(builder, 0.74, flesh, 24, 36)),
         "Segment": mesh("Segment", add_uv_sphere(builder, 0.58, shell, 24, 32)),
         "Lobe": mesh("Lobe", add_uv_sphere(builder, 0.42, flesh, 24, 36)),
-        "Rib": mesh("Rib", add_beveled_box(builder, (1.5, 0.15, 0.24), shell, 0.032)),
+        # Thorax ribs are rounded living struts; keep separate convex plates
+        # for the dorsal and maw surfaces so those surfaces retain their
+        # broad shell read without turning the repeated ribs into flat bars.
+        "Rib": mesh("Rib", add_capsule(builder, 0.14, 1.5, shell, sides=24, cap_segments=6)),
+        "Plate": mesh("Plate", add_convex_sheet(builder, (1.5, 0.15, 0.24), shell, rings=5, sides=24)),
         "Fan": mesh("Fan", add_beveled_box(builder, (0.18, 1.4, 0.8), membrane, 0.025)),
         "Maw": mesh("Maw", add_uv_sphere(builder, 0.44, membrane, 24, 36)),
         # Pointed crown spines keep the nest silhouette organic instead of
@@ -142,10 +148,10 @@ def main() -> None:
     for index in range(5):
         z = -0.78 + index * 0.42
         add_node("TorsoSegment%d" % index, mesh_ids["Segment"], (0.0, 0.94, z), scale=(1.34 - index * 0.05, 0.82, 1.28 - index * 0.04), parent=torso)
-        add_node("BroodmassThoraxRib%d" % index, mesh_ids["Rib"], (0.0, 1.42 - index * 0.025, z), rotation=(0.0, 0.0, 0.05), parent=torso)
+        add_node("BroodmassThoraxRib%d" % index, mesh_ids["Rib"], (0.0, 1.42 - index * 0.025, z), rotation=(0.0, 0.0, math.pi * 0.5 + 0.05), parent=torso)
         add_node("BroodmassFastenerL%d" % index, mesh_ids["Fastener"], (-0.75, 1.28, z), parent=torso)
         add_node("BroodmassFastenerR%d" % index, mesh_ids["Fastener"], (0.75, 1.28, z), parent=torso)
-    add_node("OrganicDorsalPlate", mesh_ids["Rib"], (-0.15, 1.68, 0.18), scale=(1.3, 0.9, 1.2), extras={"surface": "layered_shell_break"})
+    add_node("OrganicDorsalPlate", mesh_ids["Plate"], (-0.15, 1.68, 0.18), scale=(1.3, 0.9, 1.2), extras={"surface": "layered_shell_break"})
 
     for side in (-1.0, 1.0):
         suffix = "L" if side < 0 else "R"
@@ -157,7 +163,7 @@ def main() -> None:
     maw = add_node("BroodmassMaw", mesh_ids["Maw"], (0.0, 1.16, -1.52), scale=(1.28, 0.75, 1.4), extras={"socket_type": "brood_maw"})
     # Maw hardware is parented to the maw shell; use local offsets so it does
     # not double-apply the shell's world-space position.
-    add_node("BroodmassMawPlate", mesh_ids["Rib"], (0.0, 0.24, -0.02), scale=(0.86, 0.82, 1.1), parent=maw)
+    add_node("BroodmassMawPlate", mesh_ids["Plate"], (0.0, 0.24, -0.02), scale=(0.86, 0.82, 1.1), parent=maw)
     add_node("BroodmassMawRidge", mesh_ids["MawRidge"], (0.0, 0.34, -0.28), scale=(0.88, 1.0, 0.9), parent=maw, extras={"surface": "maw_ridge"})
     for side in (-1.0, 1.0):
         add_node("BroodmassMawHook%s" % ("L" if side < 0 else "R"), mesh_ids["Hook"], (side * 0.34, -0.42, -0.24), rotation=(0.78, 0.0, side * 0.15), parent=maw)
@@ -192,7 +198,7 @@ def main() -> None:
             z = -0.74 + index * 0.5
             add_node("BroodmassLeg%s%d" % (suffix, index), mesh_ids["Leg"], (side * (0.85 + index * 0.06), 0.58, z), rotation=(0.0, 0.0, side * (0.76 - index * 0.06)))
             add_node("BroodmassHook%s%d" % (suffix, index), mesh_ids["Hook"], (side * (1.28 + index * 0.04), 0.14, z - 0.03), rotation=(0.0, 0.0, side * 0.38))
-        add_node("BroodmassFan%s" % suffix, mesh_ids["Fan"], (side * 1.28, 1.62, 0.3), rotation=(0.0, side * 0.2, side * 0.08), scale=(0.22, 1.3, 0.86), extras={"surface": "dorsal_membrane"})
+        add_node("BroodmassFan%s" % suffix, mesh_ids["Fan"], (side * 1.28, 1.62, 0.3), rotation=(0.0, side * 0.2, side * 0.08), scale=(0.22, 1.3, 0.44), extras={"surface": "dorsal_membrane"})
 
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "broodmass.nest.v1", "source": "original_shared_mesh_builder"})
     node_index = {node["name"]: index for index, node in enumerate(nodes)}
