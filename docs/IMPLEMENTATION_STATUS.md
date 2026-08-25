@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused Observatory dish hardware pass
+
+- rebuilt the three exposed Observatory dish ribs as dense round structural
+  rods instead of beveled rectangular bars, preserving their authored node
+  names, transforms, motion ownership and landmark contract. Silent exact
+  1280x720 page 12/14 review confirms the reflector support reads as rounded
+  survey hardware without changing the remote facility footprint.
+
 ## Focused late-organic surface pass
 
 - replaced the repeated late-family torso shell layer with a dense scalloped
