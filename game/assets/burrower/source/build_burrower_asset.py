@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import json
+import math
 import sys
 from pathlib import Path
 from typing import Sequence
@@ -11,10 +12,68 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "burrower.gltf"
+
+
+def add_convex_fin(builder: BufferBuilder, size: Sequence[float], material: int, rings: int = 8, sides: int = 36) -> tuple[int, int, int, int]:
+    """Build a rounded side fin with a tapered upper edge."""
+    thickness, height, depth = (max(0.001, float(value)) for value in size)
+    half_thickness = thickness * 0.5
+    half_height = height * 0.5
+    half_depth = depth * 0.5
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+
+    def add_vertex(point: Sequence[float], normal: Sequence[float]) -> int:
+        index = len(positions) // 3
+        positions.extend(point)
+        length = sum(value * value for value in normal) ** 0.5 or 1.0
+        normals.extend(value / length for value in normal)
+        return index
+
+    ring_count = max(6, rings)
+    side_count = max(24, sides)
+    for sign in (1.0, -1.0):
+        center = add_vertex((sign * half_thickness * 1.15, 0.08, 0.0), (sign, 0.0, 0.0))
+        previous_ring: list[int] | None = None
+        for ring in range(1, ring_count + 1):
+            radius = ring / ring_count
+            current: list[int] = []
+            for index in range(side_count):
+                angle = 2.0 * 3.141592653589793 * index / side_count
+                cosine = math.cos(angle)
+                sine = math.sin(angle)
+                y = half_height * radius * cosine * (1.0 + 0.2 * max(0.0, cosine))
+                z = half_depth * radius * sine
+                x = sign * half_thickness * (0.34 + 0.66 * (1.0 - radius * radius))
+                current.append(add_vertex((x, y, z), (sign, 0.6 * cosine, sine)))
+            for index in range(side_count):
+                next_index = (index + 1) % side_count
+                if previous_ring is None:
+                    indices.extend([center, current[next_index], current[index]] if sign > 0.0 else [center, current[index], current[next_index]])
+                elif sign > 0.0:
+                    indices.extend([previous_ring[index], previous_ring[next_index], current[next_index], previous_ring[index], current[next_index], current[index]])
+                else:
+                    indices.extend([previous_ring[index], current[index], current[next_index], previous_ring[index], current[next_index], previous_ring[next_index]])
+            previous_ring = current
+    rim_front: list[int] = []
+    rim_back: list[int] = []
+    for index in range(side_count):
+        angle = 2.0 * 3.141592653589793 * index / side_count
+        cosine = math.cos(angle)
+        sine = math.sin(angle)
+        y = half_height * cosine * (1.0 + 0.2 * max(0.0, cosine))
+        z = half_depth * sine
+        rim_front.append(add_vertex((half_thickness * 0.34, y, z), (0.0, cosine, sine)))
+        rim_back.append(add_vertex((-half_thickness * 0.34, y, z), (0.0, cosine, sine)))
+    for index in range(side_count):
+        next_index = (index + 1) % side_count
+        indices.extend([rim_front[index], rim_front[next_index], rim_back[next_index], rim_front[index], rim_back[next_index], rim_back[index]])
+    return _geometry(builder, positions, normals, indices, material)
 
 
 def main() -> None:
@@ -43,6 +102,7 @@ def main() -> None:
         "Tip": mesh("Tip", add_uv_sphere(builder, 0.2, wet, 16, 28)),
         "Jaw": mesh("Jaw", add_cylinder(builder, 0.065, 0.62, bone, 24)),
         "Fin": mesh("Fin", add_beveled_box(builder, (0.12, 0.7, 0.58), shell, 0.022)),
+        "SideFin": mesh("SideFin", add_convex_fin(builder, (0.18, 0.84, 0.68), shell)),
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.08, eye, 16, 24)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.08, 1.15, tendon, 24)),
         "Talon": mesh("Talon", add_cylinder(builder, 0.05, 0.58, bone, 24)),
@@ -116,7 +176,7 @@ def main() -> None:
             z = -0.48 + index * 0.54
             add_node("BurrowerLeg%s%d" % (suffix, index), mesh_ids["Leg"], (side * (0.62 + index * 0.05), 0.32, z), rotation=(0.0, 0.0, side * 0.72))
             add_node("BurrowerTalon%s%d" % (suffix, index), mesh_ids["Talon"], (side * 0.92, 0.1, z - 0.04), rotation=(0.0, 0.0, side * 0.36))
-        add_node("BurrowerFin%s" % suffix, mesh_ids["Fin"], (side * 1.0, 1.08, 0.2), rotation=(0.0, side * 0.18, side * 0.12), scale=(0.35, 1.1, 0.8), extras={"surface": "side_fan"})
+        add_node("BurrowerFin%s" % suffix, mesh_ids["SideFin"], (side * 1.0, 1.08, 0.2), rotation=(0.0, side * 0.18, side * 0.12), scale=(0.35, 1.1, 0.8), extras={"surface": "side_fan"})
 
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "burrower.drill.v1", "source": "original_shared_mesh_builder"})
     node_index = {node["name"]: index for index, node in enumerate(nodes)}

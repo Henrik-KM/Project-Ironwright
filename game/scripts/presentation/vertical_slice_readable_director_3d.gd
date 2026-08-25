@@ -9,6 +9,10 @@ extends VerticalSliceDirector3D
 func _ready() -> void:
     process_priority = 100
     super._ready()
+    # Apply the opening environment contract before the deferred geometry build
+    # so the first rendered/tested frame cannot observe the darker base-world
+    # settings while the Heartforge slice is still assembling.
+    _polish_environment()
 
 
 func _polish_environment() -> void:
