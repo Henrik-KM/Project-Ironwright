@@ -548,6 +548,11 @@ def build_family(name: str, spec: dict) -> None:
         "PlateCap": mesh("PlateCap", add_convex_sheet(builder, (0.44, 0.10, 0.18), bone, rings=4, sides=24)),
         "CrownFastener": mesh("CrownFastener", add_uv_sphere(builder, 0.06, bone, 24, 36)),
     }
+    # Thornback's crown is a broad territorial shield. Build its thicker
+    # folded lobe only for that family so the other six assets remain stable
+    # when this focused pass changes.
+    if name == "thornback":
+        mesh_ids["ThornbackCrownLobe"] = mesh("ThornbackCrownLobe", add_organic_lobe(builder, (1.42, 0.38, 1.02), shell, lobes=4, rings=10, sides=40, scallop_amplitude=0.14, leading_extension=0.36, fold_strength=0.82))
 
     root_name = f"{name.capitalize()}Model"
     nodes: list[dict] = [{
@@ -685,7 +690,7 @@ def build_family(name: str, spec: dict) -> None:
         attack_node = "RootweaverSporeFan"
     elif name == "thornback":
         add_node("ThornbackCrown", mesh_ids["Soft"], (0.0, 1.22, -1.02), scale=(1.28, 0.86, 1.16), extras={"socket_type": "thorn_crown"})
-        add_node("ThornbackCrownPlate", mesh_ids["Plate"], (0.0, 1.58, -0.96), rotation=(0.0, 0.0, 0.08), scale=(1.16, 1.0, 0.8), extras={"surface": "crown_plate"})
+        add_node("ThornbackCrownPlate", mesh_ids["ThornbackCrownLobe"], (0.0, 1.58, -0.96), rotation=(0.0, 0.0, 0.08), scale=(1.16, 1.0, 0.8), extras={"surface": "crown_lobe"})
         for side in (-1.0, 1.0):
             suffix = "L" if side < 0 else "R"
             add_node(f"ThornbackJawPlate{suffix}", mesh_ids["PlateCap"], (side * 0.42, 0.72, -1.42), rotation=(side * 0.38, 0.0, side * 0.12), scale=(0.82, 1.0, 0.74), extras={"surface": "jaw_plate"})

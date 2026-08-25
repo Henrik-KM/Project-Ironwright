@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Thornback crown-lobe readability pass
+
+- replaced only Thornback's broad crown plate mesh with a dense, scalloped and
+  folded living lobe while preserving the existing `ThornbackCrownPlate` node,
+  animation channels, threat sockets and runtime combat contract;
+- extended the aesthetic contract with a measurable folded-depth assertion so
+  the territorial shield cannot regress to a thin manufactured bar; exact
+  silent page 3/14 review confirms the folded shield at the compact gallery
+  distance.
+
 ## Focused West Grid transformer readability pass
 
 - gave each authored transformer four ceramic bushings with oxidized service
