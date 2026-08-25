@@ -2,6 +2,11 @@
 
 ## Focused Heartforge focal-model high-definition pass
 
+- refined Cathedral Quarter's authored choir mass, organic spines and veins,
+  window/bell ribs and rose elements with dense rounded geometry, then unified
+  the exact review dressing's biological material hierarchy; the silent page
+  11/14 capture keeps the civic facade readable beside a calmer takeover layer.
+
 - rebuilt the Root Cistern capstone's shared core, mantle, rib, claw, brace,
   crown and signal-pylon meshes as dense ellipsoidal authored forms; the exact
   silent page 14/14 capture now gives the late relay a rounded layered mass and

@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_box, add_cylinder, add_ellipsoid, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "cathedral.gltf"
@@ -80,14 +80,14 @@ def main() -> None:
         "Tower": mesh("Tower", add_beveled_box(builder, (3.4, 8.4, 3.4), brick, 0.16)),
         "TowerCap": mesh("TowerCap", add_beveled_box(builder, (3.9, 0.38, 3.9), iron, 0.14)),
         "Glass": mesh("Glass", add_cylinder(builder, 1.42, 0.16, blue_glass, 32)),
-        "Rose": mesh("Rose", add_cylinder(builder, 0.72, 0.18, rose_glass, 28)),
-        "Rib": mesh("Rib", add_beveled_box(builder, (0.14, 3.0, 0.22), iron, 0.12)),
+        "Rose": mesh("Rose", add_ellipsoid(builder, (0.72, 0.10, 0.72), rose_glass, rings=18, sides=36)),
+        "Rib": mesh("Rib", add_ellipsoid(builder, (0.11, 1.50, 0.11), iron, rings=18, sides=36)),
         "Buttress": mesh("Buttress", add_beveled_box(builder, (0.72, 3.8, 1.0), stone, 0.16)),
-        "Choir": mesh("Choir", add_uv_sphere(builder, 0.72, membrane, 20, 28)),
-        "Spine": mesh("Spine", add_cylinder(builder, 0.14, 3.0, membrane, 22)),
-        "Vein": mesh("Vein", add_cylinder(builder, 0.075, 3.8, membrane, 18)),
+        "Choir": mesh("Choir", add_ellipsoid(builder, (0.72, 0.94, 0.62), membrane, rings=20, sides=40)),
+        "Spine": mesh("Spine", add_ellipsoid(builder, (0.14, 1.50, 0.14), membrane, rings=18, sides=36)),
+        "Vein": mesh("Vein", add_ellipsoid(builder, (0.075, 1.90, 0.075), membrane, rings=18, sides=36)),
         "Signal": mesh("Signal", add_uv_sphere(builder, 0.14, rose_glass, 18, 26)),
-        "Bell": mesh("Bell", add_uv_sphere(builder, 0.42, iron, 20, 28)),
+        "Bell": mesh("Bell", add_ellipsoid(builder, (0.42, 0.50, 0.42), iron, rings=18, sides=36)),
         "Lamp": mesh("Lamp", add_uv_sphere(builder, 0.10, warm, 16, 22)),
         "Aisle": mesh("Aisle", add_beveled_box(builder, (0.42, 0.18, 5.0), iron, 0.12)),
         "Cross": mesh("Cross", add_beveled_box(builder, (0.18, 1.8, 0.18), iron, 0.12)),
@@ -96,9 +96,9 @@ def main() -> None:
         "TowerSlit": mesh("TowerSlit", add_beveled_box(builder, (0.18, 0.82, 0.12), blue_glass, 0.12)),
         "WindowLatch": mesh("WindowLatch", add_uv_sphere(builder, 0.075, iron, 14, 20)),
         "RoseRim": mesh("RoseWindowRim", add_torus(builder, 1.42, 0.10, iron)),
-        "ChoirRib": mesh("ChoirRib", add_cylinder(builder, 0.055, 2.4, iron, 18)),
+        "ChoirRib": mesh("ChoirRib", add_ellipsoid(builder, (0.055, 1.20, 0.055), iron, rings=18, sides=36)),
         "ChoirRing": mesh("ChoirRing", add_cylinder(builder, 0.24, 0.08, rose_glass, 24)),
-        "BellClapper": mesh("BellClapper", add_cylinder(builder, 0.075, 0.72, iron, 18)),
+        "BellClapper": mesh("BellClapper", add_ellipsoid(builder, (0.075, 0.36, 0.075), iron, rings=18, sides=36)),
         "ButtressCap": mesh("ButtressCap", add_beveled_box(builder, (0.88, 0.18, 1.08), iron, 0.12)),
         "VeinKnuckle": mesh("VeinKnuckle", add_uv_sphere(builder, 0.11, rose_glass, 14, 20)),
         "RoofDrain": mesh("RoofDrain", add_cylinder(builder, 0.075, 1.1, iron, 18)),

@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Cathedral Quarter received a focused authored-mesh and review-hierarchy pass on
+2026-08-25. The choir mass, organic spines and veins, rose/bell ribs and rose
+elements now use dense rounded forms, while the review dressing applies one
+restrained biological material treatment across the landmark and brood layer.
+Silent 1280x720 page 11/14 capture confirms the civic facade remains legible
+beside the calmer takeover silhouette; broader human Cathedral and region-
+library acceptance remain open.
+
 The Root Cistern capstone received a focused high-definition mesh pass on
 2026-08-25. Its core, mantle, radial ribs, claws, crown plates, basin braces
 and signal pylons now use dense rounded authored forms rather than broad boxes
