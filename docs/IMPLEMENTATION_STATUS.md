@@ -1,5 +1,12 @@
 # Implementation status
 
+## Focused first-victory overlay readability pass
+
+- added an explicit opaque, shadowed sanctuary panel and outlined victory copy
+  so the first-victory continuation state stays readable over the live world;
+- added a silent endgame review screenshot hook and completion-test guards for
+  panel contrast and text separation.
+
 ## Focused regional pressure-signal emission pass
 
 - retained the physical six-marker ecological pressure read and deterministic

@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The first-victory continuation overlay received a focused readability pass on
+2026-08-25. It now uses an opaque sanctuary panel, restrained cyan edge,
+shadow separation and outlined copy so the ending remains legible over the
+active Heartforge scene. Exact silent endgame review is required to confirm the
+result; no live speakers are used for review renders. Broader human acceptance
+of the opening, region families, final lighting/material pass and production
+art remains open.
+
 The shared regional pressure-signal layer received a focused emission-balance
 pass on 2026-08-25. High ecological pressure still pulses through the six
 physical markers, but their emission now has a bounded ceiling so authored

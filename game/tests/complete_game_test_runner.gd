@@ -358,6 +358,9 @@ func _run_all() -> void:
     var ending_panel := world.hud.ending_panel
     var ending_label := ending_panel.get_node("PanelContent").get_child(0) as Label
     _expect(ending_label != null and ending_label.text.count("\n") >= 4, "The victory overlay must wrap its long ending copy into readable lines.")
+    var ending_style := ending_panel.get_theme_stylebox("panel") as StyleBoxFlat
+    _expect(ending_style != null and ending_style.bg_color.a >= 0.9 and ending_style.border_color.g > ending_style.border_color.r, "The victory overlay must use an opaque sanctuary panel with a restrained cyan edge.")
+    _expect(ending_label != null and ending_label.get_theme_constant("outline_size") >= 3, "The victory overlay text must retain an outline against the live world.")
     _expect(ending_panel.offset_left < 0.0 and ending_panel.offset_right > 0.0 and ending_panel.offset_top < 0.0 and ending_panel.offset_bottom > 0.0, "The victory overlay must stay centered inside the viewport-safe offsets.")
     world.hud.dismiss_ending()
 
