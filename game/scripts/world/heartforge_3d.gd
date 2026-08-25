@@ -381,6 +381,7 @@ func _build_adaptive_geometry(tier: int) -> void:
         # collapse into a pale screen-space band under the opening ACES/glow
         # grade. Its scale leaves the reactor and service face visible below.
         var crown_heat := ModelKit3D.material(Color("4c2418"), 0.3, 0.54, Color("ff7b2f"), 0.32)
+        var crown_cyan := ModelKit3D.material(Color("28595c"), 0.38, 0.34, Color("70e9ee"), 0.45)
         var crown_mesh := TorusMesh.new()
         crown_mesh.inner_radius = 2.38
         crown_mesh.outer_radius = 2.72
@@ -395,7 +396,7 @@ func _build_adaptive_geometry(tier: int) -> void:
         for angle_index in range(8):
             var angle := TAU * float(angle_index) / 8.0
             var crown_position := Vector3(cos(angle) * 2.55, 4.58, sin(angle) * 2.55)
-            ModelKit3D.add_beveled_box(_adaptive_geometry, Vector3(0.24, 0.78, 0.52), crown_position, cyan, Vector3(0.0, -angle, 0.0), "Tier5CrownFin", 0.08)
+            ModelKit3D.add_beveled_box(_adaptive_geometry, Vector3(0.24, 0.78, 0.52), crown_position, crown_cyan, Vector3(0.0, -angle, 0.0), "Tier5CrownFin", 0.08)
         # Keep the Tier V beacon legible as a status accent without turning it
         # into a clipped white source at the top of the opening tactical frame.
         var crown_beacon_heat := ModelKit3D.material(Color("6a3219"), 0.26, 0.5, Color("ff7b2f"), 0.52)

@@ -795,6 +795,9 @@ func _run_all() -> void:
         var crown_mesh := crown.mesh as TorusMesh if crown != null else null
         _expect(crown_mesh != null and crown_mesh.outer_radius <= 2.75, "The Tier 5 crown ring must leave the reactor and service face visible instead of spanning the opening frame.")
         _expect(crown_material != null and crown_material.emission_energy_multiplier <= 0.4, "The Tier 5 crown ring must retain a restrained warm accent instead of becoming the brightest surface in the tactical frame.")
+        var crown_fin := heartforge.find_child("Tier5CrownFinCore", true, false) as MeshInstance3D
+        var crown_fin_material := crown_fin.material_override as StandardMaterial3D if crown_fin != null else null
+        _expect(crown_fin_material != null and crown_fin_material.emission_energy_multiplier <= 0.5, "The Tier 5 crown fins must retain a restrained cyan accent instead of clipping into white bars around the ring.")
         if heartforge_presentation != null:
             var settings_service := get_first_node_in_group("release_settings_service") as ReleaseSettingsService3D
             var previous_reduced_motion := bool(settings_service.get_value(&"reduced_motion", false)) if settings_service != null else false
