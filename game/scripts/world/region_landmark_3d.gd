@@ -534,6 +534,28 @@ func _build_authored_glasshouse_visuals() -> void:
     var imported_root := authored_scene_instance.get_node_or_null("GlasshouseModel") as Node
     if imported_root == null:
         imported_root = authored_scene_instance
+    # The grow-light sockets are focal cultivation cues, not white point
+    # lights. Split their material from the imported shared resource so the
+    # cold greenhouse key can retain readable glass, frame and living growth
+    # separation at compact review distance.
+    for candidate in authored_scene_instance.find_children("*", "MeshInstance3D", true, false):
+        var light_mesh := candidate as MeshInstance3D
+        if light_mesh == null:
+            continue
+        var light_name := String(light_mesh.name)
+        if not light_name.begins_with("GlasshouseBedLight") and light_name != "GlasshouseCanopyPulse":
+            continue
+        var source_material := light_mesh.get_active_material(0) as StandardMaterial3D
+        if source_material == null:
+            continue
+        var light_material := source_material.duplicate(true) as StandardMaterial3D
+        var canopy := light_name == "GlasshouseCanopyPulse"
+        light_material.albedo_color = Color("2c7666") if canopy else Color("3aa878")
+        light_material.emission_enabled = true
+        light_material.emission = Color("1c9b6d") if canopy else Color("38b879")
+        light_material.emission_energy_multiplier = 0.24 if canopy else 0.34
+        light_material.roughness = 0.46
+        light_mesh.material_override = light_material
     var authored_children := imported_root.get_children()
     for child in authored_children:
         child.owner = null

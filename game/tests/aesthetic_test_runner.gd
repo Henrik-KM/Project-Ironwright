@@ -496,6 +496,12 @@ func _run_all() -> void:
                 _expect(greenhouse_release_detail != null and greenhouse_release_detail.find_child("GlasshouseRoofPaneFront00", true, false) != null and greenhouse_release_detail.find_child("GlasshouseRoofPaneRear00", true, false) != null, "Municipal Glasshouse release dressing must expose a split roof canopy for readable climate volume.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/GlasshouseAuthoredModel") != null, "Municipal Glasshouse must expose its authored climate-frame landmark shell.")
                 _expect(landmark.find_child("GlasshouseBedEdge0", true, false) != null and landmark.find_child("GlasshouseGrowthTendril0_0", true, false) != null and landmark.find_child("GlasshouseLightHousing0", true, false) != null, "Municipal Glasshouse growth beds must expose secondary service and organic detail.")
+                var greenhouse_bed_light := landmark.find_child("GlasshouseBedLight0", true, false) as MeshInstance3D
+                var greenhouse_canopy_signal := landmark.find_child("GlasshouseCanopyPulse", true, false) as MeshInstance3D
+                var greenhouse_bed_material := greenhouse_bed_light.material_override as StandardMaterial3D if greenhouse_bed_light != null else null
+                var greenhouse_canopy_material := greenhouse_canopy_signal.material_override as StandardMaterial3D if greenhouse_canopy_signal != null else null
+                _expect(greenhouse_bed_material != null and greenhouse_bed_material.emission_energy_multiplier <= 0.40 and greenhouse_bed_material.emission.g > greenhouse_bed_material.emission.r, "Municipal Glasshouse bed lights must retain a bounded green signal instead of blooming white.")
+                _expect(greenhouse_canopy_material != null and greenhouse_canopy_material.emission_energy_multiplier <= 0.30 and greenhouse_canopy_material.emission.g > greenhouse_canopy_material.emission.r, "Municipal Glasshouse canopy signal must retain a restrained green emission budget.")
                 var glasshouse_post := landmark.find_child("GlasshouseFrameBay0", true, false) as MeshInstance3D
                 var glasshouse_rib := landmark.find_child("GlasshouseRoofRib0", true, false) as MeshInstance3D
                 _expect(glasshouse_post != null and glasshouse_rib != null and _mesh_vertex_count(glasshouse_post) >= 48 and _mesh_vertex_count(glasshouse_rib) >= 48, "Municipal Glasshouse authored frame must retain beveled high-definition structure.")

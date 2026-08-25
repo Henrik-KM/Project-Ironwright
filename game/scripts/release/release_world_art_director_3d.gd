@@ -556,7 +556,9 @@ func _dress_greenhouse(root: Node3D) -> void:
     var frame := _textured_material(&"metal", Color("405052"), 0.68, 0.4)
     var moss := _textured_material(&"moss", Color("476a49"), 0.0, 0.86)
     var moss_edge := _textured_material(&"moss", Color("6a8b5b"), 0.0, 0.78)
-    var glow := _emissive_material(Color("7ce6b2"), 0.82)
+    # Keep the living cultivation cues luminous without blooming into white
+    # review spots that erase the glass, frame and growth-bed hierarchy.
+    var glow := _emissive_material(Color("54c99a"), 0.32)
     # The authored Glasshouse shell already has the correct frame, growth beds
     # and service sockets. Give the release dressing a readable climate volume
     # as well: thin cold-glass bays and a split roof canopy catch the blue-hour
