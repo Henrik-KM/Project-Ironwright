@@ -12,10 +12,45 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_box, add_cylinder, add_ellipsoid, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "buried_labs.gltf"
+
+
+def add_torus(
+    builder: BufferBuilder,
+    major_radius: float,
+    minor_radius: float,
+    material: int,
+    major_segments: int = 48,
+    minor_segments: int = 8,
+) -> tuple[int, int, int, int]:
+    """Build a smooth service collar around a vertical containment vessel."""
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+    for major in range(major_segments):
+        major_angle = math.tau * major / major_segments
+        major_cos = math.cos(major_angle)
+        major_sin = math.sin(major_angle)
+        for minor in range(minor_segments):
+            minor_angle = math.tau * minor / minor_segments
+            minor_cos = math.cos(minor_angle)
+            minor_sin = math.sin(minor_angle)
+            ring_radius = major_radius + minor_radius * minor_cos
+            positions.extend([ring_radius * major_cos, minor_radius * minor_sin, ring_radius * major_sin])
+            normals.extend([minor_cos * major_cos, minor_sin, minor_cos * major_sin])
+    for major in range(major_segments):
+        next_major = (major + 1) % major_segments
+        for minor in range(minor_segments):
+            next_minor = (minor + 1) % minor_segments
+            a = major * minor_segments + minor
+            b = next_major * minor_segments + minor
+            c = next_major * minor_segments + next_minor
+            d = major * minor_segments + next_minor
+            indices.extend([a, b, c, a, c, d])
+    return _geometry(builder, positions, normals, indices, material)
 
 
 def main() -> None:
@@ -41,11 +76,17 @@ def main() -> None:
     ceramic, frame, glass, core, warning, floor, organic, prism_housing, prism_signal = range(9)
     mesh_ids = {
         "Floor": mesh("LaboratoryFloor", add_box(builder, (17.0, 0.18, 13.0), floor)),
-        "Wall": mesh("ContainmentWall", add_box(builder, (0.28, 5.4, 9.0), ceramic)),
-        "Frame": mesh("LaboratoryFrame", add_box(builder, (0.18, 5.6, 0.18), frame)),
-        "Vessel": mesh("ContainmentVessel", add_cylinder(builder, 1.18, 4.2, glass, 32)),
-        "VesselCap": mesh("ContainmentVesselCap", add_cylinder(builder, 1.32, 0.16, frame, 32)),
-        "Core": mesh("ContainmentCore", add_cylinder(builder, 0.13, 4.5, core, 20)),
+        "Wall": mesh("ContainmentWall", add_beveled_box(builder, (0.28, 5.4, 9.0), ceramic, 0.06)),
+        "Frame": mesh("LaboratoryFrame", add_beveled_box(builder, (0.18, 5.6, 0.18), frame, 0.035)),
+        # The vessel body is a smooth pressure envelope instead of a straight
+        # tube; the rounded ends catch the review key and preserve the glass
+        # containment silhouette at compact distance.
+        "Vessel": mesh("ContainmentVessel", add_ellipsoid(builder, (1.18, 2.10, 1.18), glass, 22, 40)),
+        "VesselCap": mesh("ContainmentVesselCap", add_ellipsoid(builder, (1.32, 0.18, 1.32), frame, 18, 36)),
+        "VesselCollar": mesh("ContainmentVesselServiceCollar", add_torus(builder, 1.21, 0.10, frame)),
+        "VesselBaseRing": mesh("ContainmentVesselBaseRing", add_torus(builder, 1.02, 0.08, warning)),
+        "VesselNeck": mesh("ContainmentVesselNeck", add_cylinder(builder, 0.58, 0.24, frame, 28)),
+        "Core": mesh("ContainmentCore", add_ellipsoid(builder, (0.13, 2.20, 0.13), core, 20, 32)),
         "Light": mesh("ContainmentLight", add_uv_sphere(builder, 0.18, core, 18, 28)),
         "Rail": mesh("TransferRail", add_box(builder, (15.0, 0.18, 0.22), frame)),
         "Cradle": mesh("TransferCradle", add_box(builder, (1.15, 0.22, 0.95), warning)),
@@ -56,7 +97,7 @@ def main() -> None:
         "Seep": mesh("OrganicSeep", add_uv_sphere(builder, 0.52, organic, 18, 28)),
         "Brace": mesh("ContainmentBrace", add_box(builder, (0.16, 3.8, 0.16), frame)),
         "VesselPort": mesh("ContainmentVesselPort", add_cylinder(builder, 0.18, 0.16, warning, 18)),
-        "VesselClamp": mesh("ContainmentVesselClamp", add_box(builder, (0.12, 0.28, 1.7), frame)),
+        "VesselClamp": mesh("ContainmentVesselClamp", add_beveled_box(builder, (0.12, 0.28, 1.7), frame, 0.025)),
         "TransferCarriage": mesh("TransferCarriage", add_box(builder, (1.45, 0.16, 1.18), warning)),
         "RailStop": mesh("TransferRailStop", add_cylinder(builder, 0.15, 0.16, warning, 18)),
         "DoorJamb": mesh("ContainmentDoorJamb", add_box(builder, (0.20, 4.4, 0.26), frame)),
@@ -123,6 +164,10 @@ def main() -> None:
         vessel = add_node("BuriedLabsVessel%d" % index, translation=(x, 0.0, 2.35), extras={"socket_type": "containment_vessel"})
         add_node("BuriedLabsVesselBody%d" % index, mesh_ids["Vessel"], (0.0, 2.25, 0.0), parent=vessel)
         add_node("BuriedLabsVesselCap%d" % index, mesh_ids["VesselCap"], (0.0, 4.38, 0.0), parent=vessel)
+        add_node("BuriedLabsVesselCollarTop%d" % index, mesh_ids["VesselCollar"], (0.0, 4.03, 0.0), extras={"surface": "containment_service_collar"}, parent=vessel)
+        add_node("BuriedLabsVesselCollarBottom%d" % index, mesh_ids["VesselCollar"], (0.0, 0.38, 0.0), extras={"surface": "containment_service_collar"}, parent=vessel)
+        add_node("BuriedLabsVesselBaseRing%d" % index, mesh_ids["VesselBaseRing"], (0.0, 0.22, 0.0), extras={"surface": "containment_base_ring"}, parent=vessel)
+        add_node("BuriedLabsVesselNeck%d" % index, mesh_ids["VesselNeck"], (0.0, 4.58, 0.0), extras={"surface": "containment_service_neck"}, parent=vessel)
         add_node("BuriedLabsVesselCore%d" % index, mesh_ids["Core"], (0.0, 2.28, 0.0), extras={"socket_type": "containment_core"}, parent=vessel)
         add_node("BuriedLabsVesselLight%d" % index, mesh_ids["Light"], (0.0, 4.72, 0.0), extras={"socket_type": "containment_light"}, parent=vessel)
         add_node("BuriedLabsVesselPort%d" % index, mesh_ids["VesselPort"], (0.0, 4.84, 0.0), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "containment_service_port"}, parent=vessel)
@@ -191,7 +236,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "buried.labs.v1",
-            "required_nodes": ["BuriedLabsModel", "BuriedLabsContainmentHall", "BuriedLabsVessel0", "BuriedLabsVesselCore0", "BuriedLabsVesselPort0", "BuriedLabsVesselClampL0", "BuriedLabsTransferRail", "BuriedLabsTransferCarriage", "BuriedLabsTransferRailStopL", "BuriedLabsContainmentDoor", "BuriedLabsContainmentDoorJambL", "BuriedLabsContainmentDoorLintel", "BuriedLabsWarningPanelFrame", "BuriedLabsCableClamp0", "BuriedLabsOrganicSeep0", "BuriedLabsOrganicTendril0_0", "BuriedLabsExtractionPylonL", "BuriedLabsExtractionBeam", "BuriedLabsExtractionCradle", "BuriedLabsGenomePrism", "BuriedLabsGenomePrismRing", "BuriedLabsExtractionServicePanelFrame", "ProductionAssetMarker"],
+            "required_nodes": ["BuriedLabsModel", "BuriedLabsContainmentHall", "BuriedLabsVessel0", "BuriedLabsVesselCore0", "BuriedLabsVesselCollarTop0", "BuriedLabsVesselCollarBottom0", "BuriedLabsVesselBaseRing0", "BuriedLabsVesselNeck0", "BuriedLabsVesselPort0", "BuriedLabsVesselClampL0", "BuriedLabsTransferRail", "BuriedLabsTransferCarriage", "BuriedLabsTransferRailStopL", "BuriedLabsContainmentDoor", "BuriedLabsContainmentDoorJambL", "BuriedLabsContainmentDoorLintel", "BuriedLabsWarningPanelFrame", "BuriedLabsCableClamp0", "BuriedLabsOrganicSeep0", "BuriedLabsOrganicTendril0_0", "BuriedLabsExtractionPylonL", "BuriedLabsExtractionBeam", "BuriedLabsExtractionCradle", "BuriedLabsGenomePrism", "BuriedLabsGenomePrismRing", "BuriedLabsExtractionServicePanelFrame", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
