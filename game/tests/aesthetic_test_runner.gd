@@ -1233,6 +1233,9 @@ func _run_all() -> void:
                 &"ashmantle": convex_sheet_name = &"AshmantleHeatLouverL"
             var convex_sheet := _find_first_mesh(_find_named(enemy_samples[index], convex_sheet_name) as Node3D)
             _expect(convex_sheet != null and _mesh_vertex_count(convex_sheet) >= 200, "The %s shared anatomy sheet must retain dense convex close-camera geometry." % species_names[index])
+            if species_names[index] == &"thornback":
+                var thornback_crown_depth := convex_sheet.mesh.get_aabb().size.y if convex_sheet != null and convex_sheet.mesh != null else 0.0
+                _expect(thornback_crown_depth >= 0.30, "The Thornback crown shield must retain folded living depth rather than collapsing into a thin plate.")
             if species_names[index] in [&"roofleaper", &"glassmoth", &"miremaw", &"rootweaver"]:
                 _expect(convex_sheet != null and _mesh_vertex_count(convex_sheet) >= 600, "The %s living membrane must retain the dense tapered-lobe geometry used for the late-family silhouette pass." % species_names[index])
             if species_names[index] in [&"miremaw", &"rootweaver"]:

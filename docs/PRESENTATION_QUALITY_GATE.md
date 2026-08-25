@@ -165,6 +165,13 @@ review confirms the research landmark reads more deliberately at the remote
 camera distance while preserving its stable sockets and operation contract;
 broader human region and production-art acceptance remain open.
 
+Thornback received a focused crown-lobe readability pass on 2026-08-25. Its
+existing crown socket now uses a dense folded and scalloped living shield,
+preserving the family animation and threat contract while removing the broad
+manufactured-strip read. Exact silent page 3/14 review confirms the folded
+shield at the compact gallery distance; broader hostile-family and
+production-art acceptance remain open.
+
 West Grid received a focused transformer readability pass on 2026-08-25. Each
 authored transformer now exposes four ceramic bushings with oxidized service
 caps, giving the paired yard a readable electrical silhouette without adding
