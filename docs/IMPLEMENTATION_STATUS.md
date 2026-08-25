@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Flood Market canopy-surface pass
+
+- replaced the repeated flat canopy slabs with a dense closed cloth surface
+  carrying a raised ridge, sagging edges, subtle deterministic ripple and
+  raised structural ribs; preserved the existing canopy sockets, stalls,
+  flood channels, route, ecology and service ownership. Silent exact 1280x720
+  page 8/14 review confirms the market roofs now read as fabric over a frame,
+  and aesthetic coverage guards measurable canopy volume.
+
 ## Focused Root Cistern capstone verticality pass
 
 - raised and lengthened the authored Root Cistern core mass, halo, crown,

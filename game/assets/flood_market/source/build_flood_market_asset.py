@@ -12,17 +12,79 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "flood_market.gltf"
+
+
+def add_sagging_canopy(builder: BufferBuilder, width: float, depth: float, material: int) -> tuple[int, int, int, int]:
+    """Build a shallow cloth canopy with a raised ridge and irregular edge fall."""
+    half_width = width * 0.5
+    half_depth = depth * 0.5
+    columns = 6
+    rows = 4
+    thickness = 0.10
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+
+    def height(x: float, z: float) -> float:
+        across = 1.0 - (x / half_width) ** 2
+        edge_drop = 0.16 * (abs(z) / half_depth) ** 1.6
+        ripple = 0.05 * math.sin(x * 1.7 + z * 0.8) * across
+        return 0.14 + 0.24 * across - edge_drop + ripple
+
+    def normal(x: float, z: float) -> tuple[float, float, float]:
+        epsilon = 0.01
+        dx = (height(x + epsilon, z) - height(x - epsilon, z)) / (2.0 * epsilon)
+        dz = (height(x, z + epsilon) - height(x, z - epsilon)) / (2.0 * epsilon)
+        length = math.sqrt(dx * dx + 1.0 + dz * dz)
+        return (-dx / length, 1.0 / length, -dz / length)
+
+    for layer in (0, 1):
+        for row in range(rows + 1):
+            z = -half_depth + depth * row / rows
+            for column in range(columns + 1):
+                x = -half_width + width * column / columns
+                y = height(x, z) - thickness * layer
+                positions.extend((x, y, z))
+                normals.extend(normal(x, z) if layer == 0 else (0.0, -1.0, 0.0))
+
+    stride = columns + 1
+    top_offset = 0
+    bottom_offset = stride * (rows + 1)
+    for row in range(rows):
+        for column in range(columns):
+            a = top_offset + row * stride + column
+            b = a + 1
+            d = a + stride
+            c = d + 1
+            indices.extend((a, c, b, a, d, c))
+            a = bottom_offset + row * stride + column
+            b = a + 1
+            d = a + stride
+            c = d + 1
+            indices.extend((a, b, c, a, c, d))
+
+    perimeter: list[int] = []
+    perimeter.extend(top_offset + column for column in range(columns + 1))
+    perimeter.extend(top_offset + row * stride + columns for row in range(1, rows + 1))
+    perimeter.extend(top_offset + rows * stride + column for column in range(columns - 1, -1, -1))
+    perimeter.extend(top_offset + row * stride for row in range(rows - 1, 0, -1))
+    for index, top in enumerate(perimeter):
+        next_top = perimeter[(index + 1) % len(perimeter)]
+        bottom = top + bottom_offset
+        next_bottom = next_top + bottom_offset
+        indices.extend((top, next_top, next_bottom, top, next_bottom, bottom))
+    return _geometry(builder, positions, normals, indices, material)
 
 
 def main() -> None:
     builder = BufferBuilder()
     materials = [
         {"name": "Market frame", "pbrMetallicRoughness": {"baseColorFactor": [0.025, 0.07, 0.08, 1.0], "metallicFactor": 0.42, "roughnessFactor": 0.62}},
-        {"name": "Market canopy", "pbrMetallicRoughness": {"baseColorFactor": [0.12, 0.028, 0.022, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.86}},
+        {"name": "Market canopy", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.045, 0.035, 1.0], "metallicFactor": 0.04, "roughnessFactor": 0.82}},
         {"name": "Market oxidized trim", "pbrMetallicRoughness": {"baseColorFactor": [0.34, 0.09, 0.025, 1.0], "metallicFactor": 0.28, "roughnessFactor": 0.76}, "emissiveFactor": [0.06, 0.008, 0.002]},
         {"name": "Market signal ceramic", "pbrMetallicRoughness": {"baseColorFactor": [0.04, 0.18, 0.19, 1.0], "metallicFactor": 0.16, "roughnessFactor": 0.46}, "emissiveFactor": [0.01, 0.10, 0.09]},
         {"name": "Market dark water", "alphaMode": "BLEND", "doubleSided": True, "pbrMetallicRoughness": {"baseColorFactor": [0.012, 0.12, 0.15, 0.46], "metallicFactor": 0.12, "roughnessFactor": 0.28}, "emissiveFactor": [0.0, 0.04, 0.05]},
@@ -42,7 +104,7 @@ def main() -> None:
         "Floor": mesh("MarketFloor", add_beveled_box(builder, (18.0, 0.16, 14.0), frame, 0.04)),
         "Post": mesh("MarketPost", add_beveled_box(builder, (0.16, 3.2, 0.16), frame, 0.03)),
         "Beam": mesh("MarketBeam", add_beveled_box(builder, (0.18, 0.18, 6.2), rust, 0.03)),
-        "Canopy": mesh("MarketCanopy", add_beveled_box(builder, (6.8, 0.16, 3.1), canopy, 0.045)),
+        "Canopy": mesh("MarketCanopy", add_sagging_canopy(builder, 6.8, 3.1, canopy)),
         "Stall": mesh("MarketStall", add_beveled_box(builder, (3.8, 0.28, 1.4), rust, 0.06)),
         "Water": mesh("MarketWater", add_beveled_box(builder, (3.6, 0.04, 1.5), water, 0.012)),
         "Waterline": mesh("MarketWaterline", add_box(builder, (3.0, 0.035, 0.06), waterline)),
@@ -114,7 +176,7 @@ def main() -> None:
         canopy_root = add_node("FloodMarketCanopy%d" % index, extras={"socket_type": "market_canopy"})
         add_node("FloodMarketCanopyRoof%d" % index, mesh_ids["Canopy"], (x, 4.0, 1.5), extras={"socket_type": "market_canopy_roof"}, parent=canopy_root)
         for rib_index, rib_offset in enumerate((-2.0, 0.0, 2.0)):
-            add_node("FloodMarketCanopyRib%d_%d" % (index, rib_index), mesh_ids["CanopyRib"], (x + rib_offset, 4.08, 1.5), extras={"surface": "canopy_structural_rib"}, parent=canopy_root)
+            add_node("FloodMarketCanopyRib%d_%d" % (index, rib_index), mesh_ids["CanopyRib"], (x + rib_offset, 4.42, 1.5), extras={"surface": "canopy_structural_rib"}, parent=canopy_root)
         for side in (-1.0, 1.0):
             add_node("FloodMarketCanopyPost%d_%s" % (index, "L" if side < 0 else "R"), mesh_ids["Post"], (x + side * 2.7, 1.8, 1.5), parent=canopy_root)
     for index, x in enumerate((-6.0, 0.0, 6.0)):
