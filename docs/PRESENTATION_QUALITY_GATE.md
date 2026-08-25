@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+West Grid received a focused switchyard-focal pass on 2026-08-26. A shallow
+transformer body, cooling panel, warning face, bus rail and three ceramic
+insulator stacks now give the industrial district one readable power-station
+hierarchy at remote review distance. Exact silent page 5/14 review is required;
+the pass is presentation-only and broader human West Grid, region and
+production-art acceptance remain open.
+
 East Tenements received a focused shared-court pass on 2026-08-26. A shallow
 communal threshold, canopy, service panel, rails and light now bridge the
 repeated residential blocks in the remote review frame, giving the district a

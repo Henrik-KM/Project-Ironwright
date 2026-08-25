@@ -1,5 +1,12 @@
 # Implementation status
 
+## Focused West Grid switchyard-focal pass
+
+- added a shallow transformer and switchyard assembly with cooling panel,
+  warning face, bus rail and three insulator stacks;
+- kept the pass presentation-only, with no power graph, interaction, collision,
+  repair task or other simulation state.
+
 ## Focused East Tenements shared-court pass
 
 - added a shallow communal threshold with canopy, rails, service panel,

@@ -505,6 +505,27 @@ func _dress_industrial(root: Node3D) -> void:
         ModelKit3D.add_sphere(tank, 0.09, Vector3(radius * 0.72, height * 0.5 + 0.25, 0.0), warning, Vector3.ONE, "TankWarningBeacon")
         ModelKit3D.add_cylinder(industrial_detail, 0.12, 8.0, Vector3(-10.0 + float(index) * 5.0, 4.2, 0.0), rust, Vector3(0.0, 0.0, 1.5708), "GridPipe%02d" % index)
         ModelKit3D.add_cylinder(industrial_detail, 0.19, 0.12, Vector3(-10.0 + float(index) * 5.0, 4.2, -4.0), metal, Vector3(0.0, 0.0, 1.5708), "GridPipeFlange%02d" % index)
+    # The tank field needs one unmistakable switchyard face so the district
+    # reads as a failed power station rather than a collection of cylinders.
+    # Keep the assembly shallow and presentation-only: it adds no power graph,
+    # interaction, collision or repair task.
+    var switchyard := Node3D.new()
+    switchyard.name = "GridSwitchyardFocal"
+    industrial_detail.add_child(switchyard)
+    var switch_dark := _textured_material(&"metal", Color("202b2f"), 0.78, 0.36)
+    var switch_edge := _textured_material(&"rust", Color("8a5638"), 0.42, 0.62)
+    var porcelain := _textured_material(&"ceramic", Color("b4b0a3"), 0.16, 0.5)
+    var switch_signal := _emissive_material(Color("f0a24c"), 1.7)
+    ModelKit3D.add_beveled_box(switchyard, Vector3(4.6, 0.22, 2.4), Vector3(0.0, 0.22, 2.35), switch_dark, Vector3.ZERO, "GridSwitchyardFoundation", 0.12)
+    ModelKit3D.add_beveled_box(switchyard, Vector3(3.2, 1.45, 1.1), Vector3(0.0, 1.05, 2.35), metal, Vector3.ZERO, "GridTransformerBody", 0.18)
+    ModelKit3D.add_louvered_panel(switchyard, Vector3(1.65, 0.62, 0.1), Vector3(0.0, 1.08, 2.92), switch_dark, switch_edge, Vector3.ZERO, "GridTransformerCoolingPanel", 5)
+    ModelKit3D.add_surface_panel(switchyard, Vector3(0.86, 0.5, 0.1), Vector3(1.0, 1.3, 2.94), switch_dark, switch_signal, Vector3.ZERO, "GridTransformerWarningPanel")
+    ModelKit3D.add_beveled_box(switchyard, Vector3(4.8, 0.16, 0.18), Vector3(0.0, 3.35, 2.25), switch_edge, Vector3.ZERO, "GridSwitchyardBusRail", 0.06)
+    for bushing_index in range(3):
+        var bushing_x := -1.2 + float(bushing_index) * 1.2
+        ModelKit3D.add_cylinder(switchyard, 0.16, 1.42, Vector3(bushing_x, 4.08, 2.25), porcelain, Vector3.ZERO, "GridSwitchyardBushing%02d" % bushing_index)
+        ModelKit3D.add_torus(switchyard, 0.21, 0.045, Vector3(bushing_x, 4.48, 2.25), switch_edge, Vector3.ZERO, "GridSwitchyardBushingCollar%02d" % bushing_index, 16, 6)
+        ModelKit3D.add_sphere(switchyard, 0.11, Vector3(bushing_x, 4.86, 2.25), switch_signal, Vector3.ONE, "GridSwitchyardBushingBeacon%02d" % bushing_index)
 
 
 func _dress_tenement(root: Node3D) -> void:
