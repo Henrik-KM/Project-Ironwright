@@ -1403,6 +1403,73 @@ func _dress_archive(root: Node3D) -> void:
     var glass := ModelKit3D.material(Color("18333a"), 0.2, 0.38, Color("6dbac0"), 0.12)
     var service_metal := _textured_material(&"metal", Color("3d4546"), 0.64, 0.5)
     var paper := _textured_material(&"concrete", Color("6d6253"), 0.0, 0.92)
+    # The remote review camera sees the archive fragments as a generic roofline
+    # unless one civic threshold survives in the foreground. Keep this as a
+    # bounded presentation dressing: it gives the region a records identity
+    # without adding a new door, inventory, or simulated destination.
+    var gateway := Node3D.new()
+    gateway.name = "ArchiveGateway"
+    archive_detail.add_child(gateway)
+    var gateway_stone := _textured_material(&"brick", Color("6a5149"), 0.0, 0.84)
+    var gateway_edge := _textured_material(&"stone", Color("4d5655"), 0.42, 0.58)
+    var gateway_panel := ModelKit3D.material(Color("17383d"), 0.22, 0.36, Color("6ec8c7"), 0.18)
+    ModelKit3D.add_beveled_box(
+        gateway,
+        Vector3(5.8, 0.28, 0.92),
+        Vector3(-1.6, 0.34, 4.62),
+        gateway_edge,
+        Vector3(0.0, 0.0, 0.02),
+        "ArchiveGatewayFoundation",
+        0.12
+    )
+    ModelKit3D.add_beveled_box(
+        gateway,
+        Vector3(5.5, 4.15, 0.34),
+        Vector3(-1.6, 2.34, 4.72),
+        gateway_stone,
+        Vector3.ZERO,
+        "ArchiveGatewayShell",
+        0.18
+    )
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(
+            gateway,
+            Vector3(0.38, 3.85, 0.56),
+            Vector3(-1.6 + side * 2.28, 2.18, 4.92),
+            gateway_edge,
+            Vector3(0.0, 0.0, side * 0.015),
+            "ArchiveGatewayPilaster%s" % ("L" if side < 0.0 else "R"),
+            0.08
+        )
+    ModelKit3D.add_beveled_box(
+        gateway,
+        Vector3(5.9, 0.24, 0.62),
+        Vector3(-1.6, 4.48, 4.92),
+        gateway_edge,
+        Vector3(0.0, 0.0, 0.015),
+        "ArchiveGatewayHeader",
+        0.10
+    )
+    ModelKit3D.add_surface_panel(
+        gateway,
+        Vector3(2.45, 1.72, 0.12),
+        Vector3(-1.6, 2.35, 4.96),
+        service_metal,
+        gateway_panel,
+        Vector3.ZERO,
+        "ArchiveGatewayIndex"
+    )
+    for rail_index in range(3):
+        ModelKit3D.add_beveled_box(
+            gateway,
+            Vector3(1.72, 0.08, 0.10),
+            Vector3(-1.6, 1.92 + float(rail_index) * 0.42, 4.99),
+            gateway_edge,
+            Vector3.ZERO,
+            "ArchiveGatewayIndexRail%d" % rail_index,
+            0.03
+        )
+    ModelKit3D.add_sphere(gateway, 0.18, Vector3(-1.6, 4.78, 4.96), gateway_panel, Vector3.ONE, "ArchiveGatewayBeacon")
     for index in range(6):
         var height := 5.0 + float(index % 3) * 2.0
         var position := Vector3(-12.0 + float(index) * 4.8, 2.5, -3.0 + float(index % 2) * 6.0)
