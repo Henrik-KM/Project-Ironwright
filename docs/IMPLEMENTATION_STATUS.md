@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Root Cistern capstone verticality pass
+
+- raised and lengthened the authored Root Cistern core mass, halo, crown,
+  radial plates and veins, and introduced deterministic alternating mantle
+  scales so the final remote landmark reads as a layered living root altar
+  rather than a flat circular organ. Silent exact 1280x720 page 14/14 review
+  confirms the stronger vertical focal silhouette; aesthetic and release tests
+  guard the raised core and staggered mantle while preserving endgame,
+  operation, pylon and save-state contracts.
+
 ## Focused late-organic lobe-depth pass
 
 - increased the shared late-family lobe thickness, scallop amplitude, leading

@@ -10,6 +10,14 @@ gives more visual room to the Mechromancer, Bulwark and Heartforge while
 retaining actionable status. Broader human opening-composition acceptance
 remains open.
 
+The Root Cistern capstone received a focused verticality pass on 2026-08-25.
+Its authored core mass, halo, crown, radial plates and veins now rise into a
+layered root-altar silhouette, with deterministic alternating mantle scales
+breaking the previous flat circular-organ read. Silent exact 1280x720 page
+14/14 review confirms the stronger final focal form beside the relay pylons;
+the aesthetic and release suites guard the raised core and staggered layers.
+Broader human endgame-region and production-art acceptance remain open.
+
 The late-organic lobe received a focused depth-and-material pass on
 2026-08-25. The shared builder now gives the late-family shell and membrane
 lobes more thickness, scalloped edge amplitude, tapered leading extension and
