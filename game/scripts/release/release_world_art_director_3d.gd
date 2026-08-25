@@ -337,7 +337,13 @@ func _organic_family_tint_for_mesh(mesh_instance: MeshInstance3D, path_text: Str
 func _organic_detail_tint(mesh_instance: MeshInstance3D, family_tint: Color, category: StringName) -> Color:
     var detail_name := String(mesh_instance.name).to_lower()
     if category == &"membrane" or _contains_any(detail_name, ["membrane", "fan", "gill", "fin", "wing", "mantle", "spore", "vein"]):
-        return family_tint.lightened(0.16)
+        var authored_path := str(mesh_instance.get_path()).to_lower()
+        # Late-family membranes are already broad and layered; a smaller lift
+        # keeps them living and translucent without turning the gallery into a
+        # row of pale manufactured plates. Early flight membranes retain the
+        # stronger lift needed for compact silhouette separation.
+        var late_family := _contains_any(authored_path, ["miremaw", "carrionbell", "rootweaver", "thornback", "ashmantle"])
+        return family_tint.lightened(0.09 if late_family else 0.16)
     if _contains_any(detail_name, ["plate", "rib", "ridge", "spine", "hook", "knuckle", "fastener", "bone", "frame", "ray", "cap", "leg", "arm", "talon", "jaw", "tiercrest", "tierdorsal", "tiercrown"]):
         return family_tint.darkened(0.16)
     if _contains_any(detail_name, ["eye", "oculus", "resonator", "siphon", "tendon", "tiervascular", "tiersignal"]):

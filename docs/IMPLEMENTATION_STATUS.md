@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused late-organic lobe-depth pass
+
+- increased the shared late-family lobe thickness, scallop amplitude, leading
+  extension and fold strength, with separate shell-layer tuning so the seven
+  regenerated authored families retain a visibly folded living surface rather
+  than a pale stack of flat plates; late-family membrane tint lift is also
+  restrained in the release gallery to preserve material separation. Silent
+  exact 1280x720 page 3/14 review confirms the deeper folded edges, and the
+  aesthetic suite now guards measurable lobe depth on Miremaw and Rootweaver.
+
 ## Focused tactical HUD empty-state pass
 
 - collapsed the unused operation-status row and reduced the resource card when
