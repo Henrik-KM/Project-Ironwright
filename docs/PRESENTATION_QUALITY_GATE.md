@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Municipal Glasshouse received a focused glow-balance pass on 2026-08-25. The
+authored bed lights and canopy signal now use restrained green emission, while
+the release dressing's mycelium cues are lower-energy, so cold glass, climate
+frames and living growth remain separable at the compact exact-review distance.
+The exact silent 1280x720 page 7/14 review now reads as a cultivation facility
+without changing ecology, interaction, collision, LOD or operation ownership;
+broader human Glasshouse, region and production-art acceptance remain open.
+
 The title screen received a focused atmosphere-readability pass on 2026-08-25.
 The blackout is reduced and the warm forge core, cool service rings and paired
 relay columns now remain legible behind the existing high-contrast menu panel

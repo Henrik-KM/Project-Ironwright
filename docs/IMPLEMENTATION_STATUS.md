@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Municipal Glasshouse glow-balance pass
+
+- separated the authored bed lights and canopy signal from their shared
+  imported material and restrained them to a readable green emission budget;
+- lowered the release dressing's mycelium cue energy so the exact 1280x720 page
+  7/14 review preserves cold-glass, climate-frame and living-growth separation
+  without changing ecology, interaction, collision, LOD or operation ownership;
+- extended the aesthetic contract with material emission guards and completed a
+  silent exact-frame review.
+
 ## Focused title-atmosphere readability pass
 
 - reduced the title-screen blackout and strengthened the restrained warm core,
