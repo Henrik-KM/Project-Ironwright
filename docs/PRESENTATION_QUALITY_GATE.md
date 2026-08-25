@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The fresh-world release camera received a focused startup-frame correction on
+2026-08-25. It now resolves and applies the tactical subject transform before
+the first playable frame, avoiding a transient close-up while retaining the
+existing occlusion probe, remote-region expansion and follow blend. A silent
+three-second fresh-world capture confirmed the opening is composed correctly
+from frame zero; broader human opening acceptance remains open.
+
 The friendly machine roster received a focused role-silhouette pass on
 2026-08-25. Scrapper now carries raised hopper rails and a work-facing intake
 deck, Warden carries shoulder protection and weapon rails, and Pathfinder

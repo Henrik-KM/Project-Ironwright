@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused opening camera startup pass
+
+- the release world now snaps the tactical camera to its resolved opening
+  subject before the first playable frame, preventing a transient origin/actor
+  close-up during fresh-world boot while preserving occlusion probing, remote
+  region expansion and the normal follow blend after startup; silent three-
+  second fresh-world capture confirmed a readable frame from frame zero.
+
 ## Focused friendly-role silhouette pass
 
 - added raised hopper rails and a work-facing intake deck to the Scrapper,
