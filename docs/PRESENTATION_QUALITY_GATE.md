@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+West Grid received a focused high-definition focal pass on 2026-08-25. The
+turbine hall now exposes a rounded ceramic access housing, inset steel face,
+dense oxidized collar, cross-braced hub and six maintenance fasteners on its
+authored front facade. Silent exact 1280x720 page 5/14 review confirms the
+mechanism reads at the remote-landmark camera distance; broader human region
+and production-art acceptance remain open.
+
 The opening desktop HUD received a focused readability correction on
 2026-08-25. The first-salvage objective now has a measured card height, and
 the Mechromancer/Bulwark health stack keeps both labels above their bars.

@@ -12,10 +12,45 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_beveled_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_cylinder, add_ellipsoid, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "west_grid.gltf"
+
+
+def add_torus(
+    builder: BufferBuilder,
+    major_radius: float,
+    minor_radius: float,
+    material: int,
+    major_segments: int = 48,
+    minor_segments: int = 8,
+) -> tuple[int, int, int, int]:
+    """Build a dense service collar for the turbine access assembly."""
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+    for major in range(major_segments):
+        major_angle = math.tau * major / major_segments
+        major_cos = math.cos(major_angle)
+        major_sin = math.sin(major_angle)
+        for minor in range(minor_segments):
+            minor_angle = math.tau * minor / minor_segments
+            minor_cos = math.cos(minor_angle)
+            minor_sin = math.sin(minor_angle)
+            ring_radius = major_radius + minor_radius * minor_cos
+            positions.extend([ring_radius * major_cos, minor_radius * minor_sin, ring_radius * major_sin])
+            normals.extend([minor_cos * major_cos, minor_sin, minor_cos * major_sin])
+    for major in range(major_segments):
+        next_major = (major + 1) % major_segments
+        for minor in range(minor_segments):
+            next_minor = (minor + 1) % minor_segments
+            a = major * minor_segments + minor
+            b = next_major * minor_segments + minor
+            c = next_major * minor_segments + next_minor
+            d = major * minor_segments + next_minor
+            indices.extend([a, b, c, a, c, d])
+    return _geometry(builder, positions, normals, indices, material)
 
 
 def main() -> None:
@@ -66,6 +101,16 @@ def main() -> None:
         "HallDoorFrame": mesh("WestGridHallServiceDoorFrame", add_beveled_box(builder, (2.82, 3.1, 0.16), painted_iron, 0.04)),
         "HallLouver": mesh("WestGridHallLouver", add_beveled_box(builder, (0.18, 1.05, 2.1), ceramic, 0.025)),
         "HallLouverRail": mesh("WestGridHallLouverRail", add_beveled_box(builder, (2.3, 0.10, 0.12), rust, 0.02)),
+        # A single hero service assembly breaks the turbine hall's broad
+        # industrial skin with a readable maintained mechanism rather than
+        # another flat facade bar.
+        "TurbineAccessHousing": mesh("WestGridTurbineAccessHousing", add_ellipsoid(builder, (1.78, 1.18, 0.28), ceramic, 20, 40)),
+        "TurbineAccessFace": mesh("WestGridTurbineAccessFace", add_ellipsoid(builder, (1.42, 0.86, 0.16), steel, 20, 40)),
+        "TurbineAccessRing": mesh("WestGridTurbineAccessRing", add_torus(builder, 1.48, 0.11, rust)),
+        "TurbineAccessHub": mesh("WestGridTurbineAccessHub", add_cylinder(builder, 0.26, 0.18, signal, 24)),
+        "TurbineAccessSpoke": mesh("WestGridTurbineAccessSpoke", add_beveled_box(builder, (0.10, 1.18, 0.12), painted_iron, 0.025)),
+        "TurbineAccessBolt": mesh("WestGridTurbineAccessBolt", add_cylinder(builder, 0.075, 0.07, amber, 24)),
+        "TurbineAccessRail": mesh("WestGridTurbineAccessRail", add_beveled_box(builder, (3.35, 0.10, 0.10), rust, 0.02)),
         "HallSkinRib": mesh("WestGridHallSkinRib", add_beveled_box(builder, (0.14, 2.4, 0.16), rust, 0.025)),
         "HallSkinRail": mesh("WestGridHallSkinRail", add_beveled_box(builder, (8.8, 0.12, 0.16), painted_iron, 0.025)),
         "HallSkinPlate": mesh("WestGridHallSkinPlate", add_beveled_box(builder, (0.84, 0.48, 0.10), ceramic, 0.035)),
@@ -117,6 +162,25 @@ def main() -> None:
         add_node("WestGridWindowMullion%d" % index, mesh_ids["WindowMullion"], (x, 3.55, -0.11), extras={"surface": "hall_window_mullion"})
     add_node("WestGridHallServiceDoor", mesh_ids["HallDoor"], (-4.8, 1.58, -0.31), extras={"surface": "hall_service_door"})
     add_node("WestGridHallServiceDoorFrame", mesh_ids["HallDoorFrame"], (-4.8, 1.58, -0.20), extras={"surface": "hall_service_door_frame"})
+    # The turbine access cover turns the service door into a single legible
+    # focal mechanism: a ceramic housing, inset steel face, oxidized collar,
+    # cross-braced hub and six warm maintenance fasteners.
+    turbine_center = (-4.8, 1.58)
+    # The hall's authored front is the positive-z face; keep the assembly just
+    # outside that plane so it cannot disappear inside the structural shell.
+    add_node("WestGridTurbineAccessHousing", mesh_ids["TurbineAccessHousing"], (turbine_center[0], turbine_center[1], -0.05), extras={"surface": "turbine_access_housing"})
+    add_node("WestGridTurbineAccessFace", mesh_ids["TurbineAccessFace"], (turbine_center[0], turbine_center[1], 0.22), extras={"surface": "turbine_access_face"})
+    add_node("WestGridTurbineAccessRing", mesh_ids["TurbineAccessRing"], (turbine_center[0], turbine_center[1], 0.39), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "turbine_access_ring"})
+    add_node("WestGridTurbineAccessHub", mesh_ids["TurbineAccessHub"], (turbine_center[0], turbine_center[1], 0.49), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "turbine_access_hub"})
+    add_node("WestGridTurbineAccessSpokeVertical", mesh_ids["TurbineAccessSpoke"], (turbine_center[0], turbine_center[1], 0.51), extras={"surface": "turbine_access_spoke"})
+    add_node("WestGridTurbineAccessSpokeHorizontal", mesh_ids["TurbineAccessSpoke"], (turbine_center[0], turbine_center[1], 0.51), rotation=(0.0, 0.0, math.pi * 0.5), extras={"surface": "turbine_access_spoke"})
+    for bolt_index in range(6):
+        bolt_angle = math.tau * float(bolt_index) / 6.0
+        bolt_x = turbine_center[0] + math.cos(bolt_angle) * 1.25
+        bolt_y = turbine_center[1] + math.sin(bolt_angle) * 1.25
+        add_node("WestGridTurbineAccessBolt%d" % bolt_index, mesh_ids["TurbineAccessBolt"], (bolt_x, bolt_y, 0.54), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "turbine_access_fastener"})
+    add_node("WestGridTurbineAccessRailTop", mesh_ids["TurbineAccessRail"], (-4.8, 3.18, -0.02), extras={"surface": "turbine_access_rail"})
+    add_node("WestGridTurbineAccessRailBottom", mesh_ids["TurbineAccessRail"], (-4.8, -0.02, -0.02), extras={"surface": "turbine_access_rail"})
     for index, x in enumerate((-7.1, -5.7, -3.9, -2.5)):
         add_node("WestGridHallLouver%d" % index, mesh_ids["HallLouver"], (x, 2.58, -0.16), extras={"surface": "hall_louver"})
     add_node("WestGridHallLouverRailTop", mesh_ids["HallLouverRail"], (-4.8, 3.16, -0.13), extras={"surface": "hall_louver_rail"})
@@ -176,7 +240,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "west.grid.substation.v1",
-            "required_nodes": ["WestGridModel", "WestGridTurbineHall", "WestGridWindowFrame0", "WestGridWindowMullion0", "WestGridHallServiceDoor", "WestGridHallServiceDoorFrame", "WestGridHallLouver0", "WestGridHallLouverRailTop", "WestGridHallSkinRib0", "WestGridHallSkinRailTop", "WestGridHallSkinPlate0", "WestGridRoofServiceVent0", "WestGridRoofServiceVentCap0", "WestGridRoofServiceSignal0", "WestGridServicePanel", "WestGridServicePanelLine0", "WestGridPressureTank0", "WestGridTankValve0", "WestGridTankLadder0", "WestGridTransformer0", "WestGridTransformerCap0", "WestGridTransformerBrace0", "WestGridPipeBridge", "WestGridPipeFlange0", "WestGridWarningHousing0", "WestGridWarningLight0", "WestGridOrganicCreep0", "WestGridOrganicTendril0_0", "ProductionAssetMarker"],
+            "required_nodes": ["WestGridModel", "WestGridTurbineHall", "WestGridWindowFrame0", "WestGridWindowMullion0", "WestGridHallServiceDoor", "WestGridHallServiceDoorFrame", "WestGridTurbineAccessHousing", "WestGridTurbineAccessFace", "WestGridTurbineAccessRing", "WestGridTurbineAccessHub", "WestGridTurbineAccessSpokeVertical", "WestGridTurbineAccessBolt0", "WestGridTurbineAccessRailTop", "WestGridHallLouver0", "WestGridHallLouverRailTop", "WestGridHallSkinRib0", "WestGridHallSkinRailTop", "WestGridHallSkinPlate0", "WestGridRoofServiceVent0", "WestGridRoofServiceVentCap0", "WestGridRoofServiceSignal0", "WestGridServicePanel", "WestGridServicePanelLine0", "WestGridPressureTank0", "WestGridTankValve0", "WestGridTankLadder0", "WestGridTransformer0", "WestGridTransformerCap0", "WestGridTransformerBrace0", "WestGridPipeBridge", "WestGridPipeFlange0", "WestGridWarningHousing0", "WestGridWarningLight0", "WestGridOrganicCreep0", "WestGridOrganicTendril0_0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
