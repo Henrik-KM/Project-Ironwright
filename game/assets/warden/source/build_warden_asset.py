@@ -75,6 +75,10 @@ def main() -> None:
         "RecoilCollar": mesh("RecoilCollar", add_cylinder(builder, 0.14, 0.08, cyan, 24)),
         "ThermalFin": mesh("ThermalFin", add_box(builder, (0.09, 0.34, 0.42), steel)),
         "BreechClamp": mesh("BreechClamp", add_cylinder(builder, 0.17, 0.08, warm, 24)),
+        # Shoulder protection frames the cannon and separates the guardian
+        # from the lower, cargo-oriented support machines at tactical range.
+        "ShoulderGuard": mesh("ShoulderGuard", add_beveled_box(builder, (0.2, 0.54, 0.7), steel, 0.04)),
+        "WeaponRail": mesh("WeaponRail", add_beveled_box(builder, (0.1, 0.18, 0.82), oxide, 0.025)),
     }
 
     nodes: list[dict] = [{
@@ -136,6 +140,8 @@ def main() -> None:
     add_node("WardenHeatExchanger", mesh_ids["HeatPanel"], (-0.5, 1.42, -0.92))
     add_node("WardenAmmunitionPanel", mesh_ids["HeatPanel"], (0.5, 1.38, -0.9))
     for side in (-1.0, 1.0):
+        add_node("WardenShoulderGuard", mesh_ids["ShoulderGuard"], (side * 0.94, 1.28, -0.22), rotation=(0.0, 0.0, side * 0.08))
+        add_node("WardenWeaponRail", mesh_ids["WeaponRail"], (side * 0.38, 1.62, -0.92), rotation=(math.pi * 0.5, 0.0, 0.0))
         for index in range(4):
             add_node("WardenHeatLouver", mesh_ids["Louver"], (side * 0.5, 1.3 + index * 0.09, -1.02))
         add_node("WardenLamp", mesh_ids["Beacon"], (side * 0.34, 1.4, -1.02), extras={"socket_type": "status_light"})
@@ -219,7 +225,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "warden.guardian.v1",
-            "required_nodes": ["WardenModel", "Sensor", "OpticLens", "WardenAutocannon", "WeaponMuzzle", "WardenHeatExchanger", "WardenTargetingFace", "WardenOpticShroud", "WardenRecoilCollarLeft", "WardenThermalFinRight", "WardenBreechClamp", "ProductionAssetMarker"],
+            "required_nodes": ["WardenModel", "Sensor", "OpticLens", "WardenAutocannon", "WeaponMuzzle", "WardenHeatExchanger", "WardenTargetingFace", "WardenOpticShroud", "WardenShoulderGuard", "WardenWeaponRail", "WardenRecoilCollarLeft", "WardenThermalFinRight", "WardenBreechClamp", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Fire", "Hit", "Retreat", "Death"],
         },
     }

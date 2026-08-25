@@ -70,6 +70,10 @@ def main() -> None:
         "CuttingGuard": mesh("CuttingGuard", add_beveled_box(builder, (0.46, 0.1, 0.14), steel, 0.025)),
         "MagnetCoil": mesh("MagnetCoil", add_cylinder(builder, 0.15, 0.06, cyan, 24)),
         "IntakeTooth": mesh("IntakeTooth", add_beveled_box(builder, (0.08, 0.12, 0.18), warm, 0.018)),
+        # A raised hopper rail and intake deck give the salvage frame a
+        # readable work-facing silhouette instead of another flat cargo box.
+        "HopperSideRail": mesh("HopperSideRail", add_beveled_box(builder, (0.12, 0.42, 0.86), steel, 0.025)),
+        "IntakeDeck": mesh("IntakeDeck", add_beveled_box(builder, (0.72, 0.12, 0.28), steel, 0.025)),
     }
 
     nodes: list[dict] = [{
@@ -122,6 +126,9 @@ def main() -> None:
     add_node("ScrapperHopperLatch", mesh_ids["HopperLatch"], (0.0, 1.86, -0.24), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("CargoStrap", mesh_ids["Strap"], (0.0, 1.47, 0.25))
     add_node("DeepScrapHopper", mesh_ids["Cargo"], (0.0, 1.45, 0.38))
+    for side in (-1.0, 1.0):
+        add_node("ScrapperHopperSideRail", mesh_ids["HopperSideRail"], (side * 0.72, 1.58, 0.3), rotation=(0.0, 0.0, side * 0.1))
+    add_node("ScrapperIntakeDeck", mesh_ids["IntakeDeck"], (0.0, 1.34, -0.86), rotation=(math.pi * 0.5, 0.0, 0.0))
     for side in (-1.0, 1.0):
         add_node("DismantlerJoint", mesh_ids["Joint"], (side * 0.7, 0.96, -0.34))
         add_node("ScrapperDismantlerCollar%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["DismantlerCollar"], (side * 0.7, 0.96, -0.34), extras={"socket_type": "salvage_tool_collar"})
@@ -216,7 +223,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "scrapper.salvager.v1",
-            "required_nodes": ["ScrapperModel", "Sensor", "OpticLens", "CargoBin", "DismantlerTool", "SalvageDrum", "ScrapperIntake", "ScrapperHopperRim", "ScrapperDismantlerCollarLeft", "ScrapperMagnetCoilRight", "ScrapperCuttingGuard", "ProductionAssetMarker"],
+            "required_nodes": ["ScrapperModel", "Sensor", "OpticLens", "CargoBin", "DismantlerTool", "SalvageDrum", "ScrapperIntake", "ScrapperHopperRim", "ScrapperHopperSideRail", "ScrapperIntakeDeck", "ScrapperDismantlerCollarLeft", "ScrapperMagnetCoilRight", "ScrapperCuttingGuard", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Work", "Hit", "Retreat", "Death"],
         },
     }

@@ -1036,6 +1036,9 @@ func _run_all() -> void:
             var scrapper_chassis := _find_named(scrapper_asset, "Chassis") as MeshInstance3D
             var scrapper_cargo := _find_named(scrapper_asset, "CargoBin") as MeshInstance3D
             _expect(scrapper_chassis != null and scrapper_cargo != null and _mesh_vertex_count(scrapper_chassis) >= 600 and _mesh_vertex_count(scrapper_cargo) >= 48, "The authored Scrapper chassis and cargo bin must retain dense high-definition manufactured surfaces.")
+            var scrapper_hopper_rail := _find_named(scrapper_asset, "ScrapperHopperSideRail") as MeshInstance3D
+            var scrapper_intake_deck := _find_named(scrapper_asset, "ScrapperIntakeDeck") as MeshInstance3D
+            _expect(scrapper_hopper_rail != null and scrapper_intake_deck != null and _mesh_vertex_count(scrapper_hopper_rail) >= 48 and _mesh_vertex_count(scrapper_intake_deck) >= 48, "The Scrapper must retain raised hopper rails and a readable intake deck for its salvage role silhouette.")
             var scrapper_animation := role_samples[index].get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
             if scrapper_animation != null and scrapper_animation.animation_player != null:
                 _expect(_animation_player_track_count(scrapper_animation.animation_player, &"Idle") >= 6, "Scrapper Idle must carry hopper-latch and paired magnet-coil channels.")
@@ -1055,6 +1058,9 @@ func _run_all() -> void:
             var pathfinder_chassis := _find_named(pathfinder_asset, "Chassis") as MeshInstance3D
             var pathfinder_sensor_pod := _find_named(pathfinder_asset, "PathfinderSensorPod") as MeshInstance3D
             _expect(pathfinder_chassis != null and pathfinder_sensor_pod != null and _mesh_vertex_count(pathfinder_chassis) >= 600 and _mesh_vertex_count(pathfinder_sensor_pod) >= 48, "The authored Pathfinder chassis and sensor pod must retain dense high-definition manufactured surfaces.")
+            var pathfinder_console := _find_named(pathfinder_asset, "PathfinderSurveyConsole") as MeshInstance3D
+            var pathfinder_dish_rim := _find_named(pathfinder_asset, "PathfinderDishRim") as MeshInstance3D
+            _expect(pathfinder_console != null and pathfinder_dish_rim != null and _mesh_vertex_count(pathfinder_console) >= 48 and _mesh_vertex_count(pathfinder_dish_rim) >= 64, "The Pathfinder must retain a maintained survey console and dense dish rim for its scout role silhouette.")
             var pathfinder_animation := role_samples[index].get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
             if pathfinder_animation != null and pathfinder_animation.animation_player != null:
                 _expect(_animation_player_track_count(pathfinder_animation.animation_player, &"Idle") >= 6, "Pathfinder Idle must carry sensor-pod, mast-collar and signal-canister channels.")
@@ -1096,6 +1102,9 @@ func _run_all() -> void:
     _expect(_find_named(authored_warden, "ProductionAssetMarker") != null, "The authored Warden model must expose its production asset marker.")
     _expect(_find_named(authored_warden, "WardenTargetingFace") != null and _find_named(authored_warden, "WardenOpticShroud") != null, "The authored Warden model must expose maintained targeting and optic-shroud hardware.")
     _expect(_find_named(authored_warden, "WardenRecoilCollarLeft") != null and _find_named(authored_warden, "WardenThermalFinRight") != null and _find_named(authored_warden, "WardenBreechClamp") != null, "The authored Warden model must expose close-camera recoil, thermal and breech hardware.")
+    var warden_shoulder_guard := _find_named(authored_warden, "WardenShoulderGuard") as MeshInstance3D
+    var warden_weapon_rail := _find_named(authored_warden, "WardenWeaponRail") as MeshInstance3D
+    _expect(warden_shoulder_guard != null and warden_weapon_rail != null and _mesh_vertex_count(warden_shoulder_guard) >= 48 and _mesh_vertex_count(warden_weapon_rail) >= 48, "The Warden must retain shoulder protection and weapon rails that distinguish its guardian role at tactical range.")
     _expect(_find_named(authored_warden, "RearShieldCore") != null and _find_named(authored_warden, "RearShieldCornerCap") != null, "The Warden must expose beveled rear protection hardware.")
     _expect(_find_named(authored_warden, "ShieldRibCore") != null and _find_named(authored_warden, "ShieldRibCornerCap") != null, "The Warden must expose a beveled protection-rib assembly.")
     var warden_chassis := _find_named(authored_warden, "Chassis") as MeshInstance3D
