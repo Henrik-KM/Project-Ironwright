@@ -311,7 +311,11 @@ def build_family(name: str, spec: dict) -> None:
         # rolloff.
         "Plate": mesh("Plate", add_convex_sheet(builder, (1.52, 0.16, 0.28), shell, rings=5, sides=24)),
         "ShellPlate": mesh("ShellPlate", add_ellipsoid(builder, (0.76, 0.13, 0.28), shell, rings=18, sides=36)),
-        "Membrane": mesh("Membrane", add_convex_sheet(builder, (1.26, 0.045, 1.08), membrane, rings=6, sides=28)),
+        # The membrane layer is the largest shared silhouette on the late
+        # family gallery page. A near-zero thickness sheet read as a stack of
+        # floating flat discs, so give it a deeper biological crown and spend
+        # extra radial resolution on the curved edge highlight.
+        "Membrane": mesh("Membrane", add_ellipsoid(builder, (0.63, 0.11, 0.54), membrane, rings=18, sides=36)),
         "Bone": mesh("Bone", add_capsule(builder, 0.09, 0.86, bone, 24)),
         "LongBone": mesh("LongBone", add_capsule(builder, 0.065, 1.35, bone, 24)),
         "Tendon": mesh("Tendon", add_capsule(builder, 0.07, 1.15, tendon, 24)),

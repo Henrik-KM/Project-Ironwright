@@ -8,6 +8,12 @@ and low radial conduits; silent exact 1280x720 page 14/14 review confirms the
 basin and service dressing remain useful without a duplicated generic pylon
 ring. Broader human endgame region and production-art acceptance remain open.
 
+The shared late-organic family received a focused membrane-form pass on
+2026-08-25. Wing, fin and spore surfaces now use dense flattened ellipsoids
+instead of near-zero-thickness sheets; silent exact 1280x720 page 3/14 review
+confirms smoother edge highlights while preserving stable sockets and clips.
+Broader human late-family and production-art acceptance remain open.
+
 Tram Graveyard received a focused high-definition carriage-hardware pass on
 2026-08-25. Its three derailed carriage variants now expose segmented roof
 ribs, corner posts, bogie crossbars, smooth wheel rims and ceramic hubs that
