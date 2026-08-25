@@ -574,6 +574,7 @@ func _run_all() -> void:
                 _expect(landmark.find_child("ObservatorySurveyRail0", true, false) != null, "Observatory Ridge must expose a bounded survey-deck rail silhouette.")
                 _expect(landmark.find_child("ObservatoryDishRib0", true, false) != null and landmark.find_child("ObservatoryDishActuator", true, false) != null and landmark.find_child("ObservatoryFeedCollar", true, false) != null, "Observatory Ridge must expose dish structural and feed hardware.")
                 _expect(landmark.find_child("ObservatoryDishRimRing", true, false) != null, "Observatory Ridge must expose a continuous high-definition dish service rim.")
+                _expect(landmark.find_child("ObservatoryDishPedestal", true, false) != null and landmark.find_child("ObservatoryDishSupportRing", true, false) != null and landmark.find_child("ObservatoryDishPivotHousing", true, false) != null and landmark.find_child("ObservatoryDishPivotBand", true, false) != null, "Observatory Ridge must ground the reflector in a layered azimuth pedestal and pivot housing.")
                 _expect(landmark.find_child("ObservatoryMastCollar", true, false) != null and landmark.find_child("ObservatoryDeckPost0", true, false) != null, "Observatory Ridge must expose mast and service-deck hardware.")
                 _expect(landmark.find_child("ObservatoryControlWindowFrame0", true, false) != null and landmark.find_child("ObservatoryControlWindowMullion0", true, false) != null and landmark.find_child("ObservatoryFrontConsoleFrame", true, false) != null, "Observatory Ridge must expose cabin and console framing detail.")
                 _expect(landmark.find_child("ObservatoryCableAnchor0", true, false) != null and landmark.find_child("ObservatorySurveyLightHousing0", true, false) != null, "Observatory Ridge must expose survey-cable and deck-light hardware.")
@@ -595,6 +596,9 @@ func _run_all() -> void:
                         _expect(dish_world_depth >= 0.70, "Observatory hero dish must retain a deep parabolic bowl rather than collapsing into a shallow disc.")
                     var observatory_dish_rib := landmark.find_child("ObservatoryDishRib0", true, false) as MeshInstance3D
                     _expect(observatory_dish_rib != null and _mesh_vertex_count(observatory_dish_rib) >= 48, "Observatory dish ribs must retain dense rounded structural geometry rather than flat bars.")
+                    var observatory_pedestal := landmark.find_child("ObservatoryDishPedestal", true, false) as MeshInstance3D
+                    var observatory_pivot := landmark.find_child("ObservatoryDishPivotHousing", true, false) as MeshInstance3D
+                    _expect(observatory_pedestal != null and _mesh_vertex_count(observatory_pedestal) >= 48 and observatory_pedestal.mesh.get_aabb().size.y >= 1.8 and observatory_pivot != null and _mesh_vertex_count(observatory_pivot) >= 240, "Observatory reflector support must retain a dense grounded pedestal and rounded pivot housing rather than a thin placeholder post.")
                     var dish_before := observatory_dish.rotation.y
                     var feed_before := observatory_feed.scale
                     var actuator_before := observatory_actuator.rotation

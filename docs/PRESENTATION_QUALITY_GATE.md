@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Observatory Ridge received a focused instrument-grounding pass on 2026-08-25.
+The authored reflector now has a rounded azimuth pedestal, service ring and
+layered pivot housing, so the survey dish reads as a supported high-definition
+instrument rather than a suspended blue disc. Exact silent 1280x720 page 12/14
+review is required to confirm the new silhouette; broader human Observatory,
+region and production-art acceptance remain open.
+
 The first-victory continuation overlay received a focused readability pass on
 2026-08-25. It now uses an opaque sanctuary panel, restrained cyan edge,
 shadow separation and outlined copy so the ending remains legible over the

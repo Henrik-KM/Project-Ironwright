@@ -1384,6 +1384,9 @@ func _tune_observatory_presentation_review_materials(authored_scene: Node) -> vo
 	# bowl instead of collapsing it into a dark circular platform.
 	var dish_material := ModelKit3D.material(Color("1d4f78"), 0.12, 0.66)
 	var dish_rim_material := ModelKit3D.material(Color("587b82"), 0.68, 0.42)
+	var dish_pedestal_material := ModelKit3D.material(Color("1a2930"), 0.64, 0.52)
+	var dish_pedestal_ring_material := ModelKit3D.material(Color("70402f"), 0.34, 0.62)
+	var dish_pivot_material := ModelKit3D.material(Color("29444a"), 0.52, 0.46)
 	var actuator_material := ModelKit3D.material(Color("82452f"), 0.28, 0.66)
 	var signal_material := ModelKit3D.material(Color("124d58"), 0.32, 0.34, Color("58dfe3"), 0.92)
 	for child in authored_scene.find_children("*", "MeshInstance3D", true, false):
@@ -1391,7 +1394,15 @@ func _tune_observatory_presentation_review_materials(authored_scene: Node) -> vo
 			continue
 		var mesh := child as MeshInstance3D
 		var node_name := mesh.name.to_lower()
-		if node_name.contains("dishrib") or node_name.contains("dishrim"):
+		if node_name.contains("dishsupportring"):
+			mesh.material_override = dish_pedestal_ring_material
+		elif node_name.contains("dishpedestal"):
+			mesh.material_override = dish_pedestal_material
+		elif node_name.contains("dishpivothousing"):
+			mesh.material_override = dish_pivot_material
+		elif node_name.contains("dishpivotband"):
+			mesh.material_override = signal_material
+		elif node_name.contains("dishrib") or node_name.contains("dishrim"):
 			mesh.material_override = dish_rim_material
 		elif node_name.contains("dishbrace") or node_name.contains("dishactuator"):
 			mesh.material_override = actuator_material
