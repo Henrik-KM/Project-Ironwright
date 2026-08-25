@@ -992,6 +992,29 @@ func _dress_waterfront(root: Node3D) -> void:
         ModelKit3D.add_cylinder(housing, 0.18, 0.22, Vector3(0.0, 1.78, 0.0), signal_material, Vector3.ZERO, "PumpRotorCap%02d" % index)
         ModelKit3D.add_cylinder(waterworks_detail, 0.1, 4.2, Vector3(x - 1.0, 1.25, 2.3), metal, Vector3(PI * 0.5, 0.0, 0.0), "PumpDischargePipe%02d" % index)
         ModelKit3D.add_glow_light(waterworks_detail, Vector3(x, 2.25, 5.0), Color("54d9df"), 0.72, 5.0)
+    # The repeated pumps need one clear control-station focal point so the
+    # district reads as a functioning waterworks rather than a field of
+    # disconnected machinery. Keep this shallow and presentation-only: it
+    # adds no pump simulation, interaction, collision or maintenance task.
+    var pump_station := Node3D.new()
+    pump_station.name = "WaterworksPumpStationFocal"
+    waterworks_detail.add_child(pump_station)
+    # Use the open service deck at camera-right so the station remains legible
+    # beside the central manifold instead of disappearing behind it.
+    pump_station.position = Vector3(7.0, 0.0, 0.0)
+    var station_body := _textured_material(&"metal", Color("344346"), 0.68, 0.46)
+    var station_edge := _textured_material(&"rust", Color("8c5638"), 0.38, 0.68)
+    var station_signal := _emissive_material(Color("5fd7d6"), 1.35)
+    ModelKit3D.add_beveled_box(pump_station, Vector3(4.8, 0.2, 2.2), Vector3(0.0, 0.26, -2.2), station_body, Vector3.ZERO, "WaterworksStationFoundation", 0.12)
+    ModelKit3D.add_beveled_box(pump_station, Vector3(3.8, 2.4, 1.5), Vector3(0.0, 1.48, -2.2), station_body, Vector3.ZERO, "WaterworksStationBody", 0.18)
+    ModelKit3D.add_louvered_panel(pump_station, Vector3(1.8, 0.9, 0.1), Vector3(-0.72, 1.5, -1.42), dark_metal, station_edge, Vector3.ZERO, "WaterworksStationCoolingPanel", 5)
+    ModelKit3D.add_surface_panel(pump_station, Vector3(0.78, 0.62, 0.1), Vector3(1.05, 1.7, -1.41), dark_metal, station_signal, Vector3.ZERO, "WaterworksStationControlPanel")
+    ModelKit3D.add_beveled_box(pump_station, Vector3(4.4, 0.18, 1.8), Vector3(0.0, 2.78, -2.2), station_edge, Vector3.ZERO, "WaterworksStationRoof", 0.1)
+    for stack_index in range(3):
+        var stack_x := -1.25 + float(stack_index) * 1.25
+        ModelKit3D.add_cylinder(pump_station, 0.16, 1.45, Vector3(stack_x, 3.58, -2.2), dark_metal, Vector3.ZERO, "WaterworksStationStack%02d" % stack_index)
+        ModelKit3D.add_sphere(pump_station, 0.14, Vector3(stack_x, 4.38, -2.2), station_signal, Vector3.ONE, "WaterworksStationBeacon%02d" % stack_index)
+    ModelKit3D.add_cylinder(pump_station, 0.1, 3.8, Vector3(0.0, 4.18, -2.2), station_edge, Vector3(0.0, 0.0, PI * 0.5), "WaterworksStationHeader")
 
 
 func _dress_rail(root: Node3D) -> void:

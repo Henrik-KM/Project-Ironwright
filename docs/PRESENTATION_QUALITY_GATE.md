@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Riverworks received a focused pump-station-focal pass on 2026-08-26. A shallow
+control station, cooling panel, control face, roof, three stack beacons and
+header now give the waterworks field one readable operational hierarchy at
+remote review distance. Exact silent page 9/14 review is required; the pass is
+presentation-only and broader human Riverworks, region and production-art
+acceptance remain open.
+
 West Grid received a focused switchyard-focal pass on 2026-08-26. A shallow
 transformer body, cooling panel, warning face, bus rail and three ceramic
 insulator stacks now give the industrial district one readable power-station

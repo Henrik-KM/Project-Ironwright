@@ -1,5 +1,12 @@
 # Implementation status
 
+## Focused Riverworks pump-station-focal pass
+
+- added a shallow pump control station with cooling panel, control face, roof,
+  three stack beacons and a header above the existing waterworks field;
+- kept the pass presentation-only, with no pump simulation, interaction,
+  collision or maintenance task.
+
 ## Focused West Grid switchyard-focal pass
 
 - added a shallow transformer and switchyard assembly with cooling panel,
