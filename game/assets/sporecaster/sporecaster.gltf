@@ -374,7 +374,7 @@
       "scale": [
         1.0,
         1.18,
-        0.3
+        0.48
       ],
       "extras": {
         "surface": "layered_gill_membrane"
@@ -420,7 +420,7 @@
       "scale": [
         1.0,
         1.06,
-        0.3
+        0.48
       ],
       "extras": {
         "surface": "layered_gill_membrane"
@@ -466,7 +466,7 @@
       "scale": [
         1.0,
         0.94,
-        0.3
+        0.48
       ],
       "extras": {
         "surface": "layered_gill_membrane"
@@ -506,7 +506,7 @@
       "scale": [
         1.0,
         0.82,
-        0.3
+        0.48
       ],
       "extras": {
         "surface": "layered_gill_membrane"
@@ -546,7 +546,7 @@
       "scale": [
         1.0,
         0.94,
-        0.3
+        0.48
       ],
       "extras": {
         "surface": "layered_gill_membrane"
@@ -592,7 +592,7 @@
       "scale": [
         1.0,
         1.06,
-        0.3
+        0.48
       ],
       "extras": {
         "surface": "layered_gill_membrane"
@@ -638,7 +638,7 @@
       "scale": [
         1.0,
         1.18,
-        0.3
+        0.48
       ],
       "extras": {
         "surface": "layered_gill_membrane"

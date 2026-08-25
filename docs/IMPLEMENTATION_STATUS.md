@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused Sporecaster gill-volume pass
+
+- deepened the existing seven Sporecaster gill-fan sockets at presentation
+  scale so the authored membranes retain visible volume instead of reading as
+  horizontal sheets, while preserving their animation and ecology contracts;
+- the aesthetic suite now guards the presentation depth; the exact silent
+  early-organic review will confirm the revised fan silhouette.
+
 ## Focused Rootweaver crown-lobe pass
 
 - replaced Rootweaver's paired crown sheets with dense closed folded living

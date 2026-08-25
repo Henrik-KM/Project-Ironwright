@@ -170,7 +170,10 @@ def main() -> None:
         side = -1.0 if index < 3 else (1.0 if index > 3 else 0.0)
         x = side * (0.62 + abs(index - 3) * 0.16)
         z = 0.12 + math.sin(angle) * 0.36
-        add_node("SporecasterGillFan%d" % index, mesh_ids["Gill"], (x, 1.25 + abs(index - 3) * 0.08, z), rotation=(0.0, side * 0.16, side * (0.54 - index * 0.08)), scale=(1.0, 0.82 + abs(index - 3) * 0.12, 0.3), extras={"surface": "layered_gill_membrane"})
+        # Keep the dense gill mesh visibly volumetric at the compact early
+        # organic review distance instead of flattening the membrane into a
+        # horizontal plate; the existing node and animation contract remains.
+        add_node("SporecasterGillFan%d" % index, mesh_ids["Gill"], (x, 1.25 + abs(index - 3) * 0.08, z), rotation=(0.0, side * 0.16, side * (0.54 - index * 0.08)), scale=(1.0, 0.82 + abs(index - 3) * 0.12, 0.48), extras={"surface": "layered_gill_membrane"})
         add_node("SporecasterGillRib%d" % index, mesh_ids["GillRib"], (x, 1.3 + abs(index - 3) * 0.08, z), rotation=(0.0, side * 0.16, side * (0.54 - index * 0.08)), scale=(0.72, 1.0, 0.82), extras={"surface": "gill_rib"})
 
     sac_positions = [(-0.62, 1.62, 0.12), (-0.3, 1.8, 0.34), (0.0, 1.92, 0.46), (0.3, 1.8, 0.34), (0.62, 1.62, 0.12)]

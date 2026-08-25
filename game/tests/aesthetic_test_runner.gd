@@ -1252,6 +1252,9 @@ func _run_all() -> void:
             if species_names[index] in [&"miremaw", &"rootweaver"]:
                 var lobe_depth := convex_sheet.mesh.get_aabb().size.y if convex_sheet != null and convex_sheet.mesh != null else 0.0
                 _expect(lobe_depth >= 0.70, "The %s living membrane must retain measurable folded depth rather than collapsing back to a thin plate." % species_names[index])
+        if species_names[index] == &"sporecaster":
+            var spore_gill_fan := _find_named(enemy_samples[index], "SporecasterGillFan0") as Node3D
+            _expect(spore_gill_fan != null and spore_gill_fan.scale.z >= 0.45, "The Sporecaster gill fan must retain presentation depth rather than collapsing into a flat horizontal membrane.")
         _expect(_find_named(enemy_samples[index], "OrganicDeathPresentation") != null, "The %s organic family must expose a dedicated high-definition death presentation root." % species_names[index])
         _expect(_find_named(enemy_samples[index], "OrganicDeathCarapace") != null and _find_named(enemy_samples[index], "OrganicDeathRootCollar") != null, "The %s death presentation must expose fractured shell and exposed root anatomy." % species_names[index])
         _expect(_find_named(enemy_samples[index], "OrganicDeathShard00") != null and _find_named(enemy_samples[index], "OrganicDeathVein00") != null and _find_named(enemy_samples[index], "OrganicDeathSignal") != null, "The %s death presentation must expose shell shards, dead vascular channels and a spent signal core." % species_names[index])
