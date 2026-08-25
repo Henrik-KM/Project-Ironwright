@@ -20,6 +20,14 @@ Heartforge remains readable without the prior pale screen-space band while the
 Mechromancer, Bulwark and escape route stay judgeable; broader human opening
 and production-art acceptance remain open.
 
+The endgame completion handoff received a coherence correction on 2026-08-25.
+The completed protocol now replaces the active percentage, hold-the-Heartforge
+objective and final-response prompt with the localized first-victory objective,
+continuing-sanctuary prompt and completion status in the same frame. A silent
+ten-second 1280x720 fixture reaches the ordinary victory overlay and sanctuary
+crown with those surfaces synchronized; broader endgame and production-art
+acceptance remain open.
+
 The early-organic family received a focused material-separation pass on
 2026-08-24. Skitterling, Razorhound, Burrower, Sporecaster and Veilstalker
 now separate structural shell plates, ridges, membranes and bone accents from

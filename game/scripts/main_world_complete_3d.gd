@@ -47,6 +47,9 @@ func _process(delta: float) -> void:
     if adaptive_defense_director != null:
         strategic_hud.update_adaptation(adaptive_defense_director.available_plans(), adaptive_defense_director.proposal_summary())
 
+    if game_ended:
+        return
+
     if not endgame_director.active_protocol.is_empty():
         var protocol_status := endgame_director.status_summary()
         hud.set_operation(protocol_status)
@@ -564,6 +567,10 @@ func _update_complete_game_objective() -> void:
     if long_operation_director == null or endgame_director == null:
         return
 
+    if endgame_director.completed_protocol != &"":
+        _set_complete_objective("objective.complete.victory.title", "FIRST VICTORY", "objective.complete.victory.detail", "The final protocol completed. The surviving machine sanctuary continues beyond the first victory.", [], "objective.complete.victory.prompt", "PRESS P · REVIEW THE CONTINUING SANCTUARY")
+        return
+
     if not long_operation_director.active_operation.is_empty():
         var active_operation_status := _localized_long_operation_summary()
         var locale_service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
@@ -623,9 +630,6 @@ func _update_complete_game_objective() -> void:
         return
     if not progression.has_technology(&"tech.endgame.severance") and not progression.has_technology(&"tech.endgame.containment"):
         _set_complete_objective("objective.complete.ending_choice.title", "CHOOSE WHAT THE TOWN BECOMES", "objective.complete.ending_choice.detail", "Press T and research Severance, Containment, or both. This is a strategic ending choice, not a recurring wave upgrade.", [], "objective.complete.ending_choice.prompt", "PRESS T · RESEARCH THE FINAL PROTOCOLS")
-        return
-    if endgame_director.completed_protocol != &"":
-        _set_complete_objective("objective.complete.victory.title", "FIRST VICTORY", "objective.complete.victory.detail", "The final protocol completed. The surviving machine sanctuary continues beyond the first victory.", [], "objective.complete.victory.prompt", "PRESS P · REVIEW THE CONTINUING SANCTUARY")
         return
     if endgame_director.active_protocol.is_empty():
         _set_complete_objective("objective.complete.initiate.title", "INITIATE THE FINAL PROTOCOL", "objective.complete.initiate.detail", "Press V, choose an available protocol, and deliberately provoke the final ecological response when the Heartforge and machine society are ready.", [], "objective.complete.initiate.prompt", "PRESS V · REVIEW IRREVERSIBLE FINAL PROTOCOLS")
@@ -969,6 +973,12 @@ func _on_endgame_completed(protocol_id: StringName, display_name: String, ending
         localized_detail = locale_service.text("hud.ending.first_victory_detail", [localized_name, localized_ending])
     # Keep the live completion surface in the selected locale even though the
     # simulation director still owns canonical English data for saves/logs.
+    _update_complete_game_objective()
+    var victory_status := "FIRST VICTORY · %s" % localized_name
+    if locale_service != null:
+        victory_status = locale_service.text("notification.first_victory_achieved", [localized_name])
+    hud.set_operation(victory_status)
+    hud.set_operation_badge("", false)
     hud.show_ending(true, localized_detail, true)
 
 
