@@ -335,7 +335,7 @@ func apply_progression_visuals(unlocked_effects: Dictionary, heartforge_tier: in
     ModelKit3D.add_beveled_box(
         _progression_visual_root,
         Vector3(0.3, 0.08, 0.24),
-        Vector3(0.43, -0.26, 1.66),
+        Vector3(0.43, 1.66, -0.26),
         worn_steel,
         Vector3(0.0, 0.0, -0.08),
         "MechromancerTierIIShoulderBrace",
@@ -344,7 +344,7 @@ func apply_progression_visuals(unlocked_effects: Dictionary, heartforge_tier: in
     ModelKit3D.add_surface_panel(
         _progression_visual_root,
         Vector3(0.24, 0.09, 0.22),
-        Vector3(-0.42, -0.31, 1.34),
+        Vector3(-0.42, 1.34, -0.31),
         dark_steel,
         signal_cyan,
         Vector3(0.0, 0.0, 0.12),
@@ -354,7 +354,7 @@ func apply_progression_visuals(unlocked_effects: Dictionary, heartforge_tier: in
         _progression_visual_root,
         0.035,
         0.28,
-        Vector3(-0.43, -0.24, 1.52),
+        Vector3(-0.43, 1.52, -0.24),
         signal_cyan,
         Vector3(PI * 0.5, 0.0, 0.0),
         "MechromancerTierIISignalPin"
@@ -366,7 +366,7 @@ func apply_progression_visuals(unlocked_effects: Dictionary, heartforge_tier: in
         ModelKit3D.add_beveled_box(
             _progression_visual_root,
             Vector3(0.16, 0.08, 0.48),
-            Vector3(-0.25, 0.55, 1.46),
+            Vector3(-0.25, 1.46, 0.55),
             dark_steel,
             Vector3(0.0, 0.08, 0.0),
             "MechromancerTierIIICognitionRail",
@@ -378,7 +378,7 @@ func apply_progression_visuals(unlocked_effects: Dictionary, heartforge_tier: in
                 0.022,
                 0.032,
                 0.42,
-                Vector3(-0.25 + side * 0.1, 0.5, 1.36),
+                Vector3(-0.25 + side * 0.1, 1.36, 0.5),
                 forge_amber if side < 0.0 else signal_cyan,
                 Vector3(0.18, 0.0, side * 0.22),
                 "MechromancerTierIIICableGuide%s" % ("Left" if side < 0.0 else "Right")
@@ -386,7 +386,7 @@ func apply_progression_visuals(unlocked_effects: Dictionary, heartforge_tier: in
         ModelKit3D.add_sphere(
             _progression_visual_root,
             0.045,
-            Vector3(-0.25, 0.49, 1.74),
+            Vector3(-0.25, 1.74, 0.49),
             signal_cyan,
             Vector3(1.0, 0.72, 0.72),
             "MechromancerTierIIICognitionNode"
@@ -398,7 +398,7 @@ func apply_progression_visuals(unlocked_effects: Dictionary, heartforge_tier: in
         ModelKit3D.add_beveled_box(
             _progression_visual_root,
             Vector3(0.2, 0.07, 0.3),
-            Vector3(0.28, -0.3, 1.8),
+            Vector3(0.28, 1.8, -0.3),
             bio_violet,
             Vector3(-0.18, 0.0, 0.08),
             "MechromancerTierIVBioSensorHousing",
@@ -407,7 +407,7 @@ func apply_progression_visuals(unlocked_effects: Dictionary, heartforge_tier: in
         ModelKit3D.add_sphere(
             _progression_visual_root,
             0.055,
-            Vector3(0.28, -0.35, 1.8),
+            Vector3(0.28, 1.8, -0.35),
             bio_violet,
             Vector3(1.2, 0.42, 0.8),
             "MechromancerTierIVBioSensorLens"
@@ -419,7 +419,7 @@ func apply_progression_visuals(unlocked_effects: Dictionary, heartforge_tier: in
         ModelKit3D.add_beveled_box(
             _progression_visual_root,
             Vector3(0.22, 0.07, 0.2),
-            Vector3(0.0, -0.35, 1.52),
+            Vector3(0.0, 1.52, -0.35),
             forge_amber,
             Vector3(0.0, 0.0, 0.0),
             "MechromancerTierVProtocolClasp",
@@ -428,7 +428,7 @@ func apply_progression_visuals(unlocked_effects: Dictionary, heartforge_tier: in
         ModelKit3D.add_louvered_panel(
             _progression_visual_root,
             Vector3(0.18, 0.12, 0.06),
-            Vector3(0.18, 0.5, 1.47),
+            Vector3(0.18, 1.47, 0.5),
             dark_steel,
             forge_amber,
             Vector3(0.0, 0.0, -0.12),

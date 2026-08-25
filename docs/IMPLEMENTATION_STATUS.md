@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Mechromancer progression attachment pass
+
+- corrected the derived Tier II-V hardware layer's swapped vertical/depth
+  coordinates so field-rig, cognition, bio-sensor and protocol parts attach to
+  the Mechromancer instead of appearing as stray fragments below the review
+  floor;
+- the aesthetic suite now guards body-volume attachment, and the exact silent
+  Tier V evolution review will confirm the progression silhouette in motion.
+
 ## Focused Cathedral gable-facade pass
 
 - added a shallow front gable and central cross to the Cathedral Quarter release

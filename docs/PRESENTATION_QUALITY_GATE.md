@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The Mechromancer progression attachment layer received a focused correction on
+2026-08-25. Tier II-V field hardware now uses the actor's vertical/depth axes
+correctly, so upgrades remain on the human field-engineer silhouette instead of
+dropping into the gallery floor. Exact silent Tier V evolution review is
+required to confirm the revised attachment; broader human animation and
+production-art acceptance remain open.
+
 Cathedral Quarter received a focused front-gable pass on 2026-08-25. The
 release facade now carries a shallow front gable and central cross, while the
 rose-glass emission is restrained so the civic silhouette remains legible beside
