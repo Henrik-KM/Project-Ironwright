@@ -1253,6 +1253,9 @@ func _run_all() -> void:
             &"miremaw":
                 _expect(_find_named(enemy_samples[index], "MiremawGillRidgeL") != null and _find_named(enemy_samples[index], "MiremawGillRidgeR") != null, "The Miremaw must expose layered gill-ridge surface detail.")
                 _expect(_find_named(enemy_samples[index], "MiremawJawPlateL") != null and _find_named(enemy_samples[index], "MiremawGillSpineR") != null, "The Miremaw must expose jaw plating and gill spines for readable amphibious anatomy.")
+                var miremaw_fin_l := _find_named(enemy_samples[index], "MiremawWaterFinL") as Node3D
+                var miremaw_fin_r := _find_named(enemy_samples[index], "MiremawWaterFinR") as Node3D
+                _expect(miremaw_fin_l != null and miremaw_fin_r != null and absf(miremaw_fin_l.basis.y.z) >= 0.14 and absf(miremaw_fin_r.basis.y.z) >= 0.14 and miremaw_fin_l.basis.y.z * miremaw_fin_r.basis.y.z < 0.0, "The Miremaw water-fin pair must carry opposing pitch so its amphibious membranes read as lifted fins rather than horizontal discs.")
             &"carrionbell":
                 _expect(_find_named(enemy_samples[index], "CarrionbellResonatorRing") != null, "The Carrion Bell must expose a raised resonator lip for its signal anatomy.")
                 _expect(_find_named(enemy_samples[index], "CarrionbellResonatorCore") != null and _find_named(enemy_samples[index], "CarrionbellBellRib0") != null, "The Carrion Bell must expose a layered resonator core and bell ribs.")

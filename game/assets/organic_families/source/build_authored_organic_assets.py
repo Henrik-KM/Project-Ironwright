@@ -434,9 +434,10 @@ def build_family(name: str, spec: dict) -> None:
             suffix = "L" if side < 0 else "R"
             add_node(f"MiremawJawHook{suffix}", mesh_ids["LongBone"], (side * 0.42, 0.55, -1.62), rotation=(side * 0.72, 0.0, side * 0.18), extras={"socket_type": "jaw_hook"})
             add_node(f"MiremawJawPlate{suffix}", mesh_ids["PlateCap"], (side * 0.44, 0.68, -1.42), rotation=(side * 0.36, 0.0, side * 0.12), scale=(0.82, 1.0, 0.76), extras={"surface": "jaw_plate"})
-            add_node(f"MiremawWaterFin{suffix}", mesh_ids["Membrane"], (side * 1.08, 0.68, 0.18), rotation=(0.0, side * 0.28, side * 0.08), scale=(0.62, 0.84, 1.1), extras={"socket_type": "water_fin"})
+            fin_pitch = 0.20
+            add_node(f"MiremawWaterFin{suffix}", mesh_ids["Membrane"], (side * 1.08, 0.68, 0.18), rotation=(side * fin_pitch, side * 0.28, side * 0.08), scale=(0.62, 0.84, 1.1), extras={"socket_type": "water_fin"})
             add_node(f"MiremawGillSpine{suffix}", mesh_ids["GillSpine"], (side * 0.62, 1.30, 0.38), rotation=(0.0, side * 0.28, side * 0.22), scale=(0.78, 1.0, 0.82), extras={"surface": "gill_spine"})
-            add_node(f"MiremawFinRay{suffix}", mesh_ids["MembraneRib"], (side * 1.18, 0.72, 0.18), rotation=(0.0, side * 0.3, side * 0.28), scale=(0.62, 1.0, 0.9), extras={"surface": "water_fin_ray"})
+            add_node(f"MiremawFinRay{suffix}", mesh_ids["MembraneRib"], (side * 1.18, 0.72, 0.18), rotation=(side * (fin_pitch + 0.04), side * 0.3, side * 0.28), scale=(0.62, 1.0, 0.9), extras={"surface": "water_fin_ray"})
             add_node(f"MiremawGillRidge{suffix}", mesh_ids["Ridge"], (side * 0.48, 1.28, 0.38), rotation=(0.0, side * 0.22, side * 0.08), scale=(0.72, 1.0, 0.62), extras={"surface": "gill_ridge"})
             add_node(f"MiremawEye{suffix}", mesh_ids["Eye"], (side * 0.26, 1.24, -1.62), extras={"socket_type": "threat_eye"})
         walk_node = "MiremawWaterFinL"
@@ -639,8 +640,8 @@ def build_family(name: str, spec: dict) -> None:
             ("MiremawGillRidgeR", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.22, 0.08)) + quat((-0.04, 0.24, 0.03)) + quat((0.0, 0.22, 0.08))),
         ])
         walk_channels.extend([
-            ("MiremawWaterFinL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.28, -0.08)) + quat((0.12, -0.34, -0.18)) + quat((0.0, -0.28, -0.08))),
-            ("MiremawWaterFinR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.28, 0.08)) + quat((-0.12, 0.34, 0.18)) + quat((0.0, 0.28, 0.08))),
+            ("MiremawWaterFinL", "rotation", [0.0, 0.22, 0.44], quat((-0.20, -0.28, -0.08)) + quat((0.12, -0.34, -0.18)) + quat((-0.20, -0.28, -0.08))),
+            ("MiremawWaterFinR", "rotation", [0.0, 0.22, 0.44], quat((0.20, 0.28, 0.08)) + quat((-0.12, 0.34, 0.18)) + quat((0.20, 0.28, 0.08))),
         ])
         attack_channels.extend([
             ("MiremawJawHookL", "rotation", [0.0, 0.24, 0.48], quat((-0.72, 0.0, -0.18)) + quat((-0.98, 0.0, -0.28)) + quat((-0.72, 0.0, -0.18))),
@@ -654,8 +655,8 @@ def build_family(name: str, spec: dict) -> None:
             ("MiremawGillFan", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.0, 1.57)) + quat((0.0, 0.0, 1.32)) + quat((0.0, 0.0, 1.57))),
         ])
         retreat_channels.extend([
-            ("MiremawWaterFinL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.28, -0.08)) + quat((-0.14, -0.36, -0.2)) + quat((0.0, -0.28, -0.08))),
-            ("MiremawWaterFinR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.28, 0.08)) + quat((0.14, 0.36, 0.2)) + quat((0.0, 0.28, 0.08))),
+            ("MiremawWaterFinL", "rotation", [0.0, 0.22, 0.44], quat((-0.20, -0.28, -0.08)) + quat((-0.14, -0.36, -0.2)) + quat((-0.20, -0.28, -0.08))),
+            ("MiremawWaterFinR", "rotation", [0.0, 0.22, 0.44], quat((0.20, 0.28, 0.08)) + quat((0.14, 0.36, 0.2)) + quat((0.20, 0.28, 0.08))),
             ("MiremawGillFan", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, 1.57)) + quat((0.0, 0.0, 1.82)) + quat((0.0, 0.0, 1.57))),
         ])
     elif name == "glassmoth":
