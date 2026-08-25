@@ -2,6 +2,12 @@
 
 ## Focused Heartforge focal-model high-definition pass
 
+- refined the Glassmoth's luminous wing pair with opposing authored pitch,
+  dense curved membranes and a cool teal threat-light identity; regenerated its
+  dependency-free glTF from the source builder and silently live-reviewed the
+  exact early-organic gallery page while preserving wing sockets, animation
+  channels, tier anatomy and combat ownership.
+
 - refined Tram Graveyard's three derailed carriage variants with authored roof
   ribs, corner posts, bogie crossbars, smooth wheel rims and ceramic hubs;
   regenerated the glTF and silently live-reviewed exact page 10/14 at 1280x720
