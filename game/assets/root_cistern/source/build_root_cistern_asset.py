@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_ellipsoid, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "root_cistern.gltf"
@@ -37,35 +37,39 @@ def main() -> None:
 
     root, bark, bone, alloy, signal, pulse = range(6)
     mesh_ids = {
-        "Core": mesh("Core", add_uv_sphere(builder, 0.8, root, 24, 36)),
-        "Layer": mesh("Layer", add_uv_sphere(builder, 0.55, bark, 20, 28)),
-        "Rib": mesh("Rib", add_box(builder, (0.48, 0.24, 2.2), bone)),
-        "Pylon": mesh("Pylon", add_cylinder(builder, 0.28, 4.8, alloy, 20)),
+        # The core is the late-game focal organism. Use smooth organic
+        # envelopes for its mass, layered mantle and radial ribs so the
+        # approach silhouette reads as a living relay rather than a stack of
+        # boxes and stakes at compact review distance.
+        "Core": mesh("Core", add_ellipsoid(builder, (0.80, 0.90, 0.80), root, rings=20, sides=40)),
+        "Layer": mesh("Layer", add_ellipsoid(builder, (0.55, 0.28, 0.55), bark, rings=18, sides=36)),
+        "Rib": mesh("Rib", add_ellipsoid(builder, (0.24, 0.16, 1.10), bone, rings=18, sides=36)),
+        "Pylon": mesh("Pylon", add_ellipsoid(builder, (0.30, 2.40, 0.30), alloy, rings=20, sides=40)),
         "PylonCollar": mesh("PylonCollar", add_cylinder(builder, 0.38, 0.18, alloy, 20)),
         "PylonBrace": mesh("PylonBrace", add_box(builder, (0.12, 1.85, 0.12), alloy)),
-        "Signal": mesh("Signal", add_cylinder(builder, 0.11, 2.7, signal, 18)),
+        "Signal": mesh("Signal", add_ellipsoid(builder, (0.11, 1.35, 0.11), signal, rings=18, sides=36)),
         "Pulse": mesh("Pulse", add_uv_sphere(builder, 0.18, pulse, 18, 28)),
         "PulseCap": mesh("PulseCap", add_cylinder(builder, 0.18, 0.16, pulse, 18)),
         "Cable": mesh("Cable", add_cylinder(builder, 0.055, 4.0, pulse, 14)),
         "CableClamp": mesh("CableClamp", add_cylinder(builder, 0.10, 0.14, alloy, 16)),
         "Basin": mesh("Basin", add_cylinder(builder, 5.8, 0.22, alloy, 40)),
         "BasinWater": mesh("BasinWater", add_cylinder(builder, 4.9, 0.06, root, 40)),
-        "BasinRim": mesh("BasinRim", add_box(builder, (2.45, 0.18, 0.24), bone)),
+        "BasinRim": mesh("BasinRim", add_beveled_box(builder, (2.45, 0.18, 0.24), bone, 0.06)),
         # These are radial root braces, not vertical stakes. Keeping them
         # close to the basin surface preserves the ring's silhouette and
         # leaves the apex readable from the authored approach camera.
-        "BasinSpine": mesh("BasinSpine", add_box(builder, (0.18, 0.22, 2.4), bone)),
+        "BasinSpine": mesh("BasinSpine", add_ellipsoid(builder, (0.18, 0.22, 1.20), bone, rings=18, sides=36)),
         "BasinRootTendril": mesh("BasinRootTendril", add_cylinder(builder, 0.055, 0.90, root, 14)),
-        "CorePlate": mesh("CorePlate", add_box(builder, (1.55, 0.16, 0.16), bark)),
-        "CoreClaw": mesh("CoreClaw", add_cylinder(builder, 0.11, 1.5, bone, 16)),
+        "CorePlate": mesh("CorePlate", add_ellipsoid(builder, (0.78, 0.12, 0.16), bark, rings=18, sides=36)),
+        "CoreClaw": mesh("CoreClaw", add_ellipsoid(builder, (0.12, 0.75, 0.12), bone, rings=18, sides=36)),
         "CoreVein": mesh("CoreVein", add_cylinder(builder, 0.06, 1.8, pulse, 14)),
         "CoreHalo": mesh("CoreHalo", add_uv_sphere(builder, 0.34, pulse, 18, 28)),
         "CoreCollar": mesh("CoreCollar", add_cylinder(builder, 2.82, 0.20, bark, 36)),
         "CoreRoot": mesh("CoreRoot", add_cylinder(builder, 0.085, 2.6, root, 20)),
         "CoreSpine": mesh("CoreSpine", add_cylinder(builder, 0.14, 4.2, signal, 20)),
-        "BasinInlay": mesh("BasinInlay", add_box(builder, (0.10, 0.08, 3.4), signal)),
+        "BasinInlay": mesh("BasinInlay", add_beveled_box(builder, (0.10, 0.08, 3.4), signal, 0.025)),
         "BasinSocket": mesh("BasinSocket", add_uv_sphere(builder, 0.12, pulse, 14, 20)),
-        "CoreCrownPlate": mesh("CoreCrownPlate", add_box(builder, (0.16, 0.18, 0.72), bone)),
+        "CoreCrownPlate": mesh("CoreCrownPlate", add_ellipsoid(builder, (0.16, 0.18, 0.36), bone, rings=18, sides=36)),
         "CoreCrownSocket": mesh("CoreCrownSocket", add_uv_sphere(builder, 0.105, signal, 14, 20)),
     }
     nodes: list[dict] = [{
@@ -102,8 +106,8 @@ def main() -> None:
         add_node("RootCisternBasinSocket%02d" % index, mesh_ids["BasinSocket"], (x * 1.02, 0.50, z * 1.02), extras={"socket_type": "basin_signal_socket"})
     core = add_node("RootCisternCore", extras={"surface": "layered_root_organ"})
     add_node("RootCisternCoreCollar", mesh_ids["CoreCollar"], (0.0, 0.66, 0.0), parent=core, extras={"socket_type": "core_base_collar"})
-    add_node("RootCisternCoreMass", mesh_ids["Core"], (0.0, 1.45, 0.0), scale=(3.25, 1.55, 3.25), parent=core, extras={"release_material_family": "organic"})
-    add_node("RootCisternCoreHalo", mesh_ids["CoreHalo"], (0.0, 3.0, 0.0), scale=(2.7, 0.86, 2.7), parent=core, extras={"socket_type": "core_halo"})
+    add_node("RootCisternCoreMass", mesh_ids["Core"], (0.0, 1.48, 0.0), scale=(3.10, 1.95, 3.10), parent=core, extras={"release_material_family": "organic"})
+    add_node("RootCisternCoreHalo", mesh_ids["CoreHalo"], (0.0, 3.08, 0.0), scale=(2.62, 1.08, 2.62), parent=core, extras={"socket_type": "core_halo"})
     add_node("RootCisternCoreSpine", mesh_ids["CoreSpine"], (0.0, 2.7, 0.0), parent=core, extras={"socket_type": "core_spine"})
     for index in range(6):
         angle = 6.283185307179586 * index / 6.0
