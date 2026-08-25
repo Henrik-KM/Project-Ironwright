@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Veilstalker received a focused dorsal-lobe pass on 2026-08-25. Its repeated
+dorsal sockets now use dense closed living shells rather than rectangular bars,
+giving the predator a layered thorax silhouette at the compact early-organic
+gallery distance while preserving its spine arrangement and animation. Exact
+silent 1280x720 page 2/14 review is required to confirm the revised thorax;
+broader human hostile-family and production-art acceptance remain open.
+
 Razorhound received a focused cheek-lobe pass on 2026-08-25. Its paired bite
 cheek sockets now use dense closed living shells rather than rectangular
 plates, giving the predator a layered head silhouette at the compact
