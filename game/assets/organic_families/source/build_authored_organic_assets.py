@@ -553,6 +553,38 @@ def build_family(name: str, spec: dict) -> None:
     # when this focused pass changes.
     if name == "thornback":
         mesh_ids["ThornbackCrownLobe"] = mesh("ThornbackCrownLobe", add_organic_lobe(builder, (1.42, 0.38, 1.02), shell, lobes=4, rings=10, sides=40, scallop_amplitude=0.14, leading_extension=0.36, fold_strength=0.82))
+    # Ashmantle's heat louvers and mantle ribs are its vented thermal identity.
+    # Give those existing sockets a thicker folded living surface so the
+    # family does not fall back to broad horizontal bars at gallery distance.
+    if name == "ashmantle":
+        mesh_ids["AshmantleHeatLouver"] = mesh(
+            "AshmantleHeatLouver",
+            add_organic_lobe(
+                builder,
+                (1.22, 0.30, 0.48),
+                shell,
+                lobes=4,
+                rings=9,
+                sides=40,
+                scallop_amplitude=0.16,
+                leading_extension=0.34,
+                fold_strength=0.92,
+            ),
+        )
+        mesh_ids["AshmantleMantleRib"] = mesh(
+            "AshmantleMantleRib",
+            add_organic_lobe(
+                builder,
+                (0.82, 0.18, 0.28),
+                bone,
+                lobes=3,
+                rings=8,
+                sides=36,
+                scallop_amplitude=0.12,
+                leading_extension=0.22,
+                fold_strength=0.76,
+            ),
+        )
 
     root_name = f"{name.capitalize()}Model"
     nodes: list[dict] = [{
@@ -705,12 +737,12 @@ def build_family(name: str, spec: dict) -> None:
         add_node("AshmantleSiphon", mesh_ids["Soft"], (0.0, 0.82, -1.42), scale=(0.72, 0.64, 1.14), extras={"socket_type": "route_siphon"})
         for side in (-1.0, 1.0):
             suffix = "L" if side < 0 else "R"
-            add_node(f"AshmantleHeatLouver{suffix}", mesh_ids["Plate"], (side * 0.82, 1.20, 0.28), rotation=(0.0, side * 0.28, side * 0.12), scale=(0.72, 1.0, 1.12), extras={"surface": "heat_louver"})
+            add_node(f"AshmantleHeatLouver{suffix}", mesh_ids["AshmantleHeatLouver"], (side * 0.82, 1.20, 0.28), rotation=(0.0, side * 0.28, side * 0.12), scale=(0.72, 1.0, 1.12), extras={"surface": "heat_louver"})
             add_node(f"AshmantleLouverRib{suffix}", mesh_ids["MembraneRib"], (side * 1.04, 1.24, 0.30), rotation=(0.0, side * 0.34, side * 0.22), scale=(0.7, 1.0, 0.86), extras={"surface": "louver_rib"})
             add_node(f"AshmantleTendril{suffix}", mesh_ids["Tendon"], (side * 0.28, 1.18, -1.58), rotation=(0.5, 0.0, side * 0.2), extras={"socket_type": "sensory_tendril"})
             add_node(f"AshmantleEye{suffix}", mesh_ids["Eye"], (side * 0.22, 1.34, -1.62), extras={"socket_type": "threat_eye"})
         for index in range(4):
-            add_node(f"AshmantleMantleRib{index}", mesh_ids["Ridge"], (-0.54 + index * 0.36, 1.66, 0.18), rotation=(0.0, (index - 1.5) * 0.08, 0.0), scale=(0.72, 1.0, 0.64), extras={"surface": "mantle_rib"})
+            add_node(f"AshmantleMantleRib{index}", mesh_ids["AshmantleMantleRib"], (-0.54 + index * 0.36, 1.66, 0.18), rotation=(0.0, (index - 1.5) * 0.08, 0.0), scale=(0.72, 1.0, 0.64), extras={"surface": "mantle_rib"})
         walk_node = "AshmantleHeatLouverL"
         attack_node = "AshmantleSiphon"
 

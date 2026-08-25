@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Ashmantle received a focused louver-depth pass on 2026-08-25. Its existing
+paired heat louvers and mantle ribs now use dense folded organic surfaces,
+giving the thermal shell layered volume instead of broad manufactured bars at
+the compact gallery distance. Exact silent 1280x720 page 3/14 review confirms
+the revised surface while preserving the family sockets and animation; broader
+human hostile-family and production-art acceptance remain open.
+
 Cathedral Quarter now has a focused nave-gable silhouette pass: a closed stone
 gable rises behind the authored rose-window assembly, so the landmark reads as
 an ecclesiastical civic volume rather than a flat rectangular nave. The pass is
