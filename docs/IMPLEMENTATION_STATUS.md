@@ -30,6 +30,13 @@
   the exact review dressing's biological material hierarchy; the silent page
   11/14 capture keeps the civic facade readable beside a calmer takeover layer.
 
+- refined Root Cistern's late relay with rounded pylon feet, shoulders, crowns
+  and signal rings, a crown ring around the layered core, shortened organic
+  root/rib hardware and low radial cable conduits; removed the duplicated
+  generic release-dressing pylon forest and silently live-reviewed exact page
+  14/14 at 1280x720 while preserving endgame sockets, basin ownership and
+  operation state.
+
 - rebuilt the Root Cistern capstone's shared core, mantle, rib, claw, brace,
   crown and signal-pylon meshes as dense ellipsoidal authored forms; the exact
   silent page 14/14 capture now gives the late relay a rounded layered mass and

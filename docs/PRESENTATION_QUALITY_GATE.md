@@ -2,6 +2,12 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Root Cistern received a focused high-definition relay pass on 2026-08-25. Its
+authored capstone now reads with rounded pylon hardware, a layered core crown
+and low radial conduits; silent exact 1280x720 page 14/14 review confirms the
+basin and service dressing remain useful without a duplicated generic pylon
+ring. Broader human endgame region and production-art acceptance remain open.
+
 Tram Graveyard received a focused high-definition carriage-hardware pass on
 2026-08-25. Its three derailed carriage variants now expose segmented roof
 ribs, corner posts, bogie crossbars, smooth wheel rims and ceramic hubs that
