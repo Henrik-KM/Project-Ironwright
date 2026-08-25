@@ -616,8 +616,8 @@ def build_family(name: str, spec: dict) -> None:
         for side in (-1.0, 1.0):
             suffix = "L" if side < 0 else "R"
             for level in range(2):
-                wing_pitch = 0.20 + level * 0.05
-                add_node(f"GlassmothWing{suffix}{level}", mesh_ids["WingMembrane"], (side * (0.88 + level * 0.16), 1.18 + level * 0.16, 0.12 + level * 0.18), rotation=(side * wing_pitch, side * (0.2 + level * 0.08), side * 0.18), scale=(1.3 - level * 0.12, 0.82, 1.0), extras={"socket_type": "wing_pair"})
+                wing_pitch = 0.36 + level * 0.10
+                add_node(f"GlassmothWing{suffix}{level}", mesh_ids["WingMembrane"], (side * (0.88 + level * 0.16), 1.18 + level * 0.22, 0.12 + level * 0.28), rotation=(side * wing_pitch, side * (0.28 + level * 0.10), side * 0.24), scale=(1.3 - level * 0.12, 0.82, 0.76), extras={"socket_type": "wing_pair"})
                 add_node(f"GlassmothWingFrame{suffix}{level}", mesh_ids["WingFrame"], (side * (1.10 + level * 0.16), 1.22 + level * 0.16, 0.12 + level * 0.18), rotation=(side * (wing_pitch + 0.04), side * (0.28 + level * 0.08), side * 0.64), scale=(0.62, 1.0, 0.82), extras={"surface": "glasswing_spar"})
                 add_node(f"GlassmothWingFastener{suffix}{level}", mesh_ids["CrownFastener"], (side * (0.58 + level * 0.12), 1.22 + level * 0.14, 0.08 + level * 0.16), extras={"surface": "wing_socket"})
                 add_node(f"GlassmothFineVein{suffix}{level}", mesh_ids["FineVein"], (side * (0.9 + level * 0.15), 1.2 + level * 0.15, 0.14 + level * 0.17), rotation=(side * (wing_pitch + 0.02), side * (0.26 + level * 0.06), side * 0.24), scale=(0.65, 1.0, 0.76), extras={"surface": "luminous_wing_vein"})

@@ -1469,6 +1469,8 @@ func _run_all() -> void:
     _expect(_mesh_vertex_count(_find_named(skitterling_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(skitterling_asset, "SkitterlingSensoryFan0") as MeshInstance3D) >= 48, "The authored Skitterling dorsal and sensory membranes must retain beveled high-definition anatomy edges.")
     _expect(_mesh_vertex_count(_find_named(roofleaper_asset, "RoofleaperWingL") as MeshInstance3D) >= 700, "The authored Roofleaper wing must retain a dense swept membrane silhouette rather than a low-detail disc.")
     _expect(_mesh_vertex_count(_find_named(glassmoth_asset, "GlassmothWingL0") as MeshInstance3D) >= 700, "The authored Glassmoth wing must retain a dense swept membrane silhouette rather than a low-detail disc.")
+    var glassmoth_wing := _find_named(glassmoth_asset, "GlassmothWingL0") as Node3D
+    _expect(glassmoth_wing != null and absf(glassmoth_wing.rotation.x) >= 0.30 and glassmoth_wing.scale.z <= 0.80, "The authored Glassmoth wing pair must retain a pitched, depth-separated flight silhouette.")
     razorhound_asset.queue_free()
     sporecaster_asset.queue_free()
     skitterling_asset.queue_free()
