@@ -9,6 +9,14 @@ without changing input or accessibility ownership. Exact silent 1280x720 title
 review is required to confirm the first-frame hierarchy; broader human title and
 production-art acceptance remain open.
 
+Root Cistern received a focused capstone separation pass on 2026-08-25. The
+authored central organism now separates a dark deep-root body from a restrained
+buried-alloy capstone with an inset collar, radial service ribs and cyan signal
+sockets. The exact silent 1280x720 page 14/14 review now gives the final basin a
+clear focal hierarchy without changing landmark state, sockets, collision, LOD
+or endgame ownership; broader human Root Cistern, region and production-art
+acceptance remain open.
+
 The representative vertical slice received a focused roof-occlusion correction
 on 2026-08-25. Its four central cutaway buildings now hide the original roof
 slabs and collapse fragments as well as the old opaque shells, while preserving

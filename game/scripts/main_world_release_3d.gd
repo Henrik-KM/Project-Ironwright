@@ -64,6 +64,8 @@ var presentation_review_label: Label
 var presentation_review_stage: Node3D
 var presentation_review_camera_target: Vector3 = Vector3.ZERO
 var presentation_review_camera_desired: Vector3 = Vector3(0.0, 4.8, 18.0)
+var presentation_review_capture_path: String = ""
+var presentation_review_capture_frames: int = 0
 var endgame_protocol_review_active: bool = false
 var endgame_protocol_review_clock: float = 0.0
 var endgame_protocol_review_completed: bool = false
@@ -82,6 +84,16 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if presentation_review_active:
 		_update_presentation_review_camera(delta)
+		if not presentation_review_capture_path.is_empty():
+			presentation_review_capture_frames += 1
+			if presentation_review_capture_frames == 45:
+				var review_image := get_viewport().get_texture().get_image()
+				var capture_error := review_image.save_png(presentation_review_capture_path)
+				if capture_error == OK:
+					print("Presentation review screenshot written to %s" % presentation_review_capture_path)
+				else:
+					push_error("Presentation review screenshot failed: %s" % capture_error)
+				presentation_review_capture_path = ""
 		return
 	super._process(delta)
 	if map_mode != _last_map_label_mode:
@@ -637,6 +649,18 @@ func _presentation_review_start_page() -> int:
 	return 0
 
 
+func _presentation_review_capture_argument() -> String:
+	var arguments: Array = OS.get_cmdline_args()
+	arguments.append_array(OS.get_cmdline_user_args())
+	for index in arguments.size():
+		var argument := str(arguments[index])
+		if argument.begins_with("--presentation-review-screenshot="):
+			return argument.get_slice("=", 1)
+		if argument == "--presentation-review-screenshot" and index + 1 < arguments.size():
+			return str(arguments[index + 1])
+	return ""
+
+
 func _has_mechromancer_evolution_review_flag() -> bool:
 	for argument in OS.get_cmdline_args():
 		if str(argument) == "--mechromancer-evolution-review":
@@ -744,6 +768,8 @@ func _has_casualty_recovery_review_flag() -> bool:
 func _start_presentation_review() -> void:
 	presentation_review_active = true
 	presentation_review_page = 0
+	presentation_review_capture_path = _presentation_review_capture_argument()
+	presentation_review_capture_frames = 0
 	# The gallery is an authored visual fixture, not a normal run. Reveal every
 	# regional story witness here so the exact Windows review can judge the
 	# physical archive connection while ordinary gameplay remains discovery-gated.

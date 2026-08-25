@@ -62,6 +62,8 @@ def main() -> None:
         {"name": "Cistern buried alloy", "pbrMetallicRoughness": {"baseColorFactor": [0.055, 0.14, 0.16, 1.0], "metallicFactor": 0.38, "roughnessFactor": 0.56}},
         {"name": "Cistern cold signal", "pbrMetallicRoughness": {"baseColorFactor": [0.01, 0.10, 0.14, 1.0], "metallicFactor": 0.10, "roughnessFactor": 0.38}, "emissiveFactor": [0.01, 0.22, 0.30]},
         {"name": "Cistern root pulse", "pbrMetallicRoughness": {"baseColorFactor": [0.12, 0.006, 0.04, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.56}, "emissiveFactor": [0.12, 0.004, 0.03]},
+        {"name": "Cistern deep root", "pbrMetallicRoughness": {"baseColorFactor": [0.028, 0.004, 0.014, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.60}, "emissiveFactor": [0.012, 0.0, 0.004]},
+        {"name": "Cistern capstone plate", "pbrMetallicRoughness": {"baseColorFactor": [0.035, 0.075, 0.085, 1.0], "metallicFactor": 0.34, "roughnessFactor": 0.43}, "emissiveFactor": [0.0, 0.018, 0.022]},
     ]
     meshes: list[dict] = []
 
@@ -70,13 +72,13 @@ def main() -> None:
         meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
-    root, bark, bone, alloy, signal, pulse = range(6)
+    root, bark, bone, alloy, signal, pulse, deep_root, capstone = range(8)
     mesh_ids = {
         # The core is the late-game focal organism. Use smooth organic
         # envelopes for its mass, layered mantle and radial ribs so the
         # approach silhouette reads as a living relay rather than a stack of
         # boxes and stakes at compact review distance.
-        "Core": mesh("Core", add_ellipsoid(builder, (0.80, 1.05, 0.80), root, rings=20, sides=40)),
+        "Core": mesh("Core", add_ellipsoid(builder, (0.80, 1.05, 0.80), deep_root, rings=20, sides=40)),
         "Layer": mesh("Layer", add_ellipsoid(builder, (0.55, 0.28, 0.55), bark, rings=18, sides=36)),
         "Rib": mesh("Rib", add_ellipsoid(builder, (0.20, 0.13, 0.92), bone, rings=18, sides=36)),
         "Pylon": mesh("Pylon", add_ellipsoid(builder, (0.34, 2.05, 0.34), alloy, rings=20, sides=40)),
@@ -113,6 +115,13 @@ def main() -> None:
         "CoreCrownPlate": mesh("CoreCrownPlate", add_ellipsoid(builder, (0.16, 0.18, 0.36), bone, rings=18, sides=36)),
         "CoreCrownSocket": mesh("CoreCrownSocket", add_uv_sphere(builder, 0.105, signal, 14, 20)),
         "CoreCrownRing": mesh("CoreCrownRing", add_torus(builder, 1.96, 0.08, pulse)),
+        # A buried alloy interface breaks the organic mass at the focal point.
+        # Its low profile and radial ribs read as maintained relay hardware,
+        # while the surrounding deep-root body keeps the landmark organic.
+        "CoreCapPlate": mesh("CoreCapPlate", add_ellipsoid(builder, (1.22, 0.16, 1.22), capstone, rings=20, sides=40)),
+        "CoreCapCollar": mesh("CoreCapCollar", add_torus(builder, 1.28, 0.09, capstone)),
+        "CoreCapRib": mesh("CoreCapRib", add_ellipsoid(builder, (0.10, 0.10, 0.68), capstone, rings=18, sides=32)),
+        "CoreCapSocket": mesh("CoreCapSocket", add_uv_sphere(builder, 0.14, signal, 18, 28)),
     }
     nodes: list[dict] = [{
         "name": "RootCisternModel",
@@ -154,6 +163,14 @@ def main() -> None:
     add_node("RootCisternCoreHalo", mesh_ids["CoreHalo"], (0.0, 3.48, 0.0), scale=(2.50, 1.42, 2.50), parent=core, extras={"socket_type": "core_halo"})
     add_node("RootCisternCoreCrownRing", mesh_ids["CoreCrownRing"], (0.0, 3.48, 0.0), parent=core, extras={"socket_type": "core_crown_ring"})
     add_node("RootCisternCoreSpine", mesh_ids["CoreSpine"], (0.0, 3.02, 0.0), parent=core, extras={"socket_type": "core_spine"})
+    add_node("RootCisternCoreCapPlate", mesh_ids["CoreCapPlate"], (0.0, 3.92, 0.0), parent=core, extras={"socket_type": "core_capstone_plate"})
+    add_node("RootCisternCoreCapCollar", mesh_ids["CoreCapCollar"], (0.0, 3.82, 0.0), parent=core, extras={"socket_type": "core_capstone_collar"})
+    add_node("RootCisternCoreCapSocket", mesh_ids["CoreCapSocket"], (0.0, 4.12, 0.0), parent=core, extras={"socket_type": "core_capstone_socket"})
+    for index in range(8):
+        angle = 6.283185307179586 * index / 8.0 + 0.18
+        x, z = math.cos(angle) * 0.72, math.sin(angle) * 0.72
+        add_node("RootCisternCoreCapRib%02d" % index, mesh_ids["CoreCapRib"], (x, 4.04, z), rotation=(0.0, -angle, 0.0), parent=core, extras={"socket_type": "core_capstone_rib"})
+        add_node("RootCisternCoreCapSocket%02d" % index, mesh_ids["CoreCapSocket"], (x * 0.92, 4.16, z * 0.92), parent=core, extras={"socket_type": "core_capstone_socket"})
     for index in range(6):
         angle = 6.283185307179586 * index / 6.0
         x, z = math.cos(angle) * 2.65, math.sin(angle) * 2.65
@@ -201,7 +218,7 @@ def main() -> None:
         "accessors": builder.accessors,
         "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
-        "extras": {"ironwright_asset_id": "root_cistern.landmark.v1", "required_nodes": ["RootCisternModel", "RootCisternBasin", "RootCisternBasinWater", "RootCisternBasinSpine0", "RootCisternBasinRootTendril0", "RootCisternBasinInlay00", "RootCisternBasinSocket00", "RootCisternCore", "RootCisternCoreCollar", "RootCisternCoreMass", "RootCisternCoreHalo", "RootCisternCoreCrownRing", "RootCisternCorePlate0", "RootCisternCoreClaw0", "RootCisternCoreVein0", "RootCisternCoreRoot0", "RootCisternCoreCrownPlate00", "RootCisternCoreCrownSocket00", "RootCisternLayer0", "RootCisternRib0", "RootCisternPylon0", "RootCisternPylonFoot0", "RootCisternPylonCollar0", "RootCisternPylonShoulder0", "RootCisternPylonBrace0", "RootCisternPylonCrown0", "RootCisternPylonRing0", "RootCisternSignal0", "RootCisternPulseCap0", "RootCisternCable0", "RootCisternCableClamp0", "ProductionAssetMarker"]},
+        "extras": {"ironwright_asset_id": "root_cistern.landmark.v1", "required_nodes": ["RootCisternModel", "RootCisternBasin", "RootCisternBasinWater", "RootCisternBasinSpine0", "RootCisternBasinRootTendril0", "RootCisternBasinInlay00", "RootCisternBasinSocket00", "RootCisternCore", "RootCisternCoreCollar", "RootCisternCoreMass", "RootCisternCoreHalo", "RootCisternCoreCrownRing", "RootCisternCoreCapPlate", "RootCisternCoreCapCollar", "RootCisternCoreCapSocket", "RootCisternCoreCapRib00", "RootCisternCoreCapSocket00", "RootCisternCorePlate0", "RootCisternCoreClaw0", "RootCisternCoreVein0", "RootCisternCoreRoot0", "RootCisternCoreCrownPlate00", "RootCisternCoreCrownSocket00", "RootCisternLayer0", "RootCisternRib0", "RootCisternPylon0", "RootCisternPylonFoot0", "RootCisternPylonCollar0", "RootCisternPylonShoulder0", "RootCisternPylonBrace0", "RootCisternPylonCrown0", "RootCisternPylonRing0", "RootCisternSignal0", "RootCisternPulseCap0", "RootCisternCable0", "RootCisternCableClamp0", "ProductionAssetMarker"]},
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
