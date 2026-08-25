@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Sporecaster received a focused gill-volume pass on 2026-08-25. Its existing
+seven dense gill-fan sockets now retain more depth at the compact early-organic
+gallery distance, so the infestation silhouette reads as layered membrane
+anatomy rather than broad horizontal sheets. Exact silent 1280x720 page 2/14
+review is required to confirm the revised fan volume; broader human
+hostile-family and production-art acceptance remain open.
+
 Rootweaver received a focused paired crown-lobe pass on 2026-08-25. Its two
 route-controller crown sheets now use dense closed living lobes around the
 oculi, restoring a layered biological silhouette at the compact gallery
