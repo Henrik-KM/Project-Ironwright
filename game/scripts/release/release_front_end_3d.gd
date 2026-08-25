@@ -90,7 +90,7 @@ func _build_ui() -> void:
     # Keep the authored Heartforge scene legible behind the title so the first
     # frame carries the same warm/cool material language as the playable
     # opening. The panel and vignette still protect text contrast.
-    backdrop.color = Color(0.008, 0.018, 0.024, 0.60)
+    backdrop.color = Color(0.008, 0.018, 0.024, 0.48)
     backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
     add_child(backdrop)
 
@@ -131,17 +131,20 @@ float ring(float distance_to_ring, float width) {
 void fragment() {
     vec2 p = (UV - vec2(0.5, 0.62)) * vec2(1.0, 1.72);
     float radius = length(p);
-    float core = exp(-radius * 12.0);
+    float core = exp(-radius * 10.0);
     float halo = exp(-abs(radius - 0.27) * 18.0);
-    float ring_a = ring(radius - 0.40, 0.008);
-    float ring_b = ring(radius - 0.57, 0.004);
+    float ring_a = ring(radius - 0.40, 0.010);
+    float ring_b = ring(radius - 0.57, 0.005);
     float horizon = 1.0 - smoothstep(0.0, 0.18, abs(UV.y - 0.68));
+    float service_left = exp(-abs(UV.x - 0.22) * 52.0) * smoothstep(0.18, 0.78, UV.y);
+    float service_right = exp(-abs(UV.x - 0.78) * 52.0) * smoothstep(0.18, 0.78, UV.y);
     float scan = 0.5 + 0.5 * sin((UV.y * 180.0) + sin(UV.x * 12.0));
     vec3 color = vec3(0.022, 0.09, 0.11);
-    color += vec3(0.95, 0.30, 0.09) * (core * 0.72 + halo * 0.16);
-    color += vec3(0.10, 0.62, 0.74) * (ring_a * 0.44 + ring_b * 0.28);
-    color += vec3(0.34, 0.16, 0.06) * horizon * 0.30;
-    float alpha = 0.22 + core * 0.25 + halo * 0.10 + (ring_a + ring_b) * 0.15 + horizon * 0.10;
+    color += vec3(0.95, 0.30, 0.09) * (core * 0.82 + halo * 0.20);
+    color += vec3(0.10, 0.62, 0.74) * (ring_a * 0.58 + ring_b * 0.36);
+    color += vec3(0.34, 0.16, 0.06) * horizon * 0.36;
+    color += vec3(0.06, 0.34, 0.38) * (service_left + service_right) * 0.28;
+    float alpha = 0.24 + core * 0.28 + halo * 0.12 + (ring_a + ring_b) * 0.18 + horizon * 0.12 + (service_left + service_right) * 0.05;
     alpha *= 0.88 + scan * 0.12;
     COLOR = vec4(color, alpha);
 }

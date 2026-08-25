@@ -1,5 +1,12 @@
 # Implementation status
 
+## Focused title-atmosphere readability pass
+
+- reduced the title-screen blackout and strengthened the restrained warm core,
+  service rings and paired cool relay columns behind the existing menu panel;
+- preserved menu contrast and input ownership while making the first frame carry
+  the same Heartforge material language as the playable opening.
+
 ## Focused vertical-slice roof-occlusion correction
 
 - the four central cutaway buildings now hide all original presentation roots,

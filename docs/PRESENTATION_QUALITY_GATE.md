@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The title screen received a focused atmosphere-readability pass on 2026-08-25.
+The blackout is reduced and the warm forge core, cool service rings and paired
+relay columns now remain legible behind the existing high-contrast menu panel
+without changing input or accessibility ownership. Exact silent 1280x720 title
+review is required to confirm the first-frame hierarchy; broader human title and
+production-art acceptance remain open.
+
 The representative vertical slice received a focused roof-occlusion correction
 on 2026-08-25. Its four central cutaway buildings now hide the original roof
 slabs and collapse fragments as well as the old opaque shells, while preserving
