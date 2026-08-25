@@ -16,7 +16,7 @@ from pathlib import Path
 SOURCE_DIR = Path(__file__).resolve().parent
 ASSET_ROOT = SOURCE_DIR.parents[1]
 sys.path.insert(0, str(ASSET_ROOT / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_ellipsoid, add_uv_sphere  # noqa: E402
 
 
 def build() -> None:
@@ -39,19 +39,19 @@ def build() -> None:
 
     mesh_ids = {
         "foundation": mesh("Foundation", add_cylinder(builder, 2.55, 0.7, dark, 32)),
-        "housing": mesh("CoreHousing", add_cylinder(builder, 1.75, 3.4, iron, 32)),
-        "furnace": mesh("FurnaceCore", add_cylinder(builder, 1.1, 2.5, heat, 32)),
+        "housing": mesh("CoreHousing", add_ellipsoid(builder, (1.75, 1.7, 1.75), iron, 22, 48)),
+        "furnace": mesh("FurnaceCore", add_ellipsoid(builder, (1.1, 1.25, 1.1), heat, 22, 48)),
         "ring_lower": mesh("LowerRing", add_cylinder(builder, 2.15, 0.22, rust, 32)),
         "ring_upper": mesh("UpperRing", add_cylinder(builder, 2.08, 0.22, rust, 32)),
-        "cladding": mesh("CoreCladdingSegment", add_box(builder, (0.34, 2.42, 0.62), cladding)),
-        "cladding_cap": mesh("CoreCladdingCap", add_box(builder, (0.38, 0.12, 0.68), rust)),
-        "louver_core": mesh("CoreServiceLouverCore", add_box(builder, (0.72, 0.92, 0.1), dark)),
-        "louver": mesh("CoreServiceLouver", add_box(builder, (0.12, 0.48, 0.08), cyan)),
-        "inspection": mesh("CoreInspectionPort", add_box(builder, (0.56, 0.64, 0.1), dark)),
+        "cladding": mesh("CoreCladdingSegment", add_beveled_box(builder, (0.34, 2.42, 0.62), cladding, 0.06)),
+        "cladding_cap": mesh("CoreCladdingCap", add_beveled_box(builder, (0.38, 0.12, 0.68), rust, 0.025)),
+        "louver_core": mesh("CoreServiceLouverCore", add_beveled_box(builder, (0.72, 0.92, 0.1), dark, 0.025)),
+        "louver": mesh("CoreServiceLouver", add_beveled_box(builder, (0.12, 0.48, 0.08), cyan, 0.018)),
+        "inspection": mesh("CoreInspectionPort", add_beveled_box(builder, (0.56, 0.64, 0.1), dark, 0.03)),
         "rail": mesh("CoreSignalRail", add_cylinder(builder, 0.08, 1.8, cyan, 28)),
         "collar": mesh("HeartforgeUpperCollar", add_cylinder(builder, 1.48, 0.18, rust, 32)),
-        "fin": mesh("HeartforgeFocalRadialFin", add_box(builder, (0.16, 0.58, 0.34), iron)),
-        "control": mesh("HeartforgeFocalControlFace", add_box(builder, (1.22, 0.68, 0.12), dark)),
+        "fin": mesh("HeartforgeFocalRadialFin", add_beveled_box(builder, (0.16, 0.58, 0.34), iron, 0.035)),
+        "control": mesh("HeartforgeFocalControlFace", add_beveled_box(builder, (1.22, 0.68, 0.12), dark, 0.045)),
         "lens": mesh("HeartforgeFocalSignalLens", add_uv_sphere(builder, 0.075, cyan, 16, 24)),
         "cable": mesh("HeartforgeFocalCableBranch", add_cylinder(builder, 0.055, 1.1, rust, 24)),
         "stack": mesh("ForgeStack", add_cylinder(builder, 0.36, 2.6, iron, 28)),
@@ -63,9 +63,9 @@ def build() -> None:
         "coolant_pipe": mesh("HeartforgeCoolantPipe", add_cylinder(builder, 0.065, 1.25, cyan, 20)),
         "service_latch": mesh("HeartforgeServiceLatch", add_box(builder, (0.12, 0.18, 0.38), cyan)),
         "conduit_clip": mesh("HeartforgeConduitClip", add_box(builder, (0.18, 0.12, 0.24), cladding)),
-        "thermal_shroud": mesh("HeartforgeThermalShroud", add_box(builder, (0.18, 0.46, 0.54), iron)),
-        "thermal_shroud_cap": mesh("HeartforgeThermalShroudCap", add_box(builder, (0.22, 0.08, 0.6), rust)),
-        "bench_brace": mesh("ForgeBenchBrace", add_box(builder, (0.18, 0.34, 0.52), rust)),
+        "thermal_shroud": mesh("HeartforgeThermalShroud", add_beveled_box(builder, (0.18, 0.46, 0.54), iron, 0.035)),
+        "thermal_shroud_cap": mesh("HeartforgeThermalShroudCap", add_beveled_box(builder, (0.22, 0.08, 0.6), rust, 0.022)),
+        "bench_brace": mesh("ForgeBenchBrace", add_beveled_box(builder, (0.18, 0.34, 0.52), rust, 0.03)),
         "foundation_bolt": mesh("HeartforgeFoundationBolt", add_cylinder(builder, 0.12, 0.14, cladding, 20)),
     }
 

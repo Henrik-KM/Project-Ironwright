@@ -2,6 +2,16 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The Heartforge focal model received a focused high-definition pass on
+2026-08-25. Its primary housing and furnace now use smooth ellipsoidal
+envelopes, while the service cladding, control face, thermal shrouds and
+fabrication braces carry small authored chamfers that preserve manufactured
+edge highlights. Stable progression, adaptation, damage, collision and
+interaction contracts remain runtime-owned. A silent 1280x720 movie-frame
+capture verified the same opening presentation path, and the exported build
+booted with Godot's dummy audio driver without touching the system audio;
+broader opening-composition and production-art acceptance remain open.
+
 The early-organic family received a focused material-separation pass on
 2026-08-24. Skitterling, Razorhound, Burrower, Sporecaster and Veilstalker
 now separate structural shell plates, ridges, membranes and bone accents from

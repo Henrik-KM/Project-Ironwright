@@ -713,6 +713,45 @@ def validate_mechromancer_asset() -> None:
             fail(f"Mechromancer glTF is missing manifest texture: {texture_path}")
 
 
+def validate_heartforge_asset() -> None:
+    manifest_path = ROOT / "game/data/heartforge_asset_manifest.json"
+    gltf_path = ROOT / "game/assets/heartforge/heartforge.gltf"
+    source_path = ROOT / "game/assets/heartforge/source/build_heartforge_asset.py"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    gltf = json.loads(gltf_path.read_text(encoding="utf-8"))
+    source = source_path.read_text(encoding="utf-8")
+    if manifest.get("asset_id") != "heartforge.core.v1":
+        fail("Heartforge asset manifest has an unexpected stable asset ID.")
+    if manifest.get("runtime_scene") != "res://assets/heartforge/heartforge.gltf":
+        fail("Heartforge asset manifest points at an unexpected runtime model.")
+    if 'mesh("CoreHousing", add_ellipsoid' not in source:
+        fail("Heartforge source must retain a smooth high-definition reactor housing.")
+    if 'mesh("FurnaceCore", add_ellipsoid' not in source:
+        fail("Heartforge source must retain a smooth high-definition furnace envelope.")
+    if 'mesh("CoreCladdingSegment", add_beveled_box' not in source:
+        fail("Heartforge source must retain chamfered service cladding.")
+    root_node_extras = next(
+        (node.get("extras", {}) for node in gltf.get("nodes", []) if node.get("name") == "HeartforgeModel"),
+        {},
+    )
+    gltf_asset_id = gltf.get("extras", {}).get("ironwright_asset_id") or root_node_extras.get("ironwright_asset_id")
+    if gltf_asset_id != manifest["asset_id"]:
+        fail("Heartforge glTF and manifest asset IDs must match.")
+    node_names = {str(node.get("name")) for node in gltf.get("nodes", [])}
+    for required in manifest.get("stable_nodes", []):
+        if required not in node_names:
+            fail(f"Heartforge glTF is missing required stable node: {required}")
+    mesh_by_name = {str(mesh.get("name")): mesh for mesh in gltf.get("meshes", [])}
+    for mesh_name, minimum_vertices in {"CoreHousing": 900, "FurnaceCore": 900}.items():
+        mesh = mesh_by_name.get(mesh_name)
+        if not mesh or not mesh.get("primitives"):
+            fail(f"Heartforge glTF is missing the {mesh_name} mesh required for focal review.")
+        position_accessor_index = mesh["primitives"][0].get("attributes", {}).get("POSITION")
+        vertex_count = gltf.get("accessors", [])[position_accessor_index].get("count", 0) if position_accessor_index is not None else 0
+        if vertex_count < minimum_vertices:
+            fail(f"Heartforge {mesh_name} must retain at least {minimum_vertices} authored vertices.")
+
+
 def validate_authored_organic_assets() -> None:
     for family, expected in AUTHORED_ORGANIC_ASSETS.items():
         manifest_path = ROOT / f"game/data/{family}_asset_manifest.json"
@@ -841,6 +880,7 @@ def main() -> int:
                 fail(f"Missing or unexpectedly empty aesthetic file: {relative}")
 
         validate_mechromancer_asset()
+        validate_heartforge_asset()
         validate_legacy_organic_source_tessellation()
         validate_shared_organic_source_tessellation()
         validate_mechromancer_source_tessellation()

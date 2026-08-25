@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Heartforge focal-model high-definition pass
+
+- replaced the primary housing and furnace's hard cylinder silhouettes with
+  smooth authored ellipsoidal envelopes and lifted the service cladding,
+  control face, thermal shrouds and fabrication braces onto chamfered hero
+  surfaces while preserving every stable node and runtime-owned progression
+  socket;
+- regenerated the dependency-free Heartforge glTF, verified the exported
+  Windows build boots with Godot's dummy audio driver, and captured the same
+  1280x720 presentation path to movie frames without system audio; the broader
+  opening-composition and production-art gates remain open.
+
 ## Focused early-organic material separation pass
 
 - lifted the structural shell, ridge, membrane and bone albedo separation on
