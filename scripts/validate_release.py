@@ -298,9 +298,17 @@ def validate_release_packaging() -> None:
         if token not in presets:
             raise legacy.ValidationError(f"Release export presets are missing {token!r}")
     workflow = (ROOT / ".github/workflows/release.yml").read_text(encoding="utf-8")
-    for token in ["include-templates: true", "godot --headless --path game --export-release", "upload-artifact"]:
+    for token in ["include-templates: true", "upload-artifact"]:
         if token not in workflow:
             raise legacy.ValidationError(f"Release workflow is missing {token!r}")
+    if not any(
+        command in workflow
+        for command in [
+            "godot --headless --path game --export-release",
+            "godot --headless --audio-driver Dummy --path game --export-release",
+        ]
+    ):
+        raise legacy.ValidationError("Release workflow is missing a silent Godot export command")
     windows_archive = "(cd windows && zip -9 -r ../ProjectIronwright-1.0.0-rc.1-Windows.zip .)"
     linux_archive = "(cd linux && tar -czf ../ProjectIronwright-1.0.0-rc.1-Linux.tar.gz .)"
     checksum_line = "sha256sum windows/ProjectIronwright.exe windows/ProjectIronwright.pck linux/ProjectIronwright.x86_64 linux/ProjectIronwright.pck ProjectIronwright-1.0.0-rc.1-Windows.zip ProjectIronwright-1.0.0-rc.1-Linux.tar.gz > SHA256SUMS.txt"

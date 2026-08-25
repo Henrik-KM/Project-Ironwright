@@ -1,5 +1,23 @@
 # Implementation status
 
+## Focused tactical HUD empty-state pass
+
+- collapsed the unused operation-status row and reduced the resource card when
+  no remote operation is active; live operations and final-protocol statuses
+  restore the full row. Silent fresh-world 1280x720 capture confirms the
+  opening tactical frame gives more room to the Mechromancer, Bulwark and
+  Heartforge without hiding actionable status, with first-session geometry
+  coverage added for both empty and active states.
+
+## Focused cross-region readability and silent-validation pass
+
+- added a shared 0.50 ambient readability floor to the authored atmosphere
+  contract, while retaining the opening slice's stronger 0.52 floor; this
+  prevents slower startup or region transitions from collapsing the tactical
+  world into black. All Godot GitHub validation, release, certification and
+  export commands now select the Dummy audio driver so automated coverage is
+  silent by default.
+
 ## Focused Observatory dish hardware pass
 
 - rebuilt the three exposed Observatory dish ribs as dense round structural

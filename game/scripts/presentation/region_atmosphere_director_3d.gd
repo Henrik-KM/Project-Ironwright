@@ -137,11 +137,12 @@ func _apply_visuals(weight: float) -> void:
         return
     environment.ambient_light_color = environment.ambient_light_color.lerp(_target_ambient_color, weight)
     environment.fog_light_color = environment.fog_light_color.lerp(_target_fog_color, weight)
+    var readability_floor := float(environment.get_meta(&"ambient_readability_floor", 0.0))
     var opening_floor := float(environment.get_meta(&"opening_ambient_floor", 0.0))
     var heartforge := world.get_node_or_null("Heartforge") as Node3D if world != null else null
     if opening_floor > 0.0 and (player == null or heartforge == null or player.global_position.distance_to(heartforge.global_position) > 32.0):
         opening_floor = 0.0
-    environment.ambient_light_energy = maxf(opening_floor, lerpf(environment.ambient_light_energy, _target_ambient_energy, weight))
+    environment.ambient_light_energy = maxf(maxf(readability_floor, opening_floor), lerpf(environment.ambient_light_energy, _target_ambient_energy, weight))
     environment.fog_light_energy = lerpf(environment.fog_light_energy, _target_fog_energy, weight)
     environment.fog_density = lerpf(environment.fog_density, _target_fog_density, weight)
     environment.adjustment_saturation = lerpf(environment.adjustment_saturation, _target_saturation, weight)

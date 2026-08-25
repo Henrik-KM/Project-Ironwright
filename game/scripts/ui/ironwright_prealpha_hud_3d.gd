@@ -96,6 +96,8 @@ func _apply_compact_layout(viewport_size: Vector2) -> void:
     operation_label.position = Vector2(18.0, 136.0)
     operation_label.size = Vector2(resource_panel.size.x - 36.0, 32.0)
 
+    _refresh_operation_density()
+
     notification_panel.size = Vector2(330.0, 126.0)
     notification_panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
     notification_panel.position = Vector2(maxf(18.0, viewport_size.x - notification_panel.size.x - 18.0), 206.0)
@@ -149,5 +151,15 @@ func set_sanctuary_integrity(value: float) -> void:
 
 func set_operation(text_value: String) -> void:
     super.set_operation(text_value)
+    _refresh_operation_density()
     if operation_label != null and operation_label.text.length() > 76:
         operation_label.text = operation_label.text.left(73) + "…"
+
+
+func _refresh_operation_density() -> void:
+    if resource_panel == null or operation_label == null:
+        return
+    var status := operation_label.text.strip_edges()
+    var has_live_status := not status.is_empty() and status != "No remote operation"
+    operation_label.visible = has_live_status
+    resource_panel.size.y = 174.0 if has_live_status else 132.0

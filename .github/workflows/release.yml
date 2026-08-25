@@ -33,19 +33,19 @@ jobs:
         run: npm run validate
 
       - name: Import release resources
-        run: godot --headless --path game --editor --quit
+        run: godot --headless --audio-driver Dummy --path game --editor --quit
 
       - name: Run commercial release tests
-        run: godot --headless --path game --script res://tests/release_test_runner.gd
+        run: godot --headless --audio-driver Dummy --path game --script res://tests/release_test_runner.gd
 
       - name: Run large-population performance tests
-        run: godot --headless --path game --script res://tests/performance_stress_test_runner.gd
+        run: godot --headless --audio-driver Dummy --path game --script res://tests/performance_stress_test_runner.gd
 
       - name: Capture release population benchmark
         shell: bash
         run: |
           set -o pipefail
-          output="$(godot --headless --path game --script res://tests/performance_benchmark_runner.gd 2>&1)"
+          output="$(godot --headless --audio-driver Dummy --path game --script res://tests/performance_benchmark_runner.gd 2>&1)"
           printf '%s\n' "$output"
           if ! printf '%s\n' "$output" | grep -q 'PERFORMANCE_BENCHMARK_JSON'; then
             echo "The release population benchmark did not emit its machine-readable report."
@@ -53,13 +53,13 @@ jobs:
           fi
 
       - name: Run complete start-to-victory test
-        run: godot --headless --path game --script res://tests/complete_game_test_runner.gd
+        run: godot --headless --audio-driver Dummy --path game --script res://tests/complete_game_test_runner.gd
 
       - name: Export Windows and Linux builds
         run: |
           mkdir -p dist/windows dist/linux
-          godot --headless --path game --export-release "Windows Desktop" ../dist/windows/ProjectIronwright.exe
-          godot --headless --path game --export-release "Linux/X11" ../dist/linux/ProjectIronwright.x86_64
+          godot --headless --audio-driver Dummy --path game --export-release "Windows Desktop" ../dist/windows/ProjectIronwright.exe
+          godot --headless --audio-driver Dummy --path game --export-release "Linux/X11" ../dist/linux/ProjectIronwright.x86_64
           chmod +x dist/linux/ProjectIronwright.x86_64
 
       - name: Write checksums and package archives

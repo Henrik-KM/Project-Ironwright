@@ -824,6 +824,7 @@ func _run_all() -> void:
     _expect(environment_node != null and environment_node.environment != null, "The world needs a configured environment.")
     if environment_node != null and environment_node.environment != null:
         var environment := environment_node.environment
+        _expect(float(environment.get_meta(&"ambient_readability_floor", 0.0)) >= 0.50, "The authored atmosphere must publish a shared ambient readability floor for every region.")
         _expect(environment.ambient_light_energy >= 0.50, "The opening readability pass must retain a readable ambient floor rather than collapsing the wet district into black.")
         _expect(environment.fog_density <= 0.015, "Fog may shape depth but must not crush visibility.")
         _expect(environment.tonemap_mode == Environment.TONE_MAPPER_ACES, "ACES tonemapping should provide stable cinematic contrast.")
