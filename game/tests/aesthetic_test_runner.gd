@@ -1511,7 +1511,10 @@ func _run_all() -> void:
     _expect(_mesh_vertex_count(_find_named(veilstalker_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerDorsalPlate") as MeshInstance3D) >= 48, "The authored Veilstalker dorsal plates must retain beveled high-definition anatomy edges.")
     _expect(_mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerMandibleL") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerCowlSpineL") as MeshInstance3D) >= 48, "The authored Veilstalker must retain dense mouth and cowl silhouette hardware.")
     _expect(_mesh_vertex_count(_find_named(burrower_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(burrower_asset, "BurrowerLampGuardL") as MeshInstance3D) >= 48, "The authored Burrower dorsal and lamp guards must retain beveled high-definition anatomy edges.")
-    _expect(_mesh_vertex_count(_find_named(broodmass_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(broodmass_asset, "BroodmassFanL") as MeshInstance3D) >= 48, "The authored Broodmass dorsal and membrane hardware must retain beveled high-definition anatomy edges.")
+    var broodmass_dorsal := _find_named(broodmass_asset, "OrganicDorsalPlate") as MeshInstance3D
+    var broodmass_maw_plate := _find_named(broodmass_asset, "BroodmassMawPlate") as MeshInstance3D
+    _expect(_mesh_vertex_count(broodmass_dorsal) >= 48 and _mesh_vertex_count(_find_named(broodmass_asset, "BroodmassFanL") as MeshInstance3D) >= 48, "The authored Broodmass dorsal and membrane hardware must retain beveled high-definition anatomy edges.")
+    _expect(broodmass_dorsal != null and broodmass_dorsal.mesh.get_aabb().size.y >= 0.30 and broodmass_maw_plate != null and broodmass_maw_plate.mesh.get_aabb().size.y >= 0.30, "The authored Broodmass dorsal and maw plates must retain closed folded volume rather than broad horizontal sheets.")
     var broodmass_rib := _find_named(broodmass_asset, "BroodmassThoraxRib0") as MeshInstance3D
     _expect(broodmass_rib != null and _mesh_vertex_count(broodmass_rib) >= 200 and absf(broodmass_rib.rotation.z) >= 1.4, "The authored Broodmass thorax ribs must retain dense rounded struts rather than horizontal flat bars.")
     veilstalker_asset.queue_free()

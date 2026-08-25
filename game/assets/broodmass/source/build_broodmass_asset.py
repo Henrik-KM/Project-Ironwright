@@ -14,7 +14,7 @@ SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
 from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "organic_families" / "source"))
-from build_authored_organic_assets import add_capsule, add_convex_sheet  # noqa: E402
+from build_authored_organic_assets import add_capsule, add_convex_sheet, add_organic_lobe  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "broodmass.gltf"
@@ -95,6 +95,10 @@ def main() -> None:
         # broad shell read without turning the repeated ribs into flat bars.
         "Rib": mesh("Rib", add_capsule(builder, 0.14, 1.5, shell, sides=24, cap_segments=6)),
         "Plate": mesh("Plate", add_convex_sheet(builder, (1.5, 0.15, 0.24), shell, rings=5, sides=24)),
+        # The dorsal and maw plates sit on the late-family review silhouette.
+        # Give them a closed folded volume so they read as living shell lobes
+        # instead of horizontal manufactured sheets at tactical distance.
+        "FoldedPlate": mesh("FoldedPlate", add_organic_lobe(builder, (1.58, 0.36, 0.72), shell, lobes=5, rings=10, sides=40, scallop_amplitude=0.14, leading_extension=0.34, fold_strength=0.9)),
         "Fan": mesh("Fan", add_beveled_box(builder, (0.18, 1.4, 0.8), membrane, 0.025)),
         "Maw": mesh("Maw", add_uv_sphere(builder, 0.44, membrane, 24, 36)),
         # Pointed crown spines keep the nest silhouette organic instead of
@@ -151,7 +155,7 @@ def main() -> None:
         add_node("BroodmassThoraxRib%d" % index, mesh_ids["Rib"], (0.0, 1.42 - index * 0.025, z), rotation=(0.0, 0.0, math.pi * 0.5 + 0.05), parent=torso)
         add_node("BroodmassFastenerL%d" % index, mesh_ids["Fastener"], (-0.75, 1.28, z), parent=torso)
         add_node("BroodmassFastenerR%d" % index, mesh_ids["Fastener"], (0.75, 1.28, z), parent=torso)
-    add_node("OrganicDorsalPlate", mesh_ids["Plate"], (-0.15, 1.68, 0.18), scale=(1.3, 0.9, 1.2), extras={"surface": "layered_shell_break"})
+    add_node("OrganicDorsalPlate", mesh_ids["FoldedPlate"], (-0.15, 1.68, 0.18), scale=(1.3, 0.9, 1.2), extras={"surface": "layered_shell_break"})
 
     for side in (-1.0, 1.0):
         suffix = "L" if side < 0 else "R"
@@ -163,7 +167,7 @@ def main() -> None:
     maw = add_node("BroodmassMaw", mesh_ids["Maw"], (0.0, 1.16, -1.52), scale=(1.28, 0.75, 1.4), extras={"socket_type": "brood_maw"})
     # Maw hardware is parented to the maw shell; use local offsets so it does
     # not double-apply the shell's world-space position.
-    add_node("BroodmassMawPlate", mesh_ids["Plate"], (0.0, 0.24, -0.02), scale=(0.86, 0.82, 1.1), parent=maw)
+    add_node("BroodmassMawPlate", mesh_ids["FoldedPlate"], (0.0, 0.24, -0.02), scale=(0.86, 0.82, 1.1), parent=maw)
     add_node("BroodmassMawRidge", mesh_ids["MawRidge"], (0.0, 0.34, -0.28), scale=(0.88, 1.0, 0.9), parent=maw, extras={"surface": "maw_ridge"})
     for side in (-1.0, 1.0):
         add_node("BroodmassMawHook%s" % ("L" if side < 0 else "R"), mesh_ids["Hook"], (side * 0.34, -0.42, -0.24), rotation=(0.78, 0.0, side * 0.15), parent=maw)
