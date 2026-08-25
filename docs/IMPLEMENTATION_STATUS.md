@@ -2,6 +2,12 @@
 
 ## Focused Heartforge focal-model high-definition pass
 
+- lifted the opening-only ambient floor enough to recover readable wet road and
+  district geometry in the lower tactical frame while preserving the warm
+  Heartforge focal key, cool cast separation and amber route contrast; silently
+  live-reviewed the exact 1280x720 fresh-world frame and kept the change within
+  the existing presentation-only lighting contract.
+
 - refined the Rootweaver's spore fan with a raised authored cant and aligned
   ribs so its route-control membrane reads as an elevated fan rather than a
   horizontal disc; regenerated the dependency-free glTF while preserving the
