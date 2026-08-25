@@ -1024,6 +1024,12 @@ func _show_presentation_review_page(page: int) -> void:
 		var selected_region_dressing := release_world_art.region_dressing_root(region_id)
 		if selected_region_dressing != null:
 			selected_region_dressing.visible = region_id != &"region.tram_graveyard"
+			if region_id == &"region.cathedral_quarter":
+				# The Cathedral's review-only biological hierarchy spans the
+				# authored landmark and its release brood dressing. Apply the same
+				# restrained dry-violet treatment to both roots so the choir reads
+				# as one deliberate takeover instead of isolated pink props.
+				_apply_cathedral_presentation_material_overrides(selected_region_dressing)
 	for index in actors.size():
 		var actor := actors[index] as Node3D
 		if actor == null or not is_instance_valid(actor):
@@ -1568,7 +1574,7 @@ func _apply_cathedral_material_recursive(node: Node, organic_material: Material)
 	for child in node.get_children():
 		if child is MeshInstance3D:
 			var identifier := "%s %s" % [String(child.name).to_lower(), String(child.get_path()).to_lower()]
-			if _contains_any_text(identifier, ["choir", "spine", "vein"]):
+			if _contains_any_text(identifier, ["choir", "spine", "vein", "broodsac", "brood"]):
 				(child as MeshInstance3D).material_override = organic_material
 		if child.get_child_count() > 0:
 			_apply_cathedral_material_recursive(child, organic_material)
