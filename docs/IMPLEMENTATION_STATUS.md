@@ -2,6 +2,11 @@
 
 ## Focused Heartforge focal-model high-definition pass
 
+- rebuilt the Root Cistern capstone's shared core, mantle, rib, claw, brace,
+  crown and signal-pylon meshes as dense ellipsoidal authored forms; the exact
+  silent page 14/14 capture now gives the late relay a rounded layered mass and
+  tapered vertical identity while preserving stable sockets and endgame state.
+
 - refined the shared late-organic torso ribs into rounded ellipsoidal shells
   and removed the dark chitin atlas from structural anatomy accents so plates,
   ribs, limbs and jaws separate cleanly from wet flesh; the silent page 3/14

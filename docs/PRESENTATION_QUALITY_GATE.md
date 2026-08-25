@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The Root Cistern capstone received a focused high-definition mesh pass on
+2026-08-25. Its core, mantle, radial ribs, claws, crown plates, basin braces
+and signal pylons now use dense rounded authored forms rather than broad boxes
+and straight stakes. Silent 1280x720 page 14/14 capture after forced Godot
+reimport confirms a more coherent layered relay silhouette while preserving
+stable sockets, basin ownership and endgame state; broader human capstone and
+region-library acceptance remain open.
+
 The late-organic family review received a structural-material and torso-shell
 correction on 2026-08-25. Shared torso ribs now use rounded ellipsoidal shells,
 and structural plates, ribs, limbs and jaws no longer inherit the dark chitin
