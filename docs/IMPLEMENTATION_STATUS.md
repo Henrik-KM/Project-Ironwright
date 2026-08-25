@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused Skitterling sensory-fan pass
+
+- replaced the Skitterling's repeated beveled-box sensory fans with dense
+  rounded membrane envelopes while preserving the existing sensory sockets,
+  animation tracks, scavenger silhouette and runtime family contract;
+- the aesthetic suite now guards fan density and measurable membrane volume;
+  the exact silent early-organic review will confirm the revised silhouette.
+
 ## Focused Veilstalker dorsal-lobe pass
 
 - replaced the Veilstalker's repeated rectangular dorsal bars with dense folded
