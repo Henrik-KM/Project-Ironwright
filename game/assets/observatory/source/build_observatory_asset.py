@@ -124,6 +124,13 @@ def main() -> None:
         "DishRimRing": mesh("DishRimRing", add_torus(builder, 3.0, 0.11, rust)),
         "DishRim": mesh("DishRim", add_box(builder, (6.5, 0.16, 0.22), rust)),
         "DishBrace": mesh("DishBrace", add_box(builder, (0.16, 3.5, 0.26), alloy)),
+        # A survey reflector needs a visible azimuth load path. These rounded
+        # parts ground the bowl in the service deck instead of leaving it as
+        # a floating blue disc held up by thin rods at remote review distance.
+        "DishPedestal": mesh("DishPedestal", add_cylinder(builder, 1.18, 1.95, alloy, 32)),
+        "DishSupportRing": mesh("DishSupportRing", add_torus(builder, 1.28, 0.14, rust, 48, 12)),
+        "DishPivotHousing": mesh("DishPivotHousing", add_uv_sphere(builder, 0.46, alloy, 20, 32)),
+        "DishPivotBand": mesh("DishPivotBand", add_torus(builder, 0.48, 0.085, cyan, 40, 10)),
         "FeedArm": mesh("FeedArm", add_cylinder(builder, 0.16, 4.6, alloy, 16)),
         "Feed": mesh("Feed", add_uv_sphere(builder, 0.30, cyan, 18, 28)),
         "Mast": mesh("Mast", add_cylinder(builder, 0.20, 6.0, rust, 20)),
@@ -211,6 +218,10 @@ def main() -> None:
     add_node("ObservatoryDish", mesh_ids["Dish"], (-0.4, 3.05, 1.0), scale=(1.0, 1.0, 0.82), rotation=(math.pi * 0.12, 0.0, 0.0), extras={"socket_type": "dish"})
     add_node("ObservatoryDishRimRing", mesh_ids["DishRimRing"], (-0.4, 3.05, 1.0), scale=(1.0, 1.0, 0.82), rotation=(math.pi * 0.12, 0.0, 0.0), extras={"surface": "dish_rim_service_ring"})
     add_node("ObservatoryDishRim", mesh_ids["DishRim"], (-0.4, 3.15, -1.52), rotation=(0.0, 0.0, 0.0))
+    add_node("ObservatoryDishPedestal", mesh_ids["DishPedestal"], (-0.4, 2.05, 1.0), extras={"surface": "dish_azimuth_pedestal"})
+    add_node("ObservatoryDishSupportRing", mesh_ids["DishSupportRing"], (-0.4, 1.12, 1.0), extras={"surface": "dish_pedestal_service_ring"})
+    add_node("ObservatoryDishPivotHousing", mesh_ids["DishPivotHousing"], (-0.4, 3.02, 1.0), extras={"socket_type": "dish_pivot"})
+    add_node("ObservatoryDishPivotBand", mesh_ids["DishPivotBand"], (-0.4, 3.02, 1.0), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "dish_pivot_signal_band"})
     for index, rotation_y in enumerate((0.0, math.pi * 0.33, -math.pi * 0.33)):
         add_node("ObservatoryDishRib%d" % index, mesh_ids["DishRib"], (-0.4, 3.18, 1.0), rotation=(math.pi * 0.12, rotation_y, 0.0), extras={"surface": "dish_structural_rib"})
     add_node("ObservatoryDishBraceL", mesh_ids["DishBrace"], (-2.2, 3.25, 1.0), rotation=(0.0, 0.0, 0.08))
@@ -258,7 +269,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "observatory.ridge.v1",
-            "required_nodes": ["ObservatoryModel", "ObservatoryDish", "ObservatoryDishRib0", "ObservatoryDishActuator", "ObservatoryFeedSignal", "ObservatoryFeedCollar", "ObservatoryMast", "ObservatoryMastCollar", "ObservatoryConsole", "ObservatoryFrontConsole", "ObservatoryFrontConsoleFrame", "ObservatoryServiceDeck", "ObservatoryControlWindow0", "ObservatoryControlWindowFrame0", "ObservatoryControlWindowMullion0", "ObservatorySurveyRail0", "ObservatoryCableAnchor0", "ObservatorySurveyLightHousing0", "ObservatoryRidgePylonL", "ObservatoryRidgeBeam", "ObservatoryRidgeSignalPanel", "ObservatoryRidgeLadder", "ObservatoryRidgeBraceL", "ObservatoryRidgeBeacon0", "ObservatoryRidgeSensor0", "ProductionAssetMarker"],
+            "required_nodes": ["ObservatoryModel", "ObservatoryDish", "ObservatoryDishRimRing", "ObservatoryDishPedestal", "ObservatoryDishSupportRing", "ObservatoryDishPivotHousing", "ObservatoryDishPivotBand", "ObservatoryDishRib0", "ObservatoryDishActuator", "ObservatoryFeedSignal", "ObservatoryFeedCollar", "ObservatoryMast", "ObservatoryMastCollar", "ObservatoryConsole", "ObservatoryFrontConsole", "ObservatoryFrontConsoleFrame", "ObservatoryServiceDeck", "ObservatoryControlWindow0", "ObservatoryControlWindowFrame0", "ObservatoryControlWindowMullion0", "ObservatorySurveyRail0", "ObservatoryCableAnchor0", "ObservatorySurveyLightHousing0", "ObservatoryRidgePylonL", "ObservatoryRidgeBeam", "ObservatoryRidgeSignalPanel", "ObservatoryRidgeLadder", "ObservatoryRidgeBraceL", "ObservatoryRidgeBeacon0", "ObservatoryRidgeSensor0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

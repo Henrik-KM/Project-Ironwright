@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused Observatory instrument-grounding pass
+
+- added a rounded azimuth pedestal, lower service ring, pivot housing and
+  signal band to the authored reflector while preserving the existing dish,
+  feed, mast and review-only ownership contracts;
+- added manifest, aesthetic and exact-review documentation guards for the new
+  high-definition survey hardware.
+
 ## Focused first-victory overlay readability pass
 
 - added an explicit opaque, shadowed sanctuary panel and outlined victory copy
