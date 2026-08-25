@@ -12,6 +12,14 @@ capture verified the same opening presentation path, and the exported build
 booted with Godot's dummy audio driver without touching the system audio;
 broader opening-composition and production-art acceptance remain open.
 
+The Tier III thermal milestone and Tier V sovereignty crown received a second
+silhouette correction on 2026-08-25. The former filled heat plate is now an
+open authored ring, and the late crown uses a smaller, darker warm profile with
+a shorter beacon. Silent 1280x720 progression capture confirms that the upper
+Heartforge remains readable without the prior pale screen-space band while the
+Mechromancer, Bulwark and escape route stay judgeable; broader human opening
+and production-art acceptance remain open.
+
 The early-organic family received a focused material-separation pass on
 2026-08-24. Skitterling, Razorhound, Burrower, Sporecaster and Veilstalker
 now separate structural shell plates, ridges, membranes and bone accents from

@@ -755,11 +755,15 @@ func _run_all() -> void:
         _expect(heartforge.find_child("AdaptiveHeartforgeGeometry", true, false) != null, "Heartforge progression must own a dedicated adaptive geometry layer.")
         _expect(heartforge.find_child("Tier2Buttress", true, false) != null, "Tier 2 Heartforge geometry must add structural buttresses.")
         _expect(heartforge.find_child("Tier3SignalConduit", true, false) != null, "Tier 3 Heartforge geometry must add signal conduits.")
+        var heat_ring := heartforge.find_child("Tier3HeatRing", true, false) as MeshInstance3D
+        _expect(heat_ring != null and heat_ring.mesh is ArrayMesh, "Tier 3 Heartforge thermal hardware must retain an open ring silhouette rather than a filled plate.")
         _expect(heartforge.find_child("Tier4SignalMast", true, false) != null, "Tier 4 Heartforge geometry must add the signal mast.")
         var crown := heartforge.find_child("Tier5SovereigntyCrown", true, false) as MeshInstance3D
         _expect(crown != null and crown.mesh is TorusMesh, "Tier 5 Heartforge geometry must culminate in a readable open crown ring rather than a filled plate.")
         var crown_material := crown.material_override as StandardMaterial3D if crown != null else null
-        _expect(crown_material != null and crown_material.emission_energy_multiplier <= 0.73, "The Tier 5 crown ring must retain a restrained warm accent instead of becoming the brightest surface in the tactical frame.")
+        var crown_mesh := crown.mesh as TorusMesh if crown != null else null
+        _expect(crown_mesh != null and crown_mesh.outer_radius <= 2.75, "The Tier 5 crown ring must leave the reactor and service face visible instead of spanning the opening frame.")
+        _expect(crown_material != null and crown_material.emission_energy_multiplier <= 0.4, "The Tier 5 crown ring must retain a restrained warm accent instead of becoming the brightest surface in the tactical frame.")
         if heartforge_presentation != null:
             var settings_service := get_first_node_in_group("release_settings_service") as ReleaseSettingsService3D
             var previous_reduced_motion := bool(settings_service.get_value(&"reduced_motion", false)) if settings_service != null else false
@@ -768,7 +772,7 @@ func _run_all() -> void:
             var beacon := heartforge.find_child("Tier5CrownBeacon", true, false) as Node3D
             var beacon_mesh := beacon as MeshInstance3D
             var beacon_material := beacon_mesh.material_override as StandardMaterial3D if beacon_mesh != null else null
-            _expect(beacon_material != null and beacon_material.emission_energy_multiplier <= 0.8, "The Tier 5 crown beacon must retain a restrained warm accent instead of clipping the opening frame.")
+            _expect(beacon_material != null and beacon_material.emission_energy_multiplier <= 0.56, "The Tier 5 crown beacon must retain a restrained warm accent instead of clipping the opening frame.")
             var beacon_scale_before := beacon.scale if beacon != null else Vector3.ONE
             heartforge_presentation.progression_time = 0.0
             heartforge_presentation._process(0.0)
