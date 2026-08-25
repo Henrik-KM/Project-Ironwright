@@ -538,6 +538,7 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         _expect(tenement_dressing.find_child("TenementBalcony00", true, false) != null and tenement_dressing.find_child("TenementBalconyRail00", true, false) != null, "Release tenement dressing must expose layered balcony and railing detail.")
         _expect(tenement_dressing.find_child("TenementBalconyPost00_00", true, false) != null and tenement_dressing.find_child("TenementBalconyService00", true, false) != null, "Release tenement dressing must expose balcony support and service hardware.")
         _expect(tenement_dressing.find_child("TenementClothesline00", true, false) != null and tenement_dressing.find_child("TenementHangingCloth00_00", true, false) != null, "Release tenement dressing must expose readable residential clothing detail.")
+        _expect(tenement_dressing.find_child("TenementCourtThreshold", true, false) != null and tenement_dressing.find_child("TenementCourtCanopy", true, false) != null and tenement_dressing.find_child("TenementCourtServicePanel", true, false) != null and tenement_dressing.find_child("TenementCourtLight", true, false) != null, "Release tenement dressing must expose a bounded shared residential court threshold.")
         var cloth_meshes := tenement_dressing.find_children("TenementHangingCloth*", "MeshInstance3D", true, false)
         var cloth_palette: Dictionary = {}
         for cloth_node in cloth_meshes:

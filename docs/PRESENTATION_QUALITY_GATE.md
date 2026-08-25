@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+East Tenements received a focused shared-court pass on 2026-08-26. A shallow
+communal threshold, canopy, service panel, rails and light now bridge the
+repeated residential blocks in the remote review frame, giving the district a
+lived-in centre rather than only mirrored balconies. Exact silent page 6/14
+review is required; the pass is presentation-only and broader human East
+Tenements, region and production-art acceptance remain open.
+
 Cathedral Quarter received a focused choir-crown pass on 2026-08-26. A shallow
 organ-like crown rail, seven stepped pipes, collars and a restrained signal now
 survive the remote review frame above the civic nave, giving the quarter a
