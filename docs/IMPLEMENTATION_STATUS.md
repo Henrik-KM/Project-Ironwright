@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused Razorhound cheek-lobe pass
+
+- replaced the Razorhound's paired rectangular cheek plates with dense folded
+  living shells while preserving the existing bite sockets, animation tracks,
+  threat silhouette and runtime family contract;
+- the aesthetic suite now guards measurable cheek volume; the exact silent
+  early-organic review will confirm the revised predator head.
+
 ## Focused Sporecaster gill-volume pass
 
 - deepened the existing seven Sporecaster gill-fan sockets at presentation
