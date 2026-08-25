@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused North Ruins archive-gateway pass
+
+- added a bounded front-facing civic gateway with layered pilasters, header,
+  recessed index rails, beacon and foundation to strengthen the authored
+  archive identity at remote review distance;
+- kept the pass presentation-only, with no new interaction, inventory,
+  destination, or simulation state.
+
 ## Focused Observatory instrument-grounding pass
 
 - added a rounded azimuth pedestal, lower service ring, pivot housing and

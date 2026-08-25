@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+North Ruins received a focused archive-gateway pass on 2026-08-26. A bounded
+front-facing civic threshold now survives the remote review camera with a
+header, pilasters, recessed index and foundation, so the region reads as a
+records destination rather than only a generic roofline. Exact silent 1280x720
+page 4/14 review is required to confirm the hierarchy; broader human North
+Ruins, region and production-art acceptance remain open.
+
 Observatory Ridge received a focused instrument-grounding pass on 2026-08-25.
 The authored reflector now has a rounded azimuth pedestal, service ring and
 layered pivot housing, so the survey dish reads as a supported high-definition
