@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Skitterling received a focused sensory-fan volume pass on 2026-08-25. Its
+existing sensory sockets now use dense rounded membrane envelopes rather than
+thin beveled bars, giving the scavenger a softer biological signal silhouette
+at the compact early-organic gallery distance while preserving its animation.
+Exact silent 1280x720 page 2/14 review is required to confirm the revised fans;
+broader human hostile-family and production-art acceptance remain open.
+
 Veilstalker received a focused dorsal-lobe pass on 2026-08-25. Its repeated
 dorsal sockets now use dense closed living shells rather than rectangular bars,
 giving the predator a layered thorax silhouette at the compact early-organic

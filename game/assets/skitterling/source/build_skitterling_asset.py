@@ -11,7 +11,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_ellipsoid, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "skitterling.gltf"
@@ -44,7 +44,7 @@ def main() -> None:
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.065, eye, 16, 24)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.06, 0.78, tendon, 24)),
         "Claw": mesh("Claw", add_cylinder(builder, 0.04, 0.42, bone, 24)),
-        "Fan": mesh("Fan", add_beveled_box(builder, (0.08, 0.42, 0.34), membrane, 0.018)),
+        "Fan": mesh("Fan", add_ellipsoid(builder, (0.10, 0.40, 0.32), membrane, rings=16, sides=36)),
         "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.03, bone, 16, 24)),
         "CarapaceCap": mesh("CarapaceCap", add_beveled_box(builder, (0.42, 0.08, 0.14), shell, 0.02)),
         "SensoryRib": mesh("SensoryRib", add_cylinder(builder, 0.022, 0.46, bone, 24)),
