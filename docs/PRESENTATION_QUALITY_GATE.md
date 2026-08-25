@@ -2,6 +2,12 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Flood Market received a focused exchange-focal pass on 2026-08-26. A shallow
+shared counter, canopy, sign, floodline and beacon now connect the repeated
+stalls into one readable flooded-commercial hierarchy at remote review distance.
+Exact silent page 8/14 review is required; the pass is presentation-only and
+broader human Flood Market, region and production-art acceptance remain open.
+
 Riverworks received a focused pump-station-focal pass on 2026-08-26. A shallow
 control station, cooling panel, control face, roof, three stack beacons and
 header now give the waterworks field one readable operational hierarchy at

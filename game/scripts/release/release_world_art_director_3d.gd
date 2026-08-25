@@ -909,6 +909,25 @@ func _dress_market(root: Node3D) -> void:
             5,
             "MarketMembraneAwning%02d" % index
         )
+    # The repeated stalls need one shared exchange marker so the district
+    # reads as a flooded market rather than nine disconnected kiosks. Keep it
+    # as a shallow presentation-only structure: it adds no inventory, vendor,
+    # collision or interaction state.
+    var exchange := Node3D.new()
+    exchange.name = "MarketExchangeFocal"
+    market_detail.add_child(exchange)
+    var exchange_body := _textured_material(&"concrete", Color("555354"), 0.0, 0.72)
+    var exchange_edge := _textured_material(&"rust", Color("9a5b3a"), 0.36, 0.7)
+    var exchange_signal := _emissive_material(Color("f0b46a"), 1.0)
+    var flood_signal := _emissive_material(Color("5fd7d6"), 0.55)
+    ModelKit3D.add_beveled_box(exchange, Vector3(4.2, 0.18, 2.2), Vector3(0.0, 0.25, 3.5), exchange_body, Vector3.ZERO, "MarketExchangeFoundation", 0.12)
+    ModelKit3D.add_beveled_box(exchange, Vector3(3.25, 0.85, 1.55), Vector3(0.0, 0.72, 3.5), exchange_body, Vector3.ZERO, "MarketExchangeCounter", 0.16)
+    ModelKit3D.add_beveled_box(exchange, Vector3(3.65, 0.12, 1.85), Vector3(0.0, 2.18, 3.5), exchange_edge, Vector3.ZERO, "MarketExchangeCanopy", 0.12)
+    for post_x in [-1.55, 1.55]:
+        ModelKit3D.add_cylinder(exchange, 0.07, 2.8, Vector3(post_x, 1.45, 3.5), exchange_edge, Vector3.ZERO, "MarketExchangePost%s" % ("L" if post_x < 0.0 else "R"))
+    ModelKit3D.add_surface_panel(exchange, Vector3(2.1, 0.9, 0.1), Vector3(0.0, 3.05, 2.58), exchange_body, exchange_signal, Vector3.ZERO, "MarketExchangeSign")
+    ModelKit3D.add_beveled_box(exchange, Vector3(3.7, 0.08, 0.12), Vector3(0.0, 0.5, 2.38), flood_signal, Vector3.ZERO, "MarketExchangeFloodline", 0.04)
+    ModelKit3D.add_sphere(exchange, 0.12, Vector3(0.0, 3.72, 3.5), exchange_signal, Vector3.ONE, "MarketExchangeBeacon")
 
 
 func _dress_waterfront(root: Node3D) -> void:

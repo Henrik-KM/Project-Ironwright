@@ -1,5 +1,12 @@
 # Implementation status
 
+## Focused Flood Market exchange-focal pass
+
+- added a shallow shared exchange structure with counter, canopy, sign,
+  floodline and beacon between the repeated market stalls;
+- kept the pass presentation-only, with no inventory, vendor, collision or
+  interaction state.
+
 ## Focused Riverworks pump-station-focal pass
 
 - added a shallow pump control station with cooling panel, control face, roof,
