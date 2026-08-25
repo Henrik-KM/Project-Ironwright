@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Glassmoth flight-silhouette pass
+
+- pitched and separated the paired Glassmoth wings in the authored family
+  builder, reducing their depth overlap while retaining the swept high-
+  definition membrane and existing animation sockets; tightened Sporecaster
+  gill depth for the same aerial readability target and added a transform
+  regression for the Glassmoth flight silhouette. Silent page 2/14 review
+  confirms the far-right wing pair now reads as angled spans rather than one
+  horizontal plate.
+
 ## Focused vertical-slice lighting initialization pass
 
 - applied the opening ambient/fog/tonemap contract immediately when the

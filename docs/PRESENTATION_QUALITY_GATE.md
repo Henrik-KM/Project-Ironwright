@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The Glassmoth flight silhouette received a focused follow-up pass on
+2026-08-25. Its paired wings now carry a stronger pitch and reduced depth
+overlap, while the Sporecaster gill fan is tightened in depth; silent page
+2/14 review confirms the airborne forms separate into readable spans rather
+than a single horizontal plate. Broader human hostile-family and
+production-art acceptance remain open.
+
 The opening vertical-slice lighting contract is now applied during director
 initialization before deferred Heartforge geometry assembly. This keeps the
 ambient floor, fog and tone mapping deterministic from the first rendered

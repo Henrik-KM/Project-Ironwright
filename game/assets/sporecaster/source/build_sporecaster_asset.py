@@ -104,7 +104,7 @@ def main() -> None:
         "Segment": mesh("Segment", add_uv_sphere(builder, 0.44, shell, 18, 28)),
         "Cowl": mesh("Cowl", add_uv_sphere(builder, 0.38, shell, 20, 32)),
         "Rib": mesh("Rib", add_beveled_box(builder, (1.04, 0.12, 0.22), shell, 0.025)),
-        "Gill": mesh("Gill", add_convex_gill(builder, (0.18, 1.25, 0.74), membrane)),
+        "Gill": mesh("Gill", add_convex_gill(builder, (0.18, 1.25, 0.42), membrane)),
         "Sac": mesh("Sac", add_uv_sphere(builder, 0.30, membrane, 20, 32)),
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.085, eye, 16, 24)),
         "Stem": mesh("Stem", add_cylinder(builder, 0.045, 0.54, tendon, 24)),
@@ -170,7 +170,7 @@ def main() -> None:
         side = -1.0 if index < 3 else (1.0 if index > 3 else 0.0)
         x = side * (0.62 + abs(index - 3) * 0.16)
         z = 0.12 + math.sin(angle) * 0.36
-        add_node("SporecasterGillFan%d" % index, mesh_ids["Gill"], (x, 1.25 + abs(index - 3) * 0.08, z), rotation=(0.0, side * 0.16, side * (0.54 - index * 0.08)), scale=(1.0, 0.82 + abs(index - 3) * 0.12, 0.72), extras={"surface": "layered_gill_membrane"})
+        add_node("SporecasterGillFan%d" % index, mesh_ids["Gill"], (x, 1.25 + abs(index - 3) * 0.08, z), rotation=(0.0, side * 0.16, side * (0.54 - index * 0.08)), scale=(1.0, 0.82 + abs(index - 3) * 0.12, 0.3), extras={"surface": "layered_gill_membrane"})
         add_node("SporecasterGillRib%d" % index, mesh_ids["GillRib"], (x, 1.3 + abs(index - 3) * 0.08, z), rotation=(0.0, side * 0.16, side * (0.54 - index * 0.08)), scale=(0.72, 1.0, 0.82), extras={"surface": "gill_rib"})
 
     sac_positions = [(-0.62, 1.62, 0.12), (-0.3, 1.8, 0.34), (0.0, 1.92, 0.46), (0.3, 1.8, 0.34), (0.62, 1.62, 0.12)]
