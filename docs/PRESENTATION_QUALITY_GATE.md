@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The opening desktop HUD received a focused readability correction on
+2026-08-25. The first-salvage objective now has a measured card height, and
+the Mechromancer/Bulwark health stack keeps both labels above their bars.
+Silent 1280x720 fresh-world capture plus the constrained first-session UX test
+confirm the opening copy remains unobstructed; broader human opening and
+production-art acceptance remain open.
+
 Cathedral Quarter received a focused authored-mesh and review-hierarchy pass on
 2026-08-25. The choir mass, organic spines and veins, rose/bell ribs and rose
 elements now use dense rounded forms, while the review dressing applies one
