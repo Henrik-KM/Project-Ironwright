@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused Tier V crown-fin emission pass
+
+- separated the Tier V crown fins from the brighter general cyan hardware
+  material and lowered their emission so the endgame ring remains luminous
+  without clipping into white bars around the Heartforge;
+- the aesthetic suite now guards the crown-fin emission budget, and the exact
+  silent endgame review will confirm the revised capstone hierarchy.
+
 ## Focused Mechromancer progression attachment pass
 
 - corrected the derived Tier II-V hardware layer's swapped vertical/depth

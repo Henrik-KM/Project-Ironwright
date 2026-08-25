@@ -9,6 +9,13 @@ dropping into the gallery floor. Exact silent Tier V evolution review is
 required to confirm the revised attachment; broader human animation and
 production-art acceptance remain open.
 
+The Tier V Heartforge crown received a focused fin-emission pass on 2026-08-25.
+The eight cyan crown fins now use a separate restrained material rather than
+the brighter shared signal hardware, preserving the luminous sovereignty ring
+without clipping the capstone into white bars. Exact silent 1280x720 endgame
+review is required to confirm the revised hierarchy; broader human endgame and
+production-art acceptance remain open.
+
 Cathedral Quarter received a focused front-gable pass on 2026-08-25. The
 release facade now carries a shallow front gable and central cross, while the
 rose-glass emission is restrained so the civic silhouette remains legible beside
