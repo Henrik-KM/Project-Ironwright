@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused West Grid transformer readability pass
+
+- gave each authored transformer four ceramic bushings with oxidized service
+  caps, adding a readable electrical silhouette to the paired transformer yard
+  without introducing a new interaction, queue or recurring player chore;
+- regenerated the dependency-free glTF and extended the aesthetic contract with
+  named bushing and cap nodes so the focal power hardware remains inspectable
+  and high-definition; exact silent page 5/14 review confirms the added
+  electrical silhouette at the remote landmark distance.
+
 ## Focused Cathedral nave-gable silhouette pass
 
 - added a closed authored stone gable above the existing Cathedral Quarter
