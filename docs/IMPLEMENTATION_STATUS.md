@@ -2,6 +2,11 @@
 
 ## Focused Heartforge focal-model high-definition pass
 
+- refined the Miremaw's paired water fins with opposing authored pitch so its
+  amphibious membrane silhouette reads as lifted fins rather than horizontal
+  discs; regenerated the dependency-free glTF while preserving fin sockets,
+  animation channels, tier anatomy and attack ownership.
+
 - refined the Roofleaper's ambush wing pair with opposing authored pitch so its
   raised membranes and spars read as a lifted V-shaped silhouette; regenerated
   the dependency-free glTF from the source builder and preserved wing sockets,
