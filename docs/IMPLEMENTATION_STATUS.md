@@ -43,6 +43,18 @@
   silently live-reviewed exact page 3/14 at 1280x720 while preserving stable
   sockets, animation clips and family ownership.
 
+- restaged the active endgame protocol so its six rounded perimeter spines,
+  lower rings and lateral Heartforge offset frame the crisis without caging the
+  Mechromancer and Bulwark; removed the duplicate bottom protocol badge so the
+  resource panel and hold-the-Heartforge prompt carry one clear status, then
+  silently live-reviewed the crisis frame and preserved the ordinary victory
+  transition.
+
+- cleared the sanctuary damage badge when a final protocol completes so the
+  first-victory overlay no longer carries a stale crisis warning; the silent
+  victory capture now transitions from damaged defence to a clean sanctuary
+  result while preserving continuation and save-state boundaries.
+
 - rebuilt the Root Cistern capstone's shared core, mantle, rib, claw, brace,
   crown and signal-pylon meshes as dense ellipsoidal authored forms; the exact
   silent page 14/14 capture now gives the late relay a rounded layered mass and

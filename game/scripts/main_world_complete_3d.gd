@@ -53,7 +53,10 @@ func _process(delta: float) -> void:
     if not endgame_director.active_protocol.is_empty():
         var protocol_status := endgame_director.status_summary()
         hud.set_operation(protocol_status)
-        hud.set_operation_badge(protocol_status, true, "FINAL PROTOCOL")
+        # The resource panel already carries the live protocol percentage. A
+        # second bottom badge duplicates that status and competes with the
+        # hold-the-Heartforge prompt during the final crisis.
+        hud.set_operation_badge("", false)
     elif not long_operation_director.active_operation.is_empty():
         var operation_status := _localized_long_operation_summary()
         hud.set_operation(operation_status)
@@ -955,6 +958,11 @@ func _on_endgame_completed(protocol_id: StringName, display_name: String, ending
     first_victory_achieved = true
     sanctuary_continuation = false
     game_ended = true
+    # The crisis can leave the Heartforge below the damaged-badge threshold
+    # during its defence interval. Victory restores the sanctuary state; do
+    # not carry a stale damage warning into the first-victory frame.
+    if hud != null and hud.has_method(&"set_sanctuary_integrity"):
+        hud.call(&"set_sanctuary_integrity", 1.0)
     var protocol_key := String(protocol_id).replace("protocol.", "")
     var localized_name := display_name
     var localized_ending := ending
