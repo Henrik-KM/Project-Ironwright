@@ -193,7 +193,7 @@ def main() -> None:
             add_node("ApexLeg%s%d" % ("L" if side < 0 else "R", index), mesh_ids["Leg"], (side * (0.8 + index * 0.06), 0.7, z), rotation=(0.0, 0.0, side * (0.72 - index * 0.08)))
             add_node("ApexTalon%s%d" % ("L" if side < 0 else "R", index), mesh_ids["Talon"], (side * (1.23 + index * 0.04), 0.18, z - 0.04), rotation=(0.0, 0.0, side * 0.36))
         add_node("ApexFlankRoot%s" % ("L" if side < 0 else "R"), mesh_ids["Root"], (side * 1.08, 1.18, 0.28), rotation=(0.0, 0.0, side * 0.46), extras={"socket_type": "flank_root"})
-        add_node("ApexMembrane%s" % ("L" if side < 0 else "R"), mesh_ids["Membrane"], (side * 1.36, 1.86, 0.34), rotation=(0.0, side * 0.18, side * 0.06), scale=(0.18, 1.48, 0.78), extras={"surface": "dorsal_membrane"})
+        add_node("ApexMembrane%s" % ("L" if side < 0 else "R"), mesh_ids["Membrane"], (side * 1.36, 1.86, 0.34), rotation=(0.0, side * 0.18, side * 0.06), scale=(0.18, 1.48, 0.42), extras={"surface": "dorsal_membrane"})
         for rib_index in range(3):
             add_node(
                 "ApexMembraneRib%s%d" % ("L" if side < 0 else "R", rib_index),

@@ -1484,6 +1484,8 @@ func _run_all() -> void:
     _expect(_mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerMandibleL") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerCowlSpineL") as MeshInstance3D) >= 48, "The authored Veilstalker must retain dense mouth and cowl silhouette hardware.")
     _expect(_mesh_vertex_count(_find_named(burrower_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(burrower_asset, "BurrowerLampGuardL") as MeshInstance3D) >= 48, "The authored Burrower dorsal and lamp guards must retain beveled high-definition anatomy edges.")
     _expect(_mesh_vertex_count(_find_named(broodmass_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(broodmass_asset, "BroodmassFanL") as MeshInstance3D) >= 48, "The authored Broodmass dorsal and membrane hardware must retain beveled high-definition anatomy edges.")
+    var broodmass_rib := _find_named(broodmass_asset, "BroodmassThoraxRib0") as MeshInstance3D
+    _expect(broodmass_rib != null and _mesh_vertex_count(broodmass_rib) >= 200 and absf(broodmass_rib.rotation.z) >= 1.4, "The authored Broodmass thorax ribs must retain dense rounded struts rather than horizontal flat bars.")
     veilstalker_asset.queue_free()
     burrower_asset.queue_free()
     broodmass_asset.queue_free()
