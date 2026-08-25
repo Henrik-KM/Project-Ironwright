@@ -711,7 +711,11 @@ func _dress_market(root: Node3D) -> void:
     root.add_child(market_detail)
     var market_metal := _textured_material(&"metal", Color("3a4546"), 0.64, 0.48)
     var market_rust := _textured_material(&"rust", Color("795039"), 0.38, 0.72)
-    var canopy := _textured_material(&"membrane", Color("542138"), 0.02, 0.68)
+    var canopy_variants: Array[StandardMaterial3D] = [
+        _textured_material(&"membrane", Color("542138"), 0.02, 0.68),
+        _textured_material(&"membrane", Color("612640"), 0.02, 0.7),
+        _textured_material(&"membrane", Color("4a263d"), 0.02, 0.66),
+    ]
     for index in range(9):
         var x := -12.0 + float(index % 3) * 12.0
         var z := -10.0 + float(index / 3) * 9.0
@@ -726,15 +730,59 @@ func _dress_market(root: Node3D) -> void:
         )
         # The commercial identity is a market structure with a readable
         # counter, canopy and display hardware, not a new inventory system.
-        ModelKit3D.add_beveled_box(
-            stall,
-            Vector3(3.7, 0.12, 2.55),
-            Vector3(0.0, 1.92, 0.0),
-            canopy,
-            Vector3(0.0, 0.0, 0.035 * float(index % 2)),
-            "MarketCanopy%02d" % index,
-            0.18
-        )
+        # The market roof is cloth stretched over a surviving frame, not a
+        # repeated rectangular slab. Five overlapping panels create a shallow
+        # deterministic sag, visible edge hems and a broken-up highlight while
+        # remaining a bounded presentation-only assembly.
+        var canopy_root := Node3D.new()
+        canopy_root.name = "MarketCanopy%02d" % index
+        stall.add_child(canopy_root)
+        var canopy_material := canopy_variants[index % canopy_variants.size()]
+        var canopy_y: Array[float] = [1.98, 1.91, 1.87, 1.91, 1.98]
+        for panel_index in range(canopy_y.size()):
+            var panel_fraction := float(panel_index) / float(canopy_y.size() - 1)
+            var panel_x := lerpf(-1.48, 1.48, panel_fraction)
+            var panel := ModelKit3D.add_beveled_box(
+                canopy_root,
+                Vector3(0.78, 0.2 + (0.04 if panel_index == 2 else 0.0), 2.42),
+                Vector3(panel_x, canopy_y[panel_index], 0.0),
+                canopy_material,
+                Vector3(0.0, 0.0, (panel_fraction - 0.5) * 0.055),
+                ("MarketCanopy%02d" % index) if panel_index == 0 else "MarketCanopyVolume%02d_%02d" % [index, panel_index],
+                0.2
+            )
+            panel.set_meta(&"market_canopy_panel", true)
+        for front_back in [-1.0, 1.0]:
+            ModelKit3D.add_beveled_box(
+                canopy_root,
+                Vector3(3.62, 0.1, 0.14),
+                Vector3(0.0, 1.82, front_back * 1.2),
+                market_rust,
+                Vector3(0.0, 0.0, 0.025 * float(index % 2)),
+                "MarketCanopyHem%02d_%02d" % [index, int(front_back)],
+                0.22
+            )
+        for rib_index in range(3):
+            var rib_x := -1.28 + float(rib_index) * 1.28
+            var rib_y := 1.91 if rib_index == 1 else 1.97
+            ModelKit3D.add_cylinder(
+                canopy_root,
+                0.045,
+                2.38,
+                Vector3(rib_x, rib_y + 0.07, 0.0),
+                market_metal,
+                Vector3(PI * 0.5, 0.0, 0.0),
+                "MarketCanopyRib%02d_%02d" % [index, rib_index]
+            )
+        for side in [-1.0, 1.0]:
+            ModelKit3D.add_sphere(
+                canopy_root,
+                0.085,
+                Vector3(side * 1.52, 1.84, -1.23),
+                market_rust,
+                Vector3.ONE,
+                "MarketCanopyTie%02d_%02d" % [index, int(side)]
+            )
         ModelKit3D.add_louvered_panel(
             stall,
             Vector3(2.6, 0.62, 0.1),

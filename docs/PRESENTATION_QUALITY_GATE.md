@@ -132,6 +132,15 @@ water, stall, route and service hierarchy; aesthetic coverage guards the
 measurable cloth volume. Broader human remote-facility and production-art
 acceptance remain open.
 
+Flood Market received a focused release-dressing pass on 2026-08-25. The nine
+secondary stall roofs now use five overlapping cloth panels with a shallow
+deterministic sag, visible hems, support ribs, tie hardware and restrained
+material variation instead of a repeated low-relief slab. The change is
+presentation-only and preserves market collision, routes, water, salvage and
+operation ownership. Exact silent 1280x720 page 8/14 review is required to
+confirm the revised canopy hierarchy; broader human remote-facility and
+production-art acceptance remain open.
+
 The Root Cistern capstone received a focused verticality pass on 2026-08-25.
 Its authored core mass, halo, crown, radial plates and veins now rise into a
 layered root-altar silhouette, with deterministic alternating mantle scales
