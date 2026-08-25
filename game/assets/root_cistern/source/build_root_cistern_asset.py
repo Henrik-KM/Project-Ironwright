@@ -76,7 +76,7 @@ def main() -> None:
         # envelopes for its mass, layered mantle and radial ribs so the
         # approach silhouette reads as a living relay rather than a stack of
         # boxes and stakes at compact review distance.
-        "Core": mesh("Core", add_ellipsoid(builder, (0.80, 0.90, 0.80), root, rings=20, sides=40)),
+        "Core": mesh("Core", add_ellipsoid(builder, (0.80, 1.05, 0.80), root, rings=20, sides=40)),
         "Layer": mesh("Layer", add_ellipsoid(builder, (0.55, 0.28, 0.55), bark, rings=18, sides=36)),
         "Rib": mesh("Rib", add_ellipsoid(builder, (0.20, 0.13, 0.92), bone, rings=18, sides=36)),
         "Pylon": mesh("Pylon", add_ellipsoid(builder, (0.34, 2.05, 0.34), alloy, rings=20, sides=40)),
@@ -148,30 +148,33 @@ def main() -> None:
         add_node("RootCisternBasinSocket%02d" % index, mesh_ids["BasinSocket"], (x * 1.02, 0.50, z * 1.02), extras={"socket_type": "basin_signal_socket"})
     core = add_node("RootCisternCore", extras={"surface": "layered_root_organ"})
     add_node("RootCisternCoreCollar", mesh_ids["CoreCollar"], (0.0, 0.66, 0.0), parent=core, extras={"socket_type": "core_base_collar"})
-    add_node("RootCisternCoreMass", mesh_ids["Core"], (0.0, 1.48, 0.0), scale=(3.10, 1.95, 3.10), parent=core, extras={"release_material_family": "organic"})
-    add_node("RootCisternCoreHalo", mesh_ids["CoreHalo"], (0.0, 3.08, 0.0), scale=(2.62, 1.08, 2.62), parent=core, extras={"socket_type": "core_halo"})
-    add_node("RootCisternCoreCrownRing", mesh_ids["CoreCrownRing"], (0.0, 3.08, 0.0), parent=core, extras={"socket_type": "core_crown_ring"})
-    add_node("RootCisternCoreSpine", mesh_ids["CoreSpine"], (0.0, 2.7, 0.0), parent=core, extras={"socket_type": "core_spine"})
+    # Raise and lengthen the focal organism so the capstone reads as a
+    # living root altar rather than a flat pink saucer at the approach angle.
+    add_node("RootCisternCoreMass", mesh_ids["Core"], (0.0, 1.58, 0.0), scale=(3.0, 2.25, 3.0), parent=core, extras={"release_material_family": "organic"})
+    add_node("RootCisternCoreHalo", mesh_ids["CoreHalo"], (0.0, 3.48, 0.0), scale=(2.50, 1.42, 2.50), parent=core, extras={"socket_type": "core_halo"})
+    add_node("RootCisternCoreCrownRing", mesh_ids["CoreCrownRing"], (0.0, 3.48, 0.0), parent=core, extras={"socket_type": "core_crown_ring"})
+    add_node("RootCisternCoreSpine", mesh_ids["CoreSpine"], (0.0, 3.02, 0.0), parent=core, extras={"socket_type": "core_spine"})
     for index in range(6):
         angle = 6.283185307179586 * index / 6.0
         x, z = math.cos(angle) * 2.65, math.sin(angle) * 2.65
-        add_node("RootCisternCorePlate%d" % index, mesh_ids["CorePlate"], (x, 1.88, z), rotation=(0.0, -angle, 0.0), parent=core, extras={"socket_type": "core_surface_plate"})
-        add_node("RootCisternCoreClaw%d" % index, mesh_ids["CoreClaw"], (x * 0.88, 2.54, z * 0.88), rotation=(0.0, -angle, 0.38), scale=(1.0, 0.78, 1.0), parent=core, extras={"socket_type": "core_claw"})
-        add_node("RootCisternCoreVein%d" % index, mesh_ids["CoreVein"], (x * 0.72, 2.22, z * 0.72), rotation=(0.0, -angle, 0.22), parent=core, extras={"socket_type": "core_vein"})
+        add_node("RootCisternCorePlate%d" % index, mesh_ids["CorePlate"], (x, 2.02, z), rotation=(0.0, -angle, 0.0), parent=core, extras={"socket_type": "core_surface_plate"})
+        add_node("RootCisternCoreClaw%d" % index, mesh_ids["CoreClaw"], (x * 0.88, 2.78, z * 0.88), rotation=(0.0, -angle, 0.38), scale=(1.0, 0.78, 1.0), parent=core, extras={"socket_type": "core_claw"})
+        add_node("RootCisternCoreVein%d" % index, mesh_ids["CoreVein"], (x * 0.72, 2.42, z * 0.72), rotation=(0.0, -angle, 0.22), parent=core, extras={"socket_type": "core_vein"})
     for index in range(6):
         angle = 6.283185307179586 * index / 6.0 + 0.22
         x, z = math.cos(angle) * 2.75, math.sin(angle) * 2.75
-        add_node("RootCisternCoreRoot%d" % index, mesh_ids["CoreRoot"], (x, 1.44, z), rotation=(0.0, -angle, 0.48), scale=(1.0, 1.0, 0.82), parent=core, extras={"socket_type": "core_root_brace"})
+        add_node("RootCisternCoreRoot%d" % index, mesh_ids["CoreRoot"], (x, 1.52, z), rotation=(0.0, -angle, 0.48), scale=(1.0, 1.0, 0.82), parent=core, extras={"socket_type": "core_root_brace"})
     for index in range(6):
         angle = 6.283185307179586 * index / 6.0
         x, z = math.cos(angle) * 2.0, math.sin(angle) * 2.0
-        add_node("RootCisternLayer%d" % index, mesh_ids["Layer"], (x * 1.15, 1.5, z * 1.15), rotation=(0.0, -angle, 0.0), scale=(1.5, 0.95, 2.2), parent=core)
-        add_node("RootCisternRib%d" % index, mesh_ids["Rib"], (x * 1.5, 2.0, z * 1.5), rotation=(0.20, -angle, 0.0), scale=(1.0, 0.82, 1.0), parent=core)
+        layer_scale = (1.38, 1.08, 2.05) if index % 2 == 0 else (1.58, 0.88, 2.30)
+        add_node("RootCisternLayer%d" % index, mesh_ids["Layer"], (x * 1.15, 1.62 + float(index % 2) * 0.10, z * 1.15), rotation=(0.0, -angle, 0.0), scale=layer_scale, parent=core)
+        add_node("RootCisternRib%d" % index, mesh_ids["Rib"], (x * 1.5, 2.18 + float(index % 2) * 0.10, z * 1.5), rotation=(0.20, -angle, 0.0), scale=(1.0, 0.82, 1.0), parent=core)
     for index in range(8):
         angle = 6.283185307179586 * index / 8.0 + 0.18
         x, z = math.cos(angle) * 1.92, math.sin(angle) * 1.92
-        add_node("RootCisternCoreCrownPlate%02d" % index, mesh_ids["CoreCrownPlate"], (x, 3.08, z), rotation=(0.18, -angle, 0.0), extras={"socket_type": "core_crown_plate"}, parent=core)
-        add_node("RootCisternCoreCrownSocket%02d" % index, mesh_ids["CoreCrownSocket"], (x * 0.92, 3.24, z * 0.92), extras={"socket_type": "core_crown_socket"}, parent=core)
+        add_node("RootCisternCoreCrownPlate%02d" % index, mesh_ids["CoreCrownPlate"], (x, 3.48, z), rotation=(0.18, -angle, 0.0), extras={"socket_type": "core_crown_plate"}, parent=core)
+        add_node("RootCisternCoreCrownSocket%02d" % index, mesh_ids["CoreCrownSocket"], (x * 0.92, 3.66, z * 0.92), extras={"socket_type": "core_crown_socket"}, parent=core)
     for index in range(6):
         angle = 6.283185307179586 * index / 6.0 + 0.22
         x, z = math.cos(angle) * 8.2, math.sin(angle) * 8.2
