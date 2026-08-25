@@ -13,6 +13,8 @@ from typing import Sequence
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
 from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "organic_families" / "source"))
+from build_authored_organic_assets import add_organic_lobe  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "razorhound.gltf"
@@ -43,6 +45,10 @@ def main() -> None:
         "Head": mesh("Head", add_uv_sphere(builder, 0.34, wet, 16, 28)),
         "Snout": mesh("Snout", add_uv_sphere(builder, 0.33, shell, 16, 28)),
         "Cheek": mesh("Cheek", add_beveled_box(builder, (0.18, 0.34, 0.7), shell, 0.03)),
+        # Razorhound's cheek sockets sit directly on the close-camera head
+        # silhouette. Keep the old mesh for the fallback contract, while the
+        # authored node below uses a denser folded living shell.
+        "CheekLobe": mesh("CheekLobe", add_organic_lobe(builder, (0.26, 0.34, 0.72), shell, lobes=3, rings=9, sides=40, scallop_amplitude=0.12, leading_extension=0.22, fold_strength=0.82)),
         "Ear": mesh("Ear", add_uv_sphere(builder, 0.16, bone, 16, 24)),
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.07, eye, 16, 24)),
         "Fang": mesh("Fang", add_cylinder(builder, 0.052, 0.62, bone, 24)),
@@ -79,7 +85,7 @@ def main() -> None:
     add_node("RazorhoundSnout", mesh_ids["Snout"], (0.0, 0.78, -1.18), extras={"socket_type": "snout"})
     add_node("OrganicDorsalPlate", mesh_ids["Rib"], (0.0, 1.04, 0.16), rotation=(0.0, 0.0, 0.05), extras={"surface": "layered_shell_break"})
     for side in (-1.0, 1.0):
-        add_node("RazorhoundCheekPlate", mesh_ids["Cheek"], (side * 0.44, 0.82, -0.94))
+        add_node("RazorhoundCheekPlate", mesh_ids["CheekLobe"], (side * 0.44, 0.82, -0.94))
         add_node("RazorhoundEar", mesh_ids["Ear"], (side * 0.28, 1.14, -0.9), rotation=(0.0, 0.0, side * 0.28))
         add_node("RazorhoundEye", mesh_ids["Eye"], (side * 0.2, 1.02, -1.27), extras={"socket_type": "threat_eye"})
         add_node("RazorhoundFang", mesh_ids["Fang"], (side * 0.17, 0.54, -1.45), rotation=(0.78, 0.0, side * 0.1))

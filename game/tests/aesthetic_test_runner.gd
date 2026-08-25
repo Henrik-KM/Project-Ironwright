@@ -1498,7 +1498,9 @@ func _run_all() -> void:
     var skitterling_asset := SKITTERLING_ASSET_SCENE.instantiate()
     var roofleaper_asset := ROOFLEAPER_ASSET_SCENE.instantiate()
     var glassmoth_asset := GLASSMOTH_ASSET_SCENE.instantiate()
-    _expect(_mesh_vertex_count(_find_named(razorhound_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(razorhound_asset, "RazorhoundCheekPlate") as MeshInstance3D) >= 48, "The authored Razorhound dorsal and cheek plates must retain beveled high-definition anatomy edges.")
+    var razorhound_cheek := _find_named(razorhound_asset, "RazorhoundCheekPlate") as MeshInstance3D
+    _expect(_mesh_vertex_count(_find_named(razorhound_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(razorhound_cheek) >= 48, "The authored Razorhound dorsal and cheek plates must retain beveled high-definition anatomy edges.")
+    _expect(razorhound_cheek != null and razorhound_cheek.mesh.get_aabb().size.y >= 0.28, "The Razorhound cheek plates must retain closed folded volume around the bite line rather than reading as rectangular bars.")
     _expect(_mesh_vertex_count(_find_named(sporecaster_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(sporecaster_asset, "SporecasterGillFan0") as MeshInstance3D) >= 48, "The authored Sporecaster dorsal and gill membranes must retain beveled high-definition anatomy edges.")
     _expect(_mesh_vertex_count(_find_named(skitterling_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(skitterling_asset, "SkitterlingSensoryFan0") as MeshInstance3D) >= 48, "The authored Skitterling dorsal and sensory membranes must retain beveled high-definition anatomy edges.")
     _expect(_mesh_vertex_count(_find_named(roofleaper_asset, "RoofleaperWingL") as MeshInstance3D) >= 700, "The authored Roofleaper wing must retain a dense swept membrane silhouette rather than a low-detail disc.")

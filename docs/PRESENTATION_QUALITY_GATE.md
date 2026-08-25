@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Razorhound received a focused cheek-lobe pass on 2026-08-25. Its paired bite
+cheek sockets now use dense closed living shells rather than rectangular
+plates, giving the predator a layered head silhouette at the compact
+early-organic gallery distance while preserving its bite animation. Exact
+silent 1280x720 page 2/14 review is required to confirm the revised head;
+broader human hostile-family and production-art acceptance remain open.
+
 Sporecaster received a focused gill-volume pass on 2026-08-25. Its existing
 seven dense gill-fan sockets now retain more depth at the compact early-organic
 gallery distance, so the infestation silhouette reads as layered membrane
