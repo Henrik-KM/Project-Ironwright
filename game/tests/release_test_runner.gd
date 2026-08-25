@@ -536,6 +536,14 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         _expect(tenement_dressing.find_child("TenementBalcony00", true, false) != null and tenement_dressing.find_child("TenementBalconyRail00", true, false) != null, "Release tenement dressing must expose layered balcony and railing detail.")
         _expect(tenement_dressing.find_child("TenementBalconyPost00_00", true, false) != null and tenement_dressing.find_child("TenementBalconyService00", true, false) != null, "Release tenement dressing must expose balcony support and service hardware.")
         _expect(tenement_dressing.find_child("TenementClothesline00", true, false) != null and tenement_dressing.find_child("TenementHangingCloth00_00", true, false) != null, "Release tenement dressing must expose readable residential clothing detail.")
+        var cloth_meshes := tenement_dressing.find_children("TenementHangingCloth*", "MeshInstance3D", true, false)
+        var cloth_palette: Dictionary = {}
+        for cloth_node in cloth_meshes:
+            var cloth_mesh := cloth_node as MeshInstance3D
+            var cloth_material := cloth_mesh.material_override as StandardMaterial3D if cloth_mesh != null else null
+            if cloth_material != null:
+                cloth_palette[cloth_material.albedo_color.to_html(false)] = true
+        _expect(cloth_meshes.size() >= 12 and cloth_palette.size() >= 3, "Release tenement laundry must retain varied weathered cloth materials instead of repeated bright panels.")
     var cistern_dressing := world.release_world_art.dressing_root.find_child("HighDefinitionCisternDressing", true, false) if world.release_world_art.dressing_root != null else null
     _expect(cistern_dressing != null, "Release Root Cistern dressing must expose a bounded high-definition service layer.")
     if cistern_dressing != null:

@@ -17,6 +17,13 @@ and region transitions without changing gameplay ownership. All Godot CI
 validation, certification and release/export commands use the Dummy audio
 driver; automated coverage is silent by default.
 
+East Tenements received a focused cloth-material pass on 2026-08-25. Authored
+and release-dressing laundry panels now use three muted weathered fabric tones
+with deterministic size variation instead of repeated bright pink cards.
+Silent exact 1280x720 page 6/14 review confirms the residential laundry reads
+as lived-in secondary detail behind the brick, windows and fire escapes;
+broader human remote-facility acceptance remains open.
+
 Observatory Ridge received a focused hardware pass on 2026-08-25. Its three
 exposed dish ribs now use dense round structural rods rather than beveled
 rectangular bars; silent exact 1280x720 page 12/14 review confirms the survey

@@ -503,12 +503,19 @@ func _dress_industrial(root: Node3D) -> void:
 
 func _dress_tenement(root: Node3D) -> void:
     var brick := _textured_material(&"brick", Color("55443d"), 0.0, 0.88)
-    var cloth := ModelKit3D.material(Color("4b3437"), 0.0, 0.92)
+    # The residential laundry should feel sun-faded and inhabited, not like a
+    # repeated row of bright pink UI cards. Keep three low-saturation fabric
+    # tones so the panels read as distinct cloth without stealing focus from
+    # the windows and fire escapes.
+    var cloth_variants: Array[StandardMaterial3D] = [
+        ModelKit3D.material(Color("383938"), 0.0, 0.94),
+        ModelKit3D.material(Color("30484a"), 0.0, 0.94),
+        ModelKit3D.material(Color("5b5549"), 0.0, 0.95),
+    ]
     var tenement_detail := Node3D.new()
     tenement_detail.name = "HighDefinitionTenementDressing"
     root.add_child(tenement_detail)
     var rail_metal := _textured_material(&"rust", Color("70462f"), 0.4, 0.72)
-    var cloth_edge := ModelKit3D.material(Color("70545a"), 0.0, 0.86)
     for side_index in range(2):
         var side := -1.0 if side_index == 0 else 1.0
         var facade_z := 2.94 if side < 0.0 else 5.34
@@ -527,15 +534,16 @@ func _dress_tenement(root: Node3D) -> void:
             ModelKit3D.add_surface_panel(balcony, Vector3(1.4, 0.54, 0.08), Vector3(side * -0.2, 0.48, 0.42), brick, rail_metal, Vector3.ZERO, "TenementBalconyService%02d" % balcony_index)
             ModelKit3D.add_cylinder(balcony, 0.035, 5.0, Vector3(0.0, 0.76, -0.1), rail_metal, Vector3(PI * 0.5, 0.0, 0.0), "TenementClothesline%02d" % balcony_index)
             for cloth_index in range(3):
-                ModelKit3D.add_beveled_box(
+                var cloth_panel := ModelKit3D.add_beveled_box(
                     balcony,
-                    Vector3(0.34, 0.50, 0.04),
+                    Vector3(0.34 + 0.04 * float(cloth_index % 2), 0.50 + 0.06 * float((balcony_index + cloth_index) % 2), 0.04),
                     Vector3(-0.85 + float(cloth_index) * 0.85, 0.42, 0.42),
-                    cloth if cloth_index % 2 == 0 else cloth_edge,
+                    cloth_variants[(balcony_index + cloth_index) % cloth_variants.size()],
                     Vector3(0.0, float(cloth_index) * 0.08, 0.0),
                     "TenementHangingCloth%02d_%02d" % [balcony_index, cloth_index],
                     0.12
                 )
+                cloth_panel.scale = Vector3(1.0, 1.0, 0.82 + 0.08 * float((balcony_index + cloth_index) % 3))
 
 
 func _dress_greenhouse(root: Node3D) -> void:
