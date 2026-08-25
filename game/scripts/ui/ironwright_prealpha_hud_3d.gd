@@ -74,9 +74,12 @@ func _apply_compact_layout(viewport_size: Vector2) -> void:
     var narrow := viewport_size.x < 1050.0
 
     objective_panel.position = Vector2(18.0, 18.0)
-    objective_panel.size = Vector2(360.0 if narrow else 405.0, 126.0)
+    # The first salvage objective is deliberately explanatory. Give its copy
+    # a measured card instead of letting the health stack cover the last line
+    # in the compact release viewport.
+    objective_panel.size = Vector2(360.0 if narrow else 405.0, 148.0)
     objective_label.position = Vector2(18.0, 34.0)
-    objective_label.size = Vector2(objective_panel.size.x - 36.0, 78.0)
+    objective_label.size = Vector2(objective_panel.size.x - 36.0, 100.0)
 
     resource_panel.size = Vector2(296.0 if narrow else 318.0, 174.0)
     # The base HUD uses right-anchored offsets, but the compact release scene
@@ -124,18 +127,18 @@ func _apply_compact_layout(viewport_size: Vector2) -> void:
         # opening objective rather than letting a bottom-left anchor resolve
         # to a negative y-coordinate in the compact release viewport.
         _health_panel.position = Vector2(18.0, objective_panel.position.y + objective_panel.size.y + 10.0)
-        _health_panel.size = Vector2(312.0, 82.0)
+        _health_panel.size = Vector2(312.0, 112.0)
         var content := _health_panel.get_node_or_null("PanelContent") as Control
         if content != null:
             for child in content.get_children():
                 if child is Label:
                     (child as Label).add_theme_font_size_override("font_size", 12)
             if player_bar != null:
-                player_bar.position = Vector2(14.0, 27.0)
-                player_bar.size = Vector2(284.0, 11.0)
+                player_bar.position = Vector2(96.0, 34.0)
+                player_bar.size = Vector2(200.0, 11.0)
             if companion_bar != null:
-                companion_bar.position = Vector2(14.0, 62.0)
-                companion_bar.size = Vector2(284.0, 10.0)
+                companion_bar.position = Vector2(96.0, 87.0)
+                companion_bar.size = Vector2(200.0, 10.0)
 
 
 func set_sanctuary_integrity(value: float) -> void:

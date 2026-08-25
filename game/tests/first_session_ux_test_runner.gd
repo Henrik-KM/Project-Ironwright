@@ -79,6 +79,9 @@ func _run_all() -> void:
     ])
     _expect(_rect_fits_viewport(resource_rect, Vector2(TEST_VIEWPORT_SIZE)), "The persistent resource and focus panel must remain visible inside an 800×520 viewport.")
     _expect(_rect_fits_viewport(health_rect, Vector2(TEST_VIEWPORT_SIZE)), "The Mechromancer and Bulwark health panel must remain visible inside an 800×520 viewport.")
+    _expect(not objective_rect.intersects(health_rect), "The opening objective copy and health stack must remain separate in the tactical frame.")
+    if hud.companion_status_label != null and hud.companion_bar != null:
+        _expect(not hud.companion_status_label.get_global_rect().intersects(hud.companion_bar.get_global_rect()), "The Bulwark health label must remain above its bar in the compact opening layout.")
     hud.push_notification("FIRST MACHINE REPORT")
     hud.push_notification("SECOND MACHINE REPORT")
     hud.push_notification("THIRD MACHINE REPORT")

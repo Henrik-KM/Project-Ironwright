@@ -2,6 +2,12 @@
 
 ## Focused Heartforge focal-model high-definition pass
 
+- corrected the opening desktop HUD stack so the explanatory first-salvage
+  objective has enough vertical room and the Mechromancer/Bulwark health card
+  keeps each label above its bar; a silent 1280x720 fresh-world capture and
+  the constrained first-session UX test confirm the tactical copy remains
+  readable without covering the world.
+
 - refined Cathedral Quarter's authored choir mass, organic spines and veins,
   window/bell ribs and rose elements with dense rounded geometry, then unified
   the exact review dressing's biological material hierarchy; the silent page
