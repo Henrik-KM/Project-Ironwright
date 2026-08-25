@@ -2,6 +2,12 @@
 
 ## Focused Heartforge focal-model high-definition pass
 
+- refined Buried Laboratories' three containment vessels with rounded glass
+  pressure envelopes, separate caps, service collars, warning base rings and
+  neck assemblies around the existing glowing cores; regenerated the authored
+  glTF and silently live-reviewed exact page 13/14 at 1280x720 while preserving
+  stable landmark sockets, extraction ownership and operation motion.
+
 - refined the West Grid turbine hall with an authored front-facing turbine
   access assembly: rounded ceramic housing, inset steel face, oxidized service
   collar, cross-braced hub and six maintenance fasteners; regenerated the

@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Buried Laboratories received a focused high-definition vessel pass on
+2026-08-25. Its three containment vessels now use rounded glass pressure
+envelopes, separate caps, service collars, warning base rings and neck
+assemblies around the existing glowing cores. Silent exact 1280x720 page 13/14
+review confirms the research landmark reads more deliberately at the remote
+camera distance while preserving its stable sockets and operation contract;
+broader human region and production-art acceptance remain open.
+
 West Grid received a focused high-definition focal pass on 2026-08-25. The
 turbine hall now exposes a rounded ceramic access housing, inset steel face,
 dense oxidized collar, cross-braced hub and six maintenance fasteners on its
