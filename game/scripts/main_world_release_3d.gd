@@ -1291,8 +1291,11 @@ func _create_observatory_presentation_review_actor(landmark: RegionLandmark3D) -
 
 
 func _tune_observatory_presentation_review_materials(authored_scene: Node) -> void:
-	var dish_material := ModelKit3D.material(Color("102544"), 0.12, 0.84)
-	var dish_rim_material := ModelKit3D.material(Color("3d5b61"), 0.68, 0.46)
+	# The reflector is the landmark's focal surface. Keep it deep blue, but
+	# give the compact review key enough reflected colour to show the parabolic
+	# bowl instead of collapsing it into a dark circular platform.
+	var dish_material := ModelKit3D.material(Color("1d4f78"), 0.12, 0.66)
+	var dish_rim_material := ModelKit3D.material(Color("587b82"), 0.68, 0.42)
 	var actuator_material := ModelKit3D.material(Color("82452f"), 0.28, 0.66)
 	var signal_material := ModelKit3D.material(Color("124d58"), 0.32, 0.34, Color("58dfe3"), 0.92)
 	for child in authored_scene.find_children("*", "MeshInstance3D", true, false):
@@ -1685,9 +1688,10 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	elif presentation_review_page == 10:
 		compact_region_light_scale = 0.58
 	elif presentation_review_page == 11:
-		# The blue-violet survey dish is broad and shallow; keep the exact review
-		# key restrained enough that its ribs and feed hardware stay legible.
-		compact_region_light_scale = 0.40
+		# The blue-violet survey dish is broad and shallow. Keep the key restrained
+		# enough to preserve the ribs and feed hardware, but not so low that the
+		# reflector reads as a flat dark platform.
+		compact_region_light_scale = 0.52
 	elif presentation_review_page == 12:
 		compact_region_light_scale = 0.60
 	elif presentation_review_page == 13:

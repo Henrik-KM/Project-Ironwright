@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The Observatory Ridge review frame now gives the blue-violet reflector a
+deeper authored bowl, controlled brighter review material and slightly more
+compact key exposure. The parabolic bowl, service rim and feed assembly remain
+distinct against the dark service deck without changing tactical lighting or
+landmark behaviour.
+This is a focused presentation pass; broader human acceptance of the complete
+region and release remains open.
+
 The tactical HUD received a focused empty-state pass on 2026-08-25. When no
 remote operation is active, the unused operation row now collapses and the
 resource card becomes shorter; active expeditions and final-protocol status

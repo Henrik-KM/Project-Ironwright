@@ -117,7 +117,10 @@ def main() -> None:
         "Platform": mesh("Platform", add_box(builder, (11.0, 0.38, 8.0), concrete)),
         "Control": mesh("Control", add_box(builder, (2.8, 2.4, 2.5), alloy)),
         "ControlCap": mesh("ControlCap", add_box(builder, (3.1, 0.18, 2.8), rust)),
-        "Dish": mesh("Dish", add_parabolic_dish(builder, 3.0, 0.62, dish)),
+        # Give the reflector a deeper bowl so the exact remote review frame
+        # reads the primary instrument as a parabolic survey dish rather than
+        # a shallow circular platform.
+        "Dish": mesh("Dish", add_parabolic_dish(builder, 3.0, 0.92, dish)),
         "DishRimRing": mesh("DishRimRing", add_torus(builder, 3.0, 0.11, rust)),
         "DishRim": mesh("DishRim", add_box(builder, (6.5, 0.16, 0.22), rust)),
         "DishBrace": mesh("DishBrace", add_box(builder, (0.16, 3.5, 0.26), alloy)),
