@@ -10,6 +10,15 @@ gives more visual room to the Mechromancer, Bulwark and Heartforge while
 retaining actionable status. Broader human opening-composition acceptance
 remains open.
 
+Flood Market received a focused canopy-surface pass on 2026-08-25. The three
+authored market roofs now use dense closed cloth surfaces with raised ridges,
+sagging edges, deterministic ripple and visible structural ribs instead of
+flat rectangular slabs. Silent exact 1280x720 page 8/14 review confirms the
+canopies read as fabric over a maintained market frame while preserving the
+water, stall, route and service hierarchy; aesthetic coverage guards the
+measurable cloth volume. Broader human remote-facility and production-art
+acceptance remain open.
+
 The Root Cistern capstone received a focused verticality pass on 2026-08-25.
 Its authored core mass, halo, crown, radial plates and veins now rise into a
 layered root-altar silhouette, with deterministic alternating mantle scales

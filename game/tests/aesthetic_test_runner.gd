@@ -437,6 +437,8 @@ func _run_all() -> void:
                 var market_canopy := landmark.find_child("FloodMarketCanopyRoof0", true, false) as MeshInstance3D
                 var market_stall := landmark.find_child("FloodMarketStall0", true, false) as MeshInstance3D
                 _expect(market_canopy != null and market_stall != null and _mesh_vertex_count(market_canopy) >= 48 and _mesh_vertex_count(market_stall) >= 48, "Flood Market authored canopy and stall must retain beveled high-definition geometry.")
+                var canopy_depth := market_canopy.mesh.get_aabb().size.y if market_canopy != null and market_canopy.mesh != null else 0.0
+                _expect(canopy_depth >= 0.30, "Flood Market authored canopies must retain measurable sag and cloth volume rather than reverting to flat slabs.")
                 var market_light := landmark.find_child("FloodMarketWaterline0", true, false) as Node3D
                 var market_growth := landmark.find_child("FloodMarketOrganicGrowth0", true, false) as Node3D
                 _expect(market_light != null and market_growth != null, "Flood Market must expose named waterline and organic-growth motion sockets.")
