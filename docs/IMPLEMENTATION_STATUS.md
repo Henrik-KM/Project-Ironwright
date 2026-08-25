@@ -1,5 +1,23 @@
 # Implementation status
 
+## Focused vertical-slice lighting initialization pass
+
+- applied the opening ambient/fog/tonemap contract immediately when the
+  readable Heartforge director becomes ready, before its deferred geometry
+  build; this removes a frame-timing race in fresh-world startup while keeping
+  the same presentation-only lighting values and gameplay ownership.
+
+## Focused early-organic membrane silhouette pass
+
+- replaced the broad airborne wing oval with a dense swept membrane carrying
+  a tapered leading edge and shallow central keel for Roofleaper and Glassmoth;
+  replaced the Sporecaster gill block and Burrower side fin with rounded,
+  tapered high-definition forms; regenerated the affected authored glTF shells
+  and added vertex-density regressions while preserving sockets, animation
+  clips, collision, ecology and runtime ownership. Silent exact page 2/14
+  review confirmed the wing surfaces now read as directional anatomy instead of
+  repeated flat discs.
+
 ## Focused opening camera startup pass
 
 - the release world now snaps the tactical camera to its resolved opening

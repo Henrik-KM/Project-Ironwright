@@ -12,10 +12,73 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "sporecaster.gltf"
+
+
+def add_convex_gill(builder: BufferBuilder, size: Sequence[float], material: int, rings: int = 8, sides: int = 36) -> tuple[int, int, int, int]:
+    """Build a rounded vertical gill whose edge breaks catch the light."""
+    thickness, height, depth = (max(0.001, float(value)) for value in size)
+    half_thickness = thickness * 0.5
+    half_height = height * 0.5
+    half_depth = depth * 0.5
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+
+    def add_vertex(point: Sequence[float], normal: Sequence[float]) -> int:
+        index = len(positions) // 3
+        positions.extend(point)
+        length = math.sqrt(sum(value * value for value in normal)) or 1.0
+        normals.extend(value / length for value in normal)
+        return index
+
+    for sign in (1.0, -1.0):
+        center = add_vertex((sign * half_thickness * 1.2, 0.08, 0.0), (sign, 0.0, 0.0))
+        ring_indices: list[list[int]] = []
+        for ring in range(1, max(6, rings) + 1):
+            radius = ring / max(6, rings)
+            current: list[int] = []
+            for index in range(max(24, sides)):
+                angle = math.tau * index / max(24, sides)
+                cosine = math.cos(angle)
+                sine = math.sin(angle)
+                top_taper = 1.0 + 0.18 * max(0.0, cosine)
+                y = half_height * radius * cosine * top_taper + 0.04 * (1.0 - radius)
+                z = half_depth * radius * sine * (0.84 + 0.16 * max(0.0, -cosine))
+                x = sign * half_thickness * (0.34 + 0.66 * (1.0 - radius * radius))
+                current.append(add_vertex((x, y, z), (sign, 0.6 * cosine, sine)))
+            ring_indices.append(current)
+            previous = ring_indices[-2] if len(ring_indices) > 1 else None
+            for index in range(max(24, sides)):
+                next_index = (index + 1) % max(24, sides)
+                if previous is None:
+                    if sign > 0.0:
+                        indices.extend([center, current[next_index], current[index]])
+                    else:
+                        indices.extend([center, current[index], current[next_index]])
+                elif sign > 0.0:
+                    indices.extend([previous[index], previous[next_index], current[next_index], previous[index], current[next_index], current[index]])
+                else:
+                    indices.extend([previous[index], current[index], current[next_index], previous[index], current[next_index], previous[next_index]])
+
+    rim_front: list[int] = []
+    rim_back: list[int] = []
+    for index in range(max(24, sides)):
+        angle = math.tau * index / max(24, sides)
+        cosine = math.cos(angle)
+        sine = math.sin(angle)
+        top_taper = 1.0 + 0.18 * max(0.0, cosine)
+        y = half_height * cosine * top_taper
+        z = half_depth * sine * (0.84 + 0.16 * max(0.0, -cosine))
+        rim_front.append(add_vertex((half_thickness * 0.34, y, z), (0.0, cosine, sine)))
+        rim_back.append(add_vertex((-half_thickness * 0.34, y, z), (0.0, cosine, sine)))
+    for index in range(max(24, sides)):
+        next_index = (index + 1) % max(24, sides)
+        indices.extend([rim_front[index], rim_front[next_index], rim_back[next_index], rim_front[index], rim_back[next_index], rim_back[index]])
+    return _geometry(builder, positions, normals, indices, material)
 
 
 def main() -> None:
@@ -41,7 +104,7 @@ def main() -> None:
         "Segment": mesh("Segment", add_uv_sphere(builder, 0.44, shell, 18, 28)),
         "Cowl": mesh("Cowl", add_uv_sphere(builder, 0.38, shell, 20, 32)),
         "Rib": mesh("Rib", add_beveled_box(builder, (1.04, 0.12, 0.22), shell, 0.025)),
-        "Gill": mesh("Gill", add_beveled_box(builder, (0.16, 1.25, 0.74), membrane, 0.025)),
+        "Gill": mesh("Gill", add_convex_gill(builder, (0.18, 1.25, 0.74), membrane)),
         "Sac": mesh("Sac", add_uv_sphere(builder, 0.30, membrane, 20, 32)),
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.085, eye, 16, 24)),
         "Stem": mesh("Stem", add_cylinder(builder, 0.045, 0.54, tendon, 24)),

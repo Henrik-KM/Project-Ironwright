@@ -273,6 +273,103 @@ def add_organic_lobe(
     return _geometry(builder, positions, normals, indices, material)
 
 
+def add_swept_wing_membrane(
+    builder: BufferBuilder,
+    size: Sequence[float],
+    material: int,
+    rings: int = 9,
+    sides: int = 40,
+) -> tuple[int, int, int, int]:
+    """Build a tapered wing with a raised keel instead of an oval sheet.
+
+    Airborne early families need a directional leading edge and a readable
+    root-to-tip sweep. The shared oval membrane was technically convex but
+    still collapsed into a stack of discs at gallery distance. This mesh keeps
+    the same local socket dimensions while tightening the outer edge and
+    lifting a shallow living keel through the centre.
+    """
+    width, thickness, depth = (max(0.001, float(value)) for value in size)
+    rings = max(6, int(rings))
+    sides = max(32, int(sides))
+    half_width = width * 0.5
+    half_thickness = thickness * 0.5
+    half_depth = depth * 0.5
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+
+    def add_vertex(point: Sequence[float], normal: Sequence[float]) -> int:
+        index = len(positions) // 3
+        positions.extend(point)
+        length = math.sqrt(sum(value * value for value in normal)) or 1.0
+        normals.extend(value / length for value in normal)
+        return index
+
+    for sign in (1.0, -1.0):
+        center = add_vertex((0.0, sign * half_thickness * 1.18, -half_depth * 0.12), (0.0, sign, 0.0))
+        ring_indices: list[list[int]] = []
+        for ring in range(1, rings + 1):
+            radius = ring / rings
+            current: list[int] = []
+            for side in range(sides):
+                angle = math.tau * side / sides
+                cosine = math.cos(angle)
+                sine = math.sin(angle)
+                # Narrow the root-facing rear edge and sharpen the forward
+                # sweep so the silhouette reads as a wing, not a plate.
+                rear_taper = 0.78 + 0.22 * max(0.0, -cosine)
+                forward_sweep = 1.0 + 0.34 * max(0.0, -sine)
+                x = half_width * radius * cosine * rear_taper
+                z = half_depth * radius * sine * forward_sweep - half_depth * 0.12 * (1.0 - radius)
+                crown = 0.34 + 0.66 * (1.0 - radius * radius)
+                keel = 0.12 * abs(cosine) * (1.0 - radius * 0.42)
+                y = sign * (half_thickness * crown + keel)
+                current.append(add_vertex(
+                    (x, y, z),
+                    (sign * 0.9 * radius * cosine, sign, sign * 1.05 * radius * sine),
+                ))
+            ring_indices.append(current)
+            previous = ring_indices[-2] if len(ring_indices) > 1 else None
+            for side in range(sides):
+                next_side = (side + 1) % sides
+                if previous is None:
+                    if sign > 0.0:
+                        indices.extend([center, current[next_side], current[side]])
+                    else:
+                        indices.extend([center, current[side], current[next_side]])
+                elif sign > 0.0:
+                    indices.extend([
+                        previous[side], previous[next_side], current[next_side],
+                        previous[side], current[next_side], current[side],
+                    ])
+                else:
+                    indices.extend([
+                        previous[side], current[side], current[next_side],
+                        previous[side], current[next_side], previous[next_side],
+                    ])
+
+    rim_front: list[int] = []
+    rim_back: list[int] = []
+    for side in range(sides):
+        angle = math.tau * side / sides
+        cosine = math.cos(angle)
+        sine = math.sin(angle)
+        rear_taper = 0.78 + 0.22 * max(0.0, -cosine)
+        forward_sweep = 1.0 + 0.34 * max(0.0, -sine)
+        x = half_width * cosine * rear_taper
+        z = half_depth * sine * forward_sweep
+        rim_front.append(add_vertex((x, half_thickness * 0.34, z), (cosine, 0.0, sine)))
+        rim_back.append(add_vertex((x, -half_thickness * 0.34, z), (cosine, 0.0, sine)))
+    for side in range(sides):
+        next_side = (side + 1) % sides
+        indices.extend([
+            rim_front[side], rim_front[next_side], rim_back[next_side],
+            rim_front[side], rim_back[next_side], rim_back[side],
+        ])
+
+    return _geometry(builder, positions, normals, indices, material)
+
+
 def add_capsule(
     builder: BufferBuilder,
     radius: float,
@@ -424,6 +521,7 @@ def build_family(name: str, spec: dict) -> None:
         # repeated dishes, so use a tapered scalloped lobe with a living rim
         # highlight while retaining the same mesh/socket contract.
         "Membrane": mesh("Membrane", add_organic_lobe(builder, (1.26, 0.22, 1.08), membrane, lobes=3, rings=8, sides=36)),
+        "WingMembrane": mesh("WingMembrane", add_swept_wing_membrane(builder, (1.38, 0.18, 1.08), membrane)),
         "Bone": mesh("Bone", add_capsule(builder, 0.09, 0.86, bone, 24)),
         "LongBone": mesh("LongBone", add_capsule(builder, 0.065, 1.35, bone, 24)),
         "Tendon": mesh("Tendon", add_capsule(builder, 0.07, 1.15, tendon, 24)),
@@ -504,7 +602,7 @@ def build_family(name: str, spec: dict) -> None:
         for side in (-1.0, 1.0):
             suffix = "L" if side < 0 else "R"
             wing_pitch = 0.16
-            add_node(f"RoofleaperWing{suffix}", mesh_ids["Membrane"], (side * 0.92, 1.18, 0.05), rotation=(side * wing_pitch, side * 0.18, side * 0.1), scale=(1.15, 1.0, 1.1), extras={"socket_type": "wing_membrane"})
+            add_node(f"RoofleaperWing{suffix}", mesh_ids["WingMembrane"], (side * 0.92, 1.18, 0.05), rotation=(side * wing_pitch, side * 0.18, side * 0.1), scale=(1.15, 1.0, 1.1), extras={"socket_type": "wing_membrane"})
             add_node(f"RoofleaperWingFrame{suffix}", mesh_ids["WingFrame"], (side * 1.18, 1.2, 0.05), rotation=(side * (wing_pitch + 0.04), side * 0.35, side * 0.72), scale=(0.72, 1.0, 1.0), extras={"surface": "wing_spar"})
             add_node(f"RoofleaperWingVein{suffix}", mesh_ids["Bone"], (side * 1.12, 1.2, 0.05), rotation=(side * (wing_pitch + 0.04), side * 0.35, side * 0.72), scale=(0.6, 1.0, 1.0))
             add_node(f"RoofleaperFineVein{suffix}", mesh_ids["FineVein"], (side * 0.92, 1.2, 0.04), rotation=(side * (wing_pitch + 0.02), side * 0.32, side * 0.28), scale=(0.72, 1.0, 0.88), extras={"surface": "membrane_vascular_detail"})
@@ -519,7 +617,7 @@ def build_family(name: str, spec: dict) -> None:
             suffix = "L" if side < 0 else "R"
             for level in range(2):
                 wing_pitch = 0.20 + level * 0.05
-                add_node(f"GlassmothWing{suffix}{level}", mesh_ids["Membrane"], (side * (0.88 + level * 0.16), 1.18 + level * 0.16, 0.12 + level * 0.18), rotation=(side * wing_pitch, side * (0.2 + level * 0.08), side * 0.18), scale=(1.3 - level * 0.12, 0.82, 1.0), extras={"socket_type": "wing_pair"})
+                add_node(f"GlassmothWing{suffix}{level}", mesh_ids["WingMembrane"], (side * (0.88 + level * 0.16), 1.18 + level * 0.16, 0.12 + level * 0.18), rotation=(side * wing_pitch, side * (0.2 + level * 0.08), side * 0.18), scale=(1.3 - level * 0.12, 0.82, 1.0), extras={"socket_type": "wing_pair"})
                 add_node(f"GlassmothWingFrame{suffix}{level}", mesh_ids["WingFrame"], (side * (1.10 + level * 0.16), 1.22 + level * 0.16, 0.12 + level * 0.18), rotation=(side * (wing_pitch + 0.04), side * (0.28 + level * 0.08), side * 0.64), scale=(0.62, 1.0, 0.82), extras={"surface": "glasswing_spar"})
                 add_node(f"GlassmothWingFastener{suffix}{level}", mesh_ids["CrownFastener"], (side * (0.58 + level * 0.12), 1.22 + level * 0.14, 0.08 + level * 0.16), extras={"surface": "wing_socket"})
                 add_node(f"GlassmothFineVein{suffix}{level}", mesh_ids["FineVein"], (side * (0.9 + level * 0.15), 1.2 + level * 0.15, 0.14 + level * 0.17), rotation=(side * (wing_pitch + 0.02), side * (0.26 + level * 0.06), side * 0.24), scale=(0.65, 1.0, 0.76), extras={"surface": "luminous_wing_vein"})

@@ -2,6 +2,20 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The opening vertical-slice lighting contract is now applied during director
+initialization before deferred Heartforge geometry assembly. This keeps the
+ambient floor, fog and tone mapping deterministic from the first rendered
+frame; it does not change gameplay lighting ownership or the existing target
+values.
+
+The early-organic roster received a focused membrane-silhouette pass on
+2026-08-25. Roofleaper and Glassmoth wings now use dense swept membranes with
+a tapered leading edge and central keel; Sporecaster gills and Burrower side
+fins now use rounded tapered forms rather than block-like plates. Silent exact
+1280x720 page 2/14 review confirms the airborne silhouettes carry directional
+anatomy and no longer read as repeated flat discs; broader human hostile-family
+and production-art acceptance remain open.
+
 The fresh-world release camera received a focused startup-frame correction on
 2026-08-25. It now resolves and applies the tactical subject transform before
 the first playable frame, avoiding a transient close-up while retaining the
