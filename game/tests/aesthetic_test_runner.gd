@@ -880,7 +880,10 @@ func _run_all() -> void:
                 }, 5)
                 var cognition_node := player.get_node_or_null("MechromancerProgressionVisuals/MechromancerTierIIICognitionNode") as Node3D
                 var sensor_lens := player.get_node_or_null("MechromancerProgressionVisuals/MechromancerTierIVBioSensorLens") as Node3D
+                var shoulder_brace := player.get_node_or_null("MechromancerProgressionVisuals/MechromancerTierIIShoulderBrace") as Node3D
+                var protocol_clasp := player.get_node_or_null("MechromancerProgressionVisuals/MechromancerTierVProtocolClasp") as Node3D
                 _expect(cognition_node != null and sensor_lens != null, "The progression animation test must expose cognition and sensor hardware.")
+                _expect(shoulder_brace != null and protocol_clasp != null and shoulder_brace.position.y > 1.0 and protocol_clasp.position.y > 1.0 and shoulder_brace.position.z < 0.0 and protocol_clasp.position.z < 0.0, "Mechromancer progression hardware must attach to the body volume rather than falling below the presentation floor.")
                 if cognition_node != null and sensor_lens != null:
                     player_presentation.progression_time = 0.0
                     player_presentation._animate_progression_hardware()
