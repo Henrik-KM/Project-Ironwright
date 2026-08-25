@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Carrion Bell received a focused crown-lobe pass on 2026-08-25. Its existing
+resonator-top crown now uses a dense folded living surface instead of a broad
+horizontal sheet, so the signal mantle carries a layered edge at the compact
+gallery distance. Exact silent 1280x720 page 3/14 review confirms the revised
+crown while preserving its socket and motion contract; broader human
+hostile-family and production-art acceptance remain open.
+
 Ashmantle received a focused louver-depth pass on 2026-08-25. Its existing
 paired heat louvers and mantle ribs now use dense folded organic surfaces,
 giving the thermal shell layered volume instead of broad manufactured bars at

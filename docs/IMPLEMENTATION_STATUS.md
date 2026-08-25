@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Carrion Bell crown-lobe pass
+
+- replaced Carrion Bell's broad resonator-top crown sheet with a dense folded
+  living lobe while preserving the existing `CarrionbellCrownPlate` socket,
+  animation channel, signal hierarchy and runtime family contract;
+- the aesthetic suite now guards measurable crown depth; exact silent page
+  3/14 review confirms the crown reads as a layered signal mantle above the
+  resonator.
+
 ## Focused Ashmantle louver-depth pass
 
 - replaced Ashmantle's paired heat louvers and four mantle ribs with dense,

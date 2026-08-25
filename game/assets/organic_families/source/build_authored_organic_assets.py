@@ -585,6 +585,25 @@ def build_family(name: str, spec: dict) -> None:
                 fold_strength=0.76,
             ),
         )
+    # Carrion Bell's crown plate sits directly above the resonator and is the
+    # family's strongest readable signal shape. Replace its broad shared
+    # sheet with a thicker folded lobe while keeping the crown socket and
+    # animation channel stable.
+    if name == "carrionbell":
+        mesh_ids["CarrionbellCrownLobe"] = mesh(
+            "CarrionbellCrownLobe",
+            add_organic_lobe(
+                builder,
+                (1.58, 0.34, 0.62),
+                shell,
+                lobes=5,
+                rings=10,
+                sides=40,
+                scallop_amplitude=0.15,
+                leading_extension=0.38,
+                fold_strength=0.90,
+            ),
+        )
 
     root_name = f"{name.capitalize()}Model"
     nodes: list[dict] = [{
@@ -693,7 +712,7 @@ def build_family(name: str, spec: dict) -> None:
         add_node("CarrionbellResonator", mesh_ids["Eye"], (0.0, 1.92, -0.35), scale=(1.4, 0.8, 1.0), extras={"socket_type": "resonator"})
         add_node("CarrionbellResonatorCore", mesh_ids["Eye"], (0.0, 1.92, -0.44), scale=(0.62, 0.62, 0.72), extras={"surface": "resonator_core"})
         add_node("CarrionbellResonatorRing", mesh_ids["ResonatorRing"], (0.0, 1.92, -0.35), rotation=(1.5708, 0.0, 0.0), scale=(1.8, 1.0, 1.35), extras={"surface": "resonator_lip"})
-        add_node("CarrionbellCrownPlate", mesh_ids["Plate"], (0.0, 2.32, 0.18), rotation=(0.0, 0.0, 0.12), scale=(1.3, 1.0, 0.92), extras={"socket_type": "crown_plate"})
+        add_node("CarrionbellCrownPlate", mesh_ids["CarrionbellCrownLobe"], (0.0, 2.32, 0.18), rotation=(0.0, 0.0, 0.12), scale=(1.3, 1.0, 0.92), extras={"socket_type": "crown_plate"})
         for index in range(4):
             side = -1.0 if index < 2 else 1.0
             add_node(f"CarrionbellBellRib{index}", mesh_ids["BellRib"], (side * (0.42 + (index % 2) * 0.2), 1.62, -0.24 + (index % 2) * 0.18), rotation=(0.0, side * 0.32, side * 0.52), scale=(0.7, 1.0, 0.82), extras={"surface": "bell_rib"})
