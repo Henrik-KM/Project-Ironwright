@@ -357,6 +357,7 @@ func _run_all() -> void:
                 _expect(landmark.find_child("RootCisternBasinSpine0", true, false) != null and landmark.find_child("RootCisternBasinRootTendril0", true, false) != null, "The Root Cistern must expose basin rim and organic-root detail.")
                 _expect(landmark.find_child("RootCisternBasinInlay00", true, false) != null and landmark.find_child("RootCisternBasinSocket00", true, false) != null, "The Root Cistern must expose a repeated basin signal-inlay layer.")
                 _expect(landmark.find_child("RootCisternCoreCrownPlate00", true, false) != null and landmark.find_child("RootCisternCoreCrownSocket00", true, false) != null, "The Root Cistern must expose a readable crown hardware ring above the core.")
+                _expect(landmark.find_child("RootCisternCoreCapPlate", true, false) != null and landmark.find_child("RootCisternCoreCapCollar", true, false) != null and landmark.find_child("RootCisternCoreCapSocket", true, false) != null and landmark.find_child("RootCisternCoreCapRib00", true, false) != null and landmark.find_child("RootCisternCoreCapSocket00", true, false) != null, "The Root Cistern capstone must expose a distinct buried-alloy plate, collar, radial ribs and signal sockets.")
                 var cistern_core_mass := landmark.find_child("RootCisternCoreMass", true, false) as Node3D
                 var cistern_layer_0 := landmark.find_child("RootCisternLayer0", true, false) as Node3D
                 var cistern_layer_1 := landmark.find_child("RootCisternLayer1", true, false) as Node3D
