@@ -10,6 +10,16 @@ gives more visual room to the Mechromancer, Bulwark and Heartforge while
 retaining actionable status. Broader human opening-composition acceptance
 remains open.
 
+The late-organic lobe received a focused depth-and-material pass on
+2026-08-25. The shared builder now gives the late-family shell and membrane
+lobes more thickness, scalloped edge amplitude, tapered leading extension and
+fold strength, while the release gallery uses a restrained late-family
+membrane lift so the forms retain a wet living read instead of pale
+manufactured plates. Silent exact 1280x720 page 3/14 review confirms the folded
+edges and darker surface separation; the aesthetic suite guards measurable
+depth on representative Miremaw and Rootweaver membranes. Broader human
+hostile-family and production-art acceptance remain open.
+
 The atmosphere contract now retains a shared 0.50 ambient readability floor
 across authored regions, with the opening slice still using its stronger 0.52
 floor. This preserves readable wet-district silhouettes during slower startup
