@@ -331,6 +331,8 @@ func _run_all() -> void:
     _expect(world.endgame_escalation_director != null, "The final protocol must have a dedicated bounded presentation director.")
     _expect(world.endgame_escalation_director.current_state == &"active", "Starting a final protocol must raise its Heartforge lattice presentation.")
     _expect(world.get_node_or_null("EndgameProtocolVisuals") != null, "The final protocol must attach a visible lattice to the Heartforge without changing collision geometry.")
+    world._update_camera(0.2)
+    _expect(world.camera.global_position.distance_to(world.heartforge.global_position) > 15.0, "The active final protocol must use a calm establishing camera distance so the Heartforge lattice and surviving cast remain readable.")
     _expect(world.endgame_escalation_director.core_light != null and world.endgame_escalation_director.core_light.light_energy <= 4.0, "The final protocol light budget must preserve readable Heartforge silhouettes instead of blooming over the frame.")
     var capstone_visuals := world.get_node_or_null("EndgameProtocolVisuals") as Node3D
     _expect(capstone_visuals != null and capstone_visuals.global_position.distance_to(world.heartforge.global_position) > 1.5, "The final protocol capstone must anchor toward the player-facing side of the Heartforge so its transformation remains visible.")

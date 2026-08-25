@@ -164,6 +164,10 @@ func _update_camera(delta: float) -> void:
 		camera.global_position = camera.global_position.lerp(desired_map_position, 1.0 - exp(-delta * 4.2))
 		camera.look_at(map_target, Vector3.FORWARD)
 		return
+	if _is_endgame_focus_context():
+		_update_endgame_establishing_camera(delta)
+		return
+	camera.fov = lerpf(camera.fov, 43.8, 1.0 - exp(-delta * 3.0))
 
 	var target := player.global_position
 	var home_focus := false
@@ -206,6 +210,37 @@ func _update_camera(delta: float) -> void:
 	camera.look_at(target + Vector3.UP * 0.68, Vector3.UP)
 
 
+func _is_endgame_focus_context() -> bool:
+	if endgame_director == null:
+		return false
+	if not endgame_director.active_protocol.is_empty():
+		return true
+	return game_ended and first_victory_achieved and not sanctuary_continuation
+
+
+func _update_endgame_establishing_camera(delta: float) -> void:
+	if camera == null or heartforge == null:
+		return
+	# The final protocol is a town-scale consequence, not a close-up combat
+	# interruption. Give the lattice, Heartforge and surviving cast a calmer
+	# establishing frame while the normal player camera remains unchanged.
+	var target := heartforge.global_position + Vector3.UP * 1.15
+	var heading := Vector3(camera_heading.x, 0.0, camera_heading.z)
+	if heading.length_squared() <= 0.001:
+		heading = Vector3(0.0, 0.0, 1.0)
+	heading = heading.normalized()
+	var final_height := camera_height + 3.8
+	var final_distance := camera_distance + 5.2
+	var desired := target + Vector3.UP * final_height + heading * final_distance
+	var resolved := _resolve_camera_occlusion(target, desired, final_height, final_distance)
+	if camera.global_position.distance_to(resolved) > 20.0:
+		camera.global_position = resolved
+	else:
+		camera.global_position = camera.global_position.lerp(resolved, 1.0 - exp(-delta * 4.0))
+	camera.fov = lerpf(camera.fov, 46.0, 1.0 - exp(-delta * 3.0))
+	camera.look_at(target, Vector3.UP)
+
+
 func _snap_release_camera_to_subject() -> void:
 	# The release camera is created before the world actors are spawned. Set its
 	# first playable transform explicitly so the opening never renders a frame
@@ -223,6 +258,7 @@ func _snap_release_camera_to_subject() -> void:
 	var resolved := _resolve_camera_occlusion(target, desired, dynamic_height, dynamic_distance)
 	camera.global_position = resolved
 	camera.look_at(target + Vector3.UP * 0.68, Vector3.UP)
+	camera.fov = 43.8
 	camera_target_velocity = Vector3.ZERO
 
 
