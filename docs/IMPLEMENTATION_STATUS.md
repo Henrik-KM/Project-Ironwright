@@ -4675,3 +4675,4 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - wired the development-only Tier V review entrypoint to re-submit the same
   guarded cue after deferred audio startup, making the exact exported review
   visibly exercise the progression caption without changing normal gameplay.
+- 2026-08-25: Added a bounded folded-cloth release pass to the nine Flood Market secondary stall roofs. Each roof now uses deterministic sagged panels, edge hems, support ribs, tie hardware and restrained material variation while preserving the existing authored landmark, water, route, collision and operation contracts. Exact silent page 8/14 review remains required.
