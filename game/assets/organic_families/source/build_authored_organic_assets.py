@@ -19,7 +19,7 @@ from typing import Sequence
 SOURCE_DIR = Path(__file__).resolve().parent
 ASSET_ROOT = SOURCE_DIR.parents[1]
 sys.path.insert(0, str(ASSET_ROOT / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_cylinder, add_ellipsoid, add_uv_sphere, quat  # noqa: E402
 
 
 FAMILIES = {
@@ -306,11 +306,11 @@ def build_family(name: str, spec: dict) -> None:
         # The torso ribs are the dominant close-gallery surface. A thin sheet
         # made them read as repeated manufactured bars at 1280x720, even
         # though the family-specific sockets were present. Keep the original
-        # Plate mesh for narrow crowns and fins, but give the shared torso
-        # layer a deeper convex shell with a softer perimeter and more useful
-        # highlight rolloff.
+        # Plate mesh for narrow crowns and fins, but make the shared torso
+        # layer a rounded ellipsoidal shell with a softer biological highlight
+        # rolloff.
         "Plate": mesh("Plate", add_convex_sheet(builder, (1.52, 0.16, 0.28), shell, rings=5, sides=24)),
-        "ShellPlate": mesh("ShellPlate", add_convex_sheet(builder, (1.52, 0.24, 0.54), shell, rings=7, sides=32)),
+        "ShellPlate": mesh("ShellPlate", add_ellipsoid(builder, (0.76, 0.13, 0.28), shell, rings=18, sides=36)),
         "Membrane": mesh("Membrane", add_convex_sheet(builder, (1.26, 0.045, 1.08), membrane, rings=6, sides=28)),
         "Bone": mesh("Bone", add_capsule(builder, 0.09, 0.86, bone, 24)),
         "LongBone": mesh("LongBone", add_capsule(builder, 0.065, 1.35, bone, 24)),
@@ -372,8 +372,8 @@ def build_family(name: str, spec: dict) -> None:
         z = -0.62 + index * 0.43
         segment_width = max(0.72, float(segment_scale[0]) - index * segment_taper)
         segment_depth = max(0.78, float(segment_scale[2]) - index * segment_taper * 0.8)
-        add_node(f"TorsoSegment{index}", mesh_ids["Segment"], (0.0, 0.89 - index * 0.018, z), scale=(segment_width, segment_scale[1], segment_depth), parent=torso)
-        add_node(f"{name.capitalize()}ThoraxRib", mesh_ids["ShellPlate"], (0.0, 1.37 - index * 0.035, z), rotation=(0.0, 0.0, 0.03 * (index - 1)), scale=(1.0, 1.0, 0.74), parent=torso, extras={"surface": "layered_shell_break"} if index == 1 else None)
+        add_node(f"TorsoSegment{index}", mesh_ids["Segment"], (0.0, 0.89 - index * 0.024, z), scale=(segment_width, segment_scale[1], segment_depth), parent=torso)
+        add_node(f"{name.capitalize()}ThoraxRib", mesh_ids["ShellPlate"], (0.0, 1.35 - index * 0.045, z), rotation=(0.0, 0.0, 0.03 * (index - 1)), scale=(1.0, 1.0, 0.84), parent=torso, extras={"surface": "layered_shell_break"} if index == 1 else None)
         add_node("ThoraxFastener", mesh_ids["Fastener"], (-0.56, 1.18, z), parent=torso)
         add_node("ThoraxFastener", mesh_ids["Fastener"], (0.56, 1.18, z), parent=torso)
         # Paired surface veins break up the shared torso kit at close camera

@@ -248,7 +248,6 @@ func _refresh_visuals() -> void:
     tier_detail.name = "TierHighDefinitionDetail"
     _tier_visual_root.add_child(tier_detail)
     var crest_material := ModelKit3D.material(tier_color.darkened(0.48), 0.05, 0.52, tier_color, 0.78 + float(enemy_tier) * 0.28)
-    var edge_material := ModelKit3D.material(Color("9d8e73").lerp(tier_color, 0.20), 0.0, 0.76)
     var channel_material := ModelKit3D.material(tier_color.darkened(0.28), 0.08, 0.42, tier_color, 0.72 + float(enemy_tier) * 0.22)
     var bone := ModelKit3D.material(Color("a69678"), 0.0, 0.76)
 
@@ -257,21 +256,20 @@ func _refresh_visuals() -> void:
     # pressure legible at the tactical camera without changing the actor's
     # collision or simulation state.
     # Tier anatomy is a restrained biological accent, not a second skeleton.
-    # The previous 2 + tier plates filled the close gallery with repeated bars
-    # that read as a cage over the authored shell. Keep a compact dorsal series
-    # so tier remains legible while the species silhouette stays primary.
-    var dorsal_count := 2 + mini(enemy_tier, 2)
+    # The previous dorsal plate series filled the close gallery with repeated
+    # bars that read as a cage over the authored shell. Keep one short spine,
+    # adding a paired cue only for strategic and apex tiers.
+    var dorsal_count := 1 + int(enemy_tier >= 4)
     for index in range(dorsal_count):
-        var fraction := float(index) / float(maxi(1, dorsal_count - 1))
-        var dorsal_z := lerpf(-0.56, 0.56, fraction)
-        var dorsal_y := 1.18 + float(enemy_tier) * 0.05 + sin(fraction * PI) * 0.10
-        ModelKit3D.add_organic_plate(
+        var dorsal_z := 0.0 if dorsal_count == 1 else (-0.24 if index == 0 else 0.24)
+        var dorsal_y := 1.42 + float(enemy_tier) * 0.06
+        ModelKit3D.add_capsule(
             tier_detail,
-            0.095 + float(enemy_tier) * 0.012,
+            0.032 + float(enemy_tier) * 0.006,
+            0.30 + float(enemy_tier) * 0.05,
             Vector3(0.0, dorsal_y, dorsal_z),
             crest_material,
-            edge_material,
-            Vector3(0.92 + float(enemy_tier) * 0.035, 0.28, 0.58),
+            Vector3(0.18 + float(index) * 0.12, 0.0, 0.0),
             "TierDorsalPlate%02d" % index
         )
 

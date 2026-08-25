@@ -244,6 +244,17 @@ func _texture_mesh(mesh_instance: MeshInstance3D) -> void:
             # compact gallery is a real production gate: plates, ribs and
             # spines need to catch the key as structural anatomy, while
             # membranes and vascular details need a separate living lift.
+            var detail_name := String(mesh_instance.name).to_lower()
+            var structural_detail := _contains_any(detail_name, ["plate", "rib", "ridge", "spine", "hook", "knuckle", "fastener", "bone", "frame", "ray", "cap", "leg", "arm", "talon", "jaw", "tiercrest", "tierdorsal", "tiercrown"])
+            if structural_detail:
+                # The chitin atlas is intentionally dark and patterned for wet flesh.
+                # Applying it to bone, ribs and limbs made every family read as a
+                # stack of black manufactured bars. Preserve the family tint and
+                # normal material contract for living surfaces, but let structural
+                # anatomy use a clean authored albedo so it separates in key light.
+                material.albedo_texture = null
+                material.normal_enabled = false
+                material.normal_texture = null
             material.albedo_color = _organic_detail_tint(mesh_instance, authored_tint, category)
     mesh_instance.material_override = material
     mesh_instance.visibility_range_end = 250.0
@@ -327,8 +338,8 @@ func _organic_detail_tint(mesh_instance: MeshInstance3D, family_tint: Color, cat
     var detail_name := String(mesh_instance.name).to_lower()
     if category == &"membrane" or _contains_any(detail_name, ["membrane", "fan", "gill", "fin", "wing", "mantle", "spore", "vein"]):
         return family_tint.lightened(0.16)
-    if _contains_any(detail_name, ["plate", "rib", "ridge", "spine", "hook", "knuckle", "fastener", "bone", "frame", "ray", "cap", "tiercrest", "tierdorsal", "tiercrown"]):
-        return family_tint.lerp(Color("d9c59b"), 0.48)
+    if _contains_any(detail_name, ["plate", "rib", "ridge", "spine", "hook", "knuckle", "fastener", "bone", "frame", "ray", "cap", "leg", "arm", "talon", "jaw", "tiercrest", "tierdorsal", "tiercrown"]):
+        return family_tint.darkened(0.16)
     if _contains_any(detail_name, ["eye", "oculus", "resonator", "siphon", "tendon", "tiervascular", "tiersignal"]):
         return family_tint.lightened(0.22)
     return family_tint.darkened(0.06)
