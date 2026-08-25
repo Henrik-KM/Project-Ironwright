@@ -694,6 +694,10 @@ func _run_all() -> void:
                 var tenement_creep := landmark.find_child("TenementOrganicCreep0", true, false) as Node3D
                 _expect(tenement_creep != null, "East Tenements must expose a named organic-creep motion socket.")
                 _expect(landmark.find_child("TenementLaundryLine0", true, false) != null and landmark.find_child("TenementLightHousingL", true, false) != null and landmark.find_child("TenementOrganicTendril0_0", true, false) != null, "East Tenements must expose lived-in laundry, window-light and organic detail.")
+                var tenement_laundry := landmark.find_child("TenementLaundry", true, false) as Node3D
+                var tenement_laundry_core := tenement_laundry.get_node_or_null("TenementLaundryCore") as MeshInstance3D if tenement_laundry != null else null
+                var tenement_laundry_material := tenement_laundry_core.material_override as StandardMaterial3D if tenement_laundry_core != null else null
+                _expect(tenement_laundry != null and tenement_laundry.get_child_count() >= 5 and tenement_laundry_material != null and tenement_laundry_material.albedo_color.r < 0.8 and tenement_laundry_material.albedo_color.g < 0.75, "East Tenements laundry must retain beveled cloth detail with muted residential tones rather than saturated placeholder cards.")
                 if tenement_creep != null:
                     landmark.set_presentation_detail_level(0)
                     var tenement_ladder := landmark.find_child("TenementFireEscapeLadder", true, false) as Node3D

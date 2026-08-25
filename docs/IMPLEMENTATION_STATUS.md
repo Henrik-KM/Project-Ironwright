@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused East Tenements laundry-dressing pass
+
+- replaced the encounter vignette's saturated laundry cards with varied
+  weathered cloth tones, beveled panel volume and restrained lower hems while
+  preserving the residential route, landmark ownership and presentation-only
+  scope;
+- the aesthetic suite now guards the muted cloth material and beveled detail;
+  the exact silent page 6/14 review will confirm the revised residential arc.
+
 ## Focused Skitterling sensory-fan pass
 
 - replaced the Skitterling's repeated beveled-box sensory fans with dense

@@ -378,6 +378,12 @@ func _build_tenement_vignette(parent: Node3D) -> void:
     var window_warm := ModelKit3D.material(Color("7d4e30"), 0.2, 0.32, Color("e9a35d"), 1.2)
     var service_cyan := ModelKit3D.material(Color("24494e"), 0.32, 0.3, Color("63d4d8"), 1.8)
     var growth := ModelKit3D.material(Color("321a25"), 0.0, 0.8, Color("a43258"), 0.62)
+    var cloth_variants: Array[StandardMaterial3D] = [
+        ModelKit3D.material(Color("5b4b47"), 0.0, 0.94),
+        ModelKit3D.material(Color("31565a"), 0.0, 0.94),
+        ModelKit3D.material(Color("75664f"), 0.0, 0.95),
+    ]
+    var cloth_hem := ModelKit3D.material(Color("263235"), 0.18, 0.82)
 
     ModelKit3D.add_beveled_box(vertical_life, Vector3(6.8, 5.5, 0.5), Vector3(4.6, 2.75, -7.05), facade, Vector3(0.0, 0.0, 0.02), "TenementFacadeShell", 0.16)
     ModelKit3D.add_beveled_box(vertical_life, Vector3(7.25, 0.22, 0.78), Vector3(4.6, 5.62, -7.02), facade_edge, Vector3.ZERO, "TenementRoofCoping", 0.22)
@@ -408,7 +414,24 @@ func _build_tenement_vignette(parent: Node3D) -> void:
         _add_beam(parent, Vector3(-6.0, y, -6.2), Vector3(6.0, y, -6.2), 0.06, _steel, "TenementLaundryRail")
         for index in range(5):
             var x := -4.8 + float(index) * 2.4
-            ModelKit3D.add_box(parent, Vector3(0.9, 0.72, 0.045), Vector3(x, y - 0.42, -6.12), _membrane if index % 2 == 0 else _warning, Vector3(0.03 * index, 0.02 * index, 0.0), "TenementLaundry")
+            ModelKit3D.add_beveled_box(
+                parent,
+                Vector3(0.9, 0.72, 0.06),
+                Vector3(x, y - 0.42, -6.12),
+                cloth_variants[(level + index) % cloth_variants.size()],
+                Vector3(0.03 * index, 0.02 * index, 0.0),
+                "TenementLaundry",
+                0.18,
+            )
+            ModelKit3D.add_beveled_box(
+                parent,
+                Vector3(0.84, 0.06, 0.08),
+                Vector3(x, y - 0.81, -6.10),
+                cloth_hem,
+                Vector3(0.0, 0.02 * float(index), 0.0),
+                "TenementLaundryHem",
+                0.30,
+            )
     ModelKit3D.add_beveled_box(parent, Vector3(2.4, 0.18, 1.0), Vector3(-5.8, 0.28, -5.8), _rust, Vector3.ZERO, "TenementBench", 0.2)
 
 

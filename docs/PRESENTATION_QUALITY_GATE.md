@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+East Tenements received a focused laundry-dressing correction on 2026-08-25.
+The encounter vignette's repeated saturated cards now use varied weathered
+cloth tones, beveled panel volume and restrained lower hems, so the residential
+arc reads as inhabited fabric rather than placeholder UI surfaces. Exact silent
+1280x720 page 6/14 review is required to confirm the revised dressing; broader
+human remote-facility and production-art acceptance remain open.
+
 Skitterling received a focused sensory-fan volume pass on 2026-08-25. Its
 existing sensory sockets now use dense rounded membrane envelopes rather than
 thin beveled bars, giving the scavenger a softer biological signal silhouette
