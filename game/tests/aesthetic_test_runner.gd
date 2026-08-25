@@ -304,6 +304,9 @@ func _run_all() -> void:
                     _expect(secondary_identity_name != "" and secondary_breadth.find_child(secondary_identity_name, true, false) != null, "District breadth must preserve a second region-specific identity motif.")
             var pressure_read := landmark.get_node_or_null("PersistentRegionGeometry/RegionalPressureRead") as Node3D
             var pressure_signal := landmark.find_child("RegionalPressureSignal00", true, false) as Node3D
+            var pressure_signal_mesh := pressure_signal as MeshInstance3D
+            var pressure_signal_material := pressure_signal_mesh.get_active_material(0) as StandardMaterial3D if pressure_signal_mesh != null else null
+            _expect(pressure_signal_material != null and pressure_signal_material.emission_energy_multiplier <= 0.70, "Regional pressure signals must retain a bounded emission ceiling instead of blooming into white points across the landmark.")
             if pressure_read != null and pressure_signal != null:
                 landmark.set_pressure(0.9)
                 landmark.set_presentation_detail_level(0)

@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The shared regional pressure-signal layer received a focused emission-balance
+pass on 2026-08-25. High ecological pressure still pulses through the six
+physical markers, but their emission now has a bounded ceiling so authored
+industrial, residential, civic and observatory structures retain material
+separation instead of acquiring repeated white points. Exact silent remote
+review is required to confirm the region-family hierarchy; broader human region
+and production-art acceptance remain open.
+
 Municipal Glasshouse received a focused glow-balance pass on 2026-08-25. The
 authored bed lights and canopy signal now use restrained green emission, while
 the release dressing's mycelium cues are lower-energy, so cold glass, climate

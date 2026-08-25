@@ -806,7 +806,10 @@ func _refresh_pressure_read() -> void:
     var intensity := clampf(effective_pressure(), 0.0, 1.0)
     _pressure_read_root.visible = discovered and region_kind != &"sanctuary"
     if _pressure_signal_material != null:
-        _pressure_signal_material.emission_energy_multiplier = lerpf(0.3, 2.8, intensity)
+        # Pressure is a strategic read, not a white point-light ring. Keep the
+        # signal visible and alive while preserving the authored landmark's
+        # material hierarchy at high ecological intensity.
+        _pressure_signal_material.emission_energy_multiplier = lerpf(0.16, 0.62, intensity)
         _pressure_signal_material.albedo_color = _region_color().darkened(lerpf(0.78, 0.42, intensity))
 
 

@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused regional pressure-signal emission pass
+
+- retained the physical six-marker ecological pressure read and deterministic
+  pulse while lowering its high-pressure emission ceiling so regional authored
+  structures do not acquire repeated white points;
+- added an aesthetic regression guard for the shared pressure-signal material;
+  exact silent remote-region review remains required for broader family
+  acceptance.
+
 ## Focused Municipal Glasshouse glow-balance pass
 
 - separated the authored bed lights and canopy signal from their shared
