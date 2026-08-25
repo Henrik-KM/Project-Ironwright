@@ -171,6 +171,66 @@ def add_convex_sheet(
     return _geometry(builder, positions, normals, indices, material)
 
 
+def add_capsule(
+    builder: BufferBuilder,
+    radius: float,
+    height: float,
+    material: int,
+    sides: int = 24,
+    cap_segments: int = 6,
+) -> tuple[int, int, int, int]:
+    """Build a smooth vertical capsule for living structural details.
+
+    The shared family kit previously used capped cylinders for every bone,
+    wing spar and tendon. At the compact review distance those flat ends read
+    as manufactured rods and caught the shadow as black bars. Rounded caps
+    keep the same dimensions and material contract while giving each detail a
+    softer, more biological silhouette.
+    """
+    radius = max(0.001, float(radius))
+    height = max(float(height), radius * 2.05)
+    sides = max(24, int(sides))
+    cap_segments = max(4, int(cap_segments))
+    half_body = max(0.0, height * 0.5 - radius)
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+    rings: list[list[int]] = []
+
+    def add_ring(y: float, ring_radius: float, normal_y: float) -> None:
+        ring: list[int] = []
+        for side in range(sides):
+            angle = math.tau * side / sides
+            cosine = math.cos(angle)
+            sine = math.sin(angle)
+            normal = (ring_radius * cosine, normal_y, ring_radius * sine)
+            normal_length = math.sqrt(sum(value * value for value in normal)) or 1.0
+            ring.append(len(positions) // 3)
+            positions.extend([ring_radius * cosine, y, ring_radius * sine])
+            normals.extend(value / normal_length for value in normal)
+        rings.append(ring)
+
+    for index in range(cap_segments + 1):
+        theta = -math.pi * 0.5 + math.pi * 0.5 * index / cap_segments
+        add_ring(-half_body + math.sin(theta) * radius, math.cos(theta) * radius, math.sin(theta))
+    if half_body > 0.0:
+        add_ring(half_body, radius, 0.0)
+    for index in range(1, cap_segments + 1):
+        theta = math.pi * 0.5 * index / cap_segments
+        add_ring(half_body + math.sin(theta) * radius, math.cos(theta) * radius, math.sin(theta))
+
+    for ring_index in range(len(rings) - 1):
+        current = rings[ring_index]
+        next_ring = rings[ring_index + 1]
+        for side in range(sides):
+            next_side = (side + 1) % sides
+            indices.extend([
+                current[side], current[next_side], next_ring[next_side],
+                current[side], next_ring[next_side], next_ring[side],
+            ])
+    return _geometry(builder, positions, normals, indices, material)
+
+
 def add_torus(
     builder: BufferBuilder,
     major_radius: float,
@@ -252,22 +312,22 @@ def build_family(name: str, spec: dict) -> None:
         "Plate": mesh("Plate", add_convex_sheet(builder, (1.52, 0.16, 0.28), shell, rings=5, sides=24)),
         "ShellPlate": mesh("ShellPlate", add_convex_sheet(builder, (1.52, 0.24, 0.54), shell, rings=7, sides=32)),
         "Membrane": mesh("Membrane", add_convex_sheet(builder, (1.26, 0.045, 1.08), membrane, rings=6, sides=28)),
-        "Bone": mesh("Bone", add_cylinder(builder, 0.09, 0.86, bone, 24)),
-        "LongBone": mesh("LongBone", add_cylinder(builder, 0.065, 1.35, bone, 24)),
-        "Tendon": mesh("Tendon", add_cylinder(builder, 0.07, 1.15, tendon, 24)),
+        "Bone": mesh("Bone", add_capsule(builder, 0.09, 0.86, bone, 24)),
+        "LongBone": mesh("LongBone", add_capsule(builder, 0.065, 1.35, bone, 24)),
+        "Tendon": mesh("Tendon", add_capsule(builder, 0.07, 1.15, tendon, 24)),
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.095, eye, 24, 36)),
         "Soft": mesh("Soft", add_uv_sphere(builder, 0.34, membrane, 24, 36)),
         "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.045, bone, 24, 36)),
-        "FineVein": mesh("FineVein", add_cylinder(builder, 0.026, 1.22, bone, 24)),
-        "SurfaceVein": mesh("SurfaceVein", add_cylinder(builder, 0.024, 0.88, tendon, 24)),
+        "FineVein": mesh("FineVein", add_capsule(builder, 0.026, 1.22, bone, 24)),
+        "SurfaceVein": mesh("SurfaceVein", add_capsule(builder, 0.024, 0.88, tendon, 24)),
         "Ridge": mesh("Ridge", add_beveled_box(builder, (1.24, 0.07, 0.10), bone, 0.018)),
         "ResonatorRing": mesh("ResonatorRing", add_torus(builder, 0.19, 0.035, bone)),
         "RootKnuckle": mesh("RootKnuckle", add_uv_sphere(builder, 0.14, bone, 24, 36)),
-        "WingFrame": mesh("WingFrame", add_cylinder(builder, 0.045, 1.58, bone, 24)),
-        "MembraneRib": mesh("MembraneRib", add_cylinder(builder, 0.03, 0.82, bone, 24)),
-        "GillSpine": mesh("GillSpine", add_cylinder(builder, 0.045, 0.78, bone, 24)),
-        "BellRib": mesh("BellRib", add_cylinder(builder, 0.04, 0.92, bone, 24)),
-        "RootSpine": mesh("RootSpine", add_cylinder(builder, 0.055, 1.42, bone, 24)),
+        "WingFrame": mesh("WingFrame", add_capsule(builder, 0.045, 1.58, bone, 24)),
+        "MembraneRib": mesh("MembraneRib", add_capsule(builder, 0.03, 0.82, bone, 24)),
+        "GillSpine": mesh("GillSpine", add_capsule(builder, 0.045, 0.78, bone, 24)),
+        "BellRib": mesh("BellRib", add_capsule(builder, 0.04, 0.92, bone, 24)),
+        "RootSpine": mesh("RootSpine", add_capsule(builder, 0.055, 1.42, bone, 24)),
         "PlateCap": mesh("PlateCap", add_convex_sheet(builder, (0.44, 0.10, 0.18), bone, rings=4, sides=24)),
         "CrownFastener": mesh("CrownFastener", add_uv_sphere(builder, 0.06, bone, 24, 36)),
     }

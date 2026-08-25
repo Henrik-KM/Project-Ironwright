@@ -327,9 +327,9 @@ func _organic_detail_tint(mesh_instance: MeshInstance3D, family_tint: Color, cat
     var detail_name := String(mesh_instance.name).to_lower()
     if category == &"membrane" or _contains_any(detail_name, ["membrane", "fan", "gill", "fin", "wing", "mantle", "spore", "vein"]):
         return family_tint.lightened(0.16)
-    if _contains_any(detail_name, ["plate", "rib", "ridge", "spine", "hook", "knuckle", "fastener", "bone", "frame", "ray", "cap"]):
+    if _contains_any(detail_name, ["plate", "rib", "ridge", "spine", "hook", "knuckle", "fastener", "bone", "frame", "ray", "cap", "tiercrest", "tierdorsal", "tiercrown"]):
         return family_tint.lerp(Color("d9c59b"), 0.48)
-    if _contains_any(detail_name, ["eye", "oculus", "resonator", "siphon", "tendon"]):
+    if _contains_any(detail_name, ["eye", "oculus", "resonator", "siphon", "tendon", "tiervascular", "tiersignal"]):
         return family_tint.lightened(0.22)
     return family_tint.darkened(0.06)
 
