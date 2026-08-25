@@ -1244,6 +1244,9 @@ func _run_all() -> void:
             if species_names[index] == &"carrionbell":
                 var carrionbell_crown_depth := convex_sheet.mesh.get_aabb().size.y if convex_sheet != null and convex_sheet.mesh != null else 0.0
                 _expect(carrionbell_crown_depth >= 0.28, "The Carrion Bell crown must retain folded living depth above the resonator rather than collapsing into a thin signal bar.")
+            if species_names[index] == &"rootweaver":
+                var rootweaver_crown_depth := convex_sheet.mesh.get_aabb().size.y if convex_sheet != null and convex_sheet.mesh != null else 0.0
+                _expect(rootweaver_crown_depth >= 0.24, "The Rootweaver crown plates must retain folded living depth around the route oculi rather than collapsing into thin service bars.")
             if species_names[index] in [&"roofleaper", &"glassmoth", &"miremaw", &"rootweaver"]:
                 _expect(convex_sheet != null and _mesh_vertex_count(convex_sheet) >= 600, "The %s living membrane must retain the dense tapered-lobe geometry used for the late-family silhouette pass." % species_names[index])
             if species_names[index] in [&"miremaw", &"rootweaver"]:

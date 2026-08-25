@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused Rootweaver crown-lobe pass
+
+- replaced Rootweaver's paired crown sheets with dense closed folded living
+  lobes while preserving both crown sockets, route-oculus framing, animation
+  channels and runtime family contract;
+- the aesthetic suite now guards measurable crown depth; the exact silent late
+  organic review will confirm the paired crown silhouette at tactical distance.
+
 ## Focused Broodmass folded-plate pass
 
 - replaced the Broodmass dorsal and maw shell sheets with dense, closed folded
