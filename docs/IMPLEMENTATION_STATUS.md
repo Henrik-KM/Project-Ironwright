@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused vertical-slice roof-occlusion correction
+
+- the four central cutaway buildings now hide all original presentation roots,
+  including roof slabs and collapse fragments, while retaining their
+  authoritative collision shapes;
+- the vertical-slice suite now guards the roof cleanup so the opening and
+  endgame establishing cameras cannot inherit a leftover opaque roof plane.
+
 ## Focused Tier V crown-fin emission pass
 
 - separated the Tier V crown fins from the brighter general cyan hardware

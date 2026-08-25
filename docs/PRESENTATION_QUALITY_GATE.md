@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The representative vertical slice received a focused roof-occlusion correction
+on 2026-08-25. Its four central cutaway buildings now hide the original roof
+slabs and collapse fragments as well as the old opaque shells, while preserving
+collision and the authored broken facades. This keeps both the opening and
+endgame establishing frames readable; exact silent 1280x720 review is required
+to confirm the revised composition, and broader human environment acceptance
+remains open.
+
 The Mechromancer progression attachment layer received a focused correction on
 2026-08-25. Tier II-V field hardware now uses the actor's vertical/depth axes
 correctly, so upgrades remain on the human field-engineer silhouette instead of

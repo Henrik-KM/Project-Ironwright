@@ -147,7 +147,13 @@ func _replace_central_building_visuals() -> void:
         if body == null:
             continue
         for child in body.get_children():
-            if child is MeshInstance3D or child.name == "Shell":
+            # The cutaway owns the readable central-building presentation.
+            # Hide every original visual root, including roof slabs and
+            # collapse fragments, while retaining the authoritative collision
+            # shape so the plaza's spatial contract does not change.
+            if child is CollisionShape3D:
+                continue
+            if child is Node3D:
                 (child as Node3D).visible = false
         _build_cutaway_facade(body, float(definition[2]), definition[3] as StringName)
 
