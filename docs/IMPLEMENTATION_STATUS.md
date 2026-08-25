@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused endgame establishing-camera pass
+
+- the active final protocol and first-victory overlay now use a bounded,
+  Heartforge-focused establishing camera with additional height and distance;
+  continuing the sanctuary returns smoothly to the normal player-follow frame;
+- the complete-game contract now checks the final camera distance, while the
+  change preserves protocol timing, lattice ownership, collision, controls and
+  save state; exact silent crisis-to-victory review confirms the wider frame.
+
 ## Focused Thornback crown-lobe readability pass
 
 - replaced only Thornback's broad crown plate mesh with a dense, scalloped and

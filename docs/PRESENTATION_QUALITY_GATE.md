@@ -165,6 +165,13 @@ review confirms the research landmark reads more deliberately at the remote
 camera distance while preserving its stable sockets and operation contract;
 broader human region and production-art acceptance remain open.
 
+The final protocol received a focused establishing-camera pass on 2026-08-25.
+During the active crisis and first-victory overlay, the camera now gives the
+Heartforge lattice a calmer, wider frame so the completion surface and
+surviving machine cast remain judgeable; continuing the sanctuary restores the
+ordinary player-follow camera. Exact silent crisis-to-victory review confirms
+the wider frame; broader human endgame acceptance remains open.
+
 Thornback received a focused crown-lobe readability pass on 2026-08-25. Its
 existing crown socket now uses a dense folded and scalloped living shield,
 preserving the family animation and threat contract while removing the broad
