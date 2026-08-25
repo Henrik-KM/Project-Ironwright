@@ -1654,7 +1654,7 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	# Darker organic shells need a little more review-only key and rim energy
 	# than the manufactured roster to keep wet materials and anatomy breaks
 	# judgeable at the supported compact export size. Runtime lighting is untouched.
-	var organic_gallery_light_scale := 1.58 if presentation_review_page >= 1 and presentation_review_page <= 2 else 1.0
+	var organic_gallery_light_scale := 1.18 if presentation_review_page >= 1 and presentation_review_page <= 2 else 1.0
 	# Friendly authored shells carry bright cyan sensors and pale steel. The
 	# roster page needs a slightly quieter shared key so copper oxide, rubber,
 	# brushed steel and protected tool hardware retain their material breaks.
@@ -1664,8 +1664,10 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	var organic_page := presentation_review_page >= 1 and presentation_review_page <= 2
 	if organic_fill != null:
 		organic_fill.visible = organic_page
-		organic_fill.light_energy = 3.2 if organic_page else 0.0
-		organic_fill.position = target + Vector3(0.0, 4.0, 8.0)
+		organic_fill.light_energy = 2.2 if organic_page else 0.0
+		# A low, shadowless fill reveals legs, roots and jaw hardware that sit
+		# below the broad shell key without changing runtime lighting.
+		organic_fill.position = target + Vector3(0.0, 2.6, 7.0)
 	# The authored shells already carry high-frequency normal detail. Removing
 	# only the organic gallery key's hard shadows keeps plates, ribs and
 	# membranes from collapsing into black bands at compact acceptance

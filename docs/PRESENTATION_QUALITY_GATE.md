@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The late-organic family review received a structural-material and torso-shell
+correction on 2026-08-25. Shared torso ribs now use rounded ellipsoidal shells,
+and structural plates, ribs, limbs and jaws no longer inherit the dark chitin
+atlas used by wet flesh. Silent 1280x720 page 3/14 capture after forced Godot
+reimport confirms clearer anatomy separation; broader human hostile-family and
+production-art acceptance remain open.
+
 The Heartforge focal model received a focused high-definition pass on
 2026-08-25. Its primary housing and furnace now use smooth ellipsoidal
 envelopes, while the service cladding, control face, thermal shrouds and

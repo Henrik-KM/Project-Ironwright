@@ -2,6 +2,12 @@
 
 ## Focused Heartforge focal-model high-definition pass
 
+- refined the shared late-organic torso ribs into rounded ellipsoidal shells
+  and removed the dark chitin atlas from structural anatomy accents so plates,
+  ribs, limbs and jaws separate cleanly from wet flesh; the silent page 3/14
+  capture remains a focused improvement, while broader organic production-art
+  acceptance remains open.
+
 - replaced the primary housing and furnace's hard cylinder silhouettes with
   smooth authored ellipsoidal envelopes and lifted the service cladding,
   control face, thermal shrouds and fabrication braces onto chamfered hero
