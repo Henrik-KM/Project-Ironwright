@@ -11,6 +11,10 @@
   Windows build boots with Godot's dummy audio driver, and captured the same
   1280x720 presentation path to movie frames without system audio; the broader
   opening-composition and production-art gates remain open.
+- tightened the runtime Tier V crown and converted the earlier Tier III heat
+  plate into an open thermal ring, then silently recaptured the exact 1280x720
+  progression fixture; the crown now reads as warm manufactured hardware
+  without the prior pale screen-space band.
 
 ## Focused early-organic material separation pass
 
