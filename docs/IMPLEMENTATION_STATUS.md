@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused Cathedral Quarter choir-crown pass
+
+- added a shallow organ-like crown rail with stepped pipe silhouettes, collars
+  and a restrained signal above the civic nave to strengthen the worship-space
+  identity at remote review distance;
+- kept the pass presentation-only, with no new collision, routing, interaction,
+  encounter or simulation state.
+
 ## Focused North Ruins archive-gateway pass
 
 - added a bounded front-facing civic gateway with layered pilasters, header,

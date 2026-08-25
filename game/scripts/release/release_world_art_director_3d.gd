@@ -1109,6 +1109,55 @@ func _dress_nest(root: Node3D) -> void:
             Vector3(PI * 0.5, 0.0, spoke_angle),
             "CathedralReleaseRoseSpoke%02d" % spoke_index
         )
+    # The rose window alone disappears into the roof clutter at remote review
+    # distance. Add a restrained organ-like choir crown above the nave so the
+    # quarter reads as a civic worship space before its brood takeover. Keep
+    # this as shallow presentation dressing: it adds no collision, routing,
+    # interaction or encounter state.
+    var choir_metal := _textured_material(&"metal", Color("55403d"), 0.5, 0.5)
+    var choir_dark := _textured_material(&"metal", Color("282d31"), 0.72, 0.38)
+    var choir_signal := ModelKit3D.material(Color("3d2850"), 0.2, 0.3, Color("bd67d1"), 0.62)
+    ModelKit3D.add_beveled_box(
+        cathedral_facade,
+        Vector3(4.7, 0.18, 0.18),
+        Vector3(0.0, 5.28, facade_z + 0.9),
+        choir_dark,
+        Vector3.ZERO,
+        "CathedralChoirCrownRail",
+        0.08
+    )
+    var choir_heights := [1.2, 1.8, 2.35, 2.8, 2.35, 1.8, 1.2]
+    for pipe_index in range(choir_heights.size()):
+        var pipe_height := float(choir_heights[pipe_index])
+        var pipe_x := -1.8 + float(pipe_index) * 0.6
+        ModelKit3D.add_cylinder(
+            cathedral_facade,
+            0.095,
+            pipe_height,
+            Vector3(pipe_x, 5.28 + pipe_height * 0.5, facade_z + 0.92),
+            choir_metal,
+            Vector3.ZERO,
+            "CathedralChoirPipe%02d" % pipe_index
+        )
+        ModelKit3D.add_torus(
+            cathedral_facade,
+            0.12,
+            0.035,
+            Vector3(pipe_x, 5.28, facade_z + 0.92),
+            choir_signal,
+            Vector3.ZERO,
+            "CathedralChoirCollar%02d" % pipe_index,
+            16,
+            6
+        )
+    ModelKit3D.add_sphere(
+        cathedral_facade,
+        0.22,
+        Vector3(0.0, 5.62, facade_z + 1.0),
+        choir_signal,
+        Vector3.ONE,
+        "CathedralChoirSignal"
+    )
     for side in [-1.0, 1.0]:
         ModelKit3D.add_beveled_box(
             cathedral_facade,

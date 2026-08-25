@@ -642,6 +642,8 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     var cathedral_dressing := world.release_world_art.region_dressing_root(&"region.cathedral_quarter") if world.release_world_art != null else null
     _expect(world.release_world_art != null and world.release_world_art.dressing_root.visible, "Remote presentation review must keep the sibling release dressing root visible.")
     _expect(cathedral_dressing != null and cathedral_dressing.visible and cathedral_dressing.find_child("CathedralReleaseFacade", true, false) != null, "Cathedral Quarter presentation review must retain its release facade dressing when selected.")
+    if cathedral_dressing != null:
+        _expect(cathedral_dressing.find_child("CathedralChoirCrownRail", true, false) != null and cathedral_dressing.find_child("CathedralChoirPipe03", true, false) != null and cathedral_dressing.find_child("CathedralChoirSignal", true, false) != null, "Cathedral Quarter presentation review must retain its layered choir crown and signal detail.")
     world._show_presentation_review_page(13)
     await process_frame
     var page: Array = world.presentation_review_pages[13] if world.presentation_review_pages.size() > 13 else []
