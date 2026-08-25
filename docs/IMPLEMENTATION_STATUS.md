@@ -2,6 +2,11 @@
 
 ## Focused Heartforge focal-model high-definition pass
 
+- refined Tram Graveyard's three derailed carriage variants with authored roof
+  ribs, corner posts, bogie crossbars, smooth wheel rims and ceramic hubs;
+  regenerated the glTF and silently live-reviewed exact page 10/14 at 1280x720
+  while preserving the carriage, rail, salvage and maintenance-pit contracts.
+
 - refined Buried Laboratories' three containment vessels with rounded glass
   pressure envelopes, separate caps, service collars, warning base rings and
   neck assemblies around the existing glowing cores; regenerated the authored

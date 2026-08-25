@@ -12,10 +12,45 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "tram_graveyard.gltf"
+
+
+def add_torus(
+    builder: BufferBuilder,
+    major_radius: float,
+    minor_radius: float,
+    material: int,
+    major_segments: int = 48,
+    minor_segments: int = 8,
+) -> tuple[int, int, int, int]:
+    """Build a smooth wheel rim that keeps the derailed hardware legible."""
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+    for major in range(major_segments):
+        major_angle = math.tau * major / major_segments
+        major_cos = math.cos(major_angle)
+        major_sin = math.sin(major_angle)
+        for minor in range(minor_segments):
+            minor_angle = math.tau * minor / minor_segments
+            minor_cos = math.cos(minor_angle)
+            minor_sin = math.sin(minor_angle)
+            ring_radius = major_radius + minor_radius * minor_cos
+            positions.extend([ring_radius * major_cos, minor_radius * minor_sin, ring_radius * major_sin])
+            normals.extend([minor_cos * major_cos, minor_sin, minor_cos * major_sin])
+    for major in range(major_segments):
+        next_major = (major + 1) % major_segments
+        for minor in range(minor_segments):
+            next_minor = (minor + 1) % minor_segments
+            a = major * minor_segments + minor
+            b = next_major * minor_segments + minor
+            c = next_major * minor_segments + next_minor
+            d = major * minor_segments + next_minor
+            indices.extend([a, b, c, a, c, d])
+    return _geometry(builder, positions, normals, indices, material)
 
 
 def main() -> None:
@@ -55,7 +90,10 @@ def main() -> None:
         "LowerPanel": mesh("LowerPanel", add_beveled_box(builder, (1.45, 0.62, 0.10), dark, 0.025)),
         "Undercarriage": mesh("Undercarriage", add_beveled_box(builder, (7.5, 0.52, 1.75), dark, 0.08)),
         "BogiePlate": mesh("BogiePlate", add_beveled_box(builder, (1.35, 0.24, 1.34), dark, 0.055)),
+        "BogieCrossbar": mesh("BogieCrossbar", add_beveled_box(builder, (1.80, 0.14, 0.16), rust, 0.025)),
         "Wheel": mesh("Wheel", add_cylinder(builder, 0.62, 0.22, dark, 28)),
+        "WheelRim": mesh("WheelRim", add_torus(builder, 0.47, 0.075, rust)),
+        "WheelHub": mesh("WheelHub", add_cylinder(builder, 0.18, 0.28, ceramic, 24)),
         "Rail": mesh("Rail", add_cylinder(builder, 0.11, 15.0, rust, 20)),
         "Sleeper": mesh("Sleeper", add_beveled_box(builder, (4.6, 0.18, 0.34), concrete, 0.04)),
         "RailFastener": mesh("RailFastener", add_cylinder(builder, 0.08, 0.10, rust, 16)),
@@ -72,6 +110,8 @@ def main() -> None:
         "PantographArm": mesh("PantographArm", add_beveled_box(builder, (2.6, 0.10, 0.10), dark, 0.025)),
         "PantographInsulator": mesh("PantographInsulator", add_cylinder(builder, 0.10, 0.22, ceramic, 18)),
         "RoofVent": mesh("RoofVent", add_beveled_box(builder, (0.92, 0.16, 0.42), rust, 0.035)),
+        "RoofRib": mesh("RoofRib", add_beveled_box(builder, (0.14, 0.11, 2.42), rust, 0.025)),
+        "CornerPost": mesh("CornerPost", add_beveled_box(builder, (0.16, 1.58, 0.16), rust, 0.03)),
         "HeadlampHousing": mesh("HeadlampHousing", add_cylinder(builder, 0.17, 0.20, dark, 22)),
         "HeadlampLens": mesh("HeadlampLens", add_cylinder(builder, 0.11, 0.07, amber, 22)),
         "Seep": mesh("Seep", add_uv_sphere(builder, 0.48, organic, 18, 28)),
@@ -123,6 +163,11 @@ def main() -> None:
                 add_node(prefix + "SidePanel" + side_name + str(index), mesh_ids["CarriageSidePanel"], (x, 1.18, side_z), extras={"surface": "maintained_carriage_panel"}, parent=carriage_root)
         add_node(prefix + "RoofVent0", mesh_ids["RoofVent"], (-2.4, 3.82, 0.0), parent=carriage_root)
         add_node(prefix + "RoofVent1", mesh_ids["RoofVent"], (2.0, 3.82, 0.0), parent=carriage_root)
+        for index, x in enumerate((-3.35, -1.12, 1.12, 3.35)):
+            add_node(prefix + "RoofRib%d" % index, mesh_ids["RoofRib"], (x, 3.86, 0.0), extras={"surface": "carriage_roof_rib"}, parent=carriage_root)
+        for index, x in enumerate((-4.05, 4.05)):
+            add_node(prefix + "CornerPostFront%d" % index, mesh_ids["CornerPost"], (x, 2.10, 1.43), extras={"surface": "carriage_corner_post"}, parent=carriage_root)
+            add_node(prefix + "CornerPostRear%d" % index, mesh_ids["CornerPost"], (x, 2.10, -1.43), extras={"surface": "carriage_corner_post"}, parent=carriage_root)
         add_node(prefix + "BeltRailFront", mesh_ids["BeltRail"], (0.0, 1.25, 1.40), parent=carriage_root)
         add_node(prefix + "BeltRailRear", mesh_ids["BeltRail"], (0.0, 1.25, -1.40), parent=carriage_root)
         add_node(prefix + "Door", mesh_ids["Door"], (0.0, 1.52, -1.28), extras={"socket_type": "carriage_door"}, parent=carriage_root)
@@ -145,7 +190,11 @@ def main() -> None:
         add_node(prefix + "Undercarriage", mesh_ids["Undercarriage"], (0.0, 0.45, 0.0), parent=carriage_root)
         for index, x in enumerate((-2.55, 2.55)):
             add_node(prefix + "BogiePlate%d" % index, mesh_ids["BogiePlate"], (x, 0.70, 0.0), parent=carriage_root)
-            add_node(prefix + "Wheel%d" % index, mesh_ids["Wheel"], (x, 0.28, -0.62), rotation=(math.pi * 0.5, 0.0, 0.0), parent=carriage_root)
+            add_node(prefix + "BogieCrossbar%d" % index, mesh_ids["BogieCrossbar"], (x, 0.86, 0.0), extras={"surface": "bogie_crossbar"}, parent=carriage_root)
+            for side_name, z in (("Front", -0.62), ("Rear", 0.62)):
+                add_node(prefix + "Wheel" + side_name + str(index), mesh_ids["Wheel"], (x, 0.28, z), rotation=(math.pi * 0.5, 0.0, 0.0), parent=carriage_root)
+                add_node(prefix + "WheelRim" + side_name + str(index), mesh_ids["WheelRim"], (x, 0.28, z + (-0.13 if side_name == "Front" else 0.13)), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "wheel_rim"}, parent=carriage_root)
+                add_node(prefix + "WheelHub" + side_name + str(index), mesh_ids["WheelHub"], (x, 0.28, z + (-0.16 if side_name == "Front" else 0.16)), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "wheel_hub"}, parent=carriage_root)
         pantograph = add_node(prefix + "Pantograph", extras={"socket_type": "roof_power_pickup"}, parent=carriage_root)
         add_node(prefix + "PantographArmL", mesh_ids["PantographArm"], (-0.82, 4.13, 0.0), rotation=(0.0, 0.0, -0.20), parent=pantograph)
         add_node(prefix + "PantographArmR", mesh_ids["PantographArm"], (0.82, 4.13, 0.0), rotation=(0.0, 0.0, 0.20), parent=pantograph)
@@ -206,7 +255,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "tram.graveyard.v1",
-            "required_nodes": ["TramGraveyardModel", "TramCarriageA", "TramCarriageAFrontWindow0", "TramCarriageAFrontDoor", "TramCarriageAFrontHeadlampHousing", "TramCarriageABogiePlate0", "TramCarriageAPantograph", "TramCarriageASidePanelFront0", "TramYardDeck", "TramMaintenancePit", "TramPitRung0", "TramSignalMast", "TramSignalHousing", "TramSignalLamp", "TramCableClamp0", "TramOrganicSeep0", "TramOrganicSeepTendril0_0", "ProductionAssetMarker"],
+            "required_nodes": ["TramGraveyardModel", "TramCarriageA", "TramCarriageAFrontWindow0", "TramCarriageAFrontDoor", "TramCarriageAFrontHeadlampHousing", "TramCarriageABogiePlate0", "TramCarriageABogieCrossbar0", "TramCarriageAWheelRimFront0", "TramCarriageAWheelHubFront0", "TramCarriageARoofRib0", "TramCarriageACornerPostFront0", "TramCarriageAPantograph", "TramCarriageASidePanelFront0", "TramYardDeck", "TramMaintenancePit", "TramPitRung0", "TramSignalMast", "TramSignalHousing", "TramSignalLamp", "TramCableClamp0", "TramOrganicSeep0", "TramOrganicSeepTendril0_0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
