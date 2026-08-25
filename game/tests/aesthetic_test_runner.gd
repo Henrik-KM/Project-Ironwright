@@ -1244,6 +1244,9 @@ func _run_all() -> void:
             &"glassmoth":
                 _expect(_find_named(enemy_samples[index], "GlassmothFineVeinL0") != null and _find_named(enemy_samples[index], "GlassmothFineVeinR0") != null, "The Glassmoth must expose fine luminous wing-vein detail on both wing pairs.")
                 _expect(_find_named(enemy_samples[index], "GlassmothWingFrameL0") != null and _find_named(enemy_samples[index], "GlassmothWingFastenerR1") != null, "The Glassmoth must expose structural spars and socket fasteners on its luminous wings.")
+                var glassmoth_wing_l := _find_named(enemy_samples[index], "GlassmothWingL0") as Node3D
+                var glassmoth_wing_r := _find_named(enemy_samples[index], "GlassmothWingR0") as Node3D
+                _expect(glassmoth_wing_l != null and glassmoth_wing_r != null and absf(glassmoth_wing_l.basis.y.z) >= 0.12 and absf(glassmoth_wing_r.basis.y.z) >= 0.12 and glassmoth_wing_l.basis.y.z * glassmoth_wing_r.basis.y.z < 0.0, "The Glassmoth wing pair must carry opposing pitch so its luminous membranes read as a living V-shaped silhouette rather than coplanar discs.")
             &"miremaw":
                 _expect(_find_named(enemy_samples[index], "MiremawGillRidgeL") != null and _find_named(enemy_samples[index], "MiremawGillRidgeR") != null, "The Miremaw must expose layered gill-ridge surface detail.")
                 _expect(_find_named(enemy_samples[index], "MiremawJawPlateL") != null and _find_named(enemy_samples[index], "MiremawGillSpineR") != null, "The Miremaw must expose jaw plating and gill spines for readable amphibious anatomy.")

@@ -281,12 +281,18 @@ def build_family(name: str, spec: dict) -> None:
     wet, shell, membrane, bone, eye, tendon = range(6)
     colors = spec["colors"]
     membrane_tone = [channel * 0.62 if index < 3 else channel for index, channel in enumerate(colors[2])]
+    # Glassmoth is the luminous territorial swarm. Its wing membranes should
+    # carry a cool living-light identity instead of inheriting the warmer
+    # threat palette used by the terrestrial families.
+    if name == "glassmoth":
+        membrane_tone = [0.07, 0.34, 0.36, 1.0]
+    threat_emissive = [0.14, 0.86, 0.72] if name == "glassmoth" else [1.0, 0.18, 0.04]
     materials = [
         {"name": f"{spec['display']} wet shell", "pbrMetallicRoughness": {"baseColorFactor": list(colors[0]), "metallicFactor": 0.18, "roughnessFactor": 0.32}},
         {"name": f"{spec['display']} layered plate", "pbrMetallicRoughness": {"baseColorFactor": list(colors[1]), "metallicFactor": 0.14, "roughnessFactor": 0.42}},
         {"name": f"{spec['display']} membrane", "pbrMetallicRoughness": {"baseColorFactor": membrane_tone, "metallicFactor": 0.02, "roughnessFactor": 0.58}},
         {"name": f"{spec['display']} bone", "pbrMetallicRoughness": {"baseColorFactor": list(colors[3]), "metallicFactor": 0.0, "roughnessFactor": 0.62}},
-        {"name": f"{spec['display']} threat light", "pbrMetallicRoughness": {"baseColorFactor": list(colors[4]), "metallicFactor": 0.0, "roughnessFactor": 0.22}, "emissiveFactor": [1.0, 0.18, 0.04]},
+        {"name": f"{spec['display']} threat light", "pbrMetallicRoughness": {"baseColorFactor": list(colors[4]), "metallicFactor": 0.0, "roughnessFactor": 0.22}, "emissiveFactor": threat_emissive},
         {"name": f"{spec['display']} tendon", "pbrMetallicRoughness": {"baseColorFactor": list(colors[5]), "metallicFactor": 0.0, "roughnessFactor": 0.55}},
     ]
     meshes: list[dict] = []
@@ -409,10 +415,11 @@ def build_family(name: str, spec: dict) -> None:
         for side in (-1.0, 1.0):
             suffix = "L" if side < 0 else "R"
             for level in range(2):
-                add_node(f"GlassmothWing{suffix}{level}", mesh_ids["Membrane"], (side * (0.88 + level * 0.16), 1.18 + level * 0.16, 0.12 + level * 0.18), rotation=(0.0, side * (0.2 + level * 0.08), side * 0.18), scale=(1.3 - level * 0.12, 0.82, 1.0), extras={"socket_type": "wing_pair"})
-                add_node(f"GlassmothWingFrame{suffix}{level}", mesh_ids["WingFrame"], (side * (1.10 + level * 0.16), 1.22 + level * 0.16, 0.12 + level * 0.18), rotation=(0.0, side * (0.28 + level * 0.08), side * 0.64), scale=(0.62, 1.0, 0.82), extras={"surface": "glasswing_spar"})
+                wing_pitch = 0.20 + level * 0.05
+                add_node(f"GlassmothWing{suffix}{level}", mesh_ids["Membrane"], (side * (0.88 + level * 0.16), 1.18 + level * 0.16, 0.12 + level * 0.18), rotation=(side * wing_pitch, side * (0.2 + level * 0.08), side * 0.18), scale=(1.3 - level * 0.12, 0.82, 1.0), extras={"socket_type": "wing_pair"})
+                add_node(f"GlassmothWingFrame{suffix}{level}", mesh_ids["WingFrame"], (side * (1.10 + level * 0.16), 1.22 + level * 0.16, 0.12 + level * 0.18), rotation=(side * (wing_pitch + 0.04), side * (0.28 + level * 0.08), side * 0.64), scale=(0.62, 1.0, 0.82), extras={"surface": "glasswing_spar"})
                 add_node(f"GlassmothWingFastener{suffix}{level}", mesh_ids["CrownFastener"], (side * (0.58 + level * 0.12), 1.22 + level * 0.14, 0.08 + level * 0.16), extras={"surface": "wing_socket"})
-                add_node(f"GlassmothFineVein{suffix}{level}", mesh_ids["FineVein"], (side * (0.9 + level * 0.15), 1.2 + level * 0.15, 0.14 + level * 0.17), rotation=(0.0, side * (0.26 + level * 0.06), side * 0.24), scale=(0.65, 1.0, 0.76), extras={"surface": "luminous_wing_vein"})
+                add_node(f"GlassmothFineVein{suffix}{level}", mesh_ids["FineVein"], (side * (0.9 + level * 0.15), 1.2 + level * 0.15, 0.14 + level * 0.17), rotation=(side * (wing_pitch + 0.02), side * (0.26 + level * 0.06), side * 0.24), scale=(0.65, 1.0, 0.76), extras={"surface": "luminous_wing_vein"})
             add_node(f"GlassmothAntenna{suffix}", mesh_ids["Tendon"], (side * 0.2, 1.45, -0.98), rotation=(0.48, 0.0, side * 0.22), extras={"socket_type": "antenna"})
             add_node(f"GlassmothOculus{suffix}", mesh_ids["Eye"], (side * 0.2, 1.3, -1.12), extras={"socket_type": "luminous_eye"})
         walk_node = "GlassmothWingL0"
@@ -656,36 +663,36 @@ def build_family(name: str, spec: dict) -> None:
         # concert so the high-definition silhouette does not freeze into a
         # decorative plane during close tactical views.
         idle_channels.extend([
-            ("GlassmothWingL0", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.2, -0.18)) + quat((0.08, -0.24, -0.26)) + quat((0.0, -0.2, -0.18))),
-            ("GlassmothWingR0", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.2, 0.18)) + quat((-0.08, 0.24, 0.26)) + quat((0.0, 0.2, 0.18))),
-            ("GlassmothWingL1", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.28, -0.24)) + quat((0.06, -0.32, -0.3)) + quat((0.0, -0.28, -0.24))),
-            ("GlassmothWingR1", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.28, 0.24)) + quat((-0.06, 0.32, 0.3)) + quat((0.0, 0.28, 0.24))),
+            ("GlassmothWingL0", "rotation", [0.0, 0.8, 1.6], quat((-0.2, -0.2, -0.18)) + quat((0.08, -0.24, -0.26)) + quat((-0.2, -0.2, -0.18))),
+            ("GlassmothWingR0", "rotation", [0.0, 0.8, 1.6], quat((0.2, 0.2, 0.18)) + quat((-0.08, 0.24, 0.26)) + quat((0.2, 0.2, 0.18))),
+            ("GlassmothWingL1", "rotation", [0.0, 0.8, 1.6], quat((-0.25, -0.28, -0.24)) + quat((0.06, -0.32, -0.3)) + quat((-0.25, -0.28, -0.24))),
+            ("GlassmothWingR1", "rotation", [0.0, 0.8, 1.6], quat((0.25, 0.28, 0.24)) + quat((-0.06, 0.32, 0.3)) + quat((0.25, 0.28, 0.24))),
         ])
         walk_channels.extend([
-            ("GlassmothWingL0", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.2, -0.18)) + quat((0.16, -0.28, -0.32)) + quat((0.0, -0.2, -0.18))),
-            ("GlassmothWingR0", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.2, 0.18)) + quat((-0.16, 0.28, 0.32)) + quat((0.0, 0.2, 0.18))),
-            ("GlassmothWingL1", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.28, -0.24)) + quat((0.12, -0.36, -0.34)) + quat((0.0, -0.28, -0.24))),
-            ("GlassmothWingR1", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.28, 0.24)) + quat((-0.12, 0.36, 0.34)) + quat((0.0, 0.28, 0.24))),
+            ("GlassmothWingL0", "rotation", [0.0, 0.22, 0.44], quat((-0.2, -0.2, -0.18)) + quat((0.16, -0.28, -0.32)) + quat((-0.2, -0.2, -0.18))),
+            ("GlassmothWingR0", "rotation", [0.0, 0.22, 0.44], quat((0.2, 0.2, 0.18)) + quat((-0.16, 0.28, 0.32)) + quat((0.2, 0.2, 0.18))),
+            ("GlassmothWingL1", "rotation", [0.0, 0.22, 0.44], quat((-0.25, -0.28, -0.24)) + quat((0.12, -0.36, -0.34)) + quat((-0.25, -0.28, -0.24))),
+            ("GlassmothWingR1", "rotation", [0.0, 0.22, 0.44], quat((0.25, 0.28, 0.24)) + quat((-0.12, 0.36, 0.34)) + quat((0.25, 0.28, 0.24))),
         ])
         attack_channels.extend([
-            ("GlassmothWingL1", "rotation", [0.0, 0.24, 0.48], quat((0.0, -0.28, -0.24)) + quat((-0.22, -0.4, -0.42)) + quat((0.0, -0.28, -0.24))),
-            ("GlassmothWingR1", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.28, 0.24)) + quat((0.22, 0.4, 0.42)) + quat((0.0, 0.28, 0.24))),
-            ("GlassmothWingL0", "rotation", [0.0, 0.24, 0.48], quat((0.0, -0.2, -0.18)) + quat((-0.16, -0.32, -0.34)) + quat((0.0, -0.2, -0.18))),
-            ("GlassmothWingR0", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.2, 0.18)) + quat((0.16, 0.32, 0.34)) + quat((0.0, 0.2, 0.18))),
+            ("GlassmothWingL1", "rotation", [0.0, 0.24, 0.48], quat((-0.25, -0.28, -0.24)) + quat((-0.22, -0.4, -0.42)) + quat((-0.25, -0.28, -0.24))),
+            ("GlassmothWingR1", "rotation", [0.0, 0.24, 0.48], quat((0.25, 0.28, 0.24)) + quat((0.22, 0.4, 0.42)) + quat((0.25, 0.28, 0.24))),
+            ("GlassmothWingL0", "rotation", [0.0, 0.24, 0.48], quat((-0.2, -0.2, -0.18)) + quat((-0.16, -0.32, -0.34)) + quat((-0.2, -0.2, -0.18))),
+            ("GlassmothWingR0", "rotation", [0.0, 0.24, 0.48], quat((0.2, 0.2, 0.18)) + quat((0.16, 0.32, 0.34)) + quat((0.2, 0.2, 0.18))),
             ("GlassmothAntennaL", "rotation", [0.0, 0.24, 0.48], quat((0.48, 0.0, -0.22)) + quat((0.72, 0.0, -0.32)) + quat((0.48, 0.0, -0.22))),
             ("GlassmothAntennaR", "rotation", [0.0, 0.24, 0.48], quat((0.48, 0.0, 0.22)) + quat((0.72, 0.0, 0.32)) + quat((0.48, 0.0, 0.22))),
         ])
         feed_channels.extend([
-            ("GlassmothWingL0", "rotation", [0.0, 0.3, 0.6], quat((0.0, -0.2, -0.18)) + quat((0.12, -0.28, -0.26)) + quat((0.0, -0.2, -0.18))),
-            ("GlassmothWingR0", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.2, 0.18)) + quat((-0.12, 0.28, 0.26)) + quat((0.0, 0.2, 0.18))),
+            ("GlassmothWingL0", "rotation", [0.0, 0.3, 0.6], quat((-0.2, -0.2, -0.18)) + quat((0.12, -0.28, -0.26)) + quat((-0.2, -0.2, -0.18))),
+            ("GlassmothWingR0", "rotation", [0.0, 0.3, 0.6], quat((0.2, 0.2, 0.18)) + quat((-0.12, 0.28, 0.26)) + quat((0.2, 0.2, 0.18))),
             ("GlassmothAntennaL", "rotation", [0.0, 0.3, 0.6], quat((0.48, 0.0, -0.22)) + quat((0.62, 0.0, -0.28)) + quat((0.48, 0.0, -0.22))),
             ("GlassmothAntennaR", "rotation", [0.0, 0.3, 0.6], quat((0.48, 0.0, 0.22)) + quat((0.62, 0.0, 0.28)) + quat((0.48, 0.0, 0.22))),
         ])
         retreat_channels.extend([
-            ("GlassmothWingL1", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.28, -0.24)) + quat((0.26, -0.42, -0.38)) + quat((0.0, -0.28, -0.24))),
-            ("GlassmothWingR1", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.28, 0.24)) + quat((-0.26, 0.42, 0.38)) + quat((0.0, 0.28, 0.24))),
-            ("GlassmothWingL0", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.2, -0.18)) + quat((0.18, -0.34, -0.3)) + quat((0.0, -0.2, -0.18))),
-            ("GlassmothWingR0", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.2, 0.18)) + quat((-0.18, 0.34, 0.3)) + quat((0.0, 0.2, 0.18))),
+            ("GlassmothWingL1", "rotation", [0.0, 0.22, 0.44], quat((-0.25, -0.28, -0.24)) + quat((0.26, -0.42, -0.38)) + quat((-0.25, -0.28, -0.24))),
+            ("GlassmothWingR1", "rotation", [0.0, 0.22, 0.44], quat((0.25, 0.28, 0.24)) + quat((-0.26, 0.42, 0.38)) + quat((0.25, 0.28, 0.24))),
+            ("GlassmothWingL0", "rotation", [0.0, 0.22, 0.44], quat((-0.2, -0.2, -0.18)) + quat((0.18, -0.34, -0.3)) + quat((-0.2, -0.2, -0.18))),
+            ("GlassmothWingR0", "rotation", [0.0, 0.22, 0.44], quat((0.2, 0.2, 0.18)) + quat((-0.18, 0.34, 0.3)) + quat((0.2, 0.2, 0.18))),
         ])
     elif name == "carrionbell":
         # Carrionbell's threat is a resonant, living instrument: the mantle
