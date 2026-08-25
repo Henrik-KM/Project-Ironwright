@@ -15,6 +15,9 @@
   plate into an open thermal ring, then silently recaptured the exact 1280x720
   progression fixture; the crown now reads as warm manufactured hardware
   without the prior pale screen-space band.
+- synchronized the endgame completion handoff so the localized first-victory
+  objective, continuing-sanctuary prompt and operation readout replace the
+  active-protocol state together while the victory overlay is visible.
 
 ## Focused early-organic material separation pass
 

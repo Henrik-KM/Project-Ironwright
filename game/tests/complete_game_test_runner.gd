@@ -343,6 +343,9 @@ func _run_all() -> void:
     _expect(world.get_node("EndgameProtocolVisuals/SanctuaryCrown").visible, "The completed protocol must leave a calm capstone presentation at the Heartforge.")
     _expect(world.first_victory_achieved, "Completing a final protocol must produce the first victory.")
     _expect(world.game_ended, "The complete systemic run must have a real end state.")
+    _expect(world.hud.operation_label.text.find("%") == -1 and (world.hud.operation_label.text.to_lower().find("victory") >= 0 or world.hud.operation_label.text.to_lower().find("sieg") >= 0), "First victory must replace the stale active-protocol percentage in the live resource panel.")
+    _expect(world.hud.objective_label.text.to_lower().find("victory") >= 0 or world.hud.objective_label.text.to_lower().find("sieg") >= 0, "First victory must replace the active hold-the-Heartforge objective.")
+    _expect(world.hud.prompt_label.text.to_lower().find("sanctuary") >= 0 or world.hud.prompt_label.text.to_lower().find("heiligtum") >= 0, "First victory must expose the continuing-sanctuary prompt.")
     _expect(not world.long_operation_director.available_operations().any(func(entry: Dictionary) -> bool: return StringName(str(entry.get("id", ""))) == &"operation.post_victory_archive"), "The post-victory archive must remain unavailable behind the victory boundary until continuation is chosen.")
     world.hud.show_ending(true, "The signal collapses. Organisms remain in the streets, but the intelligence coordinating them is gone. The machines inherit a wounded, survivable town.", true)
     var ending_panel := world.hud.ending_panel
