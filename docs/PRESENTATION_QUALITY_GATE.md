@@ -2,6 +2,12 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Cathedral Quarter now has a focused nave-gable silhouette pass: a closed stone
+gable rises behind the authored rose-window assembly, so the landmark reads as
+an ecclesiastical civic volume rather than a flat rectangular nave. The pass is
+presentation-only and preserves the existing tower, choir, sockets and route;
+broader human region acceptance remains open.
+
 The Observatory Ridge review frame now gives the blue-violet reflector a
 deeper authored bowl, controlled brighter review material and slightly more
 compact key exposure. The parabolic bowl, service rim and feed assembly remain
