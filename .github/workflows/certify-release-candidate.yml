@@ -40,35 +40,35 @@ jobs:
         run: npm run validate
 
       - name: Import and parse every Godot release resource
-        run: godot --headless --path game --editor --quit
+        run: godot --headless --audio-driver Dummy --path game --editor --quit
 
       - name: Run core gameplay regression
-        run: godot --headless --path game --script res://tests/test_runner.gd
+        run: godot --headless --audio-driver Dummy --path game --script res://tests/test_runner.gd
 
       - name: Run aesthetic acceptance regression
-        run: godot --headless --path game --script res://tests/aesthetic_test_runner.gd
+        run: godot --headless --audio-driver Dummy --path game --script res://tests/aesthetic_test_runner.gd
 
       - name: Run progression and autonomous outpost regression
-        run: godot --headless --path game --script res://tests/full_game_test_runner.gd
+        run: godot --headless --audio-driver Dummy --path game --script res://tests/full_game_test_runner.gd
 
       - name: Run first-session accessibility and guidance regression
-        run: godot --headless --path game --script res://tests/first_session_ux_test_runner.gd
+        run: godot --headless --audio-driver Dummy --path game --script res://tests/first_session_ux_test_runner.gd
 
       - name: Run complete start-to-victory regression
-        run: godot --headless --path game --script res://tests/complete_game_test_runner.gd
+        run: godot --headless --audio-driver Dummy --path game --script res://tests/complete_game_test_runner.gd
 
       - name: Run commercial release regression
-        run: godot --headless --path game --script res://tests/release_test_runner.gd
+        run: godot --headless --audio-driver Dummy --path game --script res://tests/release_test_runner.gd
 
       - name: Run large-population performance regression
-        run: godot --headless --path game --script res://tests/performance_stress_test_runner.gd
+        run: godot --headless --audio-driver Dummy --path game --script res://tests/performance_stress_test_runner.gd
 
       - name: Export Windows and Linux release candidates
         run: |
           rm -rf dist
           mkdir -p dist/windows dist/linux
-          godot --headless --path game --export-release "Windows Desktop" ../dist/windows/ProjectIronwright.exe
-          godot --headless --path game --export-release "Linux/X11" ../dist/linux/ProjectIronwright.x86_64
+          godot --headless --audio-driver Dummy --path game --export-release "Windows Desktop" ../dist/windows/ProjectIronwright.exe
+          godot --headless --audio-driver Dummy --path game --export-release "Linux/X11" ../dist/linux/ProjectIronwright.x86_64
           chmod +x dist/linux/ProjectIronwright.x86_64
 
       - name: Package release candidates and calculate checksums

@@ -10,6 +10,13 @@ gives more visual room to the Mechromancer, Bulwark and Heartforge while
 retaining actionable status. Broader human opening-composition acceptance
 remains open.
 
+The atmosphere contract now retains a shared 0.50 ambient readability floor
+across authored regions, with the opening slice still using its stronger 0.52
+floor. This preserves readable wet-district silhouettes during slower startup
+and region transitions without changing gameplay ownership. All Godot CI
+validation, certification and release/export commands use the Dummy audio
+driver; automated coverage is silent by default.
+
 Observatory Ridge received a focused hardware pass on 2026-08-25. Its three
 exposed dish ribs now use dense round structural rods rather than beveled
 rectangular bars; silent exact 1280x720 page 12/14 review confirms the survey

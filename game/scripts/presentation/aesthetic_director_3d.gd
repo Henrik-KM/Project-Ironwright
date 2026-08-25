@@ -98,6 +98,11 @@ func _polish_environment() -> void:
     environment.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
     environment.ambient_light_color = Color("8da6b6")
     environment.ambient_light_energy = 0.56
+    # Keep a shared readability floor available to every authored region. The
+    # opening slice may raise this further, but remote-region atmosphere must
+    # never make the tactical world unreadably dark during a transition or a
+    # slower startup frame.
+    environment.set_meta(&"ambient_readability_floor", 0.50)
     environment.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
     environment.tonemap_mode = Environment.TONE_MAPPER_ACES
     environment.tonemap_exposure = 1.18
