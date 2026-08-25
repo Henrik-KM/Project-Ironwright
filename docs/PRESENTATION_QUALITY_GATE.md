@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Tram Graveyard received a focused high-definition carriage-hardware pass on
+2026-08-25. Its three derailed carriage variants now expose segmented roof
+ribs, corner posts, bogie crossbars, smooth wheel rims and ceramic hubs that
+break up the remote silhouettes without changing rail, salvage, routing or
+maintenance-pit ownership. Silent exact 1280x720 page 10/14 review confirms the
+added hardware remains visible at the remote camera distance; broader human
+region and production-art acceptance remain open.
+
 Buried Laboratories received a focused high-definition vessel pass on
 2026-08-25. Its three containment vessels now use rounded glass pressure
 envelopes, separate caps, service collars, warning base rings and neck
