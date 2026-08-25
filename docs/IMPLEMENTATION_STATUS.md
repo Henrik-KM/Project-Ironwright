@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Ashmantle louver-depth pass
+
+- replaced Ashmantle's paired heat louvers and four mantle ribs with dense,
+  folded organic lobes while preserving every existing anatomy node,
+  animation channel, threat socket and runtime ecology contract;
+- the aesthetic suite now guards measurable louver depth and rib tessellation;
+  exact silent page 3/14 review confirms the thermal shell carries layered
+  volume rather than broad manufactured bars.
+
 ## Focused endgame establishing-camera pass
 
 - the active final protocol and first-victory overlay now use a bounded,
