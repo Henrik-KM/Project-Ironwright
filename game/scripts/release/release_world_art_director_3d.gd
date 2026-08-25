@@ -1253,11 +1253,10 @@ func _dress_cistern(root: Node3D) -> void:
     var service_ring_material := ModelKit3D.material(Color("1b2b2e"), 0.46, 0.56)
     var signal_ring_material := ModelKit3D.material(Color("0d3036"), 0.28, 0.42, Color("2d9ba4"), 0.34)
     ModelKit3D.add_cylinder(root, 18.0, 0.8, Vector3(0.0, 0.4, 0.0), basin_concrete, Vector3.ZERO, "CisternBasin")
-    for index in range(14):
-        var angle := TAU * float(index) / 14.0
-        var radius := 8.0 + float(index % 3) * 3.4
-        ModelKit3D.add_capsule(root, 0.28, 6.0 + float(index % 4), Vector3(cos(angle) * radius, 2.5, sin(angle) * radius), membrane, Vector3(0.0, -angle, 0.55), "RootPylon")
-        ModelKit3D.add_sphere(root, 0.12, Vector3(cos(angle) * radius * 0.72, 3.1, sin(angle) * radius * 0.72), glow, Vector3.ONE, "RootSignal")
+    # The authored Root Cistern glTF owns the six signal pylons and their
+    # grounded relay hardware. Do not add a second generic pylon ring here:
+    # fourteen repeated capsules obscure the capstone and read as a forest of
+    # stakes in both the exact review page and the close release camera.
 
     # The basin is the late-game approach landmark. Add one bounded municipal
     # service layer so it reads as a buried pumping installation overtaken by

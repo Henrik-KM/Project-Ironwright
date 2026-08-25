@@ -764,6 +764,14 @@ func _start_presentation_review() -> void:
 			_apply_cathedral_presentation_material_overrides(landmark)
 		if review_actor != null:
 			landmark.set_presentation_detail_level(0)
+			if PRESENTATION_REVIEW_REGIONS[index] == &"region.root_cistern":
+				landmark.visible = false
+				var review_persistent_scene := landmark.get_node_or_null("RootCisternAuthoredScene") as Node3D
+				if review_persistent_scene != null:
+					review_persistent_scene.visible = false
+				var review_reduced_proxy := landmark.get_node_or_null("ReducedRegionProxy") as Node3D
+				if review_reduced_proxy != null:
+					review_reduced_proxy.visible = false
 			landmark.set_map_emphasis(false)
 			presentation_review_pages[3 + index].append(review_actor)
 	_create_presentation_review_stage()
@@ -1203,6 +1211,17 @@ func _create_root_cistern_presentation_review_actor(landmark: RegionLandmark3D) 
 	var persistent_geometry := landmark.get_node_or_null("PersistentRegionGeometry") as Node3D
 	if persistent_geometry != null:
 		persistent_geometry.visible = false
+	var persistent_authored_scene := landmark.get_node_or_null("RootCisternAuthoredScene") as Node3D
+	if persistent_authored_scene != null:
+		# The exact review actor is the single source of truth for this page;
+		# suppress the persistent copy to avoid a doubled pylon/core silhouette.
+		persistent_authored_scene.visible = false
+	var reduced_proxy := landmark.get_node_or_null("ReducedRegionProxy") as Node3D
+	if reduced_proxy != null:
+		# The exact page is already represented by the authored capstone scene;
+		# leaving the generic distant ribs behind it creates a false second
+		# silhouette and obscures the central relay hierarchy.
+		reduced_proxy.visible = false
 	return review_actor
 
 
