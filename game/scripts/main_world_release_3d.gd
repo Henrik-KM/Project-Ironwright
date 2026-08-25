@@ -206,6 +206,26 @@ func _update_camera(delta: float) -> void:
 	camera.look_at(target + Vector3.UP * 0.68, Vector3.UP)
 
 
+func _snap_release_camera_to_subject() -> void:
+	# The release camera is created before the world actors are spawned. Set its
+	# first playable transform explicitly so the opening never renders a frame
+	# from the camera's origin while the normal follow blend catches up.
+	if camera == null or player == null:
+		return
+	var target := player.global_position
+	var dynamic_height := camera_height
+	var dynamic_distance := camera_distance
+	if _is_remote_camera_context(target):
+		var remote_expansion := _remote_camera_expansion()
+		dynamic_height += remote_expansion.x
+		dynamic_distance += remote_expansion.y
+	var desired := target + Vector3.UP * dynamic_height + _camera_horizontal_offset(dynamic_distance)
+	var resolved := _resolve_camera_occlusion(target, desired, dynamic_height, dynamic_distance)
+	camera.global_position = resolved
+	camera.look_at(target + Vector3.UP * 0.68, Vector3.UP)
+	camera_target_velocity = Vector3.ZERO
+
+
 func _update_camera_heading(velocity: Vector3, delta: float) -> void:
 	var planar_velocity := Vector3(velocity.x, 0.0, velocity.z)
 	if planar_velocity.length_squared() <= 0.16:
@@ -1729,6 +1749,7 @@ func _start_release_world() -> void:
 	game_ended = false
 	get_tree().paused = false
 	player.input_enabled = true
+	_snap_release_camera_to_subject()
 	_set_tactical_hud_visible(true)
 	release_front_end.hide_all()
 	settings_service.apply_accessibility_to_tree(self)

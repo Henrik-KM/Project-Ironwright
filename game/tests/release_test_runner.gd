@@ -108,6 +108,10 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
     _test_session_diagnostics()
     _expect(world.run_variation_director is RunVariationDirector3D, "Release runtime must install deterministic authored run variation.")
     _expect(world.release_started, "Headless release tests must enter the playable world automatically.")
+    if world.camera != null and world.player != null:
+        world.camera.global_position = world.player.global_position
+        world._start_release_world()
+        _expect(world.camera.global_position.distance_to(world.player.global_position) >= 12.0, "The release world must snap the opening camera to a readable tactical distance before the first playable frame.")
 
 
 func _test_session_diagnostics() -> void:
