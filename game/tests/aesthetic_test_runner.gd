@@ -1208,6 +1208,8 @@ func _run_all() -> void:
                 &"ashmantle": convex_sheet_name = &"AshmantleHeatLouverL"
             var convex_sheet := _find_first_mesh(_find_named(enemy_samples[index], convex_sheet_name) as Node3D)
             _expect(convex_sheet != null and _mesh_vertex_count(convex_sheet) >= 200, "The %s shared anatomy sheet must retain dense convex close-camera geometry." % species_names[index])
+            if species_names[index] in [&"roofleaper", &"glassmoth", &"miremaw", &"rootweaver"]:
+                _expect(convex_sheet != null and _mesh_vertex_count(convex_sheet) >= 600, "The %s living membrane must retain the dense tapered-lobe geometry used for the late-family silhouette pass." % species_names[index])
         _expect(_find_named(enemy_samples[index], "OrganicDeathPresentation") != null, "The %s organic family must expose a dedicated high-definition death presentation root." % species_names[index])
         _expect(_find_named(enemy_samples[index], "OrganicDeathCarapace") != null and _find_named(enemy_samples[index], "OrganicDeathRootCollar") != null, "The %s death presentation must expose fractured shell and exposed root anatomy." % species_names[index])
         _expect(_find_named(enemy_samples[index], "OrganicDeathShard00") != null and _find_named(enemy_samples[index], "OrganicDeathVein00") != null and _find_named(enemy_samples[index], "OrganicDeathSignal") != null, "The %s death presentation must expose shell shards, dead vascular channels and a spent signal core." % species_names[index])
