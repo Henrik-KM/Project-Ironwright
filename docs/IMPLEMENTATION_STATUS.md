@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused Veilstalker dorsal-lobe pass
+
+- replaced the Veilstalker's repeated rectangular dorsal bars with dense folded
+  living shells while preserving the existing dorsal sockets, animation tracks,
+  threat silhouette and runtime family contract;
+- the aesthetic suite now guards measurable Veilstalker dorsal volume; the
+  exact silent early-organic review will confirm the revised thorax.
+
 ## Focused Razorhound cheek-lobe pass
 
 - replaced the Razorhound's paired rectangular cheek plates with dense folded

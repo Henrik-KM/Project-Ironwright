@@ -18,6 +18,8 @@ from typing import Sequence
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
 from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "organic_families" / "source"))
+from build_authored_organic_assets import add_organic_lobe  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "veilstalker.gltf"
@@ -52,7 +54,7 @@ def main() -> None:
         "Abdomen": mesh("Abdomen", add_uv_sphere(builder, 0.48, flesh, 16, 28)),
         "Head": mesh("Cowl", add_uv_sphere(builder, 0.48, shell, 16, 28)),
         "Eye": mesh("ThreatEye", add_uv_sphere(builder, 0.09, eye, 16, 24)),
-        "Plate": mesh("DorsalPlate", add_beveled_box(builder, (1.25, 0.16, 0.46), shell, 0.035)),
+        "Plate": mesh("DorsalLobe", add_organic_lobe(builder, (1.30, 0.34, 0.54), shell, lobes=4, rings=9, sides=40, scallop_amplitude=0.13, leading_extension=0.24, fold_strength=0.82)),
         "Spine": mesh("DorsalSpine", add_cylinder(builder, 0.09, 0.58, bone, 24)),
         "Veil": mesh("VeilMembrane", add_uv_sphere(builder, 0.34, membrane, 16, 28)),
         "Limb": mesh("Forelimb", add_cylinder(builder, 0.075, 1.35, tendon, 24)),

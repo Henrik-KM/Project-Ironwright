@@ -1517,6 +1517,8 @@ func _run_all() -> void:
     var burrower_asset := BURROWER_ASSET_SCENE.instantiate()
     var broodmass_asset := BROODMASSS_ASSET_SCENE.instantiate()
     _expect(_mesh_vertex_count(_find_named(veilstalker_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerDorsalPlate") as MeshInstance3D) >= 48, "The authored Veilstalker dorsal plates must retain beveled high-definition anatomy edges.")
+    var veilstalker_dorsal := _find_named(veilstalker_asset, "OrganicDorsalPlate") as MeshInstance3D
+    _expect(veilstalker_dorsal != null and veilstalker_dorsal.mesh.get_aabb().size.y >= 0.28, "The Veilstalker dorsal plates must retain closed folded volume across the thorax rather than reading as rectangular bars.")
     _expect(_mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerMandibleL") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerCowlSpineL") as MeshInstance3D) >= 48, "The authored Veilstalker must retain dense mouth and cowl silhouette hardware.")
     _expect(_mesh_vertex_count(_find_named(burrower_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(burrower_asset, "BurrowerLampGuardL") as MeshInstance3D) >= 48, "The authored Burrower dorsal and lamp guards must retain beveled high-definition anatomy edges.")
     var broodmass_dorsal := _find_named(broodmass_asset, "OrganicDorsalPlate") as MeshInstance3D
