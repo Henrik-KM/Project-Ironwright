@@ -316,14 +316,16 @@ func _run_all() -> void:
             if landmark.region_kind == &"industrial":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/WestGridAuthoredModel") != null, "West Grid must expose its authored turbine-hall and transformer-yard landmark shell.")
                 _expect(landmark.find_child("WestGridWindowFrame0", true, false) != null and landmark.find_child("WestGridWindowMullion0", true, false) != null, "West Grid must expose turbine-hall window framing and mullions.")
+                _expect(landmark.find_child("WestGridTurbineAccessHousing", true, false) != null and landmark.find_child("WestGridTurbineAccessRing", true, false) != null and landmark.find_child("WestGridTurbineAccessHub", true, false) != null and landmark.find_child("WestGridTurbineAccessBolt0", true, false) != null, "West Grid must expose the authored turbine-access focal assembly.")
                 _expect(landmark.find_child("WestGridHallSkinRib0", true, false) != null and landmark.find_child("WestGridHallSkinRailTop", true, false) != null and landmark.find_child("WestGridHallSkinPlate0", true, false) != null, "West Grid must expose maintained upper hall skin ribs and inspection plates.")
                 _expect(landmark.find_child("WestGridTankValve0", true, false) != null and landmark.find_child("WestGridTankLadder0", true, false) != null, "West Grid must expose pressure-tank service hardware.")
                 _expect(landmark.find_child("WestGridTransformerCap0", true, false) != null and landmark.find_child("WestGridTransformerBrace0", true, false) != null, "West Grid must expose layered transformer-yard hardware.")
                 _expect(landmark.find_child("WestGridPipeFlange0", true, false) != null and landmark.find_child("WestGridWarningHousing0", true, false) != null, "West Grid must expose service-pipe and warning hardware.")
                 _expect(landmark.find_child("WestGridOrganicTendril0_0", true, false) != null, "West Grid organic growth must expose secondary tendril anatomy.")
                 var west_grid_hall := landmark.find_child("WestGridTurbineHall", true, false) as MeshInstance3D
+                var west_grid_turbine_ring := landmark.find_child("WestGridTurbineAccessRing", true, false) as MeshInstance3D
                 var west_grid_transformer := landmark.find_child("WestGridTransformer0", true, false) as MeshInstance3D
-                _expect(west_grid_hall != null and west_grid_transformer != null and _mesh_vertex_count(west_grid_hall) >= 48 and _mesh_vertex_count(west_grid_transformer) >= 48, "West Grid authored hall and transformer must retain beveled high-definition geometry.")
+                _expect(west_grid_hall != null and west_grid_transformer != null and west_grid_turbine_ring != null and _mesh_vertex_count(west_grid_hall) >= 48 and _mesh_vertex_count(west_grid_transformer) >= 48 and _mesh_vertex_count(west_grid_turbine_ring) >= 384, "West Grid authored hall, transformer and turbine collar must retain high-definition geometry.")
                 var grid_signal := landmark.find_child("WestGridTankSignal0", true, false) as Node3D
                 var grid_warning := landmark.find_child("WestGridWarningLight0", true, false) as Node3D
                 var grid_growth := landmark.find_child("WestGridOrganicCreep0", true, false) as Node3D
