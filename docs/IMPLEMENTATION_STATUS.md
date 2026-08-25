@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Broodmass folded-plate pass
+
+- replaced the Broodmass dorsal and maw shell sheets with dense, closed folded
+  living lobes while preserving the existing nodes, local maw socket,
+  animation channels and runtime ecology contract;
+- the aesthetic suite now guards measurable plate depth; the exact silent late
+  organic review is used to confirm the nest silhouette no longer collapses
+  into broad horizontal bars.
+
 ## Focused Carrion Bell crown-lobe pass
 
 - replaced Carrion Bell's broad resonator-top crown sheet with a dense folded

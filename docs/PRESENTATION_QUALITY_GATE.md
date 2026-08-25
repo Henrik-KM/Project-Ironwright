@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Broodmass received a focused folded-plate pass on 2026-08-25. Its dorsal and
+maw shell sheets now use dense closed living lobes, giving the nest organism a
+layered convex silhouette at the compact gallery distance. Exact silent
+1280x720 page 3/14 review is required to confirm the revised plates while
+preserving the local maw socket and animation; broader human hostile-family
+and production-art acceptance remain open.
+
 Carrion Bell received a focused crown-lobe pass on 2026-08-25. Its existing
 resonator-top crown now uses a dense folded living surface instead of a broad
 horizontal sheet, so the signal mantle carries a layered edge at the compact
