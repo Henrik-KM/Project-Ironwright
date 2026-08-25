@@ -133,26 +133,29 @@ func _ensure_lattice() -> void:
     var accent_mat := ModelKit3D.material(Color("6a3825"), 0.3, 0.3, Color("d88239"), 0.42)
     _lattice_materials = [lattice_mat, accent_mat]
 
-    _add_ring(lattice_root, 3.16, 3.28, Vector3(0.0, 0.18, 0.0), lattice_mat, "ProtocolBaseRing")
-    pulse_ring = _add_ring(lattice_root, 2.17, 2.25, Vector3(0.0, 0.34, 0.0), accent_mat, "ProtocolPulseRing")
-    _add_ring(lattice_root, 1.02, 1.18, Vector3(0.0, 2.5, 0.0), accent_mat, "ProtocolCoreHalo")
+    # The crisis must frame the Heartforge rather than cage the player. Keep
+    # the same staged lattice language, but lower the rings and tighten the
+    # footprint so the active cast remains visible at the tactical camera.
+    _add_ring(lattice_root, 2.52, 2.62, Vector3(0.0, 0.14, 0.0), lattice_mat, "ProtocolBaseRing")
+    pulse_ring = _add_ring(lattice_root, 1.72, 1.80, Vector3(0.0, 0.30, 0.0), accent_mat, "ProtocolPulseRing")
+    _add_ring(lattice_root, 0.82, 0.92, Vector3(0.0, 2.18, 0.0), accent_mat, "ProtocolCoreHalo")
 
-    for index in range(8):
-        var angle := TAU * float(index) / 8.0
-        var position := Vector3(cos(angle) * 2.82, 2.25, sin(angle) * 2.82)
-        ModelKit3D.add_beveled_box(lattice_root, Vector3(0.16, 4.0, 0.26), position, lattice_mat, Vector3(0.0, -angle, 0.0), "ProtocolSpine%d" % index, 0.18)
+    for index in range(6):
+        var angle := TAU * float(index) / 6.0
+        var position := Vector3(cos(angle) * 2.24, 1.72, sin(angle) * 2.24)
+        ModelKit3D.add_capsule(lattice_root, 0.075, 3.0, position, lattice_mat, Vector3.ZERO, "ProtocolSpine%d" % index)
 
     for stage_index in range(3):
         var stage_root := Node3D.new()
         stage_root.name = "ProtocolStage%d" % stage_index
         lattice_root.add_child(stage_root)
         _stage_roots.append(stage_root)
-        var radius := 2.5 + float(stage_index) * 0.42
-        var height := 2.0 + float(stage_index) * 1.05
-        for index in range(4 + stage_index * 2):
-            var angle := TAU * float(index) / float(4 + stage_index * 2) + float(stage_index) * 0.28
+        var radius := 1.86 + float(stage_index) * 0.32
+        var height := 1.58 + float(stage_index) * 0.82
+        for index in range(3 + stage_index):
+            var angle := TAU * float(index) / float(3 + stage_index) + float(stage_index) * 0.28
             var position := Vector3(cos(angle) * radius, height, sin(angle) * radius)
-            ModelKit3D.add_tapered_cylinder(stage_root, 0.07, 0.12, 1.1 + float(stage_index) * 0.4, position, accent_mat, Vector3(0.0, 0.0, angle), "ProtocolArc%d_%d" % [stage_index, index])
+            ModelKit3D.add_tapered_cylinder(stage_root, 0.055, 0.09, 0.86 + float(stage_index) * 0.28, position, accent_mat, Vector3(0.0, 0.0, angle), "ProtocolArc%d_%d" % [stage_index, index])
         _add_ring(stage_root, radius - 0.07, radius, Vector3(0.0, height - 0.52, 0.0), lattice_mat, "ProtocolStageRing%d" % stage_index)
 
     completion_root = Node3D.new()
@@ -202,10 +205,12 @@ func _heartforge_capstone_anchor() -> Vector3:
             planar_approach.y = 0.0
             if planar_approach.length_squared() > 0.04:
                 approach = planar_approach.normalized()
-    # Place the capstone on the player-facing side of the Heartforge so the
-    # final transformation reads in the tactical frame instead of hiding
-    # behind the machine that it transforms.
-    return heartforge.global_position + approach * 5.0 + Vector3.UP * 0.35
+    # Place the capstone toward, but offset from, the player-facing side. A
+    # centered lattice occupies the cast's silhouette during the crisis; the
+    # lateral offset lets the player and Bulwark remain judgeable while the
+    # transformation still reads against the Heartforge.
+    var lateral := Vector3.UP.cross(approach).normalized()
+    return heartforge.global_position + approach * 4.2 + lateral * 2.15 + Vector3.UP * 0.35
 
 
 func _apply_lattice_progress(progress: float) -> void:

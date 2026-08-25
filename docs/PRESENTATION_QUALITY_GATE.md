@@ -14,6 +14,19 @@ instead of near-zero-thickness sheets; silent exact 1280x720 page 3/14 review
 confirms smoother edge highlights while preserving stable sockets and clips.
 Broader human late-family and production-art acceptance remain open.
 
+The active endgame protocol received a focused crisis-staging pass on
+2026-08-25. Six rounded perimeter spines, lower rings and a lateral Heartforge
+offset now frame the Severance response without hiding the Mechromancer or
+Bulwark, and the duplicate bottom protocol badge is removed. Silent exact
+1280x720 review confirms the crisis prompt remains legible; ordinary victory
+resolution and broader human endgame acceptance remain open.
+
+The first-victory frame received a focused state cleanup on 2026-08-25. A
+completed final protocol now clears the active sanctuary-damage badge before
+the continuation overlay appears, so the ending reads as a resolved sanctuary
+state rather than a stale crisis warning. Silent victory review confirms the
+transition; broader human endgame acceptance remains open.
+
 Tram Graveyard received a focused high-definition carriage-hardware pass on
 2026-08-25. Its three derailed carriage variants now expose segmented roof
 ribs, corner posts, bogie crossbars, smooth wheel rims and ceramic hubs that

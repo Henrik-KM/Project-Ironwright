@@ -334,6 +334,10 @@ func _run_all() -> void:
     _expect(world.endgame_escalation_director.core_light != null and world.endgame_escalation_director.core_light.light_energy <= 4.0, "The final protocol light budget must preserve readable Heartforge silhouettes instead of blooming over the frame.")
     var capstone_visuals := world.get_node_or_null("EndgameProtocolVisuals") as Node3D
     _expect(capstone_visuals != null and capstone_visuals.global_position.distance_to(world.heartforge.global_position) > 1.5, "The final protocol capstone must anchor toward the player-facing side of the Heartforge so its transformation remains visible.")
+    var protocol_lattice := world.get_node_or_null("EndgameProtocolVisuals/ProtocolLattice") as Node3D
+    var protocol_spines := protocol_lattice.find_children("ProtocolSpine*", "MeshInstance3D", true, false) if protocol_lattice != null else []
+    _expect(protocol_spines.size() == 6, "The active final lattice must use six rounded perimeter spines so it frames rather than cages the tactical cast.")
+    _expect(world.hud.operation_badge != null and not world.hud.operation_badge.visible, "The final crisis must keep one live protocol status in the resource panel instead of duplicating it in a bottom badge.")
     world.endgame_director._process(0.1)
     _expect(world.endgame_escalation_director.current_progress > 0.0, "Final protocol progress must drive the visual lattice continuously.")
     var severance := world.endgame_director.protocol(&"protocol.severance")
@@ -343,6 +347,7 @@ func _run_all() -> void:
     _expect(world.get_node("EndgameProtocolVisuals/SanctuaryCrown").visible, "The completed protocol must leave a calm capstone presentation at the Heartforge.")
     _expect(world.first_victory_achieved, "Completing a final protocol must produce the first victory.")
     _expect(world.game_ended, "The complete systemic run must have a real end state.")
+    _expect(world.hud.has_method(&"set_sanctuary_integrity") and world.hud.sanctuary_integrity >= 0.7, "The first-victory frame must clear the active crisis damage badge instead of carrying stale sanctuary damage into the ending.")
     _expect(world.hud.operation_label.text.find("%") == -1 and (world.hud.operation_label.text.to_lower().find("victory") >= 0 or world.hud.operation_label.text.to_lower().find("sieg") >= 0), "First victory must replace the stale active-protocol percentage in the live resource panel.")
     _expect(world.hud.objective_label.text.to_lower().find("victory") >= 0 or world.hud.objective_label.text.to_lower().find("sieg") >= 0, "First victory must replace the active hold-the-Heartforge objective.")
     _expect(world.hud.prompt_label.text.to_lower().find("sanctuary") >= 0 or world.hud.prompt_label.text.to_lower().find("heiligtum") >= 0, "First victory must expose the continuing-sanctuary prompt.")
