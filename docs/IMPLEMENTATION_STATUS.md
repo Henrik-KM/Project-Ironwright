@@ -37,6 +37,12 @@
   14/14 at 1280x720 while preserving endgame sockets, basin ownership and
   operation state.
 
+- rounded the shared late-organic family membrane primitive into dense,
+  flattened ellipsoids so wing, fin and spore surfaces no longer read as
+  floating flat sheets; regenerated all seven dependency-free glTFs and
+  silently live-reviewed exact page 3/14 at 1280x720 while preserving stable
+  sockets, animation clips and family ownership.
+
 - rebuilt the Root Cistern capstone's shared core, mantle, rib, claw, brace,
   crown and signal-pylon meshes as dense ellipsoidal authored forms; the exact
   silent page 14/14 capture now gives the late relay a rounded layered mass and
