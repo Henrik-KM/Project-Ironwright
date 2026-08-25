@@ -227,6 +227,13 @@ func _test_vertical_slice_presentation() -> void:
         if central != null:
             var shell := central.get_node_or_null("Shell") as Node3D
             _expect(shell != null and not shell.visible, "The old solid central-building shell must be hidden in the representative slice.")
+            var roof_slab := central.get_node_or_null("BuildingRoofSlab") as Node3D
+            var collapsed_roof := central.get_node_or_null("CollapsedRoof") as Node3D
+            _expect(roof_slab != null and not roof_slab.visible and collapsed_roof != null and not collapsed_roof.visible, "The representative cutaway must hide leftover roof planes and collapse fragments while retaining the readable facade.")
+        var municipal := city.get_node_or_null("RuinedBuilding03")
+        if municipal != null:
+            var municipal_roof := municipal.get_node_or_null("BuildingRoofSlab") as Node3D
+            _expect(municipal_roof != null and not municipal_roof.visible, "The endgame-facing municipal cutaway must not leave its original roof plane over the establishing camera.")
         var distant := city.get_node_or_null("RuinedBuilding04")
         _expect(distant != null and distant.get_node_or_null("BuildingFacadeCrown") != null, "Distant city buildings must inherit the high-definition facade kit rather than remain unbroken boxes.")
         _expect(city.get_node_or_null("HighDefinitionStreetEdges") != null, "The city street grid must have authored curb edges at tactical scale.")
