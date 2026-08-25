@@ -604,6 +604,24 @@ def build_family(name: str, spec: dict) -> None:
                 fold_strength=0.90,
             ),
         )
+    # Rootweaver's paired crown plates frame the route-controller oculi. Give
+    # those existing sockets a closed folded shell so they read as living
+    # crown petals rather than two broad horizontal service plates.
+    if name == "rootweaver":
+        mesh_ids["RootweaverCrownLobe"] = mesh(
+            "RootweaverCrownLobe",
+            add_organic_lobe(
+                builder,
+                (0.92, 0.30, 0.58),
+                shell,
+                lobes=4,
+                rings=9,
+                sides=40,
+                scallop_amplitude=0.16,
+                leading_extension=0.32,
+                fold_strength=0.9,
+            ),
+        )
 
     root_name = f"{name.capitalize()}Model"
     nodes: list[dict] = [{
@@ -723,8 +741,8 @@ def build_family(name: str, spec: dict) -> None:
         attack_node = "CarrionbellResonator"
     elif name == "rootweaver":
         add_node("RootweaverCrown", mesh_ids["Soft"], (0.0, 1.55, -0.42), scale=(1.28, 1.2, 1.18), extras={"socket_type": "crown_oculi"})
-        add_node("RootweaverCrownPlate0", mesh_ids["Plate"], (-0.36, 1.92, -0.44), rotation=(0.0, -0.22, -0.08), scale=(0.72, 1.0, 0.84), extras={"surface": "crown_plate"})
-        add_node("RootweaverCrownPlate1", mesh_ids["Plate"], (0.36, 1.92, -0.44), rotation=(0.0, 0.22, 0.08), scale=(0.72, 1.0, 0.84), extras={"surface": "crown_plate"})
+        add_node("RootweaverCrownPlate0", mesh_ids["RootweaverCrownLobe"], (-0.36, 1.92, -0.44), rotation=(0.0, -0.22, -0.08), scale=(0.72, 1.0, 0.84), extras={"surface": "crown_plate"})
+        add_node("RootweaverCrownPlate1", mesh_ids["RootweaverCrownLobe"], (0.36, 1.92, -0.44), rotation=(0.0, 0.22, 0.08), scale=(0.72, 1.0, 0.84), extras={"surface": "crown_plate"})
         fan_pitch = 0.24
         add_node("RootweaverSporeFan", mesh_ids["Membrane"], (0.0, 1.76, 0.24), rotation=(fan_pitch, 0.0, 1.5708), scale=(1.0, 1.0, 1.24), extras={"socket_type": "spore_fan"})
         add_node("RootweaverSporeRib0", mesh_ids["MembraneRib"], (-0.38, 1.76, 0.24), rotation=(fan_pitch, -0.18, -0.46), scale=(0.78, 1.0, 0.84), extras={"surface": "spore_fan_rib"})

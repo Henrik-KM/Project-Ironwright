@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Rootweaver received a focused paired crown-lobe pass on 2026-08-25. Its two
+route-controller crown sheets now use dense closed living lobes around the
+oculi, restoring a layered biological silhouette at the compact gallery
+distance while preserving both sockets and animation. Exact silent 1280x720
+page 3/14 review is required to confirm the revised crown; broader human
+hostile-family and production-art acceptance remain open.
+
 Broodmass received a focused folded-plate pass on 2026-08-25. Its dorsal and
 maw shell sheets now use dense closed living lobes, giving the nest organism a
 layered convex silhouette at the compact gallery distance. Exact silent
