@@ -28,6 +28,14 @@ ten-second 1280x720 fixture reaches the ordinary victory overlay and sanctuary
 crown with those surfaces synchronized; broader endgame and production-art
 acceptance remain open.
 
+The late-organic family review received a shared detail pass on 2026-08-25.
+Bone, tendon, wing-frame, fin-ray and vascular rods now use rounded capsule
+geometry, while the tier anatomy overlay is sparser and brighter at the
+supported compact review distance. A silent 1280x720 page 3/14 capture after
+forced Godot reimport confirms that the authored family silhouettes remain
+distinct without the previous flat-bar cage read; broader human hostile-family
+and production-art acceptance remain open.
+
 The early-organic family received a focused material-separation pass on
 2026-08-24. Skitterling, Razorhound, Burrower, Sporecaster and Veilstalker
 now separate structural shell plates, ridges, membranes and bone accents from

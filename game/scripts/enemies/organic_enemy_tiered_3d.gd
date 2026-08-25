@@ -247,31 +247,35 @@ func _refresh_visuals() -> void:
     var tier_detail := Node3D.new()
     tier_detail.name = "TierHighDefinitionDetail"
     _tier_visual_root.add_child(tier_detail)
-    var crest_material := ModelKit3D.material(tier_color.darkened(0.68), 0.05, 0.52, tier_color, 1.1 + float(enemy_tier) * 0.45)
-    var edge_material := ModelKit3D.material(Color("8a806d").lerp(tier_color, 0.16), 0.0, 0.76)
-    var channel_material := ModelKit3D.material(tier_color.darkened(0.48), 0.08, 0.42, tier_color, 1.3 + float(enemy_tier) * 0.55)
-    var bone := ModelKit3D.material(Color("8a806d"), 0.0, 0.82)
+    var crest_material := ModelKit3D.material(tier_color.darkened(0.48), 0.05, 0.52, tier_color, 0.78 + float(enemy_tier) * 0.28)
+    var edge_material := ModelKit3D.material(Color("9d8e73").lerp(tier_color, 0.20), 0.0, 0.76)
+    var channel_material := ModelKit3D.material(tier_color.darkened(0.28), 0.08, 0.42, tier_color, 0.72 + float(enemy_tier) * 0.22)
+    var bone := ModelKit3D.material(Color("a69678"), 0.0, 0.76)
 
     # The tier read is carried by anatomy rather than a floating icon: a
     # compact dorsal series and paired vascular channels make population
     # pressure legible at the tactical camera without changing the actor's
     # collision or simulation state.
-    var dorsal_count := 2 + enemy_tier
+    # Tier anatomy is a restrained biological accent, not a second skeleton.
+    # The previous 2 + tier plates filled the close gallery with repeated bars
+    # that read as a cage over the authored shell. Keep a compact dorsal series
+    # so tier remains legible while the species silhouette stays primary.
+    var dorsal_count := 2 + mini(enemy_tier, 2)
     for index in range(dorsal_count):
         var fraction := float(index) / float(maxi(1, dorsal_count - 1))
-        var dorsal_z := lerpf(-0.72, 0.72, fraction)
-        var dorsal_y := 1.18 + float(enemy_tier) * 0.06 + sin(fraction * PI) * 0.12
+        var dorsal_z := lerpf(-0.56, 0.56, fraction)
+        var dorsal_y := 1.18 + float(enemy_tier) * 0.05 + sin(fraction * PI) * 0.10
         ModelKit3D.add_organic_plate(
             tier_detail,
-            0.12 + float(enemy_tier) * 0.018,
+            0.095 + float(enemy_tier) * 0.012,
             Vector3(0.0, dorsal_y, dorsal_z),
             crest_material,
             edge_material,
-            Vector3(1.18 + float(enemy_tier) * 0.04, 0.36, 0.76),
+            Vector3(0.92 + float(enemy_tier) * 0.035, 0.28, 0.58),
             "TierDorsalPlate%02d" % index
         )
 
-    var channel_count := 1 + int(enemy_tier / 2)
+    var channel_count := 1 + mini(int(enemy_tier / 2), 2)
     for side in [-1.0, 1.0]:
         var side_label := "L" if side < 0.0 else "R"
         for index in range(channel_count):
@@ -280,9 +284,9 @@ func _refresh_visuals() -> void:
             var channel_y := 0.91 + float(enemy_tier) * 0.045 + sin(fraction * PI) * 0.08
             ModelKit3D.add_capsule(
                 tier_detail,
-                0.018 + float(enemy_tier) * 0.004,
-                0.34 + float(enemy_tier) * 0.07,
-                Vector3(side * (0.31 + float(enemy_tier) * 0.055), channel_y, channel_z),
+                0.014 + float(enemy_tier) * 0.003,
+                0.25 + float(enemy_tier) * 0.045,
+                Vector3(side * (0.28 + float(enemy_tier) * 0.045), channel_y, channel_z),
                 channel_material,
                 Vector3(PI * 0.5, 0.0, 0.0),
                 "TierVascularChannel%s%02d" % [side_label, index]
@@ -304,16 +308,18 @@ func _refresh_visuals() -> void:
             "TierCrownNode%02d" % index
         )
 
-    var crest_count := enemy_tier + 1
+    # A few short crown spines give higher tiers a living silhouette cue. They
+    # are deliberately shorter and sparser than the old vertical rods.
+    var crest_count := 1 + mini(2, int((enemy_tier + 1) / 2))
     for index in range(crest_count):
-        var z := -0.8 + float(index) * 0.42
+        var z := -0.48 + float(index) * 0.48
         ModelKit3D.add_capsule(
             tier_detail,
-            0.045 + float(enemy_tier) * 0.012,
-            0.48 + float(enemy_tier) * 0.16,
-            Vector3(0.0, 1.15 + float(enemy_tier) * 0.12, z),
+            0.032 + float(enemy_tier) * 0.006,
+            0.26 + float(enemy_tier) * 0.07,
+            Vector3(0.0, 1.30 + float(enemy_tier) * 0.08, z),
             bone,
-            Vector3(0.24 + float(index % 2) * 0.15, 0.0, 0.0),
+            Vector3(0.42 + float(index % 2) * 0.12, 0.0, 0.0),
             "TierCrest_%02d" % index
         )
     for index in range(enemy_tier - 1):

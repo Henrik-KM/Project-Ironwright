@@ -18,6 +18,11 @@
 - synchronized the endgame completion handoff so the localized first-victory
   objective, continuing-sanctuary prompt and operation readout replace the
   active-protocol state together while the victory overlay is visible.
+- rebuilt the shared late-organic family detail rods as rounded capsule meshes,
+  reduced the tier overlay's repeated dorsal and crown accents, and lifted the
+  structural tint separation; the silent page 3/14 review now preserves family
+  silhouettes without the former flat-bar cage read, while broader organic
+  production-art acceptance remains open.
 
 ## Focused early-organic material separation pass
 
