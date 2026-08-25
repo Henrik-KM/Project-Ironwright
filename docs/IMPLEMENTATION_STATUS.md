@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused Observatory survey-bowl readability pass
+
+- deepened the authored Observatory Ridge reflector bowl, raised the
+  development-only review exposure and tuned its review material so the
+  parabolic surface, service rim and feed hardware remain visibly separated at
+  the exact compact export size; runtime collision, navigation, region logic
+  and landmark sockets are unchanged.
+
 ## Focused Flood Market canopy-surface pass
 
 - replaced the repeated flat canopy slabs with a dense closed cloth surface
