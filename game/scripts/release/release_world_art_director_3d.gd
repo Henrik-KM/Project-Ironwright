@@ -550,6 +550,70 @@ func _dress_tenement(root: Node3D) -> void:
                     0.12
                 )
                 cloth_panel.scale = Vector3(1.0, 1.0, 0.82 + 0.08 * float((balcony_index + cloth_index) % 3))
+    # The two residential blocks need one shared human-scale threshold so the
+    # district reads as a lived-in court rather than mirrored facade slabs.
+    # Keep the entry shallow and presentation-only: it is not a new doorway,
+    # collision volume, route or interactable destination.
+    var court := Node3D.new()
+    court.name = "TenementCourtThreshold"
+    tenement_detail.add_child(court)
+    var court_brick := _textured_material(&"brick", Color("4f3f3b"), 0.0, 0.9)
+    var court_metal := _textured_material(&"metal", Color("2e3a3c"), 0.62, 0.5)
+    var court_signal := ModelKit3D.material(Color("1d4d55"), 0.24, 0.34, Color("64c7cf"), 0.28)
+    ModelKit3D.add_beveled_box(
+        court,
+        Vector3(2.55, 3.65, 0.26),
+        Vector3(0.0, 2.22, 4.34),
+        court_brick,
+        Vector3.ZERO,
+        "TenementCourtEntry",
+        0.16
+    )
+    ModelKit3D.add_beveled_box(
+        court,
+        Vector3(3.35, 0.22, 1.32),
+        Vector3(0.0, 4.18, 4.62),
+        court_metal,
+        Vector3(0.0, 0.0, 0.04),
+        "TenementCourtCanopy",
+        0.12
+    )
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_cylinder(
+            court,
+            0.07,
+            2.9,
+            Vector3(side * 1.28, 2.0, 4.7),
+            court_metal,
+            Vector3.ZERO,
+            "TenementCourtRail%s" % ("L" if side < 0.0 else "R")
+        )
+    ModelKit3D.add_surface_panel(
+        court,
+        Vector3(1.18, 1.54, 0.10),
+        Vector3(0.0, 1.72, 4.52),
+        court_metal,
+        court_signal,
+        Vector3.ZERO,
+        "TenementCourtServicePanel"
+    )
+    ModelKit3D.add_beveled_box(
+        court,
+        Vector3(1.46, 0.12, 0.18),
+        Vector3(0.0, 3.32, 4.56),
+        court_metal,
+        Vector3.ZERO,
+        "TenementCourtAddressRail",
+        0.05
+    )
+    ModelKit3D.add_sphere(
+        court,
+        0.13,
+        Vector3(0.0, 4.02, 4.76),
+        court_signal,
+        Vector3.ONE,
+        "TenementCourtLight"
+    )
 
 
 func _dress_greenhouse(root: Node3D) -> void:

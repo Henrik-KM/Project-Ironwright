@@ -1,5 +1,12 @@
 # Implementation status
 
+## Focused East Tenements shared-court pass
+
+- added a shallow communal threshold with canopy, rails, service panel,
+  address rail and light between the repeated residential blocks;
+- kept the pass presentation-only, with no new doorway, collision, route,
+  interaction or simulation state.
+
 ## Focused Cathedral Quarter choir-crown pass
 
 - added a shallow organ-like crown rail with stepped pipe silhouettes, collars
