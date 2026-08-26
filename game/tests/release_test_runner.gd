@@ -732,7 +732,9 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     await process_frame
     var outpost_page: Array = world.presentation_review_pages[14] if world.presentation_review_pages.size() > 14 else []
     _expect(outpost_page.size() == 4, "Autonomous outpost presentation review must expose all four role silhouettes.")
-    _expect(world.camera.fov <= 42.5 and world.presentation_review_camera_target.y >= 2.0, "Autonomous outpost review must use a close elevated frame for the Tier III shelter and role hardware.")
+    _expect(world.camera.fov <= 42.5 and world.presentation_review_camera_target.y >= 1.8, "Autonomous outpost review must use a close elevated frame for the Tier III shelter and role hardware.")
+    if outpost_page.size() == 4:
+        _expect(absf((outpost_page[2] as Node3D).position.z - (outpost_page[0] as Node3D).position.z) >= 3.0, "Autonomous outpost review must separate its two role rows for readable shelter and signature detail.")
     for index in outpost_page.size():
         var outpost_actor := outpost_page[index] as Outpost3D
         _expect(outpost_actor != null and outpost_actor.visible and is_equal_approx(absf(outpost_actor.rotation.y), PI), "Autonomous outpost role review actors must face the gallery camera.")

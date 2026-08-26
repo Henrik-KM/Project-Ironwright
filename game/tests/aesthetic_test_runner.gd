@@ -1276,6 +1276,8 @@ func _run_all() -> void:
         _expect(_find_named(sample, "ShelterServiceDoor") != null and _find_named(sample, "RoofServiceRib01") != null and _find_named(sample, "FoundationAnchor00") != null, "The authored outpost shelter must expose service-door, roof-rib and foundation-anchor detail.")
         _expect(_find_named(sample, "OutpostDamagePresentation") != null and _find_named(sample, "OutpostDamageScar00") != null and _find_named(sample, "OutpostDamageLeak00") != null, "Outposts must expose bounded integrity damage-memory presentation sockets.")
         _expect(_find_named(sample, "CoreShelterCore") != null and _find_named(sample, "CoreVent") != null, "Outposts must use the high-definition shelter and service-surface treatment.")
+        _expect(_find_named(sample, "OutpostServiceSpine") != null and _find_named(sample, "ServiceSpineHousing") != null and _find_named(sample, "ServiceSpinePanel") != null, "Tiered outposts must expose a coherent high-definition service spine behind their role hardware.")
+        _expect(_find_named(sample, "ServiceSpineLouver") != null and _find_named(sample, "ServiceSpineRoleBadge") != null and _find_named(sample, "ServiceSpineBeacon") != null, "Tiered outposts must expose bounded service ventilation, role identity and status hardware.")
         var shell_core := _find_named(sample, "CoreShelterCore") as MeshInstance3D
         var shell_vertices := PackedVector3Array()
         if shell_core != null and shell_core.mesh is ArrayMesh:
@@ -1284,6 +1286,7 @@ func _run_all() -> void:
                 shell_vertices = shell_arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array
         _expect(shell_vertices.size() > 24, "The authored outpost shelter core must use chamfered high-definition geometry rather than a flat six-face box.")
         _expect(_find_named(sample, "TierFrame1") != null and _find_named(sample, "TierFrame2") != null and _find_named(sample, "TierFrame3") != null, "Tier 3 outposts must expose three stable structural frames.")
+        _expect(_find_named(sample, "TierFrame1Deck") != null and _find_named(sample, "TierFrame3Deck") != null and _find_named(sample, "TierFrame2DeckInset") != null, "Tier 3 outposts must expose recessed structural decks rather than empty repeated frames.")
         _expect(_find_named(sample, "TierFrame1RolePlate") != null and _find_named(sample, "TierFrame2RolePlate") != null and _find_named(sample, "TierFrame3RolePlate") != null, "Tier 3 outposts must expose role-coded articulation plates on every structural frame.")
         _expect(_find_named(sample, "TierFrame1RoleNode") != null and _find_named(sample, "TierFrame3RoleNode") != null and _find_named(sample, "TierFrame3RoleBraceLeft") != null, "Tier 3 outposts must expose bounded role signal nodes and frame braces.")
         _expect(_outpost_model_has_details(sample, outpost_roles[index]), "The %s outpost must expose a role-readable high-detail silhouette." % outpost_roles[index])

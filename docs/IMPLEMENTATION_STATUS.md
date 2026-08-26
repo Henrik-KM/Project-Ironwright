@@ -137,6 +137,18 @@
 - extended the silent presentation review with a dedicated four-role Tier III
   outpost page and exact live capture coverage.
 
+## Focused outpost role-surface and review-composition pass
+
+- added a bounded service spine with ventilation, status and role-identity
+  hardware behind the existing Tier I-III frames, plus recessed deck and inset
+  surfaces so the evolved outpost reads as one maintained machine assembly;
+- staged the four Tier III role fixtures as a larger two-by-two review plate and
+  adjusted only that development camera so resource, defence, scout and repair
+  signatures remain judgeable without changing gameplay scale or spacing;
+- extended aesthetic coverage across the service spine and tier decks, and
+  confirmed the page plus the opening roster in a quiet live run with dummy
+  audio output.
+
 ## Causal final-protocol phase pass
 
 - final protocols now resolve through an autonomous remote relay phase backed by
