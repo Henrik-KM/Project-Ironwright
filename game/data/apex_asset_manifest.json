@@ -4,6 +4,7 @@
   "source": "game/assets/apex/source/build_apex_asset.py",
   "runtime_path": "res://assets/apex/apex.gltf",
   "quality": "authored_high_definition",
+  "manufactured_surface_profile": "chamfered_high_definition",
   "license": "Original Project Ironwright asset",
   "required_nodes": ["ApexModel", "Torso", "TorsoCore", "ApexCrown", "ApexCrownRidgeL", "ApexCrownFastenerR", "ApexJawL", "ApexJawLatchR", "ApexMembraneL", "ApexMembraneRibL0", "ApexFlankRootL", "ProductionAssetMarker"],
   "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]

@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, _geometry, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "apex.gltf"
@@ -91,8 +91,8 @@ def main() -> None:
         "Segment": mesh("Segment", add_uv_sphere(builder, 0.68, shell, 24, 32)),
         "Crown": mesh("Crown", add_uv_sphere(builder, 0.62, shell, 24, 36)),
         "Jaw": mesh("Jaw", add_cylinder(builder, 0.13, 1.35, bone, 32)),
-        "JawPlate": mesh("JawPlate", add_box(builder, (0.32, 0.18, 0.92), bone)),
-        "Rib": mesh("Rib", add_box(builder, (1.52, 0.14, 0.24), shell)),
+        "JawPlate": mesh("JawPlate", add_beveled_box(builder, (0.32, 0.18, 0.92), bone, 0.035)),
+        "Rib": mesh("Rib", add_beveled_box(builder, (1.52, 0.14, 0.24), shell, 0.035)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.12, 1.72, tendon, 32)),
         "Talon": mesh("Talon", add_cylinder(builder, 0.075, 0.82, bone, 32)),
         # The final threat's crown should terminate in organic thorns, not a
@@ -103,7 +103,7 @@ def main() -> None:
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.11, eye, 24, 32)),
         "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.055, bone, 24, 32)),
         "CrownRidge": mesh("CrownRidge", add_cylinder(builder, 0.06, 1.08, bone, 32)),
-        "JawLatch": mesh("JawLatch", add_box(builder, (0.20, 0.10, 0.44), bone)),
+        "JawLatch": mesh("JawLatch", add_beveled_box(builder, (0.20, 0.10, 0.44), bone, 0.022)),
         "MembraneRib": mesh("MembraneRib", add_cylinder(builder, 0.035, 0.82, bone, 32)),
     }
 
@@ -113,6 +113,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "apex.cistern.v1",
             "asset_quality": "authored_high_definition",
+            "manufactured_surface_profile": "chamfered_high_definition",
             "socket_contract": "crown, jaw, dorsal_membrane, flank_roots, threat_eyes",
         },
     }]
@@ -278,6 +279,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "apex.cistern.v1",
+            "manufactured_surface_profile": "chamfered_high_definition",
             "required_nodes": ["ApexModel", "Torso", "TorsoCore", "ApexCrown", "ApexJawL", "ApexMembraneL", "ApexFlankRootL", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
         },

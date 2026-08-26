@@ -2,6 +2,12 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The Cistern Apex received a focused attack-surface pass on 2026-08-26. Its jaw
+plates, thorax ribs and jaw latches now use the shared chamfered high-definition
+mesh profile around the existing wet shell, crown and membrane anatomy. The
+exact silent 1280x720 late-organic review remains required; broader human Apex,
+organic-family and production-art acceptance remains open.
+
 The Signal Relay received a focused service-surface pass on 2026-08-26. Its
 service face, heat sink, feet, optic housing, braces, signal panels and latch
 now use the shared chamfered high-definition mesh profile around the existing
