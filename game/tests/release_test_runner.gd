@@ -69,6 +69,12 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
         _expect(is_equal_approx(world.release_audio._safe_volume_db(0.0), -18.0), "Quiet audio review mode must cap a full-scale cue at a very low playback level.")
         _expect(is_equal_approx(world.release_audio._safe_volume_db(-24.0), -24.0), "Quiet audio review mode must preserve already-quiet cues without boosting them.")
         world.release_audio.quiet_audio = false
+        world.release_audio.music_duck_remaining = 0.0
+        _expect(is_equal_approx(world.release_audio.music_target_volume_db(), -7.0), "Release music must return to its calm target when no immediate danger is present.")
+        world.release_audio._arm_music_duck(1.2)
+        _expect(is_equal_approx(world.release_audio.music_target_volume_db(), -11.5), "Immediate danger must duck the adaptive music so the warning remains readable.")
+        world.release_audio._process(1.3)
+        _expect(is_zero_approx(world.release_audio.music_duck_remaining), "Danger music ducking must expire instead of leaving the soundtrack permanently muted.")
         _expect(is_equal_approx(world.release_audio._organic_signature_pitch(&"glassmoth", false), 1.28), "Release audio must preserve the high signature of Glassmoth.")
         _expect(world.release_audio._organic_signature_pitch(&"apex", true) < world.release_audio._organic_signature_pitch(&"apex", false), "Release audio must lower a species signature on death.")
         for call_id in [&"organic_call_low", &"organic_call_mid", &"organic_call_high", &"organic_call_root", &"organic_call_bell", &"organic_call_wing"]:
@@ -117,6 +123,7 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
         world.release_audio._on_organic_attack_started(warning_enemy, world.player)
         _expect(world.release_audio.attack_warning_count == warning_count_before + 1, "An organic attack wind-up must emit a pre-impact danger cue.")
         _expect(world.release_audio.last_effect_id == world.release_audio._organic_call_id(warning_enemy.species), "An organic attack wind-up must use its species call family.")
+        _expect(world.release_audio.music_duck_remaining > 0.0, "An organic attack wind-up must duck the adaptive music during its readable warning window.")
         world.release_audio._on_organic_attack_started(warning_enemy, world.player)
         _expect(world.release_audio.attack_warning_count == warning_count_before + 1, "Overlapping organic wind-ups must be rate-limited in the audio layer.")
         world.release_audio.attack_warning_clock = 0.0
