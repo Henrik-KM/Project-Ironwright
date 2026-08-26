@@ -4,6 +4,8 @@ extends Node
 signal mood_changed(mood: StringName)
 
 const AUDIO_ROOT := "res://assets/release/audio"
+const QUIET_AUDIO_FLAG := "--quiet-audio"
+const QUIET_AUDIO_CAP_DB := -18.0
 const STREAM_PATHS: Dictionary = {
     &"ambience_city": AUDIO_ROOT + "/ambience_city.wav",
     &"ambience_sanctuary": AUDIO_ROOT + "/ambience_sanctuary.wav",
@@ -50,6 +52,7 @@ var attack_warning_clock: float = 0.0
 var attack_warning_count: int = 0
 var last_heartforge_tier: int = 1
 var heartforge_tier_cue_count: int = 0
+var quiet_audio: bool = false
 
 
 func configure(
@@ -72,6 +75,7 @@ func configure(
 
 func _ready() -> void:
     add_to_group(&"release_audio_director")
+    quiet_audio = _has_command_line_flag(QUIET_AUDIO_FLAG)
     _load_streams()
     _build_players()
     _build_caption_ui()
@@ -134,7 +138,7 @@ func _audio_player(node_name: String, bus_name: String, stream_id: StringName, v
     audio.name = node_name
     audio.bus = bus_name
     audio.stream = stream_library.get(stream_id, null)
-    audio.volume_db = volume_db
+    audio.volume_db = _safe_volume_db(volume_db)
     add_child(audio)
     if audio.stream != null:
         audio.play()
@@ -182,7 +186,7 @@ func play_effect(effect_id: StringName, caption_key: String = "", pitch_variatio
     audio.stop()
     audio.stream = stream
     audio.pitch_scale = clampf(base_pitch + sin(float(sfx_cursor) * 1.731) * pitch_variation, 0.55, 1.55)
-    audio.volume_db = volume_db
+    audio.volume_db = _safe_volume_db(volume_db)
     audio.play()
     if not caption_key.is_empty():
         show_caption(caption_key)
@@ -233,7 +237,7 @@ func _play_spatial_report(world_position: Vector3, volume_db: float, pitch_scale
     audio.name = "OperationReport_%02d" % operation_report_count
     audio.bus = "Effects"
     audio.stream = stream
-    audio.volume_db = volume_db
+    audio.volume_db = _safe_volume_db(volume_db)
     audio.pitch_scale = pitch_scale
     audio.max_distance = 42.0
     audio.unit_size = 5.0
@@ -385,8 +389,10 @@ func _update_ambience(delta: float) -> void:
     var distance := player.global_position.distance_to(heartforge.global_position)
     var sanctuary_weight := 1.0 - clampf((distance - 6.0) / 30.0, 0.0, 1.0)
     var city_weight := 1.0 - sanctuary_weight * 0.82
-    sanctuary_ambience.volume_db = lerpf(sanctuary_ambience.volume_db, linear_to_db(maxf(0.001, sanctuary_weight * 0.95)), 1.0 - exp(-delta * 2.0))
-    city_ambience.volume_db = lerpf(city_ambience.volume_db, linear_to_db(maxf(0.001, city_weight * 0.85)), 1.0 - exp(-delta * 2.0))
+    var sanctuary_target := _safe_volume_db(linear_to_db(maxf(0.001, sanctuary_weight * 0.95)))
+    var city_target := _safe_volume_db(linear_to_db(maxf(0.001, city_weight * 0.85)))
+    sanctuary_ambience.volume_db = lerpf(sanctuary_ambience.volume_db, sanctuary_target, 1.0 - exp(-delta * 2.0))
+    city_ambience.volume_db = lerpf(city_ambience.volume_db, city_target, 1.0 - exp(-delta * 2.0))
 
 
 func _evaluate_music_mood() -> void:
@@ -412,7 +418,7 @@ func _switch_music(mood: StringName, immediate: bool = false) -> void:
     current_mood = mood
     inactive_music.stop()
     inactive_music.stream = stream
-    inactive_music.volume_db = 0.0 if immediate else -60.0
+    inactive_music.volume_db = _safe_volume_db(0.0) if immediate else -60.0
     inactive_music.play()
     var swap := active_music
     active_music = inactive_music
@@ -425,7 +431,7 @@ func _switch_music(mood: StringName, immediate: bool = false) -> void:
 func _update_music_crossfade(delta: float) -> void:
     if active_music == null or inactive_music == null:
         return
-    active_music.volume_db = move_toward(active_music.volume_db, -7.0, delta * 24.0)
+    active_music.volume_db = move_toward(active_music.volume_db, _safe_volume_db(-7.0), delta * 24.0)
     inactive_music.volume_db = move_toward(inactive_music.volume_db, -60.0, delta * 28.0)
     if inactive_music.volume_db <= -58.0 and inactive_music.playing:
         inactive_music.stop()
@@ -437,3 +443,17 @@ func to_dictionary() -> Dictionary:
 
 func restore_from_dictionary(data: Dictionary) -> void:
     _switch_music(StringName(str(data.get("current_mood", "embers"))), true)
+
+
+func _safe_volume_db(volume_db: float) -> float:
+    return minf(volume_db, QUIET_AUDIO_CAP_DB) if quiet_audio else volume_db
+
+
+func _has_command_line_flag(flag: String) -> bool:
+    for argument in OS.get_cmdline_args():
+        if str(argument) == flag:
+            return true
+    for argument in OS.get_cmdline_user_args():
+        if str(argument) == flag:
+            return true
+    return false

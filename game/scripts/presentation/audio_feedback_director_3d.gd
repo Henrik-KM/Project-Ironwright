@@ -12,6 +12,8 @@ signal sound_event(profile: StringName, position: Vector3)
 
 const MIX_RATE := 22050
 const MAX_ACTIVE_PLAYERS := 18
+const QUIET_AUDIO_FLAG := "--quiet-audio"
+const QUIET_AUDIO_CAP_DB := -18.0
 const ORGANIC_SPECIES := [
     &"veilstalker", &"razorhound", &"apex", &"sporecaster", &"broodmass", &"burrower",
     &"skitterling", &"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle",
@@ -30,6 +32,7 @@ var last_actor_health: Dictionary = {}
 var last_player_health: float = -1.0
 var _last_heartforge_health: float = -1.0
 var _last_endgame_stage: int = -1
+var quiet_audio: bool = false
 
 
 func configure(next_world: Node3D, next_player: Node3D, next_heartforge: Node3D, next_noise_system: Node) -> void:
@@ -41,6 +44,7 @@ func configure(next_world: Node3D, next_player: Node3D, next_heartforge: Node3D,
 
 func _ready() -> void:
     process_mode = Node.PROCESS_MODE_ALWAYS
+    quiet_audio = _has_command_line_flag(QUIET_AUDIO_FLAG)
     for profile in [&"pistol", &"machine_weapon", &"machine_impact", &"player_impact", &"salvage", &"forge", &"organic_attack", &"organic_impact", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition", &"endgame_start", &"endgame_stage", &"endgame_complete", &"endgame_failure"]:
         profiles[profile] = _build_profile(profile)
     for species in ORGANIC_SPECIES:
@@ -98,7 +102,7 @@ func play_profile(profile: StringName, position: Vector3, volume_db: float = -7.
     var audio_player := AudioStreamPlayer3D.new()
     audio_player.name = "Sound_%s_%03d" % [String(profile), event_count]
     audio_player.stream = profiles[profile] as AudioStreamWAV
-    audio_player.volume_db = volume_db
+    audio_player.volume_db = _safe_volume_db(volume_db)
     audio_player.pitch_scale = clampf(pitch_scale, 0.55, 1.55)
     audio_player.unit_size = 3.0
     audio_player.max_distance = 34.0
@@ -186,6 +190,20 @@ func _register_actor(actor: Node) -> void:
 func _connect_once(source: Object, signal_name: StringName, callback: Callable) -> void:
     if source.has_signal(signal_name) and not source.is_connected(signal_name, callback):
         source.connect(signal_name, callback)
+
+
+func _safe_volume_db(volume_db: float) -> float:
+    return minf(volume_db, QUIET_AUDIO_CAP_DB) if quiet_audio else volume_db
+
+
+func _has_command_line_flag(flag: String) -> bool:
+    for argument in OS.get_cmdline_args():
+        if str(argument) == flag:
+            return true
+    for argument in OS.get_cmdline_user_args():
+        if str(argument) == flag:
+            return true
+    return false
 
 
 func _on_pistol_fired(origin: Vector3, _target: Vector3, _target_node: Node) -> void:

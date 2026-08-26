@@ -1,5 +1,10 @@
 # Project Ironwright — Presentation Quality Gate
 
+The development-only `--quiet-audio` flag now caps generated release and
+survival audio at -18 dB for safe live review. Automated and screenshot
+validation continues to use Godot's dummy audio driver; no review requires
+live speakers.
+
 **Status:** Canonical pre-alpha production constraint
 
 North Ruins received a focused archive-prop pass on 2026-08-26. The authored
