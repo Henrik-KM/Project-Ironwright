@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused outpost tier-articulation pass
+
+- added restrained role-colored service plates, signal nodes and small braces to
+  each existing outpost tier frame so Tier I-III progression reads as maintained
+  machine hardware rather than repeated empty rails;
+- kept the layer presentation-only and bounded: no new collision, simulation,
+  save state, queue or recurring player task was introduced;
+- extended the aesthetic guard so every Tier III role retains the articulation
+  layer across rebuild and exact review fixtures.
+
 ## Focused autonomous route-recovery marker pass
 
 - rebuilt the transient route-recovery beacon with a grounded manufactured

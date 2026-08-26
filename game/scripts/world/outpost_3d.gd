@@ -353,6 +353,7 @@ func _refresh_visuals() -> void:
     elif role == &"repair":
         role_color = Color("a78be0")
     var glow := ModelKit3D.material(role_color.darkened(0.62), 0.25, 0.38, role_color, 3.0)
+    var tier_signal := ModelKit3D.material(role_color.darkened(0.56), 0.42, 0.34, role_color, 1.8)
 
     if not alive:
         var destroyed_foundation := ModelKit3D.add_beveled_box(
@@ -433,6 +434,37 @@ func _refresh_visuals() -> void:
         ModelKit3D.add_beveled_box(frame, Vector3(frame_size, 0.16, 0.22), Vector3(0.0, 0.0, frame_size * 0.5), frame_rust, Vector3.ZERO, "%sSouthRail" % frame_name, 0.28)
         ModelKit3D.add_beveled_box(frame, Vector3(0.22, 0.16, frame_size - 0.42), Vector3(-frame_size * 0.5, 0.0, 0.0), frame_rust, Vector3.ZERO, "%sWestRail" % frame_name, 0.28)
         ModelKit3D.add_beveled_box(frame, Vector3(0.22, 0.16, frame_size - 0.42), Vector3(frame_size * 0.5, 0.0, 0.0), frame_rust, Vector3.ZERO, "%sEastRail" % frame_name, 0.28)
+        # A small role-coded service plate gives each tier a readable
+        # manufactured identity at tactical distance. It is deliberately
+        # attached to the existing frame, so it adds no structure, collision
+        # or player-managed maintenance surface.
+        ModelKit3D.add_surface_panel(
+            frame,
+            Vector3(0.72 + float(tier_index) * 0.08, 0.2, 0.1),
+            Vector3(0.0, 0.035, -frame_size * 0.5 - 0.12),
+            frame_rust,
+            tier_signal,
+            Vector3.ZERO,
+            "%sRolePlate" % frame_name
+        )
+        ModelKit3D.add_sphere(
+            frame,
+            0.085 + float(tier_index) * 0.012,
+            Vector3(0.0, 0.075, -frame_size * 0.5 - 0.2),
+            tier_signal,
+            Vector3(1.0, 0.55, 0.5),
+            "%sRoleNode" % frame_name
+        )
+        for side in [-1.0, 1.0]:
+            ModelKit3D.add_beveled_box(
+                frame,
+                Vector3(0.08, 0.12, 0.38),
+                Vector3(side * (0.48 + float(tier_index) * 0.04), 0.035, -frame_size * 0.5 - 0.08),
+                tier_signal,
+                Vector3(0.0, 0.0, side * 0.32),
+                "%sRoleBrace%s" % [frame_name, "Left" if side < 0.0 else "Right"],
+                0.18
+            )
 
     var role_signature := Node3D.new()
     role_signature.name = "OutpostRoleSignature"
