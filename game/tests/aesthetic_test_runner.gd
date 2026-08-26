@@ -661,6 +661,12 @@ func _run_all() -> void:
                 var labs_vessel_mesh := landmark.find_child("BuriedLabsVesselBody0", true, false) as MeshInstance3D
                 var labs_collar_mesh := landmark.find_child("BuriedLabsVesselCollarTop0", true, false) as MeshInstance3D
                 _expect(labs_vessel_mesh != null and labs_collar_mesh != null and _mesh_vertex_count(labs_vessel_mesh) >= 880 and _mesh_vertex_count(labs_collar_mesh) >= 384, "Buried Laboratories vessels must retain smooth high-definition envelopes and service collars.")
+                var labs_rail_mesh := landmark.find_child("BuriedLabsTransferRail", true, false) as MeshInstance3D
+                var labs_door_mesh := landmark.find_child("BuriedLabsContainmentDoor", true, false) as MeshInstance3D
+                var labs_gantry_mesh := landmark.find_child("BuriedLabsExtractionBeam", true, false) as MeshInstance3D
+                _expect(labs_rail_mesh != null and _mesh_vertex_count(labs_rail_mesh) > 24, "Buried Laboratories transfer rails must use chamfered high-definition geometry rather than flat bars.")
+                _expect(labs_door_mesh != null and _mesh_vertex_count(labs_door_mesh) > 24, "Buried Laboratories containment doors must use chamfered high-definition geometry rather than flat slabs.")
+                _expect(labs_gantry_mesh != null and _mesh_vertex_count(labs_gantry_mesh) > 24, "Buried Laboratories extraction gantries must use chamfered high-definition geometry rather than flat beams.")
                 var labs_light := landmark.find_child("BuriedLabsVesselLight0", true, false) as Node3D
                 var labs_seep := landmark.find_child("BuriedLabsOrganicSeep0", true, false) as Node3D
                 var labs_port := landmark.find_child("BuriedLabsVesselPort0", true, false) as Node3D
