@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Tier III outpost presentation pass
+
+- rebuilt every authored shelter core and service surface with the shared
+  chamfered mesh profile while preserving stable nodes, materials and sockets;
+- muted repeated tier rails so the shelter and role signatures remain the
+  visual hierarchy at tactical distance;
+- extended the silent presentation review with a dedicated four-role Tier III
+  outpost page and exact live capture coverage.
+
 ## Causal final-protocol phase pass
 
 - final protocols now resolve through an autonomous remote relay phase backed by

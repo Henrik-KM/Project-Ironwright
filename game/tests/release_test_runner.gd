@@ -572,7 +572,7 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
 func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     world._start_presentation_review()
     await process_frame
-    _expect(world.presentation_review_pages.size() == 14, "Presentation review must expose the three core pages plus all eleven remote regions.")
+    _expect(world.presentation_review_pages.size() == 15, "Presentation review must expose the three core pages, all eleven remote regions and the autonomous outpost role page.")
     _expect(world.release_world_art != null and world.release_world_art.dressing_root != null, "Presentation review must retain the release dressing root alongside its controller.")
     world._show_presentation_review_page(0)
     await process_frame
@@ -611,7 +611,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         var first_early_actor := early_review_page[0] as Node3D
         var second_early_actor := early_review_page[1] as Node3D
         _expect(first_early_actor != null and second_early_actor != null and absf(second_early_actor.position.x - first_early_actor.position.x) >= 3.0, "Organic presentation rows must preserve a readable horizontal gap between authored families.")
-    for page_index in range(3, world.presentation_review_pages.size()):
+    for page_index in range(3, 3 + world.PRESENTATION_REVIEW_REGIONS.size()):
         world._show_presentation_review_page(page_index)
         await process_frame
         var region_page: Array = world.presentation_review_pages[page_index]
@@ -681,6 +681,16 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         _expect(buried_labs_actor != null and buried_labs_actor.find_child("BuriedLabsGenomePrism", true, false) != null and buried_labs_actor.find_child("BuriedLabsExtractionBeam", true, false) != null, "Buried Laboratories presentation review actor must retain its genome-prism extraction focal assembly.")
         var buried_labs_review_offset := world._presentation_review_region_camera_offset(&"region.buried_labs")
         _expect(buried_labs_review_offset.z <= 15.1 and buried_labs_review_offset.y <= 10.3, "Buried Laboratories presentation review must use a closer vertical frame for its authored extraction gantry.")
+    world._show_presentation_review_page(14)
+    await process_frame
+    var outpost_page: Array = world.presentation_review_pages[14] if world.presentation_review_pages.size() > 14 else []
+    _expect(outpost_page.size() == 4, "Autonomous outpost presentation review must expose all four role silhouettes.")
+    _expect(world.camera.fov <= 42.5 and world.presentation_review_camera_target.y >= 2.0, "Autonomous outpost review must use a close elevated frame for the Tier III shelter and role hardware.")
+    for index in outpost_page.size():
+        var outpost_actor := outpost_page[index] as Outpost3D
+        _expect(outpost_actor != null and outpost_actor.visible and is_equal_approx(absf(outpost_actor.rotation.y), PI), "Autonomous outpost role review actors must face the gallery camera.")
+        if outpost_actor != null:
+            _expect(outpost_actor.find_child("OutpostAuthoredModel", true, false) != null and outpost_actor.find_child("TierFrame3", true, false) != null, "Autonomous outpost role review must retain the authored shelter and Tier III frame.")
     for core_page in range(3):
         world._show_presentation_review_page(core_page)
         await process_frame
@@ -707,7 +717,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
             _expect(organic_cool_light != null and organic_cool_light.light_energy >= 3.2, "Organic presentation pages must retain a cool rim lift for readable anatomy edges.")
             _expect(organic_detail_fill != null and organic_detail_fill.visible and organic_detail_fill.light_energy >= 1.5, "Organic presentation pages must receive a restrained low front fill for secondary anatomy readability.")
         _expect(world.presentation_review_camera_desired.z < 18.0, "Core presentation pages must use the closer review camera framing.")
-    world._show_presentation_review_page(13)
+    world._show_presentation_review_page(14)
     world.presentation_review_active = false
     world.get_tree().paused = false
     world._set_tactical_hud_visible(true)

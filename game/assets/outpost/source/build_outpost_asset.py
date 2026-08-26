@@ -15,7 +15,7 @@ from pathlib import Path
 SOURCE_DIR = Path(__file__).resolve().parent
 ASSET_ROOT = SOURCE_DIR.parents[1]
 sys.path.insert(0, str(ASSET_ROOT / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_uv_sphere  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_cylinder, add_uv_sphere  # noqa: E402
 
 
 def build() -> None:
@@ -51,25 +51,25 @@ def build() -> None:
     mesh_ids = {
         "foundation": mesh("Foundation", add_cylinder(builder, 2.65, 0.45, dark, 28)),
         "foundation_inset": mesh("FoundationInset", add_cylinder(builder, 2.38, 0.12, dark, 28)),
-        "shelter_core": mesh("CoreShelterCore", add_box(builder, (3.7, 2.1, 3.4), iron)),
-        "shelter_band": mesh("ShelterMaintenanceBand", add_box(builder, (3.28, 0.12, 0.16), rust)),
-        "window_frame": mesh("ShelterWindowFrame", add_box(builder, (0.1, 0.72, 1.28), panel)),
-        "window_mullion": mesh("ShelterWindowMullion", add_box(builder, (0.12, 0.58, 0.08), rust)),
-        "window_glass": mesh("ShelterWindowGlass", add_box(builder, (0.06, 0.54, 0.92), glass)),
-        "service_door": mesh("ShelterServiceDoor", add_box(builder, (0.1, 1.18, 0.86), panel)),
-        "service_latch": mesh("ShelterServiceLatch", add_box(builder, (0.08, 0.12, 0.38), signal)),
-        "roof_core": mesh("RoofPlateCore", add_box(builder, (4.1, 0.24, 3.8), rust)),
-        "roof_ridge": mesh("RoofPlateRidge", add_box(builder, (2.4, 0.12, 0.18), panel)),
-        "roof_rib": mesh("RoofServiceRib", add_box(builder, (0.16, 0.18, 3.32), iron)),
-        "roof_brace": mesh("RoofServiceBrace", add_box(builder, (0.2, 0.2, 0.72), rust)),
-        "vent_core": mesh("CoreVentCore", add_box(builder, (2.1, 0.62, 0.12), panel)),
-        "vent_louver": mesh("CoreVentLouver", add_box(builder, (0.12, 0.48, 0.08), iron)),
-        "vent_cap": mesh("CoreVentCap", add_box(builder, (2.26, 0.1, 0.18), rust)),
-        "service_core": mesh("CoreServicePanelCore", add_box(builder, (1.0, 0.6, 0.12), panel)),
-        "service_cap": mesh("CoreServicePanelCap", add_box(builder, (0.7, 0.08, 0.08), signal)),
-        "service_rail": mesh("ServiceRail", add_box(builder, (0.12, 0.12, 1.7), rust)),
-        "foundation_anchor": mesh("FoundationAnchor", add_box(builder, (0.34, 0.16, 0.54), panel)),
-        "foundation_latch": mesh("FoundationLatch", add_box(builder, (0.16, 0.08, 0.24), signal)),
+        "shelter_core": mesh("CoreShelterCore", add_beveled_box(builder, (3.7, 2.1, 3.4), iron)),
+        "shelter_band": mesh("ShelterMaintenanceBand", add_beveled_box(builder, (3.28, 0.12, 0.16), rust)),
+        "window_frame": mesh("ShelterWindowFrame", add_beveled_box(builder, (0.1, 0.72, 1.28), panel)),
+        "window_mullion": mesh("ShelterWindowMullion", add_beveled_box(builder, (0.12, 0.58, 0.08), rust)),
+        "window_glass": mesh("ShelterWindowGlass", add_beveled_box(builder, (0.06, 0.54, 0.92), glass)),
+        "service_door": mesh("ShelterServiceDoor", add_beveled_box(builder, (0.1, 1.18, 0.86), panel)),
+        "service_latch": mesh("ShelterServiceLatch", add_beveled_box(builder, (0.08, 0.12, 0.38), signal)),
+        "roof_core": mesh("RoofPlateCore", add_beveled_box(builder, (4.1, 0.24, 3.8), rust)),
+        "roof_ridge": mesh("RoofPlateRidge", add_beveled_box(builder, (2.4, 0.12, 0.18), panel)),
+        "roof_rib": mesh("RoofServiceRib", add_beveled_box(builder, (0.16, 0.18, 3.32), iron)),
+        "roof_brace": mesh("RoofServiceBrace", add_beveled_box(builder, (0.2, 0.2, 0.72), rust)),
+        "vent_core": mesh("CoreVentCore", add_beveled_box(builder, (2.1, 0.62, 0.12), panel)),
+        "vent_louver": mesh("CoreVentLouver", add_beveled_box(builder, (0.12, 0.48, 0.08), iron)),
+        "vent_cap": mesh("CoreVentCap", add_beveled_box(builder, (2.26, 0.1, 0.18), rust)),
+        "service_core": mesh("CoreServicePanelCore", add_beveled_box(builder, (1.0, 0.6, 0.12), panel)),
+        "service_cap": mesh("CoreServicePanelCap", add_beveled_box(builder, (0.7, 0.08, 0.08), signal)),
+        "service_rail": mesh("ServiceRail", add_beveled_box(builder, (0.12, 0.12, 1.7), rust)),
+        "foundation_anchor": mesh("FoundationAnchor", add_beveled_box(builder, (0.34, 0.16, 0.54), panel)),
+        "foundation_latch": mesh("FoundationLatch", add_beveled_box(builder, (0.16, 0.08, 0.24), signal)),
         "status_housing": mesh("StatusBeaconHousing", add_cylinder(builder, 0.18, 0.26, panel, 24)),
         "status_lens": mesh("StatusBeaconLens", add_uv_sphere(builder, 0.24, signal, 16, 24)),
         "corner_cap": mesh("ShelterCornerCap", add_uv_sphere(builder, 0.16, rust, 16, 24)),
@@ -137,7 +137,7 @@ def build() -> None:
         "accessors": builder.accessors,
         "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
-        "extras": {"ironwright_asset_id": "outpost.shelter.v1", "required_nodes": ["OutpostModel", "Foundation", "CoreShelter", "CoreShelterCore", "RoofPlate", "CoreVent", "CoreServicePanel", "StatusBeacon", "ProductionAssetMarker", "ShelterWindowFrame00", "ShelterWindowMullion00", "RoofServiceRib01", "FoundationAnchor00"]},
+        "extras": {"ironwright_asset_id": "outpost.shelter.v1", "asset_quality": "authored_high_definition", "manufactured_surface_profile": "chamfered_high_definition", "required_nodes": ["OutpostModel", "Foundation", "CoreShelter", "CoreShelterCore", "RoofPlate", "CoreVent", "CoreServicePanel", "StatusBeacon", "ProductionAssetMarker", "ShelterWindowFrame00", "ShelterWindowMullion00", "RoofServiceRib01", "FoundationAnchor00"]},
     }
     output_path = ASSET_ROOT / "outpost" / "outpost.gltf"
     output_path.parent.mkdir(parents=True, exist_ok=True)

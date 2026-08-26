@@ -2,6 +2,14 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Autonomous outposts received a focused Tier III presentation pass on
+2026-08-26. The original shelter core and service surfaces now use the shared
+chamfered high-definition mesh profile, while the repeated tier rails are
+visually restrained so the four role signatures remain distinct. The exact
+silent 1280x720 presentation review now includes page 15/15 for resource,
+defence, scout and repair silhouettes; broader human outpost and production-art
+acceptance remains open.
+
 Flood Market received a focused exchange-focal pass on 2026-08-26. A shallow
 shared counter, canopy, sign, floodline and beacon now connect the repeated
 stalls into one readable flooded-commercial hierarchy at remote review distance.
