@@ -7,6 +7,14 @@ live speakers.
 
 **Status:** Canonical pre-alpha production constraint
 
+Autonomous outposts received a focused tier-articulation pass on 2026-08-26.
+Each existing tier frame now carries a restrained role-colored service plate,
+signal node and small brace pair, giving Tier I-III progression a maintained
+machine identity without competing with the shelter or role mechanism. The
+pass is presentation-only and introduces no new collision, simulation, save
+state or player-managed task. Exact silent 1280x720 Tier III outpost review is
+required; broader human outpost and production-art acceptance remains open.
+
 Autonomous route recovery received a focused marker-presentation pass on
 2026-08-26. The transient detour cue now has a grounded manufactured housing,
 collar and bounded directional plates beneath the existing signal ring, stem,

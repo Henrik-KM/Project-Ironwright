@@ -1245,6 +1245,8 @@ func _run_all() -> void:
                 shell_vertices = shell_arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array
         _expect(shell_vertices.size() > 24, "The authored outpost shelter core must use chamfered high-definition geometry rather than a flat six-face box.")
         _expect(_find_named(sample, "TierFrame1") != null and _find_named(sample, "TierFrame2") != null and _find_named(sample, "TierFrame3") != null, "Tier 3 outposts must expose three stable structural frames.")
+        _expect(_find_named(sample, "TierFrame1RolePlate") != null and _find_named(sample, "TierFrame2RolePlate") != null and _find_named(sample, "TierFrame3RolePlate") != null, "Tier 3 outposts must expose role-coded articulation plates on every structural frame.")
+        _expect(_find_named(sample, "TierFrame1RoleNode") != null and _find_named(sample, "TierFrame3RoleNode") != null and _find_named(sample, "TierFrame3RoleBraceLeft") != null, "Tier 3 outposts must expose bounded role signal nodes and frame braces.")
         _expect(_outpost_model_has_details(sample, outpost_roles[index]), "The %s outpost must expose a role-readable high-detail silhouette." % outpost_roles[index])
         _expect(not bool(_find_named(sample, "OutpostDamagePresentation").visible), "Healthy outposts must keep damage-memory presentation hidden.")
         _expect(sample.presentation_status == &"idle" and is_zero_approx(sample.presentation_activity), "Healthy outposts must begin with a quiet presentation state.")
@@ -1259,7 +1261,7 @@ func _run_all() -> void:
         sample.apply_damage(sample.maximum_health)
         _expect(_find_named(sample, "DestroyedFoundationCore") != null and _find_named(sample, "DestroyedFoundationInsetCore") != null and _find_named(sample, "RubbleRebar00") != null and _find_named(sample, "DestroyedServiceRailCore") != null, "Destroyed outposts must expose a fractured high-definition foundation, reinforcement and service-rail failure read.")
         sample.rebuild()
-        _expect(_find_named(sample, "OutpostAuthoredModel") != null and sample.is_alive(), "Rebuilding an outpost must restore the authored shelter presentation and alive state.")
+        _expect(_find_named(sample, "OutpostAuthoredModel") != null and _find_named(sample, "TierFrame3RolePlate") != null and sample.is_alive(), "Rebuilding an outpost must restore the authored shelter, tier articulation and alive state.")
         sample.queue_free()
 
     var enemy_samples: Array[OrganicEnemy3D] = []
