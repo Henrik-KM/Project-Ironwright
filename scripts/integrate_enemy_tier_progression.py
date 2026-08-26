@@ -58,7 +58,7 @@ def patch_ci() -> None:
         return
     step = (
         "\n      - name: Run population-driven enemy tier progression tests\n"
-        "        run: godot --headless --path game --script res://tests/enemy_tier_progression_test_runner.gd\n"
+        "        run: godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/enemy_tier_progression_test_runner.gd\n"
     )
     text = text.rstrip() + step
     path.write_text(text + "\n", encoding="utf-8")
