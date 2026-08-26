@@ -1,5 +1,14 @@
 # Implementation status
 
+## Causal final-protocol phase pass
+
+- final protocols now resolve through an autonomous remote relay phase backed by
+  functioning discovered outposts, followed by the Heartforge home-front hold;
+- the selected relay site, both phase results and the protocol schema version
+  survive save/load, while underprepared runs fail with a specific cause;
+- no per-outpost assignment, recurring task list or additional player control
+  surface was introduced.
+
 ## Focused Flood Market exchange-focal pass
 
 - added a shallow shared exchange structure with counter, canopy, sign,

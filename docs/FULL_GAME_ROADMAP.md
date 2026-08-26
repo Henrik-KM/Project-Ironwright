@@ -66,6 +66,10 @@ The repository currently demonstrates the complete game-shaped systemic arc:
 - persistent multi-region ecology, causal pressure and reduced-detail continuity;
 - both canonical sustained endgame protocols, first victory and explicit
   post-victory sanctuary continuation;
+- final protocols resolve through an autonomous remote relay phase backed by
+  functioning discovered outposts, followed by a Heartforge home-front hold;
+  the phase evidence is persisted and underprepared support produces a causal
+  failure reason;
 - transactional unified saves, backups, legacy migration and active remote-work
   restoration;
 - controller/accessibility/localization release shell, original audio feedback,

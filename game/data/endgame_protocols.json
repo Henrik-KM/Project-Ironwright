@@ -9,8 +9,10 @@
         "heartforge_tier": 5,
         "technology": "tech.endgame.severance",
         "completed_operation": "operation.root_cistern_mapping",
-        "components_min": 4
+        "components_min": 4,
+        "functioning_outposts_min": 2
       },
+      "remote_outposts_min": 2,
       "scrap_cost": 420,
       "rare_core_cost": 2,
       "duration_seconds": 210.0,
@@ -29,6 +31,7 @@
         "components_min": 4,
         "functioning_outposts_min": 3
       },
+      "remote_outposts_min": 3,
       "scrap_cost": 580,
       "rare_core_cost": 3,
       "duration_seconds": 300.0,

@@ -328,6 +328,8 @@ func _run_all() -> void:
     _expect(not protocols.is_empty(), "At least one player-triggered final protocol must become available.")
     _expect(world.endgame_director.initiate(&"protocol.severance"), "The player must be able to initiate the complete victory path deliberately.")
     _expect(not world.endgame_director.active_protocol.is_empty(), "The final protocol must be an active causal process rather than an instant ending.")
+    _expect(world.endgame_director.active_protocol.get("remote_support_site_id", "") != "", "The final protocol must assign a persistent remote relay support site.")
+    _expect(int(world.endgame_director.active_protocol.get("remote_outposts_min", 0)) == 2, "Severance must declare its minimum autonomous remote relay support.")
     _expect(world.endgame_escalation_director != null, "The final protocol must have a dedicated bounded presentation director.")
     _expect(world.endgame_escalation_director.current_state == &"active", "Starting a final protocol must raise its Heartforge lattice presentation.")
     _expect(world.get_node_or_null("EndgameProtocolVisuals") != null, "The final protocol must attach a visible lattice to the Heartforge without changing collision geometry.")
@@ -342,9 +344,11 @@ func _run_all() -> void:
     _expect(world.hud.operation_badge != null and not world.hud.operation_badge.visible, "The final crisis must keep one live protocol status in the resource panel instead of duplicating it in a bottom badge.")
     world.endgame_director._process(0.1)
     _expect(world.endgame_escalation_director.current_progress > 0.0, "Final protocol progress must drive the visual lattice continuously.")
+    _expect(world.endgame_director.remote_support_progress() > 0.0 and world.endgame_director.homefront_hold_progress() == 0.0, "The final protocol must begin with a remote relay phase before the home-front hold.")
     var severance := world.endgame_director.protocol(&"protocol.severance")
     world.endgame_director._process(float(severance.get("duration_seconds", 210.0)) + 1.0)
     _expect(world.endgame_director.completed_protocol == &"protocol.severance", "The final protocol must complete after its sustained defence interval.")
+    _expect(world.endgame_director.remote_support_progress() >= 0.999 and world.endgame_director.homefront_hold_progress() >= 0.999, "Victory must require both remote relay support and a completed Heartforge hold.")
     _expect(world.endgame_escalation_director.current_state == &"completed", "Final protocol completion must resolve the crisis lattice into the sanctuary crown.")
     _expect(world.get_node("EndgameProtocolVisuals/SanctuaryCrown").visible, "The completed protocol must leave a calm capstone presentation at the Heartforge.")
     _expect(world.first_victory_achieved, "Completing a final protocol must produce the first victory.")
@@ -412,6 +416,7 @@ func _run_all() -> void:
     _expect(ecology_save.has("population_states") and int(ecology_save.get("schema_version", 0)) >= 3, "Ecology saves must include versioned population states.")
     var saved_population := float(world.strategic_ecology_director.population_state(&"region.heartforge_district").get("population", 0.0))
     var endgame_save := world.endgame_director.to_dictionary()
+    _expect(int(endgame_save.get("schema_version", 0)) >= 2, "Endgame saves must version the remote-relay and home-front phase state.")
 
     world.region_director.restore_from_dictionary(region_save)
     complete_world.story_archive_director.restore_from_dictionary(story_archive_save)
@@ -453,6 +458,13 @@ func _run_all() -> void:
     world.endgame_director._process(float(containment.get("duration_seconds", 300.0)) + 1.0)
     _expect(world.endgame_director.completed_protocol == &"protocol.containment", "Containment must complete after its longer sustained defence interval.")
     _expect(world.first_victory_achieved, "Completing Containment must produce the first victory state.")
+
+    world.endgame_director.completed_protocol = &""
+    world.first_victory_achieved = false
+    for site in world.outpost_director.discovered_sites():
+        if site.has_functioning_outpost():
+            site.outpost.apply_damage(9999.0)
+    _expect(not world.endgame_director.can_initiate(&"protocol.severance"), "A final protocol must remain unavailable when its autonomous remote relay support has been destroyed.")
 
     _finish()
 
