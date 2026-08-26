@@ -64,6 +64,10 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
     if world.release_color_filter is ReleaseColorFilter3D:
         _expect(not world.release_color_filter.is_active(), "Colour-vision correction must default to off.")
     if world.release_audio is ReleaseAudioDirector3D:
+        world.release_audio.quiet_audio = true
+        _expect(is_equal_approx(world.release_audio._safe_volume_db(0.0), -18.0), "Quiet audio review mode must cap a full-scale cue at a very low playback level.")
+        _expect(is_equal_approx(world.release_audio._safe_volume_db(-24.0), -24.0), "Quiet audio review mode must preserve already-quiet cues without boosting them.")
+        world.release_audio.quiet_audio = false
         _expect(is_equal_approx(world.release_audio._organic_signature_pitch(&"glassmoth", false), 1.28), "Release audio must preserve the high signature of Glassmoth.")
         _expect(world.release_audio._organic_signature_pitch(&"apex", true) < world.release_audio._organic_signature_pitch(&"apex", false), "Release audio must lower a species signature on death.")
         var tier_callback := Callable(world.release_audio, "_on_heartforge_tier_changed")
