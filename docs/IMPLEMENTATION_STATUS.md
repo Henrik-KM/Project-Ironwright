@@ -10,9 +10,14 @@
   focus used by the release performance director, so following a machine group
   promotes the region being observed instead of leaving the camera over a
   stale local district;
-- extended the aesthetic guard to verify both streamed-out proxy continuity
-  and authored-detail restoration after entering the region. The pass adds no
-  player-managed streaming task or new run-state contract.
+- changed each authored district from boot-time imported-scene instantiation to
+  focus-driven package instancing and release. Distant landmarks retain their
+  collision, discovery state, persistent dressing, story witness and coarse
+  proxy while only the imported high-detail scene nodes leave the active tree;
+- extended the aesthetic guard to verify package child release, re-instancing,
+  streamed-out proxy continuity and authored-detail restoration after entering
+  the region. The pass adds no player-managed streaming task or new run-state
+  contract.
 
 ## Focused outpost tier-articulation pass
 

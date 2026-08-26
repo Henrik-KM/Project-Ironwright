@@ -1,17 +1,17 @@
 class_name RegionLandmark3D
 extends Node3D
 
-const AUTHORED_ROOT_CISTERN_MODEL_SCENE: PackedScene = preload("res://assets/root_cistern/root_cistern.gltf")
-const AUTHORED_RIVERWORKS_MODEL_SCENE: PackedScene = preload("res://assets/riverworks/riverworks.gltf")
-const AUTHORED_CATHEDRAL_MODEL_SCENE: PackedScene = preload("res://assets/cathedral/cathedral.gltf")
-const AUTHORED_OBSERVATORY_MODEL_SCENE: PackedScene = preload("res://assets/observatory/observatory.gltf")
-const AUTHORED_TRAM_GRAVEYARD_MODEL_SCENE: PackedScene = preload("res://assets/tram_graveyard/tram_graveyard.gltf")
-const AUTHORED_BURIED_LABS_MODEL_SCENE: PackedScene = preload("res://assets/buried_labs/buried_labs.gltf")
-const AUTHORED_GLASSHOUSE_MODEL_SCENE: PackedScene = preload("res://assets/glasshouse/glasshouse.gltf")
-const AUTHORED_ARCHIVE_MODEL_SCENE: PackedScene = preload("res://assets/archive/archive.gltf")
-const AUTHORED_TENEMENT_MODEL_SCENE: PackedScene = preload("res://assets/tenement/tenement.gltf")
-const AUTHORED_FLOOD_MARKET_MODEL_SCENE: PackedScene = preload("res://assets/flood_market/flood_market.gltf")
-const AUTHORED_WEST_GRID_MODEL_SCENE: PackedScene = preload("res://assets/west_grid/west_grid.gltf")
+const AUTHORED_ROOT_CISTERN_MODEL_PATH := "res://assets/root_cistern/root_cistern.gltf"
+const AUTHORED_RIVERWORKS_MODEL_PATH := "res://assets/riverworks/riverworks.gltf"
+const AUTHORED_CATHEDRAL_MODEL_PATH := "res://assets/cathedral/cathedral.gltf"
+const AUTHORED_OBSERVATORY_MODEL_PATH := "res://assets/observatory/observatory.gltf"
+const AUTHORED_TRAM_GRAVEYARD_MODEL_PATH := "res://assets/tram_graveyard/tram_graveyard.gltf"
+const AUTHORED_BURIED_LABS_MODEL_PATH := "res://assets/buried_labs/buried_labs.gltf"
+const AUTHORED_GLASSHOUSE_MODEL_PATH := "res://assets/glasshouse/glasshouse.gltf"
+const AUTHORED_ARCHIVE_MODEL_PATH := "res://assets/archive/archive.gltf"
+const AUTHORED_TENEMENT_MODEL_PATH := "res://assets/tenement/tenement.gltf"
+const AUTHORED_FLOOD_MARKET_MODEL_PATH := "res://assets/flood_market/flood_market.gltf"
+const AUTHORED_WEST_GRID_MODEL_PATH := "res://assets/west_grid/west_grid.gltf"
 
 const STORY_RECORD_BY_REGION: Dictionary = {
     &"region.north_ruins": &"story.north_ruins.ledger",
@@ -47,9 +47,12 @@ var _nest_shell: Node3D
 var _elapsed: float = 0.0
 var _map_emphasis: bool = false
 var presentation_detail_level: int = 0
-var streamed_in: bool = true
+var streamed_in: bool = false
 var _motion_nodes: Array[Node3D] = []
 var _motion_base_transforms: Dictionary = {}
+var _authored_model_root: Node3D
+var _authored_model_path: String = ""
+var _authored_imported_root_name: StringName = &""
 var _pressure_read_root: Node3D
 var _pressure_signal_material: StandardMaterial3D
 var _reduced_proxy_root: Node3D
@@ -124,9 +127,11 @@ func set_player_proximity(distance: float) -> void:
 func set_streamed_in(value: bool) -> void:
     var next_value := value or region_kind == &"sanctuary"
     if streamed_in == next_value:
+        _refresh_authored_model_package()
         _refresh_presentation_visibility()
         return
     streamed_in = next_value
+    _refresh_authored_model_package()
     _refresh_presentation_visibility()
     streaming_changed.emit(region_id, streamed_in)
 
@@ -143,6 +148,92 @@ func add_presentation_detail(node: Node3D) -> bool:
         return false
     _visual_root.add_child(node)
     return true
+
+
+func _prepare_authored_model_package(path: String, package_name: StringName, imported_root_name: StringName = &"") -> void:
+    _authored_model_path = path
+    _authored_imported_root_name = imported_root_name
+    _authored_model_root = Node3D.new()
+    _authored_model_root.name = package_name
+    _visual_root.add_child(_authored_model_root)
+    _refresh_authored_model_package()
+
+
+func _refresh_authored_model_package() -> void:
+    if _authored_model_root == null or _authored_model_path.is_empty():
+        return
+    if streamed_in:
+        if _authored_model_root.get_child_count() == 0:
+            var authored_scene := load(_authored_model_path) as PackedScene
+            if authored_scene == null:
+                push_error("Could not load authored region package: %s" % _authored_model_path)
+                return
+            var authored_instance := authored_scene.instantiate()
+            if _authored_imported_root_name != &"":
+                var imported_root := authored_instance.get_node_or_null(NodePath(String(_authored_imported_root_name))) as Node
+                if imported_root == null:
+                    imported_root = authored_instance
+                var authored_children := imported_root.get_children()
+                for child in authored_children:
+                    child.owner = null
+                    imported_root.remove_child(child)
+                    _authored_model_root.add_child(child)
+                if imported_root != authored_instance:
+                    imported_root.free()
+                authored_instance.free()
+            else:
+                authored_instance.name = "ImportedAuthoredModel"
+                _authored_model_root.add_child(authored_instance)
+            _apply_authored_model_tuning()
+            _capture_region_motion_nodes()
+    elif _authored_model_root.get_child_count() > 0:
+        for child in _authored_model_root.get_children():
+            child.free()
+        _capture_region_motion_nodes()
+
+
+func _apply_authored_model_tuning() -> void:
+    if _authored_model_root == null:
+        return
+    if region_id == &"region.root_cistern":
+        var authored_basin := _authored_model_root.find_child("RootCisternBasin", true, false) as MeshInstance3D
+        if authored_basin != null:
+            var basin_material := authored_basin.get_active_material(0) as StandardMaterial3D
+            if basin_material != null:
+                basin_material = basin_material.duplicate(true) as StandardMaterial3D
+                basin_material.albedo_color = Color("18282b")
+                basin_material.roughness = 0.82
+                basin_material.metallic = 0.04
+                authored_basin.material_override = basin_material
+        var authored_water := _authored_model_root.find_child("RootCisternBasinWater", true, false) as MeshInstance3D
+        if authored_water != null:
+            var water_material := authored_water.get_active_material(0) as StandardMaterial3D
+            if water_material != null:
+                water_material = water_material.duplicate(true) as StandardMaterial3D
+                water_material.albedo_color = Color("0b2025")
+                water_material.emission_enabled = false
+                water_material.roughness = 0.34
+                water_material.metallic = 0.08
+                authored_water.material_override = water_material
+    elif region_id == &"region.glasshouse":
+        for candidate in _authored_model_root.find_children("*", "MeshInstance3D", true, false):
+            var light_mesh := candidate as MeshInstance3D
+            if light_mesh == null:
+                continue
+            var light_name := String(light_mesh.name)
+            if not light_name.begins_with("GlasshouseBedLight") and light_name != "GlasshouseCanopyPulse":
+                continue
+            var source_material := light_mesh.get_active_material(0) as StandardMaterial3D
+            if source_material == null:
+                continue
+            var light_material := source_material.duplicate(true) as StandardMaterial3D
+            var canopy := light_name == "GlasshouseCanopyPulse"
+            light_material.albedo_color = Color("2c7666") if canopy else Color("3aa878")
+            light_material.emission_enabled = true
+            light_material.emission = Color("1c9b6d") if canopy else Color("38b879")
+            light_material.emission_energy_multiplier = 0.24 if canopy else 0.34
+            light_material.roughness = 0.46
+            light_mesh.material_override = light_material
 
 
 func set_discovered(value: bool) -> void:
@@ -398,36 +489,7 @@ func _add_region_practical_lights() -> void:
 func _build_authored_root_cistern_visuals() -> void:
     # The late landmark receives a production shell while region state, LOD
     # and endgame ownership remain on this node and its existing services.
-    var authored_scene_instance := AUTHORED_ROOT_CISTERN_MODEL_SCENE.instantiate()
-    # Keep the imported scene hierarchy intact. RootCisternModel carries the
-    # authored parent transform for the nested basin/core/pylon assembly; moving
-    # only its children into the landmark root loses that hierarchy in the
-    # runtime import and can make the entire late landmark disappear.
-    authored_scene_instance.name = "RootCisternAuthoredScene"
-    _visual_root.add_child(authored_scene_instance)
-    # The basin is a broad wet-concrete anchor, not a white stage card. Keep
-    # the authored water, core and service hardware readable under the release
-    # key by preserving the imported texture while applying a restrained dark
-    # concrete tint to the basin surface only.
-    var authored_basin := authored_scene_instance.find_child("RootCisternBasin", true, false) as MeshInstance3D
-    if authored_basin != null:
-        var basin_material := authored_basin.get_active_material(0) as StandardMaterial3D
-        if basin_material != null:
-            basin_material = basin_material.duplicate(true) as StandardMaterial3D
-            basin_material.albedo_color = Color("18282b")
-            basin_material.roughness = 0.82
-            basin_material.metallic = 0.04
-            authored_basin.material_override = basin_material
-    var authored_water := authored_scene_instance.find_child("RootCisternBasinWater", true, false) as MeshInstance3D
-    if authored_water != null:
-        var water_material := authored_water.get_active_material(0) as StandardMaterial3D
-        if water_material != null:
-            water_material = water_material.duplicate(true) as StandardMaterial3D
-            water_material.albedo_color = Color("0b2025")
-            water_material.emission_enabled = false
-            water_material.roughness = 0.34
-            water_material.metallic = 0.08
-            authored_water.material_override = water_material
+    _prepare_authored_model_package(AUTHORED_ROOT_CISTERN_MODEL_PATH, &"RootCisternAuthoredScene")
     var authored_marker := Node3D.new()
     authored_marker.name = "RootCisternAuthoredModel"
     _visual_root.add_child(authored_marker)
@@ -436,18 +498,7 @@ func _build_authored_root_cistern_visuals() -> void:
 func _build_authored_riverworks_visuals() -> void:
     # The mid-game waterworks receives a production shell while region state,
     # collision, LOD and operation ownership remain on this landmark node.
-    var authored_scene_instance := AUTHORED_RIVERWORKS_MODEL_SCENE.instantiate()
-    var imported_root := authored_scene_instance.get_node_or_null("RiverworksModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _visual_root.add_child(child)
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
+    _prepare_authored_model_package(AUTHORED_RIVERWORKS_MODEL_PATH, &"RiverworksAuthoredScene", &"RiverworksModel")
     var authored_marker := Node3D.new()
     authored_marker.name = "RiverworksAuthoredModel"
     _visual_root.add_child(authored_marker)
@@ -456,18 +507,7 @@ func _build_authored_riverworks_visuals() -> void:
 func _build_authored_cathedral_visuals() -> void:
     # Cathedral Quarter receives a production shell while the nest director,
     # proximity occlusion and ecology remain owned by this landmark node.
-    var authored_scene_instance := AUTHORED_CATHEDRAL_MODEL_SCENE.instantiate()
-    var imported_root := authored_scene_instance.get_node_or_null("CathedralModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _visual_root.add_child(child)
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
+    _prepare_authored_model_package(AUTHORED_CATHEDRAL_MODEL_PATH, &"CathedralAuthoredScene", &"CathedralModel")
     var authored_marker := Node3D.new()
     authored_marker.name = "CathedralAuthoredModel"
     _visual_root.add_child(authored_marker)
@@ -479,18 +519,7 @@ func _build_authored_observatory_visuals() -> void:
     var identity_details := Node3D.new()
     identity_details.name = "ObservatoryIdentityDetails"
     _visual_root.add_child(identity_details)
-    var authored_scene_instance := AUTHORED_OBSERVATORY_MODEL_SCENE.instantiate()
-    var imported_root := authored_scene_instance.get_node_or_null("ObservatoryModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _visual_root.add_child(child)
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
+    _prepare_authored_model_package(AUTHORED_OBSERVATORY_MODEL_PATH, &"ObservatoryAuthoredScene", &"ObservatoryModel")
     var authored_marker := Node3D.new()
     authored_marker.name = "ObservatoryAuthoredModel"
     _visual_root.add_child(authored_marker)
@@ -503,18 +532,7 @@ func _build_authored_tram_graveyard_visuals() -> void:
     var identity_details := Node3D.new()
     identity_details.name = "RailIdentityDetails"
     _visual_root.add_child(identity_details)
-    var authored_scene_instance := AUTHORED_TRAM_GRAVEYARD_MODEL_SCENE.instantiate()
-    var imported_root := authored_scene_instance.get_node_or_null("TramGraveyardModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _visual_root.add_child(child)
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
+    _prepare_authored_model_package(AUTHORED_TRAM_GRAVEYARD_MODEL_PATH, &"TramGraveyardAuthoredScene", &"TramGraveyardModel")
     var authored_marker := Node3D.new()
     authored_marker.name = "TramGraveyardAuthoredModel"
     _visual_root.add_child(authored_marker)
@@ -523,18 +541,7 @@ func _build_authored_tram_graveyard_visuals() -> void:
 func _build_authored_buried_labs_visuals() -> void:
     # The research vignette remains owned by this landmark; the authored shell
     # makes its containment hall and sealed biological work legible at range.
-    var authored_scene_instance := AUTHORED_BURIED_LABS_MODEL_SCENE.instantiate()
-    var imported_root := authored_scene_instance.get_node_or_null("BuriedLabsModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _visual_root.add_child(child)
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
+    _prepare_authored_model_package(AUTHORED_BURIED_LABS_MODEL_PATH, &"BuriedLabsAuthoredScene", &"BuriedLabsModel")
     var authored_marker := Node3D.new()
     authored_marker.name = "BuriedLabsAuthoredModel"
     _visual_root.add_child(authored_marker)
@@ -546,40 +553,7 @@ func _build_authored_glasshouse_visuals() -> void:
     var identity_details := Node3D.new()
     identity_details.name = "GreenhouseIdentityDetails"
     _visual_root.add_child(identity_details)
-    var authored_scene_instance := AUTHORED_GLASSHOUSE_MODEL_SCENE.instantiate()
-    var imported_root := authored_scene_instance.get_node_or_null("GlasshouseModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    # The grow-light sockets are focal cultivation cues, not white point
-    # lights. Split their material from the imported shared resource so the
-    # cold greenhouse key can retain readable glass, frame and living growth
-    # separation at compact review distance.
-    for candidate in authored_scene_instance.find_children("*", "MeshInstance3D", true, false):
-        var light_mesh := candidate as MeshInstance3D
-        if light_mesh == null:
-            continue
-        var light_name := String(light_mesh.name)
-        if not light_name.begins_with("GlasshouseBedLight") and light_name != "GlasshouseCanopyPulse":
-            continue
-        var source_material := light_mesh.get_active_material(0) as StandardMaterial3D
-        if source_material == null:
-            continue
-        var light_material := source_material.duplicate(true) as StandardMaterial3D
-        var canopy := light_name == "GlasshouseCanopyPulse"
-        light_material.albedo_color = Color("2c7666") if canopy else Color("3aa878")
-        light_material.emission_enabled = true
-        light_material.emission = Color("1c9b6d") if canopy else Color("38b879")
-        light_material.emission_energy_multiplier = 0.24 if canopy else 0.34
-        light_material.roughness = 0.46
-        light_mesh.material_override = light_material
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _visual_root.add_child(child)
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
+    _prepare_authored_model_package(AUTHORED_GLASSHOUSE_MODEL_PATH, &"GlasshouseAuthoredScene", &"GlasshouseModel")
     var authored_marker := Node3D.new()
     authored_marker.name = "GlasshouseAuthoredModel"
     _visual_root.add_child(authored_marker)
@@ -591,18 +565,7 @@ func _build_authored_archive_visuals() -> void:
     var identity_details := Node3D.new()
     identity_details.name = "ArchiveIdentityDetails"
     _visual_root.add_child(identity_details)
-    var authored_scene_instance := AUTHORED_ARCHIVE_MODEL_SCENE.instantiate()
-    var imported_root := authored_scene_instance.get_node_or_null("ArchiveModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _visual_root.add_child(child)
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
+    _prepare_authored_model_package(AUTHORED_ARCHIVE_MODEL_PATH, &"ArchiveAuthoredScene", &"ArchiveModel")
     var authored_marker := Node3D.new()
     authored_marker.name = "ArchiveAuthoredModel"
     _visual_root.add_child(authored_marker)
@@ -614,18 +577,7 @@ func _build_authored_tenement_visuals() -> void:
     var identity_details := Node3D.new()
     identity_details.name = "TenementIdentityDetails"
     _visual_root.add_child(identity_details)
-    var authored_scene_instance := AUTHORED_TENEMENT_MODEL_SCENE.instantiate()
-    var imported_root := authored_scene_instance.get_node_or_null("TenementModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _visual_root.add_child(child)
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
+    _prepare_authored_model_package(AUTHORED_TENEMENT_MODEL_PATH, &"TenementAuthoredScene", &"TenementModel")
     var authored_marker := Node3D.new()
     authored_marker.name = "TenementAuthoredModel"
     _visual_root.add_child(authored_marker)
@@ -634,18 +586,7 @@ func _build_authored_tenement_visuals() -> void:
 func _build_authored_flood_market_visuals() -> void:
     # Flood Market keeps its tables, channels and ecology ownership while the
     # authored shell supplies the continuous canopy and service silhouette.
-    var authored_scene_instance := AUTHORED_FLOOD_MARKET_MODEL_SCENE.instantiate()
-    var imported_root := authored_scene_instance.get_node_or_null("FloodMarketModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _visual_root.add_child(child)
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
+    _prepare_authored_model_package(AUTHORED_FLOOD_MARKET_MODEL_PATH, &"FloodMarketAuthoredScene", &"FloodMarketModel")
     var authored_marker := Node3D.new()
     authored_marker.name = "FloodMarketAuthoredModel"
     _visual_root.add_child(authored_marker)
@@ -655,18 +596,7 @@ func _build_authored_west_grid_visuals() -> void:
     # West Grid keeps its industrial encounter and outpost ownership while the
     # authored shell supplies the turbine hall, transformer yard and service
     # infrastructure silhouette.
-    var authored_scene_instance := AUTHORED_WEST_GRID_MODEL_SCENE.instantiate()
-    var imported_root := authored_scene_instance.get_node_or_null("WestGridModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _visual_root.add_child(child)
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
+    _prepare_authored_model_package(AUTHORED_WEST_GRID_MODEL_PATH, &"WestGridAuthoredScene", &"WestGridModel")
     var authored_marker := Node3D.new()
     authored_marker.name = "WestGridAuthoredModel"
     _visual_root.add_child(authored_marker)

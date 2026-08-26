@@ -260,10 +260,31 @@ func _run_all() -> void:
                 _expect(discovered_witness_lens != null and discovered_witness_lens.visible, "The physical witness at %s must light when its Town Archive record is recovered." % raw_region_id)
             var witness_lens_02 := camp.find_child("WitnessSignalLens02", true, false) as Node3D
             _expect(witness_lens_02 != null and witness_lens_02.visible, "A sustained discovery run must progressively light the sanctuary's later memory relay lens.")
+        var authored_package_name_by_kind := {
+            &"industrial": "WestGridAuthoredScene",
+            &"commercial": "FloodMarketAuthoredScene",
+            &"archive": "ArchiveAuthoredScene",
+            &"tenement": "TenementAuthoredScene",
+            &"greenhouse": "GlasshouseAuthoredScene",
+            &"waterfront": "RiverworksAuthoredScene",
+            &"rail": "TramGraveyardAuthoredScene",
+            &"observatory": "ObservatoryAuthoredScene",
+            &"nest": "CathedralAuthoredScene",
+            &"research": "BuriedLabsAuthoredScene",
+            &"endgame": "RootCisternAuthoredScene",
+        }
         for raw_region_id in region_director.region_data.keys():
             var landmark := region_director.get_landmark(StringName(raw_region_id))
             if landmark == null or landmark.region_kind == &"sanctuary":
                 continue
+            # Authoring checks below inspect every authored package in one
+            # pass. Promote each landmark explicitly for the inspection, then
+            # let the camera-focused LOD checks below stream the distant
+            # package back out.
+            landmark.set_streamed_in(true)
+            var authored_package_name := str(authored_package_name_by_kind.get(landmark.region_kind, ""))
+            var authored_package := landmark.get_node_or_null("PersistentRegionGeometry/%s" % authored_package_name) as Node3D
+            _expect(authored_package != null and authored_package.get_child_count() > 0, "Each non-sanctuary region must instantiate its authored package when promoted into the inspection ring.")
             _expect(landmark.get_node_or_null("PersistentRegionCollision/PersistentRegionGround") != null, "Each non-sanctuary region must retain a persistent ground collision shape for physical traversal.")
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing") != null, "Each non-sanctuary region must receive stable authored encounter dressing on discovery.")
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/AuthoredDistrictSurfaceFinish") != null, "Each non-sanctuary region must receive a bounded authored surface-finish layer.")
@@ -761,8 +782,10 @@ func _run_all() -> void:
         var distant_root := region_director.get_landmark(&"region.root_cistern")
         var distant_proxy := distant_root.get_node_or_null("ReducedRegionProxy") as Node3D if distant_root != null else null
         var distant_detail := distant_root.get_node_or_null("PersistentRegionGeometry") as Node3D if distant_root != null else null
+        var distant_authored_package := distant_root.get_node_or_null("PersistentRegionGeometry/RootCisternAuthoredScene") as Node3D if distant_root != null else null
         _expect(distant_proxy != null and distant_proxy.visible, "Distant endgame regions must retain a readable coarse authored proxy.")
         _expect(distant_detail != null and not distant_detail.visible, "Distant region detail must be hidden while the coarse proxy is active.")
+        _expect(distant_authored_package != null and distant_authored_package.get_child_count() == 0, "A distant endgame region must release its imported authored package nodes rather than merely hiding them.")
         _expect(not region_lod.is_region_streamed(&"region.root_cistern"), "A landmark beyond the camera stream ring must release its authored dressing while retaining the reduced-detail proxy.")
         var distant_release_detail := release_art.region_dressing_root(&"region.root_cistern") if release_art != null else null
         _expect(distant_release_detail != null and not distant_release_detail.visible, "Distant regions must hide their separate high-definition release dressing while the coarse proxy is active.")
@@ -770,11 +793,13 @@ func _run_all() -> void:
         region_atmosphere.refresh_now()
         region_lod.refresh_now()
         _expect(region_lod.detail_mode_for(&"region.root_cistern") == 0 and distant_proxy != null and not distant_proxy.visible, "Entering a distant region must restore full detail and retire its coarse proxy.")
+        _expect(distant_authored_package != null and distant_authored_package.get_child_count() > 0, "Entering a distant region must re-instantiate its imported authored package nodes.")
         _expect(distant_release_detail != null and distant_release_detail.visible, "Entering a region must restore its separate high-definition release dressing with the full landmark detail.")
         world.player.global_position = Vector3(-92.0, 0.0, 18.0)
         region_atmosphere.refresh_now()
         region_lod.refresh_now()
         _expect(not region_lod.is_region_streamed(&"region.root_cistern"), "A region beyond the camera stream ring must release its authored dressing while retaining its persistent landmark state.")
+        _expect(distant_authored_package != null and distant_authored_package.get_child_count() == 0, "Leaving a restored region must release its imported authored package nodes again.")
         _expect(distant_proxy != null and distant_proxy.visible, "A streamed-out discovered region must retain its coarse proxy beacon.")
         world.player.global_position = Vector3(-92.0, 0.0, 18.0)
         region_atmosphere.refresh_now()
