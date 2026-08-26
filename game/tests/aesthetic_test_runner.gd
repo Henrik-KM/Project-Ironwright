@@ -1064,6 +1064,10 @@ func _run_all() -> void:
             _expect(_find_named(role_samples[index], "RelayAuthoredModel") != null, "The Signal Relay must use the authored Relay model shell.")
             _expect(_find_named(role_samples[index], "ProductionAssetMarker") != null, "The authored Signal Relay model must expose its production asset marker.")
             _expect(_find_named(role_samples[index], "RelaySignalBeacon") != null and _find_named(role_samples[index], "RelayDirectionalDish") != null, "The Signal Relay must expose a distinct mast, dish and beacon silhouette.")
+            var relay_face := _find_named(role_samples[index], "RelayServiceFace") as MeshInstance3D
+            var relay_heat_sink := _find_named(role_samples[index], "RelayHeatSink") as MeshInstance3D
+            var relay_panel := _find_named(role_samples[index], "RelaySignalPanelLeft") as MeshInstance3D
+            _expect(relay_face != null and _mesh_vertex_count(relay_face) >= 48 and relay_heat_sink != null and _mesh_vertex_count(relay_heat_sink) >= 48 and relay_panel != null and _mesh_vertex_count(relay_panel) >= 48, "Signal Relay service face, heat sink and signal panels must retain chamfered high-definition geometry.")
             var relay_animation := role_samples[index].get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
             _expect(relay_animation != null and relay_animation.animation_player != null, "The Signal Relay must route authored animation clips through a runtime presentation bridge.")
             if relay_animation != null and relay_animation.animation_player != null:

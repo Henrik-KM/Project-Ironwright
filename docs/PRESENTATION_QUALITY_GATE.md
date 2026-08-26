@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+The Signal Relay received a focused service-surface pass on 2026-08-26. Its
+service face, heat sink, feet, optic housing, braces, signal panels and latch
+now use the shared chamfered high-definition mesh profile around the existing
+rounded chassis, dish, beacon and authored animation channels. The exact silent
+1280x720 friendly-roster review remains required; broader human role-family and
+production-art acceptance remains open.
+
 Observatory Ridge received a focused service-surface pass on 2026-08-26. The
 authored control cabin, service deck, console, window hardware and ridge signal
 surfaces now use the shared chamfered high-definition mesh profile around the
