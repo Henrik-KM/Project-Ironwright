@@ -59,6 +59,9 @@ var operation_report_clock: float = 0.0
 var operation_report_count: int = 0
 var last_operation_signature: StringName = &""
 var spatial_operation_reports: Array[AudioStreamPlayer3D] = []
+var outpost_cue_clock: float = 0.0
+var outpost_cue_count: int = 0
+var last_outpost_cue_signature: StringName = &""
 var attack_warning_clock: float = 0.0
 var attack_warning_count: int = 0
 var last_effect_id: StringName = &""
@@ -103,6 +106,7 @@ func _process(delta: float) -> void:
     evaluation_clock += delta
     caption_clock = maxf(0.0, caption_clock - delta)
     operation_report_clock = maxf(0.0, operation_report_clock - delta)
+    outpost_cue_clock = maxf(0.0, outpost_cue_clock - delta)
     attack_warning_clock = maxf(0.0, attack_warning_clock - delta)
     if caption_panel != null and caption_clock <= 0.0:
         caption_panel.visible = false
@@ -271,6 +275,84 @@ func _on_spatial_report_finished(audio: AudioStreamPlayer3D) -> void:
         audio.queue_free()
 
 
+func notify_outpost_activity(outpost: Outpost3D, status: StringName) -> void:
+    if outpost == null or not is_instance_valid(outpost):
+        return
+    var signature := StringName("%s.%s" % [String(outpost.site_id), String(status)])
+    if signature == last_outpost_cue_signature and outpost_cue_clock > 0.0:
+        return
+    last_outpost_cue_signature = signature
+    outpost_cue_clock = 0.8
+    outpost_cue_count += 1
+    var effect_id := &"machine_report"
+    var caption_key := "audio.caption.report"
+    var volume_db := -11.0
+    var pitch := 0.82
+    match status:
+        &"harvesting":
+            effect_id = &"salvage"
+            caption_key = "audio.caption.salvage"
+            volume_db = -12.0
+            pitch = 0.8
+        &"defending":
+            effect_id = &"machine_report"
+            volume_db = -10.0
+            pitch = 0.92
+        &"scouting":
+            effect_id = &"danger"
+            caption_key = "audio.caption.danger"
+            volume_db = -11.0
+            pitch = 0.88
+        &"repairing":
+            effect_id = &"forge"
+            caption_key = "audio.caption.forge"
+            volume_db = -12.0
+            pitch = 0.74
+        &"rebuilding":
+            effect_id = &"forge"
+            caption_key = "audio.caption.forge"
+            volume_db = -10.0
+            pitch = 0.7
+        &"destroyed":
+            effect_id = &"danger"
+            caption_key = "audio.caption.danger"
+            volume_db = -9.0
+            pitch = 0.68
+        _:
+            return
+    var anchor := Vector3.ZERO
+    if outpost.is_inside_tree():
+        anchor = outpost.global_position
+    elif heartforge != null and is_instance_valid(heartforge):
+        anchor = heartforge.global_position
+    _play_spatial_effect(effect_id, anchor, volume_db, pitch)
+    show_caption(caption_key)
+
+
+func _play_spatial_effect(effect_id: StringName, world_position: Vector3, volume_db: float, pitch_scale: float) -> void:
+    var stream: AudioStream = stream_library.get(effect_id, null)
+    if stream == null:
+        return
+    while spatial_operation_reports.size() >= 8:
+        var oldest: AudioStreamPlayer3D = spatial_operation_reports[0]
+        spatial_operation_reports.remove_at(0)
+        if is_instance_valid(oldest):
+            oldest.queue_free()
+    var audio := AudioStreamPlayer3D.new()
+    audio.name = "OutpostCue_%02d" % outpost_cue_count
+    audio.bus = "Effects"
+    audio.stream = stream
+    audio.volume_db = _safe_volume_db(volume_db)
+    audio.pitch_scale = clampf(pitch_scale, 0.55, 1.55)
+    audio.max_distance = 34.0
+    audio.unit_size = 4.0
+    audio.finished.connect(_on_spatial_report_finished.bind(audio))
+    add_child(audio)
+    audio.global_position = world_position
+    spatial_operation_reports.append(audio)
+    audio.play()
+
+
 func show_caption(key: String, seconds: float = 2.2) -> void:
     if settings_service != null and not bool(settings_service.get_value(&"subtitles", true)):
         return
@@ -322,10 +404,28 @@ func _connect_existing_nodes() -> void:
         _connect_actor(node)
     for node in get_tree().get_nodes_in_group(&"friendly_robots"):
         _connect_actor(node)
+    for node in get_tree().get_nodes_in_group(&"outposts"):
+        _connect_outpost(node)
 
 
 func _on_node_added(node: Node) -> void:
     call_deferred("_connect_actor", node)
+    _connect_outpost(node)
+
+
+func _connect_outpost(node: Node) -> void:
+    if not is_instance_valid(node):
+        return
+    if not (node is Outpost3D):
+        return
+    var outpost := node as Outpost3D
+    var callback := Callable(self, "_on_outpost_activity_changed")
+    if not outpost.activity_changed.is_connected(callback):
+        outpost.activity_changed.connect(callback)
+
+
+func _on_outpost_activity_changed(outpost: Outpost3D, status: StringName) -> void:
+    notify_outpost_activity(outpost, status)
 
 
 func _connect_actor(node: Variant) -> void:

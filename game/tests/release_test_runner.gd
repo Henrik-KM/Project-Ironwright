@@ -93,6 +93,18 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
         world.release_audio.notify_operation(&"salvage", &"working", "Repeated work report", Vector3(0.0, 0.0, -18.0))
         world.release_audio.notify_operation(&"salvage", &"working", "Repeated work report", Vector3(0.0, 0.0, -18.0))
         _expect(world.release_audio.operation_report_count == report_count_before + 2, "Repeated autonomous work must be rate-limited instead of flooding the audio layer.")
+        var audio_outpost := Outpost3D.new()
+        audio_outpost.configure(&"audio.test.site", &"resource", 1, world.run_state)
+        var outpost_cue_count_before := world.release_audio.outpost_cue_count
+        world.release_audio.notify_outpost_activity(audio_outpost, &"harvesting")
+        _expect(world.release_audio.outpost_cue_count == outpost_cue_count_before + 1, "Autonomous outpost activity must emit a bounded role-aware spatial cue.")
+        _expect(world.release_audio.last_outpost_cue_signature == &"audio.test.site.harvesting", "Outpost audio must retain a stable site-and-activity signature for diagnostics.")
+        world.release_audio.notify_outpost_activity(audio_outpost, &"harvesting")
+        _expect(world.release_audio.outpost_cue_count == outpost_cue_count_before + 1, "Repeated outpost activity must be rate-limited instead of flooding the audio layer.")
+        world.release_audio.outpost_cue_clock = 0.0
+        world.release_audio.notify_outpost_activity(audio_outpost, &"repairing")
+        _expect(world.release_audio.outpost_cue_count == outpost_cue_count_before + 2, "A changed outpost activity must become available after its short overlap window.")
+        audio_outpost.free()
         # Headless release boot does not materialize combat actors, so use a
         # real OrganicEnemy3D fixture through the same connection path rather
         # than weakening the test to a mock signal.

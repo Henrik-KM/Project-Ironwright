@@ -4846,3 +4846,15 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - extended aesthetic and release coverage so each Tier III role retains its
   distinctive close-camera hardware; exact exported outpost review remains
   required for broader human outpost and production-art acceptance.
+
+## Focused autonomous outpost audio milestone
+
+- connected autonomous outpost activity to the release audio layer through a
+  bounded role-aware cue: harvesting uses salvage texture, defence uses a
+  machine report, scouting uses the danger signature, and repair/rebuild uses
+  the forge signature;
+- kept cues spatial at the outpost, captioned for subtitle users, and
+  rate-limited so multiple remote posts cannot flood the mix or create a new
+  player-managed notification workload;
+- retained the existing quiet-review cap and dummy-audio validation contract,
+  with no live-speaker testing required.
