@@ -1,5 +1,19 @@
 # Implementation status
 
+## Focused authored-region streaming pass
+
+- added a bounded hysteretic stream ring around the current camera focus so
+  distant authored district dressing can leave the active presentation set
+  while the persistent landmark, ground collision, discovery state and coarse
+  regional proxy remain available;
+- connected the region presentation director to the same remote-operation
+  focus used by the release performance director, so following a machine group
+  promotes the region being observed instead of leaving the camera over a
+  stale local district;
+- extended the aesthetic guard to verify both streamed-out proxy continuity
+  and authored-detail restoration after entering the region. The pass adds no
+  player-managed streaming task or new run-state contract.
+
 ## Focused outpost tier-articulation pass
 
 - added restrained role-colored service plates, signal nodes and small braces to
