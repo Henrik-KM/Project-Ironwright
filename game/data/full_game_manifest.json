@@ -163,6 +163,7 @@
     "human_readable_save_recovery_report",
     "spawn_time_deferred_authored_visuals",
     "shared_reduced_proxy_resources",
+    "streamed_authored_region_packages",
     "deterministic_release_population_benchmark",
     "root_cistern_authored_depth_pass",
     "controller_binding_remap_and_accessibility_guidance",

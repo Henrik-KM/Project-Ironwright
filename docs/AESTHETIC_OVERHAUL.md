@@ -68,6 +68,10 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
   the landmark LOD boundary.
 - distant discovered regions retain a compact authored coarse proxy while
   their close geometry is reduced, so the town reads as a connected place
+- authored district packages now instantiate only inside the bounded camera
+  focus ring and release their imported scene nodes when distant; persistent
+  landmarks, collision, discovery state and coarse proxies remain available
+  for navigation and world simulation.
   rather than disappearing into beacon-only markers. The proxy remains
   presentation-only and never replaces physical region identity or collision.
 - discovered non-sanctuary regions now carry a restrained pressure-growth read:

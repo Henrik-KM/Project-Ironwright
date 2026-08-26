@@ -169,11 +169,14 @@ func _test_world_labels_are_not_screen_fixed() -> void:
     })
     root.add_child(landmark)
     await process_frame
+    # Close-detail inspection is an explicit focus promotion now that authored
+    # packages are released while a district is outside the stream ring.
+    landmark.set_streamed_in(true)
     _expect(landmark._label != null and not landmark._label.fixed_size, "District labels must not be fixed-size screen billboards.")
     _expect(not landmark._label.visible, "District names must stay out of the tactical view by default.")
-    _expect(landmark.get_node_or_null("PersistentRegionGeometry/WestGridTurbineHall") != null, "West Grid must retain a readable authored industrial structural shell.")
+    _expect(landmark.find_child("WestGridTurbineHall", true, false) != null, "West Grid must retain a readable authored industrial structural shell.")
     _expect(landmark.find_child("WestGridRoofCap", true, false) != null, "West Grid must retain a high-definition roof break instead of a single flat cube.")
-    _expect(landmark.get_node_or_null("PersistentRegionGeometry/WestGridWindow0") != null, "West Grid windows need layered industrial signal detail at tactical distance.")
+    _expect(landmark.find_child("WestGridWindow0", true, false) != null, "West Grid windows need layered industrial signal detail at tactical distance.")
     landmark.set_map_emphasis(true)
     _expect(landmark._label.visible, "District names should appear when the player deliberately enters command-map mode.")
     landmark.free()
