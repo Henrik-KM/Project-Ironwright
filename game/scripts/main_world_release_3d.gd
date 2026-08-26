@@ -475,6 +475,13 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _setup_release_services() -> void:
+	# The inherited complete-game world installs the legacy spatial feedback
+	# director for the lower-level entrypoints. The release layer owns the
+	# canonical music, ambience, captions and event mix; keeping both directors
+	# alive would double-fire pistol, channel, impact and organic cues.
+	if audio_director != null and is_instance_valid(audio_director):
+		audio_director.queue_free()
+		audio_director = null
 	localization_service = LocalizationService3D.new()
 	localization_service.name = "LocalizationService"
 	localization_service.process_mode = Node.PROCESS_MODE_ALWAYS

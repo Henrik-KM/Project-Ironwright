@@ -48,6 +48,7 @@ func _run_all() -> void:
 
 
 func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
+    _expect(world.get_node_or_null("AudioFeedbackDirector") == null, "The release entrypoint must not keep the inherited spatial audio director beside the canonical release mixer.")
     _expect(world.localization_service is LocalizationService3D, "Release runtime must install localization.")
     _expect(world.settings_service is ReleaseSettingsService3D, "Release runtime must install accessibility and controller settings.")
     _expect(world.transactional_save_service is ReleaseTransactionalSaveService3D, "Release runtime must install transactional persistence.")
