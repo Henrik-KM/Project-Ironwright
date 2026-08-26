@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused late-organic silhouette pass
+
+- pitched the Carrion Bell crown, Thornback territorial shield and paired
+  Ashmantle heat louvers so their folded anatomy catches the close-camera key
+  as raised biological structures rather than horizontal plates;
+- thickened the Ashmantle louver profile while preserving stable sockets,
+  animation targets, family ownership, collision and runtime scale;
+- added mesh-orientation regressions and will re-review the exact late-organic
+  gallery with dummy audio and quiet mode only.
+
 ## Focused late-organic palette separation pass
 
 - strengthened the release material tint lanes for Carrion Bell, Rootweaver,
