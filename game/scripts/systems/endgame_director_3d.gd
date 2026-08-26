@@ -4,6 +4,8 @@ extends Node
 ## Owns the player-triggered final crisis. No final response may begin from a
 ## recurring timer: the player must deliberately initiate an unlocked protocol.
 
+const REMOTE_PHASE_END := 0.30
+
 signal endgame_started(protocol_id: StringName, display_name: String)
 signal endgame_progress(protocol_id: StringName, progress: float, detail: String)
 signal endgame_completed(protocol_id: StringName, display_name: String, ending: String)
@@ -22,6 +24,8 @@ var spawn_enemy_callback: Callable
 var protocols: Dictionary = {}
 var active_protocol: Dictionary = {}
 var completed_protocol: StringName = &""
+var last_remote_support_progress: float = 0.0
+var last_homefront_hold_progress: float = 0.0
 var spawn_clock: float = 0.0
 var event_serial: int = 0
 var load_errors: Array[String] = []
@@ -59,6 +63,7 @@ func _process(delta: float) -> void:
     var data: Dictionary = active_protocol.get("data", {})
     var duration := maxf(1.0, float(data.get("duration_seconds", 210.0)))
     var progress := clampf(float(active_protocol.get("elapsed", 0.0)) / duration, 0.0, 1.0)
+    _update_endgame_phases(progress)
     var pressure_multiplier := float(data.get("pressure_multiplier", 2.0))
     pressure_multiplier *= 1.0 - operations.endgame_pressure_reduction
     ecology.set_endgame_escalation(1.0 + progress * maxf(0.2, pressure_multiplier - 1.0))
@@ -72,7 +77,12 @@ func _process(delta: float) -> void:
     var protocol_id := StringName(active_protocol.get("id", &""))
     endgame_progress.emit(protocol_id, progress, _progress_detail(progress))
     if progress >= 1.0:
-        _complete_active_protocol()
+        if float(active_protocol.get("remote_support_progress", 0.0)) < 0.999:
+            fail_active_protocol("The remote relay network lost too many functioning outposts before the final signal could be severed.")
+        elif float(active_protocol.get("homefront_hold_progress", 0.0)) < 0.999:
+            fail_active_protocol("The Heartforge could not hold the final convergence long enough to complete the protocol.")
+        else:
+            _complete_active_protocol()
 
 
 func _load_protocols() -> void:
@@ -164,16 +174,24 @@ func initiate(protocol_id: StringName) -> bool:
         run_state.refund_scrap(scrap_cost)
         return false
 
+    var support_site_id := _select_endgame_support_site()
+    var remote_outposts_min := maxi(1, int(entry.get("remote_outposts_min", 1)))
     active_protocol = {
         "id": protocol_id,
         "data": entry,
         "elapsed": 0.0,
+        "remote_support_site_id": String(support_site_id),
+        "remote_support_progress": 0.0,
+        "remote_outposts_min": remote_outposts_min,
+        "homefront_hold_progress": 0.0,
     }
+    last_remote_support_progress = 0.0
+    last_homefront_hold_progress = 0.0
     spawn_clock = 0.0
     event_serial = 0
     region_director.add_pressure(&"region.heartforge_district", 0.42)
     region_director.add_pressure(&"region.root_cistern", 0.55)
-    run_state.log_event("Final protocol initiated: %s" % str(entry.get("display_name", String(protocol_id))))
+    run_state.log_event("Final protocol initiated: %s. Remote relay support assigned from %s." % [str(entry.get("display_name", String(protocol_id))), String(support_site_id)])
     endgame_started.emit(protocol_id, str(entry.get("display_name", String(protocol_id))))
     return true
 
@@ -206,6 +224,8 @@ func status_summary() -> String:
 func _complete_active_protocol() -> void:
     var protocol_id := StringName(active_protocol.get("id", &""))
     var data: Dictionary = active_protocol.get("data", {})
+    last_remote_support_progress = remote_support_progress()
+    last_homefront_hold_progress = homefront_hold_progress()
     completed_protocol = protocol_id
     active_protocol.clear()
     ecology.set_endgame_escalation(1.0)
@@ -214,6 +234,52 @@ func _complete_active_protocol() -> void:
     var ending := str(data.get("ending", "The Heartforge survives."))
     run_state.log_event("First victory achieved through %s." % str(data.get("display_name", String(protocol_id))))
     endgame_completed.emit(protocol_id, str(data.get("display_name", String(protocol_id))), ending)
+
+
+func _update_endgame_phases(progress: float) -> void:
+    if active_protocol.is_empty():
+        return
+    var required := maxi(1, int(active_protocol.get("remote_outposts_min", 1)))
+    var functioning := _functioning_outpost_count()
+    var remote_capacity := clampf(float(functioning) / float(required), 0.0, 1.0)
+    var remote_progress := clampf(progress / REMOTE_PHASE_END, 0.0, 1.0) * remote_capacity
+    active_protocol["remote_support_progress"] = remote_progress
+
+    # The second phase is the home-front hold. Heartforge integrity is sampled
+    # into the phase result so a damaged sanctuary can visibly fail a protocol
+    # even if the remote relay survived.
+    var hold_progress := clampf((progress - REMOTE_PHASE_END) / (1.0 - REMOTE_PHASE_END), 0.0, 1.0)
+    var heartforge_integrity := 1.0
+    if heartforge != null:
+        heartforge_integrity = clampf(heartforge.current_health / maxf(1.0, heartforge.maximum_health), 0.0, 1.0)
+    active_protocol["homefront_hold_progress"] = hold_progress * heartforge_integrity
+
+
+func remote_support_progress() -> float:
+    var value := last_remote_support_progress
+    if not active_protocol.is_empty():
+        value = float(active_protocol.get("remote_support_progress", 0.0))
+    return clampf(value, 0.0, 1.0)
+
+
+func homefront_hold_progress() -> float:
+    var value := last_homefront_hold_progress
+    if not active_protocol.is_empty():
+        value = float(active_protocol.get("homefront_hold_progress", 0.0))
+    return clampf(value, 0.0, 1.0)
+
+
+func _select_endgame_support_site() -> StringName:
+    if outpost_director == null:
+        return &"none"
+    var candidates := outpost_director.discovered_sites()
+    candidates.sort_custom(func(a: OutpostSite3D, b: OutpostSite3D) -> bool:
+        return String(a.site_id) < String(b.site_id)
+    )
+    for site in candidates:
+        if site.has_functioning_outpost():
+            return site.site_id
+    return &"none"
 
 
 func _spawn_causal_response(progress: float, pressure_multiplier: float) -> void:
@@ -254,6 +320,11 @@ func _spawn_causal_response(progress: float, pressure_multiplier: float) -> void
 
 
 func _progress_detail(progress: float) -> String:
+    if remote_support_progress() < 0.999:
+        var support_site := str(active_protocol.get("remote_support_site_id", "the remote relay site"))
+        return "REMOTE RELAY · %d%% · %s is holding the recovered signal path while the Heartforge braces for convergence." % [int(round(remote_support_progress() * 100.0)), support_site]
+    if homefront_hold_progress() < 0.999:
+        return "HOME-FRONT HOLD · %d%% · The remote relay is secure; keep the Heartforge standing through the final convergence." % int(round(homefront_hold_progress() * 100.0))
     if progress < 0.2:
         return "The Heartforge is coupling the recovered components. Organic movement is converging on the town centre."
     if progress < 0.5:
@@ -279,6 +350,9 @@ func context_dictionary() -> Dictionary:
         "endgame_completed": completed_protocol != &"",
         "completed_protocol": String(completed_protocol),
         "endgame_progress": progress_fraction(),
+        "remote_support_progress": remote_support_progress(),
+        "homefront_hold_progress": homefront_hold_progress(),
+        "remote_support_site_id": str(active_protocol.get("remote_support_site_id", "")),
     }
 
 
@@ -288,13 +362,19 @@ func to_dictionary() -> Dictionary:
         serialized_active = {
             "id": String(active_protocol.get("id", &"")),
             "elapsed": float(active_protocol.get("elapsed", 0.0)),
+            "remote_support_site_id": str(active_protocol.get("remote_support_site_id", "")),
+            "remote_support_progress": float(active_protocol.get("remote_support_progress", 0.0)),
+            "remote_outposts_min": int(active_protocol.get("remote_outposts_min", 1)),
+            "homefront_hold_progress": float(active_protocol.get("homefront_hold_progress", 0.0)),
         }
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "active_protocol": serialized_active,
         "completed_protocol": String(completed_protocol),
         "spawn_clock": spawn_clock,
         "event_serial": event_serial,
+        "last_remote_support_progress": last_remote_support_progress,
+        "last_homefront_hold_progress": last_homefront_hold_progress,
     }
 
 
@@ -302,6 +382,8 @@ func restore_from_dictionary(data: Dictionary) -> void:
     completed_protocol = StringName(str(data.get("completed_protocol", "")))
     spawn_clock = maxf(0.0, float(data.get("spawn_clock", 0.0)))
     event_serial = maxi(0, int(data.get("event_serial", 0)))
+    last_remote_support_progress = clampf(float(data.get("last_remote_support_progress", 0.0)), 0.0, 1.0)
+    last_homefront_hold_progress = clampf(float(data.get("last_homefront_hold_progress", 0.0)), 0.0, 1.0)
     active_protocol.clear()
     var saved_active: Variant = data.get("active_protocol", {})
     if saved_active is Dictionary:
@@ -313,4 +395,8 @@ func restore_from_dictionary(data: Dictionary) -> void:
                 "id": protocol_id,
                 "data": entry,
                 "elapsed": maxf(0.0, float(saved.get("elapsed", 0.0))),
+                "remote_support_site_id": str(saved.get("remote_support_site_id", "")),
+                "remote_support_progress": clampf(float(saved.get("remote_support_progress", 0.0)), 0.0, 1.0),
+                "remote_outposts_min": maxi(1, int(saved.get("remote_outposts_min", entry.get("remote_outposts_min", 1)))),
+                "homefront_hold_progress": clampf(float(saved.get("homefront_hold_progress", 0.0)), 0.0, 1.0),
             }
