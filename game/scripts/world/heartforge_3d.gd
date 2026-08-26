@@ -19,8 +19,11 @@ var _core_light: OmniLight3D
 var _model_root: Node3D
 var _adaptive_geometry: Node3D
 var _adaptation_detail: Node3D
+var _adaptation_preview: Node3D
 var _damage_visual_root: Node3D
 var _damage_signal_material: StandardMaterial3D
+var adaptation_preview_profile: StringName = &""
+var adaptation_preview_progress: float = 0.0
 
 
 func _ready() -> void:
@@ -62,6 +65,7 @@ func set_operation(kind: StringName) -> void:
 
 
 func set_adaptation_profile(next_profile: StringName) -> void:
+    _clear_adaptation_preview()
     adaptation_profile = next_profile
     match next_profile:
         &"adaptation.anchored_shell":
@@ -80,6 +84,42 @@ func set_adaptation_profile(next_profile: StringName) -> void:
     _adaptation_detail.name = "HeartforgeAdaptationDetail"
     _model_root.add_child(_adaptation_detail)
     _build_adaptation_detail(next_profile)
+
+
+## Shows the physical footprint of a pending or active autonomous retrofit.
+## This is presentation-only: the authoritative choice and construction timer
+## remain owned by AdaptiveDefenseDirector3D.
+func set_adaptation_preview(profile: StringName, progress: float) -> void:
+    adaptation_preview_profile = profile
+    adaptation_preview_progress = clampf(progress, 0.0, 1.0)
+    if _model_root == null or profile == &"":
+        return
+    if _adaptation_preview != null and (not is_instance_valid(_adaptation_preview) or adaptation_preview_profile != StringName(_adaptation_preview.get_meta(&"profile", ""))):
+        _adaptation_preview.free()
+        _adaptation_preview = null
+    if _adaptation_preview == null:
+        _adaptation_preview = Node3D.new()
+        _adaptation_preview.name = "HeartforgeAdaptationPreview"
+        _adaptation_preview.set_meta(&"profile", String(profile))
+        _model_root.add_child(_adaptation_preview)
+        var previous_detail := _adaptation_detail
+        _adaptation_detail = _adaptation_preview
+        _build_adaptation_detail(profile)
+        _adaptation_detail = previous_detail
+    # The footprint must remain visible even on the first frame of a build;
+    # zero elapsed time is still meaningful autonomous work, not an invisible
+    # timer.
+    _adaptation_preview.visible = true
+    var reveal := lerpf(0.35, 1.0, adaptation_preview_progress)
+    _adaptation_preview.scale = Vector3.ONE * reveal
+
+
+func _clear_adaptation_preview() -> void:
+    if _adaptation_preview != null and is_instance_valid(_adaptation_preview):
+        _adaptation_preview.free()
+    _adaptation_preview = null
+    adaptation_preview_profile = &""
+    adaptation_preview_progress = 0.0
 
 
 func set_progression_tier(next_tier: int) -> void:
@@ -412,6 +452,13 @@ func _build_adaptation_detail(profile: StringName) -> void:
     var cyan := ModelKit3D.material(Color("28646a"), 0.32, 0.3, Color("77e9ee"), 1.8)
     var amber := ModelKit3D.material(Color("8b4b25"), 0.28, 0.42, Color("ff7a32"), 2.4)
     match profile:
+        &"adaptation.pending":
+            var preview := ModelKit3D.material(Color("173b40"), 0.34, 0.34, Color("63dce4"), 0.42)
+            ModelKit3D.add_torus(_adaptation_detail, 2.92, 0.08, Vector3(0.0, 0.74, 0.0), preview, Vector3.ZERO, "AdaptationPreviewRing", 48, 8)
+            for marker_index in range(4):
+                var marker_angle := TAU * float(marker_index) / 4.0
+                var marker_position := Vector3(cos(marker_angle) * 2.92, 0.74, sin(marker_angle) * 2.92)
+                ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(0.26, 0.16, 0.16), marker_position, preview, Vector3(0.0, -marker_angle, 0.0), "AdaptationPreviewMarker", 0.05)
         &"adaptation.anchored_shell":
             for side in [-1.0, 1.0]:
                 ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(0.3, 2.55, 0.62), Vector3(side * 2.02, 1.65, 0.0), iron, Vector3(0.0, side * 0.12, 0.0), "AnchorShellBrace", 0.1)

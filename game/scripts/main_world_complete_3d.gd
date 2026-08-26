@@ -23,6 +23,8 @@ var adaptive_defense_director: AdaptiveDefenseDirector3D
 var continuity_used: bool = false
 var first_victory_achieved: bool = false
 var sanctuary_continuation: bool = false
+var adaptive_defense_review_capture_path: String = ""
+var adaptive_defense_review_capture_frames: int = 0
 var spawned_region_salvage: Dictionary = {}
 var machine_relationship_moments: Dictionary = {}
 
@@ -309,6 +311,8 @@ func _start_dynamic_operation_review() -> void:
 
 
 func _start_adaptive_defense_review() -> void:
+    adaptive_defense_review_capture_path = _adaptive_defense_review_capture_argument()
+    adaptive_defense_review_capture_frames = 0
     if progression != null:
         progression.set_heartforge_tier(5)
         progression.unlocked_effects[&"unlock_adaptive_defence"] = true
@@ -325,6 +329,18 @@ func _start_adaptive_defense_review() -> void:
         if adaptive_defense_director.has_pending_proposal():
             strategic_hud.open_adaptation(adaptive_defense_director.available_plans(), adaptive_defense_director.proposal_summary())
             player.input_enabled = false
+
+
+func _adaptive_defense_review_capture_argument() -> String:
+    var arguments: Array = OS.get_cmdline_args()
+    arguments.append_array(OS.get_cmdline_user_args())
+    for index in arguments.size():
+        var argument := str(arguments[index])
+        if argument.begins_with("--adaptive-defense-review-screenshot="):
+            return argument.get_slice("=", 1)
+        if argument == "--adaptive-defense-review-screenshot" and index + 1 < arguments.size():
+            return str(arguments[index + 1])
+    return ""
 
 
 func _start_authored_operation_review() -> void:

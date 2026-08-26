@@ -146,6 +146,16 @@ func _process(delta: float) -> void:
 			else:
 				push_error("Heartforge progression review screenshot failed: %s" % capture_error)
 			heartforge_progression_review_capture_path = ""
+	if not adaptive_defense_review_capture_path.is_empty():
+		adaptive_defense_review_capture_frames += 1
+		if adaptive_defense_review_capture_frames == 45:
+			var review_image := get_viewport().get_texture().get_image()
+			var capture_error := review_image.save_png(adaptive_defense_review_capture_path)
+			if capture_error == OK:
+				print("Adaptive defense review screenshot written to %s" % adaptive_defense_review_capture_path)
+			else:
+				push_error("Adaptive defense review screenshot failed: %s" % capture_error)
+			adaptive_defense_review_capture_path = ""
 	if release_started:
 		_handle_controller_actions()
 	if release_front_end != null and release_front_end.is_modal_open():

@@ -159,6 +159,11 @@ func evaluate_now() -> bool:
         pending_reason_kind = &"pressure"
         pending_reason_value = pressure * 100.0
         pending_reason = "The Heartforge architect detected organic pressure at %.0f%% around the district and proposes a quieter defensive principle." % (pressure * 100.0)
+    if heartforge != null:
+        # The footprint is a quiet, non-interactive preview of the affected
+        # perimeter. The selected principle is still the player's decision;
+        # no geometry or gameplay state changes before authorization.
+        heartforge.set_adaptation_preview(&"adaptation.pending", 0.22)
     var detail := "Machines will handle geometry, escorts, construction and reconstruction. Choose one principle; this proposal is a rare run-level commitment."
     proposal_available.emit(proposal_summary())
     if run_state != null:
@@ -191,6 +196,9 @@ func authorize(adaptation_id: StringName) -> bool:
     last_reported_progress = -1
     if heartforge != null:
         heartforge.set_operation(&"heartforge_adaptation")
+        # Keep a faint footprint visible from the first construction frame so
+        # the autonomous work never reads as an invisible timer.
+        heartforge.set_adaptation_preview(adaptation_id, 0.04)
     adaptation_changed.emit(
         adaptation_id,
         &"building",
@@ -210,6 +218,8 @@ func _update_active_adaptation(delta: float) -> void:
     var duration := maxf(1.0, float(entry.get("build_seconds", 12.0)))
     var adaptation_id := StringName(active_adaptation.get("id", &""))
     var progress_percent := int(round(clampf(float(active_adaptation.get("elapsed", 0.0)) / duration, 0.0, 1.0) * 100.0))
+    if heartforge != null:
+        heartforge.set_adaptation_preview(adaptation_id, float(progress_percent) / 100.0)
     var progress_report := int(floor(float(progress_percent) / 10.0))
     if progress_report != last_reported_progress:
         last_reported_progress = progress_report
@@ -302,6 +312,12 @@ func restore_from_dictionary(data: Dictionary) -> void:
             heartforge.set_adaptation_profile(completed_adaptation)
         elif not active_adaptation.is_empty():
             heartforge.set_operation(&"heartforge_adaptation")
+            var active_id := StringName(str(active_adaptation.get("id", "")))
+            var active_data: Dictionary = active_adaptation.get("data", {})
+            var active_duration := maxf(1.0, float(active_data.get("build_seconds", 12.0)))
+            heartforge.set_adaptation_preview(active_id, clampf(float(active_adaptation.get("elapsed", 0.0)) / active_duration, 0.0, 1.0))
+        elif not pending_reason.is_empty():
+            heartforge.set_adaptation_preview(&"adaptation.pending", 0.22)
 
 
 func _localized_text(key: String, fallback: String, replacements: Array = []) -> String:
