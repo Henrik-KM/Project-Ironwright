@@ -5,7 +5,9 @@ signal mood_changed(mood: StringName)
 
 const AUDIO_ROOT := "res://assets/release/audio"
 const QUIET_AUDIO_FLAG := "--quiet-audio"
-const QUIET_AUDIO_CAP_DB := -18.0
+## Review-mode ceiling: deliberately far below normal playback so an accidental
+## speaker route cannot produce a startling test burst.
+const QUIET_AUDIO_CAP_DB := -30.0
 const STREAM_PATHS: Dictionary = {
     &"ambience_city": AUDIO_ROOT + "/ambience_city.wav",
     &"ambience_sanctuary": AUDIO_ROOT + "/ambience_sanctuary.wav",
