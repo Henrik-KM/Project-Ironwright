@@ -1602,6 +1602,18 @@ living membrane highlight rolloff instead of broad flat colour blocks; the
 finish is capped below the Heartforge and danger-signal focal hierarchy.
 Formal human acceptance of the full organic library remains open.
 
+# Focused late-organic lobe refinement — 2026-08-26
+
+The seven later-family authored shells now use a denser shared membrane
+profile: six-lobed, deeper folded membranes with a 14-ring/56-side perimeter,
+plus a restrained four-lobed scallop on the swept wing membrane. This gives the
+large biological plates a more deliberate living edge and finer highlight
+breakup at the compact review distance while preserving socket dimensions,
+collision, animation, family tint, ecology and combat ownership. The pass is
+presentation-only and was live-reviewed through the exact release gallery with
+Godot's dummy audio driver and `--quiet-audio`; no live speakers were used.
+Formal human acceptance of the full organic library remains open.
+
 # Focused organic warning-call pass — 2026-08-26
 
 The release audio layer now uses three original deterministic warning-call

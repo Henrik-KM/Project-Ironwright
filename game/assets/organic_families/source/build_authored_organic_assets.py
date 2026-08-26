@@ -292,8 +292,9 @@ def add_swept_wing_membrane(
     Airborne early families need a directional leading edge and a readable
     root-to-tip sweep. The shared oval membrane was technically convex but
     still collapsed into a stack of discs at gallery distance. This mesh keeps
-    the same local socket dimensions while tightening the outer edge and
-    lifting a shallow living keel through the centre.
+    the same local socket dimensions while tightening the outer edge, adding a
+    restrained four-lobed scallop and lifting a shallow living keel through
+    the centre.
     """
     width, thickness, depth = (max(0.001, float(value)) for value in size)
     rings = max(6, int(rings))
@@ -326,11 +327,13 @@ def add_swept_wing_membrane(
                 # sweep so the silhouette reads as a wing, not a plate.
                 rear_taper = 0.78 + 0.22 * max(0.0, -cosine)
                 forward_sweep = 1.0 + 0.34 * max(0.0, -sine)
-                x = half_width * radius * cosine * rear_taper
-                z = half_depth * radius * sine * forward_sweep - half_depth * 0.12 * (1.0 - radius)
+                scallop = 1.0 + 0.14 * math.cos(4.0 * angle)
+                x = half_width * radius * cosine * rear_taper * scallop
+                z = half_depth * radius * sine * forward_sweep * scallop - half_depth * 0.12 * (1.0 - radius)
                 crown = 0.34 + 0.66 * (1.0 - radius * radius)
                 keel = 0.12 * abs(cosine) * (1.0 - radius * 0.42)
                 y = sign * (half_thickness * crown + keel)
+                y += sign * half_thickness * 0.12 * math.sin(4.0 * angle) * radius
                 current.append(add_vertex(
                     (x, y, z),
                     (sign * 0.9 * radius * cosine, sign, sign * 1.05 * radius * sine),
@@ -363,8 +366,9 @@ def add_swept_wing_membrane(
         sine = math.sin(angle)
         rear_taper = 0.78 + 0.22 * max(0.0, -cosine)
         forward_sweep = 1.0 + 0.34 * max(0.0, -sine)
-        x = half_width * cosine * rear_taper
-        z = half_depth * sine * forward_sweep
+        scallop = 1.0 + 0.14 * math.cos(4.0 * angle)
+        x = half_width * cosine * rear_taper * scallop
+        z = half_depth * sine * forward_sweep * scallop
         rim_front.append(add_vertex((x, half_thickness * 0.34, z), (cosine, 0.0, sine)))
         rim_back.append(add_vertex((x, -half_thickness * 0.34, z), (cosine, 0.0, sine)))
     for side in range(sides):
@@ -525,10 +529,12 @@ def build_family(name: str, spec: dict) -> None:
         "ShellPlate": mesh("ShellPlate", add_organic_lobe(builder, (0.76, 0.18, 0.30), shell, lobes=4, rings=9, sides=40, scallop_amplitude=0.18, leading_extension=0.28, fold_strength=0.82)),
         # The membrane layer is the largest shared silhouette on the late
         # family gallery page. A symmetric ellipsoid still read as a stack of
-        # repeated dishes, so use a tapered scalloped lobe with a living rim
-        # highlight while retaining the same mesh/socket contract.
-        "Membrane": mesh("Membrane", add_organic_lobe(builder, (1.26, 0.42, 1.08), membrane, lobes=5, rings=10, sides=40, scallop_amplitude=0.20, leading_extension=0.52, fold_strength=0.98)),
-        "WingMembrane": mesh("WingMembrane", add_swept_wing_membrane(builder, (1.38, 0.18, 1.08), membrane)),
+        # repeated dishes, so use a deeper six-lobed fold with a denser
+        # perimeter. The extra radial resolution is spent on the broad
+        # silhouette surfaces that catch the compact gallery key light; the
+        # socket dimensions and runtime ownership remain unchanged.
+        "Membrane": mesh("Membrane", add_organic_lobe(builder, (1.26, 0.42, 1.08), membrane, lobes=6, rings=14, sides=56, scallop_amplitude=0.25, leading_extension=0.64, fold_strength=1.16)),
+        "WingMembrane": mesh("WingMembrane", add_swept_wing_membrane(builder, (1.38, 0.18, 1.08), membrane, rings=12, sides=56)),
         "Bone": mesh("Bone", add_capsule(builder, 0.09, 0.86, bone, 24)),
         "LongBone": mesh("LongBone", add_capsule(builder, 0.065, 1.35, bone, 24)),
         "Tendon": mesh("Tendon", add_capsule(builder, 0.07, 1.15, tendon, 24)),
