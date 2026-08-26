@@ -19,7 +19,12 @@ OUTPUT_PATH = SOURCE_DIR / "sporecaster.gltf"
 
 
 def add_convex_gill(builder: BufferBuilder, size: Sequence[float], material: int, rings: int = 8, sides: int = 36) -> tuple[int, int, int, int]:
-    """Build a rounded vertical gill whose edge breaks catch the light."""
+    """Build a rounded, scalloped vertical gill whose edge breaks catch the light.
+
+    The gill remains a compact closed volume for stable sockets, but a
+    restrained five-lobed perimeter keeps the repeated membranes from reading
+    as manufactured flat sheets in the close organic review.
+    """
     thickness, height, depth = (max(0.001, float(value)) for value in size)
     half_thickness = thickness * 0.5
     half_height = height * 0.5
@@ -45,9 +50,10 @@ def add_convex_gill(builder: BufferBuilder, size: Sequence[float], material: int
                 angle = math.tau * index / max(24, sides)
                 cosine = math.cos(angle)
                 sine = math.sin(angle)
-                top_taper = 1.0 + 0.18 * max(0.0, cosine)
+                scallop = 1.0 + 0.14 * math.cos(5.0 * angle) * (0.42 + 0.58 * radius)
+                top_taper = (1.0 + 0.18 * max(0.0, cosine)) * scallop
                 y = half_height * radius * cosine * top_taper + 0.04 * (1.0 - radius)
-                z = half_depth * radius * sine * (0.84 + 0.16 * max(0.0, -cosine))
+                z = half_depth * radius * sine * (0.84 + 0.16 * max(0.0, -cosine)) * scallop
                 x = sign * half_thickness * (0.34 + 0.66 * (1.0 - radius * radius))
                 current.append(add_vertex((x, y, z), (sign, 0.6 * cosine, sine)))
             ring_indices.append(current)
@@ -70,9 +76,10 @@ def add_convex_gill(builder: BufferBuilder, size: Sequence[float], material: int
         angle = math.tau * index / max(24, sides)
         cosine = math.cos(angle)
         sine = math.sin(angle)
-        top_taper = 1.0 + 0.18 * max(0.0, cosine)
+        scallop = 1.0 + 0.14 * math.cos(5.0 * angle)
+        top_taper = (1.0 + 0.18 * max(0.0, cosine)) * scallop
         y = half_height * cosine * top_taper
-        z = half_depth * sine * (0.84 + 0.16 * max(0.0, -cosine))
+        z = half_depth * sine * (0.84 + 0.16 * max(0.0, -cosine)) * scallop
         rim_front.append(add_vertex((half_thickness * 0.34, y, z), (0.0, cosine, sine)))
         rim_back.append(add_vertex((-half_thickness * 0.34, y, z), (0.0, cosine, sine)))
     for index in range(max(24, sides)):
