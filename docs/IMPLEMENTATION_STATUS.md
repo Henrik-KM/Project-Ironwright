@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused Cistern Apex attack-surface pass
+
+- rebuilt the authored Apex jaw plates, thorax ribs and jaw latches with the
+  shared chamfered mesh profile while preserving the dense wet shell, crown,
+  membranes, animation clips and stable attack sockets;
+- added aesthetic guards so the final organic threat cannot regress to flat
+  six-face placeholder attack hardware.
+
 ## Focused Signal Relay service-surface pass
 
 - rebuilt the authored Relay service face, heat sink, feet, optic housing,

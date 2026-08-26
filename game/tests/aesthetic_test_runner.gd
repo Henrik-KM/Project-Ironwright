@@ -1379,6 +1379,9 @@ func _run_all() -> void:
             var apex_jaw_latch := _find_named(enemy_samples[index], "ApexJawLatchR") as Node3D
             var apex_membrane_rib := _find_named(enemy_samples[index], "ApexMembraneRibL0") as Node3D
             _expect(apex_jaw_latch != null and apex_membrane_rib != null, "Cistern Apex jaw and membrane assemblies must expose stable authored detail sockets.")
+            var apex_crown_plate := _find_named(enemy_samples[index], "ApexCrownPlate") as MeshInstance3D
+            var apex_jaw_latch_mesh := apex_jaw_latch as MeshInstance3D
+            _expect(apex_crown_plate != null and _mesh_vertex_count(apex_crown_plate) >= 48 and apex_jaw_latch_mesh != null and _mesh_vertex_count(apex_jaw_latch_mesh) >= 48, "Cistern Apex crown plate and jaw latch must retain chamfered high-definition attack hardware.")
         if species_names[index] == &"broodmass":
             var brood_maw := _find_named(enemy_samples[index], "BroodmassMaw") as Node3D
             var brood_plate := _find_named(enemy_samples[index], "BroodmassMawPlate") as Node3D
