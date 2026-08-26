@@ -1673,10 +1673,10 @@ full organic library remains open.
 
 # Focused release audio ownership pass — 2026-08-26
 
-The commercial release entrypoint now removes the inherited lower-level
-spatial audio director before installing its canonical release mixer. This
-prevents duplicate pistol, channel, impact and organic cues while preserving
-the separate lower-level audio path used by non-release entrypoints. The
-release regression now asserts that only the canonical mixer remains active;
-validation and live review continue to use Godot's Dummy audio driver and
-`--quiet-audio`, with no live speakers.
+The commercial release entrypoint now disconnects only the inherited lower-level
+player and organic bindings already owned by its canonical release mixer. This
+prevents duplicate pistol, channel, attack and organic-death cues while
+preserving the legacy director's robot, noise-pulse, region-transition and
+endgame coverage for shared diagnostics and lower-level entrypoints. The release
+regression asserts the selective handoff; validation and live review continue to
+use Godot's Dummy audio driver and `--quiet-audio`, with no live speakers.

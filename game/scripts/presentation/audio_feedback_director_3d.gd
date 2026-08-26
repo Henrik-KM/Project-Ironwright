@@ -33,6 +33,7 @@ var last_player_health: float = -1.0
 var _last_heartforge_health: float = -1.0
 var _last_endgame_stage: int = -1
 var quiet_audio: bool = false
+var release_overlap_bindings_enabled: bool = true
 
 
 func configure(next_world: Node3D, next_player: Node3D, next_heartforge: Node3D, next_noise_system: Node) -> void:
@@ -139,6 +140,29 @@ func stop_all() -> void:
     active_players.clear()
 
 
+func disable_release_overlap_bindings() -> void:
+    """Hand release-owned player and organic cues to the canonical release mixer."""
+    if not release_overlap_bindings_enabled:
+        return
+    release_overlap_bindings_enabled = false
+    _disconnect_release_overlap_bindings(player)
+    for actor in get_tree().get_nodes_in_group(&"organic_enemies"):
+        _disconnect_release_overlap_bindings(actor)
+    stop_all()
+
+
+func _disconnect_release_overlap_bindings(actor: Node) -> void:
+    if actor == null or not is_instance_valid(actor):
+        return
+    if actor.is_in_group(&"player_character"):
+        _disconnect_once(actor, &"pistol_fired", Callable(self, "_on_pistol_fired"))
+        _disconnect_once(actor, &"channel_started", Callable(self, "_on_channel_started"))
+        _disconnect_once(actor, &"channel_completed", Callable(self, "_on_channel_completed"))
+    if actor.is_in_group(&"organic_enemies"):
+        _disconnect_once(actor, &"attack_landed", Callable(self, "_on_attack_landed"))
+        _disconnect_once(actor, &"killed", Callable(self, "_on_actor_killed"))
+
+
 func _register_existing_actors() -> void:
     if player != null:
         _register_actor(player)
@@ -168,16 +192,16 @@ func _register_actor(actor: Node) -> void:
         _connect_once(actor, &"health_changed", Callable(self, "_on_player_health_changed"))
         if actor.get(&"current_health") != null:
             last_player_health = float(actor.get(&"current_health"))
-    if actor.has_signal(&"pistol_fired"):
+    if release_overlap_bindings_enabled and actor.has_signal(&"pistol_fired"):
         _connect_once(actor, &"pistol_fired", Callable(self, "_on_pistol_fired"))
     if actor.has_signal(&"weapon_fired"):
         if actor.is_in_group(&"friendly_robots"):
             _connect_once(actor, &"weapon_fired", Callable(self, "_on_robot_weapon_fired").bind(actor))
         else:
             _connect_once(actor, &"weapon_fired", Callable(self, "_on_weapon_fired"))
-    if actor.has_signal(&"attack_landed"):
+    if release_overlap_bindings_enabled and actor.has_signal(&"attack_landed"):
         _connect_once(actor, &"attack_landed", Callable(self, "_on_attack_landed"))
-    if actor.has_signal(&"killed"):
+    if release_overlap_bindings_enabled and actor.has_signal(&"killed"):
         _connect_once(actor, &"killed", Callable(self, "_on_actor_killed"))
     if actor.is_in_group(&"friendly_robots") or actor.is_in_group(&"organic_enemies"):
         _connect_once(actor, &"health_changed", Callable(self, "_on_actor_health_changed"))
@@ -190,6 +214,11 @@ func _register_actor(actor: Node) -> void:
 func _connect_once(source: Object, signal_name: StringName, callback: Callable) -> void:
     if source.has_signal(signal_name) and not source.is_connected(signal_name, callback):
         source.connect(signal_name, callback)
+
+
+func _disconnect_once(source: Object, signal_name: StringName, callback: Callable) -> void:
+    if source != null and source.has_signal(signal_name) and source.is_connected(signal_name, callback):
+        source.disconnect(signal_name, callback)
 
 
 func _safe_volume_db(volume_db: float) -> float:
