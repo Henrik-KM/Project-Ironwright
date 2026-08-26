@@ -24,6 +24,16 @@ pass is presentation-only and introduces no new collision, simulation, save
 state or player-managed task. Exact silent 1280x720 Tier III outpost review is
 required; broader human outpost and production-art acceptance remains open.
 
+The same outpost review received a focused role-surface and composition pass on
+2026-08-26. A shared service spine now gives the existing tier frames a coherent
+manufactured body with ventilation, status and role-identity hardware, while
+recessed decks reduce the repeated open-frame read. The four Tier III role
+fixtures now use a larger two-by-two development plate and a tighter elevated
+camera so resource, defence, scout and repair signatures remain judgeable in
+one 1280x720 frame. Exact silent local review passed for page 15/15 and the
+opening roster; the pass remains presentation-only and broader human outpost
+and production-art acceptance remains open.
+
 Autonomous route recovery received a focused marker-presentation pass on
 2026-08-26. The transient detour cue now has a grounded manufactured housing,
 collar and bounded directional plates beneath the existing signal ring, stem,
