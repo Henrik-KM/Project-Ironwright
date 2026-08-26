@@ -1602,6 +1602,16 @@ living membrane highlight rolloff instead of broad flat colour blocks; the
 finish is capped below the Heartforge and danger-signal focal hierarchy.
 Formal human acceptance of the full organic library remains open.
 
+# Focused organic warning-call pass — 2026-08-26
+
+The release audio layer now uses three original deterministic warning-call
+families for organic attack wind-ups: low for apex, burrowing and root-heavy
+organisms, mid for grounded hunters and nest threats, and high for aerial,
+stalker and spore-bearing organisms. The calls remain short, rate-limited and
+mixed below the quiet review cap, while the existing species pitch signatures,
+impact cues and sound captions remain intact. Validation uses Godot's dummy
+audio driver; no live speakers are used for this review.
+
 # Title-screen review capture — 2026-08-26
 
 The exact release entrypoint now exposes a development-only `--title-review`

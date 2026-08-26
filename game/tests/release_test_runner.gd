@@ -70,6 +70,11 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
         world.release_audio.quiet_audio = false
         _expect(is_equal_approx(world.release_audio._organic_signature_pitch(&"glassmoth", false), 1.28), "Release audio must preserve the high signature of Glassmoth.")
         _expect(world.release_audio._organic_signature_pitch(&"apex", true) < world.release_audio._organic_signature_pitch(&"apex", false), "Release audio must lower a species signature on death.")
+        for call_id in [&"organic_call_low", &"organic_call_mid", &"organic_call_high"]:
+            _expect(world.release_audio.stream_library.has(call_id), "Release audio must load the authored organic call family %s." % call_id)
+        _expect(world.release_audio._organic_call_id(&"apex") == &"organic_call_low", "Apex warnings must use the low organic call family.")
+        _expect(world.release_audio._organic_call_id(&"razorhound") == &"organic_call_mid", "Ground hunter warnings must use the mid organic call family.")
+        _expect(world.release_audio._organic_call_id(&"glassmoth") == &"organic_call_high", "Aerial membrane warnings must use the high organic call family.")
         var tier_callback := Callable(world.release_audio, "_on_heartforge_tier_changed")
         _expect(world.progression.heartforge_tier_changed.is_connected(tier_callback), "Heartforge tier changes must connect to the release progression audio cue.")
         var tier_cue_count_before := world.release_audio.heartforge_tier_cue_count
@@ -96,6 +101,7 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
         var warning_count_before := world.release_audio.attack_warning_count
         world.release_audio._on_organic_attack_started(warning_enemy, world.player)
         _expect(world.release_audio.attack_warning_count == warning_count_before + 1, "An organic attack wind-up must emit a pre-impact danger cue.")
+        _expect(world.release_audio.last_effect_id == world.release_audio._organic_call_id(warning_enemy.species), "An organic attack wind-up must use its species call family.")
         world.release_audio._on_organic_attack_started(warning_enemy, world.player)
         _expect(world.release_audio.attack_warning_count == warning_count_before + 1, "Overlapping organic wind-ups must be rate-limited in the audio layer.")
         world.release_audio.attack_warning_clock = 0.0
@@ -479,6 +485,9 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         "res://assets/release/audio/sfx_pistol.wav",
         "res://assets/release/audio/sfx_salvage.wav",
         "res://assets/release/audio/sfx_forge.wav",
+        "res://assets/release/audio/sfx_organic_call_low.wav",
+        "res://assets/release/audio/sfx_organic_call_mid.wav",
+        "res://assets/release/audio/sfx_organic_call_high.wav",
     ]
     for path in audio_paths:
         _expect(ResourceLoader.exists(path), "Release audio must import: %s" % path)
