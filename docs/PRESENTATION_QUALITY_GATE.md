@@ -1680,3 +1680,13 @@ preserving the legacy director's robot, noise-pulse, region-transition and
 endgame coverage for shared diagnostics and lower-level entrypoints. The release
 regression asserts the selective handoff; validation and live review continue to
 use Godot's Dummy audio driver and `--quiet-audio`, with no live speakers.
+
+# Focused title-music pass — 2026-08-26
+
+The release shell now opens on a restrained original first-light theme and
+hands off to the existing embers, pressure or sovereignty beds when gameplay
+begins. The title theme is deterministic, loop-safe and mixed below the same
+quiet review cap; the title/world transition is explicit so the menu does not
+share the in-world bed accidentally. The music asset and transition are
+validated through the release regression and a live title capture using
+Godot's Dummy audio driver and `--quiet-audio`; no live speakers are used.

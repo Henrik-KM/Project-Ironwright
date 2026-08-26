@@ -482,6 +482,7 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
     var audio_paths := [
         "res://assets/release/audio/ambience_city.wav",
         "res://assets/release/audio/ambience_sanctuary.wav",
+        "res://assets/release/audio/music_title.wav",
         "res://assets/release/audio/music_embers.wav",
         "res://assets/release/audio/music_pressure.wav",
         "res://assets/release/audio/music_sovereignty.wav",
@@ -503,7 +504,11 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.release_world_art.normal_textures.size() == 9, "Release art director must load normal relief for all nine texture families.")
     _expect(world.release_world_art.regions_dressed >= 12, "Every persistent region must receive release dressing.")
     _expect(world.release_world_art.meshes_textured > 30, "The existing world must receive a broad textured material pass.")
-    _expect(world.release_audio.stream_library.size() >= 16, "Release audio director must load music, ambience, family calls and species variants.")
+    _expect(world.release_audio.stream_library.size() >= 17, "Release audio director must load title music, adaptive music, ambience, family calls and species variants.")
+    world.release_audio.set_title_screen_active(true)
+    _expect(world.release_audio.current_mood == &"title", "Release audio must select the restrained title theme while the title screen is active.")
+    world.release_audio.set_title_screen_active(false)
+    _expect(world.release_audio.current_mood == &"embers", "Release audio must return to the embers theme when gameplay begins.")
     _expect(not world.release_animation.attached_subjects.is_empty(), "Release secondary animation must attach to world subjects.")
     var rail_dressing := world.release_world_art.dressing_root.find_child("HighDefinitionRailDressing", true, false) if world.release_world_art.dressing_root != null else null
     _expect(rail_dressing != null, "Release rail dressing must expose a bounded high-definition carriage layer.")

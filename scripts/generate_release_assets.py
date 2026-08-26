@@ -286,6 +286,21 @@ def music_embers(t: float, duration: float) -> float:
     return pad + melody + pulse
 
 
+def music_title(t: float, duration: float) -> float:
+    """A restrained first-light theme for the title screen."""
+    chord = [110.0, 130.813, 164.814]
+    pad = sum(tone(t, duration, note, index * 0.55) for index, note in enumerate(chord)) * 0.055
+    phrase = [220.0, 261.626, 329.628, 293.665, 261.626, 220.0, 196.0, 164.814]
+    step_duration = duration / len(phrase)
+    step = int(t / step_duration) % len(phrase)
+    local = (t % step_duration) / step_duration
+    envelope = math.sin(math.pi * local) ** 1.4
+    motif = tone(t, duration, phrase[step], 0.2) * envelope * 0.075
+    answer = tone(t, duration, phrase[(step + 2) % len(phrase)] * 0.5, -0.4) * (0.45 + 0.55 * envelope) * 0.035
+    shimmer = max(0.0, tone(t, duration, 0.125, 1.4)) ** 18 * tone(t, duration, 659.25) * 0.018
+    return pad + motif + answer + shimmer
+
+
 def music_pressure(t: float, duration: float) -> float:
     beat = (t * 2.0) % 1.0
     kick = math.exp(-beat * 14.0) * tone(t, duration, 48.0) * 0.28
@@ -407,6 +422,7 @@ def sfx_victory(t: float, duration: float) -> float:
 AUDIO: dict[str, tuple[float, Callable[[float, float], float]]] = {
     "ambience_city.wav": (18.0, ambience_city),
     "ambience_sanctuary.wav": (18.0, ambience_sanctuary),
+    "music_title.wav": (24.0, music_title),
     "music_embers.wav": (24.0, music_embers),
     "music_pressure.wav": (24.0, music_pressure),
     "music_sovereignty.wav": (24.0, music_sovereignty),
