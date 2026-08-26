@@ -15,6 +15,7 @@ const REMOTE_CAMERA_DISTANCE_EXPANSION := 6.5
 const OBSERVATORY_PRESENTATION_REVIEW_SCENE: PackedScene = preload("res://assets/observatory/observatory.gltf")
 const BURIED_LABS_PRESENTATION_REVIEW_SCENE: PackedScene = preload("res://assets/buried_labs/buried_labs.gltf")
 const TRAM_GRAVEYARD_PRESENTATION_REVIEW_SCENE: PackedScene = preload("res://assets/tram_graveyard/tram_graveyard.gltf")
+const OUTPOST_PRESENTATION_REVIEW_SCENE: PackedScene = preload("res://scenes/world/outpost_3d.tscn")
 
 static var pending_launch_mode: StringName = &"title"
 
@@ -831,6 +832,7 @@ func _start_presentation_review() -> void:
 	presentation_review_pages = [[], [], []]
 	for _region_id in PRESENTATION_REVIEW_REGIONS:
 		presentation_review_pages.append([])
+	presentation_review_pages.append([])
 	presentation_review_pages[0].append(player)
 	var companion := get_node_or_null("Bulwark_01") as Node3D
 	if companion != null:
@@ -880,10 +882,22 @@ func _start_presentation_review() -> void:
 					review_reduced_proxy.visible = false
 			landmark.set_map_emphasis(false)
 			presentation_review_pages[3 + index].append(review_actor)
+	var outpost_review_page: Array = presentation_review_pages[3 + PRESENTATION_REVIEW_REGIONS.size()]
+	for index in 4:
+		var outpost := OUTPOST_PRESENTATION_REVIEW_SCENE.instantiate() as Outpost3D
+		if outpost == null:
+			continue
+		outpost.name = "PresentationReviewOutpost%02d" % index
+		outpost.configure(StringName("presentation.review.outpost.%d" % index), [&"resource", &"defence", &"scout", &"repair"][index], 3, run_state)
+		add_child(outpost)
+		outpost.set_physics_process(false)
+		outpost.set_process(false)
+		outpost.set_presentation_review_mode()
+		outpost_review_page.append(outpost)
 	_create_presentation_review_stage()
 	_show_presentation_review_page(_presentation_review_start_page())
 	get_tree().paused = true
-	run_state.log_event("Presentation review mode: 1 friendly roster, 2 early organics, 3 late organics, 4-14 all remote regions. Arrow keys browse; Escape exits review.")
+	run_state.log_event("Presentation review mode: 1 friendly roster, 2 early organics, 3 late organics, 4-14 all remote regions, 15 autonomous outpost roles. Arrow keys browse; Escape exits review.")
 
 
 func _start_mechromancer_evolution_review() -> void:
@@ -1121,7 +1135,7 @@ func _add_presentation_review_box(node_name: String, size: Vector3, position: Ve
 
 
 func _show_presentation_review_page(page: int) -> void:
-	if presentation_review_pages.size() != 3 + PRESENTATION_REVIEW_REGIONS.size():
+	if presentation_review_pages.size() != 4 + PRESENTATION_REVIEW_REGIONS.size():
 		return
 	presentation_review_page = clampi(page, 0, presentation_review_pages.size() - 1)
 	for page_actors in presentation_review_pages:
@@ -1134,7 +1148,8 @@ func _show_presentation_review_page(page: int) -> void:
 			if dressing_root != null:
 				dressing_root.visible = false
 	var actors: Array = presentation_review_pages[presentation_review_page]
-	var is_region_page := presentation_review_page >= 3
+	var outpost_page := presentation_review_page == 3 + PRESENTATION_REVIEW_REGIONS.size()
+	var is_region_page := presentation_review_page >= 3 and not outpost_page
 	var region_id := PRESENTATION_REVIEW_REGIONS[presentation_review_page - 3] if is_region_page else &""
 	if is_region_page and release_world_art != null:
 		var selected_region_dressing := release_world_art.region_dressing_root(region_id)
@@ -1151,7 +1166,7 @@ func _show_presentation_review_page(page: int) -> void:
 		if actor == null or not is_instance_valid(actor):
 			continue
 		actor.visible = true
-		_set_presentation_review_actor_lighting(actor, presentation_review_page == 0)
+		_set_presentation_review_actor_lighting(actor, presentation_review_page == 0 or outpost_page)
 		if is_region_page:
 			# Riverworks keeps its opposite-side service face, while Tram Graveyard
 			# is explicitly front-facing for the dedicated carriage review actor.
@@ -1182,11 +1197,13 @@ func _show_presentation_review_page(page: int) -> void:
 			# collapse into one silhouette band at the old spacing. Keep the actor
 			# roots and gameplay scale untouched; only the bounded review fixture
 			# gets a wider two-row composition so every family remains judgeable.
-			var spacing := 3.10 if presentation_review_page >= 1 else 4.2
+			var spacing := 4.7 if outpost_page else (3.10 if presentation_review_page >= 1 else 4.2)
 			var centered_x := (float(row_position) - float(row_count - 1) * 0.5) * spacing
 			var row_z := 1.05 if row_index == 0 else -2.15
 			if presentation_review_page == 0:
 				row_z = 0.7 if row_index == 0 else -2.5
+			elif outpost_page:
+				row_z = 0.0 if row_index == 0 else -2.5
 			row_z += _presentation_review_depth_offset(actor)
 			actor.scale = Vector3.ONE
 			var review_model_root := actor.get_node_or_null("OrganicModel") as Node3D
@@ -1200,7 +1217,7 @@ func _show_presentation_review_page(page: int) -> void:
 		"REMOTE · NORTH RUINS", "REMOTE · WEST GRID", "REMOTE · EAST TENEMENTS",
 		"REMOTE · MUNICIPAL GLASSHOUSE", "REMOTE · FLOOD MARKET", "REMOTE · RIVERWORKS",
 		"REMOTE · TRAM GRAVEYARD", "REMOTE · CATHEDRAL QUARTER", "REMOTE · OBSERVATORY RIDGE",
-		"REMOTE · BURIED LABORATORIES", "REMOTE · ROOT CISTERN",
+		"REMOTE · BURIED LABORATORIES", "REMOTE · ROOT CISTERN", "AUTONOMOUS OUTPOST ROLES · TIER III",
 	]
 	var page_title: String = page_titles[presentation_review_page]
 	presentation_review_label.text = "PRESENTATION REVIEW  ·  %s  ·  %d/%d\n1-9 / 0 DIRECT PAGE   ←/→ BROWSE   ESC EXIT" % [page_title, presentation_review_page + 1, presentation_review_pages.size()]
@@ -1211,10 +1228,10 @@ func _show_presentation_review_page(page: int) -> void:
 		presentation_review_camera_target = region_director.center(region_id) + Vector3.UP * 2.0
 		presentation_review_camera_desired = presentation_review_camera_target + Vector3(0.0, 12.0, 19.0)
 	else:
-		var core_target_height := 1.08 if presentation_review_page >= 1 else 1.45
+		var core_target_height := 2.3 if outpost_page else (1.08 if presentation_review_page >= 1 else 1.45)
 		var core_target_depth := -0.38 if presentation_review_page >= 1 else -0.7
 		presentation_review_camera_target = Vector3(0.0, core_target_height, core_target_depth)
-		presentation_review_camera_desired = Vector3(0.0, 4.45, 11.15) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5)
+		presentation_review_camera_desired = Vector3(0.0, 5.4, 16.0) if outpost_page else (Vector3(0.0, 4.45, 11.15) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5))
 	_set_presentation_review_stage_for_page(is_region_page)
 	_update_presentation_review_camera(1.0)
 
@@ -1735,7 +1752,8 @@ func _update_presentation_review_camera(delta: float) -> void:
 	var desired := presentation_review_camera_desired
 	camera.global_position = camera.global_position.lerp(desired, 1.0 - exp(-delta * 5.0))
 	var core_review_fov := 41.5 if presentation_review_page >= 1 else 43.0
-	camera.fov = 44.0 if presentation_review_page == 13 else (46.0 if presentation_review_page == 12 else (48.0 if presentation_review_page == 11 else (52.0 if presentation_review_page >= 3 else core_review_fov)))
+	var outpost_page := presentation_review_page == 3 + PRESENTATION_REVIEW_REGIONS.size()
+	camera.fov = 42.0 if outpost_page else (44.0 if presentation_review_page == 13 else (46.0 if presentation_review_page == 12 else (48.0 if presentation_review_page == 11 else (52.0 if presentation_review_page >= 3 else core_review_fov))))
 	camera.look_at(target, Vector3.UP)
 
 
@@ -1803,12 +1821,14 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	# than the manufactured roster to keep wet materials and anatomy breaks
 	# judgeable at the supported compact export size. Runtime lighting is untouched.
 	var organic_gallery_light_scale := 1.18 if presentation_review_page >= 1 and presentation_review_page <= 2 else 1.0
+	var outpost_page := presentation_review_page == 3 + PRESENTATION_REVIEW_REGIONS.size()
+	var outpost_gallery_light_scale := 0.72 if outpost_page else 1.0
 	# Friendly authored shells carry bright cyan sensors and pale steel. The
 	# roster page needs a slightly quieter shared key so copper oxide, rubber,
 	# brushed steel and protected tool hardware retain their material breaks.
 	# This is review-only; tactical lighting remains unchanged.
 	var friendly_roster_light_scale := 0.72 if presentation_review_page == 0 else 1.0
-	var review_light_scale := compact_region_light_scale * organic_gallery_light_scale * friendly_roster_light_scale
+	var review_light_scale := compact_region_light_scale * organic_gallery_light_scale * friendly_roster_light_scale * outpost_gallery_light_scale
 	var organic_page := presentation_review_page >= 1 and presentation_review_page <= 2
 	if organic_fill != null:
 		organic_fill.visible = organic_page

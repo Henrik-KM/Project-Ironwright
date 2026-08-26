@@ -282,6 +282,29 @@ func _set_presentation_activity(status: StringName, strength: float, seconds: fl
     _presentation_status_clock = maxf(_presentation_status_clock, maxf(0.0, seconds))
 
 
+func set_presentation_review_mode() -> void:
+    # The neutral gallery has a stronger shared key than a tactical scene. Use
+    # private material copies so role signals retain their colour without
+    # turning the small shelter and repair pad into clipped white highlights.
+    if _model_root == null:
+        return
+    for node in _model_root.find_children("*", "MeshInstance3D", true, false):
+        var mesh_instance := node as MeshInstance3D
+        if mesh_instance == null:
+            continue
+        if mesh_instance.material_override is StandardMaterial3D:
+            var override_material := (mesh_instance.material_override as StandardMaterial3D).duplicate() as StandardMaterial3D
+            override_material.emission_energy_multiplier *= 0.22
+            mesh_instance.material_override = override_material
+            continue
+        if mesh_instance.mesh != null and mesh_instance.mesh.get_surface_count() > 0:
+            var authored_material := mesh_instance.get_active_material(0)
+            if authored_material is StandardMaterial3D:
+                var review_material := (authored_material as StandardMaterial3D).duplicate() as StandardMaterial3D
+                review_material.emission_energy_multiplier *= 0.22
+                mesh_instance.material_override = review_material
+
+
 func _nearest_enemy(maximum_range: float) -> Node3D:
     var best: Node3D
     var best_distance := maximum_range
@@ -315,6 +338,7 @@ func _refresh_visuals() -> void:
     var rust := ModelKit3D.material(Color("82573c"), 0.42, 0.7)
     var panel := ModelKit3D.material(Color("596568"), 0.76, 0.38)
     var panel_accent := ModelKit3D.material(Color("a6b5b3"), 0.64, 0.32)
+    var frame_rust := ModelKit3D.material(Color("654235"), 0.42, 0.72)
     var destroyed_edge := ModelKit3D.material(Color("2a3435"), 0.72, 0.56)
     var destroyed_rubble := ModelKit3D.material(Color("744b36"), 0.42, 0.78)
     var role_color := Color("6bd8dd")
@@ -401,10 +425,10 @@ func _refresh_visuals() -> void:
         frame.position = Vector3(0.0, y, 0.0)
         _model_root.add_child(frame)
         var frame_size := 3.1 + float(tier_index) * 0.25
-        ModelKit3D.add_beveled_box(frame, Vector3(frame_size, 0.16, 0.22), Vector3(0.0, 0.0, -frame_size * 0.5), rust, Vector3.ZERO, "%sNorthRail" % frame_name, 0.28)
-        ModelKit3D.add_beveled_box(frame, Vector3(frame_size, 0.16, 0.22), Vector3(0.0, 0.0, frame_size * 0.5), rust, Vector3.ZERO, "%sSouthRail" % frame_name, 0.28)
-        ModelKit3D.add_beveled_box(frame, Vector3(0.22, 0.16, frame_size - 0.42), Vector3(-frame_size * 0.5, 0.0, 0.0), rust, Vector3.ZERO, "%sWestRail" % frame_name, 0.28)
-        ModelKit3D.add_beveled_box(frame, Vector3(0.22, 0.16, frame_size - 0.42), Vector3(frame_size * 0.5, 0.0, 0.0), rust, Vector3.ZERO, "%sEastRail" % frame_name, 0.28)
+        ModelKit3D.add_beveled_box(frame, Vector3(frame_size, 0.16, 0.22), Vector3(0.0, 0.0, -frame_size * 0.5), frame_rust, Vector3.ZERO, "%sNorthRail" % frame_name, 0.28)
+        ModelKit3D.add_beveled_box(frame, Vector3(frame_size, 0.16, 0.22), Vector3(0.0, 0.0, frame_size * 0.5), frame_rust, Vector3.ZERO, "%sSouthRail" % frame_name, 0.28)
+        ModelKit3D.add_beveled_box(frame, Vector3(0.22, 0.16, frame_size - 0.42), Vector3(-frame_size * 0.5, 0.0, 0.0), frame_rust, Vector3.ZERO, "%sWestRail" % frame_name, 0.28)
+        ModelKit3D.add_beveled_box(frame, Vector3(0.22, 0.16, frame_size - 0.42), Vector3(frame_size * 0.5, 0.0, 0.0), frame_rust, Vector3.ZERO, "%sEastRail" % frame_name, 0.28)
 
     var role_signature := Node3D.new()
     role_signature.name = "OutpostRoleSignature"
