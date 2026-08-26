@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused Heartforge service-surface pass
+
+- rebuilt the authored fabrication bench, assembly plate, perimeter ribs and
+  service hardware with the shared chamfered mesh profile while preserving
+  stable nodes, materials and interaction sockets;
+- added an aesthetic guard so the central fabrication surface cannot regress
+  to flat six-face placeholder geometry.
+
 ## Focused Tier III outpost presentation pass
 
 - rebuilt every authored shelter core and service surface with the shared

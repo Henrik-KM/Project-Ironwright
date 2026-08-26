@@ -781,6 +781,10 @@ func _run_all() -> void:
         var authored_furnace := heartforge.find_child("FurnaceCore", true, false) as MeshInstance3D
         _expect(authored_housing != null and _mesh_vertex_count(authored_housing) >= 900, "The Heartforge reactor housing must retain a dense smooth focal envelope.")
         _expect(authored_furnace != null and _mesh_vertex_count(authored_furnace) >= 900, "The Heartforge furnace must retain a dense smooth focal envelope.")
+        var authored_bench := heartforge.find_child("ForgeBench", true, false) as MeshInstance3D
+        var authored_plate := heartforge.find_child("AssemblyPlate", true, false) as MeshInstance3D
+        _expect(authored_bench != null and _mesh_vertex_count(authored_bench) > 24, "The Heartforge fabrication bench must use chamfered high-definition geometry rather than a flat box.")
+        _expect(authored_plate != null and _mesh_vertex_count(authored_plate) > 24, "The Heartforge assembly plate must use chamfered high-definition geometry rather than a flat box.")
         var authored_emission_peak := 0.0
         if authored_heartforge != null:
             for raw_mesh in authored_heartforge.find_children("*", "MeshInstance3D", true, false):
