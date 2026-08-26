@@ -6,6 +6,7 @@ signal destroyed(outpost: Outpost3D)
 signal threat_detected(outpost: Outpost3D, enemy: Node3D)
 signal cargo_ready(outpost: Outpost3D)
 signal weapon_fired(origin: Vector3, target: Vector3, target_node: Node)
+signal activity_changed(outpost: Outpost3D, status: StringName)
 signal state_changed(outpost: Outpost3D)
 
 const ROLES: Array[StringName] = [&"resource", &"defence", &"scout", &"repair"]
@@ -277,9 +278,12 @@ func _perform_repair_role() -> void:
 
 
 func _set_presentation_activity(status: StringName, strength: float, seconds: float) -> void:
+    var status_changed := presentation_status != status
     presentation_status = status
     presentation_activity = maxf(presentation_activity, clampf(strength, 0.0, 1.0))
     _presentation_status_clock = maxf(_presentation_status_clock, maxf(0.0, seconds))
+    if status_changed:
+        activity_changed.emit(self, status)
 
 
 func set_presentation_review_mode() -> void:

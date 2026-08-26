@@ -1712,6 +1712,15 @@ pistol and interaction sockets, collision, progression hardware and gameplay
 state remain unchanged. Exact silent exported opening and roster review is
 required; formal human production-art acceptance remains open.
 
+# Focused autonomous outpost audio pass — 2026-08-26
+
+Autonomous Tier III outpost activity now has a spatial release cue at the
+outpost itself: harvesting, defence, scouting, repair and rebuilding select
+distinct existing audio signatures and matching captions. The cue is
+rate-limited and remains presentation-only; outpost simulation, save state,
+collision and player workload are unchanged. Live audio review must continue
+to use the dummy driver and quiet cap; no live speakers are required.
+
 # Focused autonomous outpost role-detail pass — 2026-08-26
 
 The Tier III outpost review now carries a stronger role-specific high-definition
