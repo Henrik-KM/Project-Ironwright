@@ -237,6 +237,20 @@ func _run_all() -> void:
     var story_archive := world.get_node_or_null("StoryArchiveDirector") as StoryArchiveDirector3D
     var release_art := world.get_node_or_null("ReleaseWorldArtDirector") as ReleaseWorldArtDirector3D
     _expect(encounter_dressing != null, "The complete world must provide discovery-driven authored region dressing.")
+    if release_art != null:
+        var late_family_tints: Array[Color] = [
+            release_art._organic_family_tint(&"carrionbell"),
+            release_art._organic_family_tint(&"rootweaver"),
+            release_art._organic_family_tint(&"thornback"),
+            release_art._organic_family_tint(&"ashmantle"),
+        ]
+        for first_index in late_family_tints.size():
+            for second_index in range(first_index + 1, late_family_tints.size()):
+                var first_tint := late_family_tints[first_index]
+                var second_tint := late_family_tints[second_index]
+                var tint_distance := Vector4(first_tint.r, first_tint.g, first_tint.b, 1.0).distance_to(Vector4(second_tint.r, second_tint.g, second_tint.b, 1.0))
+                _expect(tint_distance >= 0.18, "Late-organic family tints must remain visibly separated under the shared membrane atlas.")
+        _expect(late_family_tints[1].g > late_family_tints[1].r and late_family_tints[2].r > late_family_tints[2].b and late_family_tints[3].b > late_family_tints[3].r, "Late-organic release colours must preserve distinct algae, amber and slate-biological lanes.")
     _expect(story_archive != null, "The complete world must provide the persistent Town Archive director.")
     if encounter_dressing != null and region_director != null:
         for raw_region_id in region_director.region_data.keys():

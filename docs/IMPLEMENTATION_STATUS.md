@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused late-organic palette separation pass
+
+- strengthened the release material tint lanes for Carrion Bell, Rootweaver,
+  Thornback and Ashmantle so their shared high-definition membrane detail no
+  longer collapses several families into one magenta band at gallery distance;
+- retained the membrane atlas, normal/detail treatment, authored geometry,
+  sockets, animation clips, gameplay scale and tactical lighting contract;
+- added an aesthetic regression guard for pairwise family separation and the
+  intended algae/amber/slate colour directions; exact live review remains
+  silent and uses Godot's Dummy audio driver.
+
 ## Focused quiet-audio safety pass
 
 - lowered the development-only `--quiet-audio` ceiling from -18 dB to -30 dB
