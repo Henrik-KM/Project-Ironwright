@@ -719,6 +719,15 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         _expect(outpost_actor != null and outpost_actor.visible and is_equal_approx(absf(outpost_actor.rotation.y), PI), "Autonomous outpost role review actors must face the gallery camera.")
         if outpost_actor != null:
             _expect(outpost_actor.find_child("OutpostAuthoredModel", true, false) != null and outpost_actor.find_child("TierFrame3", true, false) != null, "Autonomous outpost role review must retain the authored shelter and Tier III frame.")
+            _expect(outpost_actor.find_child("OutpostRoleSignature", true, false) != null, "Autonomous outpost role review must retain its bounded role-signature assembly.")
+            if index == 0:
+                _expect(outpost_actor.find_child("ResourceIntakeCollar", true, false) != null, "Resource outpost review must retain the high-definition intake collar.")
+            elif index == 1:
+                _expect(outpost_actor.find_child("DefenceTurretCollar", true, false) != null, "Defence outpost review must retain the high-definition turret collar.")
+            elif index == 2:
+                _expect(outpost_actor.find_child("ScoutMastBraceLeft", true, false) != null, "Scout outpost review must retain the high-definition mast brace.")
+            elif index == 3:
+                _expect(outpost_actor.find_child("RepairFieldRing", true, false) != null, "Repair outpost review must retain the high-definition field ring.")
     for core_page in range(3):
         world._show_presentation_review_page(core_page)
         await process_frame

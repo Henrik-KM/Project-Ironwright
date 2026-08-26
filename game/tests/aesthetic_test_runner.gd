@@ -1840,13 +1840,13 @@ func _outpost_model_has_details(outpost: Outpost3D, role: StringName) -> bool:
         return false
     match role:
         &"resource":
-            return _find_named(outpost, "ResourceHopper") != null and _find_named(outpost, "ResourceHopperLouver") != null and _find_named(outpost, "ResourceExtractorArm") != null and _find_named(outpost, "ResourceIntakeBeacon") != null
+            return _find_named(outpost, "ResourceHopper") != null and _find_named(outpost, "ResourceHopperLouver") != null and _find_named(outpost, "ResourceExtractorArm") != null and _find_named(outpost, "ResourceIntakeBeacon") != null and _find_named(outpost, "ResourceHopperRibLeft") != null and _find_named(outpost, "ResourceIntakeCollar") != null
         &"defence":
-            return _find_named(outpost, "DefenceTurretHousing") != null and _find_named(outpost, "DefenceBarrel") != null and _find_named(outpost, "DefenceMuzzleGlow") != null
+            return _find_named(outpost, "DefenceTurretHousing") != null and _find_named(outpost, "DefenceBarrel") != null and _find_named(outpost, "DefenceMuzzleGlow") != null and _find_named(outpost, "DefenceTurretCollar") != null and _find_named(outpost, "DefenceRecoilGuardLeft") != null
         &"scout":
-            return _find_named(outpost, "ScoutSensorHousing") != null and _find_named(outpost, "ScoutSensorDish") != null and _find_named(outpost, "ScoutDishRib") != null
+            return _find_named(outpost, "ScoutSensorHousing") != null and _find_named(outpost, "ScoutSensorDish") != null and _find_named(outpost, "ScoutDishRib") != null and _find_named(outpost, "ScoutMastBraceLeft") != null and _find_named(outpost, "ScoutDishHubRing") != null
         &"repair":
-            return _find_named(outpost, "RepairPad") != null and _find_named(outpost, "RepairPadPanel") != null and _find_named(outpost, "RepairFieldEmitter") != null
+            return _find_named(outpost, "RepairPad") != null and _find_named(outpost, "RepairPadPanel") != null and _find_named(outpost, "RepairFieldEmitter") != null and _find_named(outpost, "RepairFieldRing") != null and _find_named(outpost, "RepairArmCollarLeft") != null
     return false
 
 

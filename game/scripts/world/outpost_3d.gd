@@ -440,12 +440,18 @@ func _refresh_visuals() -> void:
             ModelKit3D.add_louvered_panel(role_signature, Vector3(1.0, 0.62, 0.1), Vector3(-1.2, 1.36, -2.47), panel, panel_accent, Vector3.ZERO, "ResourceHopperLouver", 3)
             ModelKit3D.add_cylinder(role_signature, 0.16, 2.2, Vector3(1.3, 1.45, -1.45), iron, Vector3(-0.4, 0.0, 0.0), "ResourceExtractorArm")
             ModelKit3D.add_sphere(role_signature, 0.26, Vector3(1.3, 2.47, -1.45), glow, Vector3(1.0, 0.65, 1.0), "ResourceIntakeBeacon")
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_beveled_box(role_signature, Vector3(0.12, 0.78, 0.16), Vector3(-1.2 + side * 0.66, 1.23, -2.45), panel_accent, Vector3(0.0, 0.0, side * 0.06), "ResourceHopperRib%s" % ("Left" if side < 0.0 else "Right"), 0.18)
+            ModelKit3D.add_torus(role_signature, 0.22, 0.055, Vector3(1.3, 2.47, -1.45), panel_accent, Vector3(PI * 0.5, 0.0, 0.0), "ResourceIntakeCollar", 32, 8)
         &"defence":
             ModelKit3D.add_beveled_box(role_signature, Vector3(1.7, 0.7, 1.5), Vector3(0.0, 3.02, 0.0), panel, Vector3.ZERO, "DefenceTurretHousing", 0.2)
             ModelKit3D.add_cylinder(role_signature, 0.18, 2.7, Vector3(0.0, 3.55, 0.0), iron, Vector3.ZERO, "DefenceTurretMast")
             ModelKit3D.add_cylinder(role_signature, 0.12, 1.8, Vector3(0.0, 4.58, -0.75), dark, Vector3(1.5708, 0.0, 0.0), "DefenceBarrel")
             ModelKit3D.add_sphere(role_signature, 0.18, Vector3(0.0, 4.58, -1.68), glow, Vector3(1.0, 0.72, 1.0), "DefenceMuzzleGlow")
             ModelKit3D.add_surface_panel(role_signature, Vector3(0.78, 0.42, 0.12), Vector3(-0.88, 3.02, -0.68), panel, panel_accent, Vector3(0.0, PI * 0.5, 0.0), "DefenceServicePanel")
+            ModelKit3D.add_torus(role_signature, 0.31, 0.07, Vector3(0.0, 3.52, 0.0), panel_accent, Vector3.ZERO, "DefenceTurretCollar", 36, 8)
+            ModelKit3D.add_beveled_box(role_signature, Vector3(0.36, 0.2, 0.42), Vector3(-0.82, 3.36, -0.55), panel_accent, Vector3(0.0, 0.0, -0.18), "DefenceRecoilGuardLeft", 0.22)
+            ModelKit3D.add_beveled_box(role_signature, Vector3(0.36, 0.2, 0.42), Vector3(0.82, 3.36, -0.55), panel_accent, Vector3(0.0, 0.0, 0.18), "DefenceRecoilGuardRight", 0.22)
         &"scout":
             ModelKit3D.add_beveled_box(role_signature, Vector3(1.0, 0.6, 1.0), Vector3(0.0, 3.08, 0.0), panel, Vector3.ZERO, "ScoutSensorHousing", 0.22)
             ModelKit3D.add_cylinder(role_signature, 0.11, 4.2, Vector3(0.0, 4.0, 0.0), iron, Vector3.ZERO, "ScoutSensorMast")
@@ -453,12 +459,22 @@ func _refresh_visuals() -> void:
             for side in [-1.0, 1.0]:
                 ModelKit3D.add_cylinder(role_signature, 0.055, 1.4, Vector3(side * 0.43, 6.15, 0.0), panel_accent, Vector3(0.0, 0.0, PI * 0.5), "ScoutDishRib")
             ModelKit3D.add_surface_panel(role_signature, Vector3(0.7, 0.38, 0.12), Vector3(0.0, 3.02, -0.52), panel, panel_accent, Vector3.ZERO, "ScoutServicePanel")
+            for side in [-1.0, 1.0]:
+                var brace_start := Vector3(side * 0.42, 3.34, 0.0)
+                var brace_end := Vector3(side * 0.16, 5.8, 0.0)
+                var brace_direction := brace_end - brace_start
+                var brace := ModelKit3D.add_cylinder(role_signature, 0.045, brace_direction.length(), (brace_start + brace_end) * 0.5, panel_accent, Vector3.ZERO, "ScoutMastBrace%s" % ("Left" if side < 0.0 else "Right"))
+                brace.quaternion = Quaternion(Vector3.UP, brace_direction.normalized())
+            ModelKit3D.add_torus(role_signature, 0.24, 0.05, Vector3(0.0, 6.15, 0.0), panel_accent, Vector3.ZERO, "ScoutDishHubRing", 32, 8)
         &"repair":
             ModelKit3D.add_beveled_box(role_signature, Vector3(3.0, 0.18, 2.2), Vector3(0.0, 0.58, -2.15), glow, Vector3.ZERO, "RepairPad", 0.3)
             ModelKit3D.add_surface_panel(role_signature, Vector3(1.7, 0.24, 0.12), Vector3(0.0, 0.72, -2.15), panel, panel_accent, Vector3.ZERO, "RepairPadPanel")
             ModelKit3D.add_cylinder(role_signature, 0.12, 2.0, Vector3(-1.45, 1.35, -1.65), iron, Vector3(0.0, 0.0, 0.75), "RepairArm")
             ModelKit3D.add_cylinder(role_signature, 0.12, 2.0, Vector3(1.45, 1.35, -1.65), iron, Vector3(0.0, 0.0, -0.75), "RepairArmRight")
             ModelKit3D.add_sphere(role_signature, 0.2, Vector3(0.0, 1.02, -2.15), glow, Vector3(1.4, 0.5, 1.0), "RepairFieldEmitter")
+            ModelKit3D.add_torus(role_signature, 0.92, 0.065, Vector3(0.0, 1.03, -2.15), panel_accent, Vector3.ZERO, "RepairFieldRing", 40, 8)
+            ModelKit3D.add_beveled_box(role_signature, Vector3(0.18, 1.12, 0.18), Vector3(-1.45, 1.72, -1.65), panel_accent, Vector3(0.0, 0.0, 0.75), "RepairArmCollarLeft", 0.2)
+            ModelKit3D.add_beveled_box(role_signature, Vector3(0.18, 1.12, 0.18), Vector3(1.45, 1.72, -1.65), panel_accent, Vector3(0.0, 0.0, -0.75), "RepairArmCollarRight", 0.2)
 
     _status_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 2.9, -1.0), role_color, 0.9 + float(tier) * 0.35, 6.0 + float(tier) * 2.0)
     _build_damage_presentation()

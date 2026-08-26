@@ -4833,3 +4833,16 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   sockets, collision capsule, progression attachments and all gameplay state;
 - added aesthetic and release regression coverage for the new named hardware;
   exact exported live review remains required for broader human acceptance.
+
+## Focused autonomous outpost role-detail milestone
+
+- added bounded high-definition role signatures for resource, defence, scout and
+  repair outposts: hopper ribs and intake collar, turret collar and recoil
+  guards, braced survey mast and dish hub, and a repair field ring with arm
+  collars;
+- preserved the authored shelter, tier frames, collision, role simulation,
+  save state, repair and autonomous operation contracts; the pass is
+  presentation-only and adds no new managed structure or recurring task;
+- extended aesthetic and release coverage so each Tier III role retains its
+  distinctive close-camera hardware; exact exported outpost review remains
+  required for broader human outpost and production-art acceptance.

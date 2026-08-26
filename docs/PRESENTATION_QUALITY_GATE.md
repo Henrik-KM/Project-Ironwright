@@ -1711,3 +1711,13 @@ asymmetric silhouette. The pass is presentation-only: authored animation,
 pistol and interaction sockets, collision, progression hardware and gameplay
 state remain unchanged. Exact silent exported opening and roster review is
 required; formal human production-art acceptance remains open.
+
+# Focused autonomous outpost role-detail pass — 2026-08-26
+
+The Tier III outpost review now carries a stronger role-specific high-definition
+break: resource shelters use hopper ribs and an intake collar, defence shelters
+use a turret collar and recoil guards, scout shelters use a braced mast and dish
+hub, and repair shelters use a field ring and arm collars. The pass is
+presentation-only and preserves shelter geometry, tier frames, collision, role
+simulation and autonomous operation. Exact silent page 15/15 review is required;
+broader human outpost and production-art acceptance remains open.
