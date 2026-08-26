@@ -1670,3 +1670,13 @@ manufactured sheets in the early-organic review gallery and was live-reviewed
 through the exact release entrypoint with Godot's dummy audio driver and
 `--quiet-audio`; no live speakers were used. Formal human acceptance of the
 full organic library remains open.
+
+# Focused release audio ownership pass — 2026-08-26
+
+The commercial release entrypoint now disconnects only the inherited lower-level
+player and organic bindings already owned by its canonical release mixer. This
+prevents duplicate pistol, channel, attack and organic-death cues while
+preserving the legacy director's robot, noise-pulse, region-transition and
+endgame coverage for shared diagnostics and lower-level entrypoints. The release
+regression asserts the selective handoff; validation and live review continue to
+use Godot's Dummy audio driver and `--quiet-audio`, with no live speakers.

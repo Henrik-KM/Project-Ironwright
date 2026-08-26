@@ -475,6 +475,13 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _setup_release_services() -> void:
+	# The inherited complete-game world installs the legacy spatial feedback
+	# director for the lower-level entrypoints. The release layer owns the
+	# canonical player and organic event mix; disconnect only those overlapping
+	# bindings while retaining robot, noise, region and endgame coverage for
+	# shared diagnostics and lower-level tests.
+	if audio_director != null and is_instance_valid(audio_director):
+		audio_director.disable_release_overlap_bindings()
 	localization_service = LocalizationService3D.new()
 	localization_service.name = "LocalizationService"
 	localization_service.process_mode = Node.PROCESS_MODE_ALWAYS
