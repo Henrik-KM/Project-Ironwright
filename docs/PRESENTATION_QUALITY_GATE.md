@@ -1592,6 +1592,17 @@ Heartforge-progression frame. The updated frame was live-reviewed with
 Godot's dummy audio driver and `--quiet-audio`; no live speakers are required
 for this review.
 
+# Focused adaptive Heartforge construction-preview pass — 2026-08-26
+
+The adaptive Heartforge proposal now marks its affected perimeter with a
+restrained open footprint before authorization, and the chosen authored
+retrofit grows through a bounded visual construction state while machines
+complete the existing autonomous build interval. The layer is
+presentation-only, does not add placement or maintenance work, survives the
+existing in-progress save/load path, and resolves into the finished retrofit
+when construction completes. Live review remains required through the exact
+release entrypoint; audio validation uses the dummy driver and quiet cap.
+
 # Focused organic surface-finish pass — 2026-08-26
 
 Authored organic chitin and membrane shells now receive a restrained

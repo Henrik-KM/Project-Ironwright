@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused adaptive Heartforge construction-preview pass
+
+- added a faint non-interactive perimeter footprint when the architect raises
+  an adaptive proposal, then grows the selected authored retrofit through the
+  machine-run construction interval instead of leaving the Heartforge visually
+  unchanged until completion;
+- kept the preview presentation-only and bounded: it changes no collision,
+  damage, resource, route or player-management state, and it restores the
+  pending or in-progress footprint from the existing adaptive save envelope;
+- added complete-game and aesthetic coverage for proposal visibility, progress
+  motion and cleanup into the finished high-definition retrofit.
+
 ## Focused North Ruins archive-prop pass
 
 - rebuilt the authored archive record stacks, survey marker and beacon braces

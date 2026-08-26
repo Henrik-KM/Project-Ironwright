@@ -854,6 +854,13 @@ func _run_all() -> void:
                 heartforge_presentation._process(0.0)
                 _expect(beacon != null and reduced_motion_scale.is_equal_approx(beacon.scale), "Heartforge progression motion must pause when reduced motion is enabled.")
                 settings_service.set_value(&"reduced_motion", previous_reduced_motion, false)
+        heartforge.set_adaptation_preview(&"adaptation.pending", 0.22)
+        var adaptation_preview := heartforge.get_node_or_null("HeartforgeModel/HeartforgeAdaptationPreview") as Node3D
+        _expect(adaptation_preview != null and adaptation_preview.visible, "The adaptive Heartforge must expose a visible proposal footprint before authorization.")
+        _expect(heartforge.find_child("AdaptationPreviewRing", true, false) != null, "The adaptive proposal footprint must use a bounded open perimeter ring.")
+        var adaptation_preview_scale := adaptation_preview.scale if adaptation_preview != null else Vector3.ZERO
+        heartforge.set_adaptation_preview(&"adaptation.pending", 0.72)
+        _expect(heartforge.adaptation_preview_progress > 0.7 and adaptation_preview != null and not adaptation_preview_scale.is_equal_approx(adaptation_preview.scale), "The adaptive proposal footprint must advance through a readable bounded reveal.")
         heartforge.set_adaptation_profile(&"adaptation.anchored_shell")
         _expect(heartforge.find_child("HeartforgeAdaptationDetail", true, false) != null, "The adaptive Heartforge must expose a visible authored retrofit detail layer.")
         _expect(heartforge.find_child("AnchorShellBrace", true, false) != null and heartforge.find_child("AnchorShellSignalRing", true, false) != null, "The anchored-shell response must expose structural braces and a signal ring.")
