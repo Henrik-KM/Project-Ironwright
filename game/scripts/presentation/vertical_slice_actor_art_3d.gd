@@ -158,6 +158,68 @@ func _polish_player(player: Mechromancer3D) -> void:
     ModelKit3D.add_beveled_box(detail, Vector3(0.38, 0.12, 0.22), Vector3(0.62, 0.72, 0.22), steel, Vector3(0.0, 0.0, -0.08), "FieldToolDeck", 0.18)
     ModelKit3D.add_beveled_box(detail, Vector3(0.06, 0.2, 0.26), Vector3(0.53, 0.86, 0.22), warm, Vector3(0.0, 0.0, -0.08), "FieldToolClamp", 0.28)
 
+    # Field-finish pass: a restrained hood rim, visor housing, work gloves and
+    # coat-hem hardware give the human technician a readable close-range
+    # material break from head to hand to boot. These are visual-only pieces;
+    # the authored skeleton, interaction sockets and gameplay capsule remain
+    # untouched.
+    ModelKit3D.add_torus(
+        detail,
+        0.28,
+        0.028,
+        Vector3(0.0, 1.91, 0.05),
+        leather,
+        Vector3.ZERO,
+        "FieldHoodRim",
+        36,
+        8
+    )
+    ModelKit3D.add_surface_panel(
+        detail,
+        Vector3(0.34, 0.1, 0.05),
+        Vector3(0.0, 1.82, -0.31),
+        dark_steel,
+        ceramic,
+        Vector3(-0.03, 0.0, 0.0),
+        "FieldVisorHousing"
+    )
+    ModelKit3D.add_capsule(
+        detail,
+        0.085,
+        0.3,
+        Vector3(-0.48, 0.68, -0.34),
+        leather,
+        Vector3(0.0, 0.0, 0.12),
+        "FieldWorkGloveLeft"
+    )
+    ModelKit3D.add_capsule(
+        detail,
+        0.085,
+        0.3,
+        Vector3(0.48, 0.68, -0.34),
+        leather,
+        Vector3(0.0, 0.0, -0.12),
+        "FieldWorkGloveRight"
+    )
+    ModelKit3D.add_beveled_box(
+        detail,
+        Vector3(0.32, 0.12, 0.16),
+        Vector3(-0.23, 0.4, -0.2),
+        leather,
+        Vector3(0.0, 0.0, 0.08),
+        "FieldCoatHemLeft",
+        0.22
+    )
+    ModelKit3D.add_beveled_box(
+        detail,
+        Vector3(0.32, 0.12, 0.16),
+        Vector3(0.23, 0.4, -0.2),
+        leather,
+        Vector3(0.0, 0.0, -0.08),
+        "FieldCoatHemRight",
+        0.22
+    )
+
     # Hero micro-detail pass: a readable forearm diagnostic and protected knee
     # hardware sharpen the technician silhouette at close tactical distance.
     # These parts are deliberately small, asymmetric and presentation-only.

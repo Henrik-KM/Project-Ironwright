@@ -846,6 +846,8 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     var player_lamp := _find_mesh_named(player_model, "LampCore")
     _expect(player_leather != null and player_coat != null and player_lamp != null, "The authored Mechromancer material-break samples must remain present.")
     _expect(player_leather != null and player_leather.material_override == null and player_coat != null and player_coat.material_override == null and player_lamp != null and player_lamp.material_override == null, "The Mechromancer leather, coat and cognition-light samples must retain their imported material assignments.")
+    _expect(world.player.find_child("FieldHoodRim", true, false) != null and world.player.find_child("FieldVisorHousing", true, false) != null, "The release Mechromancer must retain the close-range hood and visor field-finish hardware.")
+    _expect(world.player.find_child("FieldWorkGloveLeft", true, false) != null and world.player.find_child("FieldWorkGloveRight", true, false) != null and world.player.find_child("FieldCoatHemLeft", true, false) != null and world.player.find_child("FieldCoatHemRight", true, false) != null, "The release Mechromancer must retain paired gloves and coat-hem field-finish hardware.")
     var relay := world._spawn_robot(&"relay", world.player.global_position + Vector3(5.0, 0.0, -2.0), 1)
     await process_frame
     var relay_authored_mesh := _find_first_mesh(relay.get_node_or_null("RobotModel/RelayAuthoredModel") if relay != null else null)

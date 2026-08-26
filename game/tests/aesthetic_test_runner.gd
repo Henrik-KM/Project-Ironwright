@@ -900,6 +900,8 @@ func _run_all() -> void:
         _expect(_find_named(player, "FieldShoulderLampLens") != null and _find_named(player, "FieldUtilityCanister") != null and _find_named(player, "FieldToolDeck") != null, "The Mechromancer must receive a second high-definition field-instrument detail layer.")
         _expect(_find_named(player, "FieldForearmDiagnostic") != null and _find_named(player, "FieldForearmDiagnosticLens") != null, "The Mechromancer must expose a readable forearm diagnostic detail.")
         _expect(_find_named(player, "FieldKneeGuardLeft") != null and _find_named(player, "FieldKneeGuardRight") != null and _find_named(player, "FieldCableClamp") != null, "The Mechromancer micro-detail pass must preserve protected field hardware.")
+        _expect(_find_named(player, "FieldHoodRim") != null and _find_named(player, "FieldVisorHousing") != null, "The Mechromancer field-finish pass must retain a readable hood and visor material break.")
+        _expect(_find_named(player, "FieldWorkGloveLeft") != null and _find_named(player, "FieldWorkGloveRight") != null and _find_named(player, "FieldCoatHemLeft") != null and _find_named(player, "FieldCoatHemRight") != null, "The Mechromancer field-finish pass must retain paired work gloves and grounded coat-hem hardware.")
         if player_presentation != null:
             _expect(player_presentation.animation_player != null, "The authored Mechromancer must expose an imported animation player.")
             if player_presentation.animation_player != null:
