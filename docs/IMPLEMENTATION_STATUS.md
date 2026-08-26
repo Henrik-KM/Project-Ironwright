@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused quiet-audio safety pass
+
+- lowered the development-only `--quiet-audio` ceiling from -18 dB to -30 dB
+  across both survival and release audio directors, so accidental speaker
+  routing remains a deliberately very-low-volume fallback;
+- kept all automated and live review runs on Godot's Dummy audio driver, with
+  regression coverage for the new cap and no gameplay or save-state change.
+
 ## Focused Cathedral review-composition pass
 
 - tightened the development-only Cathedral Quarter camera so the authored nave,

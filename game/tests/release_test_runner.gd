@@ -66,8 +66,8 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
         _expect(not world.release_color_filter.is_active(), "Colour-vision correction must default to off.")
     if world.release_audio is ReleaseAudioDirector3D:
         world.release_audio.quiet_audio = true
-        _expect(is_equal_approx(world.release_audio._safe_volume_db(0.0), -18.0), "Quiet audio review mode must cap a full-scale cue at a very low playback level.")
-        _expect(is_equal_approx(world.release_audio._safe_volume_db(-24.0), -24.0), "Quiet audio review mode must preserve already-quiet cues without boosting them.")
+        _expect(is_equal_approx(world.release_audio._safe_volume_db(0.0), -30.0), "Quiet audio review mode must cap a full-scale cue at a very low playback level.")
+        _expect(is_equal_approx(world.release_audio._safe_volume_db(-36.0), -36.0), "Quiet audio review mode must preserve already-quiet cues without boosting them.")
         world.release_audio.quiet_audio = false
         world.release_audio.music_duck_remaining = 0.0
         _expect(is_equal_approx(world.release_audio.music_target_volume_db(), -7.0), "Release music must return to its calm target when no immediate danger is present.")

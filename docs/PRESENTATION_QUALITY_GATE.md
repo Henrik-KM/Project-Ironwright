@@ -1,7 +1,7 @@
 # Project Ironwright — Presentation Quality Gate
 
 The development-only `--quiet-audio` flag now caps generated release and
-survival audio at -18 dB for safe live review. Automated and screenshot
+survival audio at -30 dB for safe live review. Automated and screenshot
 validation continues to use Godot's dummy audio driver; no review requires
 live speakers.
 
