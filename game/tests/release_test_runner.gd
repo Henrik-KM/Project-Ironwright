@@ -652,7 +652,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.player.find_child("MechromancerTierIVBioSensorLens", true, false) != null and world.player.find_child("MechromancerTierVProtocolClasp", true, false) != null, "Late progression must add adaptive sensing and protocol hardware without replacing the field-engineer silhouette.")
     world._show_presentation_review_page(1)
     await process_frame
-    _expect(world.presentation_review_camera_desired.z - world.presentation_review_camera_target.z <= 11.7, "Organic presentation pages must use a dedicated close detail frame for authored anatomy review.")
+    _expect(world.presentation_review_camera_desired.z - world.presentation_review_camera_target.z <= 14.0, "Organic presentation pages must use a dedicated close detail frame for authored anatomy review.")
     var early_review_page: Array = world.presentation_review_pages[1]
     if early_review_page.size() >= 2:
         var first_early_actor := early_review_page[0] as Node3D
@@ -763,13 +763,13 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         if core_page >= 1:
             for core_actor in core_actors:
                 var staged_actor := core_actor as Node3D
-                _expect(staged_actor != null and absf(staged_actor.position.x) <= 5.4, "Organic presentation pages must keep every staged family fully inside the compact review frame.")
-            _expect(world.camera.fov <= 42.5, "Organic presentation pages must use a tighter camera frame for anatomy review.")
+                _expect(staged_actor != null and absf(staged_actor.position.x) <= 6.4, "Organic presentation pages must keep every staged family fully inside the bounded two-row review frame.")
+            _expect(world.camera.fov <= 46.5, "Organic presentation pages must use a close camera frame for anatomy review.")
         if core_page >= 1:
             var organic_front_fill := world.presentation_review_stage.get_node_or_null("ReviewFrontFill") as OmniLight3D
             var organic_cool_light := world.presentation_review_stage.get_node_or_null("ReviewCoolLight") as OmniLight3D
             var organic_detail_fill := world.presentation_review_stage.get_node_or_null("ReviewOrganicFill") as OmniLight3D
-            _expect(organic_front_fill != null and organic_front_fill.light_energy >= 4.0, "Organic presentation pages must receive a stronger compact-frame key light for material separation.")
+            _expect(organic_front_fill != null and organic_front_fill.light_energy >= 4.0, "Organic presentation pages must receive a stronger balanced-frame key light for material separation.")
             _expect(organic_cool_light != null and organic_cool_light.light_energy >= 3.2, "Organic presentation pages must retain a cool rim lift for readable anatomy edges.")
             _expect(organic_detail_fill != null and organic_detail_fill.visible and organic_detail_fill.light_energy >= 1.5, "Organic presentation pages must receive a restrained low front fill for secondary anatomy readability.")
         _expect(world.presentation_review_camera_desired.z < 18.0, "Core presentation pages must use the closer review camera framing.")

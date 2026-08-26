@@ -1302,6 +1302,9 @@ func _show_presentation_review_page(page: int) -> void:
 		for actor in page_actors:
 			if is_instance_valid(actor):
 				actor.visible = false
+	var is_region_page := presentation_review_page >= 3 and presentation_review_page < 3 + PRESENTATION_REVIEW_REGIONS.size()
+	if release_world_art != null and release_world_art.dressing_root != null:
+		release_world_art.dressing_root.visible = is_region_page
 	if release_world_art != null:
 		for raw_region_id in release_world_art.region_dressing_roots:
 			var dressing_root := release_world_art.region_dressing_root(raw_region_id as StringName)
@@ -1309,7 +1312,7 @@ func _show_presentation_review_page(page: int) -> void:
 				dressing_root.visible = false
 	var actors: Array = presentation_review_pages[presentation_review_page]
 	var outpost_page := presentation_review_page == 3 + PRESENTATION_REVIEW_REGIONS.size()
-	var is_region_page := presentation_review_page >= 3 and not outpost_page
+	is_region_page = presentation_review_page >= 3 and not outpost_page
 	var region_id := PRESENTATION_REVIEW_REGIONS[presentation_review_page - 3] if is_region_page else &""
 	if is_region_page and release_world_art != null:
 		var selected_region_dressing := release_world_art.ensure_region_dressing(region_id) if release_world_art.has_method(&"ensure_region_dressing") else release_world_art.region_dressing_root(region_id)
@@ -1349,15 +1352,20 @@ func _show_presentation_review_page(page: int) -> void:
 			# instead of repeating the live third-person rear angle. Friendly
 			# robots retain their established presentation orientation.
 			actor.rotation.y = 0.0 if presentation_review_page == 0 and index == 0 else PI
-			var row_index := 0 if index < mini(4, actors.size()) else 1
-			var row_count := mini(4, actors.size()) if row_index == 0 else actors.size() - mini(4, actors.size())
-			var row_position := index if row_index == 0 else index - mini(4, actors.size())
+			var row_capacity := 3 if presentation_review_page >= 1 and not outpost_page else mini(4, actors.size())
+			var row_index := 0 if index < row_capacity else 1
+			var row_count := mini(row_capacity, actors.size()) if row_index == 0 else actors.size() - row_capacity
+			var row_position := index if row_index == 0 else index - row_capacity
 			# The organic roster needs a true detail frame. Its authored shells
 			# carry fine veins, membrane ribs, crown plates and threat sockets that
 			# collapse into one silhouette band at the old spacing. Keep the actor
 			# roots and gameplay scale untouched; only the bounded review fixture
 			# gets a wider two-row composition so every family remains judgeable.
-			var spacing := 4.7 if outpost_page else (3.10 if presentation_review_page >= 1 else 4.2)
+			# Late organic families carry broad folded silhouettes. Give the
+			# review gallery enough air to judge those layers individually;
+			# this only changes the development review fixture, not gameplay
+			# scale, collision or tactical spacing.
+			var spacing := 4.7 if outpost_page else (4.1 if presentation_review_page >= 1 else 4.2)
 			var centered_x := (float(row_position) - float(row_count - 1) * 0.5) * spacing
 			var row_z := 1.05 if row_index == 0 else -2.15
 			if presentation_review_page == 0:
@@ -1391,7 +1399,7 @@ func _show_presentation_review_page(page: int) -> void:
 		var core_target_height := 2.3 if outpost_page else (1.08 if presentation_review_page >= 1 else 1.45)
 		var core_target_depth := -0.38 if presentation_review_page >= 1 else -0.7
 		presentation_review_camera_target = Vector3(0.0, core_target_height, core_target_depth)
-		presentation_review_camera_desired = Vector3(0.0, 5.4, 16.0) if outpost_page else (Vector3(0.0, 4.45, 11.15) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5))
+		presentation_review_camera_desired = Vector3(0.0, 5.4, 16.0) if outpost_page else (Vector3(0.0, 4.45, 12.8) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5))
 	_set_presentation_review_stage_for_page(is_region_page)
 	_update_presentation_review_camera(1.0)
 
@@ -1911,7 +1919,7 @@ func _update_presentation_review_camera(delta: float) -> void:
 	var target := presentation_review_camera_target
 	var desired := presentation_review_camera_desired
 	camera.global_position = camera.global_position.lerp(desired, 1.0 - exp(-delta * 5.0))
-	var core_review_fov := 41.5 if presentation_review_page >= 1 else 43.0
+	var core_review_fov := 46.0 if presentation_review_page >= 1 else 43.0
 	var outpost_page := presentation_review_page == 3 + PRESENTATION_REVIEW_REGIONS.size()
 	camera.fov = 42.0 if outpost_page else (44.0 if presentation_review_page == 13 else (46.0 if presentation_review_page == 12 else (48.0 if presentation_review_page == 11 else (52.0 if presentation_review_page >= 3 else core_review_fov))))
 	camera.look_at(target, Vector3.UP)

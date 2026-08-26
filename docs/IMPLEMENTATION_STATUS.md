@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused late-organic morphology pass
+
+- deepened the shared folded membrane profile and gave late gill, spore and
+  water-fin surfaces a denser living volume instead of a repeated flat-sheet
+  silhouette;
+- restrained the late-family palette and membrane highlight lift so chitin,
+  membrane, bone and threat accents separate under the tactical key light;
+- widened the development gallery's organic-family staging so each authored
+  silhouette can be judged without overlap;
+- extended the aesthetic guard for dense folded surfaces and preserved all
+  existing sockets, animation clips, runtime scale and gameplay state.
+
 ## Focused danger-ducking audio milestone
 
 - added a short, bounded adaptive-music duck whenever an organic attack
