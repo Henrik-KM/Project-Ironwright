@@ -78,10 +78,14 @@ const AUTHORED_ORGANIC_TINTS: Dictionary = {
     # Late families use a lower-saturation, mineral-biological palette so the
     # wet shell, living membranes and threat accents separate in the tactical
     # frame instead of reading as bright toy-coloured plates.
-    "carrionbell": Color("8f506c"),
-    "rootweaver": Color("5f8f79"),
-    "thornback": Color("a47b4d"),
-    "ashmantle": Color("668596"),
+    # Keep the shared membrane atlas for vascular breakup, but push the four
+    # late terrestrial families into clearly different mineral-biological
+    # colour lanes. This is a material-only presentation pass: authored mesh
+    # density, sockets, animation and gameplay scale remain unchanged.
+    "carrionbell": Color("a83f64"),
+    "rootweaver": Color("3a8f67"),
+    "thornback": Color("bd7d3b"),
+    "ashmantle": Color("4b7f9a"),
 }
 
 var world: Node3D
