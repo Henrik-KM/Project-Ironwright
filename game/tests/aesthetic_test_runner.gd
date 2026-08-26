@@ -1674,6 +1674,12 @@ func _run_all() -> void:
     _expect(_mesh_vertex_count(_find_named(carrionbell_asset, "CarrionbellCrownPlate") as MeshInstance3D) >= 500, "Carrion Bell must retain a dense folded crown silhouette.")
     _expect(_mesh_vertex_count(_find_named(thornback_asset, "ThornbackCrownPlate") as MeshInstance3D) >= 500, "Thornback must retain a dense folded territorial crown silhouette.")
     _expect(_mesh_vertex_count(_find_named(ashmantle_asset, "AshmantleHeatLouverL") as MeshInstance3D) >= 700, "Ashmantle must retain a dense folded heat-louver silhouette.")
+    var carrionbell_crown := _find_named(carrionbell_asset, "CarrionbellCrownPlate") as Node3D
+    var thornback_crown := _find_named(thornback_asset, "ThornbackCrownPlate") as Node3D
+    var ashmantle_louver := _find_named(ashmantle_asset, "AshmantleHeatLouverL") as Node3D
+    _expect(carrionbell_crown != null and absf(carrionbell_crown.rotation.x) >= 0.14, "Carrion Bell's folded crown must retain a raised forward pitch for readable bell depth.")
+    _expect(thornback_crown != null and absf(thornback_crown.rotation.x) >= 0.12, "Thornback's territorial crown must retain a raised forward pitch for readable shield depth.")
+    _expect(ashmantle_louver != null and absf(ashmantle_louver.rotation.x) >= 0.16, "Ashmantle's heat louver must retain a pitched vent profile instead of a horizontal fin silhouette.")
     miremaw_asset.queue_free()
     carrionbell_asset.queue_free()
     rootweaver_asset.queue_free()

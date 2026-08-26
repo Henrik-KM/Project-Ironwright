@@ -570,7 +570,7 @@ def build_family(name: str, spec: dict) -> None:
             "AshmantleHeatLouver",
             add_organic_lobe(
                 builder,
-                (1.22, 0.30, 0.48),
+                (1.22, 0.38, 0.62),
                 shell,
                 lobes=4,
                 rings=9,
@@ -739,7 +739,10 @@ def build_family(name: str, spec: dict) -> None:
         add_node("CarrionbellResonator", mesh_ids["Eye"], (0.0, 1.92, -0.35), scale=(1.4, 0.8, 1.0), extras={"socket_type": "resonator"})
         add_node("CarrionbellResonatorCore", mesh_ids["Eye"], (0.0, 1.92, -0.44), scale=(0.62, 0.62, 0.72), extras={"surface": "resonator_core"})
         add_node("CarrionbellResonatorRing", mesh_ids["ResonatorRing"], (0.0, 1.92, -0.35), rotation=(1.5708, 0.0, 0.0), scale=(1.8, 1.0, 1.35), extras={"surface": "resonator_lip"})
-        add_node("CarrionbellCrownPlate", mesh_ids["CarrionbellCrownLobe"], (0.0, 2.32, 0.18), rotation=(0.0, 0.0, 0.12), scale=(1.3, 1.0, 0.92), extras={"socket_type": "crown_plate"})
+        # The resonant crown is a raised bell lip, not a horizontal cap. A
+        # small forward pitch exposes its folded depth to the key light while
+        # keeping the stable crown socket and animation target unchanged.
+        add_node("CarrionbellCrownPlate", mesh_ids["CarrionbellCrownLobe"], (0.0, 2.32, 0.18), rotation=(0.18, 0.0, 0.12), scale=(1.3, 1.0, 0.92), extras={"socket_type": "crown_plate"})
         for index in range(4):
             side = -1.0 if index < 2 else 1.0
             add_node(f"CarrionbellBellRib{index}", mesh_ids["BellRib"], (side * (0.42 + (index % 2) * 0.2), 1.62, -0.24 + (index % 2) * 0.18), rotation=(0.0, side * 0.32, side * 0.52), scale=(0.7, 1.0, 0.82), extras={"surface": "bell_rib"})
@@ -768,7 +771,10 @@ def build_family(name: str, spec: dict) -> None:
         attack_node = "RootweaverSporeFan"
     elif name == "thornback":
         add_node("ThornbackCrown", mesh_ids["Soft"], (0.0, 1.22, -1.02), scale=(1.28, 0.86, 1.16), extras={"socket_type": "thorn_crown"})
-        add_node("ThornbackCrownPlate", mesh_ids["ThornbackCrownLobe"], (0.0, 1.58, -0.96), rotation=(0.0, 0.0, 0.08), scale=(1.16, 1.0, 0.8), extras={"surface": "crown_lobe"})
+        # Thornback's territorial shield rises toward an approaching threat;
+        # pitching the folded crown keeps its layered face legible instead of
+        # turning it into a broad horizontal plate.
+        add_node("ThornbackCrownPlate", mesh_ids["ThornbackCrownLobe"], (0.0, 1.58, -0.96), rotation=(0.16, 0.0, 0.08), scale=(1.16, 1.0, 0.8), extras={"surface": "crown_lobe"})
         for side in (-1.0, 1.0):
             suffix = "L" if side < 0 else "R"
             add_node(f"ThornbackJawPlate{suffix}", mesh_ids["PlateCap"], (side * 0.42, 0.72, -1.42), rotation=(side * 0.38, 0.0, side * 0.12), scale=(0.82, 1.0, 0.74), extras={"surface": "jaw_plate"})
@@ -783,8 +789,11 @@ def build_family(name: str, spec: dict) -> None:
         add_node("AshmantleSiphon", mesh_ids["Soft"], (0.0, 0.82, -1.42), scale=(0.72, 0.64, 1.14), extras={"socket_type": "route_siphon"})
         for side in (-1.0, 1.0):
             suffix = "L" if side < 0 else "R"
-            add_node(f"AshmantleHeatLouver{suffix}", mesh_ids["AshmantleHeatLouver"], (side * 0.82, 1.20, 0.28), rotation=(0.0, side * 0.28, side * 0.12), scale=(0.72, 1.0, 1.12), extras={"surface": "heat_louver"})
-            add_node(f"AshmantleLouverRib{suffix}", mesh_ids["MembraneRib"], (side * 1.04, 1.24, 0.30), rotation=(0.0, side * 0.34, side * 0.22), scale=(0.7, 1.0, 0.86), extras={"surface": "louver_rib"})
+            # Pitch the paired thermal petals into a vented mantle profile so
+            # Ashmantle reads as a living route predator rather than a stack
+            # of flat fins in the close tactical camera.
+            add_node(f"AshmantleHeatLouver{suffix}", mesh_ids["AshmantleHeatLouver"], (side * 0.82, 1.20, 0.28), rotation=(side * 0.20, side * 0.28, side * 0.12), scale=(0.72, 1.0, 1.12), extras={"surface": "heat_louver"})
+            add_node(f"AshmantleLouverRib{suffix}", mesh_ids["MembraneRib"], (side * 1.04, 1.24, 0.30), rotation=(side * 0.12, side * 0.34, side * 0.22), scale=(0.7, 1.0, 0.86), extras={"surface": "louver_rib"})
             add_node(f"AshmantleTendril{suffix}", mesh_ids["Tendon"], (side * 0.28, 1.18, -1.58), rotation=(0.5, 0.0, side * 0.2), extras={"socket_type": "sensory_tendril"})
             add_node(f"AshmantleEye{suffix}", mesh_ids["Eye"], (side * 0.22, 1.34, -1.62), extras={"socket_type": "threat_eye"})
         for index in range(4):
