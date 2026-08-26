@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused Buried Laboratories hardware pass
+
+- rebuilt the authored transfer rails, containment doors, gantry members,
+  cradles, panels and extraction fixtures with the shared chamfered mesh
+  profile while preserving stable landmark nodes, sockets and operation state;
+- added aesthetic guards so the late-game laboratory cannot regress to flat
+  six-face placeholder hardware.
+
 ## Focused Heartforge service-surface pass
 
 - rebuilt the authored fabrication bench, assembly plate, perimeter ribs and

@@ -1558,3 +1558,11 @@ Stable sockets and interaction ownership are unchanged. This pass is covered
 by the aesthetic guard and must be confirmed in the exact silent opening and
 Heartforge-progression captures; broader human opening and production-art
 acceptance remain open.
+# Focused Buried Laboratories hardware pass — 2026-08-26
+
+The authored Buried Laboratories transfer rails, sealed door, extraction
+gantry, cradles, panels and clamps now use the shared chamfered high-definition
+mesh profile. Stable landmark sockets and operation ownership are unchanged.
+This pass is covered by aesthetic guards and must be confirmed in the exact
+silent Buried Laboratories review; broader human region and production-art
+acceptance remain open.
