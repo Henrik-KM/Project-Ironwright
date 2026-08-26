@@ -354,6 +354,7 @@ func _refresh_visuals() -> void:
         role_color = Color("a78be0")
     var glow := ModelKit3D.material(role_color.darkened(0.62), 0.25, 0.38, role_color, 3.0)
     var tier_signal := ModelKit3D.material(role_color.darkened(0.56), 0.42, 0.34, role_color, 1.8)
+    var deck_signal := ModelKit3D.material(role_color.darkened(0.32), 0.56, 0.32, role_color.darkened(0.25), 0.55)
 
     if not alive:
         var destroyed_foundation := ModelKit3D.add_beveled_box(
@@ -422,6 +423,95 @@ func _refresh_visuals() -> void:
     authored_model.name = "OutpostAuthoredModel"
     _model_root.add_child(authored_model)
 
+    # Give the evolved shelter a single readable service spine. This is a
+    # presentation-only manufactured core: it makes the tier frames feel
+    # anchored to the authored shelter while keeping role hardware in front
+    # and adding no structure, collision or player-managed maintenance.
+    var service_spine := Node3D.new()
+    service_spine.name = "OutpostServiceSpine"
+    _model_root.add_child(service_spine)
+    ModelKit3D.add_beveled_box(
+        service_spine,
+        Vector3(2.8, 1.55, 1.5),
+        Vector3(0.0, 1.62, 0.58),
+        dark,
+        Vector3.ZERO,
+        "ServiceSpineHousing",
+        0.28
+    )
+    ModelKit3D.add_beveled_box(
+        service_spine,
+        Vector3(2.32, 0.16, 1.18),
+        Vector3(0.0, 2.43, 0.58),
+        iron,
+        Vector3.ZERO,
+        "ServiceSpineCap",
+        0.18
+    )
+    ModelKit3D.add_surface_panel(
+        service_spine,
+        Vector3(1.46, 0.5, 0.1),
+        Vector3(0.0, 1.62, -0.2),
+        panel,
+        panel_accent,
+        Vector3.ZERO,
+        "ServiceSpinePanel"
+    )
+    ModelKit3D.add_louvered_panel(
+        service_spine,
+        Vector3(1.1, 0.34, 0.1),
+        Vector3(0.0, 2.02, -0.21),
+        iron,
+        tier_signal,
+        Vector3.ZERO,
+        "ServiceSpineLouver",
+        4
+    )
+    ModelKit3D.add_surface_panel(
+        service_spine,
+        Vector3(1.72, 0.08, 0.08),
+        Vector3(0.0, 1.16, -0.21),
+        panel_accent,
+        tier_signal,
+        Vector3.ZERO,
+        "ServiceSpineStatusStrip"
+    )
+    ModelKit3D.add_surface_panel(
+        service_spine,
+        Vector3(1.12, 0.24, 0.08),
+        Vector3(0.0, 1.62, -0.27),
+        tier_signal,
+        panel_accent,
+        Vector3.ZERO,
+        "ServiceSpineRoleBadge"
+    )
+    ModelKit3D.add_sphere(
+        service_spine,
+        0.09,
+        Vector3(0.55, 1.62, -0.33),
+        glow,
+        Vector3(1.0, 0.7, 0.55),
+        "ServiceSpineRoleBadgeLens"
+    )
+    ModelKit3D.add_sphere(
+        service_spine,
+        0.13,
+        Vector3(0.0, 1.16, -0.27),
+        glow,
+        Vector3(1.5, 0.55, 0.55),
+        "ServiceSpineBeacon"
+    )
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(
+            service_spine,
+            Vector3(0.12, 1.18, 0.16),
+            Vector3(side * 1.3, 1.64, -0.05),
+            panel_accent,
+            Vector3(0.0, 0.0, side * 0.05),
+            "ServiceSpineBrace%s" % ("Left" if side < 0.0 else "Right"),
+            0.16
+        )
+
     for tier_index in range(tier):
         var y := 2.75 + float(tier_index) * 0.62
         var frame_name := "TierFrame%d" % (tier_index + 1)
@@ -434,13 +524,31 @@ func _refresh_visuals() -> void:
         ModelKit3D.add_beveled_box(frame, Vector3(frame_size, 0.16, 0.22), Vector3(0.0, 0.0, frame_size * 0.5), frame_rust, Vector3.ZERO, "%sSouthRail" % frame_name, 0.28)
         ModelKit3D.add_beveled_box(frame, Vector3(0.22, 0.16, frame_size - 0.42), Vector3(-frame_size * 0.5, 0.0, 0.0), frame_rust, Vector3.ZERO, "%sWestRail" % frame_name, 0.28)
         ModelKit3D.add_beveled_box(frame, Vector3(0.22, 0.16, frame_size - 0.42), Vector3(frame_size * 0.5, 0.0, 0.0), frame_rust, Vector3.ZERO, "%sEastRail" % frame_name, 0.28)
+        ModelKit3D.add_beveled_box(
+            frame,
+            Vector3(frame_size - 0.46, 0.07, frame_size - 0.46),
+            Vector3(0.0, -0.08, 0.0),
+            dark,
+            Vector3.ZERO,
+            "%sDeck" % frame_name,
+            0.2
+        )
+        ModelKit3D.add_surface_panel(
+            frame,
+            Vector3(frame_size - 0.92, 0.035, frame_size - 0.92),
+            Vector3(0.0, -0.035, 0.0),
+            iron,
+            deck_signal,
+            Vector3.ZERO,
+            "%sDeckInset" % frame_name
+        )
         # A small role-coded service plate gives each tier a readable
         # manufactured identity at tactical distance. It is deliberately
         # attached to the existing frame, so it adds no structure, collision
         # or player-managed maintenance surface.
         ModelKit3D.add_surface_panel(
             frame,
-            Vector3(0.72 + float(tier_index) * 0.08, 0.2, 0.1),
+            Vector3(0.96 + float(tier_index) * 0.08, 0.24, 0.1),
             Vector3(0.0, 0.035, -frame_size * 0.5 - 0.12),
             frame_rust,
             tier_signal,

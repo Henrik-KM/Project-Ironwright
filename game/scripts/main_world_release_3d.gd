@@ -1352,7 +1352,7 @@ func _show_presentation_review_page(page: int) -> void:
 			# instead of repeating the live third-person rear angle. Friendly
 			# robots retain their established presentation orientation.
 			actor.rotation.y = 0.0 if presentation_review_page == 0 and index == 0 else PI
-			var row_capacity := 3 if presentation_review_page >= 1 and not outpost_page else mini(4, actors.size())
+			var row_capacity := 2 if outpost_page else (3 if presentation_review_page >= 1 else mini(4, actors.size()))
 			var row_index := 0 if index < row_capacity else 1
 			var row_count := mini(row_capacity, actors.size()) if row_index == 0 else actors.size() - row_capacity
 			var row_position := index if row_index == 0 else index - row_capacity
@@ -1365,13 +1365,13 @@ func _show_presentation_review_page(page: int) -> void:
 			# review gallery enough air to judge those layers individually;
 			# this only changes the development review fixture, not gameplay
 			# scale, collision or tactical spacing.
-			var spacing := 4.7 if outpost_page else (4.1 if presentation_review_page >= 1 else 4.2)
+			var spacing := 5.4 if outpost_page else (4.1 if presentation_review_page >= 1 else 4.2)
 			var centered_x := (float(row_position) - float(row_count - 1) * 0.5) * spacing
 			var row_z := 1.05 if row_index == 0 else -2.15
 			if presentation_review_page == 0:
 				row_z = 0.7 if row_index == 0 else -2.5
 			elif outpost_page:
-				row_z = 0.0 if row_index == 0 else -2.5
+				row_z = 1.25 if row_index == 0 else -2.6
 			row_z += _presentation_review_depth_offset(actor)
 			actor.scale = Vector3.ONE
 			var review_model_root := actor.get_node_or_null("OrganicModel") as Node3D
@@ -1396,10 +1396,10 @@ func _show_presentation_review_page(page: int) -> void:
 		presentation_review_camera_target = region_director.center(region_id) + Vector3.UP * 2.0
 		presentation_review_camera_desired = presentation_review_camera_target + Vector3(0.0, 12.0, 19.0)
 	else:
-		var core_target_height := 2.3 if outpost_page else (1.08 if presentation_review_page >= 1 else 1.45)
+		var core_target_height := 1.9 if outpost_page else (1.08 if presentation_review_page >= 1 else 1.45)
 		var core_target_depth := -0.38 if presentation_review_page >= 1 else -0.7
 		presentation_review_camera_target = Vector3(0.0, core_target_height, core_target_depth)
-		presentation_review_camera_desired = Vector3(0.0, 5.4, 16.0) if outpost_page else (Vector3(0.0, 4.45, 12.8) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5))
+		presentation_review_camera_desired = Vector3(0.0, 5.0, 12.8) if outpost_page else (Vector3(0.0, 4.45, 12.8) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5))
 	_set_presentation_review_stage_for_page(is_region_page)
 	_update_presentation_review_camera(1.0)
 
