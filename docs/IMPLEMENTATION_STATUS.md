@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused danger-ducking audio milestone
+
+- added a short, bounded adaptive-music duck whenever an organic attack
+  wind-up or danger signal is emitted, keeping the causal warning audible
+  without adding another alert panel or player task;
+- let the soundtrack recover automatically after the warning window and kept
+  the existing quiet-review cap, captions, spatial cues and save contract
+  unchanged;
+- added release regression coverage for activation, target volume and expiry;
+  all live review remains on dummy audio with no speaker output.
+
 ## Focused authored-region streaming pass
 
 - added a bounded hysteretic stream ring around the current camera focus so

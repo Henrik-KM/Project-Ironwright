@@ -65,6 +65,7 @@ var last_outpost_cue_signature: StringName = &""
 var attack_warning_clock: float = 0.0
 var attack_warning_count: int = 0
 var last_effect_id: StringName = &""
+var music_duck_remaining: float = 0.0
 var last_heartforge_tier: int = 1
 var heartforge_tier_cue_count: int = 0
 var quiet_audio: bool = false
@@ -108,6 +109,7 @@ func _process(delta: float) -> void:
     operation_report_clock = maxf(0.0, operation_report_clock - delta)
     outpost_cue_clock = maxf(0.0, outpost_cue_clock - delta)
     attack_warning_clock = maxf(0.0, attack_warning_clock - delta)
+    music_duck_remaining = maxf(0.0, music_duck_remaining - delta)
     if caption_panel != null and caption_clock <= 0.0:
         caption_panel.visible = false
     _update_ambience(delta)
@@ -366,6 +368,7 @@ func notify_machine_report() -> void:
 
 
 func notify_danger() -> void:
+    _arm_music_duck(1.8)
     play_effect(&"danger", "audio.caption.danger", 0.0, -2.0)
 
 
@@ -488,6 +491,7 @@ func _on_organic_attack_started(enemy: OrganicEnemy3D, target: Node) -> void:
         return
     attack_warning_clock = 0.18
     attack_warning_count += 1
+    _arm_music_duck(0.9)
     play_effect(_organic_call_id(enemy.species), "", 0.015, -9.0, _organic_signature_pitch(enemy.species, false))
 
 
@@ -598,10 +602,18 @@ func _switch_music(mood: StringName, immediate: bool = false) -> void:
 func _update_music_crossfade(delta: float) -> void:
     if active_music == null or inactive_music == null:
         return
-    active_music.volume_db = move_toward(active_music.volume_db, _safe_volume_db(-7.0), delta * 24.0)
+    active_music.volume_db = move_toward(active_music.volume_db, music_target_volume_db(), delta * 24.0)
     inactive_music.volume_db = move_toward(inactive_music.volume_db, -60.0, delta * 28.0)
     if inactive_music.volume_db <= -58.0 and inactive_music.playing:
         inactive_music.stop()
+
+
+func _arm_music_duck(seconds: float) -> void:
+    music_duck_remaining = maxf(music_duck_remaining, maxf(0.0, seconds))
+
+
+func music_target_volume_db() -> float:
+    return _safe_volume_db(-11.5 if music_duck_remaining > 0.0 else -7.0)
 
 
 func to_dictionary() -> Dictionary:
