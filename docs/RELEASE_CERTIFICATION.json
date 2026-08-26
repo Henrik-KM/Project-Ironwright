@@ -3,8 +3,8 @@
   "product": "Project Ironwright",
   "version": "1.0.0-rc.1",
   "release_channel": "release_candidate",
-  "certified_source_sha": "6adc5dfa87e3a54c81bc611d0005bff8b9320329",
-  "certified_at_utc": "2026-08-26T16:24:49.809736+00:00",
+  "certified_source_sha": "85a2760a18834a1dfa47715d732d6bc20d4851ab",
+  "certified_at_utc": "2026-08-26T16:30:35.2194058+00:00",
   "runner": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
   "godot": "4.7.1",
   "platform_packages": [
