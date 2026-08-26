@@ -9,6 +9,9 @@ const QUIET_AUDIO_CAP_DB := -18.0
 const STREAM_PATHS: Dictionary = {
     &"ambience_city": AUDIO_ROOT + "/ambience_city.wav",
     &"ambience_sanctuary": AUDIO_ROOT + "/ambience_sanctuary.wav",
+    &"ambience_industrial": AUDIO_ROOT + "/ambience_industrial.wav",
+    &"ambience_waterfront": AUDIO_ROOT + "/ambience_waterfront.wav",
+    &"ambience_nest": AUDIO_ROOT + "/ambience_nest.wav",
     &"music_title": AUDIO_ROOT + "/music_title.wav",
     &"music_embers": AUDIO_ROOT + "/music_embers.wav",
     &"music_pressure": AUDIO_ROOT + "/music_pressure.wav",
@@ -39,6 +42,7 @@ var settings_service: ReleaseSettingsService3D
 var stream_library: Dictionary = {}
 var city_ambience: AudioStreamPlayer
 var sanctuary_ambience: AudioStreamPlayer
+var regional_ambience: Dictionary = {}
 var music_a: AudioStreamPlayer
 var music_b: AudioStreamPlayer
 var active_music: AudioStreamPlayer
@@ -62,6 +66,7 @@ var last_heartforge_tier: int = 1
 var heartforge_tier_cue_count: int = 0
 var quiet_audio: bool = false
 var title_screen_active: bool = true
+var current_region_kind: StringName = &"sanctuary"
 
 
 func configure(
@@ -130,6 +135,8 @@ func _load_streams() -> void:
 func _build_players() -> void:
     city_ambience = _audio_player("CityAmbience", "Ambience", &"ambience_city", -18.0)
     sanctuary_ambience = _audio_player("SanctuaryAmbience", "Ambience", &"ambience_sanctuary", -10.0)
+    for kind in [&"industrial", &"waterfront", &"nest"]:
+        regional_ambience[kind] = _audio_player("RegionalAmbience_%s" % String(kind), "Ambience", StringName("ambience_%s" % String(kind)), -60.0)
     music_a = _audio_player("MusicA", "Music", &"music_embers", -12.0)
     music_b = _audio_player("MusicB", "Music", &"music_pressure", -60.0)
     active_music = music_a
@@ -285,6 +292,17 @@ func notify_victory() -> void:
     _switch_music(&"sovereignty")
 
 
+func register_region_atmosphere(source: Node) -> void:
+    if source == null or not source.has_signal(&"atmosphere_changed"):
+        return
+    var callback := Callable(self, "_on_region_atmosphere_changed")
+    if not source.is_connected(&"atmosphere_changed", callback):
+        source.connect(&"atmosphere_changed", callback)
+    var known_kind: Variant = source.get(&"current_kind")
+    if known_kind != null and not str(known_kind).is_empty():
+        current_region_kind = StringName(str(known_kind))
+
+
 func set_title_screen_active(active: bool) -> void:
     title_screen_active = active
     if active:
@@ -427,6 +445,15 @@ func _update_ambience(delta: float) -> void:
     var city_target := _safe_volume_db(linear_to_db(maxf(0.001, city_weight * 0.85)))
     sanctuary_ambience.volume_db = lerpf(sanctuary_ambience.volume_db, sanctuary_target, 1.0 - exp(-delta * 2.0))
     city_ambience.volume_db = lerpf(city_ambience.volume_db, city_target, 1.0 - exp(-delta * 2.0))
+    var regional_weight := clampf((distance - 8.0) / 10.0, 0.0, 1.0)
+    for kind in regional_ambience:
+        var regional_player := regional_ambience[kind] as AudioStreamPlayer
+        if regional_player == null:
+            continue
+        var target := -60.0
+        if StringName(kind) == current_region_kind:
+            target = _safe_volume_db(linear_to_db(maxf(0.001, regional_weight * 0.34)))
+        regional_player.volume_db = lerpf(regional_player.volume_db, target, 1.0 - exp(-delta * 1.8))
 
 
 func _evaluate_music_mood() -> void:
@@ -444,6 +471,10 @@ func _evaluate_music_mood() -> void:
             next_mood = &"pressure"
     if next_mood != current_mood:
         _switch_music(next_mood)
+
+
+func _on_region_atmosphere_changed(_region_id: StringName, kind: StringName) -> void:
+    current_region_kind = kind
 
 
 func _switch_music(mood: StringName, immediate: bool = false) -> void:

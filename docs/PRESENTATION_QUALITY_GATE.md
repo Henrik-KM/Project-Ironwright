@@ -1690,3 +1690,13 @@ quiet review cap; the title/world transition is explicit so the menu does not
 share the in-world bed accidentally. The music asset and transition are
 validated through the release regression and a live title capture using
 Godot's Dummy audio driver and `--quiet-audio`; no live speakers are used.
+
+# Focused regional ambience pass — 2026-08-26
+
+The release audio layer now adds restrained industrial, waterfront and nest
+ambience beds driven by the existing region-atmosphere signal. They crossfade
+with distance from the Heartforge, remain below the existing quiet-review cap,
+and leave the generic city and sanctuary beds as continuity layers. This adds
+district identity without a new player setting, recurring task or simulation
+state. Validation uses the release regression and Godot's Dummy audio driver;
+no live speakers are used.

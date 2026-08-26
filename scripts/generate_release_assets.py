@@ -275,6 +275,30 @@ def ambience_sanctuary(t: float, duration: float) -> float:
     return hum + machinery + crackle + chime
 
 
+def ambience_industrial(t: float, duration: float) -> float:
+    machine = tone(t, duration, 47.0) * 0.12 + tone(t, duration, 71.0, 0.8) * 0.055
+    cycle = max(0.0, tone(t, duration, 0.2, 0.6)) ** 18
+    clank = cycle * (tone(t, duration, 286.0) + tone(t, duration, 572.0, 0.3)) * 0.045
+    air = periodic_noise(t, duration, 1301, 36) * 0.08
+    return machine + clank + air
+
+
+def ambience_waterfront(t: float, duration: float) -> float:
+    tide = tone(t, duration, 32.0) * 0.13 + tone(t, duration, 49.0, 0.7) * 0.05
+    ripple_gate = max(0.0, tone(t, duration, 0.14, 1.1)) ** 14
+    ripple = ripple_gate * (tone(t, duration, 188.0) + tone(t, duration, 376.0, 0.4)) * 0.055
+    wind = periodic_noise(t, duration, 1302, 22) * 0.09
+    return tide + ripple + wind
+
+
+def ambience_nest(t: float, duration: float) -> float:
+    pulse = tone(t, duration, 0.23, 0.5)
+    body = tone(t, duration, 38.0) * (0.11 + 0.04 * pulse)
+    resonance = max(0.0, pulse) ** 12 * tone(t, duration, 119.0, 0.4) * 0.07
+    breath = periodic_noise(t, duration, 1303, 18) * (0.045 + 0.03 * abs(pulse))
+    return body + resonance + breath
+
+
 def music_embers(t: float, duration: float) -> float:
     notes = [55.0, 65.406, 73.416, 82.407, 98.0]
     pad = sum(tone(t, duration, note, index * 0.7) for index, note in enumerate(notes[:3])) * 0.075
@@ -422,6 +446,9 @@ def sfx_victory(t: float, duration: float) -> float:
 AUDIO: dict[str, tuple[float, Callable[[float, float], float]]] = {
     "ambience_city.wav": (18.0, ambience_city),
     "ambience_sanctuary.wav": (18.0, ambience_sanctuary),
+    "ambience_industrial.wav": (18.0, ambience_industrial),
+    "ambience_waterfront.wav": (18.0, ambience_waterfront),
+    "ambience_nest.wav": (18.0, ambience_nest),
     "music_title.wav": (24.0, music_title),
     "music_embers.wav": (24.0, music_embers),
     "music_pressure.wav": (24.0, music_pressure),

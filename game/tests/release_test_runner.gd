@@ -482,6 +482,9 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
     var audio_paths := [
         "res://assets/release/audio/ambience_city.wav",
         "res://assets/release/audio/ambience_sanctuary.wav",
+        "res://assets/release/audio/ambience_industrial.wav",
+        "res://assets/release/audio/ambience_waterfront.wav",
+        "res://assets/release/audio/ambience_nest.wav",
         "res://assets/release/audio/music_title.wav",
         "res://assets/release/audio/music_embers.wav",
         "res://assets/release/audio/music_pressure.wav",
@@ -504,7 +507,8 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.release_world_art.normal_textures.size() == 9, "Release art director must load normal relief for all nine texture families.")
     _expect(world.release_world_art.regions_dressed >= 12, "Every persistent region must receive release dressing.")
     _expect(world.release_world_art.meshes_textured > 30, "The existing world must receive a broad textured material pass.")
-    _expect(world.release_audio.stream_library.size() >= 17, "Release audio director must load title music, adaptive music, ambience, family calls and species variants.")
+    _expect(world.release_audio.stream_library.size() >= 20, "Release audio director must load title music, regional ambience, adaptive music, family calls and species variants.")
+    _expect(world.release_audio.regional_ambience.size() == 3, "Release audio director must prepare bounded industrial, waterfront and nest ambience beds.")
     world.release_audio.set_title_screen_active(true)
     _expect(world.release_audio.current_mood == &"title", "Release audio must select the restrained title theme while the title screen is active.")
     world.release_audio.set_title_screen_active(false)
