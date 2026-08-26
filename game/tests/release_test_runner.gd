@@ -70,11 +70,13 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
         world.release_audio.quiet_audio = false
         _expect(is_equal_approx(world.release_audio._organic_signature_pitch(&"glassmoth", false), 1.28), "Release audio must preserve the high signature of Glassmoth.")
         _expect(world.release_audio._organic_signature_pitch(&"apex", true) < world.release_audio._organic_signature_pitch(&"apex", false), "Release audio must lower a species signature on death.")
-        for call_id in [&"organic_call_low", &"organic_call_mid", &"organic_call_high"]:
+        for call_id in [&"organic_call_low", &"organic_call_mid", &"organic_call_high", &"organic_call_root", &"organic_call_bell", &"organic_call_wing"]:
             _expect(world.release_audio.stream_library.has(call_id), "Release audio must load the authored organic call family %s." % call_id)
         _expect(world.release_audio._organic_call_id(&"apex") == &"organic_call_low", "Apex warnings must use the low organic call family.")
         _expect(world.release_audio._organic_call_id(&"razorhound") == &"organic_call_mid", "Ground hunter warnings must use the mid organic call family.")
-        _expect(world.release_audio._organic_call_id(&"glassmoth") == &"organic_call_high", "Aerial membrane warnings must use the high organic call family.")
+        _expect(world.release_audio._organic_call_id(&"glassmoth") == &"organic_call_wing", "Glassmoth warnings must use the authored wing variant.")
+        _expect(world.release_audio._organic_call_id(&"rootweaver") == &"organic_call_root", "Rootweaver warnings must use the authored root variant.")
+        _expect(world.release_audio._organic_call_id(&"carrionbell") == &"organic_call_bell", "Carrion Bell warnings must use the authored bell variant.")
         var tier_callback := Callable(world.release_audio, "_on_heartforge_tier_changed")
         _expect(world.progression.heartforge_tier_changed.is_connected(tier_callback), "Heartforge tier changes must connect to the release progression audio cue.")
         var tier_cue_count_before := world.release_audio.heartforge_tier_cue_count
@@ -488,6 +490,9 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         "res://assets/release/audio/sfx_organic_call_low.wav",
         "res://assets/release/audio/sfx_organic_call_mid.wav",
         "res://assets/release/audio/sfx_organic_call_high.wav",
+        "res://assets/release/audio/sfx_organic_call_root.wav",
+        "res://assets/release/audio/sfx_organic_call_bell.wav",
+        "res://assets/release/audio/sfx_organic_call_wing.wav",
     ]
     for path in audio_paths:
         _expect(ResourceLoader.exists(path), "Release audio must import: %s" % path)
@@ -497,7 +502,7 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.release_world_art.normal_textures.size() == 9, "Release art director must load normal relief for all nine texture families.")
     _expect(world.release_world_art.regions_dressed >= 12, "Every persistent region must receive release dressing.")
     _expect(world.release_world_art.meshes_textured > 30, "The existing world must receive a broad textured material pass.")
-    _expect(world.release_audio.stream_library.size() >= 13, "Release audio director must load music, ambience and effects.")
+    _expect(world.release_audio.stream_library.size() >= 16, "Release audio director must load music, ambience, family calls and species variants.")
     _expect(not world.release_animation.attached_subjects.is_empty(), "Release secondary animation must attach to world subjects.")
     var rail_dressing := world.release_world_art.dressing_root.find_child("HighDefinitionRailDressing", true, false) if world.release_world_art.dressing_root != null else null
     _expect(rail_dressing != null, "Release rail dressing must expose a bounded high-definition carriage layer.")
