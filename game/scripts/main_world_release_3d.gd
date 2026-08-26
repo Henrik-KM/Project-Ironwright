@@ -1932,6 +1932,8 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 func _show_title_screen() -> void:
 	release_started = false
 	paused = true
+	if release_audio != null:
+		release_audio.set_title_screen_active(true)
 	player.input_enabled = false
 	_set_tactical_hud_visible(false)
 	get_tree().paused = true
@@ -1941,6 +1943,8 @@ func _show_title_screen() -> void:
 func _start_release_world() -> void:
 	release_started = true
 	paused = false
+	if release_audio != null:
+		release_audio.set_title_screen_active(false)
 	game_ended = false
 	get_tree().paused = false
 	player.input_enabled = true

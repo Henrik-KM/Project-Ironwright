@@ -9,6 +9,7 @@ const QUIET_AUDIO_CAP_DB := -18.0
 const STREAM_PATHS: Dictionary = {
     &"ambience_city": AUDIO_ROOT + "/ambience_city.wav",
     &"ambience_sanctuary": AUDIO_ROOT + "/ambience_sanctuary.wav",
+    &"music_title": AUDIO_ROOT + "/music_title.wav",
     &"music_embers": AUDIO_ROOT + "/music_embers.wav",
     &"music_pressure": AUDIO_ROOT + "/music_pressure.wav",
     &"music_sovereignty": AUDIO_ROOT + "/music_sovereignty.wav",
@@ -60,6 +61,7 @@ var last_effect_id: StringName = &""
 var last_heartforge_tier: int = 1
 var heartforge_tier_cue_count: int = 0
 var quiet_audio: bool = false
+var title_screen_active: bool = true
 
 
 func configure(
@@ -89,7 +91,7 @@ func _ready() -> void:
     _connect_existing_nodes()
     get_tree().node_added.connect(_on_node_added)
     last_heartforge_tier = progression.heartforge_tier if progression != null else 1
-    _switch_music(&"embers", true)
+    _switch_music(&"title", true)
 
 
 func _process(delta: float) -> void:
@@ -283,6 +285,14 @@ func notify_victory() -> void:
     _switch_music(&"sovereignty")
 
 
+func set_title_screen_active(active: bool) -> void:
+    title_screen_active = active
+    if active:
+        _switch_music(&"title", true)
+    elif current_mood == &"title":
+        _switch_music(&"embers")
+
+
 func _connect_existing_nodes() -> void:
     if progression != null:
         var tier_callback := Callable(self, "_on_heartforge_tier_changed")
@@ -420,6 +430,8 @@ func _update_ambience(delta: float) -> void:
 
 
 func _evaluate_music_mood() -> void:
+    if title_screen_active:
+        return
     var next_mood: StringName = &"embers"
     if endgame != null and not endgame.active_protocol.is_empty():
         next_mood = &"pressure"
