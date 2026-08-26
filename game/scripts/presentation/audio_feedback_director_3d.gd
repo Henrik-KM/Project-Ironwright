@@ -13,7 +13,9 @@ signal sound_event(profile: StringName, position: Vector3)
 const MIX_RATE := 22050
 const MAX_ACTIVE_PLAYERS := 18
 const QUIET_AUDIO_FLAG := "--quiet-audio"
-const QUIET_AUDIO_CAP_DB := -18.0
+## Review-mode ceiling: deliberately far below normal playback so an accidental
+## speaker route cannot produce a startling test burst.
+const QUIET_AUDIO_CAP_DB := -30.0
 const ORGANIC_SPECIES := [
     &"veilstalker", &"razorhound", &"apex", &"sporecaster", &"broodmass", &"burrower",
     &"skitterling", &"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle",
