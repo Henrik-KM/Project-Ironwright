@@ -72,6 +72,9 @@ The city remains grounded and relatively low-tech in the opening. It gains visua
   focus ring and release their imported scene nodes when distant; persistent
   landmarks, collision, discovery state and coarse proxies remain available
   for navigation and world simulation.
+- release-only encounter dressing follows the same boundary, so distant
+  districts retain their coarse identity without keeping close-range service,
+  canopy, rail, nest or cistern detail nodes resident.
   rather than disappearing into beacon-only markers. The proxy remains
   presentation-only and never replaces physical region identity or collision.
 - discovered non-sanctuary regions now carry a restrained pressure-growth read:

@@ -1312,7 +1312,7 @@ func _show_presentation_review_page(page: int) -> void:
 	var is_region_page := presentation_review_page >= 3 and not outpost_page
 	var region_id := PRESENTATION_REVIEW_REGIONS[presentation_review_page - 3] if is_region_page else &""
 	if is_region_page and release_world_art != null:
-		var selected_region_dressing := release_world_art.region_dressing_root(region_id)
+		var selected_region_dressing := release_world_art.ensure_region_dressing(region_id) if release_world_art.has_method(&"ensure_region_dressing") else release_world_art.region_dressing_root(region_id)
 		if selected_region_dressing != null:
 			selected_region_dressing.visible = region_id != &"region.tram_graveyard"
 			if region_id == &"region.cathedral_quarter":
