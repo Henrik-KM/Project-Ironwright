@@ -2,6 +2,13 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+Observatory Ridge received a focused service-surface pass on 2026-08-26. The
+authored control cabin, service deck, console, window hardware and ridge signal
+surfaces now use the shared chamfered high-definition mesh profile around the
+dense reflector and support hardware. Exact silent 1280x720 page 12/15 review
+passed on the local Windows renderer; broader human Observatory, region and
+production-art acceptance remains open.
+
 Autonomous outposts received a focused Tier III presentation pass on
 2026-08-26. The original shelter core and service surfaces now use the shared
 chamfered high-definition mesh profile, while the repeated tier rails are

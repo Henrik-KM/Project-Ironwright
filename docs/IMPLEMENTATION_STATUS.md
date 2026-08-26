@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Observatory service-surface pass
+
+- rebuilt the authored observatory control cabin, service deck, console,
+  window hardware and ridge signal surfaces with the shared chamfered mesh
+  profile while preserving the dense reflector, stable sockets and landmark
+  transforms;
+- added aesthetic guards so the survey station's operational surfaces cannot
+  regress to flat six-face placeholder geometry.
+
 ## Focused Buried Laboratories hardware pass
 
 - rebuilt the authored transfer rails, containment doors, gantry members,

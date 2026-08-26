@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, _geometry, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "observatory.gltf"
@@ -115,15 +115,15 @@ def main() -> None:
     concrete, alloy, rust, dish, cyan, warm, ridge_signal = range(7)
     mesh_ids = {
         "Platform": mesh("Platform", add_box(builder, (11.0, 0.38, 8.0), concrete)),
-        "Control": mesh("Control", add_box(builder, (2.8, 2.4, 2.5), alloy)),
-        "ControlCap": mesh("ControlCap", add_box(builder, (3.1, 0.18, 2.8), rust)),
+        "Control": mesh("Control", add_beveled_box(builder, (2.8, 2.4, 2.5), alloy, 0.16)),
+        "ControlCap": mesh("ControlCap", add_beveled_box(builder, (3.1, 0.18, 2.8), rust, 0.05)),
         # Give the reflector a deeper bowl so the exact remote review frame
         # reads the primary instrument as a parabolic survey dish rather than
         # a shallow circular platform.
         "Dish": mesh("Dish", add_parabolic_dish(builder, 3.0, 0.92, dish)),
         "DishRimRing": mesh("DishRimRing", add_torus(builder, 3.0, 0.11, rust)),
-        "DishRim": mesh("DishRim", add_box(builder, (6.5, 0.16, 0.22), rust)),
-        "DishBrace": mesh("DishBrace", add_box(builder, (0.16, 3.5, 0.26), alloy)),
+        "DishRim": mesh("DishRim", add_beveled_box(builder, (6.5, 0.16, 0.22), rust, 0.045)),
+        "DishBrace": mesh("DishBrace", add_beveled_box(builder, (0.16, 3.5, 0.26), alloy, 0.045)),
         # A survey reflector needs a visible azimuth load path. These rounded
         # parts ground the bowl in the service deck instead of leaving it as
         # a floating blue disc held up by thin rods at remote review distance.
@@ -135,30 +135,30 @@ def main() -> None:
         "Feed": mesh("Feed", add_uv_sphere(builder, 0.30, cyan, 18, 28)),
         "Mast": mesh("Mast", add_cylinder(builder, 0.20, 6.0, rust, 20)),
         "Cable": mesh("Cable", add_cylinder(builder, 0.045, 4.5, warm, 10)),
-        "Console": mesh("Console", add_box(builder, (1.1, 0.55, 0.12), warm)),
+        "Console": mesh("Console", add_beveled_box(builder, (1.1, 0.55, 0.12), warm, 0.03)),
         "Light": mesh("Light", add_uv_sphere(builder, 0.10, warm, 16, 24)),
-        "Deck": mesh("Deck", add_box(builder, (6.8, 0.18, 2.9), alloy)),
+        "Deck": mesh("Deck", add_beveled_box(builder, (6.8, 0.18, 2.9), alloy, 0.045)),
         "Rail": mesh("Rail", add_cylinder(builder, 0.06, 2.1, rust, 12)),
-        "Window": mesh("Window", add_box(builder, (0.92, 0.72, 0.08), cyan)),
-        "ServiceCase": mesh("ServiceCase", add_box(builder, (1.1, 0.72, 0.78), rust)),
+        "Window": mesh("Window", add_beveled_box(builder, (0.92, 0.72, 0.08), cyan, 0.02)),
+        "ServiceCase": mesh("ServiceCase", add_beveled_box(builder, (1.1, 0.72, 0.78), rust, 0.08)),
         # The dish ribs are exposed in the remote review silhouette. Rounded
         # rods keep the same structural span while avoiding a row of flat
         # manufactured bars across the surviving survey apparatus.
         "DishRib": mesh("DishRib", add_cylinder(builder, 0.075, 5.5, rust, 24)),
         "DishActuator": mesh("DishActuator", add_cylinder(builder, 0.22, 0.28, alloy, 20)),
         "FeedCollar": mesh("FeedCollar", add_cylinder(builder, 0.38, 0.16, cyan, 24)),
-        "WindowFrame": mesh("ObservatoryWindowFrame", add_box(builder, (1.14, 0.10, 0.94), alloy)),
-        "WindowMullion": mesh("ObservatoryWindowMullion", add_box(builder, (0.08, 0.72, 0.10), alloy)),
-        "ConsoleFrame": mesh("ObservatoryConsoleFrame", add_box(builder, (1.38, 0.08, 0.78), alloy)),
+        "WindowFrame": mesh("ObservatoryWindowFrame", add_beveled_box(builder, (1.14, 0.10, 0.94), alloy, 0.022)),
+        "WindowMullion": mesh("ObservatoryWindowMullion", add_beveled_box(builder, (0.08, 0.72, 0.10), alloy, 0.018)),
+        "ConsoleFrame": mesh("ObservatoryConsoleFrame", add_beveled_box(builder, (1.38, 0.08, 0.78), alloy, 0.018)),
         "DeckPost": mesh("ObservatoryDeckPost", add_cylinder(builder, 0.07, 1.35, rust, 14)),
         "MastCollar": mesh("ObservatoryMastCollar", add_cylinder(builder, 0.30, 0.16, rust, 24)),
         "CableAnchor": mesh("ObservatoryCableAnchor", add_cylinder(builder, 0.12, 0.14, warm, 16)),
         "SurveyLightHousing": mesh("ObservatorySurveyLightHousing", add_cylinder(builder, 0.12, 0.16, alloy, 16)),
         "RidgePylon": mesh("ObservatoryRidgePylon", add_cylinder(builder, 0.22, 6.2, alloy, 18)),
-        "RidgeBeam": mesh("ObservatoryRidgeBeam", add_box(builder, (10.0, 0.18, 0.18), rust)),
-        "RidgeSignalPanel": mesh("ObservatoryRidgeSignalPanel", add_box(builder, (2.8, 1.35, 0.10), ridge_signal)),
-        "RidgeSignalFrame": mesh("ObservatoryRidgeSignalFrame", add_box(builder, (3.15, 1.60, 0.12), alloy)),
-        "RidgeLadder": mesh("ObservatoryRidgeLadder", add_box(builder, (0.08, 4.8, 0.08), rust)),
+        "RidgeBeam": mesh("ObservatoryRidgeBeam", add_beveled_box(builder, (10.0, 0.18, 0.18), rust, 0.04)),
+        "RidgeSignalPanel": mesh("ObservatoryRidgeSignalPanel", add_beveled_box(builder, (2.8, 1.35, 0.10), ridge_signal, 0.022)),
+        "RidgeSignalFrame": mesh("ObservatoryRidgeSignalFrame", add_beveled_box(builder, (3.15, 1.60, 0.12), alloy, 0.028)),
+        "RidgeLadder": mesh("ObservatoryRidgeLadder", add_beveled_box(builder, (0.08, 4.8, 0.08), rust, 0.018)),
         "RidgeBrace": mesh("ObservatoryRidgeBrace", add_cylinder(builder, 0.065, 3.8, alloy, 14)),
         "RidgeBeacon": mesh("ObservatoryRidgeBeacon", add_uv_sphere(builder, 0.18, cyan, 16, 24)),
         "RidgeSensor": mesh("ObservatoryRidgeSensor", add_cylinder(builder, 0.10, 0.34, warm, 16)),
@@ -170,6 +170,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "observatory.ridge.v1",
             "asset_quality": "authored_high_definition",
+            "manufactured_surface_profile": "chamfered_high_definition",
             "socket_contract": "dish, feed_signal, mast, console, survey_cables",
         },
     }]
@@ -269,6 +270,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "observatory.ridge.v1",
+            "manufactured_surface_profile": "chamfered_high_definition",
             "required_nodes": ["ObservatoryModel", "ObservatoryDish", "ObservatoryDishRimRing", "ObservatoryDishPedestal", "ObservatoryDishSupportRing", "ObservatoryDishPivotHousing", "ObservatoryDishPivotBand", "ObservatoryDishRib0", "ObservatoryDishActuator", "ObservatoryFeedSignal", "ObservatoryFeedCollar", "ObservatoryMast", "ObservatoryMastCollar", "ObservatoryConsole", "ObservatoryFrontConsole", "ObservatoryFrontConsoleFrame", "ObservatoryServiceDeck", "ObservatoryControlWindow0", "ObservatoryControlWindowFrame0", "ObservatoryControlWindowMullion0", "ObservatorySurveyRail0", "ObservatoryCableAnchor0", "ObservatorySurveyLightHousing0", "ObservatoryRidgePylonL", "ObservatoryRidgeBeam", "ObservatoryRidgeSignalPanel", "ObservatoryRidgeLadder", "ObservatoryRidgeBraceL", "ObservatoryRidgeBeacon0", "ObservatoryRidgeSensor0", "ProductionAssetMarker"],
         },
     }

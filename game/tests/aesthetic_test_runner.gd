@@ -596,6 +596,10 @@ func _run_all() -> void:
                         _expect(dish_world_depth >= 0.70, "Observatory hero dish must retain a deep parabolic bowl rather than collapsing into a shallow disc.")
                     var observatory_dish_rib := landmark.find_child("ObservatoryDishRib0", true, false) as MeshInstance3D
                     _expect(observatory_dish_rib != null and _mesh_vertex_count(observatory_dish_rib) >= 48, "Observatory dish ribs must retain dense rounded structural geometry rather than flat bars.")
+                    var observatory_control := landmark.find_child("ObservatoryControl", true, false) as MeshInstance3D
+                    var observatory_deck := landmark.find_child("ObservatoryServiceDeck", true, false) as MeshInstance3D
+                    var observatory_ridge_panel := landmark.find_child("ObservatoryRidgeSignalPanel", true, false) as MeshInstance3D
+                    _expect(observatory_control != null and _mesh_vertex_count(observatory_control) >= 48 and observatory_deck != null and _mesh_vertex_count(observatory_deck) >= 48 and observatory_ridge_panel != null and _mesh_vertex_count(observatory_ridge_panel) >= 48, "Observatory control, service-deck and ridge-signal hardware must retain chamfered high-definition geometry.")
                     var observatory_pedestal := landmark.find_child("ObservatoryDishPedestal", true, false) as MeshInstance3D
                     var observatory_pivot := landmark.find_child("ObservatoryDishPivotHousing", true, false) as MeshInstance3D
                     _expect(observatory_pedestal != null and _mesh_vertex_count(observatory_pedestal) >= 48 and observatory_pedestal.mesh.get_aabb().size.y >= 1.8 and observatory_pivot != null and _mesh_vertex_count(observatory_pivot) >= 240, "Observatory reflector support must retain a dense grounded pedestal and rounded pivot housing rather than a thin placeholder post.")
