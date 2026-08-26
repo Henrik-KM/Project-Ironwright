@@ -6,6 +6,9 @@ extends Node3D
 ## resolving objectives in a detached map or tutorial overlay.
 
 const ROUTE_DOT_COUNT: int = 9
+const BEACON_STEM_HEIGHT: float = 2.25
+const BEACON_TOP_HEIGHT: float = 2.35
+const BEACON_LABEL_HEIGHT: float = 2.86
 
 var player: Node3D
 var target: Node3D
@@ -43,9 +46,9 @@ func _process(delta: float) -> void:
     var pulse := 0.95 + sin(elapsed * 3.4) * 0.055
     marker_root.scale = Vector3.ONE * pulse
     marker_label.text = "%s\n%s" % [target_title, interaction_text]
-    marker_label.position.y = 4.18 + sin(elapsed * 2.1) * 0.08
+    marker_label.position.y = BEACON_LABEL_HEIGHT + sin(elapsed * 2.1) * 0.08
     if signal_ring != null:
-        signal_ring.position.y = 3.52 + sin(elapsed * 2.8) * 0.12
+        signal_ring.position.y = BEACON_TOP_HEIGHT + sin(elapsed * 2.8) * 0.12
         signal_ring.scale = Vector3.ONE * (0.82 + sin(elapsed * 2.8) * 0.12)
 
     var origin := player.global_position
@@ -140,8 +143,8 @@ func _build_visuals() -> void:
     var beam := ModelKit3D.add_cylinder(
         marker_root,
         0.035,
-        3.35,
-        Vector3(0.0, 1.75, 0.0),
+        BEACON_STEM_HEIGHT,
+        Vector3(0.0, BEACON_STEM_HEIGHT * 0.5, 0.0),
         guide_material,
         Vector3.ZERO,
         "BeaconStem"
@@ -150,7 +153,7 @@ func _build_visuals() -> void:
     var crown := ModelKit3D.add_sphere(
         marker_root,
         0.13,
-        Vector3(0.0, 3.52, 0.0),
+        Vector3(0.0, BEACON_TOP_HEIGHT, 0.0),
         guide_material,
         Vector3.ONE,
         "BeaconCrown"
@@ -166,17 +169,17 @@ func _build_visuals() -> void:
     signal_mesh.ring_segments = 32
     signal_ring.mesh = signal_mesh
     signal_ring.material_override = guide_material
-    signal_ring.position = Vector3(0.0, 3.52, 0.0)
+    signal_ring.position = Vector3(0.0, BEACON_TOP_HEIGHT, 0.0)
     signal_ring.rotation.x = PI * 0.5
     signal_ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
     marker_root.add_child(signal_ring)
 
-    guide_light = ModelKit3D.add_glow_light(marker_root, Vector3(0.0, 1.75, 0.0), active_color, 0.55, 4.0)
+    guide_light = ModelKit3D.add_glow_light(marker_root, Vector3(0.0, BEACON_STEM_HEIGHT * 0.5, 0.0), active_color, 0.55, 3.0)
 
     marker_label = Label3D.new()
     marker_label.name = "ObjectiveLabel"
     marker_label.text = "OBJECTIVE"
-    marker_label.position = Vector3(0.0, 4.18, 0.0)
+    marker_label.position = Vector3(0.0, BEACON_LABEL_HEIGHT, 0.0)
     marker_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
     # Screen-fixed Label3D text was the source of the enormous prototype-like
     # words covering the playfield. The cue now has a physical world scale.
