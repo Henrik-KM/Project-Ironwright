@@ -343,6 +343,30 @@ def sfx_danger(t: float, duration: float) -> float:
     return swell * (tone(t, duration, 55.0) * 0.26 + tone(t, duration, 82.5, 0.7) * 0.14 + periodic_noise(t, duration, 2007, 26) * 0.08)
 
 
+def sfx_organic_call_low(t: float, duration: float) -> float:
+    envelope = fade_envelope(t, duration, 0.025, 0.18)
+    body = tone(t, duration, 58.0 - 20.0 * t / duration) * 0.42
+    throat = tone(t, duration, 116.0 - 34.0 * t / duration, 0.4) * 0.18
+    pulse = max(0.0, tone(t, duration, 3.4, 1.1)) ** 7 * tone(t, duration, 41.0) * 0.16
+    return envelope * (body + throat + pulse + periodic_noise(t, duration, 2008, 24) * 0.12)
+
+
+def sfx_organic_call_mid(t: float, duration: float) -> float:
+    envelope = fade_envelope(t, duration, 0.012, 0.14)
+    body = tone(t, duration, 132.0 + 46.0 * t / duration) * 0.35
+    harmonic = tone(t, duration, 264.0 + 76.0 * t / duration, 0.7) * 0.2
+    rasp = periodic_noise(t, duration, 2009, 28) * (0.16 + 0.08 * math.sin(math.pi * t / duration))
+    return envelope * (body + harmonic + rasp)
+
+
+def sfx_organic_call_high(t: float, duration: float) -> float:
+    envelope = fade_envelope(t, duration, 0.008, 0.1)
+    body = tone(t, duration, 318.0 + 168.0 * t / duration, 0.25) * 0.3
+    harmonic = tone(t, duration, 636.0 + 246.0 * t / duration, 1.1) * 0.17
+    shimmer = tone(t, duration, 1260.0 + 360.0 * t / duration) * 0.08
+    return envelope * (body + harmonic + shimmer + periodic_noise(t, duration, 2010, 20) * 0.07)
+
+
 def sfx_ui(t: float, duration: float) -> float:
     return fade_envelope(t, duration, 0.002, 0.08) * (tone(t, duration, 659.25) * 0.18 + tone(t, duration, 987.77, 0.3) * 0.09)
 
@@ -365,6 +389,9 @@ AUDIO: dict[str, tuple[float, Callable[[float, float], float]]] = {
     "sfx_organic_hit.wav": (0.65, sfx_organic_hit),
     "sfx_machine_report.wav": (0.8, sfx_report),
     "sfx_danger.wav": (2.4, sfx_danger),
+    "sfx_organic_call_low.wav": (0.62, sfx_organic_call_low),
+    "sfx_organic_call_mid.wav": (0.5, sfx_organic_call_mid),
+    "sfx_organic_call_high.wav": (0.42, sfx_organic_call_high),
     "sfx_ui_confirm.wav": (0.24, sfx_ui),
     "sfx_victory.wav": (4.0, sfx_victory),
 }

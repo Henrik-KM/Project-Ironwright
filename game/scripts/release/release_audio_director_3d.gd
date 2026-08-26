@@ -18,6 +18,9 @@ const STREAM_PATHS: Dictionary = {
     &"organic_hit": AUDIO_ROOT + "/sfx_organic_hit.wav",
     &"machine_report": AUDIO_ROOT + "/sfx_machine_report.wav",
     &"danger": AUDIO_ROOT + "/sfx_danger.wav",
+    &"organic_call_low": AUDIO_ROOT + "/sfx_organic_call_low.wav",
+    &"organic_call_mid": AUDIO_ROOT + "/sfx_organic_call_mid.wav",
+    &"organic_call_high": AUDIO_ROOT + "/sfx_organic_call_high.wav",
     &"victory": AUDIO_ROOT + "/sfx_victory.wav",
     &"ui_confirm": AUDIO_ROOT + "/sfx_ui_confirm.wav",
 }
@@ -50,6 +53,7 @@ var last_operation_signature: StringName = &""
 var spatial_operation_reports: Array[AudioStreamPlayer3D] = []
 var attack_warning_clock: float = 0.0
 var attack_warning_count: int = 0
+var last_effect_id: StringName = &""
 var last_heartforge_tier: int = 1
 var heartforge_tier_cue_count: int = 0
 var quiet_audio: bool = false
@@ -185,6 +189,7 @@ func play_effect(effect_id: StringName, caption_key: String = "", pitch_variatio
     sfx_cursor += 1
     audio.stop()
     audio.stream = stream
+    last_effect_id = effect_id
     audio.pitch_scale = clampf(base_pitch + sin(float(sfx_cursor) * 1.731) * pitch_variation, 0.55, 1.55)
     audio.volume_db = _safe_volume_db(volume_db)
     audio.play()
@@ -352,7 +357,7 @@ func _on_organic_attack_started(enemy: OrganicEnemy3D, target: Node) -> void:
         return
     attack_warning_clock = 0.18
     attack_warning_count += 1
-    play_effect(&"danger", "", 0.04, -8.0, _organic_signature_pitch(enemy.species, false))
+    play_effect(_organic_call_id(enemy.species), "", 0.015, -9.0, _organic_signature_pitch(enemy.species, false))
 
 
 func _on_organic_killed(enemy: OrganicEnemy3D, killer: Node) -> void:
@@ -381,6 +386,16 @@ func _organic_signature_pitch(species: StringName, death: bool) -> float:
         _:
             pitch = 1.0
     return pitch * (0.92 if death else 1.0)
+
+
+func _organic_call_id(species: StringName) -> StringName:
+    match species:
+        &"apex", &"broodmass", &"rootweaver", &"burrower", &"miremaw", &"ashmantle":
+            return &"organic_call_low"
+        &"roofleaper", &"glassmoth", &"veilstalker", &"sporecaster":
+            return &"organic_call_high"
+        _:
+            return &"organic_call_mid"
 
 
 func _update_ambience(delta: float) -> void:
