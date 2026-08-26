@@ -3,6 +3,8 @@
   "kind": "world_landmark",
   "source": "game/assets/archive/source/build_archive_asset.py",
   "runtime_model": "game/assets/archive/archive.gltf",
+  "asset_quality": "authored_high_definition",
+  "manufactured_surface_profile": "chamfered_high_definition",
   "required_nodes": [
     "ArchiveModel",
     "ArchiveCivicFacade",

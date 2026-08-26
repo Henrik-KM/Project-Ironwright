@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused North Ruins archive-prop pass
+
+- rebuilt the authored archive record stacks, survey marker and beacon braces
+  with the shared chamfered mesh profile while preserving the civic facade,
+  vault, beacon sockets and presentation-only ownership;
+- added aesthetic guards so the archive's close props cannot regress to flat
+  six-face placeholder geometry.
+
 ## Focused Cistern Apex attack-surface pass
 
 - rebuilt the authored Apex jaw plates, thorax ribs and jaw latches with the
