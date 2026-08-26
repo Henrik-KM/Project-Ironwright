@@ -1550,3 +1550,11 @@ The presentation milestones proceed in this order:
 Breadth must not outrun quality again.
 
 See [`VERTICAL_SLICE_INTELLIGENCE.md`](VERTICAL_SLICE_INTELLIGENCE.md) for the concrete distributed-autonomy, ecology and opening-slice implementation contract.
+# Focused Heartforge service-surface pass — 2026-08-26
+
+The authored Heartforge fabrication bench, assembly plate, perimeter ribs and
+service hardware now use the shared chamfered high-definition mesh profile.
+Stable sockets and interaction ownership are unchanged. This pass is covered
+by the aesthetic guard and must be confirmed in the exact silent opening and
+Heartforge-progression captures; broader human opening and production-art
+acceptance remain open.

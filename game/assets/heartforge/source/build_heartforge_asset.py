@@ -16,7 +16,7 @@ from pathlib import Path
 SOURCE_DIR = Path(__file__).resolve().parent
 ASSET_ROOT = SOURCE_DIR.parents[1]
 sys.path.insert(0, str(ASSET_ROOT / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_ellipsoid, add_uv_sphere  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_cylinder, add_ellipsoid, add_uv_sphere  # noqa: E402
 
 
 def build() -> None:
@@ -55,14 +55,14 @@ def build() -> None:
         "lens": mesh("HeartforgeFocalSignalLens", add_uv_sphere(builder, 0.075, cyan, 16, 24)),
         "cable": mesh("HeartforgeFocalCableBranch", add_cylinder(builder, 0.055, 1.1, rust, 24)),
         "stack": mesh("ForgeStack", add_cylinder(builder, 0.36, 2.6, iron, 28)),
-        "bench": mesh("ForgeBench", add_box(builder, (3.0, 0.35, 1.8), iron)),
-        "plate": mesh("AssemblyPlate", add_box(builder, (2.18, 0.18, 1.06), dark)),
-        "plate_glow": mesh("AssemblyPlateGlow", add_box(builder, (1.68, 0.06, 0.72), cyan)),
-        "slot": mesh("AssemblyPlateSlot", add_box(builder, (0.1, 0.025, 0.42), dark)),
-        "rib": mesh("Rib", add_box(builder, (0.24, 2.1, 0.42), rust)),
+        "bench": mesh("ForgeBench", add_beveled_box(builder, (3.0, 0.35, 1.8), iron, 0.12)),
+        "plate": mesh("AssemblyPlate", add_beveled_box(builder, (2.18, 0.18, 1.06), dark, 0.045)),
+        "plate_glow": mesh("AssemblyPlateGlow", add_beveled_box(builder, (1.68, 0.06, 0.72), cyan, 0.018)),
+        "slot": mesh("AssemblyPlateSlot", add_beveled_box(builder, (0.1, 0.025, 0.42), dark, 0.008)),
+        "rib": mesh("Rib", add_beveled_box(builder, (0.24, 2.1, 0.42), rust, 0.035)),
         "coolant_pipe": mesh("HeartforgeCoolantPipe", add_cylinder(builder, 0.065, 1.25, cyan, 20)),
-        "service_latch": mesh("HeartforgeServiceLatch", add_box(builder, (0.12, 0.18, 0.38), cyan)),
-        "conduit_clip": mesh("HeartforgeConduitClip", add_box(builder, (0.18, 0.12, 0.24), cladding)),
+        "service_latch": mesh("HeartforgeServiceLatch", add_beveled_box(builder, (0.12, 0.18, 0.38), cyan, 0.018)),
+        "conduit_clip": mesh("HeartforgeConduitClip", add_beveled_box(builder, (0.18, 0.12, 0.24), cladding, 0.02)),
         "thermal_shroud": mesh("HeartforgeThermalShroud", add_beveled_box(builder, (0.18, 0.46, 0.54), iron, 0.035)),
         "thermal_shroud_cap": mesh("HeartforgeThermalShroudCap", add_beveled_box(builder, (0.22, 0.08, 0.6), rust, 0.022)),
         "bench_brace": mesh("ForgeBenchBrace", add_beveled_box(builder, (0.18, 0.34, 0.52), rust, 0.03)),
@@ -150,7 +150,7 @@ def build() -> None:
     for index, position in enumerate(((-1.92, 0.83, -1.55), (1.92, 0.83, -1.55), (-1.92, 0.83, 1.55), (1.92, 0.83, 1.55))):
         foundation_hardware.append(node("HeartforgeFoundationBolt%02d" % index, mesh_ids["foundation_bolt"], position))
     marker = node("ProductionAssetMarker", None, extras={"asset_id": "heartforge.core.v1", "presentation_only": True})
-    root = node("HeartforgeModel", None, children=[foundation, housing, cladding, focal, west_stack, east_stack, bench, *ribs, *foundation_hardware, marker], extras={"ironwright_asset_id": "heartforge.core.v1", "asset_quality": "authored_high_definition", "socket_contract": "heartforge_anchor, primary_reactor_shell, player_facing_control, manual_fabrication_surface, service_hardware"})
+    root = node("HeartforgeModel", None, children=[foundation, housing, cladding, focal, west_stack, east_stack, bench, *ribs, *foundation_hardware, marker], extras={"ironwright_asset_id": "heartforge.core.v1", "asset_quality": "authored_high_definition", "manufactured_surface_profile": "chamfered_high_definition", "socket_contract": "heartforge_anchor, primary_reactor_shell, player_facing_control, manual_fabrication_surface, service_hardware"})
 
     document = {
         "asset": {"version": "2.0", "generator": "Project Ironwright original Heartforge asset builder"},

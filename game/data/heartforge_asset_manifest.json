@@ -3,6 +3,7 @@
   "runtime_scene": "res://assets/heartforge/heartforge.gltf",
   "source_builder": "game/assets/heartforge/source/build_heartforge_asset.py",
   "source_type": "original_project_ironwright_shared_mesh_builder",
+  "manufactured_surface_profile": "chamfered_high_definition",
   "third_party_assets": [],
   "presentation_only": true,
   "stable_nodes": [
