@@ -1624,6 +1624,16 @@ mixed below the quiet review cap, while the existing species pitch signatures,
 impact cues and sound captions remain intact. Validation uses Godot's dummy
 audio driver; no live speakers are used for this review.
 
+# Focused organic signature-variant pass — 2026-08-26
+
+Rootweaver, Carrion Bell and Glassmoth now have original deterministic warning
+variants inside their low, mid and high call families. Their cues add a slow
+vascular pulse, hollow bell resonance and wing-flutter shimmer respectively;
+the existing rate limit, quiet cap, spatial warning path and caption behavior
+remain unchanged. Validation uses Godot's dummy audio driver; no live speakers
+are used for this review. Final music and broader authored sound design remain
+production work.
+
 # Title-screen review capture — 2026-08-26
 
 The exact release entrypoint now exposes a development-only `--title-review`

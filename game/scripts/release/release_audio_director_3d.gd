@@ -21,6 +21,9 @@ const STREAM_PATHS: Dictionary = {
     &"organic_call_low": AUDIO_ROOT + "/sfx_organic_call_low.wav",
     &"organic_call_mid": AUDIO_ROOT + "/sfx_organic_call_mid.wav",
     &"organic_call_high": AUDIO_ROOT + "/sfx_organic_call_high.wav",
+    &"organic_call_root": AUDIO_ROOT + "/sfx_organic_call_root.wav",
+    &"organic_call_bell": AUDIO_ROOT + "/sfx_organic_call_bell.wav",
+    &"organic_call_wing": AUDIO_ROOT + "/sfx_organic_call_wing.wav",
     &"victory": AUDIO_ROOT + "/sfx_victory.wav",
     &"ui_confirm": AUDIO_ROOT + "/sfx_ui_confirm.wav",
 }
@@ -390,7 +393,13 @@ func _organic_signature_pitch(species: StringName, death: bool) -> float:
 
 func _organic_call_id(species: StringName) -> StringName:
     match species:
-        &"apex", &"broodmass", &"rootweaver", &"burrower", &"miremaw", &"ashmantle":
+        &"rootweaver":
+            return &"organic_call_root"
+        &"carrionbell":
+            return &"organic_call_bell"
+        &"glassmoth":
+            return &"organic_call_wing"
+        &"apex", &"broodmass", &"burrower", &"miremaw", &"ashmantle":
             return &"organic_call_low"
         &"roofleaper", &"glassmoth", &"veilstalker", &"sporecaster":
             return &"organic_call_high"

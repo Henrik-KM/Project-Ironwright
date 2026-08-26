@@ -367,6 +367,33 @@ def sfx_organic_call_high(t: float, duration: float) -> float:
     return envelope * (body + harmonic + shimmer + periodic_noise(t, duration, 2010, 20) * 0.07)
 
 
+def sfx_organic_call_root(t: float, duration: float) -> float:
+    """Rootweaver variant: a low call with a slow, vascular pulse."""
+    envelope = fade_envelope(t, duration, 0.03, 0.2)
+    body = tone(t, duration, 47.0 - 13.0 * t / duration, 0.35) * 0.36
+    resonance = tone(t, duration, 94.0 + 12.0 * t / duration, 0.8) * 0.16
+    pulse = max(0.0, tone(t, duration, 2.2, 0.4)) ** 8 * tone(t, duration, 31.0) * 0.2
+    return envelope * (body + resonance + pulse + periodic_noise(t, duration, 2011, 30) * 0.09)
+
+
+def sfx_organic_call_bell(t: float, duration: float) -> float:
+    """Carrion Bell variant: a hollow strike under a wet mid call."""
+    envelope = fade_envelope(t, duration, 0.012, 0.17)
+    body = tone(t, duration, 118.0 + 34.0 * t / duration, 0.2) * 0.27
+    bell = tone(t, duration, 236.0 + 8.0 * t / duration, 1.0) * math.exp(-t * 8.5) * 0.24
+    ring = tone(t, duration, 472.0, 0.55) * math.exp(-t * 12.0) * 0.1
+    return envelope * (body + bell + ring + periodic_noise(t, duration, 2012, 25) * 0.11)
+
+
+def sfx_organic_call_wing(t: float, duration: float) -> float:
+    """Glassmoth variant: a thin wing-flutter around the high family call."""
+    envelope = fade_envelope(t, duration, 0.006, 0.11)
+    body = tone(t, duration, 286.0 + 208.0 * t / duration, 0.3) * 0.25
+    harmonic = tone(t, duration, 572.0 + 330.0 * t / duration, 1.0) * 0.15
+    flutter = abs(tone(t, duration, 19.0, 0.2)) * tone(t, duration, 1420.0 + 120.0 * t / duration) * 0.1
+    return envelope * (body + harmonic + flutter + periodic_noise(t, duration, 2013, 18) * 0.06)
+
+
 def sfx_ui(t: float, duration: float) -> float:
     return fade_envelope(t, duration, 0.002, 0.08) * (tone(t, duration, 659.25) * 0.18 + tone(t, duration, 987.77, 0.3) * 0.09)
 
@@ -392,6 +419,9 @@ AUDIO: dict[str, tuple[float, Callable[[float, float], float]]] = {
     "sfx_organic_call_low.wav": (0.62, sfx_organic_call_low),
     "sfx_organic_call_mid.wav": (0.5, sfx_organic_call_mid),
     "sfx_organic_call_high.wav": (0.42, sfx_organic_call_high),
+    "sfx_organic_call_root.wav": (0.68, sfx_organic_call_root),
+    "sfx_organic_call_bell.wav": (0.54, sfx_organic_call_bell),
+    "sfx_organic_call_wing.wav": (0.44, sfx_organic_call_wing),
     "sfx_ui_confirm.wav": (0.24, sfx_ui),
     "sfx_victory.wav": (4.0, sfx_victory),
 }
