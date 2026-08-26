@@ -16,6 +16,11 @@ const GLASSMOTH_ASSET_SCENE := preload("res://assets/glassmoth/glassmoth.gltf")
 const VEILSTALKER_ASSET_SCENE := preload("res://assets/veilstalker/veilstalker.gltf")
 const BURROWER_ASSET_SCENE := preload("res://assets/burrower/burrower.gltf")
 const BROODMASSS_ASSET_SCENE := preload("res://assets/broodmass/broodmass.gltf")
+const MIREMAW_ASSET_SCENE := preload("res://assets/miremaw/miremaw.gltf")
+const CARRIONBELL_ASSET_SCENE := preload("res://assets/carrionbell/carrionbell.gltf")
+const ROOTWEAVER_ASSET_SCENE := preload("res://assets/rootweaver/rootweaver.gltf")
+const THORNBACK_ASSET_SCENE := preload("res://assets/thornback/thornback.gltf")
+const ASHMANTLE_ASSET_SCENE := preload("res://assets/ashmantle/ashmantle.gltf")
 
 var failures: Array[String] = []
 
@@ -1635,6 +1640,28 @@ func _run_all() -> void:
     veilstalker_asset.queue_free()
     burrower_asset.queue_free()
     broodmass_asset.queue_free()
+
+    var miremaw_asset := MIREMAW_ASSET_SCENE.instantiate()
+    var carrionbell_asset := CARRIONBELL_ASSET_SCENE.instantiate()
+    var rootweaver_asset := ROOTWEAVER_ASSET_SCENE.instantiate()
+    var thornback_asset := THORNBACK_ASSET_SCENE.instantiate()
+    var ashmantle_asset := ASHMANTLE_ASSET_SCENE.instantiate()
+    var deep_membrane_names: Array[String] = [
+        "MiremawGillFan", "MiremawWaterFinL", "RootweaverSporeFan",
+    ]
+    var deep_membrane_assets: Array[Node] = [miremaw_asset, miremaw_asset, rootweaver_asset]
+    for index in deep_membrane_names.size():
+        var deep_membrane := _find_named(deep_membrane_assets[index], deep_membrane_names[index]) as MeshInstance3D
+        _expect(deep_membrane != null and _mesh_vertex_count(deep_membrane) >= 1000, "%s must retain the dense folded late-organic membrane profile." % deep_membrane_names[index])
+        _expect(deep_membrane != null and deep_membrane.mesh.get_aabb().size.y >= 0.45, "%s must retain closed depth rather than reading as a thin horizontal sheet." % deep_membrane_names[index])
+    _expect(_mesh_vertex_count(_find_named(carrionbell_asset, "CarrionbellCrownPlate") as MeshInstance3D) >= 500, "Carrion Bell must retain a dense folded crown silhouette.")
+    _expect(_mesh_vertex_count(_find_named(thornback_asset, "ThornbackCrownPlate") as MeshInstance3D) >= 500, "Thornback must retain a dense folded territorial crown silhouette.")
+    _expect(_mesh_vertex_count(_find_named(ashmantle_asset, "AshmantleHeatLouverL") as MeshInstance3D) >= 700, "Ashmantle must retain a dense folded heat-louver silhouette.")
+    miremaw_asset.queue_free()
+    carrionbell_asset.queue_free()
+    rootweaver_asset.queue_free()
+    thornback_asset.queue_free()
+    ashmantle_asset.queue_free()
 
     var veilstalker: Node3D
     for enemy in get_nodes_in_group("organic_enemies"):

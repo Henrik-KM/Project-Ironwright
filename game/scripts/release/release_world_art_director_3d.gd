@@ -75,10 +75,13 @@ const AUTHORED_ORGANIC_TINTS: Dictionary = {
     "roofleaper": Color("78aeb7"),
     "glassmoth": Color("78c8c8"),
     "miremaw": Color("9eac78"),
-    "carrionbell": Color("b5769e"),
-    "rootweaver": Color("78b187"),
-    "thornback": Color("c19760"),
-    "ashmantle": Color("82a7b6"),
+    # Late families use a lower-saturation, mineral-biological palette so the
+    # wet shell, living membranes and threat accents separate in the tactical
+    # frame instead of reading as bright toy-coloured plates.
+    "carrionbell": Color("8f506c"),
+    "rootweaver": Color("5f8f79"),
+    "thornback": Color("a47b4d"),
+    "ashmantle": Color("668596"),
 }
 
 var world: Node3D
@@ -382,7 +385,7 @@ func _organic_detail_tint(mesh_instance: MeshInstance3D, family_tint: Color, cat
         # row of pale manufactured plates. Early flight membranes retain the
         # stronger lift needed for compact silhouette separation.
         var late_family := _contains_any(authored_path, ["miremaw", "carrionbell", "rootweaver", "thornback", "ashmantle"])
-        return family_tint.lightened(0.09 if late_family else 0.16)
+        return family_tint.lightened(0.055 if late_family else 0.16)
     if _contains_any(detail_name, ["plate", "rib", "ridge", "spine", "hook", "knuckle", "fastener", "bone", "frame", "ray", "cap", "leg", "arm", "talon", "jaw", "tiercrest", "tierdorsal", "tiercrown"]):
         return family_tint.darkened(0.16)
     if _contains_any(detail_name, ["eye", "oculus", "resonator", "siphon", "tendon", "tiervascular", "tiersignal"]):

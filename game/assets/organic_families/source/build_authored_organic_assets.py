@@ -533,8 +533,8 @@ def build_family(name: str, spec: dict) -> None:
         # perimeter. The extra radial resolution is spent on the broad
         # silhouette surfaces that catch the compact gallery key light; the
         # socket dimensions and runtime ownership remain unchanged.
-        "Membrane": mesh("Membrane", add_organic_lobe(builder, (1.26, 0.42, 1.08), membrane, lobes=6, rings=14, sides=56, scallop_amplitude=0.25, leading_extension=0.64, fold_strength=1.16)),
-        "WingMembrane": mesh("WingMembrane", add_swept_wing_membrane(builder, (1.38, 0.18, 1.08), membrane, rings=12, sides=56)),
+        "Membrane": mesh("Membrane", add_organic_lobe(builder, (1.26, 0.52, 1.08), membrane, lobes=6, rings=16, sides=64, scallop_amplitude=0.22, leading_extension=0.56, fold_strength=1.42)),
+        "WingMembrane": mesh("WingMembrane", add_swept_wing_membrane(builder, (1.38, 0.26, 1.08), membrane, rings=14, sides=64)),
         "Bone": mesh("Bone", add_capsule(builder, 0.09, 0.86, bone, 24)),
         "LongBone": mesh("LongBone", add_capsule(builder, 0.065, 1.35, bone, 24)),
         "Tendon": mesh("Tendon", add_capsule(builder, 0.07, 1.15, tendon, 24)),
@@ -553,6 +553,9 @@ def build_family(name: str, spec: dict) -> None:
         "RootSpine": mesh("RootSpine", add_capsule(builder, 0.055, 1.42, bone, 24)),
         "PlateCap": mesh("PlateCap", add_convex_sheet(builder, (0.44, 0.10, 0.18), bone, rings=4, sides=24)),
         "CrownFastener": mesh("CrownFastener", add_uv_sphere(builder, 0.06, bone, 24, 36)),
+        # Keep the new late-family profile at the end of the shared mesh table
+        # so existing mesh indices remain stable in generated assets.
+        "DeepMembrane": mesh("DeepMembrane", add_organic_lobe(builder, (1.18, 0.62, 1.02), membrane, lobes=5, rings=16, sides=64, scallop_amplitude=0.18, leading_extension=0.42, fold_strength=1.68)),
     }
     # Thornback's crown is a broad territorial shield. Build its thicker
     # folded lobe only for that family so the other six assets remain stable
@@ -716,13 +719,13 @@ def build_family(name: str, spec: dict) -> None:
         add_node("MiremawHead", mesh_ids["Soft"], (0.0, 0.78, -1.18), scale=(1.3, 0.8, 1.2), extras={"socket_type": "maw"})
         add_node("MiremawHeadRidge0", mesh_ids["Ridge"], (-0.42, 1.15, -1.5), rotation=(0.0, -0.2, -0.12), scale=(0.62, 1.0, 0.72), extras={"surface": "head_ridge"})
         add_node("MiremawHeadRidge1", mesh_ids["Ridge"], (0.42, 1.15, -1.5), rotation=(0.0, 0.2, 0.12), scale=(0.62, 1.0, 0.72), extras={"surface": "head_ridge"})
-        add_node("MiremawGillFan", mesh_ids["Membrane"], (0.0, 1.25, 0.35), rotation=(0.0, 0.0, 1.5708), scale=(0.72, 1.0, 0.78), extras={"socket_type": "gill_fan"})
+        add_node("MiremawGillFan", mesh_ids["DeepMembrane"], (0.0, 1.25, 0.35), rotation=(0.0, 0.0, 1.5708), scale=(0.72, 1.0, 0.78), extras={"socket_type": "gill_fan"})
         for side in (-1.0, 1.0):
             suffix = "L" if side < 0 else "R"
             add_node(f"MiremawJawHook{suffix}", mesh_ids["LongBone"], (side * 0.42, 0.55, -1.62), rotation=(side * 0.72, 0.0, side * 0.18), extras={"socket_type": "jaw_hook"})
             add_node(f"MiremawJawPlate{suffix}", mesh_ids["PlateCap"], (side * 0.44, 0.68, -1.42), rotation=(side * 0.36, 0.0, side * 0.12), scale=(0.82, 1.0, 0.76), extras={"surface": "jaw_plate"})
             fin_pitch = 0.20
-            add_node(f"MiremawWaterFin{suffix}", mesh_ids["Membrane"], (side * 1.08, 0.68, 0.18), rotation=(side * fin_pitch, side * 0.28, side * 0.08), scale=(0.62, 0.84, 1.1), extras={"socket_type": "water_fin"})
+            add_node(f"MiremawWaterFin{suffix}", mesh_ids["DeepMembrane"], (side * 1.08, 0.68, 0.18), rotation=(side * fin_pitch, side * 0.28, side * 0.08), scale=(0.62, 0.84, 1.1), extras={"socket_type": "water_fin"})
             add_node(f"MiremawGillSpine{suffix}", mesh_ids["GillSpine"], (side * 0.62, 1.30, 0.38), rotation=(0.0, side * 0.28, side * 0.22), scale=(0.78, 1.0, 0.82), extras={"surface": "gill_spine"})
             add_node(f"MiremawFinRay{suffix}", mesh_ids["MembraneRib"], (side * 1.18, 0.72, 0.18), rotation=(side * (fin_pitch + 0.04), side * 0.3, side * 0.28), scale=(0.62, 1.0, 0.9), extras={"surface": "water_fin_ray"})
             add_node(f"MiremawGillRidge{suffix}", mesh_ids["Ridge"], (side * 0.48, 1.28, 0.38), rotation=(0.0, side * 0.22, side * 0.08), scale=(0.72, 1.0, 0.62), extras={"surface": "gill_ridge"})
@@ -750,7 +753,7 @@ def build_family(name: str, spec: dict) -> None:
         add_node("RootweaverCrownPlate0", mesh_ids["RootweaverCrownLobe"], (-0.36, 1.92, -0.44), rotation=(0.0, -0.22, -0.08), scale=(0.72, 1.0, 0.84), extras={"surface": "crown_plate"})
         add_node("RootweaverCrownPlate1", mesh_ids["RootweaverCrownLobe"], (0.36, 1.92, -0.44), rotation=(0.0, 0.22, 0.08), scale=(0.72, 1.0, 0.84), extras={"surface": "crown_plate"})
         fan_pitch = 0.24
-        add_node("RootweaverSporeFan", mesh_ids["Membrane"], (0.0, 1.76, 0.24), rotation=(fan_pitch, 0.0, 1.5708), scale=(1.0, 1.0, 1.24), extras={"socket_type": "spore_fan"})
+        add_node("RootweaverSporeFan", mesh_ids["DeepMembrane"], (0.0, 1.76, 0.24), rotation=(fan_pitch, 0.0, 1.5708), scale=(1.0, 1.0, 1.24), extras={"socket_type": "spore_fan"})
         add_node("RootweaverSporeRib0", mesh_ids["MembraneRib"], (-0.38, 1.76, 0.24), rotation=(fan_pitch, -0.18, -0.46), scale=(0.78, 1.0, 0.84), extras={"surface": "spore_fan_rib"})
         add_node("RootweaverSporeRib1", mesh_ids["MembraneRib"], (0.38, 1.76, 0.24), rotation=(fan_pitch, 0.18, 0.46), scale=(0.78, 1.0, 0.84), extras={"surface": "spore_fan_rib"})
         for side in (-1.0, 1.0):
