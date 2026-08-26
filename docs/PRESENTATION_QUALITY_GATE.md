@@ -1592,6 +1592,16 @@ Heartforge-progression frame. The updated frame was live-reviewed with
 Godot's dummy audio driver and `--quiet-audio`; no live speakers are required
 for this review.
 
+# Focused organic surface-finish pass — 2026-08-26
+
+Authored organic chitin and membrane shells now receive a restrained
+normal-relief-compatible rim and clearcoat finish. The pass is presentation
+only: family tint, anatomy sockets, collision, animation, ecology and combat
+ownership are unchanged. Close review frames should now show wet shell and
+living membrane highlight rolloff instead of broad flat colour blocks; the
+finish is capped below the Heartforge and danger-signal focal hierarchy.
+Formal human acceptance of the full organic library remains open.
+
 # Focused Heartforge service-surface pass — 2026-08-26
 
 The authored Heartforge fabrication bench, assembly plate, perimeter ribs and

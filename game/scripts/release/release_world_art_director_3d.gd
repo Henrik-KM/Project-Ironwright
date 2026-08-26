@@ -256,6 +256,7 @@ func _texture_mesh(mesh_instance: MeshInstance3D) -> void:
                 material.normal_enabled = false
                 material.normal_texture = null
             material.albedo_color = _organic_detail_tint(mesh_instance, authored_tint, category)
+            _tune_organic_surface_finish(material, category, detail_name)
     mesh_instance.material_override = material
     mesh_instance.visibility_range_end = 250.0
     mesh_instance.set_meta(&"release_material_family", category)
@@ -349,6 +350,23 @@ func _organic_detail_tint(mesh_instance: MeshInstance3D, family_tint: Color, cat
     if _contains_any(detail_name, ["eye", "oculus", "resonator", "siphon", "tendon", "tiervascular", "tiersignal"]):
         return family_tint.lightened(0.22)
     return family_tint.darkened(0.06)
+
+
+func _tune_organic_surface_finish(material: StandardMaterial3D, category: StringName, detail_name: String) -> void:
+    # The authored shells already carry dense geometry and normal relief. A
+    # restrained clearcoat/rim pass gives wet chitin and living membrane a
+    # continuous highlight rolloff, so the close review gallery reads as
+    # biological material instead of flat colour blocks. Keep the strengths
+    # deliberately low: the Heartforge and danger signals must remain the
+    # brightest focal accents in the tactical frame.
+    var membrane := category == &"membrane"
+    material.rim_enabled = true
+    material.rim = 0.075 if membrane else 0.105
+    material.rim_tint = 0.38 if membrane else 0.28
+    material.clearcoat_enabled = true
+    material.clearcoat = 0.055 if membrane else (0.12 if _contains_any(detail_name, ["torso", "core", "segment", "shell"]) else 0.08)
+    material.clearcoat_roughness = 0.46 if membrane else 0.34
+    material.set_meta(&"release_organic_surface_finish", "membrane_rim_clearcoat" if membrane else "chitin_rim_clearcoat")
 
 
 func _uv_scale(category: StringName) -> Vector3:
