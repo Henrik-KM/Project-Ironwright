@@ -812,6 +812,23 @@ def validate_early_organic_materials() -> None:
             fail(f"{family} structural shell material is too dark for compact tactical review.")
 
 
+def validate_sporecaster_gill_finish() -> None:
+    source_path = ROOT / "game/assets/sporecaster/source/build_sporecaster_asset.py"
+    source_text = source_path.read_text(encoding="utf-8")
+    if "rounded, scalloped vertical gill" not in source_text or "math.cos(5.0 * angle)" not in source_text:
+        fail("sporecaster source builder must retain a scalloped living edge on its close-camera gills.")
+    gltf_path = ROOT / "game/assets/sporecaster/sporecaster.gltf"
+    gltf = json.loads(gltf_path.read_text(encoding="utf-8"))
+    gill = next((mesh for mesh in gltf.get("meshes", []) if mesh.get("name") == "Gill"), None)
+    if not gill or not gill.get("primitives"):
+        fail("sporecaster glTF is missing the authored Gill mesh required for close-camera review.")
+    position_index = gill["primitives"][0].get("attributes", {}).get("POSITION")
+    accessors = gltf.get("accessors", [])
+    vertex_count = int(accessors[position_index].get("count", 0)) if isinstance(position_index, int) and position_index < len(accessors) else 0
+    if vertex_count < 600:
+        fail(f"sporecaster Gill mesh must retain dense authored geometry: {vertex_count} POSITION vertices < 600.")
+
+
 def validate_authored_robot_assets() -> None:
     for family, expected_clips in FRIENDLY_ROBOT_FAMILIES.items():
         manifest_path = ROOT / f"game/data/{family}_asset_manifest.json"
@@ -898,6 +915,7 @@ def main() -> int:
         validate_authored_robot_assets()
         validate_authored_organic_assets()
         validate_early_organic_materials()
+        validate_sporecaster_gill_finish()
         validate_authored_region_assets()
 
         main_scene = (ROOT / "game/scenes/main_3d.tscn").read_text(encoding="utf-8")

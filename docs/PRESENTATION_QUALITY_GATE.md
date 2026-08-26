@@ -1659,3 +1659,14 @@ mesh profile. Stable landmark sockets and operation ownership are unchanged.
 This pass is covered by aesthetic guards and must be confirmed in the exact
 silent Buried Laboratories review; broader human region and production-art
 acceptance remain open.
+
+# Focused Sporecaster gill-finish pass — 2026-08-26
+
+The authored Sporecaster gill mesh now carries a restrained five-lobed
+perimeter and denser rounded edge profile. The existing gill sockets, ribs,
+animation, collision, tier anatomy and combat ownership are unchanged. This
+presentation-only pass keeps the repeated membranes from reading as flat
+manufactured sheets in the early-organic review gallery and was live-reviewed
+through the exact release entrypoint with Godot's dummy audio driver and
+`--quiet-audio`; no live speakers were used. Formal human acceptance of the
+full organic library remains open.
