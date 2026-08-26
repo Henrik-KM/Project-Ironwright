@@ -1602,6 +1602,15 @@ living membrane highlight rolloff instead of broad flat colour blocks; the
 finish is capped below the Heartforge and danger-signal focal hierarchy.
 Formal human acceptance of the full organic library remains open.
 
+# Title-screen review capture — 2026-08-26
+
+The exact release entrypoint now exposes a development-only `--title-review`
+capture path for inspecting the first launch surface without saving or entering
+gameplay. It preserves the normal title-screen flow and uses the same silent
+dummy-audio review setup as the other presentation captures.
+English and German 1280×720 captures retain the centered title hierarchy,
+readable controls and subdued forge atmosphere.
+
 # Focused Heartforge service-surface pass — 2026-08-26
 
 The authored Heartforge fabrication bench, assembly plate, perimeter ribs and
