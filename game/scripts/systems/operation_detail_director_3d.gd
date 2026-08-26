@@ -145,11 +145,46 @@ func apply_reduced_salvage(assignments: Dictionary, home: Vector3) -> void:
 func _build_route_recovery_beacon() -> void:
     if route_recovery_beacon != null:
         return
+    var housing_material := ModelKit3D.material(Color("17282d"), 0.58, 0.42)
+    var edge_material := ModelKit3D.material(Color("29525a"), 0.42, 0.34, Color("4daeb0"), 0.72)
     route_recovery_material = ModelKit3D.material(Color("123d49"), 0.18, 0.3, Color("5ce0d1"), 4.2)
     route_recovery_beacon = Node3D.new()
     route_recovery_beacon.name = "AutonomousRouteRecoveryBeacon"
     route_recovery_beacon.visible = false
     add_child(route_recovery_beacon)
+    ModelKit3D.add_beveled_box(
+        route_recovery_beacon,
+        Vector3(2.75, 0.18, 2.75),
+        Vector3(0.0, 0.1, 0.0),
+        housing_material,
+        Vector3.ZERO,
+        "DetourBaseHousing",
+        0.22
+    )
+    var collar := MeshInstance3D.new()
+    collar.name = "DetourBaseCollar"
+    var collar_mesh := TorusMesh.new()
+    collar_mesh.inner_radius = 0.64
+    collar_mesh.outer_radius = 0.74
+    collar_mesh.rings = 16
+    collar_mesh.ring_segments = 28
+    collar.mesh = collar_mesh
+    collar.material_override = edge_material
+    collar.position = Vector3(0.0, 0.25, 0.0)
+    collar.rotation.x = PI * 0.5
+    collar.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+    route_recovery_beacon.add_child(collar)
+    for index in range(4):
+        var angle := TAU * float(index) / 4.0 + PI * 0.25
+        var direction_plate := ModelKit3D.add_beveled_box(
+            route_recovery_beacon,
+            Vector3(0.58, 0.08, 0.22),
+            Vector3(cos(angle) * 0.76, 0.27, sin(angle) * 0.76),
+            route_recovery_material,
+            Vector3(0.0, -angle, 0.0),
+            "DetourDirection%02d" % index,
+            0.1
+        )
     for index in range(8):
         var angle := TAU * float(index) / 8.0
         var segment := ModelKit3D.add_box(
@@ -172,6 +207,15 @@ func _build_route_recovery_beacon() -> void:
         "DetourStem"
     )
     stem.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+    ModelKit3D.add_beveled_box(
+        route_recovery_beacon,
+        Vector3(0.42, 0.12, 0.42),
+        Vector3(0.0, 0.31, 0.0),
+        edge_material,
+        Vector3.ZERO,
+        "DetourStemCollar",
+        0.12
+    )
     var crown := ModelKit3D.add_sphere(
         route_recovery_beacon,
         0.17,

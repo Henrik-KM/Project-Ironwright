@@ -391,6 +391,27 @@ func _start_route_memory_review() -> void:
     hud.push_notification(_localized_text("notification.complete.route_memory_review", "ROUTE MEMORY REVIEW · THE CLEAREST AUTHORED DETOUR IS PROPOSED"))
 
 
+func _start_route_recovery_marker_review() -> void:
+    if operation_detail_director == null:
+        return
+    # This development-only fixture isolates the autonomous presentation cue
+    # while the real route-recovery logic remains covered by the scenario tests.
+    # Pausing the operation director prevents its idle cleanup from removing the
+    # marker before the reviewer can inspect the grounded housing and arrows.
+    if long_operation_director != null:
+        long_operation_director.set_process(false)
+    operation_detail_director.show_route_recovery(
+        &"operation.detour",
+        Vector3(-2.0, 0.0, 9.0),
+        1,
+        3
+    )
+    var review_beacon := operation_detail_director.get_node_or_null("AutonomousRouteRecoveryBeacon") as Node3D
+    if review_beacon != null:
+        review_beacon.scale = Vector3.ONE * 1.2
+    hud.push_notification(_localized_text("notification.complete.route_recovery_marker_review", "ROUTE RECOVERY MARKER REVIEW · SILENT AUTONOMOUS DETOUR CUE"))
+
+
 func _start_casualty_recovery_review() -> void:
     if progression == null or region_director == null or long_operation_director == null or operations_hud == null:
         return

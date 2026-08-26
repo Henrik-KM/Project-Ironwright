@@ -105,6 +105,11 @@ func _run_all() -> void:
     _expect(bool(world.long_operation_director.active_operation.get("route_recovery_active", false)), "A route recovery must remain an explicit active formation decision until the side route is cleared.")
     var recovery_beacon := world.operation_detail_director.get_node_or_null("AutonomousRouteRecoveryBeacon") as Node3D
     _expect(recovery_beacon != null and recovery_beacon.visible, "An active route recovery must expose a physical autonomous-detour beacon in the world.")
+    if recovery_beacon != null:
+        _expect(recovery_beacon.find_child("DetourBaseHousing", true, false) != null and recovery_beacon.find_child("DetourBaseCollar", true, false) != null, "The autonomous detour beacon must have a grounded manufactured housing and collar rather than a floating marker.")
+        _expect(recovery_beacon.find_child("DetourDirection00", true, false) != null and recovery_beacon.find_child("DetourDirection03", true, false) != null, "The detour beacon must expose bounded directional plates so the learned side route reads in-world without route editing.")
+        var detour_base_core := recovery_beacon.find_child("DetourBaseHousingCore", true, false) as MeshInstance3D
+        _expect(detour_base_core != null and detour_base_core.mesh != null and detour_base_core.mesh.get_surface_count() > 0, "The detour beacon housing must use authored beveled geometry for readable close-range presentation.")
     var recovery_target: Vector3 = world.long_operation_director.active_operation.get("route_recovery_target", Vector3.ZERO)
     _expect(recovery_beacon != null and recovery_beacon.global_position.distance_to(recovery_target) < 0.1, "The autonomous-detour beacon must sit on the real inserted recovery waypoint.")
     var learned_west_route: Variant = world.long_operation_director.route_memory.get("region.west_grid", {})

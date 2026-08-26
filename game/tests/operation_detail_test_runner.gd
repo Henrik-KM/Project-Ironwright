@@ -24,6 +24,14 @@ func _run_all() -> void:
     _expect(director.update_operation(&"operation.test", Vector3(60.0, 0.0, 0.0)) == &"active", "Returning the camera within the active radius must restore active detail.")
     director.clear_operation(&"operation.test")
     _expect(director.mode_for(&"operation.test") == &"active", "Clearing an operation must remove its transient detail mode.")
+    director.show_route_recovery(&"operation.test", Vector3(4.0, 0.0, 6.0), 1, 3)
+    var recovery_beacon := director.get_node_or_null("AutonomousRouteRecoveryBeacon") as Node3D
+    _expect(recovery_beacon != null and recovery_beacon.visible, "Route recovery detail must expose a visible in-world detour beacon.")
+    if recovery_beacon != null:
+        _expect(recovery_beacon.find_child("DetourBaseHousing", true, false) != null and recovery_beacon.find_child("DetourBaseCollar", true, false) != null, "Route recovery detail must ground the detour marker in a manufactured housing.")
+        _expect(recovery_beacon.find_child("DetourDirection00", true, false) != null and recovery_beacon.find_child("DetourDirection03", true, false) != null, "Route recovery detail must expose bounded directional plates for the autonomous side route.")
+    director.clear_route_recovery()
+    _expect(not director.is_route_recovery_visible(), "Clearing route recovery detail must remove the transient detour beacon.")
 
     if failures.is_empty():
         print("Project Ironwright operation-detail tests passed.")

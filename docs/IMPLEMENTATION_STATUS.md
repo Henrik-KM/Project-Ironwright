@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused autonomous route-recovery marker pass
+
+- rebuilt the transient route-recovery beacon with a grounded manufactured
+  housing, collar, directional plates, stem collar, ring, crown and label so a
+  learned side route reads as a physical in-world machine cue;
+- preserved the existing route-memory, waypoint, save/load and autonomous
+  detour behaviour; the new geometry is presentation-only and adds no route
+  editing or recurring player chore;
+- added complete-game and operation-detail coverage for the grounded marker
+  parts, plus a silent development-only live-review fixture.
+
 ## Focused adaptive Heartforge construction-preview pass
 
 - added a faint non-interactive perimeter footprint when the architect raises
