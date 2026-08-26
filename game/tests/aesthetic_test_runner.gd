@@ -477,6 +477,9 @@ func _run_all() -> void:
                 var archive_collar := landmark.find_child("ArchiveBeaconCollar", true, false) as Node3D
                 var archive_tendril := landmark.find_child("ArchiveOrganicTendril0_0", true, false) as Node3D
                 _expect(archive_beacon != null and archive_creep != null and archive_collar != null and archive_tendril != null, "North Ruins must expose named beacon, collar, creep and tendril motion sockets.")
+                var archive_paper := landmark.find_child("ArchivePaperStack0_0", true, false) as MeshInstance3D
+                var archive_brace := landmark.find_child("ArchiveBeaconBraceL", true, false) as MeshInstance3D
+                _expect(archive_paper != null and _mesh_vertex_count(archive_paper) >= 48 and archive_brace != null and _mesh_vertex_count(archive_brace) >= 48, "North Ruins archive stacks and beacon braces must retain chamfered high-definition prop geometry.")
                 if archive_beacon != null and archive_creep != null and archive_collar != null and archive_tendril != null:
                     landmark.set_presentation_detail_level(0)
                     var beacon_before := archive_beacon.scale

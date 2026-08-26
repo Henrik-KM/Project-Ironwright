@@ -2,6 +2,12 @@
 
 **Status:** Canonical pre-alpha production constraint
 
+North Ruins received a focused archive-prop pass on 2026-08-26. The authored
+record stacks, survey marker and beacon braces now use the shared chamfered
+high-definition mesh profile around the civic facade and vault hardware. The
+exact silent 1280x720 page 4/15 remote review remains required; broader human
+North Ruins, region and production-art acceptance remains open.
+
 The Cistern Apex received a focused attack-surface pass on 2026-08-26. Its jaw
 plates, thorax ribs and jaw latches now use the shared chamfered high-definition
 mesh profile around the existing wet shell, crown and membrane anatomy. The
