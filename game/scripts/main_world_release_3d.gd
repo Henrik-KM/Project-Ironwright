@@ -1433,7 +1433,10 @@ func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3
 	if region_id == &"region.flood_market":
 		return Vector3(8.5, 9.4, 15.4)
 	if region_id == &"region.cathedral_quarter":
-		return Vector3(0.0, 10.5, 17.0)
+		# Bring the nave and rose into the same readable plane as the brood
+		# hardware. This is a development-review composition change only; the
+		# tactical camera and authored landmark placement remain untouched.
+		return Vector3(0.0, 9.7, 16.1)
 	if region_id == &"region.observatory_ridge":
 		# The authored dish is vertically dominant; give the review camera enough
 		# distance to keep the dish, mast, service ring and platform in one frame.

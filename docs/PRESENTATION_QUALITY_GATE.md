@@ -7,6 +7,14 @@ live speakers.
 
 **Status:** Canonical pre-alpha production constraint
 
+Cathedral Quarter received a focused review-composition pass on 2026-08-26.
+The development-only camera is now closer and lower so the civic nave, rose
+window, choir crown and brood hardware read as one hierarchy without changing
+runtime camera behaviour, landmark placement, collision, navigation, ecology or
+save state. Exact silent 1280x720 page 11/15 review passed locally with dummy
+audio only; broader human Cathedral, region and production-art acceptance
+remains open.
+
 Authored-region streaming received a focused presentation pass on 2026-08-26.
 The region director now uses a bounded hysteretic camera-focus ring: far
 authored dressing is released from the active presentation set while persistent

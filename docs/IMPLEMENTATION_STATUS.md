@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Cathedral review-composition pass
+
+- tightened the development-only Cathedral Quarter camera so the authored nave,
+  rose window, choir crown and brood hardware read together instead of
+  collapsing into a distant dark centre;
+- kept the change inside the exact presentation fixture: runtime camera,
+  landmark placement, collision, navigation, ecology and save state are
+  unchanged;
+- live-reviewed the exact 1280x720 Cathedral page with dummy audio only and
+  added a release guard for the focused camera bounds.
+
 ## Focused late-organic morphology pass
 
 - deepened the shared folded membrane profile and gave late gill, spore and
