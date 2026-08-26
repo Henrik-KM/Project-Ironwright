@@ -1700,3 +1700,14 @@ and leave the generic city and sanctuary beds as continuity layers. This adds
 district identity without a new player setting, recurring task or simulation
 state. Validation uses the release regression and Godot's Dummy audio driver;
 no live speakers are used.
+
+# Focused Mechromancer field-finish pass — 2026-08-26
+
+The Mechromancer presentation layer now carries a restrained hood rim, visor
+housing, paired work gloves and grounded coat-hem hardware. The additional
+material breaks make the vulnerable human field engineer read continuously
+from head to hand to boot at tactical distance while retaining the worn,
+asymmetric silhouette. The pass is presentation-only: authored animation,
+pistol and interaction sockets, collision, progression hardware and gameplay
+state remain unchanged. Exact silent exported opening and roster review is
+required; formal human production-art acceptance remains open.

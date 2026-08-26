@@ -4822,3 +4822,14 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   guarded cue after deferred audio startup, making the exact exported review
   visibly exercise the progression caption without changing normal gameplay.
 - 2026-08-25: Added a bounded folded-cloth release pass to the nine Flood Market secondary stall roofs. Each roof now uses deterministic sagged panels, edge hems, support ribs, tie hardware and restrained material variation while preserving the existing authored landmark, water, route, collision and operation contracts. Exact silent page 8/14 review remains required.
+
+## Focused Mechromancer field-finish milestone
+
+- added a restrained hood rim, visor housing, paired work gloves and grounded
+  coat-hem hardware to the presentation-only actor detail layer so the human
+  field engineer reads with a continuous head-to-hand-to-boot material break
+  at tactical distance;
+- preserved the authored skeleton, animation clips, pistol and interaction
+  sockets, collision capsule, progression attachments and all gameplay state;
+- added aesthetic and release regression coverage for the new named hardware;
+  exact exported live review remains required for broader human acceptance.
