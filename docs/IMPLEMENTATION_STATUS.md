@@ -14,6 +14,9 @@
   focus-driven package instancing and release. Distant landmarks retain their
   collision, discovery state, persistent dressing, story witness and coarse
   proxy while only the imported high-detail scene nodes leave the active tree;
+- extended the same focus-driven residency boundary to the release-only
+  encounter dressing, rebuilding it when a district returns to the ring while
+  leaving all region simulation, collision and save state untouched;
 - extended the aesthetic guard to verify package child release, re-instancing,
   streamed-out proxy continuity and authored-detail restoration after entering
   the region. The pass adds no player-managed streaming task or new run-state

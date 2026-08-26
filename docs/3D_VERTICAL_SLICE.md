@@ -89,9 +89,10 @@ The current production pass adds a bounded camera-focus stream ring for
 authored region dressing and keeps distant districts on persistent landmarks
 and coarse regional proxies. Remote-operation follow uses the same focus, so
 the observed district can restore its authored presentation as the camera
-arrives. Imported authored package nodes are now instantiated on focus and
-released when the district leaves the ring; Godot resource loading remains
-synchronous and resource-cache/package-budget work is still outstanding. The
+arrives. Imported authored package nodes and release-only encounter dressing
+are now instantiated on focus and released when the district leaves the ring;
+Godot resource loading remains synchronous and resource-cache/package-budget
+work is still outstanding. The
 remaining production gate is larger-scale reduced-detail simulation for actors
 and encounter dressing.
 

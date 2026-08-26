@@ -164,17 +164,24 @@ func _connect_region_lod() -> void:
     if world == null or not is_instance_valid(world):
         return
     var region_lod := world.get_node_or_null("RegionPresentationLodDirector")
-    if region_lod == null or not region_lod.has_signal(&"detail_changed"):
+    if region_lod == null:
         return
-    var callback := Callable(self, "_on_region_detail_changed")
-    if not region_lod.is_connected(&"detail_changed", callback):
-        region_lod.connect(&"detail_changed", callback)
+    if region_lod.has_signal(&"detail_changed"):
+        var detail_callback := Callable(self, "_on_region_detail_changed")
+        if not region_lod.is_connected(&"detail_changed", detail_callback):
+            region_lod.connect(&"detail_changed", detail_callback)
+    if region_lod.has_signal(&"region_stream_changed"):
+        var stream_callback := Callable(self, "_on_region_stream_changed")
+        if not region_lod.is_connected(&"region_stream_changed", stream_callback):
+            region_lod.connect(&"region_stream_changed", stream_callback)
     for raw_region_id in region_dressing_roots:
         var region_id := raw_region_id as StringName
         var detail_level := 0
         if region_lod.has_method(&"detail_mode_for"):
             detail_level = int(region_lod.call(&"detail_mode_for", region_id))
         _on_region_detail_changed(region_id, detail_level)
+        if region_lod.has_method(&"is_region_streamed"):
+            _on_region_stream_changed(region_id, bool(region_lod.call(&"is_region_streamed", region_id)))
 
 
 func _on_region_detail_changed(region_id: StringName, detail_level: int) -> void:
@@ -185,6 +192,37 @@ func _on_region_detail_changed(region_id: StringName, detail_level: int) -> void
     # dressing is the close-range authored layer, so it must disappear outside
     # the full-detail radius instead of silently keeping every remote mesh live.
     root.visible = detail_level <= 0
+
+
+func _on_region_stream_changed(region_id: StringName, streamed_in: bool) -> void:
+    var root := region_dressing_roots.get(region_id) as Node3D
+    if root == null or not is_instance_valid(root):
+        return
+    if streamed_in:
+        if root.get_child_count() == 0:
+            _rebuild_region_dressing(region_id, root)
+        return
+    # The landmark keeps its gameplay state and coarse proxy. Only the
+    # release-only close dressing is removed from the active scene tree.
+    for child in root.get_children():
+        child.free()
+
+
+func _rebuild_region_dressing(region_id: StringName, root: Node3D) -> void:
+    var data := region_director.get_region_data(region_id)
+    if data.is_empty():
+        return
+    var kind := StringName(str(data.get("kind", "urban")))
+    _dress_region_contents(kind, root)
+
+
+func ensure_region_dressing(region_id: StringName) -> Node3D:
+    var root := region_dressing_roots.get(region_id) as Node3D
+    if root == null or not is_instance_valid(root):
+        return null
+    if root.get_child_count() == 0:
+        _rebuild_region_dressing(region_id, root)
+    return root
 
 
 func region_dressing_root(region_id: StringName) -> Node3D:
@@ -458,6 +496,11 @@ func _dress_region(region_id: StringName) -> void:
     var kind := StringName(str(data.get("kind", "urban")))
     var root := _region_root("Release_%s" % String(region_id).replace("region.", "").to_pascal_case(), center)
     region_dressing_roots[region_id] = root
+    _dress_region_contents(kind, root)
+    regions_dressed += 1
+
+
+func _dress_region_contents(kind: StringName, root: Node3D) -> void:
     match kind:
         &"industrial":
             _dress_industrial(root)
@@ -481,7 +524,6 @@ func _dress_region(region_id: StringName) -> void:
             _dress_cistern(root)
         _:
             _dress_archive(root)
-    regions_dressed += 1
 
 
 func _region_root(node_name: String, position: Vector3) -> Node3D:
