@@ -74,6 +74,8 @@ var endgame_protocol_review_capture_path: String = ""
 var endgame_protocol_review_capture_frames: int = 0
 var heartforge_progression_review_capture_path: String = ""
 var heartforge_progression_review_capture_frames: int = 0
+var title_review_capture_path: String = ""
+var title_review_capture_frames: int = 0
 
 
 func _ready() -> void:
@@ -101,6 +103,16 @@ func _process(delta: float) -> void:
 				presentation_review_capture_path = ""
 		return
 	super._process(delta)
+	if not title_review_capture_path.is_empty():
+		title_review_capture_frames += 1
+		if title_review_capture_frames == 45:
+			var review_image := get_viewport().get_texture().get_image()
+			var capture_error := review_image.save_png(title_review_capture_path)
+			if capture_error == OK:
+				print("Title review screenshot written to %s" % title_review_capture_path)
+			else:
+				push_error("Title review screenshot failed: %s" % capture_error)
+			title_review_capture_path = ""
 	if map_mode != _last_map_label_mode:
 		_last_map_label_mode = map_mode
 		_set_region_map_emphasis(map_mode)
@@ -633,6 +645,11 @@ func _finish_release_boot() -> void:
 	elif _has_casualty_recovery_review_flag():
 		_start_release_world()
 		call_deferred("_start_casualty_recovery_review")
+	elif _has_title_review_flag():
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		title_review_capture_path = _title_review_capture_argument()
+		title_review_capture_frames = 0
+		_show_title_screen()
 	elif mode == &"new":
 		_start_release_world()
 	elif mode == &"continue":
@@ -660,6 +677,28 @@ func _has_presentation_review_flag() -> bool:
 		if str(argument) == "--presentation-review":
 			return true
 	return false
+
+
+func _has_title_review_flag() -> bool:
+	for argument in OS.get_cmdline_args():
+		if str(argument) == "--title-review":
+			return true
+	for argument in OS.get_cmdline_user_args():
+		if str(argument) == "--title-review":
+			return true
+	return false
+
+
+func _title_review_capture_argument() -> String:
+	var arguments: Array = OS.get_cmdline_args()
+	arguments.append_array(OS.get_cmdline_user_args())
+	for index in arguments.size():
+		var argument := str(arguments[index])
+		if argument.begins_with("--title-review-screenshot="):
+			return argument.get_slice("=", 1)
+		if argument == "--title-review-screenshot" and index + 1 < arguments.size():
+			return str(arguments[index + 1])
+	return ""
 
 
 func _presentation_review_start_page() -> int:
