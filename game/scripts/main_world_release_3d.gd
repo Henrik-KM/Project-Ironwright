@@ -542,6 +542,7 @@ func _setup_release_services() -> void:
 	release_audio.process_mode = Node.PROCESS_MODE_ALWAYS
 	release_audio.configure(player, heartforge, progression, strategic_ecology_director, endgame_director, localization_service, settings_service)
 	add_child(release_audio)
+	release_audio.register_region_atmosphere(region_atmosphere_director)
 
 	release_front_end = ReleaseFrontEnd3D.new()
 	release_front_end.name = "ReleaseFrontEnd"
