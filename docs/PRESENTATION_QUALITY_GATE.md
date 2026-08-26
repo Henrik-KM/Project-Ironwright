@@ -1581,6 +1581,17 @@ The presentation milestones proceed in this order:
 Breadth must not outrun quality again.
 
 See [`VERTICAL_SLICE_INTELLIGENCE.md`](VERTICAL_SLICE_INTELLIGENCE.md) for the concrete distributed-autonomy, ecology and opening-slice implementation contract.
+
+# Focused objective-beacon composition pass — 2026-08-26
+
+The opening world objective beacon now uses a shorter physical mast, compact
+signal crown and reduced light radius. The target, route dots, world-space
+label, interaction binding and guidance visibility settings are unchanged; the
+cue no longer becomes a screen-dominating vertical bar in the exact
+Heartforge-progression frame. The updated frame was live-reviewed with
+Godot's dummy audio driver and `--quiet-audio`; no live speakers are required
+for this review.
+
 # Focused Heartforge service-surface pass — 2026-08-26
 
 The authored Heartforge fabrication bench, assembly plate, perimeter ribs and

@@ -151,6 +151,7 @@ func _test_world_labels_are_not_screen_fixed() -> void:
     _expect(guidance.marker_label != null, "Objective guidance must build a world label.")
     _expect(not guidance.marker_label.fixed_size, "Objective guidance text must use physical world scale instead of giant fixed screen size.")
     _expect(guidance.marker_label.font_size <= 24, "Objective world labels must remain visually restrained.")
+    _expect(guidance.marker_label.position.y <= 3.0 and guidance.get_node("ObjectiveBeacon/BeaconCrown").position.y <= 2.5, "Objective guidance must keep its physical beacon compact enough to avoid becoming a screen-dominating vertical bar.")
     _expect(guidance.get_node_or_null("ObjectiveBeacon/BeaconStem") != null and guidance.get_node_or_null("ObjectiveBeacon/BeaconCrown") != null, "Opening objective guidance must retain a physical beacon mast and crown above local occlusion.")
     _expect(guidance.get_node_or_null("ObjectiveBeacon/BeaconSignalRing") != null, "Opening objective guidance must expose a bounded signal ring so the salvage target remains legible in the tactical composition.")
     guidance.free()
