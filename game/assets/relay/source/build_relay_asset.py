@@ -12,7 +12,7 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_box, add_cylinder, add_ellipsoid, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_ellipsoid, add_uv_sphere, quat  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "relay.gltf"
@@ -43,25 +43,25 @@ def main() -> None:
         # envelope while the mast and dish retain their distinct silhouette.
         "Chassis": mesh("Chassis", add_ellipsoid(builder, (0.61, 0.34, 0.71), chassis)),
         "Core": mesh("Core", add_ellipsoid(builder, (0.45, 0.14, 0.54), amber)),
-        "Face": mesh("Face", add_box(builder, (0.76, 0.28, 0.08), ceramic)),
-        "HeatSink": mesh("HeatSink", add_box(builder, (0.8, 0.3, 0.14), ceramic)),
+        "Face": mesh("Face", add_beveled_box(builder, (0.76, 0.28, 0.08), ceramic, 0.018)),
+        "HeatSink": mesh("HeatSink", add_beveled_box(builder, (0.8, 0.3, 0.14), ceramic, 0.028)),
         "Corner": mesh("Corner", add_cylinder(builder, 0.1, 0.14, ceramic, 20)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.095, 0.58, rubber, 20)),
-        "Foot": mesh("Foot", add_box(builder, (0.25, 0.12, 0.42), ceramic)),
-        "OpticHousing": mesh("OpticHousing", add_box(builder, (0.38, 0.2, 0.12), chassis)),
+        "Foot": mesh("Foot", add_beveled_box(builder, (0.25, 0.12, 0.42), ceramic, 0.028)),
+        "OpticHousing": mesh("OpticHousing", add_beveled_box(builder, (0.38, 0.2, 0.12), chassis, 0.022)),
         "Optic": mesh("Optic", add_uv_sphere(builder, 0.085, cyan)),
         "Mast": mesh("Mast", add_cylinder(builder, 0.07, 1.18, rubber, 20)),
         "Collar": mesh("Collar", add_cylinder(builder, 0.115, 0.08, amber, 20)),
         "Dish": mesh("Dish", add_cylinder(builder, 0.34, 0.12, ceramic, 24)),
         "DishRim": mesh("DishRim", add_cylinder(builder, 0.39, 0.04, cyan, 24)),
         "Beacon": mesh("Beacon", add_uv_sphere(builder, 0.095, cyan)),
-        "Brace": mesh("Brace", add_box(builder, (0.08, 0.12, 0.58), chassis)),
-        "Panel": mesh("Panel", add_box(builder, (0.24, 0.3, 0.08), cyan)),
+        "Brace": mesh("Brace", add_beveled_box(builder, (0.08, 0.12, 0.58), chassis, 0.018)),
+        "Panel": mesh("Panel", add_beveled_box(builder, (0.24, 0.3, 0.08), cyan, 0.018)),
         "Fastener": mesh("Fastener", add_cylinder(builder, 0.04, 0.04, amber, 20)),
-        "MastBraceDetail": mesh("MastBraceDetail", add_box(builder, (0.10, 0.14, 0.72), rubber)),
+        "MastBraceDetail": mesh("MastBraceDetail", add_beveled_box(builder, (0.10, 0.14, 0.72), rubber, 0.018)),
         "DishHub": mesh("DishHub", add_cylinder(builder, 0.14, 0.13, amber, 24)),
         "SignalCable": mesh("SignalCable", add_cylinder(builder, 0.035, 0.72, rubber, 24)),
-        "ServiceLatch": mesh("ServiceLatch", add_box(builder, (0.14, 0.08, 0.06), ceramic)),
+        "ServiceLatch": mesh("ServiceLatch", add_beveled_box(builder, (0.14, 0.08, 0.06), ceramic, 0.014)),
         "BeaconCap": mesh("BeaconCap", add_uv_sphere(builder, 0.12, cyan, rings=20, sides=32)),
     }
 
@@ -71,6 +71,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "relay.signal.v1",
             "asset_quality": "authored_high_definition",
+            "manufactured_surface_profile": "chamfered_high_definition",
             "socket_contract": "sensor, signal_mast, directional_dish, signal_beacon",
         },
     }]
@@ -205,6 +206,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "relay.signal.v1",
+            "manufactured_surface_profile": "chamfered_high_definition",
             "required_nodes": ["RelayModel", "Sensor", "OpticLens", "RelayMast", "RelayDirectionalDish", "RelayBeacon", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Work", "Fire", "Hit", "Retreat", "Death"],
         },

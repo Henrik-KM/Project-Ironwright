@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Signal Relay service-surface pass
+
+- rebuilt the authored Relay service face, heat sink, feet, optic housing,
+  braces, signal panels and service latch with the shared chamfered mesh
+  profile while preserving the rounded chassis, dish, beacon, animation clips
+  and stable sockets;
+- added aesthetic guards so the close-role machine presentation cannot regress
+  to flat six-face placeholder hardware.
+
 ## Focused Observatory service-surface pass
 
 - rebuilt the authored observatory control cabin, service deck, console,
