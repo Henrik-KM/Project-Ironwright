@@ -148,7 +148,7 @@ func _setup_complete_game_services() -> void:
     region_lod_director = REGION_LOD_SCRIPT.new() as RegionPresentationLodDirector3D
     region_lod_director.name = "RegionPresentationLodDirector"
     region_lod_director.process_mode = Node.PROCESS_MODE_ALWAYS
-    region_lod_director.configure(region_director, player)
+    region_lod_director.configure(region_director, player, Callable(self, "_release_focus_position"))
     add_child(region_lod_director)
 
     region_encounter_dressing_director = REGION_ENCOUNTER_SCRIPT.new() as RegionEncounterDressingDirector3D

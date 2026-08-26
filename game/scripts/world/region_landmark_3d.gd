@@ -28,6 +28,7 @@ const STORY_RECORD_BY_REGION: Dictionary = {
 }
 
 signal landmark_changed(landmark: RegionLandmark3D)
+signal streaming_changed(region_id: StringName, streamed_in: bool)
 
 var region_id: StringName = &"region.unknown"
 var display_name: String = "Unknown district"
@@ -46,6 +47,7 @@ var _nest_shell: Node3D
 var _elapsed: float = 0.0
 var _map_emphasis: bool = false
 var presentation_detail_level: int = 0
+var streamed_in: bool = true
 var _motion_nodes: Array[Node3D] = []
 var _motion_base_transforms: Dictionary = {}
 var _pressure_read_root: Node3D
@@ -104,10 +106,7 @@ func set_map_emphasis(value: bool) -> void:
 
 func set_presentation_detail_level(level: int) -> void:
     presentation_detail_level = clampi(level, 0, 2)
-    if _visual_root != null:
-        _visual_root.visible = presentation_detail_level < 2
-    if _reduced_proxy_root != null:
-        _reduced_proxy_root.visible = discovered and presentation_detail_level >= 2
+    _refresh_presentation_visibility()
     for practical_light in _practical_lights:
         if is_instance_valid(practical_light):
             practical_light.light_energy = 0.72 if presentation_detail_level == 0 else 0.38
@@ -120,6 +119,23 @@ func set_presentation_detail_level(level: int) -> void:
 func set_player_proximity(distance: float) -> void:
     if _nest_shell != null:
         _nest_shell.visible = not (region_kind == &"nest" and distance <= 12.0)
+
+
+func set_streamed_in(value: bool) -> void:
+    var next_value := value or region_kind == &"sanctuary"
+    if streamed_in == next_value:
+        _refresh_presentation_visibility()
+        return
+    streamed_in = next_value
+    _refresh_presentation_visibility()
+    streaming_changed.emit(region_id, streamed_in)
+
+
+func _refresh_presentation_visibility() -> void:
+    if _visual_root != null:
+        _visual_root.visible = streamed_in and presentation_detail_level < 2
+    if _reduced_proxy_root != null:
+        _reduced_proxy_root.visible = discovered and (not streamed_in or presentation_detail_level >= 2)
 
 
 func add_presentation_detail(node: Node3D) -> bool:
@@ -1317,8 +1333,7 @@ func _refresh_discovery() -> void:
     if _label != null:
         _label.visible = discovered and _map_emphasis
     _refresh_pressure_read()
-    if _reduced_proxy_root != null:
-        _reduced_proxy_root.visible = discovered and presentation_detail_level >= 2
+    _refresh_presentation_visibility()
 
 
 func _region_color() -> Color:

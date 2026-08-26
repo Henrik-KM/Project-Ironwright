@@ -76,6 +76,9 @@ var heartforge_progression_review_capture_path: String = ""
 var heartforge_progression_review_capture_frames: int = 0
 var title_review_capture_path: String = ""
 var title_review_capture_frames: int = 0
+var stream_ring_review_active: bool = false
+var stream_ring_review_clock: float = 0.0
+var stream_ring_review_phase: int = 0
 
 
 func _ready() -> void:
@@ -102,6 +105,8 @@ func _process(delta: float) -> void:
 					push_error("Presentation review screenshot failed: %s" % capture_error)
 				presentation_review_capture_path = ""
 		return
+	if stream_ring_review_active:
+		_update_stream_ring_review(delta)
 	super._process(delta)
 	if not title_review_capture_path.is_empty():
 		title_review_capture_frames += 1
@@ -651,6 +656,9 @@ func _finish_release_boot() -> void:
 	elif _has_presentation_review_flag():
 		_start_release_world()
 		call_deferred("_start_presentation_review")
+	elif _has_stream_ring_review_flag():
+		_start_release_world()
+		call_deferred("_start_stream_ring_review")
 	elif _has_route_memory_review_flag():
 		_start_release_world()
 		call_deferred("_start_route_memory_review")
@@ -696,6 +704,16 @@ func _has_presentation_review_flag() -> bool:
 			return true
 	for argument in OS.get_cmdline_user_args():
 		if str(argument) == "--presentation-review":
+			return true
+	return false
+
+
+func _has_stream_ring_review_flag() -> bool:
+	for argument in OS.get_cmdline_args():
+		if str(argument) == "--stream-ring-review":
+			return true
+	for argument in OS.get_cmdline_user_args():
+		if str(argument) == "--stream-ring-review":
 			return true
 	return false
 
@@ -992,6 +1010,52 @@ func _start_presentation_review() -> void:
 	_show_presentation_review_page(_presentation_review_start_page())
 	get_tree().paused = true
 	run_state.log_event("Presentation review mode: 1 friendly roster, 2 early organics, 3 late organics, 4-14 all remote regions, 15 autonomous outpost roles. Arrow keys browse; Escape exits review.")
+
+
+func _start_stream_ring_review() -> void:
+	# This is a development-only camera-focus fixture. It moves the actual
+	# player between two authored regions so the renderer can be checked without
+	# manual travel or any live audio output.
+	stream_ring_review_active = true
+	stream_ring_review_clock = 0.0
+	stream_ring_review_phase = 0
+	if region_director != null:
+		region_director.discover_region(&"region.west_grid")
+		region_director.discover_region(&"region.root_cistern")
+	if player != null:
+		player.input_enabled = false
+		player.global_position = Vector3(-92.0, 0.0, 18.0)
+	if region_atmosphere_director != null:
+		region_atmosphere_director.refresh_now()
+	if region_lod_director != null:
+		region_lod_director.refresh_now()
+	if hud != null:
+		hud.push_notification("STREAM RING REVIEW · WEST GRID FOCUS · ROOT CISTERN IS COARSE/STREAMED OUT")
+	run_state.log_event("Stream-ring review started: West Grid focus, then Root Cistern focus, then West Grid return. No save or player input is enabled.")
+
+
+func _update_stream_ring_review(delta: float) -> void:
+	stream_ring_review_clock += delta
+	if stream_ring_review_phase == 0 and stream_ring_review_clock >= 10.0:
+		stream_ring_review_phase = 1
+		if player != null and region_director != null:
+			player.global_position = region_director.center(&"region.root_cistern")
+		if region_atmosphere_director != null:
+			region_atmosphere_director.refresh_now()
+		if region_lod_director != null:
+			region_lod_director.refresh_now()
+		if hud != null:
+			hud.push_notification("STREAM RING REVIEW · ROOT CISTERN FOCUS · AUTHORED REGION RESTORED")
+	elif stream_ring_review_phase == 1 and stream_ring_review_clock >= 20.0:
+		stream_ring_review_phase = 2
+		if player != null:
+			player.global_position = Vector3(-92.0, 0.0, 18.0)
+		if region_atmosphere_director != null:
+			region_atmosphere_director.refresh_now()
+		if region_lod_director != null:
+			region_lod_director.refresh_now()
+		if hud != null:
+			hud.push_notification("STREAM RING REVIEW · WEST GRID RETURN · ROOT CISTERN PROXY RETAINED")
 
 
 func _start_mechromancer_evolution_review() -> void:
