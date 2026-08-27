@@ -24,6 +24,13 @@ endgame hierarchy. Both reviews used Godot Dummy audio and quiet mode only;
 broader human hostile-family, Root Cistern, region and production-art
 acceptance remains open.
 
+Flood Market and Riverworks also received a focused remote-region spot review
+on 2026-08-27. Exact silent 1280x720 pages 8/15 and 9/15 confirm that the
+market canopy/exchange and the waterworks channels/pump focal remain legible
+as distinct regional identities at the authored approach distance. Both
+reviews used Godot Dummy audio and quiet mode only; broader human region and
+production-art acceptance remains open.
+
 Authored-region streaming received a focused presentation pass on 2026-08-26.
 The region director now uses a bounded hysteretic camera-focus ring: far
 authored dressing is released from the active presentation set while persistent
