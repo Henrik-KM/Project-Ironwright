@@ -30,6 +30,10 @@
     "FieldPack",
     "ChestShell",
     "ChestArmorPlate",
+    "FieldCommsYoke",
+    "FieldCommsAntenna",
+    "FieldCommsBeacon",
+    "FieldCommsCable",
     "CoatTailLeft",
     "CoatTailRight"
   ],

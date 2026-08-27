@@ -1,5 +1,18 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Mechromancer communications-yoke pass — 2026-08-28
+
+The canonical Blender Mechromancer now carries a restrained right-shoulder
+communications yoke with a short antenna, warm beacon and service cable. The
+asymmetric field equipment gives the player silhouette a practical signal
+hardware break at close tactical distance without competing with the face,
+lamp or pack. The addition is presentation-only: existing sockets, collision,
+animation ownership, weapon behavior, progression visuals, save state and
+player workload remain unchanged. Idle, Walk, Work, Upgrade and Fire retain
+bounded antenna motion in the authored export. Exact 1280x720 page 1/15 live
+review passed with Godot Dummy audio and `--quiet-audio`; no live speakers were
+used. Broader human Mechromancer and production-art acceptance remains open.
+
 ## Focused Ashmantle siphon-detail pass — 2026-08-27
 
 The authored Ashmantle now carries a high-definition collar and paired hot
