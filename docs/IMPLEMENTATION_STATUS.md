@@ -5336,3 +5336,12 @@ jaw plates. This is a presentation-only refinement: the maw, jaw-hook and
 jaw-plate sockets, animation ownership, collision, tier, ecology and combat
 behaviour remain unchanged. The pass is guarded by the aesthetic asset and
 roster checks and requires silent late-organic live review before merge.
+## Focused Warden targeting-detail pass
+
+- added a high-definition targeting bezel and paired optic apertures to the
+  authored guardian shell, strengthening the Warden's maintained protective
+  face at tactical distance;
+- kept the additions presentation-only, preserving existing sockets,
+  animation, collision, combat, autonomy, LOD and save ownership;
+- added manifest and close-camera mesh regression coverage; the exact silent
+  friendly-roster gallery review is required before merge.

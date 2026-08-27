@@ -72,6 +72,7 @@ def main() -> None:
         # rather than a single barrel laid over a box chassis.
         "TargetingFace": mesh("TargetingFace", add_beveled_box(builder, (0.88, 0.16, 0.08), steel, 0.02)),
         "OpticShroud": mesh("OpticShroud", add_beveled_box(builder, (0.72, 0.16, 0.18), oxide, 0.03)),
+        "TargetingBezel": mesh("TargetingBezel", add_beveled_box(builder, (0.98, 0.08, 0.06), steel, 0.018)),
         "RecoilCollar": mesh("RecoilCollar", add_cylinder(builder, 0.14, 0.08, cyan, 24)),
         "ThermalFin": mesh("ThermalFin", add_box(builder, (0.09, 0.34, 0.42), steel)),
         "BreechClamp": mesh("BreechClamp", add_cylinder(builder, 0.17, 0.08, warm, 24)),
@@ -96,6 +97,7 @@ def main() -> None:
         mesh_id: int | None = None,
         translation: Sequence[float] = (0.0, 0.0, 0.0),
         rotation: Sequence[float] = (0.0, 0.0, 0.0),
+        scale: Sequence[float] = (1.0, 1.0, 1.0),
         extras: dict | None = None,
         parent: int = 0,
     ) -> int:
@@ -104,6 +106,8 @@ def main() -> None:
             entry["mesh"] = mesh_id
         if rotation != (0.0, 0.0, 0.0):
             entry["rotation"] = quat(rotation)
+        if scale != (1.0, 1.0, 1.0):
+            entry["scale"] = list(scale)
         if extras:
             entry["extras"] = extras
         nodes.append(entry)
@@ -127,6 +131,9 @@ def main() -> None:
     add_node("OpticLens", mesh_ids["Optic"], (0.0, 1.18, -1.13), extras={"socket_type": "optic"})
     add_node("WardenTargetingFace", mesh_ids["TargetingFace"], (0.0, 1.2, -1.16))
     add_node("WardenOpticShroud", mesh_ids["OpticShroud"], (0.0, 1.2, -1.19))
+    add_node("WardenTargetingBezel", mesh_ids["TargetingBezel"], (0.0, 1.2, -1.23))
+    for side in (-1.0, 1.0):
+        add_node("WardenTargetingAperture%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["Optic"], (side * 0.28, 1.2, -1.26), scale=(0.58, 0.58, 0.58), extras={"socket_type": "targeting_aperture"})
     add_node("WardenBreech", mesh_ids["Breech"], (0.0, 1.48, -0.58))
     add_node("WardenBreechClamp", mesh_ids["BreechClamp"], (0.0, 1.72, -0.72), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("WardenAutocannon", mesh_ids["Cannon"], (0.0, 1.48, -1.18), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "weapon_mount"})
@@ -225,7 +232,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "warden.guardian.v1",
-            "required_nodes": ["WardenModel", "Sensor", "OpticLens", "WardenAutocannon", "WeaponMuzzle", "WardenHeatExchanger", "WardenTargetingFace", "WardenOpticShroud", "WardenShoulderGuard", "WardenWeaponRail", "WardenRecoilCollarLeft", "WardenThermalFinRight", "WardenBreechClamp", "ProductionAssetMarker"],
+            "required_nodes": ["WardenModel", "Sensor", "OpticLens", "WardenAutocannon", "WeaponMuzzle", "WardenHeatExchanger", "WardenTargetingFace", "WardenOpticShroud", "WardenTargetingBezel", "WardenTargetingApertureLeft", "WardenShoulderGuard", "WardenWeaponRail", "WardenRecoilCollarLeft", "WardenThermalFinRight", "WardenBreechClamp", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Fire", "Hit", "Retreat", "Death"],
         },
     }
