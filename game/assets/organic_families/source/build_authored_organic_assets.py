@@ -69,7 +69,7 @@ FAMILIES = {
         "colors": ([0.055, 0.045, 0.035, 1.0], [0.30, 0.19, 0.10, 1.0], [0.36, 0.12, 0.08, 1.0], [0.57, 0.46, 0.30, 1.0], [0.92, 0.38, 0.08, 1.0], [0.34, 0.12, 0.07, 1.0]),
         "body_profile": ((1.50, 0.82, 1.45), (1.34, 0.75, 1.25), 0.03),
         "socket_contract": "thorn_crown, dorsal_spines, jaw_plates, threat_eyes",
-        "signature_nodes": ["ThornbackCrown", "ThornbackSpineL", "ThornbackSpineR", "ThornbackJawPlateL"],
+        "signature_nodes": ["ThornbackCrown", "ThornbackSpineL", "ThornbackSpineR", "ThornbackJawPlateL", "ThornbackBarb0"],
     },
     "ashmantle": {
         "display": "Ashmantle",
@@ -441,6 +441,58 @@ def add_capsule(
     return _geometry(builder, positions, normals, indices, material)
 
 
+def add_tapered_thorn(
+    builder: BufferBuilder,
+    base_radius: float,
+    height: float,
+    material: int,
+    sides: int = 32,
+) -> tuple[int, int, int, int]:
+    """Build a rounded-base, sharply tapered organic barb along local Y."""
+    base_radius = max(0.001, float(base_radius))
+    height = max(float(height), base_radius * 2.2)
+    sides = max(24, int(sides))
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+    rings: list[list[int]] = []
+    ring_data = (
+        (-height * 0.5, base_radius * 0.72),
+        (-height * 0.28, base_radius),
+        (height * 0.08, base_radius * 0.62),
+        (height * 0.5, base_radius * 0.035),
+    )
+    for y, radius in ring_data:
+        ring: list[int] = []
+        for side in range(sides):
+            angle = math.tau * side / sides
+            cosine = math.cos(angle)
+            sine = math.sin(angle)
+            slope = (base_radius * 0.55) / height
+            normal = (cosine, slope, sine)
+            length = math.sqrt(sum(value * value for value in normal)) or 1.0
+            ring.append(len(positions) // 3)
+            positions.extend([radius * cosine, y, radius * sine])
+            normals.extend(value / length for value in normal)
+        rings.append(ring)
+    for ring_index in range(len(rings) - 1):
+        current = rings[ring_index]
+        next_ring = rings[ring_index + 1]
+        for side in range(sides):
+            next_side = (side + 1) % sides
+            indices.extend([
+                current[side], current[next_side], next_ring[next_side],
+                current[side], next_ring[next_side], next_ring[side],
+            ])
+    bottom_center = len(positions) // 3
+    positions.extend([0.0, -height * 0.5, 0.0])
+    normals.extend([0.0, -1.0, 0.0])
+    for side in range(sides):
+        next_side = (side + 1) % sides
+        indices.extend([bottom_center, rings[0][next_side], rings[0][side]])
+    return _geometry(builder, positions, normals, indices, material)
+
+
 def add_torus(
     builder: BufferBuilder,
     major_radius: float,
@@ -562,6 +614,7 @@ def build_family(name: str, spec: dict) -> None:
     # when this focused pass changes.
     if name == "thornback":
         mesh_ids["ThornbackCrownLobe"] = mesh("ThornbackCrownLobe", add_organic_lobe(builder, (1.42, 0.38, 1.02), shell, lobes=4, rings=10, sides=40, scallop_amplitude=0.14, leading_extension=0.36, fold_strength=0.82))
+        mesh_ids["ThornbackBarb"] = mesh("ThornbackBarb", add_tapered_thorn(builder, 0.14, 0.78, bone))
     # Miremaw's gill fan is its breathing, amphibious identity. Add a paired
     # folded collar around the existing fan so the side profile carries a
     # layered membrane break instead of one broad plate. The collar is
@@ -805,6 +858,10 @@ def build_family(name: str, spec: dict) -> None:
             add_node(f"ThornbackEye{suffix}", mesh_ids["Eye"], (side * 0.24, 1.34, -1.36), extras={"socket_type": "threat_eye"})
         for index in range(3):
             add_node(f"ThornbackDorsalRidge{index}", mesh_ids["Ridge"], (-0.18 + index * 0.18, 1.56 + index * 0.06, -0.24 + index * 0.42), rotation=(0.0, 0.0, -0.12 + index * 0.08), scale=(0.66, 1.0, 0.78), extras={"surface": "dorsal_ridge"})
+        barb_positions = ((-0.48, 1.74, -0.18), (0.0, 1.86, 0.24), (0.48, 1.76, 0.66))
+        for index, (x, y, z) in enumerate(barb_positions):
+            side = -1.0 if index == 0 else (1.0 if index == 2 else 0.0)
+            add_node(f"ThornbackBarb{index}", mesh_ids["ThornbackBarb"], (x, y, z), rotation=(0.22, side * 0.24, side * 0.12), scale=(0.9, 1.0 + 0.08 * (index == 1), 0.9), extras={"surface": "dorsal_barb"})
         walk_node = "ThornbackSpineL"
         attack_node = "ThornbackJawPlateL"
     else:

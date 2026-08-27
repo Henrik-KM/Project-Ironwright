@@ -1466,6 +1466,8 @@ func _run_all() -> void:
             &"thornback":
                 _expect(_find_named(enemy_samples[index], "ThornbackSpineL") != null and _find_named(enemy_samples[index], "ThornbackSpineR") != null, "The Thornback must expose paired dorsal spines for its territorial silhouette.")
                 _expect(_find_named(enemy_samples[index], "ThornbackJawPlateL") != null and _find_named(enemy_samples[index], "ThornbackCrown") != null, "The Thornback must expose layered jaw and crown hardware.")
+                var thornback_barb := _find_named(enemy_samples[index], "ThornbackBarb0") as MeshInstance3D
+                _expect(thornback_barb != null and _mesh_vertex_count(thornback_barb) >= 96 and _find_named(enemy_samples[index], "ThornbackBarb2") != null, "The Thornback must expose a dense three-barb dorsal threat edge rather than a flat ridge-only back.")
             &"ashmantle":
                 _expect(_find_named(enemy_samples[index], "AshmantleHeatLouverL") != null and _find_named(enemy_samples[index], "AshmantleHeatLouverR") != null, "The Ashmantle must expose paired heat-louver anatomy.")
                 _expect(_find_named(enemy_samples[index], "AshmantleSiphon") != null and _find_named(enemy_samples[index], "AshmantleTendrilR") != null, "The Ashmantle must expose a route siphon and sensory tendril signature.")
