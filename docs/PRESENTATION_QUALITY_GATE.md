@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Miremaw high-definition gill-collar pass — 2026-08-27
+
+Miremaw's authored shell now carries a paired folded gill collar around the
+existing fan. The scalloped membrane layer gives the amphibious family a
+readable breathing break in side profile and animates with its established
+Idle, Attack, Feed and Retreat channels. It is presentation-only: existing
+sockets, collision, combat, ecology, LOD and save ownership are unchanged.
+Exact 1280x720 page 3/15 late-organic gallery review passed with Godot Dummy
+audio and `--quiet-audio`; no live speakers were used. Broader human hostile-
+family and production-art acceptance remains open.
+
 ## Focused Root Cistern causeway-motion pass — 2026-08-27
 
 The Root Cistern approach causeway now participates in the existing bounded
