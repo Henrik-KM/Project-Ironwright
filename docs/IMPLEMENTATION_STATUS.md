@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Root Cistern audio-bed pass
+
+- added a dedicated deterministic Root Cistern ambient loop with low
+  hydraulic mass, restrained signal shimmer and organic root breath, replacing
+  the generic nest bed for the final region;
+- preserved adaptive music, spatial reports, captions, volume settings and
+  all audio rate limits; the new source is presentation-only and does not add
+  a gameplay alert or recurring management task;
+- added release asset/import coverage; all live audio review continues through
+  Godot Dummy audio and quiet-audio mode, with no live speakers.
+
 ## Focused Root Cistern approach-depth pass
 
 - added a bounded presentation-only Root Cistern approach causeway with

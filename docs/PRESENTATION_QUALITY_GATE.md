@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Root Cistern audio-bed pass — 2026-08-27
+
+Root Cistern now has a dedicated original ambient loop: low hydraulic mass,
+restrained signal shimmer and organic root breath replace the generic nest bed
+when the endgame region is active. The audio director keeps its existing
+adaptive-music, spatial-report, caption, settings and rate-limit contracts.
+The loop is generated deterministically and is covered by release import and
+audio routing tests. Live review uses Godot Dummy audio and `--quiet-audio`
+only; no live speakers are used.
+
 ## Focused Root Cistern approach-depth pass — 2026-08-27
 
 Root Cistern now has a bounded presentation-only approach causeway: three

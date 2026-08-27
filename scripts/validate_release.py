@@ -74,6 +74,7 @@ NORMAL_TEXTURE_NAMES = [
 AUDIO_NAMES = [
     "ambience_city.wav",
     "ambience_sanctuary.wav",
+    "ambience_cistern.wav",
     "music_embers.wav",
     "music_pressure.wav",
     "music_sovereignty.wav",
