@@ -14,6 +14,7 @@ func _ready() -> void:
     layer = 28
     _build_ui()
     set_map_visible(false)
+    refresh_localized_text()
 
 
 func _build_ui() -> void:
@@ -75,6 +76,17 @@ func set_map_visible(value: bool) -> void:
         _refresh()
 
 
+func refresh_localized_text() -> void:
+    if panel == null:
+        return
+    title_label.text = _text("ecology.tier.title", "ECOLOGICAL INTELLIGENCE")
+    footer_label.text = _text(
+        "ecology.tier.footer",
+        "Destroy nests to reduce long-term replenishment. Killing organisms creates temporary population headroom."
+    )
+    _refresh()
+
+
 func _refresh() -> void:
     if panel == null or latest_snapshot.is_empty():
         return
@@ -82,7 +94,12 @@ func _refresh() -> void:
     var active_nests := int(latest_snapshot.get("active_nests", 0))
     var total_nests := int(latest_snapshot.get("total_nests", 0))
     var trend := str(latest_snapshot.get("trend", "unknown"))
-    summary_label.text = "Highest confirmed tier: %d\nPopulation trend: %s · active brood sites: %d/%d" % [highest, trend.to_upper(), active_nests, total_nests]
+    var trend_label_text := _text("ecology.trend.%s" % trend.to_lower(), trend.to_upper()).to_upper()
+    summary_label.text = _text(
+        "ecology.tier.summary",
+        "Highest confirmed tier: {0}\nPopulation trend: {1} · active brood sites: {2}/{3}",
+        [highest, trend_label_text, active_nests, total_nests]
+    )
 
     var tiers: Array = latest_snapshot.get("tiers", [])
     for index in range(tier_rows.size()):
@@ -90,15 +107,16 @@ func _refresh() -> void:
         var row := tier_rows[index]
         var data := _find_tier_data(tiers, tier_number)
         if data.is_empty() or tier_number > highest:
-            row.text = "TIER %d · UNCONFIRMED" % tier_number
+            row.text = _text("ecology.tier.unconfirmed", "TIER {0} · UNCONFIRMED", [tier_number])
             row.modulate = Color("7d8b88")
             continue
         var density := str(data.get("density", "unknown")).to_upper()
-        var display_name := str(data.get("display_name", "Tier %d" % tier_number)).to_upper()
-        var intelligence := str(data.get("intelligence_label", "unknown"))
+        var display_name := _localized_tier_value(str(data.get("display_name", "Tier %d" % tier_number)), "name", "Tier %d" % tier_number).to_upper()
+        var intelligence := _localized_tier_value(str(data.get("intelligence_label", "unknown")), "intelligence", "unknown")
         var saturated := bool(data.get("saturated", false))
         var flow := _replenishment_description(float(data.get("replenishment_per_minute", 0.0)), saturated)
-        row.text = "TIER %d · %s · %s\n%s · %s" % [tier_number, display_name, density, intelligence, flow]
+        var density_label := _text("ecology.density.%s" % density.to_lower(), density).to_upper()
+        row.text = _text("ecology.tier.row", "TIER {0} · {1} · {2}\n{3} · {4}", [tier_number, display_name, density_label, intelligence, flow])
         row.modulate = _tier_color(tier_number, saturated)
 
 
@@ -111,16 +129,40 @@ func _find_tier_data(tiers: Array, tier_number: int) -> Dictionary:
 
 func _replenishment_description(rate: float, saturated: bool) -> String:
     if saturated:
-        return "SATURATED — ESCALATION PRESSURE MOVING UPWARD"
+        return _text("ecology.replenishment.saturated", "SATURATED — ESCALATION PRESSURE MOVING UPWARD")
     if rate <= 0.001:
-        return "replenishment dormant"
+        return _text("ecology.replenishment.dormant", "replenishment dormant")
     if rate < 1.0:
-        return "slow replenishment"
+        return _text("ecology.replenishment.slow", "slow replenishment")
     if rate < 4.0:
-        return "steady replenishment"
+        return _text("ecology.replenishment.steady", "steady replenishment")
     if rate < 9.0:
-        return "rapid replenishment"
-    return "extreme replenishment"
+        return _text("ecology.replenishment.rapid", "rapid replenishment")
+    return _text("ecology.replenishment.extreme", "extreme replenishment")
+
+
+func _localized_tier_value(value: String, category: String, fallback: String) -> String:
+    var normalized := value.to_lower().strip_edges()
+    var aliases := {
+        "primitive roaming": "primitive_roaming",
+        "nest defence and patrol": "nest_defence_and_patrol",
+        "scouting, hunting and pack memory": "scouting_hunting_and_pack_memory",
+        "route interception and priority targeting": "route_interception_and_priority_targeting",
+        "regional strategic predator": "regional_strategic_predator",
+    }
+    var key_value := str(aliases.get(normalized, normalized.replace(" ", "_")))
+    var key := "ecology.tier.%s.%s" % [category, key_value]
+    return _text(key, fallback if value.is_empty() else value)
+
+
+func _text(key: String, fallback: String, replacements: Array = []) -> String:
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service != null:
+        return service.text(key, replacements)
+    var result := fallback
+    for index in range(replacements.size()):
+        result = result.replace("{%d}" % index, str(replacements[index]))
+    return result
 
 
 func _tier_color(tier: int, saturated: bool) -> Color:

@@ -22,6 +22,11 @@ var casualty_recovery_beacon: Node3D
 var casualty_recovery_label: Label3D
 var casualty_recovery_ring: MeshInstance3D
 var casualty_recovery_elapsed: float = 0.0
+var route_recovery_operation_id: StringName = &""
+var route_recovery_attempt: int = 0
+var route_recovery_limit: int = 0
+var casualty_recovery_record_id: StringName = &""
+var casualty_recovery_identity: String = ""
 
 
 func configure(next_camera: Camera3D) -> void:
@@ -76,7 +81,10 @@ func show_route_recovery(operation_id: StringName, target: Vector3, attempt: int
         _build_route_recovery_beacon()
     route_recovery_beacon.global_position = target
     route_recovery_beacon.visible = true
-    route_recovery_label.text = "AUTONOMOUS DETOUR\nSIDE ROUTE %d/%d · %s" % [attempt, limit, String(operation_id).replace("operation.", "")]
+    route_recovery_operation_id = operation_id
+    route_recovery_attempt = attempt
+    route_recovery_limit = limit
+    _refresh_route_recovery_label()
 
 
 func clear_route_recovery() -> void:
@@ -89,7 +97,9 @@ func show_casualty_recovery(record_id: StringName, target: Vector3, identity: St
         _build_casualty_recovery_beacon()
     casualty_recovery_beacon.global_position = target
     casualty_recovery_beacon.visible = true
-    casualty_recovery_label.text = "CASUALTY BEACON\n%s · %s" % [identity.to_upper(), String(record_id).replace("casualty.", "FIELD SIGNAL ")]
+    casualty_recovery_record_id = record_id
+    casualty_recovery_identity = identity
+    _refresh_casualty_recovery_label()
 
 
 func clear_casualty_recovery() -> void:
@@ -103,6 +113,48 @@ func is_casualty_recovery_visible() -> bool:
 
 func is_route_recovery_visible() -> bool:
     return route_recovery_beacon != null and route_recovery_beacon.visible
+
+
+func refresh_localized_text() -> void:
+    if route_recovery_label != null and route_recovery_beacon != null and route_recovery_beacon.visible:
+        _refresh_route_recovery_label()
+    if casualty_recovery_label != null and casualty_recovery_beacon != null and casualty_recovery_beacon.visible:
+        _refresh_casualty_recovery_label()
+
+
+func _refresh_route_recovery_label() -> void:
+    if route_recovery_label == null:
+        return
+    var operation_name := String(route_recovery_operation_id).trim_prefix("operation.").replace("_", " ").capitalize()
+    var operation_key := "operation.%s.name" % String(route_recovery_operation_id).trim_prefix("operation.").replace(".", "_")
+    var localized_operation := _text(operation_key, operation_name)
+    route_recovery_label.text = _text(
+        "world.operation_detail.route_recovery",
+        "AUTONOMOUS DETOUR\nSIDE ROUTE {0}/{1} · {2}",
+        [route_recovery_attempt, route_recovery_limit, localized_operation]
+    )
+
+
+func _refresh_casualty_recovery_label() -> void:
+    if casualty_recovery_label == null:
+        return
+    var record_name := String(casualty_recovery_record_id).trim_prefix("casualty.").replace("_", " ").to_upper()
+    var record_text := _text("world.operation_detail.field_signal", "FIELD SIGNAL {0}", [record_name])
+    casualty_recovery_label.text = _text(
+        "world.operation_detail.casualty_beacon",
+        "CASUALTY BEACON\n{0} · {1}",
+        [casualty_recovery_identity.to_upper(), record_text]
+    )
+
+
+func _text(key: String, fallback: String, replacements: Array = []) -> String:
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service != null:
+        return service.text(key, replacements)
+    var result := fallback
+    for index in range(replacements.size()):
+        result = result.replace("{%d}" % index, str(replacements[index]))
+    return result
 
 
 func mode_for(operation_id: StringName) -> StringName:

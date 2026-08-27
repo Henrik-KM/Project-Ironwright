@@ -119,11 +119,11 @@ func _on_intel_changed(summary: Dictionary) -> void:
 
 func _on_tier_saturated(tier: int, transferred_rate: float, next_tier: int) -> void:
     _notify(
-        "ECOLOGICAL SATURATION · TIER %s\n%.2f units/min of reproductive pressure evolved into Tier %s at 10:1." % [
+        _text("notification.tier.saturation_detail", "ECOLOGICAL SATURATION · TIER {0}\n{1} units/min of reproductive pressure evolved into Tier {2} at 10:1.", [
             _roman(tier),
             transferred_rate,
             _roman(next_tier),
-        ]
+        ])
     )
 
 
@@ -132,10 +132,10 @@ func _on_nest_cleared(nest_id: StringName, removed_rates: Dictionary) -> void:
     for value in removed_rates.values():
         total += float(value)
     _notify(
-        "NEST CLEARED · %s\nLong-term replenishment fell by %.2f units/min across its current evolved tiers." % [
+        _text("notification.tier.nest_cleared_detail", "NEST CLEARED · {0}\nLong-term replenishment fell by {1} units/min across its current evolved tiers.", [
             String(nest_id).replace("nest.", "").replace("_", " ").capitalize(),
             total,
-        ]
+        ])
     )
 
 
@@ -149,20 +149,30 @@ func _on_escalation_event(event_id: StringName, deltas: Dictionary) -> void:
         else:
             negative += -amount
     if positive > negative:
-        _notify("ECOLOGICAL COST · %s\nThe operation or technology increased future organic replenishment." % String(event_id).replace("operation.", "").replace("_", " ").capitalize())
+        _notify(_text("notification.tier.ecological_cost", "ECOLOGICAL COST · {0}\nThe operation or technology increased future organic replenishment.", [String(event_id).replace("operation.", "").replace("_", " ").capitalize()]))
     elif negative > 0.0:
-        _notify("ECOLOGICAL SUPPRESSION · %s\nThe completed action reduced long-term organic replenishment." % String(event_id).replace("operation.", "").replace("_", " ").capitalize())
+        _notify(_text("notification.tier.ecological_suppression", "ECOLOGICAL SUPPRESSION · {0}\nThe completed action reduced long-term organic replenishment.", [String(event_id).replace("operation.", "").replace("_", " ").capitalize()]))
 
 
 func _on_suppression_changed(active_wardens: int, target_cells: int, reason: String) -> void:
     intel_hud.update_suppression(suppression.status_summary())
     if active_wardens > 0:
-        _notify("AUTONOMOUS SUPPRESSION · %d WARDEN%s\n%s" % [active_wardens, "" if active_wardens == 1 else "S", reason])
+        _notify(_text("notification.tier.autonomous_suppression", "AUTONOMOUS SUPPRESSION · {0} WARDEN{1}\n{2}", [active_wardens, "" if active_wardens == 1 else "S", reason]))
 
 
 func _notify(message: String) -> void:
     if main_hud != null and is_instance_valid(main_hud):
         main_hud.call(&"push_notification", message)
+
+
+func _text(key: String, fallback: String, replacements: Array = []) -> String:
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service != null:
+        return service.text(key, replacements)
+    var result := fallback
+    for index in range(replacements.size()):
+        result = result.replace("{%d}" % index, str(replacements[index]))
+    return result
 
 
 func _on_world_save_completed(slot_id: StringName, path: String) -> bool:
