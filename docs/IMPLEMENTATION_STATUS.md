@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused hostile organic family anatomy finish
+
+- added a restrained living vascular rim, asymmetrical growth plate and paired
+  vascular nodes to the authored Roofleaper, Glassmoth, Miremaw, Carrion Bell,
+  Rootweaver, Thornback and Ashmantle shells;
+- kept the layer bounded and presentation-only, preserving species stats,
+  animation ownership, collision, ecology and reduced-detail behavior;
+- added close-camera aesthetic coverage and live-reviewed the exact late-
+  organic gallery with Godot Dummy audio and quiet mode only; no live
+  speakers were used.
+
 ## Focused friendly-roster hero service-detail pass
 
 - added a bounded high-definition signal collar, service face and paired

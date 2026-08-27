@@ -7,6 +7,14 @@ live speakers.
 
 **Status:** Canonical pre-alpha production constraint
 
+The authored hostile-family roster received a focused anatomy-finish pass on
+2026-08-27. Roofleaper, Glassmoth, Miremaw, Carrion Bell, Rootweaver,
+Thornback and Ashmantle now carry a restrained living vascular rim, asymmetric
+growth plate and paired vascular nodes that add biological depth without
+changing combat, collision, animation, ecology or LOD ownership. The exact
+1024x576 late-organic gallery review passed with Godot Dummy audio and quiet
+mode only; no live speakers were used.
+
 The friendly machine roster received a focused hero-service-detail pass on
 2026-08-27. Authored Bulwark, Warden, Scrapper, Pathfinder, Engineer and
 Relay shells now share a restrained signal collar, service face and paired

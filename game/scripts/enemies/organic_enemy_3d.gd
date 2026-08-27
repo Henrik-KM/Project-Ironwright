@@ -1246,9 +1246,88 @@ func _build_authored_organic_family_visuals(model_scene: PackedScene, imported_r
     if imported_root != authored_scene_instance:
         imported_root.free()
     authored_scene_instance.free()
+    _add_authored_family_anatomy_finish()
     var authored_marker := Node3D.new()
     authored_marker.name = String(marker_name)
     _model_root.add_child(authored_marker)
+
+
+func _add_authored_family_anatomy_finish() -> void:
+    # Generic authored families share a small living focal so their imported
+    # shells read as complete organisms rather than unlit static meshes. The
+    # bounded vascular rim and asymmetrical growth nodes are presentation-only;
+    # species stats, animation ownership, collision and ecology stay unchanged.
+    var finish_root := Node3D.new()
+    finish_root.name = "OrganicFamilyAnatomyFinish"
+    _model_root.add_child(finish_root)
+
+    var scale_factor := 1.0
+    var accent_color := Color("c94d68")
+    match species:
+        &"roofleaper":
+            scale_factor = 0.88
+            accent_color = Color("de7c9a")
+        &"glassmoth":
+            scale_factor = 0.82
+            accent_color = Color("8ee7d0")
+        &"miremaw":
+            scale_factor = 1.18
+            accent_color = Color("df9b63")
+        &"carrionbell":
+            scale_factor = 1.05
+            accent_color = Color("dd6e92")
+        &"rootweaver":
+            scale_factor = 1.28
+            accent_color = Color("b85ce1")
+        &"thornback":
+            scale_factor = 1.12
+            accent_color = Color("e3b45d")
+        &"ashmantle":
+            scale_factor = 1.2
+            accent_color = Color("f07b4a")
+
+    var tissue := ModelKit3D.material(Color("3d202b").lerp(accent_color.darkened(0.72), 0.28), 0.02, 0.72)
+    var rim := ModelKit3D.material(accent_color.darkened(0.42), 0.04, 0.44, accent_color, 1.35)
+    ModelKit3D.add_torus(
+        finish_root,
+        0.48 * scale_factor,
+        0.036 * scale_factor,
+        Vector3(0.0, 1.08 * scale_factor, 0.12),
+        rim,
+        Vector3(0.0, 0.0, 0.0),
+        "OrganicPulseRim",
+        32,
+        6
+    )
+    ModelKit3D.add_organic_plate(
+        finish_root,
+        0.18 * scale_factor,
+        Vector3(-0.1 * scale_factor, 1.34 * scale_factor, 0.22),
+        tissue,
+        rim,
+        Vector3(1.1, 0.48, 1.25),
+        "OrganicGrowthPlate",
+        true
+    )
+    for side in [-1.0, 1.0]:
+        var side_sign := float(side)
+        ModelKit3D.add_capsule(
+            finish_root,
+            0.032 * scale_factor,
+            0.48 * scale_factor,
+            Vector3(side_sign * 0.28 * scale_factor, 1.02 * scale_factor, -0.1),
+            tissue,
+            Vector3(0.22, 0.0, side_sign * 0.3),
+            "OrganicVascularVein%s" % ("L" if side_sign < 0.0 else "R")
+        )
+        ModelKit3D.add_sphere(
+            finish_root,
+            0.07 * scale_factor,
+            Vector3(side_sign * 0.31 * scale_factor, 1.28 * scale_factor, -0.08),
+            rim,
+            Vector3(1.0, 0.78, 0.92),
+            "OrganicVascularNode%s" % ("L" if side_sign < 0.0 else "R")
+        )
 
 
 func _extract_authored_animation_player(scene_instance: Node, target_root: Node3D, imported_root_name: StringName, target_prefix: StringName = &"") -> void:

@@ -1350,6 +1350,7 @@ func _run_all() -> void:
         _expect(_find_named(enemy_samples[index], "OrganicDorsalPlate") != null, "The %s organic family must expose a layered shell material break." % species_names[index])
         _expect(_find_named(enemy_samples[index], "TorsoCore") != null and _find_named(enemy_samples[index], "TorsoSegment0") != null, "The %s organic family must expose segmented high-definition torso anatomy." % species_names[index])
         if species_names[index] in [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle"]:
+            _expect(_find_named(enemy_samples[index], "OrganicFamilyAnatomyFinish") != null and _find_named(enemy_samples[index], "OrganicPulseRim") != null and _find_named(enemy_samples[index], "OrganicGrowthPlate") != null, "The %s authored family must expose a bounded living anatomy finish rather than a static shell." % species_names[index])
             var dorsal_plate := _find_named(enemy_samples[index], "OrganicDorsalPlate") as Node3D
             var dorsal_mesh := _find_first_mesh(dorsal_plate)
             _expect(dorsal_mesh != null and _mesh_vertex_count(dorsal_mesh) >= 48, "The %s authored dorsal plate must retain the beveled close-camera edge treatment." % species_names[index])
