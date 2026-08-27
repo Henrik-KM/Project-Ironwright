@@ -746,6 +746,7 @@ def build_family(name: str, spec: dict) -> None:
             suffix = "L" if side < 0 else "R"
             add_node(f"MiremawJawHook{suffix}", mesh_ids["LongBone"], (side * 0.42, 0.55, -1.62), rotation=(side * 0.72, 0.0, side * 0.18), extras={"socket_type": "jaw_hook"})
             add_node(f"MiremawJawPlate{suffix}", mesh_ids["PlateCap"], (side * 0.44, 0.68, -1.42), rotation=(side * 0.36, 0.0, side * 0.12), scale=(0.82, 1.0, 0.76), extras={"surface": "jaw_plate"})
+            add_node(f"MiremawJawHinge{suffix}", mesh_ids["CrownFastener"], (side * 0.53, 0.76, -1.52), scale=(1.35, 1.15, 1.10), extras={"surface": "jaw_hinge"})
             fin_pitch = 0.20
             add_node(f"MiremawWaterFin{suffix}", mesh_ids["DeepMembrane"], (side * 1.08, 0.68, 0.18), rotation=(side * fin_pitch, side * 0.28, side * 0.08), scale=(0.62, 0.84, 1.1), extras={"socket_type": "water_fin"})
             add_node(f"MiremawGillSpine{suffix}", mesh_ids["GillSpine"], (side * 0.62, 1.30, 0.38), rotation=(0.0, side * 0.28, side * 0.22), scale=(0.78, 1.0, 0.82), extras={"surface": "gill_spine"})

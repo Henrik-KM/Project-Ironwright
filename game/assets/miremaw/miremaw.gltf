@@ -38,7 +38,9 @@
         45,
         46,
         47,
-        48
+        48,
+        49,
+        50
       ],
       "extras": {
         "ironwright_asset_id": "miremaw.amphibious.v1",
@@ -687,6 +689,23 @@
       }
     },
     {
+      "name": "MiremawJawHingeL",
+      "translation": [
+        -0.53,
+        0.76,
+        -1.52
+      ],
+      "mesh": 23,
+      "scale": [
+        1.35,
+        1.15,
+        1.1
+      ],
+      "extras": {
+        "surface": "jaw_hinge"
+      }
+    },
+    {
       "name": "MiremawWaterFinL",
       "translation": [
         -1.08,
@@ -829,6 +848,23 @@
       ],
       "extras": {
         "surface": "jaw_plate"
+      }
+    },
+    {
+      "name": "MiremawJawHingeR",
+      "translation": [
+        0.53,
+        0.76,
+        -1.52
+      ],
+      "mesh": 23,
+      "scale": [
+        1.35,
+        1.15,
+        1.1
+      ],
+      "extras": {
+        "surface": "jaw_hinge"
       }
     },
     {
@@ -3776,14 +3812,14 @@
         {
           "sampler": 5,
           "target": {
-            "node": 39,
+            "node": 40,
             "path": "rotation"
           }
         },
         {
           "sampler": 6,
           "target": {
-            "node": 46,
+            "node": 48,
             "path": "rotation"
           }
         }
@@ -3817,7 +3853,7 @@
         {
           "sampler": 0,
           "target": {
-            "node": 36,
+            "node": 37,
             "path": "rotation"
           }
         },
@@ -3831,14 +3867,14 @@
         {
           "sampler": 2,
           "target": {
-            "node": 36,
+            "node": 37,
             "path": "rotation"
           }
         },
         {
           "sampler": 3,
           "target": {
-            "node": 43,
+            "node": 45,
             "path": "rotation"
           }
         }
@@ -3927,7 +3963,7 @@
         {
           "sampler": 5,
           "target": {
-            "node": 41,
+            "node": 42,
             "path": "rotation"
           }
         },
@@ -3941,7 +3977,7 @@
         {
           "sampler": 7,
           "target": {
-            "node": 42,
+            "node": 43,
             "path": "rotation"
           }
         }
@@ -4056,7 +4092,7 @@
         {
           "sampler": 5,
           "target": {
-            "node": 41,
+            "node": 42,
             "path": "rotation"
           }
         },
@@ -4143,7 +4179,7 @@
         {
           "sampler": 0,
           "target": {
-            "node": 36,
+            "node": 37,
             "path": "rotation"
           }
         },
@@ -4171,14 +4207,14 @@
         {
           "sampler": 4,
           "target": {
-            "node": 36,
+            "node": 37,
             "path": "rotation"
           }
         },
         {
           "sampler": 5,
           "target": {
-            "node": 43,
+            "node": 45,
             "path": "rotation"
           }
         },
