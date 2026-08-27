@@ -1374,12 +1374,16 @@ func _show_presentation_review_page(page: int) -> void:
 				row_z = 1.25 if row_index == 0 else -2.6
 			row_z += _presentation_review_depth_offset(actor)
 			actor.scale = Vector3.ONE
+			# Materialize deferred authored shells before applying the bounded
+			# gallery compensation. Otherwise set_visual_lod(0) can build a fresh
+			# OrganicModel after the scale assignment and silently reset the review
+			# root to unit scale.
+			if actor.has_method("set_visual_lod"):
+				actor.call("set_visual_lod", 0)
 			var review_model_root := actor.get_node_or_null("OrganicModel") as Node3D
 			if review_model_root != null:
 				review_model_root.scale = Vector3.ONE * _presentation_review_model_scale(actor)
 			actor.position = Vector3(centered_x, 0.0, row_z)
-			if actor.has_method("set_visual_lod"):
-				actor.call("set_visual_lod", 0)
 	var page_titles: Array[String] = [
 		"PLAYER + FRIENDLY MACHINE SOCIETY", "EARLY ORGANIC FAMILIES", "LATE ORGANIC FAMILIES",
 		"REMOTE · NORTH RUINS", "REMOTE · WEST GRID", "REMOTE · EAST TENEMENTS",
@@ -1472,6 +1476,13 @@ func _presentation_review_model_scale(actor: Node3D) -> float:
 	# Apply only a restrained visual-root compensation for families authored at
 	# a smaller inspection scale. The actor root remains at unit scale.
 	var actor_name := actor.name.to_lower()
+	if actor_name.begins_with("skitterling"):
+		# The Skitterling is intentionally the smallest living family in the
+		# world, but its authored shell still needs enough pixels for the
+		# carapace caps, sensory fan and mandible plates to be inspected beside
+		# the larger early predators. This is gallery-only and does not alter
+		# gameplay scale, collision, movement, ecology or animation timing.
+		return 1.24
 	if actor_name.begins_with("glassmoth"):
 		return 1.1
 	return 1.0
