@@ -55,6 +55,19 @@ capture; the exact 1024x576 page 1/15 review passed with Godot Dummy audio
 and quiet mode only, with no live speakers used. Broader human and
 production-art acceptance remains open.
 
+# Focused West Grid environmental-story pass — 2026-08-27
+
+The discovered West Grid encounter space now carries a physical reroute
+witness: a maintained board, inset route map, three signal markers, service
+cable and date plate. It anchors the existing `story.west_grid.reroute` record
+in the industrial space and communicates that the town's last safe route was
+kept alive by hand. The vignette is presentation-only and preserves route
+selection, operation ownership, collision, resources, pressure and save state.
+It is covered by aesthetic and commercial release regression tests. The exact
+1280x720 West Grid review passed with Dummy audio and quiet mode only, with the
+board, route bands and service cable visibly readable; broader human
+environmental-story acceptance remains open.
+
 The Transformation endgame protocol received a focused silent acceptance
 review on 2026-08-27. The exact 1024x576 endgame review showed the third
 strategy's green/teal living-partnership lattice during the crisis and the

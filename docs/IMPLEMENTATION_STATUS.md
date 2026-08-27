@@ -5247,3 +5247,15 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   combat ownership; aesthetic and commercial release regression coverage now
   includes the named hardware, with exact silent live review still required
   for broader human production-art acceptance.
+
+## Focused West Grid environmental-story milestone — 2026-08-27
+
+- added a bounded physical reroute witness to the discovered West Grid
+  encounter space: a maintenance board, route-map plate, three signal markers,
+  service cable and date plate make the existing `story.west_grid.reroute`
+  record legible in the world rather than only in the archive UI;
+- kept the addition presentation-only: route selection, operation ownership,
+  collision, resources, pressure and save state remain unchanged;
+- extended aesthetic and commercial release coverage for the authored witness;
+  the exact 1280x720 West Grid review passed with Dummy audio and quiet mode
+  only, with the board, route bands and service cable visibly readable.

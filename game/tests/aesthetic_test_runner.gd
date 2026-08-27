@@ -368,6 +368,8 @@ func _run_all() -> void:
                 _expect(landmark.find_child("WestGridTransformerCap0", true, false) != null and landmark.find_child("WestGridTransformerBrace0", true, false) != null and landmark.find_child("WestGridTransformerBushing0_0", true, false) != null and landmark.find_child("WestGridTransformerBushingCap0_0", true, false) != null, "West Grid must expose layered transformer-yard hardware and readable ceramic bushings.")
                 _expect(landmark.find_child("WestGridPipeFlange0", true, false) != null and landmark.find_child("WestGridWarningHousing0", true, false) != null, "West Grid must expose service-pipe and warning hardware.")
                 _expect(landmark.find_child("WestGridOrganicTendril0_0", true, false) != null, "West Grid organic growth must expose secondary tendril anatomy.")
+                var west_grid_reroute_witness := landmark.find_child("WestGridRerouteWitness", true, false) as Node3D
+                _expect(west_grid_reroute_witness != null and west_grid_reroute_witness.find_child("WestGridRerouteBoard", true, false) != null and west_grid_reroute_witness.find_child("WestGridRerouteRouteMap", true, false) != null and west_grid_reroute_witness.find_child("WestGridRerouteServiceCable", true, false) != null, "West Grid must expose a bounded physical reroute witness that anchors its archive record in the encounter space.")
                 var west_grid_hall := landmark.find_child("WestGridTurbineHall", true, false) as MeshInstance3D
                 var west_grid_turbine_ring := landmark.find_child("WestGridTurbineAccessRing", true, false) as MeshInstance3D
                 var west_grid_transformer := landmark.find_child("WestGridTransformer0", true, false) as MeshInstance3D
