@@ -409,7 +409,13 @@ func _populate_settings_controls() -> void:
         var toggle := settings_controls.get(key) as CheckButton
         if toggle != null:
             toggle.button_pressed = bool(settings_service.get_value(StringName(key), false))
-    _select_metadata(settings_controls.get("language") as OptionButton, str(settings_service.get_value(&"language", "en")))
+    var selected_language := str(settings_service.get_value(&"language", "en"))
+    if localization != null:
+        # A non-saving review override changes the active catalog without
+        # changing persisted preferences. Keep the visible selector aligned
+        # with the catalog the player is actually seeing.
+        selected_language = String(localization.current_locale)
+    _select_metadata(settings_controls.get("language") as OptionButton, selected_language)
     _select_metadata(settings_controls.get("difficulty") as OptionButton, str(settings_service.get_value(&"difficulty", "survival")))
     _select_metadata(settings_controls.get("colorblind_mode") as OptionButton, str(settings_service.get_value(&"colorblind_mode", "off")))
     _select_metadata(settings_controls.get("target_fps") as OptionButton, int(settings_service.get_value(&"target_fps", 60)))
