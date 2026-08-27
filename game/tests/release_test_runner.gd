@@ -1236,6 +1236,17 @@ func _test_front_end(world: IronwrightReleaseWorld3D) -> void:
     _expect(map_banner_rect.size.x >= 300.0, "The command-map banner must retain enough width to keep its live-position guidance readable.")
     world.hud.show_map_banner(false)
 
+    var containment_detail := world.localization_service.text("hud.ending.first_victory_detail", [
+        world.localization_service.text("endgame.containment.name"),
+        world.localization_service.text("endgame.containment.ending"),
+    ])
+    world.hud.show_ending(true, containment_detail, true)
+    var ending_content := world.hud.ending_panel.get_node_or_null("PanelContent") as Control
+    var ending_label := ending_content.get_child(0) as Label if ending_content != null and ending_content.get_child_count() > 0 else null
+    var ending_text := "\n%s\n" % String(ending_label.text) if ending_label != null else ""
+    _expect("\nThe\n" not in ending_text, "The Containment victory narrative must not strand its final paragraph opener on a line by itself.")
+    world.hud.dismiss_ending()
+
 
 func _expect(condition: bool, message: String) -> void:
     if not condition:
