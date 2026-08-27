@@ -1447,6 +1447,7 @@ func _run_all() -> void:
                 _expect(_find_named(enemy_samples[index], "MiremawGillRidgeL") != null and _find_named(enemy_samples[index], "MiremawGillRidgeR") != null, "The Miremaw must expose layered gill-ridge surface detail.")
                 _expect(_find_named(enemy_samples[index], "MiremawJawPlateL") != null and _find_named(enemy_samples[index], "MiremawGillSpineR") != null, "The Miremaw must expose jaw plating and gill spines for readable amphibious anatomy.")
                 _expect(_find_named(enemy_samples[index], "MiremawGillCollarL") != null and _find_named(enemy_samples[index], "MiremawGillCollarR") != null, "The Miremaw must expose paired folded gill collars so its breathing anatomy reads in layered profile.")
+                _expect(_find_named(enemy_samples[index], "MiremawJawHingeL") != null and _find_named(enemy_samples[index], "MiremawJawHingeR") != null, "The Miremaw must expose paired jaw hinges so the amphibious maw reads as articulated anatomy.")
                 var miremaw_fin_l := _find_named(enemy_samples[index], "MiremawWaterFinL") as Node3D
                 var miremaw_fin_r := _find_named(enemy_samples[index], "MiremawWaterFinR") as Node3D
                 _expect(miremaw_fin_l != null and miremaw_fin_r != null and absf(miremaw_fin_l.basis.y.z) >= 0.14 and absf(miremaw_fin_r.basis.y.z) >= 0.14 and miremaw_fin_l.basis.y.z * miremaw_fin_r.basis.y.z < 0.0, "The Miremaw water-fin pair must carry opposing pitch so its amphibious membranes read as lifted fins rather than horizontal discs.")
@@ -1706,6 +1707,7 @@ func _run_all() -> void:
     var miremaw_collar_r := _find_named(miremaw_asset, "MiremawGillCollarR") as MeshInstance3D
     _expect(miremaw_collar_l != null and miremaw_collar_r != null and _mesh_vertex_count(miremaw_collar_l) >= 700 and _mesh_vertex_count(miremaw_collar_r) >= 700, "Miremaw's paired folded gill collars must retain dense scalloped close-camera geometry.")
     _expect(miremaw_collar_l != null and miremaw_collar_r != null and miremaw_collar_l.mesh.get_aabb().size.y >= 0.20 and miremaw_collar_r.mesh.get_aabb().size.y >= 0.20, "Miremaw's folded gill collars must retain closed membrane depth rather than collapsing into thin plates.")
+    _expect(_mesh_vertex_count(_find_named(miremaw_asset, "MiremawJawHingeL") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(miremaw_asset, "MiremawJawHingeR") as MeshInstance3D) >= 48, "Miremaw's paired jaw hinges must retain rounded close-camera hardware geometry.")
     var carrionbell_crown := _find_named(carrionbell_asset, "CarrionbellCrownPlate") as Node3D
     var thornback_crown := _find_named(thornback_asset, "ThornbackCrownPlate") as Node3D
     var ashmantle_louver := _find_named(ashmantle_asset, "AshmantleHeatLouverL") as Node3D

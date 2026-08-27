@@ -5300,3 +5300,10 @@ the existing bore tip. This is a presentation-only refinement: the drill,
 tip, ring, lamp, animation, collision, tier, ecology and socket contracts are
 unchanged. The pass is covered by the aesthetic asset/roster guards and must
 be live-reviewed through the exact silent early-organic gallery before merge.
+# Focused Miremaw jaw-hardware pass
+
+The authored Miremaw now carries paired rounded hinge hardware at the existing
+jaw plates. This is a presentation-only refinement: the maw, jaw-hook and
+jaw-plate sockets, animation ownership, collision, tier, ecology and combat
+behaviour remain unchanged. The pass is guarded by the aesthetic asset and
+roster checks and requires silent late-organic live review before merge.

@@ -1943,3 +1943,11 @@ preserving the drill socket, bore-tip placement, animation, collision, tier,
 ecology and combat ownership. Validation and live review use Godot's Dummy
 audio driver with `--quiet-audio`; no live speakers are used. Formal human
 acceptance of the full organic library remains open.
+# Focused Miremaw jaw-hardware pass — 2026-08-27
+
+The authored Miremaw now carries paired rounded hinge hardware at its existing
+jaw plates, making the amphibious maw read as articulated living anatomy at
+close review distance. Sockets, animation ownership, collision, tier, ecology
+and combat ownership are unchanged. Validation and live review use Godot's
+Dummy audio driver with `--quiet-audio`; no live speakers are used. Formal
+human acceptance of the full organic library remains open.
