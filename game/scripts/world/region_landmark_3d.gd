@@ -150,6 +150,11 @@ func add_presentation_detail(node: Node3D) -> bool:
     if node == null or _visual_root == null:
         return false
     _visual_root.add_child(node)
+    # Discovery-time encounter dressing is attached after the persistent
+    # landmark has built its own visuals. Encounter directors populate the
+    # dressing immediately after attaching it, so defer the re-capture until
+    # that bounded presentation tree has been filled.
+    call_deferred("_capture_region_motion_nodes")
     return true
 
 
@@ -828,6 +833,12 @@ func _animate_region_details() -> void:
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.75) * 0.05)
         elif node_name.begins_with("RootCisternPylonCollar"):
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.45) * 0.05)
+        elif node_name.begins_with("RootCisternCausewayLamp"):
+            var causeway_lamp_pulse := 1.0 + 0.006 + absf(sin(local_phase * 1.8)) * 0.074
+            node.scale = _motion_base_transforms[node].basis.get_scale() * causeway_lamp_pulse
+        elif node_name.begins_with("RootCisternCausewayGrowth"):
+            node.rotation.y += sin(local_phase * 0.82) * 0.06
+            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.18) * 0.07)
         elif node_name.begins_with("RootCisternCoreVein"):
             node.rotation.y += sin(local_phase * 0.76) * 0.08
         elif node_name.begins_with("RootCisternBasinRootTendril"):
@@ -955,6 +966,8 @@ func _is_region_motion_name(node_name: String) -> bool:
         "RiverbankGrowth",
         "RootCisternPulse",
         "RootCisternPylonCollar",
+        "RootCisternCausewayLamp",
+        "RootCisternCausewayGrowth",
         "RootCisternCoreVein",
         "RootCisternBasinRootTendril",
         "CathedralChoirSignal",

@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Root Cistern causeway-motion pass — 2026-08-27
+
+The Root Cistern approach causeway now participates in the existing bounded
+region-detail motion service: its low lamps pulse as a machine signal and its
+paired organic threshold growth carries deterministic breathing motion. This
+keeps the endgame approach alive without adding a new service, collision,
+route, objective, ecology or player-maintenance state. Aesthetic coverage is
+present; the exact silent live review remains the acceptance gate.
+
 ## Focused Root Cistern audio-bed pass — 2026-08-27
 
 Root Cistern now has a dedicated original ambient loop: low hydraulic mass,
