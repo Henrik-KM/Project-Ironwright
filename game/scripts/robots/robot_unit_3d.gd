@@ -746,7 +746,65 @@ func _refresh_visual_identity() -> void:
             ModelKit3D.add_cylinder(_model_root, 0.12, 0.16, Vector3(0.0, 1.44, 0.22), glow, Vector3(1.5708, 0.0, 0.0), "ForgeCoil")
             ModelKit3D.add_sphere(_model_root, 0.08, Vector3(-1.18, 0.74, -0.1), glow, Vector3.ONE, "WelderGlow")
 
+    _add_hero_service_detail(glow_color)
     _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.12, -body_size.z * 0.62), glow_color, 0.85, 4.0)
+
+
+func _add_hero_service_detail(glow_color: Color) -> void:
+    # Every authored friendly chassis gets one restrained manufactured focal:
+    # a signal collar, service face and paired harness anchors. This gives the
+    # machine society a shared production language without adding sockets,
+    # jobs, maintenance or collision geometry.
+    var collar_y := 1.48
+    var collar_radius := 0.66
+    var panel_width := 0.72
+    match archetype:
+        &"companion", &"guardian":
+            collar_y = 1.56
+            collar_radius = 0.78
+            panel_width = 0.86
+        &"scout":
+            collar_y = 1.42
+            collar_radius = 0.58
+            panel_width = 0.64
+        &"relay":
+            collar_y = 2.18
+            collar_radius = 0.72
+            panel_width = 0.82
+
+    var housing := ModelKit3D.material(Color("172428"), 0.86, 0.32)
+    var edge := ModelKit3D.material(Color("4d6264"), 0.74, 0.34)
+    var signal_mat := ModelKit3D.material(glow_color.darkened(0.48), 0.34, 0.25, glow_color, 2.6)
+    ModelKit3D.add_torus(_model_root, collar_radius, 0.042, Vector3(0.0, collar_y, 0.14), edge, Vector3.ZERO, "HeroSignalCollar", 32, 6)
+    ModelKit3D.add_surface_panel(
+        _model_root,
+        Vector3(panel_width, 0.18, 0.16),
+        Vector3(0.0, collar_y + 0.02, -collar_radius * 0.8),
+        housing,
+        signal_mat,
+        Vector3(-0.04, 0.0, 0.0),
+        "HeroServiceFace"
+    )
+    for side in [-1.0, 1.0]:
+        var side_sign := float(side)
+        ModelKit3D.add_beveled_box(
+            _model_root,
+            Vector3(0.11, 0.12, 0.22),
+            Vector3(side_sign * collar_radius * 0.72, collar_y, 0.14),
+            edge,
+            Vector3(0.0, 0.0, side_sign * 0.12),
+            "HeroHarnessAnchor%s" % ("L" if side_sign < 0.0 else "R"),
+            0.18
+        )
+        ModelKit3D.add_cylinder(
+            _model_root,
+            0.026,
+            0.42,
+            Vector3(side_sign * collar_radius * 0.72, collar_y - 0.22, 0.16),
+            signal_mat,
+            Vector3(0.0, 0.0, side_sign * 0.18),
+            "HeroHarnessConduit%s" % ("L" if side_sign < 0.0 else "R")
+        )
 
 
 func _build_authored_companion_visuals() -> void:
@@ -817,6 +875,7 @@ func _build_authored_companion_visuals() -> void:
                 "Tier3CrownBeacon"
             )
 
+    _add_hero_service_detail(glow_color)
     _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.15, -1.04), glow_color, 0.9, 4.2)
 
 
@@ -894,6 +953,7 @@ func _build_authored_warden_visuals() -> void:
                 "Tier3CrownBeacon"
             )
 
+    _add_hero_service_detail(glow_color)
     _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.18, -1.07), glow_color, 0.9, 4.2)
 
 
@@ -972,6 +1032,7 @@ func _build_authored_scrapper_visuals() -> void:
         ModelKit3D.add_cylinder(_model_root, 0.04, 0.5, Vector3(0.0, 2.35, 0.2), glow, Vector3.ZERO, "Tier3CrownMast")
         ModelKit3D.add_sphere(_model_root, 0.07, Vector3(0.0, 2.64, 0.2), glow, Vector3.ONE, "Tier3CrownBeacon")
 
+    _add_hero_service_detail(glow_color)
     _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.08, -0.94), glow_color, 0.76, 3.7)
 
 
@@ -1046,6 +1107,7 @@ func _build_authored_pathfinder_visuals() -> void:
         ModelKit3D.add_cylinder(_model_root, 0.035, 0.42, Vector3(0.0, 3.28, 0.12), glow, Vector3.ZERO, "Tier3CrownMast")
         ModelKit3D.add_sphere(_model_root, 0.065, Vector3(0.0, 3.52, 0.12), glow, Vector3.ONE, "Tier3CrownBeacon")
 
+    _add_hero_service_detail(glow_color)
     _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.06, -0.9), glow_color, 0.72, 3.8)
 
 
@@ -1119,6 +1181,7 @@ func _build_authored_engineer_visuals() -> void:
         ModelKit3D.add_cylinder(_model_root, 0.04, 0.5, Vector3(0.0, 2.32, 0.2), glow, Vector3.ZERO, "Tier3CrownMast")
         ModelKit3D.add_sphere(_model_root, 0.07, Vector3(0.0, 2.62, 0.2), glow, Vector3.ONE, "Tier3CrownBeacon")
 
+    _add_hero_service_detail(glow_color)
     _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.1, -0.98), glow_color, 0.78, 3.8)
 
 
@@ -1155,4 +1218,5 @@ func _build_signal_relay_visuals() -> void:
         crown_ring.position = Vector3(0.0, 2.38, 0.02)
         _model_root.add_child(crown_ring)
         ModelKit3D.add_sphere(_model_root, 0.065, Vector3(0.0, 2.52, 0.02), amber, Vector3.ONE, "Tier3CrownBeacon")
+    _add_hero_service_detail(cyan_color)
     _sensor_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 2.28, -0.04), cyan_color, 0.72, 4.4)
