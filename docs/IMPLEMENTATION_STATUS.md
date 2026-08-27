@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused remote-region silent acceptance milestone
+
+- live-reviewed exact 1280x720 presentation pages 8/15 and 9/15, confirming
+  the Flood Market canopy/exchange and Riverworks channels/pump focal remain
+  legible from the authored approach camera;
+- kept the review on Godot Dummy audio and quiet mode only; no speaker output or
+  gameplay-state mutation was used.
+
 ## Focused late-organic and Root Cistern silent acceptance milestone
 
 - live-reviewed exact 1280x720 presentation pages 3/15 and 14/15 after the
