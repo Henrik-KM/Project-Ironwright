@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused Mechromancer communications-yoke pass
+
+- added a restrained right-shoulder communications yoke, short antenna, warm
+  beacon and service cable to the canonical Blender hero source and fallback
+  asset contract, strengthening the practical asymmetrical field-engineer
+  silhouette at close tactical distance;
+- added bounded antenna/yoke motion to the existing Idle, Walk, Work, Upgrade
+  and Fire clips without changing player sockets, collision, weapon behavior,
+  progression, save state or workload;
+- added manifest, source documentation and aesthetic regression coverage;
+  the exact 1280x720 friendly-roster review passed with Godot Dummy audio and
+  quiet mode only, with no live speakers used.
+
 ## Focused Ashmantle siphon-detail pass
 
 - added a high-definition collar and paired threat-light apertures around the

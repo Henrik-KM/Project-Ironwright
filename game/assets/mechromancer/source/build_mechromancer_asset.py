@@ -369,6 +369,10 @@ def main() -> None:
         "Barrel": mesh("Barrel", add_cylinder(builder, 0.035, 0.26, gun, 8)),
         "Tool": mesh("Tool", add_beveled_box(builder, (0.07, 0.28, 0.07), metal, 0.012)),
         "WarmLamp": mesh("WarmLamp", add_cylinder(builder, 0.045, 0.10, warm, 8)),
+        "CommsYoke": mesh("CommsYoke", add_beveled_box(builder, (0.17, 0.13, 0.18), metal, 0.018)),
+        "CommsAntenna": mesh("CommsAntenna", add_cylinder(builder, 0.018, 0.27, metal, 10)),
+        "CommsBeacon": mesh("CommsBeacon", add_uv_sphere(builder, 0.043, warm, 12, 20)),
+        "CommsCable": mesh("CommsCable", add_cylinder(builder, 0.012, 0.36, leather, 8)),
     }
 
     nodes: list[dict] = [{"name": "MechromancerModel", "children": [], "extras": {"ironwright_asset_id": "mechromancer.player.v1"}}]
@@ -418,6 +422,10 @@ def main() -> None:
     add_node("CoatTailRight", mesh_ids["CoatTail"], (0.18, 0.69, 0.13), (0.0, 0.0, 0.045))
     add_node("ShoulderLamp", mesh_ids["LampHousing"], (-0.42, 1.58, -0.16), extras={"socket_type": "light_mount"})
     add_node("LampCore", mesh_ids["Lamp"], (-0.42, 1.58, -0.245))
+    add_node("FieldCommsYoke", mesh_ids["CommsYoke"], (0.44, 1.60, -0.12), (0.0, 0.14, 0.0))
+    add_node("FieldCommsAntenna", mesh_ids["CommsAntenna"], (0.49, 1.60, 0.00), (0.0, 0.44, 0.0))
+    add_node("FieldCommsBeacon", mesh_ids["CommsBeacon"], (0.60, 1.60, 0.02))
+    add_node("FieldCommsCable", mesh_ids["CommsCable"], (0.31, 1.46, -0.02), (0.0, 0.0, -0.82))
     add_node("WarmLamp", mesh_ids["WarmLamp"], (0.31, 1.52, -0.20))
     pistol = add_node("WeakPistol", mesh_ids["Pistol"], (0.48, 1.12, -0.27), extras={"socket_type": "weapon_mount"})
     add_node("PistolBarrel", mesh_ids["Barrel"], (0.0, 0.0, -0.27), (math.pi * 0.5, 0.0, 0.0), parent=pistol)
@@ -445,6 +453,8 @@ def main() -> None:
             ("MechromancerModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.012, 0.0, 0.0, 0.0, 0.0], "LINEAR"),
             ("Hood", "translation", [0.0, 0.8, 1.6], [0.0, 1.88, 0.03, 0.0, 1.892, 0.03, 0.0, 1.88, 0.03], "LINEAR"),
             ("FieldPack", "translation", [0.0, 0.8, 1.6], [0.0, 1.20, 0.24, 0.0, 1.21, 0.24, 0.0, 1.20, 0.24], "LINEAR"),
+            ("FieldCommsAntenna", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.035, 0.0)) + quat((0.0, 0.045, 0.0)) + quat((0.0, -0.035, 0.0)), "LINEAR"),
+            ("FieldCommsBeacon", "translation", [0.0, 0.8, 1.6], [0.60, 1.60, 0.02, 0.60, 1.615, 0.02, 0.60, 1.60, 0.02], "LINEAR"),
         ]),
         animation("Walk", [
             ("LeftLeg", "rotation", [0.0, 0.22, 0.44], quat((0.24, 0.0, 0.0)) + quat((-0.24, 0.0, 0.0)) + quat((0.24, 0.0, 0.0)), "LINEAR"),
@@ -452,21 +462,26 @@ def main() -> None:
             ("CoatTailLeft", "rotation", [0.0, 0.22, 0.44], quat((0.08, 0.0, -0.045)) + quat((0.22, 0.0, -0.045)) + quat((0.08, 0.0, -0.045)), "LINEAR"),
             ("CoatTailRight", "rotation", [0.0, 0.22, 0.44], quat((0.08, 0.0, 0.045)) + quat((0.22, 0.0, 0.045)) + quat((0.08, 0.0, 0.045)), "LINEAR"),
             ("FieldPack", "translation", [0.0, 0.22, 0.44], [0.0, 1.20, 0.24, 0.0, 1.25, 0.24, 0.0, 1.20, 0.24], "LINEAR"),
+            ("FieldCommsAntenna", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, -0.02)) + quat((0.0, 0.0, 0.05)) + quat((0.0, 0.0, -0.02)), "LINEAR"),
         ]),
         animation("Fire", [
             ("WeakPistol", "translation", [0.0, 0.08, 0.18], [0.48, 1.12, -0.27, 0.48, 1.12, -0.35, 0.48, 1.12, -0.27], "LINEAR"),
             ("RightArm", "rotation", [0.0, 0.08, 0.18], quat((0.0, 0.0, 0.10)) + quat((0.0, 0.0, 0.04)) + quat((0.0, 0.0, 0.10)), "LINEAR"),
             ("ShoulderLamp", "rotation", [0.0, 0.08, 0.18], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.08, 0.0)) + quat((0.0, 0.0, 0.0)), "LINEAR"),
+            ("FieldCommsAntenna", "rotation", [0.0, 0.08, 0.18], quat((0.0, 0.0, 0.0)) + quat((0.0, -0.08, 0.0)) + quat((0.0, 0.0, 0.0)), "LINEAR"),
         ]),
         animation("Work", [
             ("LeftArm", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, -0.10)) + quat((-0.65, 0.0, -0.25)) + quat((0.0, 0.0, -0.10)), "LINEAR"),
             ("RightArm", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 0.10)) + quat((-0.72, 0.0, 0.25)) + quat((0.0, 0.0, 0.10)), "LINEAR"),
             ("FieldTool", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, -0.16)) + quat((0.0, 0.0, -0.34)) + quat((0.0, 0.0, -0.16)), "LINEAR"),
+            ("FieldCommsYoke", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.14, 0.0)) + quat((0.0, 0.22, 0.0)) + quat((0.0, 0.14, 0.0)), "LINEAR"),
+            ("FieldCommsAntenna", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.10, 0.0)) + quat((0.0, 0.0, 0.0)), "LINEAR"),
         ]),
         animation("Upgrade", [
             ("LeftArm", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, -0.10)) + quat((-0.82, 0.0, -0.28)) + quat((0.0, 0.0, -0.10)), "LINEAR"),
             ("RightArm", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 0.10)) + quat((-0.88, 0.0, 0.28)) + quat((0.0, 0.0, 0.10)), "LINEAR"),
             ("FieldTool", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, -0.16)) + quat((0.0, 0.0, -0.48)) + quat((0.0, 0.0, -0.16)), "LINEAR"),
+            ("FieldCommsAntenna", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 0.0)) + quat((0.0, -0.12, 0.0)) + quat((0.0, 0.0, 0.0)), "LINEAR"),
         ]),
         animation("Hit", [
             ("MechromancerModel", "rotation", [0.0, 0.08, 0.24], quat((0.0, 0.0, 0.0)) + quat((0.10, 0.0, 0.05)) + quat((0.0, 0.0, 0.0)), "LINEAR"),
@@ -488,7 +503,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "mechromancer.player.v1",
-            "required_nodes": ["MechromancerModel", "PistolMuzzle", "ShoulderLamp", "FaceAnchor", "FieldPack", "CoatTailLeft", "CoatTailRight"],
+            "required_nodes": ["MechromancerModel", "PistolMuzzle", "ShoulderLamp", "FaceAnchor", "FieldPack", "FieldCommsYoke", "FieldCommsAntenna", "FieldCommsBeacon", "FieldCommsCable", "CoatTailLeft", "CoatTailRight"],
             "animation_clips": ["Idle", "Walk", "Fire", "Work", "Upgrade", "Hit"],
         },
     }

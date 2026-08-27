@@ -712,6 +712,16 @@ def main() -> None:
     right_pad = cloth_panel("RightShoulderPad", [(-0.14, 0.07), (0.14, 0.05), (0.12, -0.10), (-0.10, -0.08)], 0.11, (0.39, -0.08, 1.70), root, leather, 0.020)
     right_pad.rotation_euler.y = 0.16
 
+    # The right shoulder carries the field rig's communications yoke. Keep it
+    # smaller than the lamp and pack so the asymmetry reads as practical
+    # equipment rather than a second focal prop; the short antenna and cable
+    # add a high-definition manufactured edge at close range.
+    comms_yoke = tapered_prism("FieldCommsYoke", 0.17, 0.13, 0.17, 0.11, 0.18, (0.44, -0.12, 1.78), root, metal, 0.024)
+    comms_yoke.rotation_euler.y = 0.14
+    comms_antenna = limb_between("FieldCommsAntenna", (0.49, -0.17, 1.84), (0.60, -0.17, 2.08), 0.018, root, metal, 0.80, 0.006)
+    comms_beacon = uv_sphere("FieldCommsBeacon", (0.043, 0.043, 0.043), (0.60, -0.17, 2.10), root, warm)
+    comms_cable = limb_between("FieldCommsCable", (0.44, -0.03, 1.72), (0.18, -0.22, 1.48), 0.012, root, leather, 0.80, 0.004)
+
     left_arm = limb_between("LeftArm", (-0.36, 0.0, 1.62), (-0.48, -0.04, 1.30), 0.105, root, coat, 0.88, 0.025)
     right_arm = limb_between("RightArm", (0.36, 0.0, 1.62), (0.48, -0.04, 1.30), 0.105, root, coat, 0.88, 0.025)
     limb_between("LeftForearmGuard", (-0.48, -0.04, 1.30), (-0.47, -0.22, 1.08), 0.082, root, metal, 0.88, 0.016)
@@ -807,6 +817,8 @@ def main() -> None:
         (coat_left, [("rotation_euler", 1, [(1.0, -0.015), (20.0, 0.02), (40.0, -0.015)])]),
         (coat_right, [("rotation_euler", 1, [(1.0, 0.015), (20.0, -0.02), (40.0, 0.015)])]),
         (pack, [("location", 2, [(1.0, 1.34), (20.0, 1.35), (40.0, 1.34)])]),
+        (comms_antenna, [("rotation_euler", 1, [(1.0, -0.035), (20.0, 0.045), (40.0, -0.035)])]),
+        (comms_beacon, [("location", 2, [(1.0, 2.10), (20.0, 2.115), (40.0, 2.10)])]),
     ])
     multi_action("Walk", [
         (root, [("location", 2, [(1.0, 0.0), (6.0, 0.025), (12.0, 0.0)]), ("rotation_euler", 1, [(1.0, -0.015), (6.0, 0.025), (12.0, -0.015)])]),
@@ -815,22 +827,27 @@ def main() -> None:
         (coat_left, [("rotation_euler", 1, [(1.0, -0.10), (6.0, 0.14), (12.0, -0.10)])]),
         (coat_right, [("rotation_euler", 1, [(1.0, 0.10), (6.0, -0.14), (12.0, 0.10)])]),
         (pack, [("location", 2, [(1.0, 1.33), (6.0, 1.38), (12.0, 1.33)])]),
+        (comms_antenna, [("rotation_euler", 2, [(1.0, -0.02), (6.0, 0.05), (12.0, -0.02)])]),
     ])
     multi_action("Fire", [
         (pistol, [("location", 1, [(1.0, -0.29), (3.0, -0.36), (5.0, -0.29)]), ("rotation_euler", 0, [(1.0, 0.0), (3.0, -0.06), (5.0, 0.0)])]),
         (right_arm, [("rotation_euler", 1, [(1.0, 0.10), (3.0, 0.04), (5.0, 0.10)])]),
+        (comms_antenna, [("rotation_euler", 1, [(1.0, 0.0), (3.0, -0.08), (5.0, 0.0)])]),
     ])
     multi_action("Work", [
         (left_arm, [("rotation_euler", 0, [(1.0, 0.0), (12.0, -0.28), (24.0, 0.0)])]),
         (right_arm, [("rotation_euler", 0, [(1.0, 0.0), (12.0, -0.48), (24.0, 0.0)])]),
         (coat_left, [("rotation_euler", 1, [(1.0, -0.02), (12.0, 0.08), (24.0, -0.02)])]),
         (coat_right, [("rotation_euler", 1, [(1.0, 0.02), (12.0, -0.08), (24.0, 0.02)])]),
+        (comms_yoke, [("rotation_euler", 1, [(1.0, 0.14), (12.0, 0.22), (24.0, 0.14)])]),
+        (comms_antenna, [("rotation_euler", 1, [(1.0, 0.0), (12.0, 0.10), (24.0, 0.0)])]),
     ])
     multi_action("Upgrade", [
         (left_arm, [("rotation_euler", 0, [(1.0, 0.0), (12.0, -0.42), (24.0, 0.0)])]),
         (right_arm, [("rotation_euler", 0, [(1.0, 0.0), (12.0, -0.62), (24.0, 0.0)])]),
         (field_tool, [("rotation_euler", 1, [(1.0, -0.18), (12.0, -0.42), (24.0, -0.18)])]),
         (shoulder_lamp, [("rotation_euler", 1, [(1.0, 0.0), (12.0, 0.14), (24.0, 0.0)])]),
+        (comms_antenna, [("rotation_euler", 1, [(1.0, 0.0), (12.0, -0.12), (24.0, 0.0)])]),
     ])
     multi_action("Hit", [
         (root, [("rotation_euler", 1, [(1.0, 0.0), (3.0, 0.10), (7.0, 0.0)])]),
@@ -842,7 +859,7 @@ def main() -> None:
     bpy.ops.object.select_all(action="SELECT")
     bpy.context.view_layer.objects.active = root
     scene["ironwright_asset_id"] = "mechromancer.player.v1"
-    scene["required_nodes"] = "MechromancerModel,PistolMuzzle,ShoulderLamp,FaceAnchor,FieldPack,CoatTailLeft,CoatTailRight"
+    scene["required_nodes"] = "MechromancerModel,PistolMuzzle,ShoulderLamp,FaceAnchor,FieldPack,FieldCommsYoke,FieldCommsAntenna,FieldCommsBeacon,FieldCommsCable,CoatTailLeft,CoatTailRight"
     scene["animation_clips"] = "Idle,Walk,Fire,Work,Upgrade,Hit"
     bpy.ops.wm.save_as_mainfile(filepath=str(BLEND_PATH))
     bpy.ops.export_scene.gltf(

@@ -14,12 +14,14 @@ cloth, leather, oxidized metal and skin.
 The Blender source preserves these names and clips:
 
 - Nodes: `MechromancerModel`, `PistolMuzzle`, `ShoulderLamp`, `FaceAnchor`,
-  `FieldPack`, `CoatTailLeft`, `CoatTailRight`.
+  `FieldPack`, `FieldCommsYoke`, `FieldCommsAntenna`, `FieldCommsBeacon`,
+  `FieldCommsCable`, `CoatTailLeft`, `CoatTailRight`.
 - Clips: `Idle`, `Walk`, `Fire`, `Work`, `Hit`.
 
 The model is original Project Ironwright art: charcoal hood and split coat,
-worn field metal, leather pack, cyan shoulder cognition lamp, warm utility
-light, visible face/visor, and a weak sidearm. Curved source helpers enforce a
+worn field metal, leather pack, cyan shoulder cognition lamp, right-shoulder
+communications yoke with a short warm beacon, warm utility light, visible
+face/visor, and a weak sidearm. Curved source helpers enforce a
 24-vertex radial floor and 32-major/12-minor torus floor; spherical helpers
 enforce a 32-segment and 16-ring floor before export so small field hardware
 does not regress to faceted close-camera silhouettes. The dependency-free fallback also uses
