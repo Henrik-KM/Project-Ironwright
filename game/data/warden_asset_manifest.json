@@ -17,6 +17,8 @@
     "WardenHeatExchanger",
     "WardenTargetingFace",
     "WardenOpticShroud",
+    "WardenTargetingBezel",
+    "WardenTargetingApertureLeft",
     "WardenRecoilCollarLeft",
     "WardenThermalFinRight",
     "WardenBreechClamp",

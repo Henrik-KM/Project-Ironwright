@@ -1980,3 +1980,12 @@ close review distance. Sockets, animation ownership, collision, tier, ecology
 and combat ownership are unchanged. Validation and live review use Godot's
 Dummy audio driver with `--quiet-audio`; no live speakers are used. Formal
 human acceptance of the full organic library remains open.
+## Focused Warden targeting-detail pass — 2026-08-28
+
+The authored Warden now carries a high-definition targeting bezel and paired
+optic apertures around its existing sensor face. The guardian reads as a
+maintained protective machine at compact distance without changing existing
+sockets, animation ownership, collision, combat, autonomy, LOD or save state.
+Exact silent 1280x720 page 1/15 live review is required with Godot Dummy audio
+and `--quiet-audio` only; no live speakers are used. Broader human friendly
+roster and production-art acceptance remains open.

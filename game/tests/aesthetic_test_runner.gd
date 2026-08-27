@@ -1247,6 +1247,8 @@ func _run_all() -> void:
     _expect(_find_named(authored_warden, "WardenAuthoredModel") != null, "The guardian must use the authored Warden model shell.")
     _expect(_find_named(authored_warden, "ProductionAssetMarker") != null, "The authored Warden model must expose its production asset marker.")
     _expect(_find_named(authored_warden, "WardenTargetingFace") != null and _find_named(authored_warden, "WardenOpticShroud") != null, "The authored Warden model must expose maintained targeting and optic-shroud hardware.")
+    var warden_targeting_bezel := _find_named(authored_warden, "WardenTargetingBezel") as MeshInstance3D
+    _expect(warden_targeting_bezel != null and _mesh_vertex_count(warden_targeting_bezel) >= 48 and _find_named(authored_warden, "WardenTargetingApertureRight") != null, "The Warden must expose a dense targeting bezel and paired optic apertures for a readable guardian face.")
     _expect(_find_named(authored_warden, "WardenRecoilCollarLeft") != null and _find_named(authored_warden, "WardenThermalFinRight") != null and _find_named(authored_warden, "WardenBreechClamp") != null, "The authored Warden model must expose close-camera recoil, thermal and breech hardware.")
     var warden_shoulder_guard := _find_named(authored_warden, "WardenShoulderGuard") as MeshInstance3D
     var warden_weapon_rail := _find_named(authored_warden, "WardenWeaponRail") as MeshInstance3D
