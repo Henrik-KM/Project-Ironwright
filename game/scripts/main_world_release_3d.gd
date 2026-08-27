@@ -674,6 +674,9 @@ func _finish_release_boot() -> void:
 	elif _has_casualty_recovery_review_flag():
 		_start_release_world()
 		call_deferred("_start_casualty_recovery_review")
+	elif _has_run_variation_review_flag():
+		_start_release_world()
+		call_deferred("_start_run_variation_review")
 	elif _has_title_review_flag():
 		process_mode = Node.PROCESS_MODE_ALWAYS
 		title_review_capture_path = _title_review_capture_argument()
@@ -900,6 +903,42 @@ func _has_casualty_recovery_review_flag() -> bool:
 		if str(argument) == "--casualty-recovery-review":
 			return true
 	return false
+
+
+func _has_run_variation_review_flag() -> bool:
+	for argument in OS.get_cmdline_args():
+		if str(argument).begins_with("--run-variation-review"):
+			return true
+	for argument in OS.get_cmdline_user_args():
+		if str(argument).begins_with("--run-variation-review"):
+			return true
+	return false
+
+
+func _run_variation_review_argument() -> StringName:
+	var arguments: Array = OS.get_cmdline_args()
+	arguments.append_array(OS.get_cmdline_user_args())
+	for index in arguments.size():
+		var argument := str(arguments[index])
+		if argument.begins_with("--run-variation-review="):
+			return StringName(argument.get_slice("=", 1))
+		if argument == "--run-variation-review" and index + 1 < arguments.size():
+			return StringName(str(arguments[index + 1]))
+	return &"weather.frost_hush"
+
+
+func _start_run_variation_review() -> void:
+	if run_variation_director == null or run_state == null:
+		return
+	var variant_id := _run_variation_review_argument()
+	if not run_variation_director.profiles.has(variant_id):
+		push_error("Run variation review requested an unknown profile: %s" % String(variant_id))
+		return
+	run_state.set_world_variant(variant_id, run_state.world_seed)
+	run_variation_director.apply_current()
+	var variant_name := localization_service.text("world.condition.%s.name" % String(variant_id).replace("weather.", ""))
+	hud.push_notification("RUN VARIATION REVIEW · %s" % variant_name)
+	run_state.log_event("Run variation review started: %s. No save or player input is enabled." % String(variant_id))
 
 
 func _start_presentation_review() -> void:

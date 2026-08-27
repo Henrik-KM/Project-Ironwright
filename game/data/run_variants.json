@@ -86,6 +86,24 @@
       "brightness_bias": -0.012,
       "glow_bias": 0.055,
       "ecology_pressure_multiplier": 1.02
+    },
+    {
+      "id": "weather.frost_hush",
+      "display_name": "Frost Hush",
+      "description": "A brittle cold settles over the town; suspended frost catches the Heartforge light and deadens the distance.",
+      "rain_amount": 180,
+      "rain_velocity_min": 1.0,
+      "rain_velocity_max": 2.8,
+      "rain_color": "#c9e6e8b8",
+      "particle_style": "frost",
+      "ambient_tint": "#9ab6c4",
+      "fog_tint": "#587484",
+      "fog_density_bias": 0.0022,
+      "ambient_energy_bias": -0.005,
+      "fog_energy_bias": 0.055,
+      "brightness_bias": -0.006,
+      "glow_bias": 0.11,
+      "ecology_pressure_multiplier": 0.86
     }
   ]
 }

@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Frost Hush run-variation milestone
+
+- added a sixth deterministic world condition with sparse drifting frost,
+  colder fog, restrained practical-light emphasis and a lower ecological
+  pressure identity;
+- kept the condition presentation-only and persisted through the existing
+  stable run-variant contract, so it changes atmosphere and run texture
+  without adding a recurring task or new management surface;
+- localized the player-facing name and description in English, German and
+  Swedish, with release coverage for profile loading, particle behavior and
+  bounded pressure identity.
+
 ## Focused hazard-aware route recovery milestone
 
 - extended autonomous side-route selection so a blocked operation scores both

@@ -171,7 +171,7 @@ func _test_session_diagnostics() -> void:
 
 func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
     var variation := world.run_variation_director
-    _expect(variation.profile_ids().size() == 5, "Release must load the five authored world-condition profiles.")
+    _expect(variation.profile_ids().size() == 6, "Release must load the six authored world-condition profiles.")
     _expect(variation.profiles.has(&"weather.signal_bloom"), "Release must retain the authored Signal Bloom world-condition profile.")
     if variation.profiles.has(&"weather.signal_bloom"):
         var signal_bloom: Dictionary = variation.profiles[&"weather.signal_bloom"]
@@ -185,6 +185,12 @@ func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
         _expect(str(ashfall_drift.get("particle_style", "")) == "ash" and str(ashfall_drift.get("rain_color", "")) == "#b28d8270", "Ashfall Drift must use a distinct drifting ash particle style and translucent particulate colour.")
         _expect(str(ashfall_drift.get("ambient_tint", "")) == "#aa9a94" and str(ashfall_drift.get("fog_tint", "")) == "#776866", "Ashfall Drift must carry its distinct warm ash atmospheric signature.")
         _expect(float(ashfall_drift.get("glow_bias", 0.0)) > 0.0 and float(ashfall_drift.get("glow_bias", 0.0)) < 0.1, "Ashfall Drift must preserve restrained practical-light emphasis.")
+    _expect(variation.profiles.has(&"weather.frost_hush"), "Release must retain the authored Frost Hush world-condition profile.")
+    if variation.profiles.has(&"weather.frost_hush"):
+        var frost_hush: Dictionary = variation.profiles[&"weather.frost_hush"]
+        _expect(str(frost_hush.get("particle_style", "")) == "frost" and int(frost_hush.get("rain_amount", 0)) == 180, "Frost Hush must use a sparse drifting-flake particle signature.")
+        _expect(str(frost_hush.get("ambient_tint", "")) == "#9ab6c4" and str(frost_hush.get("fog_tint", "")) == "#587484", "Frost Hush must carry its distinct cold atmospheric signature.")
+        _expect(float(frost_hush.get("ecology_pressure_multiplier", 0.0)) < 1.0, "Frost Hush must carry a restrained lower-pressure ecological identity.")
     for profile_id in variation.profile_ids():
         var profile: Dictionary = variation.profiles[profile_id]
         _expect(str(profile.get("ambient_tint", "")) != "" and str(profile.get("fog_tint", "")) != "", "Every authored world condition must define deterministic ambient and fog identity tints.")
@@ -204,6 +210,11 @@ func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
     _expect(is_equal_approx(world.strategic_ecology_director.run_variation_pressure_multiplier, 1.02), "Switching to Ashfall Drift must update the live ecology-pressure identity without changing the saved run seed.")
     var ash_mesh := world.vertical_slice.weather_emitter.mesh as QuadMesh if world.vertical_slice.weather_emitter != null else null
     _expect(ash_mesh != null and ash_mesh.size.x <= 0.1 and ash_mesh.size.y <= 0.1, "Ashfall Drift must apply a fleck-sized particle mesh at runtime.")
+    world.run_state.set_world_variant(&"weather.frost_hush", world.run_state.world_seed)
+    variation.apply_current()
+    _expect(is_equal_approx(world.strategic_ecology_director.run_variation_pressure_multiplier, 0.86), "Switching to Frost Hush must update the live ecology-pressure identity without changing the saved run seed.")
+    var frost_mesh := world.vertical_slice.weather_emitter.mesh as QuadMesh if world.vertical_slice.weather_emitter != null else null
+    _expect(frost_mesh != null and frost_mesh.size.x >= 0.1 and frost_mesh.size.y >= 0.1, "Frost Hush must apply a readable drifting-flake particle mesh at runtime.")
     world.run_state.set_world_variant(original_variant, world.run_state.world_seed)
     variation.apply_current()
 
