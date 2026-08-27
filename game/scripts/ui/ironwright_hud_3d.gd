@@ -614,7 +614,10 @@ func show_ending(victory: bool, detail: String, allow_continuation: bool = false
     var prompt_key := "hud.ending.continue" if allow_continuation else "hud.ending.restart"
     var prompt_fallback := "Press ENTER to continue exploring." if allow_continuation else "Press ENTER to restart."
     var prompt := _text(prompt_key, prompt_fallback)
-    var readable_detail := _wrap_ending_detail(detail, 76)
+    # Keep the short post-ending paragraph intact at the target 1280px review
+    # width. A 76-character split can leave the opening word of that paragraph
+    # stranded on its own line in the longer Containment narrative.
+    var readable_detail := _wrap_ending_detail(detail, 70)
     var ending_style := StyleBoxFlat.new()
     ending_style.bg_color = Color(0.012, 0.028, 0.034, 0.95) if victory else Color(0.04, 0.022, 0.025, 0.96)
     ending_style.border_color = Color(0.40, 0.85, 0.84, 0.78) if victory else Color(0.82, 0.34, 0.28, 0.78)
