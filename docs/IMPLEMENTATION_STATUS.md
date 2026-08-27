@@ -1,5 +1,19 @@
 # Implementation status
 
+## Focused Root Cistern approach-depth pass
+
+- added a bounded presentation-only Root Cistern approach causeway with
+  segmented service slabs, a low signal line, edge rails, lamps and paired
+  organic root braces, so the endgame approach reads as a deliberate machine
+  space leading into the final basin instead of a focal prop surrounded by
+  disconnected hardware;
+- preserved the endgame landmark, collision, route, ecology, operation,
+  reduced-detail and save-state contracts; the causeway owns no resources,
+  objectives or player-managed maintenance;
+- added aesthetic coverage for the causeway, machine signal line, edge rails
+  and paired organic growth anchors; silent live approach review remains part
+  of the release gate.
+
 ## Focused hostile organic family anatomy finish
 
 - added a restrained living vascular rim, asymmetrical growth plate and paired

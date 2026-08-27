@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Root Cistern approach-depth pass — 2026-08-27
+
+Root Cistern now has a bounded presentation-only approach causeway: three
+segmented service slabs, a low cyan signal line, paired edge rails and lamps,
+and organic root braces at the basin threshold. The layer gives the final
+approach a readable machine-built procession into the living basin rather than
+leaving the capstone focal prop surrounded by disconnected hardware. It adds
+no collision, route ownership, resources, objectives, ecology or player
+maintenance. Native aesthetic coverage is present; exact silent live approach
+review is required before this pass is considered visually accepted.
+
 The development-only `--quiet-audio` flag now caps generated release and
 survival audio at -30 dB for safe live review. Automated and screenshot
 validation continues to use Godot's dummy audio driver; no review requires
