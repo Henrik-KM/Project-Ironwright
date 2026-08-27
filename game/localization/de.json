@@ -185,6 +185,8 @@
     "world.condition.signal_bloom.description": "Eine geladene organische Resonanz färbt den Nebel cyan und lässt jedes Maschinenlicht beobachtet wirken.",
     "world.condition.ashfall_drift.name": "Aschedrift",
     "world.condition.ashfall_drift.description": "Eine trockene Aschefront zieht durch den zerstörten Bezirk; orange Leuchten brennen durch den schmutzigen Himmel.",
+    "world.condition.frost_hush.name": "Froststille",
+    "world.condition.frost_hush.description": "Eine spröde Kälte legt sich über die Stadt; schwebender Frost fängt das Licht der Herzschmiede und dämpft die Ferne.",
     "guidance.salvage": "WRACK BERGEN",
     "guidance.salvage.hold": "HALTE {0} · LAUT",
     "guidance.heartforge": "HERZSCHMIEDE",

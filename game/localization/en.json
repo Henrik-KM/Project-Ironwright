@@ -185,6 +185,8 @@
     "world.condition.signal_bloom.description": "A charged organic resonance stains the fog cyan and makes every machine light feel watched.",
     "world.condition.ashfall_drift.name": "Ashfall Drift",
     "world.condition.ashfall_drift.description": "A dry ash front drifts through the broken district; orange practicals burn through a dirty sky.",
+    "world.condition.frost_hush.name": "Frost Hush",
+    "world.condition.frost_hush.description": "A brittle cold settles over the town; suspended frost catches the Heartforge light and deadens the distance.",
     "guidance.salvage": "SALVAGE WRECK",
     "guidance.salvage.hold": "HOLD {0} · LOUD",
     "guidance.heartforge": "HEARTFORGE",

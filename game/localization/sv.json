@@ -185,6 +185,8 @@
     "world.condition.signal_bloom.description": "En laddad organisk resonans färgar dimman cyan och får varje maskinljus att kännas bevakat.",
     "world.condition.ashfall_drift.name": "Askdrift",
     "world.condition.ashfall_drift.description": "En torr askfront driver genom den trasiga stadsdelen; orange ljus brinner genom en smutsig himmel.",
+    "world.condition.frost_hush.name": "Frosttystnad",
+    "world.condition.frost_hush.description": "En spröd kyla lägger sig över staden; svävande frost fångar Hjärtugnens ljus och dämpar avståndet.",
     "guidance.salvage": "BÄRGA VRAK",
     "guidance.salvage.hold": "HÅLL {0} · HÖGLJUTT",
     "guidance.heartforge": "HJÄRTSMEDJAN",

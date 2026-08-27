@@ -804,6 +804,20 @@ func apply_weather_profile(profile: Dictionary) -> void:
         var ash_mesh := weather_emitter.mesh as QuadMesh
         if ash_mesh != null:
             ash_mesh.size = Vector2(0.065, 0.065)
+    elif particle_style == &"frost":
+        # Frost is a sparse, drifting flake field rather than a recoloured
+        # rain streak. It remains a bounded presentation layer and never feeds
+        # noise, ecology, navigation or simulation state.
+        weather_emitter.lifetime = 6.0
+        weather_emitter.preprocess = 6.0
+        weather_emitter.direction = Vector3(0.08, -0.24, 0.03)
+        weather_emitter.spread = 58.0
+        weather_emitter.gravity = Vector3(0.0, -0.18, 0.0)
+        weather_emitter.scale_amount_min = 0.34
+        weather_emitter.scale_amount_max = 0.9
+        var frost_mesh := weather_emitter.mesh as QuadMesh
+        if frost_mesh != null:
+            frost_mesh.size = Vector2(0.11, 0.11)
     else:
         weather_emitter.lifetime = 1.4
         weather_emitter.preprocess = 1.4
