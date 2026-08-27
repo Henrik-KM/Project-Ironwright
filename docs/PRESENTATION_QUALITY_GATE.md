@@ -1943,6 +1943,15 @@ preserving the drill socket, bore-tip placement, animation, collision, tier,
 ecology and combat ownership. Validation and live review use Godot's Dummy
 audio driver with `--quiet-audio`; no live speakers are used. Formal human
 acceptance of the full organic library remains open.
+# Focused Veilstalker cowl-detail pass — 2026-08-27
+
+The authored Veilstalker now carries paired shell brow plates between its
+protected threat eyes and cowl spines, making the sensory predator's face read
+as layered anatomy at close roster distance. Sockets, animation, collision,
+tier, ecology and combat ownership are unchanged. Validation and live review
+use Godot's Dummy audio driver with `--quiet-audio`; no live speakers are used.
+Formal human acceptance of the full organic library remains open.
+
 # Focused Miremaw jaw-hardware pass — 2026-08-27
 
 The authored Miremaw now carries paired rounded hinge hardware at its existing

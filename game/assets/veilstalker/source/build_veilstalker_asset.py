@@ -83,6 +83,7 @@ def main() -> None:
         mesh_id: int | None = None,
         translation: Sequence[float] = (0.0, 0.0, 0.0),
         rotation: Sequence[float] = (0.0, 0.0, 0.0),
+        scale: Sequence[float] | None = None,
         extras: dict | None = None,
         parent: int = 0,
     ) -> int:
@@ -91,6 +92,8 @@ def main() -> None:
             entry["mesh"] = mesh_id
         if rotation != (0.0, 0.0, 0.0):
             entry["rotation"] = quat(rotation)
+        if scale is not None:
+            entry["scale"] = list(scale)
         if extras:
             entry["extras"] = extras
         nodes.append(entry)
@@ -110,6 +113,7 @@ def main() -> None:
     for side in (-1.0, 1.0):
         add_node("VeilstalkerEye", mesh_ids["Eye"], (side * 0.27, 1.48, -1.37), extras={"socket_type": "threat_eye"})
         add_node("VeilstalkerEyeRim%s" % ("L" if side < 0.0 else "R"), mesh_ids["EyeRim"], (side * 0.27, 1.48, -1.3), rotation=(0.0, 0.0, side * 0.18), extras={"surface": "protected_threat_eye"})
+        add_node("VeilstalkerCowlPlate%s" % ("L" if side < 0.0 else "R"), mesh_ids["Plate"], (side * 0.34, 1.60, -1.17), rotation=(0.0, 0.0, side * 0.18), scale=(0.40, 0.76, 0.34), extras={"surface": "layered_cowl_brow"})
         add_node("VeilstalkerMandible%s" % ("L" if side < 0.0 else "R"), mesh_ids["Mandible"], (side * 0.24, 1.17, -1.43), rotation=(0.0, 0.0, side * 0.28), extras={"socket_type": "attack_mandible"})
         add_node("VeilstalkerMandibleRidge%s" % ("L" if side < 0.0 else "R"), mesh_ids["MandibleRidge"], (side * 0.28, 1.34, -1.36), rotation=(0.0, 0.0, side * 0.12), extras={"surface": "layered_mouth_ridge"})
         add_node("VeilstalkerCowlSpine%s" % ("L" if side < 0.0 else "R"), mesh_ids["CowlSpine"], (side * 0.39, 1.7, -1.08), rotation=(0.0, 0.0, side * 0.32), extras={"surface": "cowl_bone_spine"})

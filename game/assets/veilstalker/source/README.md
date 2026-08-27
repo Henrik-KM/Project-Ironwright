@@ -7,8 +7,10 @@ The shell ridges and bone hooks are lifted above the wet chitin and deep flesh
 materials so the veil membranes and threat face remain legible in the early
 organic gallery.
 
-The asset supplies the layered thorax, protected threat eyes, sensory cowl
-spines, articulated mandibles, veil membranes, tendrils, hooks and threat eyes.
+The asset supplies the layered thorax, protected threat eyes, paired cowl brow
+plates, sensory cowl spines, articulated mandibles, veil membranes, tendrils,
+hooks and threat eyes. The brow plates are a presentation-only shell layer
+around the existing sensory-eye sockets.
 Runtime movement, attack wind-up, ecology, collision and damage remain owned by
 `OrganicEnemy3D`.
 
