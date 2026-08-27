@@ -655,6 +655,48 @@ func _build_research_vignette(parent: Node3D) -> void:
 
 
 func _build_endgame_vignette(parent: Node3D) -> void:
+    var approach := Node3D.new()
+    approach.name = "RootCisternApproachCauseway"
+    parent.add_child(approach)
+    var causeway_steel := ModelKit3D.material(Color("27363b"), 0.72, 0.34)
+    var causeway_edge := ModelKit3D.material(Color("73503a"), 0.42, 0.68)
+    var causeway_signal := ModelKit3D.material(Color("285e64"), 0.34, 0.26, Color("6fe3dd"), 1.65)
+    var causeway_root := ModelKit3D.material(Color("321b29"), 0.0, 0.84, Color("a33d67"), 0.44)
+
+    # The final approach should read as a place machines built toward, not as
+    # a hero basin surrounded by disconnected props. This remains a bounded
+    # presentation layer: it owns no collision, route, resource or objective.
+    for segment_index in range(3):
+        var segment_z := -5.55 + float(segment_index) * 1.45
+        ModelKit3D.add_beveled_box(
+            approach,
+            Vector3(4.7, 0.16, 1.12),
+            Vector3(0.0, 0.34, segment_z),
+            causeway_steel,
+            Vector3(0.0, 0.0, 0.02 * float(segment_index % 2)),
+            "RootCisternCausewaySlab%d" % segment_index,
+            0.18
+        )
+        ModelKit3D.add_beveled_box(
+            approach,
+            Vector3(3.7, 0.035, 0.08),
+            Vector3(0.0, 0.45, segment_z - 0.28),
+            causeway_signal,
+            Vector3.ZERO,
+            "RootCisternCausewaySignal%d" % segment_index,
+            0.08
+        )
+    for side in [-1.0, 1.0]:
+        _add_beam(approach, Vector3(side * 2.18, 0.46, -6.25), Vector3(side * 2.18, 0.74, -1.35), 0.055, causeway_edge, "RootCisternCausewayRail")
+        for post_index in range(3):
+            var post_z := -5.95 + float(post_index) * 1.9
+            ModelKit3D.add_tapered_cylinder(approach, 0.10, 0.16, 0.72, Vector3(side * 2.18, 0.68, post_z), causeway_edge, Vector3.ZERO, "RootCisternCausewayPost%d" % post_index)
+            ModelKit3D.add_cylinder(approach, 0.12, 0.06, Vector3(side * 2.18, 1.08, post_z), causeway_signal, Vector3.ZERO, "RootCisternCausewayLamp%d" % post_index)
+    _add_beam(approach, Vector3(-1.72, 0.48, -1.12), Vector3(-2.6, 1.92, -0.58), 0.09, causeway_root, "RootCisternCausewayRootBraceL")
+    _add_beam(approach, Vector3(1.72, 0.48, -1.12), Vector3(2.6, 1.92, -0.58), 0.09, causeway_root, "RootCisternCausewayRootBraceR")
+    ModelKit3D.add_organic_plate(approach, 0.62, Vector3(-2.7, 1.52, -0.52), causeway_root, causeway_edge, Vector3(1.0, 0.72, 0.86), "RootCisternCausewayGrowthL")
+    ModelKit3D.add_organic_plate(approach, 0.62, Vector3(2.7, 1.52, -0.52), causeway_root, causeway_edge, Vector3(1.0, 0.72, 0.86), "RootCisternCausewayGrowthR")
+
     for index in range(4):
         var angle := TAU * float(index) / 4.0 + 0.25
         var position := Vector3(cos(angle) * 5.3, 2.2, sin(angle) * 5.3)
