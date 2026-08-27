@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Sporecaster sac-surface pass
+
+- added layered cap rims and visible pore apertures to the five authored
+  Sporecaster sacs, strengthening its ranged-infestation delivery-organ read
+  at compact review distance;
+- kept the additions presentation-only, preserving existing sac, stem, gill,
+  combat, targeting, ecology, LOD and save ownership;
+- added manifest, close-camera mesh and anatomy regression coverage and
+  silently live-reviewed the exact early-organic gallery with Godot Dummy audio
+  and quiet mode only; no live speakers were used.
+
 ## Focused Cistern Apex jaw-detail pass
 
 - added six tapered jaw teeth to the authored Cistern Apex shell, giving the

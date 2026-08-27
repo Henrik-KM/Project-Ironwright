@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Sporecaster sac-surface pass — 2026-08-27
+
+The authored Sporecaster now carries layered rims and warm pore apertures on
+all five suspended sacs. These bounded surface details make its ranged
+infestation delivery organs readable in the early-family gallery without
+changing sockets, animation ownership, combat, targeting, ecology, LOD or
+save state. Exact 1280x720 page 2/15 review passed after the surface details
+were visible at compact distance, using Godot Dummy audio and `--quiet-audio`
+only; no live speakers were used. Broader human early-family and
+production-art acceptance remains open.
+
 ## Focused Cistern Apex jaw-detail pass — 2026-08-27
 
 The authored Cistern Apex now carries six tapered jaw teeth parented beneath

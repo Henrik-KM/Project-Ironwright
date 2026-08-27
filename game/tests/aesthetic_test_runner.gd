@@ -1427,6 +1427,7 @@ func _run_all() -> void:
                 _expect(_find_named(enemy_samples[index], "BurrowerDrillFlute0") != null and _find_named(enemy_samples[index], "BurrowerLampGuardL") != null, "The Burrower must expose drill flutes and protected bore lamps.")
             &"sporecaster":
                 _expect(_find_named(enemy_samples[index], "SporecasterGillRib0") != null and _find_named(enemy_samples[index], "SporecasterSacCap0") != null, "The Sporecaster must expose layered gill ribs and capped spore sacs.")
+                _expect(_find_named(enemy_samples[index], "SporecasterSacRim0") != null and _find_named(enemy_samples[index], "SporecasterSacPore0") != null, "The Sporecaster must expose layered sac rims and visible pore apertures for ranged-infestation readability.")
             &"broodmass":
                 _expect(_find_named(enemy_samples[index], "BroodmassLobeRidgeL") != null and _find_named(enemy_samples[index], "BroodmassMawRidge") != null and _find_named(enemy_samples[index], "CrownFastener0") != null, "The Broodmass must expose layered lobe, maw and crown hardware.")
             &"roofleaper":
@@ -1650,7 +1651,9 @@ func _run_all() -> void:
     var razorhound_cheek := _find_named(razorhound_asset, "RazorhoundCheekPlate") as MeshInstance3D
     _expect(_mesh_vertex_count(_find_named(razorhound_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(razorhound_cheek) >= 48, "The authored Razorhound dorsal and cheek plates must retain beveled high-definition anatomy edges.")
     _expect(razorhound_cheek != null and razorhound_cheek.mesh.get_aabb().size.y >= 0.28, "The Razorhound cheek plates must retain closed folded volume around the bite line rather than reading as rectangular bars.")
-    _expect(_mesh_vertex_count(_find_named(sporecaster_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(sporecaster_asset, "SporecasterGillFan0") as MeshInstance3D) >= 48, "The authored Sporecaster dorsal and gill membranes must retain beveled high-definition anatomy edges.")
+    var spore_sac_rim := _find_named(sporecaster_asset, "SporecasterSacRim0") as MeshInstance3D
+    var spore_sac_pore := _find_named(sporecaster_asset, "SporecasterSacPore0") as MeshInstance3D
+    _expect(_mesh_vertex_count(_find_named(sporecaster_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(sporecaster_asset, "SporecasterGillFan0") as MeshInstance3D) >= 48 and _mesh_vertex_count(spore_sac_rim) >= 100 and _mesh_vertex_count(spore_sac_pore) >= 48, "The authored Sporecaster dorsal, gill and sac-aperture surfaces must retain beveled high-definition anatomy edges.")
     var skitterling_fan := _find_named(skitterling_asset, "SkitterlingSensoryFan0") as MeshInstance3D
     _expect(_mesh_vertex_count(_find_named(skitterling_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(skitterling_fan) >= 500, "The authored Skitterling dorsal and sensory membranes must retain dense high-definition anatomy edges.")
     _expect(skitterling_fan != null and skitterling_fan.mesh.get_aabb().size.x >= 0.16, "The Skitterling sensory fans must retain closed rounded membrane volume rather than reading as thin bars.")
