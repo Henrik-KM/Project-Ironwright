@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused autonomous detour readability pass
+
+- reduced the transient route-recovery beacon's emissive and local-light budget
+  so it remains visible in the Heartforge street grade without bleaching nearby
+  actors, route chevrons or the focal machine;
+- tightened the in-world detour label while preserving the attempt counter,
+  operation identity and physical beacon placement;
+- kept route recovery, formation movement, save state and player workload
+  unchanged, with a regression guard for the bounded presentation budget;
+- re-reviewed the exact route-recovery fixture with Dummy audio and quiet mode
+  only.
+
 ## Focused Skitterling gallery-readability pass
 
 - applied a bounded development-gallery scale compensation to the smallest
