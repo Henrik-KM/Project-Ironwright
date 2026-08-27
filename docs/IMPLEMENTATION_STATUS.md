@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused full-gallery live acceptance milestone
+
+- silently live-reviewed the exact exported presentation gallery pages for the
+  player and friendly machine roster, early organic families and late organic
+  families, confirming readable high-definition silhouettes, material breaks,
+  authored detail and stable framing at 1280x720;
+- combined with the already completed remote-region gallery pass, this covers
+  all 15 authored presentation pages without speaker output or live audio
+  playback; remaining external hardware and human acceptance gates stay open.
+
 ## Focused presentation callback budget milestone
 
 - stopped undiscovered outpost-site markers and non-visible/reduced region
