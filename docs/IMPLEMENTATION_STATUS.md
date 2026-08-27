@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Skitterling gallery-readability pass
+
+- applied a bounded development-gallery scale compensation to the smallest
+  authored organic family so its carapace caps, sensory fan and mandible plates
+  remain judgeable beside the larger early predators;
+- kept the compensation on the `OrganicModel` review root only: gameplay scale,
+  collision, movement, ecology, animation timing and active/reduced-detail
+  ownership are unchanged;
+- added an aesthetic regression guard and will re-review the exact early
+  organic page with Dummy audio and quiet mode only.
+
 ## Focused organic-roster detail framing pass
 
 - tightened the development-only early and late organic gallery camera so the
