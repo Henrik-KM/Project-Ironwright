@@ -86,6 +86,13 @@ Scrap remains the only ordinary stockpiled construction resource. Improving read
 
 ## 7. Responsive acceptance targets
 
-Automated native tests cover an 800×520 viewport as a constrained regression case. The forge and strategic command panels must fit inside that viewport using scrollable content with fixed close footers.
+Automated native tests cover the 800×520 constrained floor, the 1024×576
+release capture size and the 1280×720 review size. Each case also exercises
+1.35× text scale. The forge and strategic command panels must fit inside the
+viewport using scrollable content with fixed close footers; the operations
+surface is held to the same rule. The runner uses Godot Dummy audio and
+`--quiet-audio` only.
 
-This is a regression floor, not the final supported-resolution list. The production accessibility milestone must later add text scaling, controller navigation, input remapping, contrast options, and formal resolution coverage.
+This is still a regression floor, not the final supported-resolution list.
+Professional accessibility review, affected-player testing and broader
+hardware coverage remain release gates.
