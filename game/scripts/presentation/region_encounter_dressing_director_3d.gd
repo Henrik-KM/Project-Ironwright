@@ -85,6 +85,8 @@ func _build_region(region_id: StringName) -> void:
             _build_endgame_vignette(dressing)
         _:
             _build_archive_vignette(dressing)
+    if region_id == &"region.west_grid":
+        _build_west_grid_reroute_witness(dressing)
     _build_district_breadth(dressing, kind)
 
 
@@ -366,6 +368,98 @@ func _build_industrial_vignette(parent: Node3D) -> void:
         _add_beam(parent, Vector3(x, 2.1, -3.25), Vector3(x + 0.7, 3.1, -1.35), 0.055, _cool, "SubstationPipe")
     ModelKit3D.add_surface_panel(parent, Vector3(2.0, 1.15, 0.08), Vector3(4.2, 1.38, -3.0), _dark_steel, _cool, Vector3.ZERO, "SubstationControlPanel")
     _add_light(parent, Vector3(0.0, 2.8, -2.6), Color("67dbe2"), 1.8, 10.0)
+
+
+func _build_west_grid_reroute_witness(parent: Node3D) -> void:
+    # A physical maintenance board turns the existing West Grid archive
+    # record into a readable environmental story: someone kept the town's
+    # last safe route alive by hand. It is a bounded presentation vignette;
+    # the operation and route directors remain the sole gameplay owners.
+    var witness := Node3D.new()
+    witness.name = "WestGridRerouteWitness"
+    parent.add_child(witness)
+    # Put the witness in the clear foreground of the authored substation so
+    # the environmental story can be read in the gallery without competing
+    # with the pressure tanks behind it.
+    witness.position = Vector3(1.8, 0.18, 0.7)
+    ModelKit3D.add_beveled_box(
+        witness,
+        Vector3(2.58, 1.72, 0.12),
+        Vector3(0.0, 2.18, 0.0),
+        _rust,
+        Vector3(-0.02, 0.0, 0.0),
+        "WestGridRerouteBoardFrame",
+        0.2
+    )
+    ModelKit3D.add_beveled_box(
+        witness,
+        Vector3(2.34, 1.48, 0.16),
+        Vector3(0.0, 2.18, 0.08),
+        _dark_steel,
+        Vector3(-0.02, 0.0, 0.0),
+        "WestGridRerouteBoard",
+        0.2
+    )
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(
+            witness,
+            Vector3(0.16, 1.92, 0.16),
+            Vector3(side * 0.88, 0.98, 0.0),
+            _steel,
+            Vector3.ZERO,
+            "WestGridReroutePylon%s" % ("L" if side < 0.0 else "R"),
+            0.16
+        )
+        ModelKit3D.add_beveled_box(
+            witness,
+            Vector3(0.48, 0.12, 0.48),
+            Vector3(side * 0.88, 0.08, 0.0),
+            _rust,
+            Vector3.ZERO,
+            "WestGridRerouteFoot%s" % ("L" if side < 0.0 else "R"),
+            0.18
+        )
+    ModelKit3D.add_beveled_box(
+        witness,
+        Vector3(1.92, 0.9, 0.07),
+        Vector3(0.0, 2.24, 0.18),
+        _steel,
+        Vector3.ZERO,
+        "WestGridRerouteRouteMap",
+        0.12
+    )
+    for index in range(2):
+        ModelKit3D.add_beveled_box(
+            witness,
+            Vector3(1.2, 0.05, 0.05),
+            Vector3(0.0 + (0.12 if index == 1 else -0.12), 2.03 + float(index) * 0.36, 0.24),
+            _cool,
+            Vector3(0.0, 0.0, 0.08 if index == 0 else -0.08),
+            "WestGridRerouteRouteBand%d" % index,
+            0.3
+        )
+    for index in range(3):
+        var marker_x := -0.66 + float(index) * 0.66
+        ModelKit3D.add_sphere(
+            witness,
+            0.09,
+            Vector3(marker_x, 2.2 + (0.12 if index == 1 else 0.0), 0.28),
+            _warning if index == 1 else _warm,
+            Vector3(1.0, 0.72, 0.72),
+            "WestGridRerouteMarker%d" % index
+        )
+    _add_beam(witness, Vector3(-0.66, 2.17, 0.3), Vector3(-0.12, 2.45, 0.3), 0.026, _cool, "WestGridRerouteLineA")
+    _add_beam(witness, Vector3(-0.12, 2.45, 0.3), Vector3(0.66, 2.19, 0.3), 0.026, _cool, "WestGridRerouteLineB")
+    _add_beam(witness, Vector3(0.58, 0.92, 0.08), Vector3(1.05, 2.0, 0.1), 0.035, _rust, "WestGridRerouteServiceCable")
+    ModelKit3D.add_surface_panel(
+        witness,
+        Vector3(1.12, 0.22, 0.06),
+        Vector3(0.0, 1.22, 0.2),
+        _rust,
+        _warning,
+        Vector3.ZERO,
+        "WestGridRerouteDatePlate"
+    )
 
 
 func _build_tenement_vignette(parent: Node3D) -> void:

@@ -925,7 +925,7 @@ func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
     var flood_market := world.region_director.get_landmark(&"region.flood_market")
     _expect(flood_market != null and flood_market.find_child("FloodMarketCanopy0", true, false) != null, "Commercial release must retain the authored Flood Market landmark.")
     var west_grid := world.region_director.get_landmark(&"region.west_grid")
-    _expect(west_grid != null and west_grid.find_child("WestGridTurbineHall", true, false) != null, "Commercial release must retain the authored West Grid landmark.")
+    _expect(west_grid != null and west_grid.find_child("WestGridTurbineHall", true, false) != null and west_grid.find_child("WestGridRerouteWitness", true, false) != null and west_grid.find_child("WestGridRerouteRouteMap", true, false) != null, "Commercial release must retain the authored West Grid landmark and its physical reroute witness.")
     _expect(world.balance_director.profile_ids().size() == 3, "Story, Survival and Brutal profiles must be present.")
     _expect(world.balance_director.set_profile(&"story"), "Story profile must be selectable.")
     _expect(world.balance_director.active_enemy_cap() < 96, "Story profile must lower the active enemy cap.")
