@@ -10,7 +10,10 @@ signal machine_recovered(record: Dictionary)
 const OPERATIONS_PATH := "res://data/strategic_operations.json"
 const ROUTE_BLOCK_GRACE_SECONDS := 2.4
 const MAX_ROUTE_RECOVERIES := 3
+const ROUTE_RECOVERY_FORWARD_OFFSET := 5.0
 const ROUTE_RECOVERY_LATERAL_OFFSET := 11.0
+const ROUTE_RECOVERY_HAZARD_RADIUS := 10.0
+const ROUTE_RECOVERY_HAZARD_TIE_EPSILON := 0.08
 const ROUTE_MEMORY_SWITCH_THRESHOLD := 1.0
 const ROUTE_MEMORY_SUCCESS_DECAY := 0.22
 const ROUTE_MEMORY_MAX_ENTRIES := 24
@@ -311,6 +314,7 @@ func _with_route_preview(entry: Dictionary) -> Dictionary:
     preview["route_label"] = route_label
     preview["route_waypoints"] = waypoint_count
     preview["route_distance"] = route_distance
+    preview["route_confidence"] = _route_confidence(region_id)
     preview["route_brief"] = "Route: %s · %d waypoint%s · %d m" % [
         route_label,
         waypoint_count,
@@ -318,6 +322,16 @@ func _with_route_preview(entry: Dictionary) -> Dictionary:
         int(round(route_distance)),
     ]
     return preview
+
+
+func _route_confidence(region_id: StringName) -> StringName:
+    var memory: Variant = route_memory.get(String(region_id), {})
+    var risk := float((memory as Dictionary).get("risk", 0.0)) if memory is Dictionary else 0.0
+    if risk >= 3.0:
+        return &"disrupted"
+    if risk >= ROUTE_MEMORY_SWITCH_THRESHOLD:
+        return &"guarded"
+    return &"clear"
 
 
 func _route_for_entry(entry: Dictionary, route_variant: int) -> PackedVector3Array:
@@ -539,8 +553,8 @@ func _insert_route_recovery(anchor: Vector3, waypoint: Vector3, route_index: int
         direction.y = 0.0
     direction = direction.normalized()
     var lateral := Vector3(-direction.z, 0.0, direction.x)
-    var side := -1.0 if int(active_operation.get("route_recovery_count", 0)) % 2 == 0 else 1.0
-    var detour := anchor + direction * 5.0 + lateral * side * ROUTE_RECOVERY_LATERAL_OFFSET
+    var side := _choose_route_recovery_side(anchor, waypoint, direction, lateral)
+    var detour := anchor + direction * ROUTE_RECOVERY_FORWARD_OFFSET + lateral * side * ROUTE_RECOVERY_LATERAL_OFFSET
     var route: PackedVector3Array = active_operation.get("route", PackedVector3Array())
     var rerouted := PackedVector3Array()
     for index in range(route_index):
@@ -552,7 +566,40 @@ func _insert_route_recovery(anchor: Vector3, waypoint: Vector3, route_index: int
     active_operation["route_recovery_count"] = int(active_operation.get("route_recovery_count", 0)) + 1
     active_operation["route_recovery_active"] = true
     active_operation["route_recovery_target"] = detour
+    active_operation["route_recovery_side"] = int(side)
+    active_operation["route_recovery_hazard_score"] = _route_hazard_score(detour)
     active_operation["blocked_clock"] = 0.0
+
+
+func _choose_route_recovery_side(anchor: Vector3, waypoint: Vector3, direction: Vector3, lateral: Vector3) -> float:
+    # Emergency routing is still bounded and deterministic, but it should use
+    # the information the group already has instead of alternating blindly.
+    # A tie keeps the old alternating behaviour so repeated recovery attempts
+    # do not settle into one side of a damaged street.
+    var left_detour := anchor + direction * ROUTE_RECOVERY_FORWARD_OFFSET - lateral * ROUTE_RECOVERY_LATERAL_OFFSET
+    var right_detour := anchor + direction * ROUTE_RECOVERY_FORWARD_OFFSET + lateral * ROUTE_RECOVERY_LATERAL_OFFSET
+    var left_score := _route_hazard_score(left_detour)
+    var right_score := _route_hazard_score(right_detour)
+    if left_score + ROUTE_RECOVERY_HAZARD_TIE_EPSILON < right_score:
+        return -1.0
+    if right_score + ROUTE_RECOVERY_HAZARD_TIE_EPSILON < left_score:
+        return 1.0
+    return -1.0 if int(active_operation.get("route_recovery_count", 0)) % 2 == 0 else 1.0
+
+
+func _route_hazard_score(position: Vector3) -> float:
+    var score := 0.0
+    for enemy in get_tree().get_nodes_in_group(&"organic_enemies"):
+        if not is_instance_valid(enemy) or not enemy is Node3D:
+            continue
+        var distance := position.distance_to((enemy as Node3D).global_position)
+        if distance > ROUTE_RECOVERY_HAZARD_RADIUS:
+            continue
+        # Nearby organisms count more than distant ones, while every living
+        # body contributes a bounded amount. This is a local steering hint,
+        # not a global threat meter or a new player-managed assignment.
+        score += 0.5 + (1.0 - distance / ROUTE_RECOVERY_HAZARD_RADIUS)
+    return score
 
 
 func _begin_route_retreat(reason: String) -> void:
@@ -1196,6 +1243,8 @@ func _serialize_active_operation() -> Dictionary:
         "route_recovery_count": int(active_operation.get("route_recovery_count", 0)),
         "route_recovery_active": bool(active_operation.get("route_recovery_active", false)),
         "route_recovery_target": _vector_to_array(active_operation.get("route_recovery_target", Vector3.ZERO)),
+        "route_recovery_side": int(active_operation.get("route_recovery_side", 0)),
+        "route_recovery_hazard_score": float(active_operation.get("route_recovery_hazard_score", 0.0)),
         "pending_rewards": (active_operation.get("pending_rewards", {}) as Dictionary).duplicate(true),
     }
 
@@ -1236,6 +1285,8 @@ func _restore_active_operation(raw_data: Variant) -> void:
         "route_recovery_count": clampi(int(saved.get("route_recovery_count", 0)), 0, MAX_ROUTE_RECOVERIES),
         "route_recovery_active": bool(saved.get("route_recovery_active", false)),
         "route_recovery_target": _array_to_vector(saved.get("route_recovery_target", [0.0, 0.0, 0.0])),
+        "route_recovery_side": clampi(int(saved.get("route_recovery_side", 0)), -1, 1),
+        "route_recovery_hazard_score": maxf(0.0, float(saved.get("route_recovery_hazard_score", 0.0))),
         "pending_rewards": (saved.get("pending_rewards", {}) as Dictionary).duplicate(true),
     }
     for index in range(members.size()):

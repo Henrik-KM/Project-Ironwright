@@ -428,7 +428,13 @@ func _localized_route_brief(item: Dictionary) -> String:
         plural_suffix = "" if waypoint_count == 1 else "e"
     elif locale_service != null and locale_service.current_locale == &"sv":
         plural_suffix = "" if waypoint_count == 1 else "er"
-    return _text("command.operations.route_brief", "Route: {0} · {1} waypoint{2} · {3} m", [route_label, waypoint_count, plural_suffix, distance])
+    var confidence_id := StringName(str(item.get("route_confidence", "clear")))
+    var confidence_label := _text(
+        "command.operations.route_confidence.%s" % String(confidence_id),
+        String(confidence_id).replace("_", " ").capitalize()
+    )
+    var route_brief := _text("command.operations.route_brief", "Route: {0} · {1} waypoint{2} · {3} m", [route_label, waypoint_count, plural_suffix, distance])
+    return "%s%s" % [route_brief, _text("command.operations.route_confidence_suffix", " · Route confidence: {0}", [confidence_label])]
 
 
 func refresh_localized_text() -> void:

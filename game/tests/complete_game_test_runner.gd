@@ -100,6 +100,15 @@ func _run_all() -> void:
     route_blocker.add_to_group(&"organic_enemies")
     world.add_child(route_blocker)
     route_blocker.global_position = primary_west_route_before_block[1]
+    var recovery_direction := primary_west_route_before_block[2] - primary_west_route_before_block[1]
+    recovery_direction.y = 0.0
+    recovery_direction = recovery_direction.normalized()
+    var recovery_lateral := Vector3(-recovery_direction.z, 0.0, recovery_direction.x)
+    var left_detour_hazard := Node3D.new()
+    left_detour_hazard.name = "RouteRecoveryLeftHazard"
+    left_detour_hazard.add_to_group(&"organic_enemies")
+    world.add_child(left_detour_hazard)
+    left_detour_hazard.global_position = primary_west_route_before_block[1] + recovery_direction * LongRangeOperationDirector3D.ROUTE_RECOVERY_FORWARD_OFFSET - recovery_lateral * LongRangeOperationDirector3D.ROUTE_RECOVERY_LATERAL_OFFSET
     world.long_operation_director._update_active_operation(2.5)
     _expect(int(world.long_operation_director.active_operation.get("route_recovery_count", 0)) == 1, "A sustained organic blockage must trigger one bounded route recovery attempt.")
     _expect(bool(world.long_operation_director.active_operation.get("route_recovery_active", false)), "A route recovery must remain an explicit active formation decision until the side route is cleared.")
@@ -112,6 +121,8 @@ func _run_all() -> void:
         _expect(detour_base_core != null and detour_base_core.mesh != null and detour_base_core.mesh.get_surface_count() > 0, "The detour beacon housing must use authored beveled geometry for readable close-range presentation.")
     var recovery_target: Vector3 = world.long_operation_director.active_operation.get("route_recovery_target", Vector3.ZERO)
     _expect(recovery_beacon != null and recovery_beacon.global_position.distance_to(recovery_target) < 0.1, "The autonomous-detour beacon must sit on the real inserted recovery waypoint.")
+    _expect(int(world.long_operation_director.active_operation.get("route_recovery_side", 0)) == 1, "A bounded recovery must choose the lower-pressure side instead of blindly alternating left and right.")
+    _expect(float(world.long_operation_director.active_operation.get("route_recovery_hazard_score", 99.0)) < 0.08, "The selected autonomous detour must record its low local organic-pressure score.")
     var learned_west_route: Variant = world.long_operation_director.route_memory.get("region.west_grid", {})
     _expect(learned_west_route is Dictionary and float((learned_west_route as Dictionary).get("risk", 0.0)) >= 1.0, "A route disruption must become bounded persistent route-risk memory.")
     _expect(learned_west_route is Dictionary and bool((learned_west_route as Dictionary).get("has_block_position", false)), "A route disruption must remember the physical blockage position for future authored-route scoring.")
@@ -120,6 +131,7 @@ func _run_all() -> void:
     _expect(world.long_operation_director._preferred_route_variant(&"region.west_grid") == 2, "A blockage on the primary street must make the clearest authored alternate route the next autonomous preference.")
     var learned_route_preview := world.long_operation_director.route_preview(&"operation.west_grid_survey")
     _expect(int(learned_route_preview.get("route_variant", 0)) == 2, "An operation preview must surface the clearest route-memory alternate selected for the West Grid.")
+    _expect(StringName(str(learned_route_preview.get("route_confidence", ""))) == &"guarded", "A route with one remembered disruption must expose a guarded confidence readout before authorization.")
     _expect(str(learned_route_preview.get("route_brief", "")).contains("rail-yard cut-through") and str(learned_route_preview.get("route_brief", "")).contains("waypoint"), "An operation preview must explain the remembered street route and bounded waypoint count.")
     _expect(float(learned_route_preview.get("route_distance", 0.0)) > 0.0, "An operation preview must expose a non-zero physical travel distance.")
     var primary_west_route := world.region_director.route_from_heartforge(&"region.west_grid", world.heartforge.global_position)
@@ -148,6 +160,8 @@ func _run_all() -> void:
     var recovery_anchor: Vector3 = world.long_operation_director.active_operation.get("anchor", world.heartforge.global_position)
     route_blocker.remove_from_group(&"organic_enemies")
     route_blocker.queue_free()
+    left_detour_hazard.remove_from_group(&"organic_enemies")
+    left_detour_hazard.queue_free()
     await process_frame
     world.long_operation_director.active_operation["anchor"] = recovery_target
     world.long_operation_director._update_active_operation(0.1)
@@ -157,6 +171,7 @@ func _run_all() -> void:
     world._save_game()
     world._load_game()
     _expect(int(world.long_operation_director.active_operation.get("route_recovery_count", 0)) == 1, "Route-recovery progress must survive an in-flight operation save/load.")
+    _expect(int(world.long_operation_director.active_operation.get("route_recovery_side", 0)) == 1, "The selected recovery side must survive an in-flight operation save/load.")
     var restored_west_route_memory: Variant = world.long_operation_director.route_memory.get("region.west_grid", {})
     _expect(restored_west_route_memory is Dictionary and float((restored_west_route_memory as Dictionary).get("risk", 0.0)) >= 1.0, "Learned route-risk memory must survive the unified save/load path.")
     _expect(restored_west_route_memory is Dictionary and bool((restored_west_route_memory as Dictionary).get("has_block_position", false)), "Remembered route blockage state must survive the unified save/load path.")

@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused hazard-aware route recovery milestone
+
+- extended autonomous side-route selection so a blocked operation scores both
+  bounded detour candidates against nearby organic pressure and takes the
+  safer side deterministically, while retaining alternating tie-breaks;
+- persisted the selected recovery side and local hazard score with the active
+  operation so a save/load cannot silently change the group's recovery choice;
+- exposed a localized clear, guarded or disrupted route-confidence readout in
+  the existing operation briefing, turning remembered field risk into one
+  strategic decision signal without adding a recurring management task;
+- added complete-game coverage and silently live-reviewed the real operation
+  briefing with Godot Dummy audio and quiet mode only.
+
 ## Focused full-region ambience coverage milestone
 
 - extended the release mixer so every non-sanctuary region family receives an
