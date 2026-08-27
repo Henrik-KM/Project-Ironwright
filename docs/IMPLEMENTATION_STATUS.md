@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Veilstalker cowl-detail pass
+
+The authored Veilstalker now carries paired high-definition shell brow plates
+between its protected threat eyes and cowl spines. This is presentation-only:
+the sensory-eye, veil, mandible and tendril sockets, animation, collision, tier,
+ecology and combat ownership remain unchanged. The pass is covered by the
+aesthetic asset and roster guards and requires silent early-organic live review
+before merge.
+
 ## Focused Sporecaster sac-surface pass
 
 - added layered cap rims and visible pore apertures to the five authored

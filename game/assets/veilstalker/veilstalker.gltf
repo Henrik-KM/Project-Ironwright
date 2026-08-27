@@ -48,7 +48,9 @@
         47,
         48,
         49,
-        50
+        50,
+        51,
+        52
       ],
       "extras": {
         "ironwright_asset_id": "veilstalker.predator.v1",
@@ -294,6 +296,29 @@
       }
     },
     {
+      "name": "VeilstalkerCowlPlateL",
+      "translation": [
+        -0.34,
+        1.6,
+        -1.17
+      ],
+      "mesh": 6,
+      "rotation": [
+        0.0,
+        0.0,
+        -0.08987854919801104,
+        0.9959527330119943
+      ],
+      "scale": [
+        0.4,
+        0.76,
+        0.34
+      ],
+      "extras": {
+        "surface": "layered_cowl_brow"
+      }
+    },
+    {
       "name": "VeilstalkerMandibleL",
       "translation": [
         -0.24,
@@ -426,6 +451,29 @@
       ],
       "extras": {
         "surface": "protected_threat_eye"
+      }
+    },
+    {
+      "name": "VeilstalkerCowlPlateR",
+      "translation": [
+        0.34,
+        1.6,
+        -1.17
+      ],
+      "mesh": 6,
+      "rotation": [
+        0.0,
+        0.0,
+        0.08987854919801104,
+        0.9959527330119943
+      ],
+      "scale": [
+        0.4,
+        0.76,
+        0.34
+      ],
+      "extras": {
+        "surface": "layered_cowl_brow"
       }
     },
     {
@@ -2746,14 +2794,14 @@
         {
           "sampler": 2,
           "target": {
-            "node": 23,
+            "node": 24,
             "path": "rotation"
           }
         },
         {
           "sampler": 3,
           "target": {
-            "node": 31,
+            "node": 33,
             "path": "rotation"
           }
         }
@@ -2828,7 +2876,7 @@
         {
           "sampler": 0,
           "target": {
-            "node": 34,
+            "node": 36,
             "path": "rotation"
           }
         },
@@ -2842,28 +2890,28 @@
         {
           "sampler": 2,
           "target": {
-            "node": 23,
+            "node": 24,
             "path": "rotation"
           }
         },
         {
           "sampler": 3,
           "target": {
-            "node": 31,
+            "node": 33,
             "path": "rotation"
           }
         },
         {
           "sampler": 4,
           "target": {
-            "node": 25,
+            "node": 26,
             "path": "rotation"
           }
         },
         {
           "sampler": 5,
           "target": {
-            "node": 33,
+            "node": 35,
             "path": "rotation"
           }
         }
@@ -2911,14 +2959,14 @@
         {
           "sampler": 2,
           "target": {
-            "node": 23,
+            "node": 24,
             "path": "rotation"
           }
         },
         {
           "sampler": 3,
           "target": {
-            "node": 31,
+            "node": 33,
             "path": "rotation"
           }
         }
@@ -2966,14 +3014,14 @@
         {
           "sampler": 2,
           "target": {
-            "node": 23,
+            "node": 24,
             "path": "rotation"
           }
         },
         {
           "sampler": 3,
           "target": {
-            "node": 31,
+            "node": 33,
             "path": "rotation"
           }
         }
@@ -3052,14 +3100,14 @@
         {
           "sampler": 2,
           "target": {
-            "node": 25,
+            "node": 26,
             "path": "rotation"
           }
         },
         {
           "sampler": 3,
           "target": {
-            "node": 33,
+            "node": 35,
             "path": "rotation"
           }
         }
