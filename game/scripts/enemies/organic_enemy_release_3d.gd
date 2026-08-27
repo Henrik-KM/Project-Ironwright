@@ -273,7 +273,7 @@ func _refresh_visuals() -> void:
 
     match species:
         &"roofleaper":
-            ModelKit3D.add_organic_plate(_model_root, 0.34, Vector3(0.0, 1.34, -0.86), chitin, bone, Vector3(1.35, 0.55, 1.08), "RoofleaperCrown")
+            ModelKit3D.add_organic_plate(_model_root, 0.34, Vector3(0.0, 1.34, -0.86), chitin, bone, Vector3(1.35, 0.55, 1.08), "RoofleaperCrown", true)
             for side in [-1.0, 1.0]:
                 ModelKit3D.add_capsule(_model_root, 0.075, 1.8, Vector3(side * 0.78, 1.0, 0.15), bone, Vector3(0.0, 0.0, side * 1.08), "LeapLeg")
                 ModelKit3D.add_box(_model_root, Vector3(0.08, 0.85, 1.15), Vector3(side * 0.7, 1.1, 0.25), membrane, Vector3(0.0, 0.0, side * 0.42), "GlideMembrane")
@@ -296,7 +296,7 @@ func _refresh_visuals() -> void:
             ModelKit3D.add_ribbed_shell(_model_root, 0.64, Vector3(0.0, 1.12, 0.22), wet_chitin, bone, Vector3(1.58, 0.72, 1.72), "MiremawDorsalShell")
             for index in range(4):
                 var shell_z := -0.62 + float(index) * 0.42
-                ModelKit3D.add_organic_plate(_model_root, 0.25 - float(index) * 0.02, Vector3(-0.18 + float(index % 2) * 0.12, 1.38 - float(index) * 0.04, shell_z), chitin, bone, Vector3(1.32, 0.42, 0.72), "MiremawDorsalPlate%d" % index)
+                ModelKit3D.add_organic_plate(_model_root, 0.25 - float(index) * 0.02, Vector3(-0.18 + float(index % 2) * 0.12, 1.38 - float(index) * 0.04, shell_z), chitin, bone, Vector3(1.32, 0.42, 0.72), "MiremawDorsalPlate%d" % index, true)
             for side in [-1.0, 1.0]:
                 ModelKit3D.add_capsule(_model_root, 0.15, 1.35, Vector3(side * 0.5, 0.45, -1.15), bone, Vector3(1.0, 0.0, side * 0.35), "MireJaw")
                 ModelKit3D.add_capsule(_model_root, 0.065, 0.62, Vector3(side * 0.72, 0.56, -1.55), bone, Vector3(0.82, 0.0, side * 0.18), "MiremawTusk")
@@ -308,7 +308,7 @@ func _refresh_visuals() -> void:
                 var angle := TAU * float(index) / 5.0
                 ModelKit3D.add_capsule(_model_root, 0.055, 1.0, Vector3(cos(angle) * 0.42, 2.2, sin(angle) * 0.42), bone, Vector3(0.0, 0.0, angle), "BellTendril")
                 ModelKit3D.add_capsule(_model_root, 0.028, 0.64, Vector3(cos(angle) * 0.7, 1.54, sin(angle) * 0.7), tendon, Vector3(0.35, 0.0, angle + 0.42), "CarrionbellSignalTendril%d" % index)
-            ModelKit3D.add_organic_plate(_model_root, 0.3, Vector3(0.0, 2.32, 0.24), membrane, bone, Vector3(1.25, 0.32, 1.18), "CarrionbellCrownPlate")
+            ModelKit3D.add_organic_plate(_model_root, 0.3, Vector3(0.0, 2.32, 0.24), membrane, bone, Vector3(1.25, 0.32, 1.18), "CarrionbellCrownPlate", true)
             ModelKit3D.add_sphere(_model_root, 0.1, Vector3(0.0, 2.48, 0.2), eye, Vector3(1.0, 0.72, 0.82), "CarrionbellResonator")
         &"rootweaver":
             ModelKit3D.add_sphere(_model_root, 0.86, Vector3(0.0, 1.05, 0.0), chitin, Vector3(1.7, 1.35, 1.8), "RootCore")

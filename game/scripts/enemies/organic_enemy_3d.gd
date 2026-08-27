@@ -956,10 +956,11 @@ func _refresh_visuals() -> void:
         wet_chitin,
         body_scale,
         segment_count,
-        "Torso"
+        "Torso",
+        true
     )
     ModelKit3D.add_sphere(_model_root, body_radius * 0.62, Vector3(0.0, body_radius + 0.12, head_offset), chitin, Vector3(1.1, 0.8, 1.25), "Head")
-    ModelKit3D.add_organic_plate(_model_root, body_radius * 0.44, Vector3(-body_scale.x * 0.18, body_radius * 1.18, 0.18), wet_chitin, chitin, Vector3(1.45, 0.56, 1.65), "OrganicDorsalPlate")
+    ModelKit3D.add_organic_plate(_model_root, body_radius * 0.44, Vector3(-body_scale.x * 0.18, body_radius * 1.18, 0.18), wet_chitin, chitin, Vector3(1.45, 0.56, 1.65), "OrganicDorsalPlate", true)
 
     var leg_pairs := 3
     if species in [&"veilstalker", &"burrower", &"broodmass", &"apex"]:
@@ -978,7 +979,7 @@ func _refresh_visuals() -> void:
     if species == &"skitterling":
         for index in range(3):
             var shell_z := -0.42 + float(index) * 0.42
-            ModelKit3D.add_organic_plate(_model_root, 0.28 - float(index) * 0.025, Vector3(0.0, 0.84 + float(index) * 0.05, shell_z), wet_chitin, chitin, Vector3(1.16, 0.42, 0.78), "SkitterlingCarapace")
+            ModelKit3D.add_organic_plate(_model_root, 0.28 - float(index) * 0.025, Vector3(0.0, 0.84 + float(index) * 0.05, shell_z), wet_chitin, chitin, Vector3(1.16, 0.42, 0.78), "SkitterlingCarapace", true)
         for side in [-1.0, 1.0]:
             ModelKit3D.add_capsule(_model_root, 0.035, 0.58, Vector3(side * 0.22, 1.08, -1.02), tendon, Vector3(0.5, 0.0, side * 0.18), "SkitterlingAntenna")
             ModelKit3D.add_capsule(_model_root, 0.045, 0.5, Vector3(side * 0.2, 0.66, -1.18), bone, Vector3(0.78, 0.0, side * 0.25), "SkitterlingMandible")
@@ -987,7 +988,7 @@ func _refresh_visuals() -> void:
     if species == &"razorhound":
         ModelKit3D.add_sphere(_model_root, 0.34, Vector3(0.0, 0.78, -1.0), wet_chitin, Vector3(1.22, 0.7, 1.42), "RazorhoundSnout")
         for side in [-1.0, 1.0]:
-            ModelKit3D.add_organic_plate(_model_root, 0.23, Vector3(side * 0.46, 0.96, -0.12), chitin, bone, Vector3(0.9, 0.42, 1.3), "RazorhoundCheekPlate")
+            ModelKit3D.add_organic_plate(_model_root, 0.23, Vector3(side * 0.46, 0.96, -0.12), chitin, bone, Vector3(0.9, 0.42, 1.3), "RazorhoundCheekPlate", true)
         for side in [-1.0, 1.0]:
             ModelKit3D.add_sphere(_model_root, 0.16, Vector3(side * 0.27, 1.12, -0.95), bone, Vector3(0.7, 1.25, 0.72), "RazorhoundEar")
             ModelKit3D.add_capsule(_model_root, 0.055, 0.66, Vector3(side * 0.28, 0.62, -1.22), bone, Vector3(0.8, 0.0, side * 0.18), "RazorhoundFang")
@@ -1003,7 +1004,7 @@ func _refresh_visuals() -> void:
         ModelKit3D.add_sphere(_model_root, 0.42, Vector3(-0.22, 1.18, 0.72), flesh, Vector3(1.28, 0.82, 1.08), "VeilstalkerAbdomen")
         for index in range(3):
             var plate_z := -0.68 + float(index) * 0.44
-            ModelKit3D.add_organic_plate(_model_root, 0.34, Vector3(0.0, 1.42 - float(index) * 0.045, plate_z), chitin, bone, Vector3(1.48, 0.55, 0.62), "VeilstalkerDorsalPlate")
+            ModelKit3D.add_organic_plate(_model_root, 0.34, Vector3(0.0, 1.42 - float(index) * 0.045, plate_z), chitin, bone, Vector3(1.48, 0.55, 0.62), "VeilstalkerDorsalPlate", true)
         for side in [-1.0, 1.0]:
             ModelKit3D.add_sphere(_model_root, 0.34, Vector3(side * 0.98, 1.1, -0.18), membrane, Vector3(0.22, 1.6, 0.9), "VeilstalkerVeil")
             ModelKit3D.add_capsule(_model_root, 0.075, 1.75, Vector3(side * 0.78, 0.72, -0.62), tendon, Vector3(0.22, 0.0, side * 0.34), "VeilstalkerForelimb")

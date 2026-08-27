@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused organic shell seam pass
+
+- added a restrained smooth perimeter seam to the shared active organic
+  presentation layer, giving every tiered enemy shell a continuous biological
+  edge treatment at close gallery distance;
+- kept the treatment presentation-only: imported family meshes, collision,
+  animation, reduced-detail ownership, ecology and simulation state are
+  unchanged, and the extra geometry is bounded to one low-cost oval per active
+  enemy;
+- added release coverage and silently live-reviewed the exact organic gallery
+  with Godot Dummy audio and quiet mode only.
+
 ## Focused ecological-intelligence localization milestone
 
 - localized the population-tier command-map panel, ecological-intelligence
