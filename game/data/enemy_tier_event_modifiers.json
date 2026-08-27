@@ -115,6 +115,10 @@
     "tech.endgame.containment": {
       "replenishment_delta_per_minute": {"2": 0.1, "3": 0.04, "4": 0.015},
       "reason": "Containment research caused a slower but broader ecological adaptation."
+    },
+    "tech.endgame.transformation": {
+      "replenishment_delta_per_minute": {"1": 0.45, "2": 0.08, "3": 0.02},
+      "reason": "Transformation research invited the living network to test the machine society's new boundary language."
     }
   },
   "endgame": {
@@ -127,6 +131,11 @@
       "replenishment_delta_per_minute": {"1": 2.0, "2": 0.2, "3": 0.07, "4": 0.025},
       "spawn_credit_delta": {"2": 1.0, "3": 0.5},
       "reason": "The active Containment protocol drew organisms from across the network."
+    },
+    "protocol.transformation": {
+      "replenishment_delta_per_minute": {"1": 0.75, "2": 0.12, "3": 0.035},
+      "spawn_credit_delta": {"2": 0.5, "3": 0.25},
+      "reason": "The active Transformation protocol translated machine signals into a contested living boundary."
     }
   }
 }

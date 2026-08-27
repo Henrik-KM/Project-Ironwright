@@ -38,6 +38,25 @@
       "pressure_multiplier": 1.75,
       "spawn_interval_seconds": 12.0,
       "ending": "The lattice closes around the signal. The hostile ecology becomes local, animal, and finite. The Heartforge survives as the centre of a machine sanctuary rather than a conquering empire."
+    },
+    {
+      "id": "protocol.transformation",
+      "display_name": "Transformation",
+      "description": "Translate the root signal through the machine society and turn the hostile network into a bounded living partner. The process demands the widest relay network, but its response is the least violent.",
+      "requirements": {
+        "heartforge_tier": 5,
+        "technology": "tech.endgame.transformation",
+        "completed_operation": "operation.root_cistern_mapping",
+        "components_min": 4,
+        "functioning_outposts_min": 4
+      },
+      "remote_outposts_min": 4,
+      "scrap_cost": 720,
+      "rare_core_cost": 4,
+      "duration_seconds": 260.0,
+      "pressure_multiplier": 1.45,
+      "spawn_interval_seconds": 11.0,
+      "ending": "The Heartforge translates the root signal instead of destroying it. The town remains dangerous, but the machine society gives the living network a language of boundaries, care, and choice."
     }
   ]
 }

@@ -249,6 +249,21 @@
       "automatic": false
     },
     {
+      "id": "tech.endgame.transformation",
+      "display_name": "Transformation Protocol",
+      "branch": "endgame",
+      "description": "Translate the recovered root signal through the machine society, creating a bounded living partnership instead of severing or caging it.",
+      "cost": {"scrap": 380, "rare_cores": 2},
+      "requirements": {
+        "heartforge_tier": 5,
+        "components_min": 4,
+        "completed_operation": "operation.root_cistern_mapping",
+        "functioning_outposts_min": 4
+      },
+      "effects": ["protocol_transformation_available"],
+      "automatic": false
+    },
+    {
       "id": "tech.machine.actuator_tuning",
       "display_name": "Actuator Tuning",
       "branch": "machines",
