@@ -48,6 +48,7 @@ NEW_REQUIRED_PATHS = [
     "game/scripts/enemies/organic_enemy_full_game_3d.gd",
     "game/tests/full_game_test_runner.gd",
     "game/tests/first_session_ux_test_runner.gd",
+    "game/tests/resolution_accessibility_test_runner.gd",
     "game/tests/complete_game_test_runner.gd",
     "game/tests/presentation_and_salvage_escort_test_runner.gd",
     "game/tests/persistence_test_runner.gd",

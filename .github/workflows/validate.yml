@@ -59,6 +59,9 @@ jobs:
       - name: Run first-session UX and guidance tests
         run: godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/first_session_ux_test_runner.gd
 
+      - name: Run resolution and large-text accessibility tests
+        run: godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/resolution_accessibility_test_runner.gd
+
       - name: Run complete start-to-victory systemic test
         run: godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/complete_game_test_runner.gd
 

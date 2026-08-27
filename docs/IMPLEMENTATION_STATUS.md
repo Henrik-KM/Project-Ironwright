@@ -5225,3 +5225,13 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   player-managed notification workload;
 - retained the existing quiet-review cap and dummy-audio validation contract,
   with no live-speaker testing required.
+## Focused resolution and large-text accessibility gate — 2026-08-27
+
+- added a native regression runner covering the compact 800×520 floor, the
+  1024×576 release capture size and the 1280×720 review size;
+- exercised the opening HUD, forge, strategic command surface and operations
+  surface at 1.35× text scale, checking that panels and fixed close actions
+  remain inside the real viewport and that scroll content stops above fixed
+  footers;
+- wired the gate into repository validation and commercial certification;
+- kept the test fully silent with Godot Dummy audio and `--quiet-audio`.

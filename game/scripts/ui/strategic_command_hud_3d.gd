@@ -63,12 +63,20 @@ func _build_ui() -> void:
     panel.add_theme_stylebox_override("panel", _panel_style())
     add_child(panel)
 
+    var shell := Control.new()
+    shell.name = "StrategicViewportShell"
+    shell.custom_minimum_size = Vector2(320.0, 340.0)
+    panel.add_child(shell)
+
     scroll = ScrollContainer.new()
     scroll.name = "StrategicScroll"
-    scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-    scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+    scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    scroll.offset_left = 12.0
+    scroll.offset_top = 12.0
+    scroll.offset_right = -12.0
+    scroll.offset_bottom = -66.0
     scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-    panel.add_child(scroll)
+    shell.add_child(scroll)
 
     var box := VBoxContainer.new()
     box.name = "StrategicContent"
@@ -124,9 +132,21 @@ func _build_ui() -> void:
     secondary_button.visible = false
     box.add_child(secondary_button)
 
+    var footer := HBoxContainer.new()
+    footer.name = "StrategicFooter"
+    footer.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+    footer.offset_left = 12.0
+    footer.offset_right = -12.0
+    footer.offset_top = -56.0
+    footer.offset_bottom = -12.0
+    footer.mouse_filter = Control.MOUSE_FILTER_STOP
+    shell.add_child(footer)
+
     close_button = _button("CLOSE · ESC", func() -> void: close_requested.emit())
+    close_button.name = "StrategicCloseButton"
     close_button.custom_minimum_size = Vector2(0, 44)
-    box.add_child(close_button)
+    close_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    footer.add_child(close_button)
 
 
 func open_evolution() -> void:
