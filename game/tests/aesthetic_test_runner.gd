@@ -1782,6 +1782,13 @@ func _run_all() -> void:
         var sanctuary_palette: Dictionary = atmosphere.palette_for_kind(&"sanctuary")
         _expect(float(sanctuary_palette.get("glow", 1.0)) <= 0.46, "The opening sanctuary palette must preserve material separation around the Heartforge.")
 
+    var release_world := world as IronwrightReleaseWorld3D
+    _expect(release_world != null, "The aesthetic review fixture must expose the release presentation world.")
+    if release_world != null:
+        release_world._start_presentation_review()
+        release_world._show_presentation_review_page(1)
+        _expect(release_world.presentation_review_camera_desired.z <= 11.0 and release_world.presentation_review_camera_target.y >= 1.4, "The early and late organic galleries must use a closer detail frame so authored creature anatomy remains judgeable at review distance.")
+
     if failures.is_empty():
         print("Project Ironwright aesthetic overhaul tests passed.")
         quit(0)
