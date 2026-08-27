@@ -10,15 +10,17 @@ The current Project Ironwright conversation with Henrik is the highest product a
 
 ## Current status
 
-Version **0.6.0** is a complete end-to-end systemic alpha.
+Version **1.0.0-rc.1** is a packaged, localized, accessible and
+performance-bounded commercial release candidate.
 
 A run can now progress from the frightening first salvage through:
 
 - the first autonomous robot loop;
 - the North Ruins expedition;
 - Heartforge tiers II–V;
-- autonomous outposts;
-- seven persistent town regions;
+- autonomous outposts on fixed discovered sites;
+- twelve persistent town regions;
+- fourteen organic families with population-driven escalation;
 - physical long-range operations;
 - unique biological components;
 - autonomous ordinary robot replacement;
@@ -27,9 +29,15 @@ A run can now progress from the frightening first salvage through:
 - a causal final crisis;
 - first victory.
 
-This is game-complete in systemic structure, not yet commercially content-complete. Final authored assets, audio, animation, performance scaling, save migration, accessibility, controller support, balance, narrative breadth, localization, and external playtesting remain on the roadmap.
+The repository is complete as a systemic release candidate, but it is not yet
+an unqualified final retail release. Representative hardware, endurance,
+professional translation, accessibility-user, broad balance, signing, legal
+and store QA remain external gates.
 
-See [`docs/COMPLETE_GAME_ALPHA.md`](docs/COMPLETE_GAME_ALPHA.md) and [`docs/FULL_GAME_ROADMAP.md`](docs/FULL_GAME_ROADMAP.md).
+See [`docs/COMMERCIAL_RELEASE_CANDIDATE.md`](docs/COMMERCIAL_RELEASE_CANDIDATE.md)
+and [`docs/FULL_GAME_ROADMAP.md`](docs/FULL_GAME_ROADMAP.md). The older
+[`docs/COMPLETE_GAME_ALPHA.md`](docs/COMPLETE_GAME_ALPHA.md) is retained as a
+historical 0.6.0 milestone.
 
 ## Run the native Godot game
 
@@ -53,7 +61,13 @@ Direct launch:
 godot --path game
 ```
 
-The runtime uses an original authored Mechromancer glTF asset alongside procedural low-poly robot and organic placeholder geometry, a readable blue-hour ruined-town presentation, warm Heartforge lighting, typed player animation feedback, particles, combat feedback, world-space objective cues, and cinematic modal interfaces. The remaining procedural actors are production-facing placeholders for later authored asset passes.
+The runtime uses an original authored model and texture library for the
+Mechromancer, machines, organic families and persistent town, plus authored
+secondary animation, adaptive original audio, warm Heartforge lighting,
+particles, combat feedback, world-space objective cues and cinematic modal
+interfaces. Presentation shells remain decoupled from collision and
+simulation so later commissioned assets can be integrated without rewriting
+the game systems.
 
 ## Controls
 
@@ -126,19 +140,27 @@ There is no recurring numbered-wave main loop. The final large response exists b
 
 ## Persistent world and ecology
 
-The complete alpha contains seven physical regions:
+The release candidate contains twelve physical regions:
 
 - Heartforge District;
 - North Ruins;
 - West Grid;
+- East Tenements;
+- Municipal Glasshouse;
 - Flood Market;
+- Riverworks;
+- Tram Graveyard;
 - Cathedral Quarter;
+- Observatory Ridge;
 - Buried Laboratories;
 - Root Cistern.
 
 Regions retain discovery, pressure, suppression, routes, and physical landmarks. Organic populations respond continuously to local ecological capacity, noise, operations, construction, kills, and suppression. High-pressure regions can produce migrations into connecting streets without a wave countdown.
 
-The hostile roster remains wholly organic and now includes Skitterlings, Razorhounds, Veilstalkers, Burrowers, Sporecasters, Broodmasses, and Apex organisms.
+The hostile roster remains wholly organic and includes Skitterlings,
+Razorhounds, Veilstalkers, Burrowers, Sporecasters, Broodmasses, Roofleapers,
+Glassmoths, Miremaws, Carrion Bells, Rootweavers, Thornbacks, Ashmantles and
+the regional Apex organism.
 
 ## Machine society
 
@@ -148,7 +170,9 @@ The machine society explains why it fabricated a replacement, spends Scrap, crea
 
 ## Save state
 
-The transitional alpha save retains:
+The release candidate uses a unified transactional save envelope with schema
+versioning, checksums, rotating backups, fail-closed recovery and migration
+from the earlier alpha files. It retains:
 
 - base world actors and positions;
 - progression and Heartforge tier;
@@ -161,7 +185,8 @@ The transitional alpha save retains:
 - active or completed final protocol;
 - continuity use and first victory.
 
-Active long-range operations still defer saving. A later production milestone consolidates the transitional files into one transactional, versioned save with migration and rotating backups.
+Active manual channels defer saving while active remote work remains
+resumable; the save service otherwise persists the complete run state.
 
 ## Browser reference prototype
 
@@ -185,8 +210,8 @@ python3 scripts/validate_aesthetic.py
 Native Godot suites:
 
 ```bash
-godot --headless --path game --editor --quit
-godot --headless --path game --script res://tests/test_runner.gd
+godot --headless --audio-driver Dummy --quiet-audio --path game --editor --quit
+godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/test_runner.gd
 godot --headless --path game --script res://tests/aesthetic_test_runner.gd
 godot --headless --path game --script res://tests/full_game_test_runner.gd
 godot --headless --path game --script res://tests/first_session_ux_test_runner.gd
@@ -202,13 +227,13 @@ Read before changing gameplay:
 
 1. [`AGENTS.md`](AGENTS.md)
 2. [`docs/DESIGN_LOCKS.md`](docs/DESIGN_LOCKS.md)
-3. [`docs/COMPLETE_GAME_ALPHA.md`](docs/COMPLETE_GAME_ALPHA.md)
-4. [`docs/FULL_GAME_ROADMAP.md`](docs/FULL_GAME_ROADMAP.md)
-5. [`docs/FIRST_SESSION_UX.md`](docs/FIRST_SESSION_UX.md)
-6. [`docs/GAME_DESIGN_DOCUMENT.md`](docs/GAME_DESIGN_DOCUMENT.md)
-7. [`docs/AUTONOMY_AND_ANTI_CHORE.md`](docs/AUTONOMY_AND_ANTI_CHORE.md)
-8. [`docs/ENEMY_ECOLOGY.md`](docs/ENEMY_ECOLOGY.md)
-9. [`docs/AESTHETIC_OVERHAUL.md`](docs/AESTHETIC_OVERHAUL.md)
+3. [`docs/FULL_GAME_ROADMAP.md`](docs/FULL_GAME_ROADMAP.md)
+4. [`docs/GAME_DESIGN_DOCUMENT.md`](docs/GAME_DESIGN_DOCUMENT.md)
+5. [`docs/AUTONOMY_AND_ANTI_CHORE.md`](docs/AUTONOMY_AND_ANTI_CHORE.md)
+6. [`docs/ENEMY_ECOLOGY.md`](docs/ENEMY_ECOLOGY.md)
+7. [`docs/ENEMY_TIER_PROGRESSION.md`](docs/ENEMY_TIER_PROGRESSION.md)
+8. [`docs/AESTHETIC_OVERHAUL.md`](docs/AESTHETIC_OVERHAUL.md)
+9. [`docs/COMMERCIAL_RELEASE_CANDIDATE.md`](docs/COMMERCIAL_RELEASE_CANDIDATE.md)
 
 ## Population-driven enemy escalation
 
