@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Ashmantle siphon-detail pass
+
+- added a high-definition collar and paired threat-light apertures around the
+  authored Ashmantle route siphon, giving its thermal intake a deliberate
+  close-camera anatomy break;
+- kept the additions presentation-only, preserving existing sockets,
+  animation, collision, tier, ecology, combat, LOD and save ownership;
+- added manifest and close-camera mesh regression coverage; the exact silent
+  late-organic gallery review is required before merge.
+
 ## Focused Thornback dorsal-barb pass
 
 - added a restrained three-barb dorsal threat edge to the authored Thornback

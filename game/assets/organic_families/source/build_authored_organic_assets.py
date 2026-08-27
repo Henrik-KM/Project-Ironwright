@@ -77,7 +77,7 @@ FAMILIES = {
         "colors": ([0.035, 0.045, 0.055, 1.0], [0.16, 0.20, 0.24, 1.0], [0.20, 0.27, 0.32, 1.0], [0.52, 0.48, 0.38, 1.0], [0.94, 0.23, 0.08, 1.0], [0.18, 0.10, 0.08, 1.0]),
         "body_profile": ((1.48, 0.82, 1.42), (1.30, 0.72, 1.22), 0.03),
         "socket_contract": "heat_mantle, louver_fins, route_siphon, sensory_tendrils",
-        "signature_nodes": ["AshmantleMantle", "AshmantleHeatLouverL", "AshmantleHeatLouverR", "AshmantleSiphon"],
+        "signature_nodes": ["AshmantleMantle", "AshmantleHeatLouverL", "AshmantleHeatLouverR", "AshmantleSiphon", "AshmantleSiphonRing"],
     },
 }
 
@@ -867,6 +867,10 @@ def build_family(name: str, spec: dict) -> None:
     else:
         add_node("AshmantleMantle", mesh_ids["Soft"], (0.0, 1.28, 0.18), scale=(1.5, 0.92, 1.34), extras={"socket_type": "heat_mantle"})
         add_node("AshmantleSiphon", mesh_ids["Soft"], (0.0, 0.82, -1.42), scale=(0.72, 0.64, 1.14), extras={"socket_type": "route_siphon"})
+        add_node("AshmantleSiphonRing", mesh_ids["ResonatorRing"], (0.0, 0.82, -1.60), rotation=(1.5708, 0.0, 0.0), scale=(1.34, 1.0, 1.08), extras={"surface": "heated_siphon_collar"})
+        for side in (-1.0, 1.0):
+            suffix = "L" if side < 0.0 else "R"
+            add_node(f"AshmantleSiphonAperture{suffix}", mesh_ids["Eye"], (side * 0.18, 0.84, -1.72), scale=(0.72, 0.72, 0.54), extras={"surface": "heated_siphon_aperture"})
         for side in (-1.0, 1.0):
             suffix = "L" if side < 0 else "R"
             # Pitch the paired thermal petals into a vented mantle profile so

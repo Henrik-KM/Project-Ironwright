@@ -5,6 +5,6 @@
   "runtime_path": "res://assets/ashmantle/ashmantle.gltf",
   "quality": "authored_high_definition",
   "license": "Original Project Ironwright asset",
-  "required_nodes": ["AshmantleModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "AshmantleMantle", "AshmantleHeatLouverL", "AshmantleHeatLouverR", "AshmantleSiphon", "AshmantleTendrilR", "ProductionAssetMarker"],
+  "required_nodes": ["AshmantleModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "AshmantleMantle", "AshmantleHeatLouverL", "AshmantleHeatLouverR", "AshmantleSiphon", "AshmantleSiphonRing", "AshmantleSiphonApertureL", "AshmantleTendrilR", "ProductionAssetMarker"],
   "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]
 }
