@@ -15,6 +15,15 @@ save state. Exact silent 1280x720 page 11/15 review passed locally with dummy
 audio only; broader human Cathedral, region and production-art acceptance
 remains open.
 
+The late-organic roster and Root Cistern received a focused silent acceptance
+review on 2026-08-27. Exact 1280x720 page 3/15 confirms the Miremaw,
+Carrionbell, Rootweaver, Thornback and Ashmantle shells remain distinct at the
+neutral close-camera distance, while page 14/15 confirms the Cistern capstone,
+basin ownership, perimeter signal pillars and approach platform retain a clear
+endgame hierarchy. Both reviews used Godot Dummy audio and quiet mode only;
+broader human hostile-family, Root Cistern, region and production-art
+acceptance remains open.
+
 Authored-region streaming received a focused presentation pass on 2026-08-26.
 The region director now uses a bounded hysteretic camera-focus ring: far
 authored dressing is released from the active presentation set while persistent
