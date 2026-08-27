@@ -273,6 +273,22 @@ func _refresh_visuals() -> void:
             "TierDorsalPlate%02d" % index
         )
 
+    # A restrained oval seam gives every active tiered shell one continuous
+    # biological edge treatment. It sits in the presentation layer only, so
+    # the imported family meshes, collision, LOD and simulation remain intact.
+    var surface_seam := ModelKit3D.add_torus(
+        tier_detail,
+        0.54 + float(enemy_tier) * 0.035,
+        0.018 + float(enemy_tier) * 0.003,
+        Vector3(0.0, 1.03 + float(enemy_tier) * 0.045, 0.04),
+        channel_material,
+        Vector3.ZERO,
+        "OrganicSurfaceSeam",
+        48,
+        8
+    )
+    surface_seam.scale = Vector3(1.28, 0.62, 1.0)
+
     var channel_count := 1 + mini(int(enemy_tier / 2), 2)
     for side in [-1.0, 1.0]:
         var side_label := "L" if side < 0.0 else "R"

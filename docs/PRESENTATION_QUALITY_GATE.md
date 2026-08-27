@@ -1615,6 +1615,13 @@ full receiver reach, so the approach-facing reflector keeps a clear blue-violet
 centre instead of reading as a dark vertical bar. This is presentation-only;
 broader human Observatory and production-art acceptance remain outstanding.
 
+The active organic roster now also carries a restrained continuous shell seam in
+the shared tiered presentation layer. This restores a readable biological edge
+break across early and late families at close review distance without changing
+their imported silhouettes, collision, animation, reduced-detail proxy or
+ecological behaviour. Broader human hostile-family acceptance remains
+outstanding.
+
 ## Art production sequence
 
 The presentation milestones proceed in this order:

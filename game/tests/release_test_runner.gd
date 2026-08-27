@@ -728,6 +728,10 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         var first_early_actor := early_review_page[0] as Node3D
         var second_early_actor := early_review_page[1] as Node3D
         _expect(first_early_actor != null and second_early_actor != null and absf(second_early_actor.position.x - first_early_actor.position.x) >= 3.0, "Organic presentation rows must preserve a readable horizontal gap between authored families.")
+    var late_review_page: Array = world.presentation_review_pages[2]
+    if late_review_page.size() >= 1:
+        var first_late_actor := late_review_page[0] as Node3D
+        _expect(first_late_actor != null and first_late_actor.find_child("OrganicSurfaceSeam", true, false) != null, "Active organic families must retain a smooth continuous shell seam for close-camera material separation.")
     for page_index in range(3, 3 + world.PRESENTATION_REVIEW_REGIONS.size()):
         world._show_presentation_review_page(page_index)
         await process_frame

@@ -286,7 +286,8 @@ static func add_organic_plate(
         base_mat: Material,
         edge_mat: Material,
         scale: Vector3 = Vector3.ONE,
-        name_hint: String = "OrganicPlate"
+        name_hint: String = "OrganicPlate",
+        high_definition: bool = false
     ) -> Node3D:
     # Overlapping wet shell and dry edge give organic families a readable
     # material break without introducing a second texture or shader pipeline.
@@ -297,6 +298,19 @@ static func add_organic_plate(
     parent.add_child(plate)
     add_sphere(plate, radius, Vector3.ZERO, base_mat, Vector3.ONE, "%sShell" % name_hint)
     add_sphere(plate, radius * 0.76, Vector3(0.0, radius * 0.42, -radius * 0.08), edge_mat, Vector3(1.0, 0.16, 0.88), "%sRidge" % name_hint)
+    if high_definition:
+        var seam := add_torus(
+            plate,
+            radius * 0.68,
+            maxf(0.018, radius * 0.052),
+            Vector3(0.0, radius * 0.34, -radius * 0.08),
+            edge_mat,
+            Vector3.ZERO,
+            "%sSeam" % name_hint,
+            40,
+            8
+        )
+        seam.scale = Vector3(1.0, 0.42, 0.86)
     return plate
 
 
@@ -335,7 +349,8 @@ static func add_segmented_carapace(
         edge_mat: Material,
         scale: Vector3 = Vector3.ONE,
         segment_count: int = 4,
-        name_hint: String = "SegmentedCarapace"
+        name_hint: String = "SegmentedCarapace",
+        high_definition_plates: bool = false
     ) -> Node3D:
     # Shared high-definition anatomy for the organic roster. A wet central
     # body remains cheap to simulate, while overlapping segment plates create
@@ -359,7 +374,8 @@ static func add_segmented_carapace(
             base_mat,
             edge_mat,
             segment_scale,
-            "%sSegment%d" % [name_hint, index]
+            "%sSegment%d" % [name_hint, index],
+            high_definition_plates
         )
     for side in [-1.0, 1.0]:
         add_tapered_cylinder(
