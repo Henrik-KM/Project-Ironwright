@@ -4,6 +4,11 @@
 **Version:** 0.6.0  
 **Authority:** The current Project Ironwright conversation with Henrik.
 
+> Historical milestone. The current repository status is the 1.0.0-rc.1
+> commercial release candidate documented in
+> `docs/COMMERCIAL_RELEASE_CANDIDATE.md`; this document preserves the earlier
+> 0.6.0 acceptance boundary and terminology.
+
 This milestone connects the frightening opening, autonomous outposts, long-run progression, multi-region world, machine society, continuous regional ecology, late-game objectives, final protocols, and first victory into one playable systemic run.
 
 It is a complete game-shaped alpha: the player can start weak, develop autonomy, cross the whole town, reach Heartforge tier 5, choose an ending, survive the causal final response, and win. It is not yet the final commercial content, asset, animation, audio, balance, accessibility, localization, or performance pass described in `FULL_GAME_ROADMAP.md`.
