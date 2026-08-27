@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused presentation callback budget milestone
+
+- stopped undiscovered outpost-site markers and non-visible/reduced region
+  landmarks from waking a presentation callback every frame;
+- removed the recurring full-world secondary-motion scan because dynamic actor
+  registration already attaches the same presentation layer when nodes arrive;
+- kept motion, streaming, active/reduced-detail presentation and late-spawned
+  actor coverage unchanged while lowering the release 192-actor benchmark
+  from roughly 46.6 ms/frame to 42.5 ms/frame under silent headless review.
+
 ## Focused Frost Hush run-variation milestone
 
 - added a sixth deterministic world condition with sparse drifting frost,

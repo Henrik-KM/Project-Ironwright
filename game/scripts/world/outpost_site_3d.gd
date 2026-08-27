@@ -33,10 +33,11 @@ func _ready() -> void:
     add_to_group(&"outpost_sites")
     _build_visuals()
     _refresh_visibility()
+    _sync_process_state()
 
 
 func _process(delta: float) -> void:
-    if _visual_root == null or not discovered:
+    if _visual_root == null:
         return
     _visual_clock += delta
     var pulse := 1.0 + sin(_visual_clock * 1.8) * 0.07
@@ -53,6 +54,7 @@ func discover() -> bool:
         return false
     discovered = true
     _refresh_visibility()
+    _sync_process_state()
     site_discovered.emit(self)
     site_changed.emit(self)
     return true
@@ -61,6 +63,7 @@ func discover() -> bool:
 func set_discovered(value: bool) -> void:
     discovered = value
     _refresh_visibility()
+    _sync_process_state()
     site_changed.emit(self)
 
 
@@ -108,6 +111,10 @@ func _refresh_visibility() -> void:
     _visual_root.visible = discovered
     if _beacon_light != null:
         _beacon_light.visible = discovered
+
+
+func _sync_process_state() -> void:
+    set_process(discovered)
 
 
 func _build_visuals() -> void:
