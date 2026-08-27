@@ -105,6 +105,9 @@ def main() -> None:
         "CrownRidge": mesh("CrownRidge", add_cylinder(builder, 0.06, 1.08, bone, 32)),
         "JawLatch": mesh("JawLatch", add_beveled_box(builder, (0.20, 0.10, 0.44), bone, 0.022)),
         "MembraneRib": mesh("MembraneRib", add_cylinder(builder, 0.035, 0.82, bone, 32)),
+        # Small tapered teeth give the final threat a readable bite edge at
+        # approach distance without turning its jaw into a repeated bar.
+        "JawTooth": mesh("JawTooth", add_tapered_cylinder(builder, 0.13, 0.018, 0.58, bone, 32)),
     }
 
     nodes: list[dict] = [{
@@ -175,7 +178,17 @@ def main() -> None:
     for side in (-1.0, 1.0):
         add_node("ApexEye%s" % ("L" if side < 0 else "R"), mesh_ids["Eye"], (side * 0.34, 2.16, -1.62), extras={"socket_type": "threat_eye"})
         add_node("ApexCheek%s" % ("L" if side < 0 else "R"), mesh_ids["JawPlate"], (side * 0.64, 1.72, -1.15), rotation=(0.0, 0.0, side * 0.18))
-        add_node("ApexJaw%s" % ("L" if side < 0 else "R"), mesh_ids["Jaw"], (side * 0.42, 1.15, -1.78), rotation=(0.82, 0.0, side * 0.12), extras={"socket_type": "jaw"})
+        jaw = add_node("ApexJaw%s" % ("L" if side < 0 else "R"), mesh_ids["Jaw"], (side * 0.42, 1.15, -1.78), rotation=(0.82, 0.0, side * 0.12), extras={"socket_type": "jaw"})
+        for tooth_index in range(3):
+            add_node(
+                "ApexJawTooth%s%d" % ("L" if side < 0 else "R", tooth_index),
+                mesh_ids["JawTooth"],
+                ((tooth_index - 1) * 0.20, -0.33 + tooth_index * 0.30, -0.30),
+                rotation=(math.pi, 0.0, 0.0),
+                scale=(0.92, 1.12, 0.92),
+                parent=jaw,
+                extras={"surface": "jaw_tooth"},
+            )
         add_node(
             "ApexJawLatch%s" % ("L" if side < 0 else "R"),
             mesh_ids["JawLatch"],

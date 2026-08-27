@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Cistern Apex jaw-detail pass — 2026-08-27
+
+The authored Cistern Apex now carries six tapered jaw teeth parented beneath
+its existing jaw sockets. The restrained bone edge makes the final threat's
+bite and attack language readable at the late-organic gallery distance without
+adding a gameplay owner or changing collision, ecology, threat pacing, LOD or
+save state. Exact 1280x720 page 3/15 review passed after the teeth were enlarged
+and repositioned for visible silhouette contribution, using Godot Dummy audio
+and `--quiet-audio` only; no live speakers were used. Broader human Apex,
+hostile-family and production-art acceptance remains open.
+
 ## Focused Miremaw high-definition gill-collar pass — 2026-08-27
 
 Miremaw's authored shell now carries a paired folded gill collar around the

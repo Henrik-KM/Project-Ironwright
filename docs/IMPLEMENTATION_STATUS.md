@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Cistern Apex jaw-detail pass
+
+- added six tapered jaw teeth to the authored Cistern Apex shell, giving the
+  final threat a readable bite edge at approach distance without changing its
+  gameplay collision or threat logic;
+- parented the teeth to the existing jaw sockets so the established authored
+  Attack, Feed and Retreat motion remains the only animation owner;
+- added manifest, close-camera mesh and runtime anatomy regression coverage and
+  silently live-reviewed the exact late-organic gallery with Godot Dummy audio
+  and quiet mode only; no live speakers were used.
+
 ## Focused Miremaw high-definition gill-collar pass
 
 - added a paired folded gill collar to the authored Miremaw shell, giving its
