@@ -570,6 +570,7 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         "res://assets/release/audio/ambience_industrial.wav",
         "res://assets/release/audio/ambience_waterfront.wav",
         "res://assets/release/audio/ambience_nest.wav",
+        "res://assets/release/audio/ambience_cistern.wav",
         "res://assets/release/audio/music_title.wav",
         "res://assets/release/audio/music_embers.wav",
         "res://assets/release/audio/music_pressure.wav",
@@ -599,6 +600,7 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         var regional_player := world.release_audio.regional_ambience.get(region_kind) as AudioStreamPlayer
         var source_id := ReleaseAudioDirector3D.REGIONAL_AMBIENCE_SOURCES[region_kind] as StringName
         _expect(regional_player != null and regional_player.stream == world.release_audio.stream_library.get(source_id), "Region %s must retain its intentional authored ambience source." % String(region_kind))
+    _expect(ReleaseAudioDirector3D.REGIONAL_AMBIENCE_SOURCES[&"endgame"] == &"ambience_cistern", "The Root Cistern must use its dedicated endgame ambience instead of inheriting the generic nest bed.")
     world.release_audio.set_title_screen_active(true)
     _expect(world.release_audio.current_mood == &"title", "Release audio must select the restrained title theme while the title screen is active.")
     world.release_audio.set_title_screen_active(false)

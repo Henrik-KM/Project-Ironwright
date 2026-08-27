@@ -299,6 +299,16 @@ def ambience_nest(t: float, duration: float) -> float:
     return body + resonance + breath
 
 
+def ambience_cistern(t: float, duration: float) -> float:
+    """A restrained endgame bed: hydraulic mass, signal shimmer and root breath."""
+    pulse = tone(t, duration, 0.125, 0.35)
+    hydraulic = tone(t, duration, 29.0) * (0.12 + 0.035 * pulse)
+    signal_gate = max(0.0, tone(t, duration, 0.25, 1.2)) ** 16
+    signal = signal_gate * (tone(t, duration, 247.0) + tone(t, duration, 370.0, 0.4)) * 0.045
+    root = periodic_noise(t, duration, 1304, 24) * (0.035 + 0.025 * abs(pulse))
+    return hydraulic + signal + root
+
+
 def music_embers(t: float, duration: float) -> float:
     notes = [55.0, 65.406, 73.416, 82.407, 98.0]
     pad = sum(tone(t, duration, note, index * 0.7) for index, note in enumerate(notes[:3])) * 0.075
@@ -449,6 +459,7 @@ AUDIO: dict[str, tuple[float, Callable[[float, float], float]]] = {
     "ambience_industrial.wav": (18.0, ambience_industrial),
     "ambience_waterfront.wav": (18.0, ambience_waterfront),
     "ambience_nest.wav": (18.0, ambience_nest),
+    "ambience_cistern.wav": (18.0, ambience_cistern),
     "music_title.wav": (24.0, music_title),
     "music_embers.wav": (24.0, music_embers),
     "music_pressure.wav": (24.0, music_pressure),

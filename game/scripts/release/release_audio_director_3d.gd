@@ -14,6 +14,7 @@ const STREAM_PATHS: Dictionary = {
     &"ambience_industrial": AUDIO_ROOT + "/ambience_industrial.wav",
     &"ambience_waterfront": AUDIO_ROOT + "/ambience_waterfront.wav",
     &"ambience_nest": AUDIO_ROOT + "/ambience_nest.wav",
+    &"ambience_cistern": AUDIO_ROOT + "/ambience_cistern.wav",
     &"music_title": AUDIO_ROOT + "/music_title.wav",
     &"music_embers": AUDIO_ROOT + "/music_embers.wav",
     &"music_pressure": AUDIO_ROOT + "/music_pressure.wav",
@@ -47,7 +48,7 @@ const REGIONAL_AMBIENCE_SOURCES: Dictionary = {
     &"nest": &"ambience_nest",
     &"research": &"ambience_industrial",
     &"observatory": &"ambience_city",
-    &"endgame": &"ambience_nest",
+    &"endgame": &"ambience_cistern",
     &"archive": &"ambience_city",
 }
 
