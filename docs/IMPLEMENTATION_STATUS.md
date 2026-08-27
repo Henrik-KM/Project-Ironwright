@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Observatory feed-arm readability pass
+
+- slimmed the authored reflector feed arm while preserving its receiver reach,
+  named socket family, material language and presentation-only ownership;
+- kept the dish, feed signal, actuator motion, service structure, collision and
+  survey interaction contracts unchanged;
+- added an aesthetic regression guard and live-reviewed the exact Observatory
+  gallery page with Dummy audio and quiet mode only.
+
 ## Focused autonomous detour readability pass
 
 - reduced the transient route-recovery beacon's emissive and local-light budget
