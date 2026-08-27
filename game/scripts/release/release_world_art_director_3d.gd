@@ -1415,9 +1415,13 @@ func _dress_observatory(root: Node3D) -> void:
     observatory_detail.add_child(array_frame)
     var frame_dark := _textured_material(&"metal", Color("1b2b30"), 0.8, 0.32)
     var frame_edge := _textured_material(&"rust", Color("9a5d3a"), 0.42, 0.6)
+    # Keep the release array as a rear horizon frame. The reflector is the
+    # landmark's focal instrument; foreground pylons and crossbars turn it
+    # into a blocked blue disc at the authored approach angle.
+    var array_rear_z := -3.8
     for pylon_index in range(4):
         var pylon_x := -4.0 if pylon_index % 2 == 0 else 4.0
-        var pylon_z := -3.0 if pylon_index < 2 else 3.0
+        var pylon_z := array_rear_z + float(pylon_index % 2) * 1.4
         ModelKit3D.add_cylinder(
             array_frame,
             0.15,
@@ -1436,7 +1440,7 @@ func _dress_observatory(root: Node3D) -> void:
             "ObservatoryArrayBeacon%02d" % pylon_index
         )
     for crossbar_index in range(2):
-        var crossbar_z := -3.0 if crossbar_index == 0 else 3.0
+        var crossbar_z := array_rear_z + float(crossbar_index) * 1.4
         ModelKit3D.add_cylinder(
             array_frame,
             0.1,
@@ -1449,7 +1453,7 @@ func _dress_observatory(root: Node3D) -> void:
     var control_pod := ModelKit3D.add_beveled_box(
         array_frame,
         Vector3(1.9, 1.25, 1.45),
-        Vector3(-2.15, 1.0, -3.2),
+        Vector3(-2.15, 1.0, array_rear_z - 0.45),
         frame_dark,
         Vector3.ZERO,
         "ObservatoryArrayControlPod",
@@ -1467,7 +1471,7 @@ func _dress_observatory(root: Node3D) -> void:
     var approach_control_pod := ModelKit3D.add_beveled_box(
         array_frame,
         Vector3(1.9, 1.25, 1.45),
-        Vector3(2.15, 1.0, 3.2),
+        Vector3(2.15, 1.0, array_rear_z + 1.45),
         frame_dark,
         Vector3.ZERO,
         "ObservatoryArrayApproachControlPod",
@@ -1486,7 +1490,7 @@ func _dress_observatory(root: Node3D) -> void:
         array_frame,
         0.07,
         2.8,
-        Vector3(3.55, 6.8, -3.0),
+        Vector3(3.55, 6.8, array_rear_z),
         frame_edge,
         Vector3(0.0, 0.0, 0.18),
         "ObservatoryArrayRelayMast"
@@ -1494,7 +1498,7 @@ func _dress_observatory(root: Node3D) -> void:
     ModelKit3D.add_surface_panel(
         array_frame,
         Vector3(1.25, 0.48, 0.08),
-        Vector3(1.25, 0.52, -3.72),
+        Vector3(1.25, 0.52, array_rear_z - 0.72),
         frame_dark,
         signal_material,
         Vector3.ZERO,

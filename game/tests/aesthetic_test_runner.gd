@@ -626,6 +626,8 @@ func _run_all() -> void:
                 var observatory_release_detail := release_art.dressing_root.find_child("HighDefinitionObservatoryDressing", true, false) if release_art != null and release_art.dressing_root != null else null
                 _expect(observatory_release_detail != null and observatory_release_detail.find_child("ObservatoryArrayFrame", true, false) != null and observatory_release_detail.find_child("ObservatoryArrayControlPod", true, false) != null and observatory_release_detail.find_child("ObservatoryArrayApproachControlPod", true, false) != null, "Observatory Ridge release dressing must frame the dish with a bounded instrument array and approach-facing control pods.")
                 _expect(observatory_release_detail != null and observatory_release_detail.find_child("ObservatoryArrayCrossbar00", true, false) != null and observatory_release_detail.find_child("ObservatoryArrayRelayMast", true, false) != null, "Observatory Ridge release dressing must expose crossbar and relay structure for a readable survey silhouette.")
+                var observatory_array_pylon := observatory_release_detail.find_child("ObservatoryArrayPylon00", true, false) as Node3D if observatory_release_detail != null else null
+                _expect(observatory_array_pylon != null and observatory_array_pylon.position.z <= -3.0, "Observatory Ridge's release array must stay behind the reflector instead of recreating a foreground occluding frame.")
                 var observatory_dish := landmark.find_child("ObservatoryDish", true, false) as Node3D
                 var observatory_feed := landmark.find_child("ObservatoryFeedSignal", true, false) as Node3D
                 var observatory_actuator := landmark.find_child("ObservatoryDishActuator", true, false) as Node3D
@@ -643,6 +645,8 @@ func _run_all() -> void:
                     var observatory_deck := landmark.find_child("ObservatoryServiceDeck", true, false) as MeshInstance3D
                     var observatory_ridge_panel := landmark.find_child("ObservatoryRidgeSignalPanel", true, false) as MeshInstance3D
                     _expect(observatory_control != null and _mesh_vertex_count(observatory_control) >= 48 and observatory_deck != null and _mesh_vertex_count(observatory_deck) >= 48 and observatory_ridge_panel != null and _mesh_vertex_count(observatory_ridge_panel) >= 48, "Observatory control, service-deck and ridge-signal hardware must retain chamfered high-definition geometry.")
+                    var observatory_ridge_beam := landmark.find_child("ObservatoryRidgeBeam", true, false) as Node3D
+                    _expect(observatory_ridge_beam != null and observatory_ridge_beam.position.z <= -3.0, "Observatory Ridge's authored gantry must frame the reflector from behind instead of occluding the approach-facing dish.")
                     var observatory_pedestal := landmark.find_child("ObservatoryDishPedestal", true, false) as MeshInstance3D
                     var observatory_pivot := landmark.find_child("ObservatoryDishPivotHousing", true, false) as MeshInstance3D
                     _expect(observatory_pedestal != null and _mesh_vertex_count(observatory_pedestal) >= 48 and observatory_pedestal.mesh.get_aabb().size.y >= 1.8 and observatory_pivot != null and _mesh_vertex_count(observatory_pivot) >= 240, "Observatory reflector support must retain a dense grounded pedestal and rounded pivot housing rather than a thin placeholder post.")

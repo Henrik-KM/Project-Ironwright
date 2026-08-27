@@ -236,19 +236,20 @@ def main() -> None:
     add_node("ObservatoryMastCollar", mesh_ids["MastCollar"], (-4.0, 5.85, 2.2), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "mast_service_collar"})
 
     # A survey station needs a horizon silhouette in addition to its dish.
-    # This collapsed ridge gantry gives the Observatory a readable civic
-    # infrastructure profile while remaining presentation-only.
-    add_node("ObservatoryRidgePylonL", mesh_ids["RidgePylon"], (-4.7, 3.1, -2.55), extras={"socket_type": "ridge_pylon"})
-    add_node("ObservatoryRidgePylonR", mesh_ids["RidgePylon"], (4.7, 3.1, -2.55), extras={"socket_type": "ridge_pylon"})
-    add_node("ObservatoryRidgeBeam", mesh_ids["RidgeBeam"], (0.0, 6.05, -2.55), rotation=(0.0, 0.0, 0.02), extras={"socket_type": "ridge_beam"})
-    add_node("ObservatoryRidgeSignalFrame", mesh_ids["RidgeSignalFrame"], (0.0, 4.95, -2.51), rotation=(0.0, 0.0, -0.03), extras={"surface": "ridge_signal_frame"})
-    add_node("ObservatoryRidgeSignalPanel", mesh_ids["RidgeSignalPanel"], (0.0, 4.95, -2.44), rotation=(0.0, 0.0, -0.03), extras={"socket_type": "ridge_signal_panel"})
-    add_node("ObservatoryRidgeLadder", mesh_ids["RidgeLadder"], (4.25, 3.0, -2.32), extras={"surface": "ridge_service_ladder"})
-    add_node("ObservatoryRidgeBraceL", mesh_ids["RidgeBrace"], (-4.25, 3.65, -2.5), rotation=(0.0, 0.0, 0.22), extras={"surface": "ridge_brace"})
-    add_node("ObservatoryRidgeBraceR", mesh_ids["RidgeBrace"], (4.25, 3.65, -2.5), rotation=(0.0, 0.0, -0.22), extras={"surface": "ridge_brace"})
+    # Keep the gantry behind the reflector so it frames the instrument rather
+    # than cutting across the bowl from the authored approach camera.
+    ridge_z = -3.8
+    add_node("ObservatoryRidgePylonL", mesh_ids["RidgePylon"], (-4.7, 3.1, ridge_z), extras={"socket_type": "ridge_pylon"})
+    add_node("ObservatoryRidgePylonR", mesh_ids["RidgePylon"], (4.7, 3.1, ridge_z), extras={"socket_type": "ridge_pylon"})
+    add_node("ObservatoryRidgeBeam", mesh_ids["RidgeBeam"], (0.0, 6.05, ridge_z), rotation=(0.0, 0.0, 0.02), extras={"socket_type": "ridge_beam"})
+    add_node("ObservatoryRidgeSignalFrame", mesh_ids["RidgeSignalFrame"], (0.0, 4.95, ridge_z + 0.04), rotation=(0.0, 0.0, -0.03), extras={"surface": "ridge_signal_frame"})
+    add_node("ObservatoryRidgeSignalPanel", mesh_ids["RidgeSignalPanel"], (0.0, 4.95, ridge_z + 0.11), rotation=(0.0, 0.0, -0.03), extras={"socket_type": "ridge_signal_panel"})
+    add_node("ObservatoryRidgeLadder", mesh_ids["RidgeLadder"], (4.25, 3.0, ridge_z + 0.23), extras={"surface": "ridge_service_ladder"})
+    add_node("ObservatoryRidgeBraceL", mesh_ids["RidgeBrace"], (-4.25, 3.65, ridge_z + 0.05), rotation=(0.0, 0.0, 0.22), extras={"surface": "ridge_brace"})
+    add_node("ObservatoryRidgeBraceR", mesh_ids["RidgeBrace"], (4.25, 3.65, ridge_z + 0.05), rotation=(0.0, 0.0, -0.22), extras={"surface": "ridge_brace"})
     for index, x in enumerate((-3.2, 0.0, 3.2)):
-        add_node("ObservatoryRidgeBeacon%d" % index, mesh_ids["RidgeBeacon"], (x, 6.42, -2.46), extras={"socket_type": "ridge_beacon"})
-        add_node("ObservatoryRidgeSensor%d" % index, mesh_ids["RidgeSensor"], (x, 6.62, -2.46), extras={"surface": "ridge_sensor"})
+        add_node("ObservatoryRidgeBeacon%d" % index, mesh_ids["RidgeBeacon"], (x, 6.42, ridge_z + 0.09), extras={"socket_type": "ridge_beacon"})
+        add_node("ObservatoryRidgeSensor%d" % index, mesh_ids["RidgeSensor"], (x, 6.62, ridge_z + 0.09), extras={"surface": "ridge_sensor"})
 
     for index, side in enumerate((-1.0, 1.0)):
         add_node("ObservatoryCable%d" % index, mesh_ids["Cable"], (side * 2.8, 2.65, 2.3), rotation=(0.0, side * 0.28, side * 0.24), extras={"socket_type": "survey_cable"})
