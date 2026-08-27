@@ -131,7 +131,10 @@ def main() -> None:
         "DishSupportRing": mesh("DishSupportRing", add_torus(builder, 1.28, 0.14, rust, 48, 12)),
         "DishPivotHousing": mesh("DishPivotHousing", add_uv_sphere(builder, 0.46, alloy, 20, 32)),
         "DishPivotBand": mesh("DishPivotBand", add_torus(builder, 0.48, 0.085, cyan, 40, 10)),
-        "FeedArm": mesh("FeedArm", add_cylinder(builder, 0.16, 4.6, alloy, 16)),
+        # The feed arm remains long enough to bridge the bowl to its receiver,
+        # but a slimmer authored profile keeps the approach-facing reflector
+        # readable instead of turning the arm into a dark centre bar.
+        "FeedArm": mesh("FeedArm", add_cylinder(builder, 0.10, 4.6, alloy, 16)),
         "Feed": mesh("Feed", add_uv_sphere(builder, 0.30, cyan, 18, 28)),
         "Mast": mesh("Mast", add_cylinder(builder, 0.20, 6.0, rust, 20)),
         "Cable": mesh("Cable", add_cylinder(builder, 0.045, 4.5, warm, 10)),

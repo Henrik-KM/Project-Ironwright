@@ -641,6 +641,8 @@ func _run_all() -> void:
                         _expect(dish_world_depth >= 0.70, "Observatory hero dish must retain a deep parabolic bowl rather than collapsing into a shallow disc.")
                     var observatory_dish_rib := landmark.find_child("ObservatoryDishRib0", true, false) as MeshInstance3D
                     _expect(observatory_dish_rib != null and _mesh_vertex_count(observatory_dish_rib) >= 48, "Observatory dish ribs must retain dense rounded structural geometry rather than flat bars.")
+                    var observatory_feed_arm := landmark.find_child("ObservatoryFeedArm", true, false) as MeshInstance3D
+                    _expect(observatory_feed_arm != null and observatory_feed_arm.mesh.get_aabb().size.x <= 0.24, "Observatory feed arm must retain a slim approach-facing profile so it does not become a dark centre bar across the reflector.")
                     var observatory_control := landmark.find_child("ObservatoryControl", true, false) as MeshInstance3D
                     var observatory_deck := landmark.find_child("ObservatoryServiceDeck", true, false) as MeshInstance3D
                     var observatory_ridge_panel := landmark.find_child("ObservatoryRidgeSignalPanel", true, false) as MeshInstance3D

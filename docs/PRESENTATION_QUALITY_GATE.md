@@ -1610,6 +1610,11 @@ the 1280×720 page with clearer separation; runtime landmark, route, collision,
 navigation, ecology and operation state remain unchanged. Broader human region
 acceptance remains outstanding.
 
+The authored Observatory feed arm now uses a slimmer profile while retaining its
+full receiver reach, so the approach-facing reflector keeps a clear blue-violet
+centre instead of reading as a dark vertical bar. This is presentation-only;
+broader human Observatory and production-art acceptance remain outstanding.
+
 ## Art production sequence
 
 The presentation milestones proceed in this order:
