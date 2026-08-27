@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused late-organic and Root Cistern silent acceptance milestone
+
+- live-reviewed exact 1280x720 presentation pages 3/15 and 14/15 after the
+  release certificate merge, confirming distinct late-organic family shells and
+  a readable Root Cistern endgame hierarchy;
+- kept the review on Godot Dummy audio and quiet mode only; no speaker output or
+  gameplay-state mutation was used.
+
 ## Focused outpost service-rim pass
 
 - added bounded nested service rails inside each existing outpost tier frame,
