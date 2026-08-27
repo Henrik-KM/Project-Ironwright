@@ -121,6 +121,10 @@ def main() -> None:
         "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 16, 24)),
         "GillRib": mesh("GillRib", add_cylinder(builder, 0.026, 0.86, bone, 24)),
         "SacCap": mesh("SacCap", add_uv_sphere(builder, 0.12, bone, 16, 24)),
+        # A shallow rim and a bright pore aperture turn each suspended sac
+        # into a readable living delivery organ at review distance.
+        "SacRim": mesh("SacRim", add_uv_sphere(builder, 0.15, bone, 20, 32)),
+        "SacPore": mesh("SacPore", add_uv_sphere(builder, 0.065, eye, 16, 24)),
     }
 
     nodes: list[dict] = [{
@@ -188,6 +192,8 @@ def main() -> None:
         add_node("SporecasterStem%d" % index, mesh_ids["Stem"], (x, y - 0.26, z), rotation=(0.0, 0.0, x * -0.3), extras={"socket_type": "spore_stem"})
         add_node("SporecasterSac%d" % index, mesh_ids["Sac"], (x, y, z), scale=(0.78, 1.18, 0.78), extras={"socket_type": "spore_sac"})
         add_node("SporecasterSacCap%d" % index, mesh_ids["SacCap"], (x, y + 0.22, z - 0.02), scale=(0.9, 0.7, 0.9), extras={"surface": "spore_cap"})
+        add_node("SporecasterSacRim%d" % index, mesh_ids["SacRim"], (x, y + 0.17, z - 0.01), scale=(0.95, 0.32, 0.95), extras={"surface": "spore_cap_rim"})
+        add_node("SporecasterSacPore%d" % index, mesh_ids["SacPore"], (x, y + 0.29, z - 0.16), scale=(0.72, 0.48, 0.72), extras={"surface": "spore_pore"})
         add_node("SporecasterOculusSac%d" % index, mesh_ids["Eye"], (x, y + 0.23, z - 0.16), extras={"socket_type": "spore_eye"})
 
     for index in range(6):
