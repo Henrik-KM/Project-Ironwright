@@ -30,6 +30,8 @@ func _run_all() -> void:
     if recovery_beacon != null:
         _expect(recovery_beacon.find_child("DetourBaseHousing", true, false) != null and recovery_beacon.find_child("DetourBaseCollar", true, false) != null, "Route recovery detail must ground the detour marker in a manufactured housing.")
         _expect(recovery_beacon.find_child("DetourDirection00", true, false) != null and recovery_beacon.find_child("DetourDirection03", true, false) != null, "Route recovery detail must expose bounded directional plates for the autonomous side route.")
+    _expect(director.route_recovery_material != null and director.route_recovery_material.emission_energy_multiplier <= 2.0, "The autonomous detour cue must keep its emissive warning below the scene-washing threshold.")
+    _expect(director.route_recovery_label != null and director.route_recovery_label.font_size <= 18 and director.route_recovery_label.pixel_size <= 0.016, "The autonomous detour label must remain a restrained in-world explanation rather than a dominant screen-space banner.")
     director.clear_route_recovery()
     _expect(not director.is_route_recovery_visible(), "Clearing route recovery detail must remove the transient detour beacon.")
 

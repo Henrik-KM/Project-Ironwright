@@ -47,9 +47,12 @@ Autonomous route recovery received a focused marker-presentation pass on
 collar and bounded directional plates beneath the existing signal ring, stem,
 crown and label, so the learned side route reads as a physical machine
 intervention rather than a floating icon. The exact silent route-recovery
-marker review is required; the pass is presentation-only and adds no route
-editing or recurring player chore. Broader human navigation, expedition and
-production-art acceptance remains open.
+marker review now also keeps the emissive/light budget and in-world label
+restrained in the opening street grade, so the explanation does not wash out
+the Heartforge or nearby actors. The exact silent route-recovery marker review
+passed locally with Dummy audio; the pass is presentation-only and adds no
+route editing or recurring player chore. Broader human navigation, expedition
+and production-art acceptance remains open.
 
 North Ruins received a focused archive-prop pass on 2026-08-26. The authored
 record stacks, survey marker and beacon braces now use the shared chamfered

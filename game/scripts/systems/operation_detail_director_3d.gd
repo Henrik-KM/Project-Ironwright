@@ -147,7 +147,10 @@ func _build_route_recovery_beacon() -> void:
         return
     var housing_material := ModelKit3D.material(Color("17282d"), 0.58, 0.42)
     var edge_material := ModelKit3D.material(Color("29525a"), 0.42, 0.34, Color("4daeb0"), 0.72)
-    route_recovery_material = ModelKit3D.material(Color("123d49"), 0.18, 0.3, Color("5ce0d1"), 4.2)
+    # Keep the detour cue legible in a busy street without washing out the
+    # Heartforge key light, nearby actors or the route itself. It is a warning
+    # marker, not a permanent beacon competing with the scene focal point.
+    route_recovery_material = ModelKit3D.material(Color("123d49"), 0.18, 0.3, Color("5ce0d1"), 1.65)
     route_recovery_beacon = Node3D.new()
     route_recovery_beacon.name = "AutonomousRouteRecoveryBeacon"
     route_recovery_beacon.visible = false
@@ -244,15 +247,15 @@ func _build_route_recovery_beacon() -> void:
     route_recovery_label.position = Vector3(0.0, 3.28, 0.0)
     route_recovery_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
     route_recovery_label.fixed_size = false
-    route_recovery_label.font_size = 20
-    route_recovery_label.pixel_size = 0.018
-    route_recovery_label.outline_size = 5
-    route_recovery_label.modulate = Color("d5fff7")
+    route_recovery_label.font_size = 17
+    route_recovery_label.pixel_size = 0.014
+    route_recovery_label.outline_size = 4
+    route_recovery_label.modulate = Color("b9eee6")
     route_recovery_label.outline_modulate = Color(0.01, 0.025, 0.03, 0.96)
     route_recovery_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     route_recovery_label.no_depth_test = false
     route_recovery_beacon.add_child(route_recovery_label)
-    ModelKit3D.add_glow_light(route_recovery_beacon, Vector3(0.0, 1.35, 0.0), Color("5ce0d1"), 0.42, 3.4)
+    ModelKit3D.add_glow_light(route_recovery_beacon, Vector3(0.0, 1.35, 0.0), Color("5ce0d1"), 0.2, 2.8)
 
 
 func _build_casualty_recovery_beacon() -> void:
