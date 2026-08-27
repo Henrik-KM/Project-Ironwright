@@ -542,6 +542,31 @@ func _refresh_visuals() -> void:
             Vector3.ZERO,
             "%sDeckInset" % frame_name
         )
+        # Nested service rails turn the broad deck into a maintained machine
+        # surface instead of an empty open frame. They are presentation-only
+        # and remain inside the existing tier footprint and collision box.
+        var inner_frame_size := frame_size - 0.96
+        var inner_rail_length := maxf(0.8, inner_frame_size - 0.3)
+        var inner_rail_offset := inner_frame_size * 0.5
+        for inner_side in [-1.0, 1.0]:
+            ModelKit3D.add_beveled_box(
+                frame,
+                Vector3(inner_rail_length, 0.045, 0.075),
+                Vector3(0.0, 0.09, inner_side * inner_rail_offset),
+                deck_signal,
+                Vector3.ZERO,
+                "%sServiceRim%s" % [frame_name, "North" if inner_side < 0.0 else "South"],
+                0.28
+            )
+            ModelKit3D.add_beveled_box(
+                frame,
+                Vector3(0.075, 0.045, inner_rail_length),
+                Vector3(inner_side * inner_rail_offset, 0.09, 0.0),
+                deck_signal,
+                Vector3.ZERO,
+                "%sServiceRim%s" % [frame_name, "West" if inner_side < 0.0 else "East"],
+                0.28
+            )
         # A small role-coded service plate gives each tier a readable
         # manufactured identity at tactical distance. It is deliberately
         # attached to the existing frame, so it adds no structure, collision

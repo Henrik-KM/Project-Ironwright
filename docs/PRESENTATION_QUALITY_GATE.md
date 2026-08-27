@@ -32,7 +32,9 @@ signal node and small brace pair, giving Tier I-III progression a maintained
 machine identity without competing with the shelter or role mechanism. The
 pass is presentation-only and introduces no new collision, simulation, save
 state or player-managed task. Exact silent 1280x720 Tier III outpost review is
-required; broader human outpost and production-art acceptance remains open.
+now supplemented by nested service rims inside each frame; exact silent Tier III
+outpost review has been live-reviewed with Godot Dummy audio and quiet mode
+only. Broader human outpost and production-art acceptance remains open.
 
 The same outpost review received a focused role-surface and composition pass on
 2026-08-26. A shared service spine now gives the existing tier frames a coherent

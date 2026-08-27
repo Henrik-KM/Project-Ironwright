@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused outpost service-rim pass
+
+- added bounded nested service rails inside each existing outpost tier frame,
+  turning the open decks into maintained machine surfaces while preserving the
+  authored shelter, role signatures, footprint and calm autonomous presentation;
+- kept the change presentation-only: no collision, simulation, save state,
+  queue, workforce or player-managed structure was added;
+- added an aesthetic regression guard and silently live-reviewed the exact Tier
+  III outpost gallery with Godot Dummy audio and quiet mode only.
+
 ## Focused organic shell seam pass
 
 - added a restrained smooth perimeter seam to the shared active organic
