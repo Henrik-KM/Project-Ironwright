@@ -258,6 +258,12 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.operations_hud.title_label.text == "LÅNGDISTANSOPERATIONER" and world.operations_hud.close_button.text == "STÄNG · ESC" and "Varje grupp" in world.operations_hud.status_label.text, "Swedish locale must refresh operations command chrome and explanatory copy.")
     world.operations_hud.close()
     _expect(service.set_locale(&"de"), "German locale must be selectable.")
+    world.settings_service.set_value(&"language", "de", false)
+    _expect(service.set_locale(&"en"), "English locale must remain selectable after a persisted German preference.")
+    world.release_front_end._populate_settings_controls()
+    var language_control := world.release_front_end.settings_controls.get("language") as OptionButton
+    _expect(language_control != null and str(language_control.get_item_metadata(language_control.selected)) == "en", "The settings language selector must follow the active catalog during a non-saving locale override.")
+    _expect(service.set_locale(&"de"), "German locale must remain selectable after the override alignment check.")
     _expect(service.text("menu.settings") == "EINSTELLUNGEN", "German catalog must resolve release settings text.")
     _expect(service.text("objective.opening.salvage.title") == "BERGE DEIN ERSTES SCHROTTGUT", "German catalog must localize the opening objective title.")
     _expect(service.text("notification.forge.insufficient_scrap", [42]) == "NICHT GENUG SCHROTT · 42 ERFORDERLICH" and service.text("notification.final_protocol.initiated") == "ENDPROTOKOLL GESTARTET · DIE REAKTION IST KAUSAL UND UNWIDERRUFLICH", "German gameplay reports must localize fabrication and final-protocol guidance.")
@@ -305,6 +311,7 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     world.operations_hud.open_endgame()
     _expect(world.operations_hud.title_label.text == "ENDPROTOKOLLE", "German locale must refresh final-protocol command chrome.")
     world.operations_hud.close()
+    world.settings_service.set_value(&"language", "en", false)
     world.release_front_end.hide_all()
     service.set_locale(&"en")
 
