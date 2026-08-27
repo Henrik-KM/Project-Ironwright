@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused organic-roster detail framing pass
+
+- tightened the development-only early and late organic gallery camera so the
+  authored crown, membrane and locomotion layers occupy a judgeable portion of
+  the frame instead of being stranded in excess empty space;
+- preserved actor scale, roster spacing, gameplay camera behaviour, collision,
+  simulation and LOD ownership; this is a review-fixture composition change
+  only;
+- added an aesthetic regression guard for the closer roster detail frame and
+  will re-review both organic pages with Dummy audio and quiet mode only.
+
 ## Focused Observatory focal-composition pass
 
 - moved the authored Observatory Ridge gantry behind the parabolic reflector so
