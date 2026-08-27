@@ -21,8 +21,10 @@ authored dressing is released from the active presentation set while persistent
 landmarks, ground collision, discovery state and reduced-detail regional
 proxies remain available. Remote-operation follow uses the same focus, so the
 district under observation receives full authored detail as the camera arrives.
-The exact silent 1280x720 stream-ring review is required; broader world
-streaming, region-scale and production-art acceptance remains open.
+The exact silent stream-ring review has now been live-reviewed through the
+opening, remote-region and retained-proxy phases with Godot Dummy audio only;
+broader world streaming, region-scale and production-art acceptance remains
+open.
 
 Autonomous outposts received a focused tier-articulation pass on 2026-08-26.
 Each existing tier frame now carries a restrained role-colored service plate,
