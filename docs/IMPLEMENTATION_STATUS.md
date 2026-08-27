@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Root Cistern causeway-motion pass
+
+- connected the causeway lamps and paired organic threshold growth to the
+  existing deterministic region-detail motion service, adding a restrained
+  living signal without a new per-frame service or gameplay state;
+- added aesthetic coverage for both motion sockets; the layer remains
+  presentation-only and preserves the endgame collision, route, ecology,
+  operation, reduced-detail and save-state contracts.
+
 ## Focused Root Cistern audio-bed pass
 
 - added a dedicated deterministic Root Cistern ambient loop with low

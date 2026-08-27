@@ -405,6 +405,8 @@ func _run_all() -> void:
                 var cistern_approach := landmark.find_child("RootCisternApproachCauseway", true, false) as Node3D
                 _expect(cistern_approach != null and cistern_approach.find_child("RootCisternCausewaySlab0", true, false) != null and cistern_approach.find_child("RootCisternCausewaySignal0", true, false) != null, "The Root Cistern encounter must expose a segmented approach causeway with a readable machine signal line.")
                 _expect(cistern_approach != null and cistern_approach.find_child("RootCisternCausewayRail", true, false) != null and cistern_approach.find_child("RootCisternCausewayGrowthL", true, false) != null and cistern_approach.find_child("RootCisternCausewayGrowthR", true, false) != null, "The Root Cistern approach must bind machine-built edge rails to organic takeover detail.")
+                var cistern_approach_lamp := cistern_approach.find_child("RootCisternCausewayLamp0", true, false) as Node3D if cistern_approach != null else null
+                var cistern_approach_growth := cistern_approach.find_child("RootCisternCausewayGrowthL", true, false) as Node3D if cistern_approach != null else null
                 var cistern_core_mass := landmark.find_child("RootCisternCoreMass", true, false) as Node3D
                 var cistern_layer_0 := landmark.find_child("RootCisternLayer0", true, false) as Node3D
                 var cistern_layer_1 := landmark.find_child("RootCisternLayer1", true, false) as Node3D
@@ -424,11 +426,15 @@ func _run_all() -> void:
                     var collar_before := cistern_collar.scale
                     var vein_before := cistern_vein.rotation.y
                     var tendril_before := cistern_tendril.rotation.z
+                    var approach_lamp_before := cistern_approach_lamp.scale if cistern_approach_lamp != null else Vector3.ZERO
+                    var approach_growth_before := cistern_approach_growth.rotation.y if cistern_approach_growth != null else 0.0
                     landmark.call("_process", 0.5)
                     _expect(not cistern_pulse.scale.is_equal_approx(pulse_before), "The Root Cistern pulse must carry a restrained presentation cue.")
                     _expect(not cistern_collar.scale.is_equal_approx(collar_before), "The Root Cistern pylon collar must carry a restrained signal cue.")
                     _expect(not is_equal_approx(cistern_vein.rotation.y, vein_before), "The Root Cistern core veins must carry deterministic organic motion.")
                     _expect(not is_equal_approx(cistern_tendril.rotation.z, tendril_before), "The Root Cistern basin tendrils must carry deterministic organic motion.")
+                    _expect(cistern_approach_lamp != null and not cistern_approach_lamp.scale.is_equal_approx(approach_lamp_before), "The Root Cistern causeway lamps must carry a restrained signal pulse.")
+                    _expect(cistern_approach_growth != null and not is_equal_approx(cistern_approach_growth.rotation.y, approach_growth_before), "The Root Cistern causeway growth must carry deterministic organic motion.")
             if landmark.region_kind == &"nest":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/NestOccluderShell") != null, "The nest must isolate its close-range opaque shell for camera-safe presentation.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/CathedralAuthoredModel") != null, "Cathedral Quarter must expose its authored nave and choir landmark shell.")
