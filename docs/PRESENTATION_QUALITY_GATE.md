@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Thornback dorsal-barb pass — 2026-08-27
+
+The authored Thornback now carries a restrained three-barb dorsal threat edge
+above its existing territorial crown and paired spines. The new tapered,
+rounded-base barbs sharpen the silhouette at compact distance without changing
+the existing sockets, animation ownership, collision, tier, ecology, combat,
+LOD or save state. Exact 1280x720 page 3/15 live review passed with Godot Dummy
+audio and `--quiet-audio` only; no live speakers were used. Broader human
+Thornback, hostile-family and production-art acceptance remains open.
+
 ## Focused Sporecaster sac-surface pass — 2026-08-27
 
 The authored Sporecaster now carries layered rims and warm pore apertures on

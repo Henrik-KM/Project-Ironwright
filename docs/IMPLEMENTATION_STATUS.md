@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Thornback dorsal-barb pass
+
+- added a restrained three-barb dorsal threat edge to the authored Thornback
+  shell, giving its territorial crown and paired spines a sharper layered
+  silhouette at compact review distance;
+- kept the barbs presentation-only, preserving existing sockets, animation,
+  collision, tier, ecology, combat, LOD and save ownership;
+- added manifest and close-camera mesh regression coverage; the exact silent
+  late-organic gallery review is required before merge.
+
 ## Focused Veilstalker cowl-detail pass
 
 The authored Veilstalker now carries paired high-definition shell brow plates
