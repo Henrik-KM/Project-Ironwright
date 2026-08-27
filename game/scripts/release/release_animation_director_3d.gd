@@ -4,7 +4,6 @@ extends Node
 var world: Node
 var settings_service: ReleaseSettingsService3D
 var attached_subjects: Dictionary = {}
-var scan_clock: float = 0.0
 
 
 func configure(next_world: Node, next_settings: ReleaseSettingsService3D) -> void:
@@ -16,14 +15,6 @@ func _ready() -> void:
     add_to_group(&"release_animation_director")
     get_tree().node_added.connect(_on_node_added)
     call_deferred("_scan_world")
-
-
-func _process(delta: float) -> void:
-    scan_clock += delta
-    if scan_clock < 2.0:
-        return
-    scan_clock = 0.0
-    _scan_world()
 
 
 func _on_node_added(node: Node) -> void:

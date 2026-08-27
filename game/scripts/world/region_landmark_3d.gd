@@ -81,6 +81,7 @@ func _ready() -> void:
     add_to_group(&"world_regions")
     _build_visuals()
     _refresh_discovery()
+    _sync_process_state()
 
 
 func _process(delta: float) -> void:
@@ -110,6 +111,7 @@ func set_map_emphasis(value: bool) -> void:
 func set_presentation_detail_level(level: int) -> void:
     presentation_detail_level = clampi(level, 0, 2)
     _refresh_presentation_visibility()
+    _sync_process_state()
     for practical_light in _practical_lights:
         if is_instance_valid(practical_light):
             practical_light.light_energy = 0.72 if presentation_detail_level == 0 else 0.38
@@ -133,6 +135,7 @@ func set_streamed_in(value: bool) -> void:
     streamed_in = next_value
     _refresh_authored_model_package()
     _refresh_presentation_visibility()
+    _sync_process_state()
     streaming_changed.emit(region_id, streamed_in)
 
 
@@ -1264,6 +1267,13 @@ func _refresh_discovery() -> void:
         _label.visible = discovered and _map_emphasis
     _refresh_pressure_read()
     _refresh_presentation_visibility()
+    _sync_process_state()
+
+
+func _sync_process_state() -> void:
+    # Region motion is presentation-only. Keep the beacon and close-detail
+    # animation live only while a discovered, streamed region can display it.
+    set_process(discovered and streamed_in and presentation_detail_level < 2)
 
 
 func _region_color() -> Color:
