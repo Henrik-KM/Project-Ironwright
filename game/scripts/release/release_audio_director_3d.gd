@@ -33,6 +33,23 @@ const STREAM_PATHS: Dictionary = {
     &"victory": AUDIO_ROOT + "/sfx_victory.wav",
     &"ui_confirm": AUDIO_ROOT + "/sfx_ui_confirm.wav",
 }
+## Every non-sanctuary region receives an intentional ambient bed. The release
+## package currently has five authored loops, so adjacent region families share
+## a compatible source while retaining their own atmosphere palette and
+## transition cue. Only the current region bed is raised by _update_ambience.
+const REGIONAL_AMBIENCE_SOURCES: Dictionary = {
+    &"industrial": &"ambience_industrial",
+    &"commercial": &"ambience_city",
+    &"tenement": &"ambience_city",
+    &"greenhouse": &"ambience_sanctuary",
+    &"waterfront": &"ambience_waterfront",
+    &"rail": &"ambience_industrial",
+    &"nest": &"ambience_nest",
+    &"research": &"ambience_industrial",
+    &"observatory": &"ambience_city",
+    &"endgame": &"ambience_nest",
+    &"archive": &"ambience_city",
+}
 
 var player: Mechromancer3D
 var heartforge: Heartforge3D
@@ -143,8 +160,10 @@ func _load_streams() -> void:
 func _build_players() -> void:
     city_ambience = _audio_player("CityAmbience", "Ambience", &"ambience_city", -18.0)
     sanctuary_ambience = _audio_player("SanctuaryAmbience", "Ambience", &"ambience_sanctuary", -10.0)
-    for kind in [&"industrial", &"waterfront", &"nest"]:
-        regional_ambience[kind] = _audio_player("RegionalAmbience_%s" % String(kind), "Ambience", StringName("ambience_%s" % String(kind)), -60.0)
+    for raw_kind in REGIONAL_AMBIENCE_SOURCES:
+        var kind := raw_kind as StringName
+        var source_id := REGIONAL_AMBIENCE_SOURCES[kind] as StringName
+        regional_ambience[kind] = _audio_player("RegionalAmbience_%s" % String(kind), "Ambience", source_id, -60.0)
     music_a = _audio_player("MusicA", "Music", &"music_embers", -12.0)
     music_b = _audio_player("MusicB", "Music", &"music_pressure", -60.0)
     active_music = music_a
@@ -560,6 +579,10 @@ func _update_ambience(delta: float) -> void:
         if StringName(kind) == current_region_kind:
             target = _safe_volume_db(linear_to_db(maxf(0.001, regional_weight * 0.34)))
         regional_player.volume_db = lerpf(regional_player.volume_db, target, 1.0 - exp(-delta * 1.8))
+        if target > -59.0 and not regional_player.playing:
+            regional_player.play()
+        elif target <= -59.0 and regional_player.playing and regional_player.volume_db <= -58.5:
+            regional_player.stop()
 
 
 func _evaluate_music_mood() -> void:

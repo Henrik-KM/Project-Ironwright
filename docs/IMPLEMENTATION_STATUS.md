@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused full-region ambience coverage milestone
+
+- extended the release mixer so every non-sanctuary region family receives an
+  intentional ambient bed instead of silently falling back to generic city
+  ambience;
+- reused the existing five authored loops by compatible region family, while
+  retaining one active regional bed, the existing palette/transition cues and
+  the very-low-volume Dummy/quiet review contract;
+- added release regression coverage for every region-to-bed mapping.
+
 ## Focused Observatory feed-arm readability pass
 
 - slimmed the authored reflector feed arm while preserving its receiver reach,

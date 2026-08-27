@@ -527,7 +527,12 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.release_world_art.regions_dressed >= 12, "Every persistent region must receive release dressing.")
     _expect(world.release_world_art.meshes_textured > 30, "The existing world must receive a broad textured material pass.")
     _expect(world.release_audio.stream_library.size() >= 20, "Release audio director must load title music, regional ambience, adaptive music, family calls and species variants.")
-    _expect(world.release_audio.regional_ambience.size() == 3, "Release audio director must prepare bounded industrial, waterfront and nest ambience beds.")
+    _expect(world.release_audio.regional_ambience.size() == ReleaseAudioDirector3D.REGIONAL_AMBIENCE_SOURCES.size(), "Release audio director must prepare a bounded ambience bed for every non-sanctuary region family.")
+    for raw_kind in ReleaseAudioDirector3D.REGIONAL_AMBIENCE_SOURCES:
+        var region_kind := raw_kind as StringName
+        var regional_player := world.release_audio.regional_ambience.get(region_kind) as AudioStreamPlayer
+        var source_id := ReleaseAudioDirector3D.REGIONAL_AMBIENCE_SOURCES[region_kind] as StringName
+        _expect(regional_player != null and regional_player.stream == world.release_audio.stream_library.get(source_id), "Region %s must retain its intentional authored ambience source." % String(region_kind))
     world.release_audio.set_title_screen_active(true)
     _expect(world.release_audio.current_mood == &"title", "Release audio must select the restrained title theme while the title screen is active.")
     world.release_audio.set_title_screen_active(false)
