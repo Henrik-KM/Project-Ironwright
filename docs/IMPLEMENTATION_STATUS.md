@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused friendly-roster hero service-detail pass
+
+- added a bounded high-definition signal collar, service face and paired
+  harness anchors to every authored friendly machine family, including the
+  opening Bulwark companion;
+- preserved stable sockets, collision, animation, role logic, autonomy and
+  save state; the detail is a presentation-only shared chassis language;
+- added an aesthetic regression guard and live-reviewed the exact roster page
+  with Godot Dummy audio and quiet mode only; no live speakers were used.
+
 ## Focused Transformation endgame milestone
 
 - added the third strategic endgame protocol, with four autonomous relay

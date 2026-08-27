@@ -197,6 +197,7 @@ func _run_all() -> void:
             _expect(audio_director.last_profile == &"organic_impact", "Non-lethal organic damage must use the organic impact audio profile.")
         var friendly_sample := get_first_node_in_group(&"friendly_robots") as RobotUnit3D
         if friendly_sample != null:
+            _expect(friendly_sample.find_child("HeroSignalCollar", true, false) != null and friendly_sample.find_child("HeroServiceFace", true, false) != null and friendly_sample.find_child("HeroHarnessAnchorL", true, false) != null, "Authored friendly chassis must expose the shared high-definition service collar and harness language.")
             presentation_feedback.call("_on_actor_health_changed", friendly_sample, friendly_sample.current_health - 1.0, friendly_sample.maximum_health)
             _expect(world.find_children("ActorImpactResponse", "CPUParticles3D", true, false).size() > 0, "Non-lethal machine damage must create a bounded world-space impact response.")
             audio_director.call("_on_actor_health_changed", friendly_sample, friendly_sample.current_health - 1.0, friendly_sample.maximum_health)

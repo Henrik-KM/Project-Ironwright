@@ -7,6 +7,16 @@ live speakers.
 
 **Status:** Canonical pre-alpha production constraint
 
+The friendly machine roster received a focused hero-service-detail pass on
+2026-08-27. Authored Bulwark, Warden, Scrapper, Pathfinder, Engineer and
+Relay shells now share a restrained signal collar, service face and paired
+harness anchors, strengthening manufactured depth and role readability without
+changing sockets, collision, animation or autonomy. The pass is covered by an
+aesthetic regression guard and must be confirmed in the exact silent roster
+capture; the exact 1024x576 page 1/15 review passed with Godot Dummy audio
+and quiet mode only, with no live speakers used. Broader human and
+production-art acceptance remains open.
+
 The Transformation endgame protocol received a focused silent acceptance
 review on 2026-08-27. The exact 1024x576 endgame review showed the third
 strategy's green/teal living-partnership lattice during the crisis and the
