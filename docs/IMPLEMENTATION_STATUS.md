@@ -5293,3 +5293,10 @@ The roadmap now refines and expands an actual complete game loop rather than ext
 - extended aesthetic and commercial release coverage for the authored witness;
   the exact 1280x720 West Grid review passed with Dummy audio and quiet mode
   only, with the board, route bands and service cable visibly readable.
+# Focused Burrower drill-crown pass
+
+The authored Burrower now carries a four-tooth beveled cutting crown around
+the existing bore tip. This is a presentation-only refinement: the drill,
+tip, ring, lamp, animation, collision, tier, ecology and socket contracts are
+unchanged. The pass is covered by the aesthetic asset/roster guards and must
+be live-reviewed through the exact silent early-organic gallery before merge.
