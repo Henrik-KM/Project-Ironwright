@@ -1,7 +1,9 @@
 {
   "schema_version": 2,
   "product_id": "project_ironwright",
-  "production_status": "end_to_end_systemic_alpha",
+  "release_version": "1.0.0-rc.1",
+  "production_status": "commercial_release_candidate_under_external_qa",
+  "release_channel": "release_candidate",
   "authoritative_source": "current_project_conversation",
   "engine": "Godot 4.7.1",
   "principal_mode": "persistent_survival_sandbox",
@@ -72,7 +74,7 @@
     "local_ecology_director",
     "strategic_ecology_director",
     "endgame_director",
-    "transitional_persistence_services",
+    "release_transactional_persistence_service",
     "presentation_layer"
   ],
   "implemented_end_to_end_deliverables": [
@@ -175,12 +177,17 @@
     "start_to_victory_automated_test"
   ],
   "remaining_commercial_work": [
-    "authored_production_assets",
-    "production_animation_and_audio",
-    "content_breadth_and_balance",
-    "performance_optimization",
-    "narrative_and_environmental_storytelling",
-    "external_alpha_and_beta",
-    "release_packaging_and_qa"
+    "representative_windows_and_linux_hardware_testing",
+    "multi_hour_and_multi_day_save_endurance_testing",
+    "controller_testing_on_actual_gamepads",
+    "professional_language_review",
+    "accessibility_user_review",
+    "broad_external_balance_and_onboarding_playtests",
+    "target_hardware_crash_and_performance_profiling",
+    "store_signing_and_upload_configuration",
+    "age_rating_and_regional_legal_review",
+    "privacy_licensing_and_trademark_review",
+    "final_store_screenshots_trailer_and_copy",
+    "release_support_and_rollback_process"
   ]
 }

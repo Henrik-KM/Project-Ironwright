@@ -1,8 +1,8 @@
 {
-  "schema_version": 4,
-  "milestone_id": "complete_game_alpha_0_6",
-  "display_name": "Complete End-to-End Systemic Alpha",
-  "status": "implemented_under_validation",
+  "schema_version": 5,
+  "milestone_id": "commercial_release_candidate_1_0_rc1",
+  "display_name": "Commercial Release Candidate 1.0.0-rc.1",
+  "status": "repository_complete_under_external_qa",
   "full_product_target_hours_min": 30,
   "full_product_target_hours_max": 100,
   "player_experience": "Begin weak and dependent on one Bulwark, survive noisy manual salvage and fabrication, grow an autonomous machine society, build bounded outposts, cross twelve persistent regions, recover unique biological components, evolve the Heartforge through tier 5, choose a final protocol, survive the causal response, and achieve first victory.",
@@ -14,7 +14,7 @@
     "warden_robot",
     "pathfinder_robot",
     "engineer_robot",
-    "twelve_organic_species",
+    "fourteen_organic_species",
     "twelve_persistent_regions",
     "urban_salvage_wrecks",
     "fixed_discovered_outpost_sites",
@@ -66,10 +66,20 @@
     "per_robot_orders",
     "per_robot_loadouts",
     "automatic_forge_at_start",
-    "commercial_content_breadth",
-    "production_authored_assets_and_audio",
-    "transactional_single_file_save_migration",
-    "full_controller_accessibility_localization",
-    "release_packaging"
+    "per_outpost_production_queues",
+    "manual_supply_line_management",
+    "production_chain_economy",
+    "player_managed_power_grid",
+    "hunger_thirst_sleep_management",
+    "short_run_roguelite_as_principal_mode"
+  ],
+  "remaining_external_gates": [
+    "representative_hardware_testing",
+    "multi_day_endurance_playtesting",
+    "professional_translation_review",
+    "accessibility_user_review",
+    "broad_balance_and_onboarding_playtests",
+    "store_signing_and_submission",
+    "legal_privacy_licensing_and_trademark_review"
   ]
 }
