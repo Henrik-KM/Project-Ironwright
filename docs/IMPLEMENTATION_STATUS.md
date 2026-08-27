@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Miremaw high-definition gill-collar pass
+
+- added a paired folded gill collar to the authored Miremaw shell, giving its
+  amphibious breathing anatomy a layered side profile around the existing gill
+  fan rather than one broad membrane plane;
+- added deterministic Idle, Attack, Feed and Retreat channels for the collar
+  while preserving the existing sockets, combat, collision, ecology, LOD and
+  save contracts;
+- added close-camera mesh, node and animation regression coverage and silently
+  live-reviewed the exact late-organic gallery with Godot Dummy audio and quiet
+  mode only; no live speakers were used.
+
 ## Focused Root Cistern causeway-motion pass
 
 - connected the causeway lamps and paired organic threshold growth to the

@@ -1444,6 +1444,7 @@ func _run_all() -> void:
             &"miremaw":
                 _expect(_find_named(enemy_samples[index], "MiremawGillRidgeL") != null and _find_named(enemy_samples[index], "MiremawGillRidgeR") != null, "The Miremaw must expose layered gill-ridge surface detail.")
                 _expect(_find_named(enemy_samples[index], "MiremawJawPlateL") != null and _find_named(enemy_samples[index], "MiremawGillSpineR") != null, "The Miremaw must expose jaw plating and gill spines for readable amphibious anatomy.")
+                _expect(_find_named(enemy_samples[index], "MiremawGillCollarL") != null and _find_named(enemy_samples[index], "MiremawGillCollarR") != null, "The Miremaw must expose paired folded gill collars so its breathing anatomy reads in layered profile.")
                 var miremaw_fin_l := _find_named(enemy_samples[index], "MiremawWaterFinL") as Node3D
                 var miremaw_fin_r := _find_named(enemy_samples[index], "MiremawWaterFinR") as Node3D
                 _expect(miremaw_fin_l != null and miremaw_fin_r != null and absf(miremaw_fin_l.basis.y.z) >= 0.14 and absf(miremaw_fin_r.basis.y.z) >= 0.14 and miremaw_fin_l.basis.y.z * miremaw_fin_r.basis.y.z < 0.0, "The Miremaw water-fin pair must carry opposing pitch so its amphibious membranes read as lifted fins rather than horizontal discs.")
@@ -1555,11 +1556,11 @@ func _run_all() -> void:
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 5, "Rootweaver Feed must carry fan and root-arm motion channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 5, "Rootweaver Retreat must carry paired root-spine withdrawal channels.")
             if species_names[index] == &"miremaw":
-                _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 5, "Miremaw Idle must carry gill-fan and ridge breathing channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 7, "Miremaw Idle must carry gill-fan, folded-collar and ridge breathing channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Walk") >= 4, "Miremaw Walk must carry paired water-fin channels.")
-                _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 6, "Miremaw Attack must carry paired jaw-hook and jaw-plate threat channels.")
-                _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 5, "Miremaw Feed must carry jaw and gill-fan motion channels.")
-                _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 5, "Miremaw Retreat must carry water-fin and gill withdrawal channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Attack") >= 8, "Miremaw Attack must carry folded-collar, jaw-hook and jaw-plate threat channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Feed") >= 7, "Miremaw Feed must carry folded-collar, jaw and gill-fan motion channels.")
+                _expect(_animation_player_track_count(authored_animation.animation_player, &"Retreat") >= 7, "Miremaw Retreat must carry folded-collar, water-fin and gill withdrawal channels.")
             if species_names[index] == &"glassmoth":
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Idle") >= 6, "Glassmoth Idle must carry paired wing breathing channels.")
                 _expect(_animation_player_track_count(authored_animation.animation_player, &"Walk") >= 6, "Glassmoth Walk must carry paired wing flight channels.")
@@ -1696,6 +1697,10 @@ func _run_all() -> void:
     _expect(_mesh_vertex_count(_find_named(carrionbell_asset, "CarrionbellCrownPlate") as MeshInstance3D) >= 500, "Carrion Bell must retain a dense folded crown silhouette.")
     _expect(_mesh_vertex_count(_find_named(thornback_asset, "ThornbackCrownPlate") as MeshInstance3D) >= 500, "Thornback must retain a dense folded territorial crown silhouette.")
     _expect(_mesh_vertex_count(_find_named(ashmantle_asset, "AshmantleHeatLouverL") as MeshInstance3D) >= 700, "Ashmantle must retain a dense folded heat-louver silhouette.")
+    var miremaw_collar_l := _find_named(miremaw_asset, "MiremawGillCollarL") as MeshInstance3D
+    var miremaw_collar_r := _find_named(miremaw_asset, "MiremawGillCollarR") as MeshInstance3D
+    _expect(miremaw_collar_l != null and miremaw_collar_r != null and _mesh_vertex_count(miremaw_collar_l) >= 700 and _mesh_vertex_count(miremaw_collar_r) >= 700, "Miremaw's paired folded gill collars must retain dense scalloped close-camera geometry.")
+    _expect(miremaw_collar_l != null and miremaw_collar_r != null and miremaw_collar_l.mesh.get_aabb().size.y >= 0.20 and miremaw_collar_r.mesh.get_aabb().size.y >= 0.20, "Miremaw's folded gill collars must retain closed membrane depth rather than collapsing into thin plates.")
     var carrionbell_crown := _find_named(carrionbell_asset, "CarrionbellCrownPlate") as Node3D
     var thornback_crown := _find_named(thornback_asset, "ThornbackCrownPlate") as Node3D
     var ashmantle_louver := _find_named(ashmantle_asset, "AshmantleHeatLouverL") as Node3D

@@ -45,7 +45,7 @@ FAMILIES = {
         "colors": ([0.035, 0.065, 0.045, 1.0], [0.22, 0.28, 0.18, 1.0], [0.25, 0.07, 0.045, 1.0], [0.52, 0.44, 0.29, 1.0], [0.82, 0.32, 0.05, 1.0], [0.28, 0.12, 0.075, 1.0]),
         "body_profile": ((1.45, 0.76, 1.34), (1.28, 0.66, 1.10), 0.025),
         "socket_contract": "maw, gill_fan, water_fins, jaw_hooks",
-        "signature_nodes": ["MiremawGillRidgeL", "MiremawGillRidgeR", "MiremawJawPlateL", "MiremawGillSpineR"],
+        "signature_nodes": ["MiremawGillRidgeL", "MiremawGillRidgeR", "MiremawJawPlateL", "MiremawGillSpineR", "MiremawGillCollarL"],
     },
     "carrionbell": {
         "display": "Carrion Bell",
@@ -562,6 +562,26 @@ def build_family(name: str, spec: dict) -> None:
     # when this focused pass changes.
     if name == "thornback":
         mesh_ids["ThornbackCrownLobe"] = mesh("ThornbackCrownLobe", add_organic_lobe(builder, (1.42, 0.38, 1.02), shell, lobes=4, rings=10, sides=40, scallop_amplitude=0.14, leading_extension=0.36, fold_strength=0.82))
+    # Miremaw's gill fan is its breathing, amphibious identity. Add a paired
+    # folded collar around the existing fan so the side profile carries a
+    # layered membrane break instead of one broad plate. The collar is
+    # presentation-only; the existing gill socket remains the animation and
+    # runtime ownership anchor.
+    if name == "miremaw":
+        mesh_ids["MiremawGillCollar"] = mesh(
+            "MiremawGillCollar",
+            add_organic_lobe(
+                builder,
+                (0.82, 0.24, 0.52),
+                membrane,
+                lobes=5,
+                rings=12,
+                sides=48,
+                scallop_amplitude=0.13,
+                leading_extension=0.30,
+                fold_strength=0.86,
+            ),
+        )
     # Ashmantle's heat louvers and mantle ribs are its vented thermal identity.
     # Give those existing sockets a thicker folded living surface so the
     # family does not fall back to broad horizontal bars at gallery distance.
@@ -720,6 +740,8 @@ def build_family(name: str, spec: dict) -> None:
         add_node("MiremawHeadRidge0", mesh_ids["Ridge"], (-0.42, 1.15, -1.5), rotation=(0.0, -0.2, -0.12), scale=(0.62, 1.0, 0.72), extras={"surface": "head_ridge"})
         add_node("MiremawHeadRidge1", mesh_ids["Ridge"], (0.42, 1.15, -1.5), rotation=(0.0, 0.2, 0.12), scale=(0.62, 1.0, 0.72), extras={"surface": "head_ridge"})
         add_node("MiremawGillFan", mesh_ids["DeepMembrane"], (0.0, 1.25, 0.35), rotation=(0.0, 0.0, 1.5708), scale=(0.72, 1.0, 0.78), extras={"socket_type": "gill_fan"})
+        add_node("MiremawGillCollarL", mesh_ids["MiremawGillCollar"], (-0.46, 1.18, 0.48), rotation=(0.18, -0.28, -0.18), scale=(0.78, 1.0, 0.92), extras={"surface": "folded_gill_collar"})
+        add_node("MiremawGillCollarR", mesh_ids["MiremawGillCollar"], (0.46, 1.18, 0.48), rotation=(-0.18, 0.28, 0.18), scale=(0.78, 1.0, 0.92), extras={"surface": "folded_gill_collar"})
         for side in (-1.0, 1.0):
             suffix = "L" if side < 0 else "R"
             add_node(f"MiremawJawHook{suffix}", mesh_ids["LongBone"], (side * 0.42, 0.55, -1.62), rotation=(side * 0.72, 0.0, side * 0.18), extras={"socket_type": "jaw_hook"})
@@ -936,6 +958,8 @@ def build_family(name: str, spec: dict) -> None:
         # for the release camera to judge the family.
         idle_channels.extend([
             ("MiremawGillFan", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.0, 1.48)) + quat((0.0, 0.0, 1.66)) + quat((0.0, 0.0, 1.48))),
+            ("MiremawGillCollarL", "rotation", [0.0, 0.8, 1.6], quat((0.18, -0.28, -0.18)) + quat((0.08, -0.34, -0.24)) + quat((0.18, -0.28, -0.18))),
+            ("MiremawGillCollarR", "rotation", [0.0, 0.8, 1.6], quat((-0.18, 0.28, 0.18)) + quat((-0.08, 0.34, 0.24)) + quat((-0.18, 0.28, 0.18))),
             ("MiremawGillRidgeL", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.22, -0.08)) + quat((0.04, -0.24, -0.03)) + quat((0.0, -0.22, -0.08))),
             ("MiremawGillRidgeR", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.22, 0.08)) + quat((-0.04, 0.24, 0.03)) + quat((0.0, 0.22, 0.08))),
         ])
@@ -944,17 +968,23 @@ def build_family(name: str, spec: dict) -> None:
             ("MiremawWaterFinR", "rotation", [0.0, 0.22, 0.44], quat((0.20, 0.28, 0.08)) + quat((-0.12, 0.34, 0.18)) + quat((0.20, 0.28, 0.08))),
         ])
         attack_channels.extend([
+            ("MiremawGillCollarL", "rotation", [0.0, 0.24, 0.48], quat((0.18, -0.28, -0.18)) + quat((0.32, -0.44, -0.30)) + quat((0.18, -0.28, -0.18))),
+            ("MiremawGillCollarR", "rotation", [0.0, 0.24, 0.48], quat((-0.18, 0.28, 0.18)) + quat((-0.32, 0.44, 0.30)) + quat((-0.18, 0.28, 0.18))),
             ("MiremawJawHookL", "rotation", [0.0, 0.24, 0.48], quat((-0.72, 0.0, -0.18)) + quat((-0.98, 0.0, -0.28)) + quat((-0.72, 0.0, -0.18))),
             ("MiremawJawHookR", "rotation", [0.0, 0.24, 0.48], quat((0.72, 0.0, 0.18)) + quat((0.98, 0.0, 0.28)) + quat((0.72, 0.0, 0.18))),
             ("MiremawJawPlateL", "rotation", [0.0, 0.24, 0.48], quat((-0.36, 0.0, -0.12)) + quat((-0.58, 0.0, -0.18)) + quat((-0.36, 0.0, -0.12))),
             ("MiremawJawPlateR", "rotation", [0.0, 0.24, 0.48], quat((0.36, 0.0, 0.12)) + quat((0.58, 0.0, 0.18)) + quat((0.36, 0.0, 0.12))),
         ])
         feed_channels.extend([
+            ("MiremawGillCollarL", "rotation", [0.0, 0.3, 0.6], quat((0.18, -0.28, -0.18)) + quat((0.02, -0.14, -0.10)) + quat((0.18, -0.28, -0.18))),
+            ("MiremawGillCollarR", "rotation", [0.0, 0.3, 0.6], quat((-0.18, 0.28, 0.18)) + quat((-0.02, 0.14, 0.10)) + quat((-0.18, 0.28, 0.18))),
             ("MiremawJawHookL", "rotation", [0.0, 0.3, 0.6], quat((-0.72, 0.0, -0.18)) + quat((-0.88, 0.0, -0.24)) + quat((-0.72, 0.0, -0.18))),
             ("MiremawJawHookR", "rotation", [0.0, 0.3, 0.6], quat((0.72, 0.0, 0.18)) + quat((0.88, 0.0, 0.24)) + quat((0.72, 0.0, 0.18))),
             ("MiremawGillFan", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.0, 1.57)) + quat((0.0, 0.0, 1.32)) + quat((0.0, 0.0, 1.57))),
         ])
         retreat_channels.extend([
+            ("MiremawGillCollarL", "rotation", [0.0, 0.22, 0.44], quat((0.18, -0.28, -0.18)) + quat((-0.10, -0.38, -0.26)) + quat((0.18, -0.28, -0.18))),
+            ("MiremawGillCollarR", "rotation", [0.0, 0.22, 0.44], quat((-0.18, 0.28, 0.18)) + quat((0.10, 0.38, 0.26)) + quat((-0.18, 0.28, 0.18))),
             ("MiremawWaterFinL", "rotation", [0.0, 0.22, 0.44], quat((-0.20, -0.28, -0.08)) + quat((-0.14, -0.36, -0.2)) + quat((-0.20, -0.28, -0.08))),
             ("MiremawWaterFinR", "rotation", [0.0, 0.22, 0.44], quat((0.20, 0.28, 0.08)) + quat((0.14, 0.36, 0.2)) + quat((0.20, 0.28, 0.08))),
             ("MiremawGillFan", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, 1.57)) + quat((0.0, 0.0, 1.82)) + quat((0.0, 0.0, 1.57))),
