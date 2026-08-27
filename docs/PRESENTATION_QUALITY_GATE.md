@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Ashmantle siphon-detail pass — 2026-08-27
+
+The authored Ashmantle now carries a high-definition collar and paired hot
+apertures around its existing route siphon. The thermal intake reads as a
+layered living organ at compact distance without changing the existing sockets,
+animation ownership, collision, tier, ecology, combat, LOD or save state. Exact
+1280x720 page 3/15 live review is required with Godot Dummy audio and
+`--quiet-audio` only; no live speakers are used. Broader human Ashmantle,
+hostile-family and production-art acceptance remains open.
+
 ## Focused Thornback dorsal-barb pass — 2026-08-27
 
 The authored Thornback now carries a restrained three-barb dorsal threat edge

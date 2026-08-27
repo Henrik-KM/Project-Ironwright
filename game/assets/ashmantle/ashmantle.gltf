@@ -32,7 +32,10 @@
         39,
         40,
         41,
-        42
+        42,
+        43,
+        44,
+        45
       ],
       "extras": {
         "ironwright_asset_id": "ashmantle.route_predator.v1",
@@ -539,6 +542,63 @@
       ],
       "extras": {
         "socket_type": "route_siphon"
+      }
+    },
+    {
+      "name": "AshmantleSiphonRing",
+      "translation": [
+        0.0,
+        0.82,
+        -1.6
+      ],
+      "mesh": 15,
+      "rotation": [
+        0.7071080798594735,
+        0.0,
+        0.0,
+        0.7071054825112363
+      ],
+      "scale": [
+        1.34,
+        1.0,
+        1.08
+      ],
+      "extras": {
+        "surface": "heated_siphon_collar"
+      }
+    },
+    {
+      "name": "AshmantleSiphonApertureL",
+      "translation": [
+        -0.18,
+        0.84,
+        -1.72
+      ],
+      "mesh": 9,
+      "scale": [
+        0.72,
+        0.72,
+        0.54
+      ],
+      "extras": {
+        "surface": "heated_siphon_aperture"
+      }
+    },
+    {
+      "name": "AshmantleSiphonApertureR",
+      "translation": [
+        0.18,
+        0.84,
+        -1.72
+      ],
+      "mesh": 9,
+      "scale": [
+        0.72,
+        0.72,
+        0.54
+      ],
+      "extras": {
+        "surface": "heated_siphon_aperture"
       }
     },
     {
@@ -3688,28 +3748,28 @@
         {
           "sampler": 2,
           "target": {
-            "node": 30,
+            "node": 33,
             "path": "rotation"
           }
         },
         {
           "sampler": 3,
           "target": {
-            "node": 34,
+            "node": 37,
             "path": "rotation"
           }
         },
         {
           "sampler": 4,
           "target": {
-            "node": 31,
+            "node": 34,
             "path": "rotation"
           }
         },
         {
           "sampler": 5,
           "target": {
-            "node": 35,
+            "node": 38,
             "path": "rotation"
           }
         }
@@ -3753,7 +3813,7 @@
         {
           "sampler": 0,
           "target": {
-            "node": 30,
+            "node": 33,
             "path": "rotation"
           }
         },
@@ -3767,28 +3827,28 @@
         {
           "sampler": 2,
           "target": {
-            "node": 30,
+            "node": 33,
             "path": "rotation"
           }
         },
         {
           "sampler": 3,
           "target": {
-            "node": 34,
+            "node": 37,
             "path": "rotation"
           }
         },
         {
           "sampler": 4,
           "target": {
-            "node": 31,
+            "node": 34,
             "path": "rotation"
           }
         },
         {
           "sampler": 5,
           "target": {
-            "node": 35,
+            "node": 38,
             "path": "rotation"
           }
         }
@@ -3868,42 +3928,42 @@
         {
           "sampler": 3,
           "target": {
-            "node": 30,
+            "node": 33,
             "path": "rotation"
           }
         },
         {
           "sampler": 4,
           "target": {
-            "node": 34,
+            "node": 37,
             "path": "rotation"
           }
         },
         {
           "sampler": 5,
           "target": {
-            "node": 31,
+            "node": 34,
             "path": "rotation"
           }
         },
         {
           "sampler": 6,
           "target": {
-            "node": 35,
+            "node": 38,
             "path": "rotation"
           }
         },
         {
           "sampler": 7,
           "target": {
-            "node": 32,
+            "node": 35,
             "path": "rotation"
           }
         },
         {
           "sampler": 8,
           "target": {
-            "node": 36,
+            "node": 39,
             "path": "rotation"
           }
         }
@@ -4004,28 +4064,28 @@
         {
           "sampler": 3,
           "target": {
-            "node": 30,
+            "node": 33,
             "path": "rotation"
           }
         },
         {
           "sampler": 4,
           "target": {
-            "node": 34,
+            "node": 37,
             "path": "rotation"
           }
         },
         {
           "sampler": 5,
           "target": {
-            "node": 32,
+            "node": 35,
             "path": "rotation"
           }
         },
         {
           "sampler": 6,
           "target": {
-            "node": 36,
+            "node": 39,
             "path": "rotation"
           }
         }
@@ -4100,7 +4160,7 @@
         {
           "sampler": 0,
           "target": {
-            "node": 30,
+            "node": 33,
             "path": "rotation"
           }
         },
@@ -4114,28 +4174,28 @@
         {
           "sampler": 2,
           "target": {
-            "node": 30,
+            "node": 33,
             "path": "rotation"
           }
         },
         {
           "sampler": 3,
           "target": {
-            "node": 34,
+            "node": 37,
             "path": "rotation"
           }
         },
         {
           "sampler": 4,
           "target": {
-            "node": 31,
+            "node": 34,
             "path": "rotation"
           }
         },
         {
           "sampler": 5,
           "target": {
-            "node": 35,
+            "node": 38,
             "path": "rotation"
           }
         }
@@ -4184,6 +4244,7 @@
       "AshmantleHeatLouverL",
       "AshmantleHeatLouverR",
       "AshmantleSiphon",
+      "AshmantleSiphonRing",
       "ProductionAssetMarker"
     ],
     "animation_clips": [

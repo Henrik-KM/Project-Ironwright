@@ -1471,6 +1471,8 @@ func _run_all() -> void:
             &"ashmantle":
                 _expect(_find_named(enemy_samples[index], "AshmantleHeatLouverL") != null and _find_named(enemy_samples[index], "AshmantleHeatLouverR") != null, "The Ashmantle must expose paired heat-louver anatomy.")
                 _expect(_find_named(enemy_samples[index], "AshmantleSiphon") != null and _find_named(enemy_samples[index], "AshmantleTendrilR") != null, "The Ashmantle must expose a route siphon and sensory tendril signature.")
+                var ash_siphon_ring := _find_named(enemy_samples[index], "AshmantleSiphonRing") as MeshInstance3D
+                _expect(ash_siphon_ring != null and _mesh_vertex_count(ash_siphon_ring) >= 96 and _find_named(enemy_samples[index], "AshmantleSiphonApertureR") != null, "The Ashmantle must expose a dense thermal siphon collar and paired hot apertures rather than a soft front mass alone.")
         if species_names[index] == &"apex":
             var apex_crown := _find_named(enemy_samples[index], "ApexCrown") as Node3D
             var apex_plate := _find_named(enemy_samples[index], "ApexCrownPlate") as Node3D
