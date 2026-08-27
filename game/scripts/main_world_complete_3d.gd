@@ -669,7 +669,7 @@ func _update_complete_game_objective() -> void:
         _set_complete_objective("objective.complete.tier5.title", "EVOLVE THE HEARTFORGE TO TIER V", "objective.complete.tier5.detail", "Return to the forge and choose 9. The recovered components can now be integrated into a final-protocol lattice.", [], "objective.complete.tier5.prompt", "PRESS 9 · EVOLVE THE HEARTFORGE TO TIER V")
         return
     if not progression.has_technology(&"tech.endgame.severance") and not progression.has_technology(&"tech.endgame.containment"):
-        _set_complete_objective("objective.complete.ending_choice.title", "CHOOSE WHAT THE TOWN BECOMES", "objective.complete.ending_choice.detail", "Press T and research Severance, Containment, or both. This is a strategic ending choice, not a recurring wave upgrade.", [], "objective.complete.ending_choice.prompt", "PRESS T · RESEARCH THE FINAL PROTOCOLS")
+        _set_complete_objective("objective.complete.ending_choice.title", "CHOOSE WHAT THE TOWN BECOMES", "objective.complete.ending_choice.detail", "Press T and research Severance, Containment, Transformation, or more than one. This is a strategic ending choice, not a recurring wave upgrade.", [], "objective.complete.ending_choice.prompt", "PRESS T · RESEARCH THE FINAL PROTOCOLS")
         return
     if endgame_director.active_protocol.is_empty():
         _set_complete_objective("objective.complete.initiate.title", "INITIATE THE FINAL PROTOCOL", "objective.complete.initiate.detail", "Press V, choose an available protocol, and deliberately provoke the final ecological response when the Heartforge and machine society are ready.", [], "objective.complete.initiate.prompt", "PRESS V · REVIEW IRREVERSIBLE FINAL PROTOCOLS")

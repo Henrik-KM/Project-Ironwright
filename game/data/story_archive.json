@@ -406,6 +406,16 @@
       "display_name": "The Caged Root",
       "source_name": "Final protocol: Containment",
       "description": "The root signal was enclosed instead of erased. The ecology remained alive and local, a dangerous neighbour whose limits the machines had finally learned to hold."
+    },
+    {
+      "id": "story.endgame.transformation",
+      "arc": "ecological_convergence",
+      "trigger": "endgame_completed",
+      "trigger_id": "protocol.transformation",
+      "sequence": 96,
+      "display_name": "The Transformed Root",
+      "source_name": "Final protocol: Transformation",
+      "description": "The root signal was translated instead of destroyed. The machine society taught the living network a language of boundaries, care, and choice, and the town remained dangerous without remaining unknowable."
     }
   ]
 }

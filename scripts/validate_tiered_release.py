@@ -190,8 +190,8 @@ def validate_dynamic_modifiers() -> None:
     for technology in ["tech.heartforge.tier_2", "tech.heartforge.tier_3", "tech.heartforge.tier_4", "tech.heartforge.tier_5"]:
         if technology not in technologies:
             raise legacy.ValidationError(f"Heartforge evolution lacks ecological effect {technology}")
-    if set(endgame) != {"protocol.severance", "protocol.containment"}:
-        raise legacy.ValidationError("Both final protocols need escalation effects")
+    if set(endgame) != {"protocol.severance", "protocol.containment", "protocol.transformation"}:
+        raise legacy.ValidationError("All three final protocols need escalation effects")
 
 
 def validate_no_wave_loop() -> None:

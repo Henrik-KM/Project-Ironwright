@@ -488,6 +488,32 @@ func _run_all() -> void:
     _expect(world.endgame_director.completed_protocol == &"protocol.containment", "Containment must complete after its longer sustained defence interval.")
     _expect(world.first_victory_achieved, "Completing Containment must produce the first victory state.")
 
+    var fourth_site := world.outpost_director.get_site(&"site.west_substation")
+    _expect(fourth_site != null, "The complete run must retain a fourth discovered site for the widest final protocol.")
+    if fourth_site != null:
+        fourth_site.set_discovered(true)
+        if not fourth_site.has_outpost():
+            world.outpost_director._spawn_outpost(fourth_site, &"defence", 1)
+    _expect(_functioning_outposts(world) >= 4, "Transformation must require and receive the widest autonomous relay network.")
+    world.run_state.scrap = 5000
+    world.run_state.rare_cores = 20
+    world.run_state.scrap_changed.emit(world.run_state.scrap)
+    world.run_state.rare_cores_changed.emit(world.run_state.rare_cores)
+    world.endgame_director.completed_protocol = &""
+    world.endgame_director.active_protocol.clear()
+    world.first_victory_achieved = false
+    world.game_ended = false
+    _expect(world.progression.purchase(&"tech.endgame.transformation"), "The complete run must support researching the third Transformation protocol.")
+    _expect(world.endgame_director.available_protocols().any(func(entry: Dictionary) -> bool: return StringName(str(entry.get("id", ""))) == &"protocol.transformation"), "Transformation must appear only after its full research and relay prerequisites are met.")
+    _expect(world.endgame_director.initiate(&"protocol.transformation"), "The player must be able to initiate the third Transformation path deliberately.")
+    _expect(int(world.endgame_director.active_protocol.get("remote_outposts_min", 0)) == 4, "Transformation must declare its four-post autonomous relay requirement.")
+    _expect(world.get_node_or_null("EndgameProtocolVisuals/ProtocolLattice/ProtocolLivingLoopA") != null and world.get_node_or_null("EndgameProtocolVisuals/ProtocolLattice/ProtocolLivingLoopB") != null, "Transformation must expose its distinct living-partnership lattice presentation.")
+    var transformation := world.endgame_director.protocol(&"protocol.transformation")
+    world.endgame_director._process(float(transformation.get("duration_seconds", 260.0)) + 1.0)
+    _expect(world.endgame_director.completed_protocol == &"protocol.transformation", "Transformation must complete after its sustained, lower-pressure defence interval.")
+    _expect(world.first_victory_achieved, "Completing Transformation must produce the first victory state.")
+    _expect(world.get_node_or_null("EndgameProtocolVisuals/SanctuaryCrown/SanctuaryLivingLoop") != null, "Transformation victory must leave a distinct living-loop sanctuary capstone.")
+
     world.endgame_director.completed_protocol = &""
     world.first_victory_achieved = false
     for site in world.outpost_director.discovered_sites():

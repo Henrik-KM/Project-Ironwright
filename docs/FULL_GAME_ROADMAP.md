@@ -64,7 +64,7 @@ The repository currently demonstrates the complete game-shaped systemic arc:
 - loud manual salvage and fabrication followed by autonomous machine society;
 - class-wide robot progression, physical salvage, expeditions and outposts;
 - persistent multi-region ecology, causal pressure and reduced-detail continuity;
-- both canonical sustained endgame protocols, first victory and explicit
+- three canonical sustained endgame protocols, first victory and explicit
   post-victory sanctuary continuation;
 - final protocols resolve through an autonomous remote relay phase backed by
   functioning discovered outposts, followed by a Heartforge home-front hold;

@@ -18,6 +18,7 @@ var core_light: OmniLight3D
 var current_state: StringName = &"dormant"
 var current_progress: float = 0.0
 var current_protocol: StringName = &""
+var built_protocol: StringName = &""
 var _lattice_materials: Array[StandardMaterial3D] = []
 var _completion_materials: Array[StandardMaterial3D] = []
 var _stage_roots: Array[Node3D] = []
@@ -116,8 +117,20 @@ func _on_endgame_failed(protocol_id: StringName, _reason: String) -> void:
 
 func _ensure_lattice() -> void:
     if visual_root != null and is_instance_valid(visual_root):
-        visual_root.visible = true
-        return
+        if built_protocol != current_protocol:
+            visual_root.free()
+            visual_root = null
+            lattice_root = null
+            completion_root = null
+            pulse_ring = null
+            core_light = null
+            _stage_roots.clear()
+            _lattice_materials.clear()
+            _completion_materials.clear()
+            _last_stage = -1
+        else:
+            visual_root.visible = true
+            return
     if world == null or heartforge == null:
         return
     visual_root = Node3D.new()
@@ -129,8 +142,10 @@ func _ensure_lattice() -> void:
     lattice_root.name = "ProtocolLattice"
     visual_root.add_child(lattice_root)
 
-    var lattice_mat := ModelKit3D.material(Color("3b202f"), 0.42, 0.34, Color("d93458"), 0.28)
-    var accent_mat := ModelKit3D.material(Color("6a3825"), 0.3, 0.3, Color("d88239"), 0.42)
+    var transformation_protocol := current_protocol == &"protocol.transformation"
+    built_protocol = current_protocol
+    var lattice_mat := ModelKit3D.material(Color("27453d") if transformation_protocol else Color("3b202f"), 0.42, 0.34, Color("4dd6a0") if transformation_protocol else Color("d93458"), 0.28)
+    var accent_mat := ModelKit3D.material(Color("35634d") if transformation_protocol else Color("6a3825"), 0.3, 0.3, Color("a5e66f") if transformation_protocol else Color("d88239"), 0.42)
     _lattice_materials = [lattice_mat, accent_mat]
 
     # The crisis must frame the Heartforge rather than cage the player. Keep
@@ -144,6 +159,14 @@ func _ensure_lattice() -> void:
         var angle := TAU * float(index) / 6.0
         var position := Vector3(cos(angle) * 2.24, 1.72, sin(angle) * 2.24)
         ModelKit3D.add_capsule(lattice_root, 0.075, 3.0, position, lattice_mat, Vector3.ZERO, "ProtocolSpine%d" % index)
+
+    if transformation_protocol:
+        # Transformation is the living-partnership ending: two crossed,
+        # low-energy loops make it visibly different from the severance and
+        # containment cages without changing the crisis footprint or player
+        # collision. The loops read as a negotiated braid around the Heartforge.
+        ModelKit3D.add_torus(lattice_root, 1.18, 0.055, Vector3(0.0, 1.35, 0.0), accent_mat, Vector3(PI * 0.5, 0.0, 0.18), "ProtocolLivingLoopA", 40, 8)
+        ModelKit3D.add_torus(lattice_root, 1.18, 0.055, Vector3(0.0, 1.35, 0.0), accent_mat, Vector3(0.0, 0.0, PI * 0.5), "ProtocolLivingLoopB", 40, 8)
 
     for stage_index in range(3):
         var stage_root := Node3D.new()
@@ -162,14 +185,16 @@ func _ensure_lattice() -> void:
     completion_root.name = "SanctuaryCrown"
     completion_root.visible = false
     visual_root.add_child(completion_root)
-    var completion_mat := ModelKit3D.material(Color("4f746d"), 0.46, 0.26, Color("69f0d2"), 4.6)
-    var completion_accent := ModelKit3D.material(Color("8b6331"), 0.38, 0.28, Color("ffd36a"), 3.8)
+    var completion_mat := ModelKit3D.material(Color("3e866d") if transformation_protocol else Color("4f746d"), 0.46, 0.26, Color("8ff3b4") if transformation_protocol else Color("69f0d2"), 4.6)
+    var completion_accent := ModelKit3D.material(Color("6e8d3d") if transformation_protocol else Color("8b6331"), 0.38, 0.28, Color("d7ff8a") if transformation_protocol else Color("ffd36a"), 3.8)
     _completion_materials = [completion_mat, completion_accent]
     _add_ring(completion_root, 3.3, 3.4, Vector3(0.0, 0.26, 0.0), completion_mat, "SanctuaryCrownRing")
     for index in range(8):
         var angle := TAU * float(index) / 8.0
         var position := Vector3(cos(angle) * 2.78, 3.45, sin(angle) * 2.78)
         ModelKit3D.add_beveled_box(completion_root, Vector3(0.22, 2.35, 0.38), position, completion_mat, Vector3(0.0, -angle, angle * 0.16), "SanctuaryCrownFin%d" % index, 0.16)
+    if transformation_protocol:
+        ModelKit3D.add_torus(completion_root, 2.18, 0.08, Vector3(0.0, 2.25, 0.0), completion_accent, Vector3(PI * 0.5, 0.0, 0.0), "SanctuaryLivingLoop", 48, 8)
     ModelKit3D.add_cylinder(completion_root, 0.32, 1.5, Vector3(0.0, 4.75, 0.0), completion_accent, Vector3.ZERO, "SanctuaryCrownBeacon")
 
     core_light = OmniLight3D.new()
@@ -225,8 +250,8 @@ func _apply_lattice_progress(progress: float) -> void:
     if stage != _last_stage:
         _last_stage = stage
         visual_state_changed.emit(StringName("stage_%d" % stage), progress)
-    var crisis := Color("ff4d6d").lerp(Color("ffb347"), clampf(progress * 1.8, 0.0, 1.0))
-    if progress > 0.72:
+    var crisis := Color("4dd6a0").lerp(Color("d7ff8a"), clampf(progress * 1.8, 0.0, 1.0)) if current_protocol == &"protocol.transformation" else Color("ff4d6d").lerp(Color("ffb347"), clampf(progress * 1.8, 0.0, 1.0))
+    if current_protocol != &"protocol.transformation" and progress > 0.72:
         crisis = crisis.lerp(Color("d76aff"), (progress - 0.72) / 0.28)
     for material in _lattice_materials:
         material.emission = crisis
@@ -246,7 +271,7 @@ func _show_completion() -> void:
     for material in _completion_materials:
         material.emission_energy_multiplier = 0.62
     if core_light != null:
-        core_light.light_color = Color("69f0d2")
+        core_light.light_color = Color("8ff3b4") if current_protocol == &"protocol.transformation" else Color("69f0d2")
         core_light.light_energy = 1.1
     var tween := create_tween()
     tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)

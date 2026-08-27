@@ -195,7 +195,7 @@ Every tier is still performed manually at the Heartforge as a loud, exposed, int
 
 Press `V` after completing tier 5 research and Root Cistern mapping.
 
-The player chooses between two endgame approaches.
+The player chooses among three endgame approaches.
 
 ### Severance
 
@@ -204,6 +204,13 @@ A shorter, more violent overload that cuts the town away from the coordinating r
 ### Containment
 
 A longer, more expensive resonant lattice that cages the root intelligence while leaving local organisms alive. It requires a mature support network and rises more gradually.
+
+### Transformation
+
+A broad relay protocol that translates the root signal through the machine
+society, creating a bounded living partnership instead of severing or caging
+the network. It requires the widest outpost support and rises with the least
+violent visual language.
 
 The final crisis is:
 
@@ -215,7 +222,7 @@ The final crisis is:
 
 The optional Apex lure can reduce the final response, giving long-range preparation strategic value.
 
-Completing either protocol is the first victory, not a forced restart. Press
+Completing any protocol is the first victory, not a forced restart. Press
 Enter or Space on the victory panel to continue the surviving sanctuary. The
 post-victory archive then becomes available through `P`; its autonomous group
 travels to the North Ruins and returns with civil records and machine names.
@@ -306,7 +313,7 @@ It validates:
 - sustained final-protocol completion;
 - first victory;
 - persistence of regions, components, operations, machine society, ecology, and ending state;
-- end-to-end coverage for both canonical final protocols, including their distinct costs, pressure profiles, and completion outcomes.
+- end-to-end coverage for all three canonical final protocols, including their distinct costs, pressure profiles, and completion outcomes.
 
 ## 13. What remains before commercial release
 

@@ -226,8 +226,9 @@ def validate_current_design_contracts() -> None:
     if not isinstance(protocols, list) or {entry.get("id") for entry in protocols if isinstance(entry, dict)} != {
         "protocol.severance",
         "protocol.containment",
+        "protocol.transformation",
     }:
-        raise legacy.ValidationError("The complete alpha must expose Severance and Containment endings")
+        raise legacy.ValidationError("The complete alpha must expose three strategic endings")
 
     serialized_content = json.dumps({
         "regions": regions,

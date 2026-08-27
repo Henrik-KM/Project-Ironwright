@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Transformation endgame milestone
+
+- added the third strategic endgame protocol, with four autonomous relay
+  outposts, its own research gate, pressure profile, completion record and
+  localized ending copy;
+- added a distinct living-partnership presentation language: crossed lattice
+  loops during the crisis and a living sanctuary loop after victory, with a
+  regression guard covering the protocol transition and completion state;
+- live-reviewed the actual 1024x576 crisis and first-victory flow with Godot
+  Dummy audio and quiet mode only; no live speakers were used.
+
 ## Focused remote-region silent acceptance milestone
 
 - live-reviewed exact 1280x720 presentation pages 8/15 and 9/15, confirming

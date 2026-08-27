@@ -835,12 +835,24 @@ func _apply_command_line_locale_override() -> void:
 
 func _has_endgame_protocol_review_flag() -> bool:
 	for argument in OS.get_cmdline_args():
-		if str(argument) == "--endgame-protocol-review":
+		if str(argument) == "--endgame-protocol-review" or str(argument).begins_with("--endgame-protocol-review="):
 			return true
 	for argument in OS.get_cmdline_user_args():
-		if str(argument) == "--endgame-protocol-review":
+		if str(argument) == "--endgame-protocol-review" or str(argument).begins_with("--endgame-protocol-review="):
 			return true
 	return false
+
+
+func _endgame_protocol_review_id() -> StringName:
+	var arguments: Array = OS.get_cmdline_args()
+	arguments.append_array(OS.get_cmdline_user_args())
+	for argument in arguments:
+		var raw := str(argument)
+		if raw.begins_with("--endgame-protocol-review="):
+			var suffix := raw.get_slice("=", 1).to_lower()
+			if suffix in ["severance", "containment", "transformation"]:
+				return StringName("protocol.%s" % suffix)
+	return &"protocol.severance"
 
 
 func _endgame_protocol_review_capture_argument() -> String:
@@ -1149,9 +1161,10 @@ func _start_endgame_protocol_review() -> void:
 	endgame_protocol_review_completed = false
 	endgame_protocol_review_capture_path = _endgame_protocol_review_capture_argument()
 	endgame_protocol_review_capture_frames = 0
+	var review_protocol_id := _endgame_protocol_review_id()
 	if progression != null:
 		progression.set_heartforge_tier(5)
-		for technology_id in [&"tech.machine.forge_assistance", &"tech.endgame.severance", &"tech.endgame.containment"]:
+		for technology_id in [&"tech.machine.forge_assistance", &"tech.endgame.severance", &"tech.endgame.containment", &"tech.endgame.transformation"]:
 			if technology_id not in progression.unlocked_technologies:
 				progression.unlocked_technologies.append(technology_id)
 		progression.unlocked_effects[&"unlock_final_protocol_research"] = true
@@ -1178,7 +1191,7 @@ func _start_endgame_protocol_review() -> void:
 		run_state.expedition_core_recovered = true
 		full_game_milestone_complete = true
 	if outpost_director != null:
-		for index in range(mini(3, outpost_director.sites.size())):
+		for index in range(mini(4, outpost_director.sites.size())):
 			var site := outpost_director.sites[index] as OutpostSite3D
 			if site == null:
 				continue
@@ -1187,11 +1200,11 @@ func _start_endgame_protocol_review() -> void:
 				outpost_director._spawn_outpost(site, site.recommended_role, 1)
 	if region_director != null:
 		region_director.discover_region(&"region.root_cistern")
-	if endgame_director != null and endgame_director.initiate(&"protocol.severance"):
+	if endgame_director != null and endgame_director.initiate(review_protocol_id):
 		if hud != null:
-			hud.push_notification("FINAL PROTOCOL REVIEW · SEVERANCE LATTICE ACTIVE · VICTORY RESOLUTION IN 8 SECONDS")
+			hud.push_notification("FINAL PROTOCOL REVIEW · %s ACTIVE · VICTORY RESOLUTION IN 8 SECONDS" % str(review_protocol_id).replace("protocol.", "").to_upper())
 		if run_state != null:
-			run_state.log_event("Endgame protocol review mode: active Severance lattice will resolve through the ordinary victory path.")
+			run_state.log_event("Endgame protocol review mode: active %s lattice will resolve through the ordinary victory path." % str(review_protocol_id))
 
 
 func _start_complete_objective_review() -> void:
@@ -2128,6 +2141,8 @@ func _on_run_state_event_logged(message: String) -> void:
 			record_key = "endgame_severance"
 		elif record_name == "The Caged Root":
 			record_key = "endgame_containment"
+		elif record_name == "The Transformed Root":
+			record_key = "endgame_transformation"
 		if not record_key.is_empty():
 			hud.push_notification(localization_service.text("notification.town_record_recovered", [localization_service.text("story.record.%s.name" % record_key)]))
 			return
