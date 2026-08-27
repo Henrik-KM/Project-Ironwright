@@ -129,6 +129,7 @@ jobs:
                   "aesthetic_acceptance",
                   "progression_and_outposts",
                   "first_session_accessibility",
+                  "resolution_and_large_text_accessibility",
                   "complete_start_to_victory",
                   "commercial_release_regression",
                   "windows_export",
