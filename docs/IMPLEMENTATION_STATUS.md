@@ -1,5 +1,19 @@
 # Implementation status
 
+## Focused Observatory focal-composition pass
+
+- moved the authored Observatory Ridge gantry behind the parabolic reflector so
+  its pylons, signal panel and service ladder frame the instrument instead of
+  cutting across the approach-facing dish;
+- moved the release-only instrument array behind the same focal plane so the
+  layered presentation pass cannot reintroduce foreground pylons, crossbars or
+  control pods that occlude the reflector;
+- preserved every named socket, mesh, animation target, collision boundary and
+  survey interaction contract while changing only the authored presentation
+  composition;
+- added a regression guard for the behind-the-dish placement and will review
+  the exact Observatory page with Dummy audio and quiet mode only.
+
 ## Focused late-organic silhouette pass
 
 - pitched the Carrion Bell crown, Thornback territorial shield and paired
