@@ -1876,3 +1876,15 @@ hub, and repair shelters use a field ring and arm collars. The pass is
 presentation-only and preserves shelter geometry, tier frames, collision, role
 simulation and autonomous operation. Exact silent page 15/15 review is required;
 broader human outpost and production-art acceptance remains open.
+
+# Focused hero model surface-finish pass — 2026-08-27
+
+The Mechromancer now carries a framed rear pack with service routing, anchors
+and a top roll, while the Bulwark receives paired actuator rings, side heat
+panels and a diagnostic-window frame. These bounded presentation details make
+the field engineer and indispensable companion read as maintained equipment
+from the three-quarter tactical camera without changing imported animation,
+sockets, collision, progression, autonomy or combat ownership. The pass is
+covered by aesthetic and commercial release regression tests and must be
+confirmed in the exact silent live opening/roster review; broader human
+production-art acceptance remains open.
