@@ -17,6 +17,7 @@ func _ready() -> void:
     layer = 24
     _build_ui()
     visible = false
+    refresh_localized_text()
 
 
 func _build_ui() -> void:
@@ -81,22 +82,39 @@ func update_intel(summary: Dictionary) -> void:
     current_summary = summary.duplicate(true)
     if panel == null:
         return
-    density_label.text = "Feral population · %s" % str(summary.get("tier_1_density", "UNKNOWN"))
+    var density := str(summary.get("tier_1_density", "UNKNOWN"))
+    density_label.text = _text("ecology.intel.density", "Feral population · {0}", [_text("ecology.density.%s" % density.to_lower(), density).to_lower()])
     var tier := int(summary.get("highest_confirmed_tier", 1))
-    tier_label.text = "Highest confirmed tier · %s · %s" % [_roman(tier), str(summary.get("highest_tier_name", "Unknown"))]
-    nest_label.text = "Active reproductive nests · %d" % int(summary.get("active_nests", 0))
+    var tier_name := str(summary.get("highest_tier_name", "Unknown"))
+    tier_name = _text("ecology.tier.name.%s" % tier_name.to_lower().replace(" ", "_"), tier_name)
+    tier_label.text = _text("ecology.intel.highest", "Highest confirmed tier · {0} · {1}", [_roman(tier), tier_name])
+    nest_label.text = _text("ecology.intel.nests", "Active reproductive nests · {0}", [int(summary.get("active_nests", 0))])
     var trend := str(summary.get("trend", "STABLE"))
-    trend_label.text = "Ecological trend · %s" % trend
+    trend_label.text = _text("ecology.intel.trend", "Ecological trend · {0}", [_text("ecology.trend.%s" % trend.to_lower(), trend).to_upper()])
     trend_label.add_theme_color_override("font_color", _trend_color(trend))
     var saturated_tiers: Array = summary.get("saturated_tiers", [])
     if saturated_tiers.is_empty():
-        escalation_label.text = "No confirmed tier saturation. Current replenishment is still being spent on existing population levels."
+        escalation_label.text = _text("ecology.intel.no_saturation", "No confirmed tier saturation. Current replenishment is still being spent on existing population levels.")
     else:
         var labels: Array[String] = []
         for raw_tier in saturated_tiers:
             labels.append(_roman(int(raw_tier)))
-        escalation_label.text = "SATURATION: Tier%s %s converting future replenishment upward at 10:1." % ["s" if labels.size() > 1 else "", ", ".join(labels)]
+        escalation_label.text = _text("ecology.intel.saturation", "SATURATION: Tier{0} {1} converting future replenishment upward at 10:1.", ["s" if labels.size() > 1 else "", ", ".join(labels)])
     suppression_label.text = suppression_summary
+
+
+func refresh_localized_text() -> void:
+    if panel == null:
+        return
+    heading_label.text = _text("ecology.intel.title", "ECOLOGY INTELLIGENCE")
+    if current_summary.is_empty():
+        density_label.text = _text("ecology.intel.density", "Feral population · {0}", [_text("ecology.density.unknown", "unknown")])
+        tier_label.text = _text("ecology.intel.highest", "Highest confirmed tier · {0} · {1}", [_roman(1), _text("ecology.tier.name.feral", "Feral")])
+        nest_label.text = _text("ecology.intel.nests", "Active reproductive nests · {0}", [0])
+        trend_label.text = _text("ecology.intel.trend", "Ecological trend · {0}", [_text("ecology.trend.stable", "STABLE")])
+        escalation_label.text = _text("ecology.intel.no_saturation", "No confirmed tier saturation. Current replenishment is still being spent on existing population levels.")
+        return
+    update_intel(current_summary)
 
 
 func update_suppression(value: String) -> void:
@@ -131,3 +149,13 @@ func _trend_color(value: String) -> Color:
             return Color("77d5a6")
         _:
             return Color("c0cbc7")
+
+
+func _text(key: String, fallback: String, replacements: Array = []) -> String:
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service != null:
+        return service.text(key, replacements)
+    var result := fallback
+    for index in range(replacements.size()):
+        result = result.replace("{%d}" % index, str(replacements[index]))
+    return result

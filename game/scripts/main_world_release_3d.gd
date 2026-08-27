@@ -2216,6 +2216,17 @@ func _on_release_locale_changed(_locale: StringName) -> void:
 		strategic_hud.refresh_localized_text()
 	if operations_hud != null:
 		operations_hud.refresh_localized_text()
+	var operation_detail := get_node_or_null("OperationDetailDirector")
+	if operation_detail != null and operation_detail.has_method(&"refresh_localized_text"):
+		operation_detail.call(&"refresh_localized_text")
+	var enemy_tier_hud := get_node_or_null("EnemyTierHUD")
+	if enemy_tier_hud != null and enemy_tier_hud.has_method(&"refresh_localized_text"):
+		enemy_tier_hud.call(&"refresh_localized_text")
+	var enemy_tier_bootstrap := get_node_or_null("EnemyTierProgressionBootstrap")
+	if enemy_tier_bootstrap != null:
+		var intel_hud := enemy_tier_bootstrap.get_node_or_null("EnemyTierIntelHUD")
+		if intel_hud != null and intel_hud.has_method(&"refresh_localized_text"):
+			intel_hud.call(&"refresh_localized_text")
 	refresh_input_legend()
 
 

@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused ecological-intelligence localization milestone
+
+- localized the population-tier command-map panel, ecological-intelligence
+  summary, autonomous route-recovery and casualty-beacon markers, and
+  population-suppression notifications in English, Swedish and German;
+- made locale changes refresh already-visible ecology panels and world markers,
+  with release regression coverage for translated tier, trend, replenishment
+  and stable-identifier text;
+- silently live-reviewed the real German release entrypoint and command map
+  with Godot Dummy audio and quiet mode only; this is a presentation/localization
+  change and does not alter simulation state or player workload.
+
 ## Focused full-gallery live acceptance milestone
 
 - silently live-reviewed the exact exported presentation gallery pages for the

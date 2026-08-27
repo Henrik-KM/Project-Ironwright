@@ -311,6 +311,53 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     world.operations_hud.open_endgame()
     _expect(world.operations_hud.title_label.text == "ENDPROTOKOLLE", "German locale must refresh final-protocol command chrome.")
     world.operations_hud.close()
+
+    var route_detail := world.operation_detail_director as OperationDetailDirector3D
+    _expect(route_detail != null, "Release runtime must retain the operation detail presentation director.")
+    if route_detail != null:
+        route_detail.show_route_recovery(&"operation.test", Vector3(4.0, 0.0, 6.0), 1, 3)
+        _expect("AUTONOMER UMWEG" in route_detail.route_recovery_label.text and "SEITENROUTE 1/3" in route_detail.route_recovery_label.text, "German locale must localize the visible autonomous detour marker.")
+        route_detail.show_casualty_recovery(&"casualty.test_frame", Vector3(4.0, 0.0, 6.0), "Siebzehn")
+        _expect("AUSFALLSIGNAL" in route_detail.casualty_recovery_label.text and "FELDSIGNAL TEST FRAME" in route_detail.casualty_recovery_label.text, "German locale must localize the visible casualty beacon marker.")
+        service.set_locale(&"sv")
+        route_detail.refresh_localized_text()
+        _expect("AUTONOM OMVÄG" in route_detail.route_recovery_label.text and "FÖRLUSTSIGNAL" in route_detail.casualty_recovery_label.text, "Swedish locale must refresh already-visible autonomous markers.")
+        route_detail.clear_route_recovery()
+        route_detail.clear_casualty_recovery()
+        service.set_locale(&"de")
+
+    var tier_hud := world.get_node_or_null("EnemyTierHUD") as EnemyTierHUD3D
+    _expect(tier_hud != null, "Release runtime must expose the population-tier command-map panel.")
+    if tier_hud != null:
+        tier_hud.set_snapshot({
+            "highest_observed_tier": 3,
+            "active_nests": 2,
+            "total_nests": 4,
+            "trend": "WORSENING",
+            "tiers": [
+                {"tier": 1, "display_name": "Feral", "intelligence_label": "primitive roaming", "density": "LOW", "replenishment_per_minute": 0.4, "saturated": false},
+                {"tier": 2, "display_name": "Territorial", "intelligence_label": "nest defence and patrol", "density": "DENSE", "replenishment_per_minute": 3.0, "saturated": false},
+                {"tier": 3, "display_name": "Predatory", "intelligence_label": "scouting, hunting and pack memory", "density": "PRESENT", "replenishment_per_minute": 0.8, "saturated": false},
+            ],
+        })
+        tier_hud.refresh_localized_text()
+        _expect(tier_hud.title_label.text == "ÖKOLOGISCHE INTELLIGENZ" and "Höchste bestätigte Stufe" in tier_hud.summary_label.text, "German locale must localize the population-tier panel heading and summary.")
+        _expect("STUFE 3" in tier_hud.tier_rows[2].text and "Spähen, Jagd" in tier_hud.tier_rows[2].text and "langsame Erneuerung" in tier_hud.tier_rows[2].text, "German locale must localize tier names, intelligence and replenishment labels.")
+
+    var intel_hud := world.get_node_or_null("EnemyTierProgressionBootstrap/EnemyTierIntelHUD") as EnemyTierIntelHUD3D
+    _expect(intel_hud != null, "Release runtime must expose the ecological intelligence summary panel.")
+    if intel_hud != null:
+        intel_hud.update_intel({
+            "tier_1_density": "DENSE",
+            "highest_confirmed_tier": 3,
+            "highest_tier_name": "Predatory",
+            "active_nests": 2,
+            "trend": "WORSENING",
+            "saturated_tiers": [2],
+        })
+        intel_hud.refresh_localized_text()
+        _expect("ÖKOLOGISCHE INTELLIGENZ" == intel_hud.heading_label.text and "Höchste bestätigte Stufe" in intel_hud.tier_label.text and "SÄTTIGUNG" in intel_hud.escalation_label.text, "German locale must localize the ecological intelligence summary panel.")
+
     world.settings_service.set_value(&"language", "en", false)
     world.release_front_end.hide_all()
     service.set_locale(&"en")
