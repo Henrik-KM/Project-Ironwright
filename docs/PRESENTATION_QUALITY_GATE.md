@@ -1934,3 +1934,12 @@ sockets, collision, progression, autonomy or combat ownership. The pass is
 covered by aesthetic and commercial release regression tests and must be
 confirmed in the exact silent live opening/roster review; broader human
 production-art acceptance remains open.
+# Focused Burrower drill-crown pass — 2026-08-27
+
+The authored Burrower drill now carries a restrained four-tooth beveled
+cutting crown around the existing bore tip. The added crown makes the
+subterranean predator's working edge readable at close review distance while
+preserving the drill socket, bore-tip placement, animation, collision, tier,
+ecology and combat ownership. Validation and live review use Godot's Dummy
+audio driver with `--quiet-audio`; no live speakers are used. Formal human
+acceptance of the full organic library remains open.

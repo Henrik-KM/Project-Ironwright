@@ -110,6 +110,7 @@ def main() -> None:
         "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 16, 24)),
         "DrillFlute": mesh("DrillFlute", add_cylinder(builder, 0.035, 0.56, bone, 24)),
         "LampGuard": mesh("LampGuard", add_beveled_box(builder, (0.18, 0.08, 0.12), shell, 0.018)),
+        "DrillCutter": mesh("DrillCutter", add_beveled_box(builder, (0.12, 0.22, 0.28), bone, 0.025)),
     }
 
     nodes: list[dict] = [{
@@ -160,6 +161,17 @@ def main() -> None:
         add_node("BurrowerDrillFlute%d" % index, mesh_ids["DrillFlute"], (0.0, 0.0, -0.1 - index * 0.2), rotation=(0.0, 0.0, index * 1.0472), scale=(0.8 - index * 0.08, 1.0, 0.8 - index * 0.08), parent=drill_parent, extras={"surface": "drill_flute"})
     add_node("BurrowerDrill", mesh_ids["Drill"], (0.0, 0.0, -0.45), rotation=(1.5708, 0.0, 0.0), scale=(1.0, 1.0, 1.25), parent=drill_parent, extras={"socket_type": "drill"})
     add_node("BurrowerTip", mesh_ids["Tip"], (0.0, 0.0, -0.84), scale=(1.0, 0.7, 1.3), parent=drill_parent, extras={"socket_type": "bore_tip"})
+    for index in range(4):
+        angle = index * 1.5708
+        add_node(
+            "BurrowerDrillCutter%d" % index,
+            mesh_ids["DrillCutter"],
+            (math.cos(angle) * 0.17, math.sin(angle) * 0.17, -0.66),
+            rotation=(0.0, 0.0, angle),
+            scale=(1.0, 0.9, 1.0),
+            parent=drill_parent,
+            extras={"surface": "bore_cutter"},
+        )
     for side in (-1.0, 1.0):
         suffix = "L" if side < 0 else "R"
         add_node("BurrowerLamp%s" % suffix, mesh_ids["Eye"], (side * 0.22, 0.17, -0.78), parent=drill_parent, extras={"socket_type": "bore_lamp"})
@@ -268,7 +280,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "burrower.drill.v1",
-            "required_nodes": ["BurrowerModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BurrowerDrill", "BurrowerTip", "BurrowerDrillRing0", "BurrowerDrillFlute0", "BurrowerLampL", "BurrowerLampGuardL", "ProductionAssetMarker"],
+            "required_nodes": ["BurrowerModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BurrowerDrill", "BurrowerTip", "BurrowerDrillRing0", "BurrowerDrillFlute0", "BurrowerDrillCutter0", "BurrowerLampL", "BurrowerLampGuardL", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
         },
     }
