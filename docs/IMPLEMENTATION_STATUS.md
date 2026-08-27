@@ -5235,3 +5235,15 @@ The roadmap now refines and expands an actual complete game loop rather than ext
   footers;
 - wired the gate into repository validation and commercial certification;
 - kept the test fully silent with Godot Dummy audio and `--quiet-audio`.
+
+## Focused hero model surface-finish milestone — 2026-08-27
+
+- added a framed rear pack, pack anchors, top roll and service cable to the
+  presentation-only Mechromancer detail layer so the field engineer reads as
+  maintained equipment from the three-quarter tactical camera;
+- added paired Bulwark actuator rings, side heat panels and a diagnostic-window
+  frame to complete the companion's protected manufactured silhouette;
+- preserved imported animation, sockets, collision, progression, autonomy and
+  combat ownership; aesthetic and commercial release regression coverage now
+  includes the named hardware, with exact silent live review still required
+  for broader human production-art acceptance.

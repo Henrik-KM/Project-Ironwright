@@ -978,6 +978,7 @@ func _run_all() -> void:
         _expect(_find_named(player, "FieldKneeGuardLeft") != null and _find_named(player, "FieldKneeGuardRight") != null and _find_named(player, "FieldCableClamp") != null, "The Mechromancer micro-detail pass must preserve protected field hardware.")
         _expect(_find_named(player, "FieldHoodRim") != null and _find_named(player, "FieldVisorHousing") != null, "The Mechromancer field-finish pass must retain a readable hood and visor material break.")
         _expect(_find_named(player, "FieldWorkGloveLeft") != null and _find_named(player, "FieldWorkGloveRight") != null and _find_named(player, "FieldCoatHemLeft") != null and _find_named(player, "FieldCoatHemRight") != null, "The Mechromancer field-finish pass must retain paired work gloves and grounded coat-hem hardware.")
+        _expect(_find_named(player, "FieldPackBackplate") != null and _find_named(player, "FieldPackFrameRailLeft") != null and _find_named(player, "FieldPackTopRoll") != null and _find_named(player, "FieldPackServiceCable") != null, "The Mechromancer hero surface pass must retain a framed rear pack and readable service cable.")
         if player_presentation != null:
             _expect(player_presentation.animation_player != null, "The authored Mechromancer must expose an imported animation player.")
             if player_presentation.animation_player != null:
@@ -1078,6 +1079,7 @@ func _run_all() -> void:
         _expect(_find_named(robot, "ProductionAssetMarker") != null, "The authored Bulwark model must expose its production asset marker.")
         _expect(_find_named(robot, "BulwarkRadiatorLouver") != null and _find_named(robot, "BulwarkFrontSensorVisor") != null and _find_named(robot, "BulwarkEmitterCollar") != null, "The Bulwark must receive a second high-definition protection hardware layer.")
         _expect(_find_named(robot, "BulwarkServiceFace") != null and _find_named(robot, "BulwarkServiceLatchLeft") != null and _find_named(robot, "BulwarkShoulderRailLeft") != null and _find_named(robot, "BulwarkFootPlateLeft") != null, "The Bulwark must expose its refined service face, shoulder rail and foot hardware.")
+        _expect(_find_named(robot, "BulwarkActuatorRingLeft") != null and _find_named(robot, "BulwarkActuatorRingRight") != null and _find_named(robot, "BulwarkSideHeatPanelLeft") != null and _find_named(robot, "BulwarkServiceWindowFrame") != null, "The Bulwark hero surface pass must retain paired actuator, heat-panel and diagnostic-window depth.")
         var bulwark_chassis := _find_named(robot, "Chassis") as MeshInstance3D
         var bulwark_plate := _find_named(robot, "ArmorPlate") as MeshInstance3D
         _expect(bulwark_chassis != null and _mesh_vertex_count(bulwark_chassis) >= 600, "The Bulwark chassis must retain dense rounded high-definition geometry.")
