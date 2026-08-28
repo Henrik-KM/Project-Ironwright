@@ -191,6 +191,7 @@ func _spawn_world() -> void:
     player.process_mode = Node.PROCESS_MODE_PAUSABLE
     player.position = Vector3(0.0, 0.0, 6.0)
     add_child(player)
+    player.set_movement_camera(camera)
 
     autonomy_director = AutonomyDirector3D.new()
     autonomy_director.name = "AutonomyDirector"

@@ -1,5 +1,15 @@
 # Implementation status
 
+## Camera-relative Mechromancer movement
+
+- wired the live tactical camera into both the development and release
+  Mechromancer movement paths so WASD, remapped keyboard input and controller
+  axes use the same horizontal forward/right basis as the view;
+- preserved normalized diagonal speed and a deterministic world-axis fallback
+  when no valid camera is available;
+- added regression coverage for camera-relative keyboard/controller direction
+  and live-reviewed the opening with Godot Dummy audio and `--quiet-audio`.
+
 ## Focused Observatory Ridge gallery framing pass
 
 - moved the development-only Observatory Ridge review camera to a bounded
