@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused export package hygiene
+
+- configured both committed Godot export presets to exclude the generated
+  `game/dist` review-output directory, preventing local screenshots and other
+  ignored artifacts from entering `all_resources` release packages;
+- verified the filtered Windows export boots into the fresh opening with dummy
+  audio and `--quiet-audio`, while repository and release validation remain
+  clean.
+
 ## Focused Observatory Ridge instrument finish
 
 - added a raised, tilted aperture ring to the release Observatory dressing and

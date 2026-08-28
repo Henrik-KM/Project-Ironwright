@@ -234,7 +234,7 @@ Automated testing includes the complete accelerated start-to-victory path. This 
 
 ## Packaging and release QA
 
-Godot export presets are committed for Windows x86-64 and Linux x86-64. A release workflow installs Godot 4.7.1 export templates, validates assets and contracts, imports all resources, runs commercial release tests, runs the complete start-to-victory test, exports both platforms, packages the builds and produces SHA-256 checksums.
+Godot export presets are committed for Windows x86-64 and Linux x86-64. Both presets exclude the generated `game/dist` review-output directory so local screenshots and other ignored artifacts cannot be pulled into an `all_resources` package. A release workflow installs Godot 4.7.1 export templates, validates assets and contracts, imports all resources, runs commercial release tests, runs the complete start-to-victory test, exports both platforms, packages the builds and produces SHA-256 checksums.
 
 The pull-request workflow runs all earlier regression suites in addition to the new commercial release suite. Existing opening, aesthetics, outposts, persistence, complete-game progression and victory behaviour must remain green.
 
