@@ -416,6 +416,20 @@ func _localized_operation_field(item: Dictionary, field: String, fallback: Strin
                 ]
             if field == "description":
                 return _localized_story_thread_description(item, fallback, thread_key)
+        if str(item.get("archive_kind", "")) == "bestiary":
+            if field == "name":
+                return "%s %s" % [
+                    _text("story.archive.bestiary_prefix", "BESTIARY ·"),
+                    str(item.get("display_name", "Unknown")).trim_prefix("Bestiary · ").to_upper(),
+                ]
+            if field == "description":
+                return _localized_bestiary_description(item, fallback)
+        if str(item.get("archive_kind", "")) == "pressure":
+            if field == "name":
+                var pressure_region := _localized_archive_region(item)
+                return "%s %s" % [_text("story.archive.pressure_prefix", "PRESSURE CHRONICLE ·"), pressure_region]
+            if field == "description":
+                return _localized_pressure_description(item, fallback)
         var archive_id := str(item.get("id", ""))
         if archive_id.begins_with("story."):
             var record_key := archive_id.trim_prefix("story.").replace(".", "_")
@@ -522,6 +536,32 @@ func _localized_story_thread_description(item: Dictionary, fallback: String, thr
             var visible_missing := missing_names.slice(0, mini(2, missing_names.size()))
             continuation = _text("story.thread.next_trace", "NEXT TRACE · {0}", [", ".join(visible_missing)])
     return "%s\n\n%s\n%s" % [status_line, stage_description, continuation]
+
+
+func _localized_bestiary_description(item: Dictionary, fallback: String) -> String:
+    var display_name := str(item.get("display_name", "Unknown")).trim_prefix("Bestiary · ")
+    var species_key := str(item.get("species_key", "")).replace(".", "_")
+    var localized_name := _text("story.species.%s" % species_key, display_name)
+    var behaviour_names: Array[String] = []
+    for raw_behaviour in item.get("behaviour_keys", []):
+        var behaviour_key := str(raw_behaviour).replace(".", "_")
+        var behaviour_fallback := str(raw_behaviour).replace("_", " ").capitalize()
+        behaviour_names.append(_text("story.behaviour.%s" % behaviour_key, behaviour_fallback))
+    var behaviour_text := ", ".join(behaviour_names) if not behaviour_names.is_empty() else _text("story.behaviour.unclassified_movement", "unclassified movement")
+    return _text("story.bestiary.description", "Field evidence identifies {0}. Observed behaviour: {1}. This is a remembered ecological pattern, not a command or recurring task.", [localized_name, behaviour_text])
+
+
+func _localized_archive_region(item: Dictionary) -> String:
+    var region_key := str(item.get("region_key", "")).trim_prefix("region.")
+    var fallback := str(item.get("display_name", "Unknown"))
+    if fallback.begins_with("Pressure Chronicle · "):
+        fallback = fallback.trim_prefix("Pressure Chronicle · ")
+    return _localized_archive_label("story.source.%s" % region_key, fallback)
+
+
+func _localized_pressure_description(item: Dictionary, fallback: String) -> String:
+    var region_name := _localized_archive_region(item)
+    return _text("story.pressure.description", "{0} reached {1}% ecological pressure during the run. The trace remains a remembered regional consequence, not a command or recurring task.", [region_name, int(item.get("peak_pressure", 0))])
 
 
 func _localized_archive_label(key: String, fallback: String) -> String:

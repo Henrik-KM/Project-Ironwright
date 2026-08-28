@@ -165,6 +165,9 @@ func _observed_ecology_records() -> Array[Dictionary]:
         var behaviour_text := ", ".join(behaviour_names) if not behaviour_names.is_empty() else "unclassified movement"
         result.append({
             "id": "bestiary.%s" % species_key,
+            "archive_kind": "bestiary",
+            "species_key": species_key,
+            "behaviour_keys": (entry.get("behaviours", []) as Array).duplicate(),
             "display_name": "Bestiary · %s" % display_name,
             "description": "Field evidence identifies %s. Observed behaviour: %s. This is a remembered ecological pattern, not a command or recurring task." % [display_name, behaviour_text],
             "source_name": "Regional ecology",
@@ -190,6 +193,9 @@ func _pressure_chronicle_records() -> Array[Dictionary]:
         var peak := int(round(float(entry.get("peak_pressure", 0.0)) * 100.0))
         result.append({
             "id": "pressure.%s" % region_key,
+            "archive_kind": "pressure",
+            "region_key": region_key,
+            "peak_pressure": peak,
             "display_name": "Pressure Chronicle · %s" % display_name,
             "description": "%s reached %d%% ecological pressure during the run. The trace remains a remembered regional consequence, not a command or recurring task." % [display_name, peak],
             "source_name": "Regional ecology",
