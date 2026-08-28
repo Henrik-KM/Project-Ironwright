@@ -717,5 +717,9 @@ func _wrap_multiline_detail(detail: String, max_chars: int) -> String:
 
 func dismiss_ending() -> void:
     if is_instance_valid(ending_panel):
-        ending_panel.queue_free()
-    ending_panel = null
+        # Keep the surface mounted and hide it. Destroying a CanvasItem during
+        # the first-victory handoff can invalidate the renderer's next 3D
+        # frame on the exported release path, leaving the sanctuary as an
+        # empty clear field. Reusing the bounded surface preserves the world
+        # while retaining the same visible UI contract.
+        ending_panel.visible = false

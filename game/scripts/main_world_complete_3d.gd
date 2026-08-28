@@ -97,6 +97,8 @@ func _unhandled_input(event: InputEvent) -> void:
             sanctuary_continuation = true
             game_ended = false
             hud.dismiss_ending()
+            if has_method(&"_restore_sanctuary_continuation_presentation"):
+                call(&"_restore_sanctuary_continuation_presentation")
             hud.push_notification(_localized_text("notification.complete.sanctuary_continues", "SANCTUARY CONTINUES · THE FIRST ARCHIVE IS NOW AVAILABLE THROUGH P"))
             return
 
