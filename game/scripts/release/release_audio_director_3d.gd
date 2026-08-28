@@ -5,6 +5,7 @@ signal mood_changed(mood: StringName)
 
 const AUDIO_ROOT := "res://assets/release/audio"
 const QUIET_AUDIO_FLAG := "--quiet-audio"
+const REVIEW_AUDIO_MARKER := "review"
 ## Review-mode ceiling: deliberately far below normal playback so an accidental
 ## speaker route cannot produce a startling test burst.
 const QUIET_AUDIO_CAP_DB := -30.0
@@ -113,7 +114,9 @@ func configure(
 
 func _ready() -> void:
     add_to_group(&"release_audio_director")
-    quiet_audio = _has_command_line_flag(QUIET_AUDIO_FLAG)
+    var launch_arguments: Array = OS.get_cmdline_args()
+    launch_arguments.append_array(OS.get_cmdline_user_args())
+    quiet_audio = _should_quiet_audio(launch_arguments)
     _load_streams()
     _build_players()
     _build_caption_ui()
@@ -652,6 +655,14 @@ func restore_from_dictionary(data: Dictionary) -> void:
 
 func _safe_volume_db(volume_db: float) -> float:
     return minf(volume_db, QUIET_AUDIO_CAP_DB) if quiet_audio else volume_db
+
+
+func _should_quiet_audio(arguments: Array) -> bool:
+    for raw_argument in arguments:
+        var argument := str(raw_argument).to_lower()
+        if argument == QUIET_AUDIO_FLAG or (argument.begins_with("--") and argument.contains(REVIEW_AUDIO_MARKER)):
+            return true
+    return false
 
 
 func _has_command_line_flag(flag: String) -> bool:

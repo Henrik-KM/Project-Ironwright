@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused review-audio safety cap
+
+- development review launch arguments now automatically enable the existing
+  very-low `-30 dB` audio ceiling, even when `--quiet-audio` was omitted;
+- ordinary non-review launches retain their configured audio levels, while
+  review runs remain safe to inspect without risking a startling speaker burst;
+- release coverage verifies presentation and objective review detection; live
+  review continues to use Godot's Dummy audio driver and `--quiet-audio` only.
+
 ## Focused North Ruins catalogue-witness pass
 
 - added a bounded physical Lower Catalogue witness beside the North Ruins
