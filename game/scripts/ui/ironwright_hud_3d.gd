@@ -35,6 +35,7 @@ var forge_content_box: VBoxContainer
 var forge_close_button: Button
 var forge_title: Label
 var forge_copy: Label
+var forge_reserve_label: Label
 var forge_buttons: Array[Button] = []
 var notification_label: Label
 var notification_heading: Label
@@ -271,6 +272,15 @@ func _build_forge_panel() -> PanelContainer:
     forge_copy.add_theme_font_size_override("font_size", 15)
     forge_copy.add_theme_color_override("font_color", Color("aeb8b5"))
     forge_content_box.add_child(forge_copy)
+
+    forge_reserve_label = Label.new()
+    forge_reserve_label.name = "ForgeReserveStatus"
+    forge_reserve_label.custom_minimum_size = Vector2(0, 28)
+    forge_reserve_label.add_theme_font_size_override("font_size", 14)
+    forge_reserve_label.add_theme_color_override("font_color", Color("f0b36d"))
+    forge_reserve_label.add_theme_color_override("font_outline_color", Color(0.02, 0.03, 0.035, 0.9))
+    forge_reserve_label.add_theme_constant_override("outline_size", 3)
+    forge_content_box.add_child(forge_reserve_label)
 
     _forge_button(forge_content_box, "1  BUILD SCRAPPER · 42 Scrap · 6.5 s", func() -> void: forge_build_selected.emit(&"salvager"), "forge.build.scrapper")
     _forge_button(forge_content_box, "2  BUILD WARDEN · 68 Scrap · 8.0 s", func() -> void: forge_build_selected.emit(&"guardian"), "forge.build.warden")
@@ -577,6 +587,7 @@ func refresh_localized_text() -> void:
     _refresh_resource_text()
     forge_title.text = _text("forge.title", "HEARTFORGE · MANUAL FABRICATION")
     forge_copy.text = _text("forge.description", "The Mechromancer must build every early machine personally. Fabrication takes time, emits noise, and disables the pistol. Automation is a later evolution.")
+    _refresh_forge_reserve_text()
     forge_close_button.text = _text("forge.close", "ESC  CLOSE FORGE")
     for button in forge_buttons:
         if button == null or not is_instance_valid(button):
@@ -591,6 +602,13 @@ func _refresh_resource_text() -> void:
     if resource_label == null:
         return
     resource_label.text = _text("hud.scrap_cores", "SCRAP  {0}\nCOGNITION CORES  {1}", [displayed_scrap, displayed_rare_cores])
+    _refresh_forge_reserve_text()
+
+
+func _refresh_forge_reserve_text() -> void:
+    if forge_reserve_label == null:
+        return
+    forge_reserve_label.text = _text("forge.reserves", "CURRENT RESERVES · {0} Scrap · {1} Cognition Cores", [displayed_scrap, displayed_rare_cores])
 
 
 func _text(key: String, fallback: String, replacements: Array = []) -> String:

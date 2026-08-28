@@ -99,6 +99,7 @@
     "objective.active_operation.prompt": "F FOLLOW ACTIVE MACHINE GROUP · P REVIEW OPERATION STATUS",
     "forge.title": "HEARTFORGE · MANUAL FABRICATION",
     "forge.description": "The Mechromancer must build every early machine personally. Fabrication takes time, emits noise, and disables the pistol. Automation is a later evolution.",
+    "forge.reserves": "CURRENT RESERVES · {0} Scrap · {1} Cognition Cores",
     "forge.close": "ESC  CLOSE FORGE",
     "forge.build.scrapper": "1  BUILD SCRAPPER · 42 Scrap · 6.5 s",
     "forge.build.warden": "2  BUILD WARDEN · 68 Scrap · 8.0 s",

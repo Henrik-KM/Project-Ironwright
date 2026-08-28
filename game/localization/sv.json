@@ -99,6 +99,7 @@
     "objective.active_operation.prompt": "F FÖLJ AKTIV MASKINGRUPP · P GRANSKA OPERATIONSSTATUS",
     "forge.title": "HJÄRTSMEDJAN · MANUELL TILLVERKNING",
     "forge.description": "Mekromantikern måste bygga varje tidig maskin personligen. Tillverkningen tar tid, skapar oväsen och stänger av pistolen. Automatisering kommer senare.",
+    "forge.reserves": "AKTUELLA RESERVER · {0} skrot · {1} kognitionskärnor",
     "forge.close": "ESC  STÄNG SMEDJAN",
     "forge.build.scrapper": "1  BYGG SKROTARE · 42 skrot · 6,5 s",
     "forge.build.warden": "2  BYGG VÄKTARE · 68 skrot · 8,0 s",
