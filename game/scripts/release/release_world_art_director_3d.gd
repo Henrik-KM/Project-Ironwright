@@ -1413,17 +1413,31 @@ func _dress_observatory(root: Node3D) -> void:
     # The authored Observatory asset owns the primary reflector surface. Do
     # not add the former scaled-sphere proxy here: at remote review distance
     # it reads as a pale duplicate crescent beneath the real parabolic dish.
-    for rib_index in range(8):
-        var rib_angle := TAU * float(rib_index) / 8.0
+    for rib_index in range(4):
+        var rib_angle := TAU * float(rib_index) / 4.0
         ModelKit3D.add_capsule(
             observatory_detail,
             0.08,
-            5.8,
-            Vector3(cos(rib_angle) * 2.75, 4.3 + sin(rib_angle) * 0.48, sin(rib_angle) * 2.75),
+            3.4,
+            Vector3(cos(rib_angle) * 2.55, 3.75 + sin(rib_angle) * 0.28, sin(rib_angle) * 2.55),
             rust,
             Vector3(0.0, -rib_angle, 0.18 * cos(rib_angle)),
             "ObservatoryDishRib%02d" % rib_index
         )
+    # A raised inner aperture ring gives the deep reflector a second readable
+    # contour at remote distance. It follows the authored bowl tilt and is
+    # presentation dressing only: no collision, routing or simulation state.
+    ModelKit3D.add_torus(
+        observatory_detail,
+        2.18,
+        0.075,
+        Vector3(-0.4, 3.58, 0.92),
+        rust,
+        Vector3(PI * 0.12, 0.0, 0.0),
+        "ObservatoryDishApertureRing",
+        48,
+        8
+    )
     ModelKit3D.add_cylinder(observatory_detail, 0.18, 5.0, Vector3(0.0, 6.0, 0.0), metal, Vector3(0.4, 0.0, 0.0), "DishFeed")
     ModelKit3D.add_cylinder(observatory_detail, 0.28, 0.34, Vector3(0.0, 8.32, 0.0), signal_material, Vector3.ZERO, "DishReceiverLens")
     ModelKit3D.add_beveled_box(observatory_detail, Vector3(0.82, 0.14, 0.82), Vector3(0.0, 3.62, 0.0), rust, Vector3.ZERO, "ObservatoryDishHub", 0.18)

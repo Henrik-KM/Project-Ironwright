@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Observatory Ridge instrument finish — 2026-08-28
+
+The Observatory Ridge presentation now adds a raised inner aperture ring that
+follows the authored dish tilt, giving the high-definition reflector a second
+contour and a clearer instrument identity at remote review distance. The
+development gallery also uses a lower diagonal frame so the bowl, cradle and
+service deck read together. The change is bounded presentation dressing only;
+runtime placement, navigation, collision, simulation, audio and player workload
+are unchanged. Live review uses Godot Dummy audio with `--quiet-audio` only; no
+live speakers are used.
+
 ## Focused late-organic gallery spacing pass — 2026-08-28
 
 The late-organic presentation page now gives the broad folded shells more
