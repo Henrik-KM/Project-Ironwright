@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused late-organic gallery spacing pass
+
+- widened the development-only late-organic roster laterally and separated its
+  second row more deeply so the broad folded shells no longer merge into one
+  foreground band at the exact export review distance;
+- kept the change inside the bounded presentation fixture: runtime actor scale,
+  collision, animation, ecology, navigation, save state and gameplay camera are
+  unchanged, with no new player or machine workload;
+- added a release regression guard for the deeper late-family row; live review
+  uses Godot Dummy audio and `--quiet-audio` only.
+
 ## Focused Razorhound eye-guard silhouette finish
 
 - added a dense paired brow guard around the authored threat eyes so the
