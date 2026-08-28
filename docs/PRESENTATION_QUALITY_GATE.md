@@ -2156,3 +2156,12 @@ role, tier, autonomy, hauling, repair, destruction, rebuilding and save state
 are unchanged, and no player-managed structure or maintenance task was added.
 Exact silent live review uses Godot Dummy audio with `--quiet-audio`; no live
 speakers are used. Broader human production-art acceptance remains open.
+
+## Focused fabrication-modal reserve pass — 2026-08-28
+
+The manual fabrication modal now repeats the current Scrap and Cognition Core
+reserves inside its own dimmed surface. This keeps the early build decision
+truthful at compact window sizes without adding a queue, budget dashboard or
+new interaction. The strip is localized through the existing English, German
+and Swedish catalogs. Exact silent live review uses Godot Dummy audio with
+`--quiet-audio`; no live speakers are used.

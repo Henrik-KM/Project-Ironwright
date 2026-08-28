@@ -307,6 +307,7 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     world.hud.show_forge_menu()
     _expect(world.hud.forge_title.text == "HERZSCHMIEDE · MANUELLE FERTIGUNG", "German locale must refresh the first-session Heartforge title.")
     _expect(world.hud.forge_copy.text.begins_with("Der Mechromant muss"), "German locale must refresh the first-session fabrication explanation.")
+    _expect(world.hud.forge_reserve_label.text == "AKTUELLER VORRAT · 24 Schrott · 0 Kognitionskerne", "The forge must repeat current reserves inside the dimmed fabrication modal.")
     _expect(world.hud.forge_buttons.size() >= 9 and world.hud.forge_buttons[0].text == "1  SCHROTTER BAUEN · 42 Schrott · 6,5 s", "German locale must refresh the shared and production forge actions.")
     _expect(world.hud.forge_close_button.text == "ESC  HERZSCHMIEDE SCHLIESSEN", "German locale must refresh the fixed forge close action.")
     _expect("BEWEGEN" in world.hud.help_label.text, "German locale must refresh the release input legend.")
