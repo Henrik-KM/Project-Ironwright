@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused endgame command localization pass
+
+- final-protocol names and descriptions now resolve from the selected release
+  catalog, including the inactive and progress status lines that previously
+  leaked canonical English data into German and Swedish command surfaces;
+- release regression coverage now exercises a localized protocol fixture, and
+  the corrected German panel passed the exact 1600x900 silent live review.
+
 ## Focused route-recovery marker localization pass
 
 - added stable localized names for the physical detour review operation and its
