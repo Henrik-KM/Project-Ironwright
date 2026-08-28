@@ -1,5 +1,6 @@
 {
   "asset_id": "root_cistern.landmark.v1",
+  "asset_quality": "authored_high_definition",
   "kind": "world_landmark",
   "source": "game/assets/root_cistern/source/build_root_cistern_asset.py",
   "runtime_model": "game/assets/root_cistern/root_cistern.gltf",

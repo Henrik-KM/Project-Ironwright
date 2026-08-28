@@ -1,5 +1,6 @@
 {
   "asset_id": "outpost.shelter.v1",
+  "asset_quality": "authored_high_definition",
   "runtime_scene": "res://assets/outpost/outpost.gltf",
   "source_builder": "game/assets/outpost/source/build_outpost_asset.py",
   "source_type": "original_project_ironwright_shared_mesh_builder",

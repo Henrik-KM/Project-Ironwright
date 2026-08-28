@@ -1,5 +1,11 @@
 # Changelog
 
+## Pre-alpha authored asset provenance milestone
+
+- normalized every runtime art manifest with an explicit `authored_high_definition` quality declaration;
+- added an aesthetic validation gate requiring a runtime path and authored source builder for each manifest;
+- completed a live review sweep of the remaining machine, organic and urban presentation-gallery pages at 1280×720.
+
 ## Pre-alpha large-text HUD resilience milestone
 
 - measured the opening objective card against the active accessibility text scale so large copy stays inside its panel and never overlaps the Mechromancer/Bulwark health stack;

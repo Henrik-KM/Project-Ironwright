@@ -1,5 +1,6 @@
 {
   "asset_id": "mechromancer.player.v1",
+  "asset_quality": "authored_high_definition",
   "display_name": "Mechromancer",
   "runtime_model": "res://assets/mechromancer/mechromancer.gltf",
   "runtime_buffer": "res://assets/mechromancer/mechromancer.bin",

@@ -898,6 +898,24 @@ def validate_authored_region_assets() -> None:
                 fail(f"{family} landmark glTF is missing required node: {required}")
 
 
+def validate_asset_manifest_quality_contract() -> None:
+    """Require every runtime art manifest to declare authored HD provenance."""
+    manifests = sorted((ROOT / "game/data").glob("*_asset_manifest.json"))
+    if not manifests:
+        fail("No runtime asset manifests were found for the quality contract.")
+    for manifest_path in manifests:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        quality = manifest.get("asset_quality") or manifest.get("quality")
+        if quality != "authored_high_definition":
+            fail(f"{manifest_path.name} must declare authored_high_definition quality.")
+        source = manifest.get("source_builder") or manifest.get("source")
+        if not str(source).strip():
+            fail(f"{manifest_path.name} must declare an authored source builder.")
+        runtime = manifest.get("runtime_scene") or manifest.get("runtime_model") or manifest.get("runtime_path")
+        if not str(runtime).strip():
+            fail(f"{manifest_path.name} must declare a runtime model path.")
+
+
 def main() -> int:
     try:
         for relative in REQUIRED:
@@ -912,6 +930,7 @@ def main() -> int:
         validate_mechromancer_source_tessellation()
         validate_actor_geometry_density()
         validate_actor_animation_breadth()
+        validate_asset_manifest_quality_contract()
         validate_authored_robot_assets()
         validate_authored_organic_assets()
         validate_early_organic_materials()

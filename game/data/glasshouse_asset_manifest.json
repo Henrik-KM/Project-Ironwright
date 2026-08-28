@@ -1,5 +1,6 @@
 {
   "asset_id": "glasshouse.municipal.v1",
+  "asset_quality": "authored_high_definition",
   "kind": "world_landmark",
   "source": "game/assets/glasshouse/source/build_glasshouse_asset.py",
   "runtime_model": "game/assets/glasshouse/glasshouse.gltf",

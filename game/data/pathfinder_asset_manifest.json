@@ -1,5 +1,6 @@
 {
   "asset_id": "pathfinder.scout.v1",
+  "asset_quality": "authored_high_definition",
   "runtime_scene": "res://assets/pathfinder/pathfinder.gltf",
   "source_builder": "game/assets/pathfinder/source/build_pathfinder_asset.py",
   "source_type": "original_project_ironwright_shared_mesh_builder",

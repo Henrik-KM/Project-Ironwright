@@ -1,5 +1,6 @@
 {
   "asset_id": "west.grid.substation.v1",
+  "asset_quality": "authored_high_definition",
   "kind": "world_landmark",
   "source": "game/assets/west_grid/source/build_west_grid_asset.py",
   "runtime_model": "game/assets/west_grid/west_grid.gltf",

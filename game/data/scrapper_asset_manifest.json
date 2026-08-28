@@ -1,5 +1,6 @@
 {
   "asset_id": "scrapper.salvager.v1",
+  "asset_quality": "authored_high_definition",
   "runtime_scene": "res://assets/scrapper/scrapper.gltf",
   "source_builder": "game/assets/scrapper/source/build_scrapper_asset.py",
   "source_type": "original_project_ironwright_shared_mesh_builder",
