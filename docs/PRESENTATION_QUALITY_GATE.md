@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused late-organic gallery spacing pass — 2026-08-28
+
+The late-organic presentation page now gives the broad folded shells more
+lateral spacing and a deeper second row. At the compact exact-export distance,
+the seven families read as separate layered organisms instead of overlapping
+into a single foreground band. This is isolated to the development gallery;
+runtime actor scale, collision, animation, ecology, navigation, save state and
+gameplay camera are unchanged. Live review uses Godot Dummy audio with
+`--quiet-audio` only; no live speakers are used.
+
 ## First-victory sanctuary handoff — 2026-08-28
 
 The first-victory panel now hides its bounded CanvasItem instead of queue-freeing

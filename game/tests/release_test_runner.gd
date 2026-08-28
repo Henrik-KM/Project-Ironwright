@@ -926,7 +926,10 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         if core_page >= 1:
             for core_actor in core_actors:
                 var staged_actor := core_actor as Node3D
-                _expect(staged_actor != null and absf(staged_actor.position.x) <= 6.4, "Organic presentation pages must keep every staged family fully inside the bounded two-row review frame.")
+                var x_limit := 7.2 if core_page == 2 else 6.4
+                _expect(staged_actor != null and absf(staged_actor.position.x) <= x_limit, "Organic presentation pages must keep every staged family fully inside the bounded two-row review frame.")
+            if core_page == 2:
+                _expect(absf((core_actors[3] as Node3D).position.z - (core_actors[0] as Node3D).position.z) > 4.0, "Late-organic presentation must give its broadest shells a deeper second row so layered silhouettes do not merge.")
             _expect(world.camera.fov <= 46.5, "Organic presentation pages must use a close camera frame for anatomy review.")
         if core_page >= 1:
             var organic_front_fill := world.presentation_review_stage.get_node_or_null("ReviewFrontFill") as OmniLight3D
