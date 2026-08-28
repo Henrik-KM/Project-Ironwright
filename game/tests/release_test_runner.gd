@@ -785,7 +785,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     var cathedral_review_offset := world._presentation_review_region_camera_offset(&"region.cathedral_quarter")
     _expect(cathedral_review_offset.z <= 19.6 and cathedral_review_offset.y <= 8.8 and cathedral_review_offset.x >= 6.2, "Cathedral Quarter presentation review must use a bounded diagonal frame for its nave, tower and choir hardware.")
     var observatory_review_offset := world._presentation_review_region_camera_offset(&"region.observatory_ridge")
-    _expect(observatory_review_offset.z <= 15.0 and observatory_review_offset.y <= 8.8, "Observatory Ridge presentation review must use a close survey-station frame for its dish and instrument hardware.")
+    _expect(observatory_review_offset.z <= 15.0 and observatory_review_offset.y <= 8.8 and observatory_review_offset.x >= 4.8, "Observatory Ridge presentation review must use a bounded diagonal survey-station frame for its dish and instrument hardware.")
     world._show_presentation_review_page(10)
     await process_frame
     var cathedral_dressing := world.release_world_art.region_dressing_root(&"region.cathedral_quarter") if world.release_world_art != null else null
