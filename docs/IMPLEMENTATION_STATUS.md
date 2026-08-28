@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused authored-organic hierarchy stability pass
+
+- preserved each authored organic glTF scene and generated `AnimationPlayer`
+  under `OrganicModel`, including generic later families and the scaled
+  Skitterling shell, so source animation paths and recursive presentation
+  passes remain intact;
+- separated tier-silhouette refresh from base-creature refresh, preventing
+  same-frame imported-scene teardown during tier configuration while keeping
+  the actor-owned sockets, collision, ecology, and combat state unchanged;
+- deferred streamed authored district attachment by one idle frame and updated
+  the re-entry fixture to observe the stable post-frame state; silent review
+  uses Godot Dummy audio and `--quiet-audio` only.
+
 ## Focused late-organic gallery spacing pass
 
 - widened the development-only late-organic roster laterally and separated its

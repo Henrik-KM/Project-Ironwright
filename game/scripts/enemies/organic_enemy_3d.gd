@@ -877,8 +877,8 @@ func _ensure_deferred_proxy_root() -> Node3D:
 func _refresh_visuals() -> void:
     if _model_root == null:
         return
-    # Keep the runtime species available to the release material pass after
-    # authored children are flattened under OrganicModel. This is presentation
+    # Keep the runtime species available to the release material pass while
+    # authored children remain nested under OrganicModel. This is presentation
     # metadata only; combat, ecology and collision remain actor-owned.
     _model_root.set_meta(&"ironwright_organic_family", String(species))
     for child in _model_root.get_children():
@@ -1073,24 +1073,13 @@ func _refresh_visuals() -> void:
 
 
 func _build_authored_veilstalker_visuals() -> void:
-    # Keep the imported production shell flat under OrganicModel so the
-    # release material pass and existing animation lookup retain their stable
-    # paths. Only presentation changes; species stats and ecology stay here.
+    # Keep the imported production scene intact under OrganicModel so its
+    # authored animation hierarchy and renderer resources remain stable.
+    # Species stats and ecology stay on this actor.
     var authored_scene_instance := _instantiate_authored_scene(AUTHORED_VEILSTALKER_MODEL_SCENE, "Veilstalker")
     if authored_scene_instance == null:
         return
-    var imported_root := authored_scene_instance.get_node_or_null("VeilstalkerModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _model_root.add_child(child)
-    _extract_authored_animation_player(authored_scene_instance, _model_root, StringName(imported_root.name))
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
+    _attach_authored_scene_hierarchy(authored_scene_instance, _model_root, &"VeilstalkerAuthoredModel")
     # Keep the production shell's torso anchor stable for release material
     # continuity and secondary-animation lookup. The compact core sits inside
     # the imported thorax, adding depth without changing the authored outline.
@@ -1099,9 +1088,6 @@ func _build_authored_veilstalker_visuals() -> void:
     _model_root.add_child(torso, true)
     var torso_material := ModelKit3D.material(Color("422934"), 0.08, 0.68)
     ModelKit3D.add_sphere(torso, 0.34, Vector3(0.0, 0.98, 0.1), torso_material, Vector3(1.55, 0.68, 1.2), "TorsoCore")
-    var authored_marker := Node3D.new()
-    authored_marker.name = "VeilstalkerAuthoredModel"
-    _model_root.add_child(authored_marker)
 
 
 func _build_authored_razorhound_visuals() -> void:
@@ -1111,21 +1097,7 @@ func _build_authored_razorhound_visuals() -> void:
     var authored_scene_instance := _instantiate_authored_scene(AUTHORED_RAZORHOUND_MODEL_SCENE, "Razorhound")
     if authored_scene_instance == null:
         return
-    var imported_root := authored_scene_instance.get_node_or_null("RazorhoundModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _model_root.add_child(child)
-    _extract_authored_animation_player(authored_scene_instance, _model_root, StringName(imported_root.name))
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
-    var authored_marker := Node3D.new()
-    authored_marker.name = "RazorhoundAuthoredModel"
-    _model_root.add_child(authored_marker)
+    _attach_authored_scene_hierarchy(authored_scene_instance, _model_root, &"RazorhoundAuthoredModel")
 
 
 func _build_authored_apex_visuals() -> void:
@@ -1135,21 +1107,7 @@ func _build_authored_apex_visuals() -> void:
     var authored_scene_instance := _instantiate_authored_scene(AUTHORED_APEX_MODEL_SCENE, "Apex")
     if authored_scene_instance == null:
         return
-    var imported_root := authored_scene_instance.get_node_or_null("ApexModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _model_root.add_child(child)
-    _extract_authored_animation_player(authored_scene_instance, _model_root, StringName(imported_root.name))
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
-    var authored_marker := Node3D.new()
-    authored_marker.name = "ApexAuthoredModel"
-    _model_root.add_child(authored_marker)
+    _attach_authored_scene_hierarchy(authored_scene_instance, _model_root, &"ApexAuthoredModel")
 
 
 func _build_authored_sporecaster_visuals() -> void:
@@ -1159,21 +1117,7 @@ func _build_authored_sporecaster_visuals() -> void:
     var authored_scene_instance := _instantiate_authored_scene(AUTHORED_SPORECASTER_MODEL_SCENE, "Sporecaster")
     if authored_scene_instance == null:
         return
-    var imported_root := authored_scene_instance.get_node_or_null("SporecasterModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _model_root.add_child(child)
-    _extract_authored_animation_player(authored_scene_instance, _model_root, StringName(imported_root.name))
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
-    var authored_marker := Node3D.new()
-    authored_marker.name = "SporecasterAuthoredModel"
-    _model_root.add_child(authored_marker)
+    _attach_authored_scene_hierarchy(authored_scene_instance, _model_root, &"SporecasterAuthoredModel")
 
 
 func _build_authored_broodmass_visuals() -> void:
@@ -1182,21 +1126,7 @@ func _build_authored_broodmass_visuals() -> void:
     var authored_scene_instance := _instantiate_authored_scene(AUTHORED_BROODMASS_MODEL_SCENE, "Broodmass")
     if authored_scene_instance == null:
         return
-    var imported_root := authored_scene_instance.get_node_or_null("BroodmassModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _model_root.add_child(child)
-    _extract_authored_animation_player(authored_scene_instance, _model_root, StringName(imported_root.name))
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
-    var authored_marker := Node3D.new()
-    authored_marker.name = "BroodmassAuthoredModel"
-    _model_root.add_child(authored_marker)
+    _attach_authored_scene_hierarchy(authored_scene_instance, _model_root, &"BroodmassAuthoredModel")
 
 
 func _build_authored_burrower_visuals() -> void:
@@ -1205,21 +1135,7 @@ func _build_authored_burrower_visuals() -> void:
     var authored_scene_instance := _instantiate_authored_scene(AUTHORED_BURROWER_MODEL_SCENE, "Burrower")
     if authored_scene_instance == null:
         return
-    var imported_root := authored_scene_instance.get_node_or_null("BurrowerModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _model_root.add_child(child)
-    _extract_authored_animation_player(authored_scene_instance, _model_root, StringName(imported_root.name))
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
-    var authored_marker := Node3D.new()
-    authored_marker.name = "BurrowerAuthoredModel"
-    _model_root.add_child(authored_marker)
+    _attach_authored_scene_hierarchy(authored_scene_instance, _model_root, &"BurrowerAuthoredModel")
 
 
 func _build_authored_skitterling_visuals() -> void:
@@ -1228,9 +1144,6 @@ func _build_authored_skitterling_visuals() -> void:
     var authored_scene_instance := _instantiate_authored_scene(AUTHORED_SKITTERLING_MODEL_SCENE, "Skitterling")
     if authored_scene_instance == null:
         return
-    var imported_root := authored_scene_instance.get_node_or_null("SkitterlingModel") as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
     var authored_shell_root := Node3D.new()
     authored_shell_root.name = "SkitterlingAuthoredShell"
     # The scavenger is physically small, but the earlier 0.28 shell scale made
@@ -1239,44 +1152,32 @@ func _build_authored_skitterling_visuals() -> void:
     # owned by the actor and are unchanged.
     authored_shell_root.scale = Vector3.ONE * 0.58
     _model_root.add_child(authored_shell_root)
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        authored_shell_root.add_child(child)
-    _extract_authored_animation_player(authored_scene_instance, authored_shell_root, StringName(imported_root.name))
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
-    var authored_marker := Node3D.new()
-    authored_marker.name = "SkitterlingAuthoredModel"
-    _model_root.add_child(authored_marker)
+    _attach_authored_scene_hierarchy(authored_scene_instance, authored_shell_root, &"SkitterlingAuthoredModel")
 
 
 func _build_authored_organic_family_visuals(model_path: String, imported_root_name: StringName, marker_name: StringName) -> void:
-    # Tier-2 and tier-4 families use the same stable shell handoff as the
-    # opening production creatures. The imported geometry is flattened under
-    # OrganicModel so material continuity, LOD and tier signals remain owned
-    # by the runtime actor without introducing a second gameplay hierarchy.
+    # Tier-2 and tier-4 families keep their complete imported scene under
+    # OrganicModel. The runtime actor still owns gameplay, while recursive
+    # material/LOD passes can inspect the authored hierarchy without tearing
+    # down generated roots or animation resources.
     var authored_scene_instance := _instantiate_authored_scene(model_path, String(imported_root_name))
     if authored_scene_instance == null:
         return
-    var imported_root := authored_scene_instance.get_node_or_null(NodePath(String(imported_root_name))) as Node
-    if imported_root == null:
-        imported_root = authored_scene_instance
-    var authored_children := imported_root.get_children()
-    for child in authored_children:
-        child.owner = null
-        imported_root.remove_child(child)
-        _model_root.add_child(child)
-    _extract_authored_animation_player(authored_scene_instance, _model_root, StringName(imported_root.name))
-    if imported_root != authored_scene_instance:
-        imported_root.free()
-    authored_scene_instance.free()
+    _attach_authored_scene_hierarchy(authored_scene_instance, _model_root, marker_name)
     _add_authored_family_anatomy_finish()
+
+
+func _attach_authored_scene_hierarchy(scene_instance: Node3D, target_root: Node3D, marker_name: StringName) -> void:
+    if scene_instance == null or target_root == null:
+        return
+    # Preserve the imported glTF hierarchy and its generated AnimationPlayer.
+    # Same-frame child reparent/free churn can invalidate renderer resources on
+    # the compatibility renderer during repeated reduced-detail transitions.
+    scene_instance.name = "ImportedAuthoredModel"
+    target_root.add_child(scene_instance)
     var authored_marker := Node3D.new()
     authored_marker.name = String(marker_name)
-    _model_root.add_child(authored_marker)
+    target_root.add_child(authored_marker)
 
 
 func _add_authored_family_anatomy_finish() -> void:
@@ -1355,46 +1256,3 @@ func _add_authored_family_anatomy_finish() -> void:
             Vector3(1.0, 0.78, 0.92),
             "OrganicVascularNode%s" % ("L" if side_sign < 0.0 else "R")
         )
-
-
-func _extract_authored_animation_player(scene_instance: Node, target_root: Node3D, imported_root_name: StringName, target_prefix: StringName = &"") -> void:
-    var player := _find_animation_player(scene_instance)
-    if player == null or target_root == null:
-        return
-    _retarget_authored_animation_tracks(player, imported_root_name, target_prefix)
-    var previous_parent := player.get_parent()
-    if previous_parent != null:
-        previous_parent.remove_child(player)
-    player.owner = null
-    target_root.add_child(player)
-
-
-func _retarget_authored_animation_tracks(player: AnimationPlayer, imported_root_name: StringName, target_prefix: StringName) -> void:
-    if player == null or imported_root_name == &"":
-        return
-    var imported_prefix := String(imported_root_name)
-    var target_prefix_text := String(target_prefix)
-    for animation_name in player.get_animation_list():
-        var animation := player.get_animation(animation_name)
-        if animation == null:
-            continue
-        for track_index in animation.get_track_count():
-            var original_path := String(animation.track_get_path(track_index))
-            var mapped_path := original_path
-            if original_path == imported_prefix:
-                mapped_path = "."
-            elif original_path.begins_with(imported_prefix + "/"):
-                var suffix := original_path.substr(imported_prefix.length() + 1)
-                mapped_path = suffix if target_prefix_text == "" else target_prefix_text + "/" + suffix
-            if mapped_path != original_path:
-                animation.track_set_path(track_index, NodePath(mapped_path))
-
-
-func _find_animation_player(root: Node) -> AnimationPlayer:
-    if root is AnimationPlayer:
-        return root as AnimationPlayer
-    for child in root.get_children():
-        var result := _find_animation_player(child)
-        if result != null:
-            return result
-    return null
