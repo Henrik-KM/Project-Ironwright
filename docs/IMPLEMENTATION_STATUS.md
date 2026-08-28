@@ -1,5 +1,11 @@
 # Implementation status
 
+## Pause overlay localization
+
+- routed the pause-overlay subtitle through the shared release localization
+  catalogs so title, actions and explanatory copy stay in the selected locale;
+- added parity and live refresh coverage for German and Swedish pause screens.
+
 ## Camera-relative Mechromancer movement
 
 - wired the live tactical camera into both the development and release

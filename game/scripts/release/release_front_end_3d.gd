@@ -20,6 +20,7 @@ var pause_panel: PanelContainer
 var settings_panel: PanelContainer
 var title_label: Label
 var subtitle_label: Label
+var pause_subtitle_label: Label
 var version_label: Label
 var continue_button: Button
 var new_world_button: Button
@@ -186,7 +187,8 @@ void fragment() {
     pause_panel = _panel(Vector2(560, 570))
     var pause_box := _vertical_content(pause_panel, 13)
     pause_box.add_child(_heading("PROJECT IRONWRIGHT", 31, Color("f2eadc")))
-    pause_box.add_child(_body_label("THE WORLD IS PAUSED", 14, Color("a8bab7"), 30))
+    pause_subtitle_label = _body_label("THE WORLD IS PAUSED", 14, Color("a8bab7"), 30)
+    pause_box.add_child(pause_subtitle_label)
     pause_box.add_child(HSeparator.new())
     pause_box.add_child(_menu_button("RESUME", func() -> void: resume_requested.emit()))
     pause_box.add_child(_menu_button("SAVE WORLD", func() -> void: save_requested.emit()))
@@ -500,6 +502,7 @@ func _refresh_text() -> void:
     title_label.text = localization.text("app.title")
     subtitle_label.text = localization.text("app.subtitle")
     version_label.text = localization.text("menu.release_candidate")
+    pause_subtitle_label.text = localization.text("menu.world_paused")
     continue_button.text = localization.text("menu.continue")
     no_save_label.text = localization.text("menu.no_save")
     settings_title.text = localization.text("settings.title")

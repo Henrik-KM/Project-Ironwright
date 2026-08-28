@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-28 — Pause overlay localization
+
+- localized the pause-overlay subtitle alongside its existing translated
+  actions, so German and Swedish sessions no longer expose English pause copy;
+- added release coverage for the refreshed subtitle in both non-English locales.
+
 ## 2026-08-28 — Camera-relative movement
 
 - aligned Mechromancer keyboard and controller movement with the live tactical
