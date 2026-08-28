@@ -812,6 +812,12 @@ func _run_all() -> void:
                     var labs_prism_ring_before := labs_prism_ring.scale
                     var labs_cradle_before := labs_cradle.position
                     landmark.call("_process", 0.5)
+                    # The restrained containment pulse is continuous; a
+                    # fixed sample can land on its same scale phase on a
+                    # different runner. Take one bounded follow-up sample
+                    # only when the first sample is phase-aligned.
+                    if labs_light.scale.is_equal_approx(labs_light_before):
+                        landmark.call("_process", 0.17)
                     _expect(not labs_light.scale.is_equal_approx(labs_light_before), "Buried Laboratories containment light must pulse as a restrained presentation cue.")
                     _expect(not labs_seep.scale.is_equal_approx(labs_seep_before), "Buried Laboratories organic contamination must carry deterministic presentation motion.")
                     _expect(not labs_port.rotation.is_equal_approx(labs_port_before), "Buried Laboratories vessel port must carry restrained service motion.")
