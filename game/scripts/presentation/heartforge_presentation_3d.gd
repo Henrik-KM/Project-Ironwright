@@ -28,6 +28,7 @@ func _process(delta: float) -> void:
     progression_time += delta
     _animate_focal_hardware()
     _animate_progression_hardware()
+    _animate_adaptation_hardware()
 
 
 func _animate_focal_hardware() -> void:
@@ -73,6 +74,49 @@ func _animate_progression_hardware() -> void:
         var phase := float(fin.get_index()) * 0.42
         var fin_pulse := 1.0 + sin(progression_time * 1.3 + phase) * 0.045
         fin.scale = Vector3(1.0, fin_pulse, 1.0)
+
+
+func _animate_adaptation_hardware() -> void:
+    var detail := subject.get_node_or_null("HeartforgeModel/HeartforgeAdaptationDetail") as Node3D
+    var preview := subject.get_node_or_null("HeartforgeModel/HeartforgeAdaptationPreview") as Node3D
+    var active_root := detail if detail != null and detail.visible else preview
+    if active_root == null or not active_root.visible:
+        return
+
+    # Each principle gets one restrained, readable machine rhythm. These are
+    # presentation cues only; the director remains authoritative for state,
+    # timing and the resulting damage/noise trade-off.
+    if subject.adaptation_profile == &"adaptation.anchored_shell":
+        var anchor_ring := active_root.get_node_or_null("AnchorShellSignalRing") as Node3D
+        if anchor_ring != null:
+            anchor_ring.rotation.z = sin(progression_time * 0.72) * 0.025
+        var anchor_crossbar := active_root.get_node_or_null("AnchorShellCrossbar") as Node3D
+        if anchor_crossbar != null:
+            anchor_crossbar.scale.y = 1.0 + sin(progression_time * 1.1 + 0.4) * 0.018
+    elif subject.adaptation_profile == &"adaptation.sacrificial_hollow":
+        var hollow_ring := active_root.get_node_or_null("SacrificialHollowRing") as Node3D
+        if hollow_ring != null:
+            hollow_ring.rotation.x = sin(progression_time * 0.58) * 0.035
+        for child in active_root.get_children():
+            if not child is Node3D or not String(child.name).begins_with("SacrificialHollowRib"):
+                continue
+            var rib := child as Node3D
+            var rib_phase := float(rib.get_index()) * 0.47
+            rib.scale.y = 1.0 + sin(progression_time * 1.22 + rib_phase) * 0.025
+    elif subject.adaptation_profile == &"adaptation.quiet_core":
+        var quiet_panel := active_root.get_node_or_null("QuietCoreSignalPanel") as Node3D
+        if quiet_panel != null:
+            quiet_panel.scale = Vector3.ONE * (1.0 + sin(progression_time * 0.8) * 0.018)
+        for child in active_root.get_children():
+            if not child is Node3D or not String(child.name).begins_with("QuietCoreDampenerBaffle"):
+                continue
+            var baffle := child as Node3D
+            var baffle_phase := float(baffle.get_index()) * 0.6
+            baffle.scale.z = 1.0 + sin(progression_time * 0.9 + baffle_phase) * 0.02
+    elif subject.adaptation_profile == &"":
+        var preview_ring := active_root.get_node_or_null("AdaptationPreviewRing") as Node3D
+        if preview_ring != null:
+            preview_ring.rotation.z = sin(progression_time * 0.6) * 0.02
 
 
 func _named_node(node_name: String) -> Node3D:

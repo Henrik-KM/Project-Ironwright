@@ -1007,11 +1007,17 @@ func _run_all() -> void:
         _expect(heartforge.adaptation_preview_progress > 0.7 and adaptation_preview != null and not adaptation_preview_scale.is_equal_approx(adaptation_preview.scale), "The adaptive proposal footprint must advance through a readable bounded reveal.")
         heartforge.set_adaptation_profile(&"adaptation.anchored_shell")
         _expect(heartforge.find_child("HeartforgeAdaptationDetail", true, false) != null, "The adaptive Heartforge must expose a visible authored retrofit detail layer.")
-        _expect(heartforge.find_child("AnchorShellBrace", true, false) != null and heartforge.find_child("AnchorShellSignalRing", true, false) != null, "The anchored-shell response must expose structural braces and a signal ring.")
+        _expect(heartforge.find_child("AnchorShellBrace", true, false) != null and heartforge.find_child("AnchorShellSignalRing", true, false) != null and heartforge.find_child("AnchorShellFooting", true, false) != null and heartforge.find_child("AnchorShellAnchorPin", true, false) != null, "The anchored-shell response must expose structural braces, anchored footings and a signal ring.")
+        if heartforge_presentation != null:
+            var anchor_ring := heartforge.find_child("AnchorShellSignalRing", true, false) as Node3D
+            var anchor_ring_before := anchor_ring.rotation.z if anchor_ring != null else 0.0
+            heartforge_presentation.progression_time = 0.8
+            heartforge_presentation._process(0.0)
+            _expect(anchor_ring != null and not is_equal_approx(anchor_ring_before, anchor_ring.rotation.z), "The anchored-shell response must carry a restrained structural pulse after construction.")
         heartforge.set_adaptation_profile(&"adaptation.sacrificial_hollow")
-        _expect(heartforge.find_child("SacrificialHollowRib", true, false) != null and heartforge.find_child("SacrificialHollowService", true, false) != null, "The sacrificial-hollow response must expose replaceable outer ribs and service hardware.")
+        _expect(heartforge.find_child("SacrificialHollowRib", true, false) != null and heartforge.find_child("SacrificialHollowCap", true, false) != null and heartforge.find_child("SacrificialHollowService", true, false) != null, "The sacrificial-hollow response must expose replaceable outer ribs, capped service hardware and an expendable service face.")
         heartforge.set_adaptation_profile(&"adaptation.quiet_core")
-        _expect(heartforge.find_child("QuietCoreShroud", true, false) != null and heartforge.find_child("QuietCoreSignalPanel", true, false) != null, "The quiet-core response must expose damped shroud and signal-panel detail.")
+        _expect(heartforge.find_child("QuietCoreShroud", true, false) != null and heartforge.find_child("QuietCoreDampenerBaffle", true, false) != null and heartforge.find_child("QuietCoreSignalPanel", true, false) != null, "The quiet-core response must expose damped shrouds, baffles and signal-panel detail.")
         heartforge.set_adaptation_profile(&"")
         _expect(heartforge.find_child("HeartforgeDamagePresentation", true, false) != null, "The Heartforge must expose a bounded damage-memory presentation layer.")
         _expect(heartforge.find_child("HeartforgeDamageScar00", true, false) != null and heartforge.find_child("HeartforgeDamageLeak00", true, false) != null, "The Heartforge damage layer must expose stable scar and leak sockets.")

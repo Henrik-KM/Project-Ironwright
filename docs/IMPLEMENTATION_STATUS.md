@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused adaptive Heartforge geometry and motion pass
+
+- completed adaptive Heartforge responses now retain distinct high-definition
+  anchoring, sacrificial-buffer and quiet-core hardware, including footings,
+  capped ribs and dampener baffles;
+- each authorized principle now carries a restrained presentation rhythm so
+  the long autonomous retrofit reads as a living machine response rather than
+  a static mesh swap; simulation state, trade-offs, collision and player
+  workload remain unchanged;
+- the aesthetic contract covers the new hardware and construction remains
+  silent in review with Godot Dummy audio and `--quiet-audio` only; broader
+  human production-art and balance acceptance remains open.
+
 ## Focused Town Archive ecology-localization pass
 
 - added stable archive metadata for persistent bestiary observations and

@@ -1,5 +1,18 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused adaptive Heartforge geometry and motion pass — 2026-08-29
+
+Completed Heartforge adaptations now leave a more legible physical signature:
+Anchor Deeply adds braced footings and anchor pins, Create a Sacrificial Hollow
+adds capped replaceable ribs, and Reduce Vibration adds paired dampener baffles.
+Each selected principle also has a restrained mechanical pulse in the completed
+retrofit, so the autonomous build resolves into a functioning machine response
+rather than a static mesh swap. The change is presentation-only; the director
+still owns the stable choice, build interval and damage/noise trade-off, while
+collision, navigation, save state and player workload remain unchanged. Exact
+review uses Godot Dummy audio with `--quiet-audio` only; no live speakers are
+used. Broader human production-art and balance acceptance remains open.
+
 ## Focused late-organic gallery safe-frame pass — 2026-08-28
 
 The exact development gallery now stages the seven late organic families in a
