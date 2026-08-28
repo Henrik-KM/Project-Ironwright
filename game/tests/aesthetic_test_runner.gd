@@ -573,8 +573,9 @@ func _run_all() -> void:
                 var archive_paper := landmark.find_child("ArchivePaperStack0_0", true, false) as MeshInstance3D
                 var archive_brace := landmark.find_child("ArchiveBeaconBraceL", true, false) as MeshInstance3D
                 _expect(archive_paper != null and _mesh_vertex_count(archive_paper) >= 48 and archive_brace != null and _mesh_vertex_count(archive_brace) >= 48, "North Ruins archive stacks and beacon braces must retain chamfered high-definition prop geometry.")
-                var archive_sublevel := landmark.find_child("ArchiveSublevelWitness", true, false) as Node3D
-                _expect(archive_sublevel != null and archive_sublevel.find_child("ArchiveSublevelRecordCase", true, false) != null, "North Ruins must expose a physical sealed-catalogue witness beside the civic gateway.")
+                var archive_release_detail := release_art.dressing_root.find_child("HighDefinitionArchiveDressing", true, false) if release_art != null and release_art.dressing_root != null else null
+                var archive_sublevel := archive_release_detail.find_child("ArchiveSublevelWitness", true, false) as Node3D if archive_release_detail != null else null
+                _expect(archive_sublevel != null and archive_sublevel.find_child("ArchiveSublevelRecordCase", true, false) != null, "North Ruins release dressing must expose a physical sealed-catalogue witness beside the civic gateway.")
                 if archive_sublevel != null:
                     _expect(archive_sublevel.find_child("ArchiveSublevelStep00", true, false) != null and archive_sublevel.find_child("ArchiveSublevelIndex", true, false) != null and archive_sublevel.find_child("ArchiveSublevelLamp", true, false) != null, "North Ruins sealed-catalogue witness must retain layered steps, index hardware and a restrained service lamp.")
                 if archive_beacon != null and archive_creep != null and archive_collar != null and archive_tendril != null:
