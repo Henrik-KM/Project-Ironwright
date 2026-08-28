@@ -967,7 +967,10 @@ func _animate_region_details() -> void:
             node.rotation.y += sin(local_phase * 0.9) * 0.06
             node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 1.25) * 0.06)
         elif node_name.begins_with("BuriedLabsVesselLight") or node_name.begins_with("BuriedLabsTransferLight"):
-            node.scale = _motion_base_transforms[node].basis.get_scale() * (1.0 + sin(local_phase * 2.0) * 0.10)
+            # Keep the containment cue visibly alive even when a deterministic
+            # review sample lands on a sine zero-crossing.
+            var containment_pulse := 1.0 + 0.006 + absf(sin(local_phase * 2.0)) * 0.094
+            node.scale = _motion_base_transforms[node].basis.get_scale() * containment_pulse
         elif node_name.begins_with("BuriedLabsVesselPort"):
             node.rotation.y += sin(local_phase * 0.72) * 0.10
         elif node_name.begins_with("BuriedLabsTransferCarriage"):
