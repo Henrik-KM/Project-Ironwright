@@ -5590,3 +5590,17 @@ roster checks and requires silent late-organic live review before merge.
   recurring player or machine task;
 - added commercial-release coverage for the dedicated camera offset; exact
   exported live review remains required for the region-family acceptance gate.
+
+## Focused sanctuary-crown framing milestone
+
+- moved the completed final-protocol sanctuary crown farther behind the
+  Heartforge and reduced its resolved scale so the living sanctuary remains a
+  backdrop to the surviving Mechromancer, Bulwark and Heartforge focal read;
+- lowered completion emission and the post-victory point-light target to keep
+  the cyan/orange transformation legible without blooming across the tactical
+  frame;
+- preserved final-protocol completion, explicit continuation, archive unlock,
+  collision, persistence and HUD contracts, with a complete-game regression
+  guard for the compact crown and restrained light budget;
+- exact silent victory-to-sanctuary live review passed with Godot Dummy audio
+  and `--quiet-audio`; broader human production-art acceptance remains open.

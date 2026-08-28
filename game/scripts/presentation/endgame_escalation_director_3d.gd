@@ -24,6 +24,10 @@ var _completion_materials: Array[StandardMaterial3D] = []
 var _stage_roots: Array[Node3D] = []
 var _last_stage: int = -1
 var _pulse_clock: float = 0.0
+const SANCTUARY_CROWN_START_SCALE := 0.48
+const SANCTUARY_CROWN_TARGET_SCALE := 0.58
+const SANCTUARY_CROWN_EMISSION := 0.34
+const SANCTUARY_CORE_LIGHT_ENERGY := 0.68
 
 
 func configure(next_world: Node3D, next_heartforge: Heartforge3D, next_endgame_director: EndgameDirector3D) -> void:
@@ -53,7 +57,8 @@ func _process(delta: float) -> void:
         var ring_pulse := 1.0 + sin(_pulse_clock * 3.1) * (0.035 + current_progress * 0.06)
         pulse_ring.scale = Vector3(ring_pulse, 1.0, ring_pulse)
     if core_light != null:
-        core_light.light_energy = lerpf(core_light.light_energy, 0.45 + current_progress * 0.65, clampf(delta * 5.0, 0.0, 1.0))
+        var target_energy := SANCTUARY_CORE_LIGHT_ENERGY if current_state == &"completed" else 0.45 + current_progress * 0.65
+        core_light.light_energy = lerpf(core_light.light_energy, target_energy, clampf(delta * 5.0, 0.0, 1.0))
 
 
 func sync_from_endgame_state() -> void:
@@ -273,19 +278,20 @@ func _show_completion() -> void:
     lattice_root.visible = false
     completion_root.visible = true
     # The completed sanctuary is a quiet backdrop for the surviving cast, not
-    # a second foreground cage. Pull it behind the Heartforge-facing approach
-    # and keep the living loop legible without letting its fins cover the
-    # Mechromancer or Bulwark in the close tactical camera.
-    completion_root.position = -_capstone_approach() * 1.65
-    completion_root.scale = Vector3.ONE * 0.62
+    # a second foreground cage. Pull it farther behind the Heartforge-facing
+    # approach and keep the crown compact so its fins frame the settlement
+    # without competing with the Mechromancer or Bulwark in the close tactical
+    # camera.
+    completion_root.position = -_capstone_approach() * 2.30
+    completion_root.scale = Vector3.ONE * SANCTUARY_CROWN_START_SCALE
     for material in _completion_materials:
-        material.emission_energy_multiplier = 0.62
+        material.emission_energy_multiplier = SANCTUARY_CROWN_EMISSION
     if core_light != null:
         core_light.light_color = Color("8ff3b4") if current_protocol == &"protocol.transformation" else Color("69f0d2")
-        core_light.light_energy = 1.1
+        core_light.light_energy = SANCTUARY_CORE_LIGHT_ENERGY
     var tween := create_tween()
     tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-    tween.tween_property(completion_root, "scale", Vector3.ONE * 0.78, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+    tween.tween_property(completion_root, "scale", Vector3.ONE * SANCTUARY_CROWN_TARGET_SCALE, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 
 func _connect_once(source: Object, signal_name: StringName, callback: Callable) -> void:
