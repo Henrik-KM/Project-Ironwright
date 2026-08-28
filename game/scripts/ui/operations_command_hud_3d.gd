@@ -313,7 +313,7 @@ func _refresh() -> void:
 
     if mode == &"endgame":
         title_label.text = _text("command.endgame.title", "FINAL PROTOCOLS")
-        status_label.text = "%s\n%s" % [endgame_status, _text("command.endgame.status", "The final crisis is player-triggered and causal. No recurring wave schedule exists.")]
+        status_label.text = "%s\n%s" % [_localized_endgame_status(), _text("command.endgame.status", "The final crisis is player-triggered and causal. No recurring wave schedule exists.")]
     elif mode == &"archive":
         title_label.text = _text("command.archive.title", "TOWN ARCHIVE")
         var thread_count := items.filter(func(item: Dictionary) -> bool: return str(item.get("kind", "")) == "story_thread").size()
@@ -374,10 +374,36 @@ func _empty_state_text() -> String:
     return _text("command.operations.empty_detail", "Complete the current Heartforge, outpost, or technology prerequisite. Routine salvage, repair, rebuilding, and replacement continue without opening another management task.")
 
 
+func _localized_endgame_status() -> String:
+    if endgame_status == "No final protocol active":
+        return _text("command.endgame.none", "No final protocol active")
+    if endgame_status.ends_with(" completed"):
+        var completed_name := endgame_status.trim_suffix(" completed")
+        return _text("command.endgame.completed", "{0} completed", [_localized_protocol_name(completed_name)])
+    var separator := endgame_status.find(" · ")
+    if separator > 0:
+        var active_name := endgame_status.substr(0, separator)
+        var progress := endgame_status.substr(separator + 3)
+        return _text("command.endgame.progress", "{0} · {1}", [_localized_protocol_name(active_name), progress])
+    return endgame_status
+
+
+func _localized_protocol_name(raw_name: String) -> String:
+    var normalized := raw_name.to_lower().replace(" ", "_")
+    for item in protocols:
+        var display_name := str(item.get("display_name", ""))
+        if display_name.to_lower() == raw_name.to_lower():
+            normalized = display_name.to_lower().replace(" ", "_")
+            break
+    return _text("endgame.%s.name" % normalized, raw_name)
+
+
 func _localized_operation_field(item: Dictionary, field: String, fallback: String) -> String:
     var template_id := str(item.get("dynamic_template_id", ""))
     var operation_id := str(item.get("id", "")).trim_prefix("operation.")
     var key_base := "operation.%s" % operation_id.replace(".", "_")
+    if mode == &"endgame" and operation_id.begins_with("protocol."):
+        key_base = "endgame.%s" % operation_id.trim_prefix("protocol.")
     var replacements: Array = []
     if not template_id.is_empty():
         var template_key := template_id.trim_prefix("dynamic.")

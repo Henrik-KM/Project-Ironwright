@@ -34,8 +34,19 @@ func _run_all() -> void:
     # The UX assertions below intentionally use the canonical English copy;
     # keep them deterministic even when a preceding live export review has
     # persisted another supported release locale in user:// settings.
+    if world.settings_service != null:
+        # Keep later settings_changed emissions from reapplying a persisted
+        # non-English locale while this runner is laying out its surfaces.
+        world.settings_service.set_value(&"language", "en", false)
     if world.localization_service != null:
         world.localization_service.set_locale(&"en")
+        # set_locale() is intentionally a no-op when the service already
+        # reports English.  The release world normally refreshes its surfaces
+        # through the locale-changed signal, but this runner can inherit a
+        # persisted locale before the scene has finished constructing every
+        # command surface.  Force the same refresh path so assertions never
+        # depend on the order of a preceding live language review.
+        world._on_release_locale_changed(&"en")
 
     var hud := world.hud as IronwrightBeautifulHUD3D
     _expect(hud != null, "The production scene must use the cinematic HUD.")

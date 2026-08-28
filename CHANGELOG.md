@@ -1,5 +1,11 @@
 # Changelog
 
+## Pre-alpha endgame command localization milestone
+
+- localized final-protocol names, descriptions and inactive/progress status text through the supported English, Swedish and German catalogs;
+- added a German release regression for final-protocol choice and status copy so canonical English endgame data cannot leak into the command surface;
+- live-reviewed the corrected German endgame panel at 1600×900 with Godot Dummy audio and quiet mode only; no live speakers were used.
+
 ## Pre-alpha route-recovery marker localization milestone
 
 - added readable Detour/Umweg/Omväg operation names and route-recovery review notifications to every supported locale so physical detour markers never expose raw localization keys;
