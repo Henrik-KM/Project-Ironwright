@@ -1,5 +1,6 @@
 {
   "asset_id": "buried.labs.v1",
+  "asset_quality": "authored_high_definition",
   "kind": "world_landmark",
   "source": "game/assets/buried_labs/source/build_buried_labs_asset.py",
   "runtime_model": "game/assets/buried_labs/buried_labs.gltf",

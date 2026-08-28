@@ -1,5 +1,6 @@
 {
   "asset_id": "bulwark.companion.v1",
+  "asset_quality": "authored_high_definition",
   "runtime_scene": "res://assets/bulwark/bulwark.gltf",
   "source_builder": "game/assets/bulwark/source/build_bulwark_asset.py",
   "source_type": "original_project_ironwright_procedural_mesh_builder",

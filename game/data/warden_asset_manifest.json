@@ -1,5 +1,6 @@
 {
   "asset_id": "warden.guardian.v1",
+  "asset_quality": "authored_high_definition",
   "runtime_scene": "res://assets/warden/warden.gltf",
   "source_builder": "game/assets/warden/source/build_warden_asset.py",
   "source_type": "original_project_ironwright_shared_mesh_builder",

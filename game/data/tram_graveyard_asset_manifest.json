@@ -1,5 +1,6 @@
 {
   "asset_id": "tram.graveyard.v1",
+  "asset_quality": "authored_high_definition",
   "kind": "world_landmark",
   "source": "game/assets/tram_graveyard/source/build_tram_graveyard_asset.py",
   "runtime_model": "game/assets/tram_graveyard/tram_graveyard.gltf",

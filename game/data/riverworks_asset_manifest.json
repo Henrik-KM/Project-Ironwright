@@ -1,5 +1,6 @@
 {
   "asset_id": "riverworks.landmark.v1",
+  "asset_quality": "authored_high_definition",
   "kind": "world_landmark",
   "source": "game/assets/riverworks/source/build_riverworks_asset.py",
   "runtime_model": "game/assets/riverworks/riverworks.gltf",

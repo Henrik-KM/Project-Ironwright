@@ -1,5 +1,6 @@
 {
   "asset_id": "cathedral.quarter.v1",
+  "asset_quality": "authored_high_definition",
   "kind": "world_landmark",
   "source": "game/assets/cathedral/source/build_cathedral_asset.py",
   "runtime_model": "game/assets/cathedral/cathedral.gltf",
