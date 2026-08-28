@@ -109,6 +109,7 @@ func story_arc_summaries() -> Array[Dictionary]:
         var required_ids: Array = arc.get("record_ids", [])
         var recovered := 0
         var missing_names: Array[String] = []
+        var missing_record_ids: Array[String] = []
         for raw_id in required_ids:
             var record_id := StringName(str(raw_id))
             if has_record(record_id):
@@ -117,6 +118,7 @@ func story_arc_summaries() -> Array[Dictionary]:
                 var missing: Variant = records.get(record_id, {})
                 if missing is Dictionary:
                     missing_names.append(str((missing as Dictionary).get("display_name", String(record_id))))
+                    missing_record_ids.append(String(record_id))
         var total := required_ids.size()
         var selected_stage := _thread_stage_for(arc, recovered)
         var stage_description := str(selected_stage.get("description", arc.get("description", "The thread has not yet found its shape.")))
@@ -134,6 +136,10 @@ func story_arc_summaries() -> Array[Dictionary]:
             "description": "%s\n\n%s\n%s" % [status_line, stage_description, continuation],
             "source_name": str(arc.get("source_name", "Run-level story")),
             "arc": str(arc.get("id", "story")),
+            "thread_key": str(arc.get("id", "unknown")),
+            "stage_count": int(selected_stage.get("count", 0)),
+            "stage_description": stage_description,
+            "missing_record_ids": missing_record_ids,
             "sequence": int(arc.get("sequence", 0)),
             "progress": recovered,
             "total": total,

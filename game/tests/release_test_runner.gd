@@ -271,6 +271,23 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     _expect("hjärtsmedjedistriktet" in swedish_archive_metadata, "Swedish Town Archive must render its localized source label.")
     _expect("medborgerligt efterljus" in swedish_archive_metadata, "Swedish Town Archive must render its localized arc label.")
     world.operations_hud.close()
+    world.operations_hud.open_archive([{
+        "id": "thread.civic_afterimage",
+        "kind": "story_thread",
+        "thread_key": "civic_afterimage",
+        "display_name": "THREAD · The Town That Stayed · 1/5",
+        "description": "THREAD PROGRESS · 1/5 PHYSICAL CLUES RECOVERED\\n\\nThe first ledger is not a mission.",
+        "source_name": "Run-level civic thread",
+        "arc": "civic_afterimage",
+        "progress": 1,
+        "total": 5,
+        "stage_count": 1,
+        "stage_description": "The first ledger is not a mission.",
+        "missing_record_ids": ["story.north_ruins.ledger"],
+    }])
+    _expect(world.operations_hud.selection_label.text == "TRÅD · STADEN SOM STANNADE · 1/5" and "TRÅDFÖRLOPP" in world.operations_hud.description_label.text and "NÄSTA SPÅR" in world.operations_hud.description_label.text, "Swedish Town Archive threads must localize their title, progress and next-trace copy on the actual archive surface.")
+    _expect("CIVILT SPÅR FÖR OMGÅNGEN" in world.operations_hud.requirements_label.text and "MEDBORGERLIGT EFTERLJUS" in world.operations_hud.requirements_label.text, "Swedish Town Archive threads must localize their source and arc metadata on the actual archive surface.")
+    world.operations_hud.close()
     _expect(service.text("objective.complete.initiate.title") == "STARTA SLUTPROTOKOLLET" and service.text("objective.complete.initiate.prompt").begins_with("TRYCK V"), "Swedish late-run objective title and prompt must resolve through the selected catalog.")
     world.release_front_end.show_pause()
     service.set_locale(&"sv")
@@ -313,6 +330,23 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     _expect(service.text("story.source.heartforge_district") == "Herzschmiedeviertel" and service.text("story.arc.civic_afterimage") == "Bürgerliches Nachbild", "German Town Archive source and arc catalog entries must resolve.")
     _expect("herzschmiedeviertel" in german_archive_metadata, "German Town Archive must render its localized source label.")
     _expect("bürgerliches nachbild" in german_archive_metadata, "German Town Archive must render its localized arc label.")
+    world.operations_hud.close()
+    world.operations_hud.open_archive([{
+        "id": "thread.civic_afterimage",
+        "kind": "story_thread",
+        "thread_key": "civic_afterimage",
+        "display_name": "THREAD · Die Stadt, die blieb · 1/5",
+        "description": "FADENFORTSCHRITT · 1/5 PHYSISCHE SPUREN GEBORGEN\\n\\nDas erste Protokoll ist keine Mission.",
+        "source_name": "Run-level civic thread",
+        "arc": "civic_afterimage",
+        "progress": 1,
+        "total": 5,
+        "stage_count": 1,
+        "stage_description": "Das erste Protokoll ist keine Mission.",
+        "missing_record_ids": ["story.north_ruins.ledger"],
+    }])
+    _expect(world.operations_hud.selection_label.text == "FADEN · DIE STADT, DIE BLIEB · 1/5" and "FADENFORTSCHRITT" in world.operations_hud.description_label.text and "NÄCHSTE SPUR" in world.operations_hud.description_label.text, "German Town Archive threads must localize their title, progress and next-trace copy on the actual archive surface.")
+    _expect("BÜRGERLICHER LAUF-FADEN" in world.operations_hud.requirements_label.text and "BÜRGERLICHES NACHBILD" in world.operations_hud.requirements_label.text, "German Town Archive threads must localize their source and arc metadata on the actual archive surface.")
     world.operations_hud.close()
     _expect(service.text("notification.technology_online", ["FELDTECHNIK"]) == "TECHNOLOGIE AKTIV · FELDTECHNIK" and service.text("notification.outpost_status", ["Ressourcenposten", "Nördlicher Verkehrshof", "1", "100"]) == "Ressourcenposten bei Nördlicher Verkehrshof · STUFE 1 · INTEGRITÄT 100%", "German endgame technology and outpost reports must resolve stable localized presentation text.")
     _expect(service.text("notification.technology_unlocked", ["FELDTECHNIK"]) == "TECHNOLOGIE FREIGESCHALTET · FELDTECHNIK", "German canonical technology-unlocked reports must resolve stable localized presentation text.")

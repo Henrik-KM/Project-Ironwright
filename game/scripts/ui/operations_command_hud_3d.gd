@@ -405,6 +405,17 @@ func _localized_protocol_name(raw_name: String) -> String:
 
 func _localized_operation_field(item: Dictionary, field: String, fallback: String) -> String:
     if mode == &"archive":
+        if str(item.get("kind", "")) == "story_thread":
+            var thread_key := str(item.get("thread_key", str(item.get("id", "")).trim_prefix("thread.")))
+            if field == "name":
+                return "%s · %s · %d/%d" % [
+                    _text("command.archive.thread_prefix", "THREAD"),
+                    _text("story.thread.%s.name" % thread_key, str(item.get("display_name", "Unknown"))),
+                    int(item.get("progress", 0)),
+                    int(item.get("total", 0)),
+                ]
+            if field == "description":
+                return _localized_story_thread_description(item, fallback, thread_key)
         var archive_id := str(item.get("id", ""))
         if archive_id.begins_with("story."):
             var record_key := archive_id.trim_prefix("story.").replace(".", "_")
@@ -487,6 +498,30 @@ func _text(key: String, fallback: String, replacements: Array = []) -> String:
     for index in range(replacements.size()):
         result = result.replace("{%d}" % index, str(replacements[index]))
     return result
+
+
+func _localized_story_thread_description(item: Dictionary, fallback: String, thread_key: String) -> String:
+    var progress := int(item.get("progress", 0))
+    var total := int(item.get("total", 0))
+    var status_line := _text("story.thread.status", "THREAD PROGRESS · {0}/{1} PHYSICAL CLUES RECOVERED", [progress, total])
+    var stage_count := int(item.get("stage_count", 0))
+    var stage_key := "story.thread.%s.stage_%d" % [thread_key, stage_count]
+    var stage_description := _text(stage_key, str(item.get("stage_description", "")))
+    if stage_description == stage_key:
+        stage_description = str(item.get("stage_description", ""))
+    var continuation := ""
+    if progress >= total:
+        continuation = _text("story.thread.complete", "The thread is complete. Its meaning now belongs to the run's ending.")
+    else:
+        var missing_names: Array[String] = []
+        for raw_id in item.get("missing_record_ids", []):
+            var record_key := str(raw_id).trim_prefix("story.").replace(".", "_")
+            var record_name := _text("story.record.%s.name" % record_key, str(raw_id))
+            missing_names.append(record_name)
+        if not missing_names.is_empty():
+            var visible_missing := missing_names.slice(0, mini(2, missing_names.size()))
+            continuation = _text("story.thread.next_trace", "NEXT TRACE · {0}", [", ".join(visible_missing)])
+    return "%s\n\n%s\n%s" % [status_line, stage_description, continuation]
 
 
 func _localized_archive_label(key: String, fallback: String) -> String:

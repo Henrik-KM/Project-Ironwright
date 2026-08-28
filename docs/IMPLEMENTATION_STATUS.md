@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Town Archive thread-localization pass
+
+- exposed stable arc, stage and missing-record identifiers from the derived
+  run-level story threads so the UI can localize progress without changing
+  persistence or story advancement;
+- localized thread names, stage prose, progress and next-trace copy in the
+  English, Swedish and German catalogs, while retaining the canonical English
+  archive data for diagnostics and migration-safe tests;
+- extended release coverage to the actual thread surface; professional
+  translation review remains an external release gate.
+
 ## Focused Town Archive record-localization pass
 
 - externalized all 30 non-ending physical Town Archive records plus their
