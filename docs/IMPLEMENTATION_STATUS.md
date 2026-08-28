@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Observatory migration-witness pass
+
+- added a bounded physical migration-map witness beside the Observatory Ridge
+  reflector, with layered route traces, calibration hardware and a restrained
+  survey-station frame;
+- kept the witness presentation-only: the existing Town Archive record remains
+  authoritative for discovery, while routes, collision, operation state,
+  resources and player workload are unchanged;
+- extended aesthetic and commercial release coverage; live review uses Godot's
+  Dummy audio driver and `--quiet-audio` only.
+
 ## Focused concurrent remote-operation autonomy pass
 
 - long-range expedition members now hold an explicit reservation while the

@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Observatory migration witness — 2026-08-29
+
+Observatory Ridge now carries a physical migration-map witness beside the
+reflector: a framed survey plate, three route traces, calibration nodes and a
+small service canopy make the existing `story.observatory.migration` record
+read as something the town physically used rather than only a HUD entry. The
+assembly is bounded presentation dressing only; the Town Archive remains the
+authority for discovery and no interaction, collision, route or resource state
+was added. Exact live review uses Godot Dummy audio with `--quiet-audio` only;
+no live speakers are used.
+
 ## Focused adaptive Heartforge geometry and motion pass — 2026-08-29
 
 Completed Heartforge adaptations now leave a more legible physical signature:
