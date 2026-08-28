@@ -72,14 +72,21 @@ func _apply_compact_layout(viewport_size: Vector2) -> void:
     if objective_panel == null:
         return
     var narrow := viewport_size.x < 1050.0
+    var text_scale := _accessibility_text_scale()
+    # The opening objective is intentionally explanatory. At the largest
+    # supported text scale its copy needs a taller measured card so it cannot
+    # paint into the health stack below it.
+    var objective_height := 148.0 + maxf(0.0, text_scale - 1.0) * 220.0
 
     objective_panel.position = Vector2(18.0, 18.0)
     # The first salvage objective is deliberately explanatory. Give its copy
     # a measured card instead of letting the health stack cover the last line
     # in the compact release viewport.
-    objective_panel.size = Vector2(360.0 if narrow else 405.0, 148.0)
+    objective_panel.size = Vector2(360.0 if narrow else 405.0, objective_height)
     objective_label.position = Vector2(18.0, 34.0)
-    objective_label.size = Vector2(objective_panel.size.x - 36.0, 100.0)
+    objective_label.size.x = objective_panel.size.x - 36.0
+    objective_panel.size.y = maxf(objective_panel.size.y, objective_label.get_combined_minimum_size().y + 48.0)
+    objective_label.size.y = objective_panel.size.y - 48.0
 
     resource_panel.size = Vector2(296.0 if narrow else 318.0, 174.0)
     # The base HUD uses right-anchored offsets, but the compact release scene
@@ -141,6 +148,19 @@ func _apply_compact_layout(viewport_size: Vector2) -> void:
             if companion_bar != null:
                 companion_bar.position = Vector2(96.0, 87.0)
                 companion_bar.size = Vector2(200.0, 10.0)
+
+
+func _accessibility_text_scale() -> float:
+    var settings := get_tree().get_first_node_in_group(&"release_settings_service") as Node
+    if settings != null and settings.has_method(&"get_value"):
+        return clampf(float(settings.get_value(&"text_scale", 1.0)), 0.75, 1.6)
+    return 1.0
+
+
+func set_objective(title: String, detail: String) -> void:
+    super.set_objective(title, detail)
+    if is_inside_tree() and get_viewport() != null:
+        _apply_compact_layout(Vector2(get_viewport().get_visible_rect().size))
 
 
 func set_sanctuary_integrity(value: float) -> void:

@@ -43,6 +43,15 @@ func _run_all() -> void:
         _finish()
         return
 
+    # A live accessibility review may have persisted a larger text scale in
+    # user://. Establish the intended default layout explicitly so this
+    # first-session contract remains reproducible and independent of a prior
+    # player or review session.
+    if world.settings_service != null:
+        world.settings_service.set_value(&"text_scale", 1.0, false)
+        world.settings_service.apply_accessibility_to_tree(world)
+        hud.apply_safe_layout(Vector2(TEST_VIEWPORT_SIZE))
+
     for report in hud.notifications:
         var report_text := str(report).to_upper()
         _expect("PRE-ALPHA" not in report_text, "Opening reports must not expose internal pre-alpha status language.")
