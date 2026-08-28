@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-08-28 — Cathedral Quarter gallery framing
+
+- replaced the over-close centered Cathedral Quarter review angle with a
+  bounded diagonal frame that keeps the nave and tower silhouette visible
+  while separating the choir hardware from the foreground pipe dressing;
+- kept the change presentation-only, with no runtime navigation, collision,
+  save, ecology or recurring-task impact.
+
 ## 2026-08-28 — West Grid gallery framing
 
 - gave the authored West Grid industrial landmark a dedicated diagonal review

@@ -1457,7 +1457,7 @@ func _show_presentation_review_page(page: int) -> void:
 	var page_title: String = page_titles[presentation_review_page]
 	presentation_review_label.text = "PRESENTATION REVIEW  ·  %s  ·  %d/%d\n1-9, 0 DIRECT PAGE   ←/→ BROWSE   ESC EXIT" % [page_title, presentation_review_page + 1, presentation_review_pages.size()]
 	if is_region_page and not actors.is_empty():
-		var review_target_height := 3.8 if region_id == &"region.east_tenements" else 2.0
+		var review_target_height := 3.8 if region_id == &"region.east_tenements" else (3.0 if region_id == &"region.cathedral_quarter" else 2.0)
 		presentation_review_camera_target = (actors[0] as Node3D).global_position + Vector3.UP * review_target_height
 		presentation_review_camera_desired = presentation_review_camera_target + _presentation_review_region_camera_offset(region_id)
 	elif is_region_page and region_director != null:
@@ -1515,10 +1515,12 @@ func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3
 	if region_id == &"region.flood_market":
 		return Vector3(8.5, 9.4, 15.4)
 	if region_id == &"region.cathedral_quarter":
-		# Bring the nave and rose into the same readable plane as the brood
-		# hardware. This is a development-review composition change only; the
-		# tactical camera and authored landmark placement remain untouched.
-		return Vector3(0.0, 9.7, 16.1)
+		# The centered frame lets the foreground choir and pipe dressing eclipse
+		# the nave while the tower is cropped against the top edge. A bounded
+		# diagonal, slightly more distant frame separates the choir hardware from
+		# the civic shell and keeps the tower silhouette in view; runtime landmark
+		# placement and encounter geometry remain untouched.
+		return Vector3(6.6, 8.5, 18.8)
 	if region_id == &"region.observatory_ridge":
 		# The authored dish is vertically dominant; give the review camera enough
 		# distance to keep the dish, mast, service ring and platform in one frame.
