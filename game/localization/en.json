@@ -16,6 +16,7 @@
     "menu.back": "BACK",
     "menu.apply": "APPLY",
     "menu.no_save": "NO VALID SAVE FOUND",
+    "menu.world_paused": "THE WORLD IS PAUSED",
     "menu.release_candidate": "THE LAST LIGHT · 1.0",
     "settings.title": "ACCESSIBILITY, CONTROLS & AUDIO",
     "settings.language": "Language",
