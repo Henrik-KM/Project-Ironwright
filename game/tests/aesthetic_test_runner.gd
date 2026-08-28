@@ -1503,6 +1503,11 @@ func _run_all() -> void:
                 _expect(_find_named(enemy_samples[index], "CarrionbellResonatorCore") != null and _find_named(enemy_samples[index], "CarrionbellBellRib0") != null, "The Carrion Bell must expose a layered resonator core and bell ribs.")
                 var resonator_ring_mesh := _find_first_mesh(_find_named(enemy_samples[index], "CarrionbellResonatorRing") as Node3D)
                 _expect(resonator_ring_mesh != null and _mesh_vertex_count(resonator_ring_mesh) >= 240, "The Carrion Bell resonator must use a dense curved ring mesh rather than a flat cylinder lip.")
+                var resonator_bell_lip := _find_named(enemy_samples[index], "CarrionbellResonatorBellLip") as MeshInstance3D
+                var resonator_clapper := _find_named(enemy_samples[index], "CarrionbellResonatorClapper") as MeshInstance3D
+                var resonator_clapper_tip := _find_named(enemy_samples[index], "CarrionbellResonatorClapperTip") as MeshInstance3D
+                _expect(resonator_bell_lip != null and _mesh_vertex_count(resonator_bell_lip) >= 500 and resonator_bell_lip.mesh.get_aabb().size.y >= 0.16, "The Carrion Bell resonator must retain a dense closed bell lip with readable depth.")
+                _expect(resonator_clapper != null and resonator_clapper_tip != null and resonator_clapper.get_parent().name == "CarrionbellResonator" and resonator_clapper_tip.get_parent().name == "CarrionbellResonator", "The Carrion Bell clapper assembly must stay parented to the animated resonator socket.")
             &"rootweaver":
                 _expect(_find_named(enemy_samples[index], "RootweaverKnuckleL") != null and _find_named(enemy_samples[index], "RootweaverKnuckleR") != null, "The Rootweaver must expose joint detail where its route arms meet the body.")
                 _expect(_find_named(enemy_samples[index], "RootweaverCrownPlate0") != null and _find_named(enemy_samples[index], "RootweaverRootSpineR") != null, "The Rootweaver must expose crown plating and layered route spines.")

@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Carrion Bell resonator finish — 2026-08-28
+
+The Carrion Bell authored signal organ now has a dense closed bell lip,
+suspended clapper and clapper tip parented to the existing animated resonator
+socket. At the exact late-organic gallery review size (page 3/15), the mouth,
+depth and hanging impact detail read as one layered biological instrument while
+the existing animation and gameplay contracts remain unchanged. The merged
+build passed the focused aesthetic contract and silent live review with Godot
+Dummy audio and `--quiet-audio` only; no live speakers were used. Broader human
+production-art acceptance remains open.
+
 ## Camera-relative movement — 2026-08-28
 
 The Mechromancer now interprets keyboard and controller movement relative to
