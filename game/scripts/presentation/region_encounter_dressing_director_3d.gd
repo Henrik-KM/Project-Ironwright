@@ -586,6 +586,54 @@ func _build_commercial_vignette(parent: Node3D) -> void:
 
 
 func _build_waterfront_vignette(parent: Node3D) -> void:
+    var waterworks_shell := ModelKit3D.material(Color("35464a"), 0.68, 0.38)
+    var waterworks_edge := ModelKit3D.material(Color("765038"), 0.4, 0.62)
+    var waterworks_dark := ModelKit3D.material(Color("14262b"), 0.78, 0.3)
+    var waterworks_water := ModelKit3D.material(Color("174a55"), 0.22, 0.3, Color("53c8d1"), 0.74)
+    var waterworks_signal := ModelKit3D.material(Color("1d4b55"), 0.28, 0.28, Color("64dce0"), 1.45)
+    var waterworks_warning := ModelKit3D.material(Color("70412f"), 0.18, 0.52, Color("e59450"), 0.78)
+
+    # Riverworks is a pressure-and-flow landmark. The discovered vignette
+    # needs a compact sluice and manifold hierarchy so the water-management
+    # identity survives at encounter distance instead of reading as bollards
+    # around one pump case. This remains presentation-only and owns no
+    # collision, salvage, route, resource or operation state.
+    var waterworks_assembly := Node3D.new()
+    waterworks_assembly.name = "RiverworksDockAssembly"
+    parent.add_child(waterworks_assembly)
+    ModelKit3D.add_beveled_box(waterworks_assembly, Vector3(11.2, 0.18, 1.7), Vector3(0.0, 0.36, -8.45), waterworks_dark, Vector3.ZERO, "RiverworksFlowChannelBed", 0.16)
+    for index in range(2):
+        var channel_x := -3.5 + float(index) * 7.0
+        ModelKit3D.add_beveled_box(waterworks_assembly, Vector3(4.9, 0.05, 0.64), Vector3(channel_x, 0.51, -8.6), waterworks_water, Vector3.ZERO, "RiverworksFlowChannel%d" % index, 0.12)
+        _add_beam(waterworks_assembly, Vector3(channel_x - 2.1, 0.58, -8.6), Vector3(channel_x + 1.9, 0.58, -8.6), 0.035, waterworks_signal, "RiverworksFlowBreak%d" % index)
+
+    var sluice := Node3D.new()
+    sluice.name = "RiverworksEncounterSluice"
+    waterworks_assembly.add_child(sluice)
+    ModelKit3D.add_beveled_box(sluice, Vector3(2.45, 1.55, 0.16), Vector3(-4.1, 1.2, -8.05), waterworks_shell, Vector3.ZERO, "RiverworksEncounterGate", 0.16)
+    for side in [-1.0, 1.0]:
+        _add_beam(sluice, Vector3(-4.1 + side * 1.45, 0.52, -8.04), Vector3(-4.1 + side * 1.45, 2.65, -8.04), 0.08, waterworks_edge, "RiverworksEncounterGatePost")
+    _add_beam(sluice, Vector3(-5.55, 2.65, -8.04), Vector3(-2.65, 2.65, -8.04), 0.08, waterworks_edge, "RiverworksEncounterGateHeader")
+    ModelKit3D.add_louvered_panel(sluice, Vector3(1.35, 0.86, 0.14), Vector3(-4.1, 1.28, -8.16), waterworks_dark, waterworks_signal, Vector3.ZERO, "RiverworksEncounterGateLouver", 4)
+    ModelKit3D.add_surface_panel(sluice, Vector3(0.54, 0.46, 0.08), Vector3(-2.78, 1.42, -8.16), waterworks_dark, waterworks_warning, Vector3.ZERO, "RiverworksEncounterGateLatch")
+    _add_beam(sluice, Vector3(-2.7, 1.1, -8.05), Vector3(-1.72, 1.65, -8.05), 0.045, waterworks_warning, "RiverworksEncounterGateActuator")
+
+    var manifold := Node3D.new()
+    manifold.name = "RiverworksEncounterManifold"
+    waterworks_assembly.add_child(manifold)
+    ModelKit3D.add_beveled_box(manifold, Vector3(3.4, 0.72, 1.35), Vector3(4.5, 0.84, -8.18), waterworks_shell, Vector3(0.0, 0.08, 0.0), "RiverworksEncounterPumpHousing", 0.18)
+    ModelKit3D.add_louvered_panel(manifold, Vector3(1.5, 0.54, 0.14), Vector3(4.5, 0.9, -8.88), waterworks_dark, waterworks_signal, Vector3.ZERO, "RiverworksEncounterPumpLouver", 4)
+    ModelKit3D.add_cylinder(manifold, 0.38, 0.12, Vector3(4.5, 1.38, -8.18), waterworks_signal, Vector3(PI * 0.5, 0.0, 0.0), "RiverworksEncounterRotorCap")
+    ModelKit3D.add_torus(manifold, 0.52, 0.055, Vector3(4.5, 1.45, -8.18), waterworks_edge, Vector3(PI * 0.5, 0.0, 0.0), "RiverworksEncounterRotorRing", 40, 8)
+    for index in range(3):
+        var header_x := 3.35 + float(index) * 1.15
+        _add_beam(manifold, Vector3(header_x, 1.48, -8.18), Vector3(header_x, 2.55, -8.18), 0.045, waterworks_edge, "RiverworksEncounterHeaderPipe")
+    _add_beam(manifold, Vector3(3.25, 2.55, -8.18), Vector3(5.9, 2.55, -8.18), 0.07, waterworks_edge, "RiverworksEncounterHeaderManifold")
+    ModelKit3D.add_surface_panel(manifold, Vector3(0.8, 0.44, 0.08), Vector3(5.95, 1.05, -8.18), waterworks_dark, waterworks_signal, Vector3.ZERO, "RiverworksEncounterFlowPanel")
+    _add_beam(manifold, Vector3(5.95, 1.28, -8.1), Vector3(5.95, 2.52, -8.1), 0.035, waterworks_warning, "RiverworksEncounterWarningCable")
+    _add_light(waterworks_assembly, Vector3(-4.1, 1.75, -8.55), Color("63d5de"), 0.48, 4.8)
+    _add_light(waterworks_assembly, Vector3(4.5, 1.15, -8.55), Color("e29552"), 0.3, 4.0)
+
     ModelKit3D.add_beveled_box(parent, Vector3(12.0, 0.24, 2.8), Vector3(0.0, 0.24, -7.0), _concrete, Vector3.ZERO, "DockServiceDeck", 0.18)
     for index in range(4):
         var x := -4.8 + float(index) * 3.2
