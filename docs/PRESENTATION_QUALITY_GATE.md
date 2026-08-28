@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused close-camera organic roster framing — 2026-08-28
+
+The early and late organic roster pages in the development presentation gallery
+now use a closer, slightly lower review camera. The authored shells occupy more
+of the frame, making their anatomy, material breaks and threat sockets easier to
+judge at the exact export review size. This is isolated to the gallery fixture;
+gameplay camera behaviour, actor scale, collision, LOD, AI and audio are
+unchanged. The live acceptance review uses Godot Dummy audio with
+`--quiet-audio` only; no live speakers are used.
+
 ## Focused presentation-review navigation polish — 2026-08-28
 
 The development presentation gallery now describes its ten direct digit-key

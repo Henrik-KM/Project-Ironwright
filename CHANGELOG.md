@@ -1,5 +1,13 @@
 # Changelog
 
+## Pre-alpha close-camera organic roster framing
+
+- tightened the development gallery camera for the early and late organic
+  roster pages so their authored anatomy occupies more of the review frame;
+- kept the adjustment isolated to presentation-review composition, preserving
+  gameplay camera behaviour, actor scale, collision, LOD, AI and audio;
+- the exact review remains silent with Godot Dummy audio and `--quiet-audio`.
+
 ## Pre-alpha presentation-review navigation polish
 
 - corrected the development gallery navigation legend so the direct digit-key
