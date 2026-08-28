@@ -331,6 +331,28 @@ func _build_visuals() -> void:
     add_child(_model_root)
 
 
+func _add_strut(
+        parent: Node3D,
+        start: Vector3,
+        end: Vector3,
+        mat: Material,
+        name_hint: String,
+        radius: float = 0.055
+    ) -> MeshInstance3D:
+    var direction := end - start
+    var strut := ModelKit3D.add_cylinder(
+        parent,
+        radius,
+        direction.length(),
+        (start + end) * 0.5,
+        mat,
+        Vector3.ZERO,
+        name_hint
+    )
+    strut.quaternion = Quaternion(Vector3.UP, direction.normalized())
+    return strut
+
+
 func _refresh_visuals() -> void:
     if _model_root == null:
         return
@@ -603,6 +625,74 @@ func _refresh_visuals() -> void:
                 "%sRoleBrace%s" % [frame_name, "Left" if side < 0.0 else "Right"],
                 0.18
             )
+
+        # Compact truss work gives the evolved frames a believable load path.
+        # It is presentation-only: every strut stays inside the existing
+        # outpost footprint and no new structure or maintenance task exists.
+        var corner_offset := frame_size * 0.5 - 0.2
+        for corner_x in [-1.0, 1.0]:
+            for corner_z in [-1.0, 1.0]:
+                _add_strut(
+                    frame,
+                    Vector3(corner_x * corner_offset, -0.16, corner_z * corner_offset),
+                    Vector3(corner_x * corner_offset, 0.3, corner_z * corner_offset),
+                    panel_accent,
+                    "%sCornerStrut%s%s" % [frame_name, "L" if corner_x < 0.0 else "R", "F" if corner_z < 0.0 else "B"]
+                )
+        for side in [-1.0, 1.0]:
+            _add_strut(
+                frame,
+                Vector3(-corner_offset, -0.11, side * corner_offset),
+                Vector3(corner_offset, 0.22, side * corner_offset),
+                frame_rust,
+                "%sDiagonalBrace%s" % [frame_name, "Front" if side < 0.0 else "Back"],
+                0.045
+            )
+
+    # A small shared service crown makes the stacked frames read as one
+    # machine-built system. Role hardware remains the foreground signal.
+    var crown := Node3D.new()
+    crown.name = "OutpostServiceCrown"
+    _model_root.add_child(crown)
+    var top_frame_y := 2.75 + float(maxi(tier - 1, 0)) * 0.62
+    var crown_y := top_frame_y + 0.38
+    ModelKit3D.add_beveled_box(
+        crown,
+        Vector3(1.7, 0.18, 1.12),
+        Vector3(0.0, crown_y, 0.22),
+        iron,
+        Vector3.ZERO,
+        "ServiceCrownHousing",
+        0.24
+    )
+    ModelKit3D.add_torus(
+        crown,
+        0.42,
+        0.055,
+        Vector3(0.0, crown_y + 0.16, 0.12),
+        tier_signal,
+        Vector3.ZERO,
+        "ServiceCrownRing",
+        32,
+        8
+    )
+    ModelKit3D.add_sphere(
+        crown,
+        0.16,
+        Vector3(0.0, crown_y + 0.24, 0.12),
+        glow,
+        Vector3(1.25, 0.7, 1.25),
+        "ServiceCrownBeacon"
+    )
+    for side in [-1.0, 1.0]:
+        _add_strut(
+            crown,
+            Vector3(side * 0.62, crown_y - 0.04, -0.14),
+            Vector3(side * 0.38, crown_y + 0.18, 0.12),
+            panel_accent,
+            "ServiceCrownBrace%s" % ("Left" if side < 0.0 else "Right"),
+            0.045
+        )
 
     var role_signature := Node3D.new()
     role_signature.name = "OutpostRoleSignature"

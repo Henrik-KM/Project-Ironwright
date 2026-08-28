@@ -2144,3 +2144,15 @@ allows the first desktop frame to present before freezing the simulation. This
 preserves the paused title-screen contract while avoiding a transparent blank
 initial frame on the OpenGL compatibility renderer. Exact silent live review
 uses Godot Dummy audio with `--quiet-audio`; no live speakers are used.
+
+## Focused autonomous outpost frame-depth pass — 2026-08-28
+
+The autonomous outpost gallery now gives its evolved tier frames a bounded
+manufactured truss and shared service crown. The added struts, ring and beacon
+make the three-tier presentation read as one load-bearing machine system
+instead of detached flat trays, while role-specific hardware remains the
+foreground signal. This is presentation-only: collision, fixed-site identity,
+role, tier, autonomy, hauling, repair, destruction, rebuilding and save state
+are unchanged, and no player-managed structure or maintenance task was added.
+Exact silent live review uses Godot Dummy audio with `--quiet-audio`; no live
+speakers are used. Broader human production-art acceptance remains open.
