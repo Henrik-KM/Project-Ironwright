@@ -23,6 +23,7 @@ var current_health: float = 100.0
 var death_presentation_remaining: float = 0.0
 var current_target: Node3D
 var input_enabled: bool = true
+var movement_camera: Camera3D
 var invulnerability_seconds: float = 0.0
 var pistol_cooldown: float = 0.0
 var channel_kind: StringName = &""
@@ -54,6 +55,10 @@ func _ready() -> void:
     health_changed.emit(current_health, maximum_health)
 
 
+func set_movement_camera(next_camera: Camera3D) -> void:
+    movement_camera = next_camera
+
+
 func _physics_process(delta: float) -> void:
     if current_health <= 0.0:
         death_presentation_remaining = maxf(0.0, death_presentation_remaining - delta)
@@ -81,14 +86,34 @@ func _update_movement(delta: float) -> void:
         input_vector.y = _movement_action_strength(&"iw_move_down") - _movement_action_strength(&"iw_move_up")
     input_vector = input_vector.normalized()
 
-    var target_velocity := Vector3(input_vector.x, 0.0, input_vector.y) * move_speed
+    var movement_direction := _camera_relative_movement(input_vector)
+    var target_velocity := movement_direction * move_speed
     velocity.x = move_toward(velocity.x, target_velocity.x, 28.0 * delta)
     velocity.z = move_toward(velocity.z, target_velocity.z, 28.0 * delta)
     velocity.y = -0.8
     move_and_slide()
 
-    if input_vector.length_squared() > 0.01 and current_target == null:
-        rotation.y = lerp_angle(rotation.y, atan2(input_vector.x, input_vector.y), 0.18)
+    if movement_direction.length_squared() > 0.01 and current_target == null:
+        rotation.y = lerp_angle(rotation.y, atan2(movement_direction.x, movement_direction.z), 0.18)
+
+
+func _camera_relative_movement(input_vector: Vector2) -> Vector3:
+    if input_vector.length_squared() <= 0.001:
+        return Vector3.ZERO
+    if movement_camera == null or not is_instance_valid(movement_camera):
+        return Vector3(input_vector.x, 0.0, input_vector.y).normalized()
+
+    var camera_right := movement_camera.global_transform.basis.x
+    camera_right.y = 0.0
+    var camera_forward := -movement_camera.global_transform.basis.z
+    camera_forward.y = 0.0
+    if camera_right.length_squared() <= 0.001 or camera_forward.length_squared() <= 0.001:
+        return Vector3(input_vector.x, 0.0, input_vector.y).normalized()
+
+    camera_right = camera_right.normalized()
+    camera_forward = camera_forward.normalized()
+    var movement := camera_right * input_vector.x - camera_forward * input_vector.y
+    return movement.normalized() if movement.length_squared() > 0.001 else Vector3.ZERO
 
 
 func _update_automatic_pistol() -> void:

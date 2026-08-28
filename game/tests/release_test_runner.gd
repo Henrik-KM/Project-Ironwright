@@ -428,14 +428,24 @@ func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void
                 has_expected_key = true
         _expect(has_expected_key, "Strategic action %s needs its default keyboard command key." % String(action))
 
+    # Freeze the presentation camera while exercising the input actuator so
+    # the assertion measures the input frame itself, not the release camera's
+    # deliberate travel-direction reframe.
+    world.set_process(false)
+    world.camera.rotation = Vector3(0.0, PI * 0.37, 0.0)
     var keyboard_position_before := world.player.global_position
+    var expected_keyboard_direction := world.player._camera_relative_movement(Vector2(0.0, -1.0))
     Input.action_press(&"iw_move_up")
     for _frame in range(12):
         await physics_frame
     Input.action_release(&"iw_move_up")
-    _expect(world.player.global_position.z < keyboard_position_before.z - 0.2, "The release Mechromancer must move through the shared keyboard action-strength path.")
+    var keyboard_displacement := world.player.global_position - keyboard_position_before
+    keyboard_displacement.y = 0.0
+    _expect(keyboard_displacement.length() > 0.2 and keyboard_displacement.normalized().dot(expected_keyboard_direction) > 0.80, "The release Mechromancer must move through the shared camera-relative keyboard path.")
 
+    world.player.velocity = Vector3.ZERO
     var position_before := world.player.global_position
+    var expected_controller_direction := world.player._camera_relative_movement(Vector2(1.0, 0.0))
     var motion := InputEventJoypadMotion.new()
     motion.device = 0
     motion.axis = JOY_AXIS_LEFT_X
@@ -448,7 +458,11 @@ func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void
     release_motion.axis = JOY_AXIS_LEFT_X
     release_motion.axis_value = 0.0
     Input.parse_input_event(release_motion)
-    _expect(world.player.global_position.x > position_before.x + 0.2, "The release Mechromancer must move from a joypad axis, not only from raw keyboard state.")
+    var controller_displacement := world.player.global_position - position_before
+    controller_displacement.y = 0.0
+    var controller_alignment := controller_displacement.normalized().dot(expected_controller_direction) if controller_displacement.length() > 0.001 else 0.0
+    _expect(controller_displacement.length() > 0.2 and controller_alignment > 0.80, "The release Mechromancer must move from a camera-relative joypad axis, not only from raw keyboard state.")
+    world.set_process(true)
 
     Input.action_press(&"iw_interact")
     await process_frame

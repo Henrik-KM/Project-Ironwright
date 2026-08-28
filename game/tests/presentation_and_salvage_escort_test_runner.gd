@@ -13,6 +13,7 @@ func _initialize() -> void:
 
 func _run_all() -> void:
     await _test_remote_ground_continuity()
+    await _test_camera_relative_player_input()
     await _test_directional_camera_reframe()
     await _test_threat_camera_readability()
     await _test_salvage_escort_split()
@@ -64,6 +65,32 @@ func _test_directional_camera_reframe() -> void:
     world.player.velocity = Vector3.ZERO
     world._update_camera(0.65)
     _expect(world.camera_heading.distance_to(heading_after_motion) < 0.05, "The tactical camera must hold its established heading when the player stops instead of rotating during idle play.")
+    world.free()
+    await process_frame
+
+
+func _test_camera_relative_player_input() -> void:
+    var world := MAIN_SCENE.instantiate() as IronwrightReleaseWorld3D
+    root.add_child(world)
+    await process_frame
+    await physics_frame
+
+    _expect(world.player.movement_camera == world.camera, "The Mechromancer must receive the live tactical camera as its movement reference.")
+    world.camera.rotation = Vector3(0.0, PI * 0.37, 0.0)
+    var camera_right := world.camera.global_transform.basis.x
+    camera_right.y = 0.0
+    camera_right = camera_right.normalized()
+    var camera_forward := -world.camera.global_transform.basis.z
+    camera_forward.y = 0.0
+    camera_forward = camera_forward.normalized()
+
+    var forward_input := world.player._camera_relative_movement(Vector2(0.0, -1.0))
+    var right_input := world.player._camera_relative_movement(Vector2(1.0, 0.0))
+    var diagonal_input := world.player._camera_relative_movement(Vector2(1.0, -1.0))
+    _expect(forward_input.distance_to(camera_forward) < 0.01, "W must move along the camera's horizontal forward axis.")
+    _expect(right_input.distance_to(camera_right) < 0.01, "D must move along the camera's horizontal right axis.")
+    _expect(is_equal_approx(diagonal_input.length(), 1.0), "Camera-relative diagonal movement must remain normalized.")
+
     world.free()
     await process_frame
 

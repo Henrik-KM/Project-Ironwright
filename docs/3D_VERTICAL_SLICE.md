@@ -20,7 +20,7 @@ The player then manually forges a Warden and Pathfinder. With all three roles av
 
 | Input | Action |
 |---|---|
-| `WASD` | Move the Mechromancer |
+| `WASD` | Move the Mechromancer relative to the tactical camera |
 | automatic | Fire the weak pistol at the nearest organic enemy in range |
 | hold `E` | Salvage a nearby wreck; movement and pistol disabled |
 | `E` at Heartforge | Open manual fabrication and class-upgrade menu |

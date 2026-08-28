@@ -29,14 +29,15 @@ func _update_movement(delta: float) -> void:
         )
     input_vector = input_vector.normalized()
 
-    var target_velocity := Vector3(input_vector.x, 0.0, input_vector.y) * move_speed
+    var movement_direction := _camera_relative_movement(input_vector)
+    var target_velocity := movement_direction * move_speed
     velocity.x = move_toward(velocity.x, target_velocity.x, 28.0 * delta)
     velocity.z = move_toward(velocity.z, target_velocity.z, 28.0 * delta)
     velocity.y = -0.8
     move_and_slide()
 
-    if input_vector.length_squared() > 0.01 and current_target == null:
-        rotation.y = lerp_angle(rotation.y, atan2(input_vector.x, input_vector.y), 0.18)
+    if movement_direction.length_squared() > 0.01 and current_target == null:
+        rotation.y = lerp_angle(rotation.y, atan2(movement_direction.x, movement_direction.z), 0.18)
 
 
 func _nearest_enemy_in_range(maximum_range: float) -> Node3D:

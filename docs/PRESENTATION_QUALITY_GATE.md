@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Camera-relative movement — 2026-08-28
+
+The Mechromancer now interprets keyboard and controller movement relative to
+the live tactical camera, keeping forward and strafe input visually consistent
+as the view reframes. Diagonal input remains normalized, and a deterministic
+world-axis fallback covers non-present camera contexts. The behavior is covered
+by release and presentation regression tests and was live-reviewed in the
+opening with Godot Dummy audio and `--quiet-audio` only.
+
 ## Focused Observatory Ridge gallery framing — 2026-08-28
 
 The Observatory Ridge page in the development presentation gallery now uses a

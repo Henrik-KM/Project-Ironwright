@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-08-28 — Camera-relative movement
+
+- aligned Mechromancer keyboard and controller movement with the live tactical
+  camera so forward, strafe and diagonal input remain consistent with the
+  player’s view;
+- kept the no-input fallback and movement normalization intact, with release
+  and presentation regression coverage for both keyboard and controller paths.
+
 ## 2026-08-28 — Observatory Ridge gallery framing
 
 - replaced the centered Observatory Ridge review angle with a bounded diagonal
