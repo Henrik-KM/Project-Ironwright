@@ -872,6 +872,9 @@ func _run_all() -> void:
         world.player.global_position = distant_root.global_position if distant_root != null else Vector3(128.0, 0.0, -116.0)
         region_atmosphere.refresh_now()
         region_lod.refresh_now()
+        # Authored region packages attach on the next idle frame so imported
+        # renderer resources finish their threaded-load handoff safely.
+        await process_frame
         _expect(region_lod.detail_mode_for(&"region.root_cistern") == 0 and distant_proxy != null and not distant_proxy.visible, "Entering a distant region must restore full detail and retire its coarse proxy.")
         _expect(distant_authored_package != null and distant_authored_package.get_child_count() > 0, "Entering a distant region must re-instantiate its imported authored package nodes.")
         _expect(distant_release_detail != null and distant_release_detail.get_child_count() > 0, "Entering a distant region must re-instantiate its high-definition encounter dressing nodes.")

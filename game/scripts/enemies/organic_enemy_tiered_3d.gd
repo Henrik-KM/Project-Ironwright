@@ -88,7 +88,8 @@ func configure_tier(tier: int, config: Dictionary, recapture_base: bool = false)
     ecology_directive = _resolve_directive_for_tier(ecology_directive)
     behaviour_clock = behaviour_duration
     if is_inside_tree():
-        _refresh_visuals()
+        _clear_tier_visuals()
+        _build_tier_visuals()
         _choose_next_ecological_behaviour(true)
 
 
@@ -231,6 +232,16 @@ func _prey_priority_multiplier(target: Node3D) -> float:
 
 func _refresh_visuals() -> void:
     super._refresh_visuals()
+    _build_tier_visuals()
+
+
+func _clear_tier_visuals() -> void:
+    if _tier_visual_root != null and is_instance_valid(_tier_visual_root):
+        _tier_visual_root.free()
+    _tier_visual_root = null
+
+
+func _build_tier_visuals() -> void:
     if _model_root == null:
         return
     _tier_visual_root = Node3D.new()

@@ -1097,8 +1097,8 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     var robot_core := late_robot.get_node_or_null("RobotModel/Chassis/ChassisCore") as MeshInstance3D
     var enemy_core := late_enemy.get_node_or_null("OrganicModel/Torso/TorsoCore") as MeshInstance3D
     var enemy_authored_mesh := _find_first_mesh_with_token(late_enemy.get_node_or_null("OrganicModel"), "veilstalker")
-    var late_authored_family_mesh := _find_first_mesh(late_authored_family.get_node_or_null("OrganicModel/RootweaverCrown") if late_authored_family != null else null)
-    var rootweaver_membrane_mesh := _find_first_mesh(late_authored_family.get_node_or_null("OrganicModel/RootweaverSporeFan") if late_authored_family != null else null)
+    var late_authored_family_mesh := _find_first_mesh(late_authored_family.find_child("RootweaverCrown", true, false) if late_authored_family != null else null)
+    var rootweaver_membrane_mesh := _find_first_mesh(late_authored_family.find_child("RootweaverSporeFan", true, false) if late_authored_family != null else null)
     _expect(robot_core != null and robot_core.get_meta(&"release_material_family", &"") == &"metal", "Late-fabricated robots must receive the release metal material pass.")
     _expect(enemy_core != null and enemy_core.get_meta(&"release_material_family", &"") == &"chitin", "Late-spawned organic families must receive the release chitin material pass.")
     _expect(enemy_authored_mesh != null and enemy_authored_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Authored Veilstalker shell meshes must receive the release chitin material pass.")
@@ -1106,7 +1106,7 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     var rootweaver_membrane_material := rootweaver_membrane_mesh.material_override as StandardMaterial3D if rootweaver_membrane_mesh != null else null
     _expect(rootweaver_membrane_material != null and rootweaver_membrane_material.albedo_color.r < 0.7 and rootweaver_membrane_material.albedo_color.b < 0.7, "Authored organic membrane surfaces must retain restrained release color after texturing.")
     _expect(rootweaver_membrane_material != null and rootweaver_membrane_material.rim_enabled and rootweaver_membrane_material.clearcoat_enabled and rootweaver_membrane_material.get_meta(&"release_organic_surface_finish", &"") == "membrane_rim_clearcoat", "Authored organic membranes must receive a restrained rim and clearcoat finish for high-definition material separation.")
-    var rootweaver_spine_mesh := _find_first_mesh(late_authored_family.get_node_or_null("OrganicModel/RootweaverRootSpineR") if late_authored_family != null else null)
+    var rootweaver_spine_mesh := _find_first_mesh(late_authored_family.find_child("RootweaverRootSpineR", true, false) if late_authored_family != null else null)
     var rootweaver_spine_material := rootweaver_spine_mesh.material_override as StandardMaterial3D if rootweaver_spine_mesh != null else null
     var rootweaver_material_delta := 0.0
     if rootweaver_spine_material != null and rootweaver_membrane_material != null:

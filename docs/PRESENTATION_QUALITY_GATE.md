@@ -2175,3 +2175,16 @@ preserving recursive tuning, motion capture, stable node names and
 reduced-detail transitions. Collision, navigation, ecology, operations and
 save contracts are unchanged. Exact silent live review uses Godot Dummy audio
 with `--quiet-audio`; no live speakers are used.
+
+## Focused authored-organic hierarchy stability pass — 2026-08-28
+
+Authored organic actors now retain their imported glTF hierarchy and generated
+`AnimationPlayer` under `OrganicModel`, including generic later families and
+the scaled Skitterling shell. This preserves source animation paths, recursive
+material/LOD discovery and stable presentation resources while leaving
+gameplay, collision, sockets, ecology, tier and save ownership on the actor.
+Tier reconfiguration replaces only the bounded tier silhouette instead of
+rebuilding the imported creature. Threaded authored district packages defer
+scene attachment by one idle frame so imported renderer resources finish their
+handoff before promotion. Exact silent live review uses Godot Dummy audio with
+`--quiet-audio`; no live speakers are used.

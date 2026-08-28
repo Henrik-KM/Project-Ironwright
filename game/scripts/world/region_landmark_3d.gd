@@ -56,6 +56,7 @@ var _authored_imported_root_name: StringName = &""
 var _authored_model_scene: PackedScene
 var _authored_model_load_requested: bool = false
 var _authored_model_load_failed: bool = false
+var _authored_model_attach_requested: bool = false
 var _pressure_read_root: Node3D
 var _pressure_signal_material: StandardMaterial3D
 var _reduced_proxy_root: Node3D
@@ -168,6 +169,7 @@ func _prepare_authored_model_package(path: String, package_name: StringName, imp
     _authored_model_scene = null
     _authored_model_load_requested = false
     _authored_model_load_failed = false
+    _authored_model_attach_requested = false
     _authored_model_root = Node3D.new()
     _authored_model_root.name = package_name
     _visual_root.add_child(_authored_model_root)
@@ -180,7 +182,7 @@ func _refresh_authored_model_package() -> void:
     if streamed_in:
         if _authored_model_root.get_child_count() == 0:
             if _authored_model_scene != null:
-                _attach_authored_model_scene()
+                _schedule_authored_model_attachment()
             elif not _authored_model_load_requested and not _authored_model_load_failed:
                 var request_error := ResourceLoader.load_threaded_request(
                     _authored_model_path,
@@ -202,7 +204,7 @@ func _refresh_authored_model_package() -> void:
                     var fallback_scene := ResourceLoader.load(_authored_model_path, "PackedScene", ResourceLoader.CACHE_MODE_REUSE) as PackedScene
                     if fallback_scene != null:
                         _authored_model_scene = fallback_scene
-                        _attach_authored_model_scene()
+                        _schedule_authored_model_attachment()
                     else:
                         push_error("Could not load authored region package: %s" % _authored_model_path)
     elif _authored_model_root.get_child_count() > 0:
@@ -224,14 +226,26 @@ func _poll_authored_model_package() -> void:
             _authored_model_load_failed = true
             push_error("Threaded authored region package was not a PackedScene: %s" % _authored_model_path)
             return
-        _refresh_authored_model_package()
+        _schedule_authored_model_attachment()
         return
     _authored_model_load_failed = true
     push_error("Could not asynchronously load authored region package: %s (status %d)" % [_authored_model_path, load_status])
 
 
+func _schedule_authored_model_attachment() -> void:
+    if _authored_model_attach_requested or _authored_model_scene == null:
+        return
+    _authored_model_attach_requested = true
+    # ResourceLoader.load_threaded_get() has completed the PackedScene load,
+    # but the compatibility renderer may still be finalizing imported mesh
+    # resources. Attach on the next idle frame so promotion does not race that
+    # renderer handoff or produce invalid RIDs during district streaming.
+    call_deferred("_attach_authored_model_scene")
+
+
 func _attach_authored_model_scene() -> void:
-    if _authored_model_scene == null or _authored_model_root == null or _authored_model_root.get_child_count() > 0:
+    _authored_model_attach_requested = false
+    if _authored_model_scene == null or _authored_model_root == null or not streamed_in or _authored_model_root.get_child_count() > 0:
         return
     var authored_instance := _authored_model_scene.instantiate()
     if _authored_imported_root_name != &"":
