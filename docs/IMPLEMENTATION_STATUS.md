@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused late-organic palette refinement
+
+- reduced the late-family release tint saturation so broad membranes retain
+  readable mineral-biological separation instead of converging into a bright
+  pink gallery band;
+- preserved authored mesh density, anatomy sockets, animation, collision,
+  ecology, reduced-detail ownership and save state; the pass adds no player
+  task or recurring workload;
+- added a restrained-colour regression guard; exact hostile-family live review
+  remains silent and uses Godot Dummy audio with `--quiet-audio` only.
+
 ## Focused endgame command localization pass
 
 - final-protocol names and descriptions now resolve from the selected release

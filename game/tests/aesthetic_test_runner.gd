@@ -252,6 +252,10 @@ func _run_all() -> void:
                 var tint_distance := Vector4(first_tint.r, first_tint.g, first_tint.b, 1.0).distance_to(Vector4(second_tint.r, second_tint.g, second_tint.b, 1.0))
                 _expect(tint_distance >= 0.18, "Late-organic family tints must remain visibly separated under the shared membrane atlas.")
         _expect(late_family_tints[1].g > late_family_tints[1].r and late_family_tints[2].r > late_family_tints[2].b and late_family_tints[3].b > late_family_tints[3].r, "Late-organic release colours must preserve distinct algae, amber and slate-biological lanes.")
+        for tint in late_family_tints:
+            var tint_max := maxf(tint.r, maxf(tint.g, tint.b))
+            var tint_min := minf(tint.r, minf(tint.g, tint.b))
+            _expect(tint_max - tint_min <= 0.40, "Late-organic family tints must stay restrained enough for broad membranes to read as mineral biology rather than toy-saturated plates.")
     _expect(story_archive != null, "The complete world must provide the persistent Town Archive director.")
     if encounter_dressing != null and region_director != null:
         for raw_region_id in region_director.region_data.keys():
