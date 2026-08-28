@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused East Tenements review-framing pass
+
+- moved the development-only East Tenements gallery camera to a closer
+  diagonal frame so the authored residential blocks, attached balconies,
+  fire-escape hardware and weathered laundry read as one lived-in structure;
+- preserved the persistent landmark placement, collision, navigation, region
+  simulation and tactical camera; this is composition-only and adds no player
+  workload or world state;
+- added a release regression guard for the bounded review offset; the exact
+  Windows review remains silent and uses Godot Dummy audio with `--quiet-audio`.
+
 ## Focused presentation-review navigation polish
 
 - corrected the development gallery legend so the direct digit-key controls
