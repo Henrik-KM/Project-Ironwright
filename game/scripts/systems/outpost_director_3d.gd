@@ -117,7 +117,7 @@ func can_authorize_build(site_id: StringName, role: StringName) -> bool:
         return false
     if progression == null or progression.heartforge_tier < 2 or not role_available(role):
         return false
-    if not operation.is_empty() or _other_remote_operation_active():
+    if not operation.is_empty() or _other_local_operation_active():
         return false
     if run_state.scrap < build_cost(role, 1):
         return false
@@ -145,7 +145,7 @@ func can_authorize_upgrade(site_id: StringName) -> bool:
         return false
     if progression == null or site.outpost.tier >= progression.maximum_outpost_tier():
         return false
-    if not operation.is_empty() or _other_remote_operation_active():
+    if not operation.is_empty() or _other_local_operation_active():
         return false
     if run_state.scrap < upgrade_cost(site.outpost):
         return false
@@ -177,7 +177,7 @@ func _process(delta: float) -> void:
     if maintenance_clock < 1.0:
         return
     maintenance_clock = 0.0
-    if _other_remote_operation_active():
+    if _other_local_operation_active():
         return
     if _try_schedule_automatic_rebuild():
         return
@@ -194,10 +194,10 @@ func _start_operation(
     ) -> bool:
     if site == null or members.is_empty() or autonomy_director == null:
         return false
-    if _other_remote_operation_active():
+    if _other_local_operation_active():
         return false
 
-    autonomy_director.set_process(false)
+    autonomy_director.reserve_external_operation_members(members)
     var group_id := StringName("outpost_%s" % String(kind))
     for index in range(members.size()):
         members[index].set_group(group_id, index)
@@ -357,29 +357,31 @@ func _begin_return() -> void:
 func _complete_return() -> void:
     var detail_key := StringName("outpost_%s" % String(operation.get("kind", &"operation")))
     var cargo := int(operation.get("cargo", 0))
+    var completed_members := _living_operation_members()
     if cargo > 0:
         run_state.add_scrap(cargo, true)
         haul_returned.emit(cargo)
-    for robot in _living_operation_members():
+    for robot in completed_members:
         robot.set_group(&"reserve", 0)
         robot.set_goal(heartforge.global_position, "Remote operation complete; returning to the general machine pool.", robot.move_speed * 0.72)
     operation.clear()
     if operation_detail_director != null:
         operation_detail_director.clear_operation(detail_key)
-    autonomy_director.set_process(true)
+    autonomy_director.release_external_operation_members(completed_members)
     operation_changed.emit(&"outpost", &"idle", "The remote group has returned to the Heartforge.")
 
 
 func _abort_operation(reason: String) -> void:
     var detail_key := StringName("outpost_%s" % String(operation.get("kind", &"operation")))
-    for robot in _living_operation_members():
+    var aborted_members := _living_operation_members()
+    for robot in aborted_members:
         robot.set_group(&"reserve", 0)
         robot.set_goal(heartforge.global_position, reason, robot.move_speed * 0.72)
     operation.clear()
     if operation_detail_director != null:
         operation_detail_director.clear_operation(detail_key)
     if autonomy_director != null:
-        autonomy_director.set_process(true)
+        autonomy_director.release_external_operation_members(aborted_members)
     operation_changed.emit(&"outpost", &"aborted", reason)
 
 
@@ -465,7 +467,7 @@ func _select_team(kind: StringName) -> Array[RobotUnit3D]:
 
 func _hold_nonmembers_at_heartforge(members: Array[RobotUnit3D]) -> void:
     var slot := 0
-    for robot in autonomy_director.living_robots():
+    for robot in autonomy_director.available_living_robots():
         if robot in members or robot.archetype == &"companion":
             continue
         var angle := TAU * float(slot) / 6.0
@@ -516,13 +518,12 @@ func _hostile_near(position: Vector3, radius: float) -> bool:
     return false
 
 
-func _other_remote_operation_active() -> bool:
+func _other_local_operation_active() -> bool:
     if autonomy_director == null:
         return false
     return (
         not autonomy_director.salvage_operation.is_empty()
         or not autonomy_director.expedition_operation.is_empty()
-        or autonomy_director.has_external_operation()
     )
 
 
@@ -680,7 +681,7 @@ func _restore_active_operation(raw_data: Variant) -> void:
     }
     for index in range(members.size()):
         members[index].set_group(StringName("outpost_%s" % String(operation.get("kind", &"build"))), index)
-    autonomy_director.set_process(false)
+    autonomy_director.reserve_external_operation_members(members)
     operation_changed.emit(StringName(operation.get("kind", &"outpost")), StringName(operation.get("state", &"outbound")), "The saved outpost convoy resumed its physical route.")
 
 
@@ -719,7 +720,7 @@ func _on_outpost_threat(outpost: Outpost3D, enemy: Node3D) -> void:
 
 
 func _on_outpost_cargo_ready(outpost: Outpost3D) -> void:
-    if operation.is_empty() and not _other_remote_operation_active():
+    if operation.is_empty() and not _other_local_operation_active():
         _try_schedule_resource_haul()
 
 

@@ -710,6 +710,9 @@ func _finish_release_boot() -> void:
 	elif _has_authored_operation_review_flag():
 		_start_release_world()
 		call_deferred("_start_authored_operation_review")
+	elif _has_concurrent_operation_review_flag():
+		_start_release_world()
+		call_deferred("_start_concurrent_operation_review")
 	elif _has_casualty_recovery_review_flag():
 		_start_release_world()
 		call_deferred("_start_casualty_recovery_review")
@@ -942,6 +945,16 @@ func _has_authored_operation_review_flag() -> bool:
 			return true
 	for argument in OS.get_cmdline_user_args():
 		if str(argument) == "--authored-operation-review":
+			return true
+	return false
+
+
+func _has_concurrent_operation_review_flag() -> bool:
+	for argument in OS.get_cmdline_args():
+		if str(argument) == "--concurrent-operation-review":
+			return true
+	for argument in OS.get_cmdline_user_args():
+		if str(argument) == "--concurrent-operation-review":
 			return true
 	return false
 
@@ -1315,6 +1328,47 @@ func _start_complete_objective_review() -> void:
 	if hud != null:
 		hud.push_notification(_localized_runtime_text("notification.complete.response_offer", "WORLD-STATE RESPONSE OFFER · PRESSURE HAS BECOME A CHOICE"))
 	call_deferred("_update_complete_game_objective")
+
+
+func _start_concurrent_operation_review() -> void:
+	if progression == null or region_director == null or long_operation_director == null or outpost_director == null:
+		return
+	progression.set_heartforge_tier(2)
+	if not progression.has_technology(&"tech.machine.group_coordination"):
+		progression.unlocked_technologies.append(&"tech.machine.group_coordination")
+	run_state.scrap = 900
+	run_state.robots_built = maxi(run_state.robots_built, 8)
+	run_state.scrap_changed.emit(run_state.scrap)
+	var roles: Array[StringName] = [&"salvager", &"guardian", &"scout"]
+	var positions: Array[Vector3] = [Vector3(-4.0, 0.0, 4.0), Vector3(0.0, 0.0, 5.0), Vector3(4.0, 0.0, 4.0)]
+	for index in roles.size():
+		while autonomy_director.living_robots(roles[index]).size() < 2:
+			_spawn_robot(roles[index], positions[index] + Vector3(float(autonomy_director.living_robots(roles[index]).size()) * 1.4, 0.0, 1.8), 1)
+	region_director.discover_region(&"region.west_grid")
+	var site := outpost_director.sites[0] as OutpostSite3D if not outpost_director.sites.is_empty() else null
+	if site == null:
+		return
+	site.set_discovered(true)
+	if not site.has_outpost():
+		outpost_director._spawn_outpost(site, &"resource", 1)
+	if site.outpost != null:
+		site.outpost.stored_scrap = 30
+	if not long_operation_director.authorize(&"operation.west_grid_survey"):
+		push_error("Concurrent operation review could not authorize its long-range fixture.")
+		return
+	outpost_director.maintenance_clock = 2.0
+	outpost_director._process(1.1)
+	if long_operation_director.active_operation.is_empty() or outpost_director.operation.is_empty():
+		push_error("Concurrent operation review did not create both remote fixtures.")
+		return
+	follow_operation = false
+	player.input_enabled = false
+	hud.push_notification("CONCURRENT REMOTE REVIEW · LONG-RANGE GROUP + OUTPOST HAUL ACTIVE")
+	long_operation_director.operation_changed.emit(
+		&"concurrent_review",
+		&"active",
+		"Two autonomous remote groups are travelling at once; each keeps a separate formation and the Heartforge network remains online."
+	)
 
 
 func _create_presentation_review_stage() -> void:
@@ -2274,6 +2328,7 @@ func _should_build_city_on_boot() -> bool:
 			"--new", "--new-world", "--presentation-review", "--title-review",
 			"--stream-ring-review", "--route-memory-review", "--route-recovery-marker-review",
 			"--dynamic-operation-review", "--authored-operation-review", "--casualty-recovery-review",
+			"--concurrent-operation-review",
 			"--run-variation-review", "--heartforge-progression-review", "--adaptive-defense-review",
 			"--complete-objective-review", "--endgame-protocol-review", "--mechromancer-evolution-review",
 		]:

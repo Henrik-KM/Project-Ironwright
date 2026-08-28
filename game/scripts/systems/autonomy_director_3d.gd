@@ -82,6 +82,10 @@ func available_living_robots(archetype_filter: StringName = &"") -> Array[RobotU
 
 func set_external_operation_members(members: Array[RobotUnit3D]) -> void:
     external_operation_members.clear()
+    reserve_external_operation_members(members)
+
+
+func reserve_external_operation_members(members: Array[RobotUnit3D]) -> void:
     for robot in members:
         if is_instance_valid(robot) and robot.is_alive() and robot not in external_operation_members:
             external_operation_members.append(robot)
@@ -89,6 +93,12 @@ func set_external_operation_members(members: Array[RobotUnit3D]) -> void:
 
 func clear_external_operation_members() -> void:
     external_operation_members.clear()
+
+
+func release_external_operation_members(members: Array[RobotUnit3D]) -> void:
+    for robot in members:
+        external_operation_members.erase(robot)
+    _remove_invalid_external_members()
 
 
 func external_operation_member_count() -> int:
