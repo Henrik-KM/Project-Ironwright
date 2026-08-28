@@ -5,6 +5,7 @@ on:
     branches:
       - agent/commercial-release-candidate
       - agent/commercial-release-candidate-recertification
+      - agent/commercial-release-candidate-final
   workflow_dispatch:
 
 permissions:
@@ -160,7 +161,7 @@ jobs:
             echo "Generated assets and release certificate are already current."
           else
             git commit -m "Certify Project Ironwright 1.0.0-rc.1"
-            git push origin HEAD:agent/commercial-release-candidate
+            git push origin HEAD:$GITHUB_REF_NAME
           fi
 
       - name: Upload Windows package
