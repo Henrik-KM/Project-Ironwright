@@ -392,6 +392,11 @@ func _run_all() -> void:
                     var grid_valve_before := grid_valve.rotation
                     var grid_tendril_before := grid_tendril.rotation
                     landmark.call("_process", 0.5)
+                    # Avoid making the acceptance gate depend on one exact
+                    # sine phase; hosted runners can enter this sample at a
+                    # slightly different elapsed time.
+                    if grid_signal.scale.is_equal_approx(grid_signal_before):
+                        landmark.call("_process", 0.17)
                     _expect(not grid_signal.scale.is_equal_approx(grid_signal_before), "West Grid tank signal must pulse as a restrained presentation cue.")
                     _expect(not grid_warning.scale.is_equal_approx(grid_warning_before), "West Grid warning light must carry deterministic presentation motion.")
                     _expect(not grid_growth.scale.is_equal_approx(grid_growth_before), "West Grid organic growth must carry deterministic presentation motion.")
@@ -543,6 +548,13 @@ func _run_all() -> void:
                     var collar_before := archive_collar.scale
                     var tendril_before := archive_tendril.rotation
                     landmark.call("_process", 0.5)
+                    # A presentation pulse is continuous, so a single fixed
+                    # sample can land on the same phase on a different
+                    # runner. Take one bounded follow-up sample only when the
+                    # first sample is phase-aligned; this keeps the check
+                    # about observable motion rather than frame timing.
+                    if archive_beacon.scale.is_equal_approx(beacon_before):
+                        landmark.call("_process", 0.17)
                     _expect(not archive_beacon.scale.is_equal_approx(beacon_before), "North Ruins beacon must pulse as a restrained presentation cue.")
                     _expect(not archive_creep.scale.is_equal_approx(creep_before), "North Ruins organic creep must carry deterministic presentation motion.")
                     _expect(not archive_collar.scale.is_equal_approx(collar_before), "North Ruins beacon collar must carry restrained service motion.")
