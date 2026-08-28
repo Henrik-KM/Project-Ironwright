@@ -1028,6 +1028,7 @@ func _run_all() -> void:
         _expect(_find_named(player, "FieldWorkGloveLeft") != null and _find_named(player, "FieldWorkGloveRight") != null and _find_named(player, "FieldCoatHemLeft") != null and _find_named(player, "FieldCoatHemRight") != null, "The Mechromancer field-finish pass must retain paired work gloves and grounded coat-hem hardware.")
         _expect(_find_named(player, "FieldPackBackplate") != null and _find_named(player, "FieldPackFrameRailLeft") != null and _find_named(player, "FieldPackTopRoll") != null and _find_named(player, "FieldPackServiceCable") != null, "The Mechromancer hero surface pass must retain a framed rear pack and readable service cable.")
         _expect(_find_named(player, "FieldCommsYoke") != null and _find_named(player, "FieldCommsAntenna") != null and _find_named(player, "FieldCommsBeacon") != null and _find_named(player, "FieldCommsCable") != null, "The Mechromancer must retain the asymmetrical communications yoke with antenna, beacon and service cable.")
+        _expect(_find_named(player, "HoodLowerSeam") != null and _find_named(player, "VisorBrow") != null and _find_named(player, "VisorMountLeft") != null and _find_named(player, "VisorMountRight") != null, "The authored Mechromancer must retain the protective hood seam and fastened visor brow finish.")
         if player_presentation != null:
             _expect(player_presentation.animation_player != null, "The authored Mechromancer must expose an imported animation player.")
             if player_presentation.animation_player != null:

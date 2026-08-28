@@ -689,6 +689,7 @@ def main() -> None:
     limb_between("HoodFoldLeft", (-0.20, 0.38, 1.92), (-0.15, 0.38, 2.19), 0.014, root, coat_fold, 0.80, 0.004)
     limb_between("HoodFoldRight", (0.20, 0.38, 1.92), (0.15, 0.38, 2.19), 0.014, root, coat_fold, 0.80, 0.004)
     arc_ribbon("HoodRim", (0.0, -0.32, 2.03), 0.245, 0.082, 0.050, root, coat_fold, math.pi * 0.10, math.pi * 0.90)
+    box("HoodLowerSeam", (0.28, 0.025, 0.045), (0.0, -0.42, 1.91), root, leather, 0.012)
     cloth_panel("HoodOpening", [(-0.18, 0.10), (0.18, 0.10), (0.16, -0.12), (-0.16, -0.12)], 0.028, (0.0, -0.35, 2.05), root, hood_inner, 0.010)
     socket("FaceAnchor", root, (0.0, -0.30, 2.05))["socket_type"] = "face_anchor"
     uv_sphere("Face", (0.17, 0.12, 0.21), (0.0, -0.35, 2.05), root, skin)
@@ -703,6 +704,9 @@ def main() -> None:
     box("VisorFrame", (0.27, 0.052, 0.090), (0.0, -0.445, 2.085), root, metal, 0.022)
     box("Visor", (0.21, 0.024, 0.044), (0.0, -0.478, 2.085), root, glass, 0.012)
     box("VisorGlow", (0.15, 0.012, 0.014), (0.0, -0.495, 2.085), root, cyan, 0.005)
+    box("VisorBrow", (0.25, 0.034, 0.045), (0.0, -0.465, 2.145), root, metal, 0.014)
+    uv_sphere("VisorMountLeft", (0.028, 0.028, 0.028), (-0.145, -0.492, 2.085), root, metal)
+    uv_sphere("VisorMountRight", (0.028, 0.028, 0.028), (0.145, -0.492, 2.085), root, metal)
     cylinder("Neck", 0.11, 0.16, (0.0, 0.0, 1.83), root, skin, 16, 0.015)
 
     left_shoulder = uv_sphere("LeftShoulder", (0.19, 0.16, 0.12), (-0.37, -0.01, 1.66), root, coat)
@@ -859,7 +863,7 @@ def main() -> None:
     bpy.ops.object.select_all(action="SELECT")
     bpy.context.view_layer.objects.active = root
     scene["ironwright_asset_id"] = "mechromancer.player.v1"
-    scene["required_nodes"] = "MechromancerModel,PistolMuzzle,ShoulderLamp,FaceAnchor,FieldPack,FieldCommsYoke,FieldCommsAntenna,FieldCommsBeacon,FieldCommsCable,CoatTailLeft,CoatTailRight"
+    scene["required_nodes"] = "MechromancerModel,PistolMuzzle,ShoulderLamp,FaceAnchor,FieldPack,FieldCommsYoke,FieldCommsAntenna,FieldCommsBeacon,FieldCommsCable,CoatTailLeft,CoatTailRight,HoodLowerSeam,VisorBrow,VisorMountLeft,VisorMountRight"
     scene["animation_clips"] = "Idle,Walk,Fire,Work,Upgrade,Hit"
     bpy.ops.wm.save_as_mainfile(filepath=str(BLEND_PATH))
     bpy.ops.export_scene.gltf(

@@ -36,7 +36,11 @@
     "FieldCommsBeacon",
     "FieldCommsCable",
     "CoatTailLeft",
-    "CoatTailRight"
+    "CoatTailRight",
+    "HoodLowerSeam",
+    "VisorBrow",
+    "VisorMountLeft",
+    "VisorMountRight"
   ],
   "animation_clips": ["Idle", "Walk", "Fire", "Work", "Upgrade", "Hit"]
 }
