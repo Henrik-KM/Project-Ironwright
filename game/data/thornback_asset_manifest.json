@@ -5,6 +5,6 @@
   "runtime_path": "res://assets/thornback/thornback.gltf",
   "quality": "authored_high_definition",
   "license": "Original Project Ironwright asset",
-  "required_nodes": ["ThornbackModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "ThornbackCrown", "ThornbackSpineL", "ThornbackSpineR", "ThornbackJawPlateL", "ThornbackBarb0", "ThornbackEyeR", "ProductionAssetMarker"],
+  "required_nodes": ["ThornbackModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "ThornbackCrown", "ThornbackSpineL", "ThornbackSpineR", "ThornbackJawPlateL", "ThornbackJawToothL0", "ThornbackJawToothR1", "ThornbackBarb0", "ThornbackEyeR", "ProductionAssetMarker"],
   "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]
 }

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-08-28 — Thornback jaw-silhouette finish
+
+- added a dense paired tooth edge beneath the authored Thornback jaw plates;
+- seated the teeth into the existing animated jaw sockets without changing
+  gameplay, collision, ecology, save state or recurring player work;
+- added manifest and aesthetic-contract coverage and corrected the live
+  late-organic review using Godot Dummy audio and `--quiet-audio` only.
+
 ## 2026-08-28 — Carrion Bell resonator finish
 
 - added a high-definition bell lip, suspended clapper and clapper tip to the

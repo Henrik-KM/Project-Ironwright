@@ -615,6 +615,10 @@ def build_family(name: str, spec: dict) -> None:
     if name == "thornback":
         mesh_ids["ThornbackCrownLobe"] = mesh("ThornbackCrownLobe", add_organic_lobe(builder, (1.42, 0.38, 1.02), shell, lobes=4, rings=10, sides=40, scallop_amplitude=0.14, leading_extension=0.36, fold_strength=0.82))
         mesh_ids["ThornbackBarb"] = mesh("ThornbackBarb", add_tapered_thorn(builder, 0.14, 0.78, bone))
+        # The territorial jaw needs a small, readable tooth edge beneath the
+        # broad plates. Keep the teeth as children of those existing sockets so
+        # the authored attack motion remains the sole motion owner.
+        mesh_ids["ThornbackJawTooth"] = mesh("ThornbackJawTooth", add_tapered_thorn(builder, 0.07, 0.42, bone, sides=28))
     # Miremaw's gill fan is its breathing, amphibious identity. Add a paired
     # folded collar around the existing fan so the side profile carries a
     # layered membrane break instead of one broad plate. The collar is
@@ -878,7 +882,12 @@ def build_family(name: str, spec: dict) -> None:
         add_node("ThornbackCrownPlate", mesh_ids["ThornbackCrownLobe"], (0.0, 1.58, -0.96), rotation=(0.16, 0.0, 0.08), scale=(1.16, 1.0, 0.8), extras={"surface": "crown_lobe"})
         for side in (-1.0, 1.0):
             suffix = "L" if side < 0 else "R"
-            add_node(f"ThornbackJawPlate{suffix}", mesh_ids["PlateCap"], (side * 0.42, 0.72, -1.42), rotation=(side * 0.38, 0.0, side * 0.12), scale=(0.82, 1.0, 0.74), extras={"surface": "jaw_plate"})
+            jaw_plate = add_node(f"ThornbackJawPlate{suffix}", mesh_ids["PlateCap"], (side * 0.42, 0.94, -1.20), rotation=(side * 0.38, 0.0, side * 0.12), scale=(0.82, 1.0, 0.74), extras={"surface": "jaw_plate"})
+            # Keep the rounded tooth bases intersecting the lower jaw edge;
+            # the points may hang below the plate, but the assembly must never
+            # read as detached hardware in the close gallery frame.
+            for tooth_index, tooth_position in enumerate(((-0.13, -0.07, -0.04), (0.13, -0.07, -0.14))):
+                add_node(f"ThornbackJawTooth{suffix}{tooth_index}", mesh_ids["ThornbackJawTooth"], tooth_position, scale=(0.82, 1.0, 0.82), extras={"surface": "jaw_tooth"}, parent=jaw_plate)
             add_node(f"ThornbackSpine{suffix}", mesh_ids["LongBone"], (side * 0.76, 1.42, 0.14), rotation=(0.0, side * 0.24, side * 0.34), scale=(0.82, 1.0, 0.86), extras={"socket_type": "dorsal_spine"})
             add_node(f"ThornbackEye{suffix}", mesh_ids["Eye"], (side * 0.24, 1.34, -1.36), extras={"socket_type": "threat_eye"})
         for index in range(3):
