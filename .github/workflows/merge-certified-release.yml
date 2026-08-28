@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - agent/commercial-release-candidate
+      - agent/commercial-release-candidate-recertification
+      - agent/commercial-release-candidate-final
 
 permissions:
   contents: write
@@ -29,7 +31,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          PR_NUMBER="$(gh pr list --repo "$GITHUB_REPOSITORY" --head agent/commercial-release-candidate --base main --state open --json number --jq '.[0].number')"
+          PR_NUMBER="$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$GITHUB_REF_NAME" --base main --state open --json number --jq '.[0].number')"
           test -n "$PR_NUMBER"
           test "$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json state --jq .state)" = "OPEN"
           if [ "$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft)" = "true" ]; then
@@ -40,7 +42,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          PR_NUMBER="$(gh pr list --repo "$GITHUB_REPOSITORY" --head agent/commercial-release-candidate --base main --state open --json number --jq '.[0].number')"
+          PR_NUMBER="$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$GITHUB_REF_NAME" --base main --state open --json number --jq '.[0].number')"
           test -n "$PR_NUMBER"
           gh pr merge "$PR_NUMBER" \
             --repo "$GITHUB_REPOSITORY" \

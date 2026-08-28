@@ -5,6 +5,7 @@ on:
     branches:
       - agent/commercial-release-candidate
       - agent/commercial-release-candidate-recertification
+      - agent/commercial-release-candidate-final
   workflow_dispatch:
 
 permissions:
