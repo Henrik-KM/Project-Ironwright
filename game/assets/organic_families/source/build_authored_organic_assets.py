@@ -686,6 +686,28 @@ def build_family(name: str, spec: dict) -> None:
                 fold_strength=0.90,
             ),
         )
+        # The Carrion Bell's signal organ needs a readable mouth and depth
+        # cue, not only a thin torus around a glowing core. Keep the detail
+        # parented to the existing resonator socket so its authored attack and
+        # pulse animation remain the sole motion owner.
+        mesh_ids["CarrionbellResonatorBellLip"] = mesh(
+            "CarrionbellResonatorBellLip",
+            add_organic_lobe(
+                builder,
+                (0.78, 0.22, 0.46),
+                bone,
+                lobes=6,
+                rings=10,
+                sides=48,
+                scallop_amplitude=0.12,
+                leading_extension=0.22,
+                fold_strength=0.72,
+            ),
+        )
+        mesh_ids["CarrionbellResonatorClapper"] = mesh(
+            "CarrionbellResonatorClapper",
+            add_capsule(builder, 0.055, 0.42, bone, 24),
+        )
     # Rootweaver's paired crown plates frame the route-controller oculi. Give
     # those existing sockets a closed folded shell so they read as living
     # crown petals rather than two broad horizontal service plates.
@@ -812,9 +834,12 @@ def build_family(name: str, spec: dict) -> None:
         add_node("CarrionbellMantle", mesh_ids["Soft"], (0.0, 1.18, 0.12), scale=(1.25, 1.55, 1.2), extras={"socket_type": "bell_mantle"})
         add_node("CarrionbellMantleSeamL", mesh_ids["Ridge"], (-0.72, 1.25, 0.06), rotation=(0.0, -0.24, -0.08), scale=(0.68, 1.0, 0.88), extras={"surface": "mantle_seam"})
         add_node("CarrionbellMantleSeamR", mesh_ids["Ridge"], (0.72, 1.25, 0.06), rotation=(0.0, 0.24, 0.08), scale=(0.68, 1.0, 0.88), extras={"surface": "mantle_seam"})
-        add_node("CarrionbellResonator", mesh_ids["Eye"], (0.0, 1.92, -0.35), scale=(1.4, 0.8, 1.0), extras={"socket_type": "resonator"})
+        resonator = add_node("CarrionbellResonator", mesh_ids["Eye"], (0.0, 1.92, -0.35), scale=(1.4, 0.8, 1.0), extras={"socket_type": "resonator"})
         add_node("CarrionbellResonatorCore", mesh_ids["Eye"], (0.0, 1.92, -0.44), scale=(0.62, 0.62, 0.72), extras={"surface": "resonator_core"})
         add_node("CarrionbellResonatorRing", mesh_ids["ResonatorRing"], (0.0, 1.92, -0.35), rotation=(1.5708, 0.0, 0.0), scale=(1.8, 1.0, 1.35), extras={"surface": "resonator_lip"})
+        add_node("CarrionbellResonatorBellLip", mesh_ids["CarrionbellResonatorBellLip"], (0.0, -0.04, 0.08), rotation=(0.24, 0.0, 0.0), scale=(1.28, 0.92, 1.12), extras={"surface": "resonator_bell_lip"}, parent=resonator)
+        add_node("CarrionbellResonatorClapper", mesh_ids["CarrionbellResonatorClapper"], (0.0, -0.24, 0.13), rotation=(0.16, 0.0, 0.0), scale=(0.76, 0.92, 0.76), extras={"surface": "resonator_clapper"}, parent=resonator)
+        add_node("CarrionbellResonatorClapperTip", mesh_ids["CrownFastener"], (0.0, -0.46, 0.13), scale=(1.18, 1.18, 1.18), extras={"surface": "resonator_clapper_tip"}, parent=resonator)
         # The resonant crown is a raised bell lip, not a horizontal cap. A
         # small forward pitch exposes its folded depth to the key light while
         # keeping the stable crown socket and animation target unchanged.

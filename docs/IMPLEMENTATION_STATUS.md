@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Carrion Bell resonator finish
+
+- added a dense closed bell lip, suspended clapper and clapper tip to the
+  authored Carrion Bell asset so its signal organ reads as a layered resonator
+  rather than a thin ring at close review distance;
+- parented the new details to the existing `CarrionbellResonator` animation
+  socket, preserving stable gameplay sockets, animation ownership, collision,
+  ecology and save state with no new recurring player work;
+- added manifest and aesthetic-contract coverage; the merged-build page 3/15
+  late-organic review passed silently with Godot Dummy audio and
+  `--quiet-audio` only.
+
 ## Focused threaded authored-region loading pass
 
 - replaced synchronous authored landmark package attachment with bounded

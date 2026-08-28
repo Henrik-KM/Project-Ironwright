@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-08-28 — Carrion Bell resonator finish
+
+- added a high-definition bell lip, suspended clapper and clapper tip to the
+  authored Carrion Bell signal organ;
+- kept the new detail parented to the existing resonator animation socket, with
+  no gameplay, collision, ecology, save-state or recurring-work changes;
+- added asset-manifest and aesthetic-contract coverage and completed a silent
+  late-organic gallery review with Godot Dummy audio and `--quiet-audio` only.
+
 ## 2026-08-28 — Threaded authored-region package loading
 
 - replaced synchronous authored landmark package attachment with bounded
