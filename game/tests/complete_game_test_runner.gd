@@ -436,6 +436,7 @@ func _run_all() -> void:
     _expect(world.hud.visible, "Continuing after victory must leave the tactical HUD visible.")
     await process_frame
     _expect(world.get_node_or_null("ProceduralUrbanDistrict") is Node3D and (world.get_node("ProceduralUrbanDistrict") as Node3D).visible, "Continuing after victory must keep the authored urban world visible.")
+    _expect(world.release_world_art != null and world.release_world_art.dressing_root != null and world.release_world_art.dressing_root.visible and world.release_world_art.dressing_root.is_visible_in_tree(), "Continuing after victory must keep the release presentation dressing visible with the living sanctuary.")
     _expect(world.get_node_or_null("Heartforge") is Node3D and (world.get_node("Heartforge") as Node3D).visible, "Continuing after victory must keep the Heartforge visible.")
     _expect(world.get_node_or_null("HeartforgeVerticalSlice") is Node3D and (world.get_node("HeartforgeVerticalSlice") as Node3D).visible, "Continuing after victory must keep the representative sanctuary slice visible.")
     _expect(world.long_operation_director.available_operations().any(func(entry: Dictionary) -> bool: return StringName(str(entry.get("id", ""))) == &"operation.post_victory_archive"), "The post-victory archive must become available after the player continues.")

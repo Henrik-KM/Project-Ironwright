@@ -166,7 +166,6 @@ func _process(delta: float) -> void:
 	if release_front_end != null and release_front_end.is_modal_open():
 		_ensure_modal_focus()
 
-
 func _on_player_died() -> void:
 	if session_diagnostics != null:
 		session_diagnostics.record_event(&"player_defeat", "The Mechromancer was lost.")
@@ -336,6 +335,12 @@ func _restore_sanctuary_continuation_presentation() -> void:
 	paused = false
 	if release_front_end != null:
 		release_front_end.hide_all()
+	if release_world_art != null and release_world_art.dressing_root != null:
+		# The release dressing is a sibling presentation layer rather than a
+		# child of the procedural city. Reassert it explicitly at this boundary;
+		# otherwise the living sanctuary can retain only actors and forge hardware
+		# after a victory-review transition.
+		release_world_art.dressing_root.visible = true
 	_set_tactical_hud_visible(true)
 	if player != null:
 		player.input_enabled = true
@@ -2232,13 +2237,16 @@ func _should_build_city_on_boot() -> bool:
 	var arguments := OS.get_cmdline_args()
 	arguments.append_array(OS.get_cmdline_user_args())
 	for argument in arguments:
-		if str(argument) in [
+		var raw_argument := str(argument)
+		if raw_argument in [
 			"--new", "--new-world", "--presentation-review", "--title-review",
 			"--stream-ring-review", "--route-memory-review", "--route-recovery-marker-review",
 			"--dynamic-operation-review", "--authored-operation-review", "--casualty-recovery-review",
 			"--run-variation-review", "--heartforge-progression-review", "--adaptive-defense-review",
 			"--complete-objective-review", "--endgame-protocol-review", "--mechromancer-evolution-review",
 		]:
+			return true
+		if raw_argument.begins_with("--endgame-protocol-review="):
 			return true
 	return false
 
