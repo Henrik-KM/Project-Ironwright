@@ -2165,3 +2165,13 @@ truthful at compact window sizes without adding a queue, budget dashboard or
 new interaction. The strip is localized through the existing English, German
 and Swedish catalogs. Exact silent live review uses Godot Dummy audio with
 `--quiet-audio`; no live speakers are used.
+
+## Focused streamed-authored hierarchy stability pass — 2026-08-28
+
+Streamed authored district scenes now retain their imported glTF hierarchy
+under the stable presentation root while a district is promoted. This avoids
+same-frame root reparent/free churn in the compatibility renderer while
+preserving recursive tuning, motion capture, stable node names and
+reduced-detail transitions. Collision, navigation, ecology, operations and
+save contracts are unchanged. Exact silent live review uses Godot Dummy audio
+with `--quiet-audio`; no live speakers are used.

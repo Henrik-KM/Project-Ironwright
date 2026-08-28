@@ -235,17 +235,17 @@ func _attach_authored_model_scene() -> void:
         return
     var authored_instance := _authored_model_scene.instantiate()
     if _authored_imported_root_name != &"":
-        var imported_root := authored_instance.get_node_or_null(NodePath(String(_authored_imported_root_name))) as Node
-        if imported_root == null:
-            imported_root = authored_instance
-        var authored_children := imported_root.get_children()
-        for child in authored_children:
-            child.owner = null
-            imported_root.remove_child(child)
-            _authored_model_root.add_child(child)
-        if imported_root != authored_instance:
-            imported_root.free()
-        authored_instance.free()
+        # Keep the imported scene hierarchy intact. Reparenting every glTF
+        # child and freeing its imported roots in the same frame can leave
+        # renderer RIDs in an invalid state on Godot's headless compatibility
+        # renderer while a streamed district is being promoted. The nested
+        # root remains presentation-only and all recursive tuning/motion
+        # discovery continues to find the same stable node names.
+        authored_instance.name = "ImportedAuthoredModel"
+        _authored_model_root.add_child(authored_instance)
+        _apply_authored_model_tuning()
+        _capture_region_motion_nodes()
+        return
     else:
         authored_instance.name = "ImportedAuthoredModel"
         _authored_model_root.add_child(authored_instance)
