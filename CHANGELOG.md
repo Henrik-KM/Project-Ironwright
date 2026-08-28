@@ -1,5 +1,11 @@
 # Changelog
 
+## Pre-alpha route-recovery marker localization milestone
+
+- added readable Detour/Umweg/Omväg operation names and route-recovery review notifications to every supported locale so physical detour markers never expose raw localization keys;
+- expanded release localization regression coverage for visible German and Swedish detour markers and the review notification;
+- live-reviewed the corrected marker at 1280x720 with Godot Dummy audio and quiet mode only; no live speakers were used.
+
 ## Pre-alpha sanctuary capstone framing milestone
 
 - moved the completed Transformation sanctuary crown behind the Heartforge-facing approach and reduced its final footprint so the living loop remains legible without covering the surviving Mechromancer, Bulwark or Heartforge;

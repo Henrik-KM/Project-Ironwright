@@ -1,5 +1,13 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused route-recovery marker localization pass — 2026-08-28
+
+The physical autonomous detour marker now resolves its operation name and
+review notification through the supported English, German and Swedish
+catalogs. The presentation contract rejects raw localization keys in the
+visible marker. The corrected marker passed live review at 1280x720 with
+Godot Dummy audio and quiet mode only; no live speakers were used.
+
 ## Focused sanctuary capstone framing pass — 2026-08-28
 
 The completed Transformation sanctuary crown now shifts behind the Heartforge-

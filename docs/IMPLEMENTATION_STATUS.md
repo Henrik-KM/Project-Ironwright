@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused route-recovery marker localization pass
+
+- added stable localized names for the physical detour review operation and its
+  completion notification in English, German and Swedish;
+- release regression coverage now rejects raw localization keys in visible
+  detour markers and confirms the review notification resolves to readable
+  copy; the corrected review passed live at 1280x720 with Godot Dummy audio
+  and quiet mode only.
+
 ## Focused sanctuary capstone framing pass
 
 - moved the completed Transformation sanctuary crown behind the Heartforge-
