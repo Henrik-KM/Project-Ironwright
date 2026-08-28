@@ -5427,3 +5427,14 @@ roster checks and requires silent late-organic live review before merge.
   animation, collision, combat, autonomy, LOD and save ownership;
 - added manifest and close-camera mesh regression coverage; the exact silent
   friendly-roster gallery review is required before merge.
+
+## Focused West Grid gallery framing pass
+
+- gave the authored West Grid industrial landmark a dedicated bounded diagonal
+  presentation-review frame so the turbine hall, transformer yard and physical
+  reroute witness are not hidden behind foreground service stacks;
+- preserved runtime landmark placement, navigation, collision, ecology,
+  operation ownership and save state; this is presentation-only and adds no
+  recurring player or machine task;
+- added commercial-release coverage for the dedicated camera offset; exact
+  exported live review remains required for the region-family acceptance gate.

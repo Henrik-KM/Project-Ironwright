@@ -767,6 +767,8 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     _expect(riverworks_review_offset.z <= 16.6 and riverworks_review_offset.y <= 10.3, "Riverworks presentation review must use a closer frame for its pump and sluice hardware.")
     var tenement_review_offset := world._presentation_review_region_camera_offset(&"region.east_tenements")
     _expect(tenement_review_offset.z <= 19.2 and tenement_review_offset.y <= 9.2 and tenement_review_offset.x >= 6.5, "East Tenements presentation review must use a bounded diagonal frame for its facade, balcony and laundry hardware.")
+    var west_grid_review_offset := world._presentation_review_region_camera_offset(&"region.west_grid")
+    _expect(west_grid_review_offset.z <= 16.4 and west_grid_review_offset.y <= 8.6 and west_grid_review_offset.x <= -7.0, "West Grid presentation review must use a bounded diagonal frame for its industrial focal and reroute witness.")
     var tram_review_offset := world._presentation_review_region_camera_offset(&"region.tram_graveyard")
     _expect(tram_review_offset.z <= 16.6 and tram_review_offset.y <= 10.3 and is_zero_approx(tram_review_offset.x), "Tram Graveyard presentation review must use a centered rail-yard frame for its carriage hardware.")
     world._show_presentation_review_page(9)

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-08-28 — West Grid gallery framing
+
+- gave the authored West Grid industrial landmark a dedicated diagonal review
+  frame so its switchyard depth and physical reroute witness remain visible
+  instead of being hidden behind foreground service stacks;
+- kept the change presentation-only, with no runtime navigation, collision,
+  save, ecology or recurring-task impact.
+
 ## 2026-08-28 — East Tenements gallery framing
 
 - tightened the development-only East Tenements presentation frame so the

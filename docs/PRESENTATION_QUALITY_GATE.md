@@ -2058,3 +2058,12 @@ sockets, animation ownership, collision, combat, autonomy, LOD or save state.
 Exact silent 1280x720 page 1/15 live review is required with Godot Dummy audio
 and `--quiet-audio` only; no live speakers are used. Broader human friendly
 roster and production-art acceptance remains open.
+
+## Focused West Grid gallery framing pass — 2026-08-28
+
+The authored West Grid landmark now uses a bounded diagonal presentation frame
+so its industrial depth, transformer hardware and physical reroute witness stay
+visible instead of aligning behind the foreground service stacks. Runtime
+placement and encounter geometry are unchanged. Exact silent 1600x900 review
+is required with Godot Dummy audio and `--quiet-audio` only; no live speakers
+are used. Broader region-family and production-art acceptance remains open.

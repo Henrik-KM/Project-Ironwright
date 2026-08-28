@@ -1527,6 +1527,13 @@ func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3
 		return Vector3(0.0, 10.2, 15.0)
 	if region_id == &"region.north_ruins":
 		return Vector3(-7.0, 9.6, 14.8)
+	if region_id == &"region.west_grid":
+		# The industrial hall's foreground service stacks otherwise line up
+		# directly over the switchyard and reroute witness under the shared
+		# elevated remote angle. A bounded diagonal frame keeps the turbine
+		# housing, transformer hardware and physical route board legible while
+		# leaving the runtime landmark, navigation and encounter geometry alone.
+		return Vector3(-7.4, 8.4, 16.2)
 	if region_id == &"region.east_tenements":
 		# The residential blocks are broad and low-detail from the shared remote
 		# angle. A closer diagonal frame lets the facade bands, balconies and
