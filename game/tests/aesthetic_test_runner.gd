@@ -538,6 +538,18 @@ func _run_all() -> void:
                     landmark.call("_process", 0.5)
                     _expect(not market_light.scale.is_equal_approx(market_light_before), "Flood Market waterline must pulse as a restrained presentation cue.")
                     _expect(not market_growth.scale.is_equal_approx(market_growth_before), "Flood Market organic growth must carry deterministic presentation motion.")
+            if landmark.region_kind == &"research":
+                var labs_spine := landmark.find_child("BuriedLabsContainmentSpine", true, false) as Node3D
+                _expect(labs_spine != null, "Buried Laboratories must expose a bounded containment spine in the discovered encounter space.")
+                if labs_spine != null:
+                    _expect(labs_spine.find_child("LabContainmentBackwall", true, false) != null and labs_spine.find_child("LabAirlockDoor", true, false) != null and labs_spine.find_child("LabAirlockReader", true, false) != null, "Buried Laboratories must expose an approach-facing airlock and sealed backwall.")
+                    _expect(labs_spine.find_child("LabContainmentVessel", true, false) != null and labs_spine.find_child("LabContainmentCore", true, false) != null and labs_spine.find_child("LabContainmentCollar", true, false) != null and labs_spine.find_child("LabContainmentCap", true, false) != null, "Buried Laboratories must expose layered central containment-vessel anatomy.")
+                    _expect(labs_spine.find_child("LabSpineCoolingLouver", true, false) != null and labs_spine.find_child("LabSpineInstrumentFace", true, false) != null and labs_spine.find_child("LabSpineTransferPipe", true, false) != null, "Buried Laboratories must expose cooling, instrument and transfer hardware around the vessel.")
+                    var labs_vessel := labs_spine.find_child("LabContainmentVessel", true, false) as MeshInstance3D
+                    var labs_collar := labs_spine.find_child("LabContainmentCollar", true, false) as MeshInstance3D
+                    _expect(labs_vessel != null and _mesh_vertex_count(labs_vessel) >= 48 and labs_collar != null and _mesh_vertex_count(labs_collar) >= 300, "Buried Laboratories containment hardware must retain dense curved high-definition geometry.")
+                    var labs_light := labs_spine.find_child("EncounterPractical", true, false) as OmniLight3D
+                    _expect(labs_light != null and labs_light.light_energy <= 0.60, "Buried Laboratories containment lighting must remain a restrained violet cue instead of blooming over the encounter.")
             if landmark.region_kind == &"archive":
                 _expect(landmark.find_child("ArchiveCivicFacade", true, false) != null, "North Ruins must expose an authored civic archive facade.")
                 _expect(landmark.find_child("ArchiveFacadeCornice", true, false) != null and landmark.find_child("ArchiveFacadePilasterL", true, false) != null, "North Ruins must expose layered facade edge treatment and civic pilaster detail.")
