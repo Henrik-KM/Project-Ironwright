@@ -432,6 +432,12 @@ func _run_all() -> void:
     continue_event.pressed = true
     world._unhandled_input(continue_event)
     _expect(not world.game_ended and world.sanctuary_continuation, "The victory boundary must support an explicit continuation into the living sanctuary.")
+    _expect(world.hud.ending_panel != null and not world.hud.ending_panel.visible, "Continuing after victory must hide the ending surface without tearing down the HUD canvas.")
+    _expect(world.hud.visible, "Continuing after victory must leave the tactical HUD visible.")
+    await process_frame
+    _expect(world.get_node_or_null("ProceduralUrbanDistrict") is Node3D and (world.get_node("ProceduralUrbanDistrict") as Node3D).visible, "Continuing after victory must keep the authored urban world visible.")
+    _expect(world.get_node_or_null("Heartforge") is Node3D and (world.get_node("Heartforge") as Node3D).visible, "Continuing after victory must keep the Heartforge visible.")
+    _expect(world.get_node_or_null("HeartforgeVerticalSlice") is Node3D and (world.get_node("HeartforgeVerticalSlice") as Node3D).visible, "Continuing after victory must keep the representative sanctuary slice visible.")
     _expect(world.long_operation_director.available_operations().any(func(entry: Dictionary) -> bool: return StringName(str(entry.get("id", ""))) == &"operation.post_victory_archive"), "The post-victory archive must become available after the player continues.")
     _expect(_complete_operation(world, &"operation.post_victory_archive"), "The post-victory archive must remain a physical autonomous operation.")
     _expect(world.long_operation_director.has_component(&"component.town_archive"), "The post-victory archive must deliver its persistent town record component.")

@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## First-victory sanctuary handoff — 2026-08-28
+
+The first-victory panel now hides its bounded CanvasItem instead of queue-freeing
+it during the handoff. The city, Heartforge and tactical HUD therefore remain
+rendered when the player chooses to continue exploring the living sanctuary;
+the normal camera and gameplay flow resume immediately. The complete-game test
+asserts both the retained world roots and the hidden ending surface. Live
+review used Godot Dummy audio with `--quiet-audio`; no live speakers were used.
+
 ## Focused Thornback jaw-silhouette finish — 2026-08-28
 
 Thornback’s existing jaw plates now carry a dense paired tooth edge, with the

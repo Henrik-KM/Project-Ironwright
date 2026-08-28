@@ -326,6 +326,31 @@ func _snap_release_camera_to_subject() -> void:
 	camera_target_velocity = Vector3.ZERO
 
 
+func _restore_sanctuary_continuation_presentation() -> void:
+	# Dismissing the first-victory boundary returns to the living tactical world.
+	# Reassert the same resident presentation contract used by a fresh release
+	# start so the victory camera, atmosphere and stream ring cannot leave the
+	# player looking at an empty clear field.
+	if get_tree().paused:
+		get_tree().paused = false
+	paused = false
+	if release_front_end != null:
+		release_front_end.hide_all()
+	_set_tactical_hud_visible(true)
+	if player != null:
+		player.input_enabled = true
+	if camera != null:
+		_snap_release_camera_to_subject()
+	if region_atmosphere_director != null:
+		region_atmosphere_director.refresh_now()
+	if region_lod_director != null:
+		region_lod_director.refresh_now()
+	for node_name in ["ProceduralUrbanDistrict", "Heartforge", "HeartforgeVerticalSlice", "CozyHeartforgeCamp", "UrbanAestheticPass"]:
+		var node := get_node_or_null(node_name) as Node3D
+		if node != null:
+			node.visible = true
+
+
 func _update_camera_heading(velocity: Vector3, delta: float) -> void:
 	var planar_velocity := Vector3(velocity.x, 0.0, velocity.z)
 	if planar_velocity.length_squared() <= 0.16:
