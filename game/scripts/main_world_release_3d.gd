@@ -79,6 +79,7 @@ var title_review_capture_frames: int = 0
 var stream_ring_review_active: bool = false
 var stream_ring_review_clock: float = 0.0
 var stream_ring_review_phase: int = 0
+var title_pause_timer: Timer
 
 
 func _ready() -> void:
@@ -593,6 +594,13 @@ func _setup_release_services() -> void:
 	release_front_end.name = "ReleaseFrontEnd"
 	release_front_end.configure(localization_service, settings_service)
 	add_child(release_front_end)
+
+	title_pause_timer = Timer.new()
+	title_pause_timer.name = "TitlePauseTimer"
+	title_pause_timer.one_shot = true
+	title_pause_timer.process_mode = Node.PROCESS_MODE_ALWAYS
+	title_pause_timer.timeout.connect(_pause_title_after_first_frame)
+	add_child(title_pause_timer)
 
 
 func _connect_release_services() -> void:
@@ -2202,11 +2210,25 @@ func _show_title_screen() -> void:
 		release_audio.set_title_screen_active(true)
 	player.input_enabled = false
 	_set_tactical_hud_visible(false)
-	get_tree().paused = true
+	get_tree().paused = false
 	release_front_end.show_title(transactional_save_service.has_valid_save(RELEASE_SLOT) or _legacy_save_exists())
+	if title_pause_timer != null:
+		title_pause_timer.start(0.12)
+
+
+func _pause_title_after_first_frame() -> void:
+	# A paused SceneTree can present the initial swapchain as a transparent
+	# frame on desktop OpenGL. Let the title render briefly before freezing the
+	# simulation so the menu is visible without allowing gameplay to run.
+	if release_started or release_front_end == null:
+		return
+	if release_front_end.active_screen == &"title":
+		get_tree().paused = true
 
 
 func _start_release_world() -> void:
+	if title_pause_timer != null:
+		title_pause_timer.stop()
 	release_started = true
 	paused = false
 	if release_audio != null:

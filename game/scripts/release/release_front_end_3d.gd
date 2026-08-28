@@ -13,6 +13,7 @@ signal presentation_review_requested
 
 var localization: LocalizationService3D
 var settings_service: ReleaseSettingsService3D
+var root_control: Control
 var backdrop: ColorRect
 var title_atmosphere: ColorRect
 var title_panel: PanelContainer
@@ -85,6 +86,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _build_ui() -> void:
+    root_control = Control.new()
+    root_control.name = "ReleaseFrontEndRoot"
+    root_control.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    root_control.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    add_child(root_control)
+
     backdrop = ColorRect.new()
     backdrop.name = "ReleaseBackdrop"
     backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -93,7 +100,7 @@ func _build_ui() -> void:
     # opening. The panel and vignette still protect text contrast.
     backdrop.color = Color(0.008, 0.018, 0.024, 0.48)
     backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
-    add_child(backdrop)
+    root_control.add_child(backdrop)
 
     var vignette := ColorRect.new()
     vignette.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -583,7 +590,7 @@ func _panel(size_value: Vector2) -> PanelContainer:
     style.content_margin_top = 24.0
     style.content_margin_bottom = 24.0
     panel.add_theme_stylebox_override("panel", style)
-    add_child(panel)
+    root_control.add_child(panel)
     return panel
 
 

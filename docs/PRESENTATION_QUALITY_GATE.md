@@ -2136,3 +2136,11 @@ visible instead of aligning behind the foreground service stacks. Runtime
 placement and encounter geometry are unchanged. Exact silent 1600x900 review
 is required with Godot Dummy audio and `--quiet-audio` only; no live speakers
 are used. Broader region-family and production-art acceptance remains open.
+
+## Title-screen first-frame pause pass — 2026-08-28
+
+The release menu now renders through an explicit full-viewport control root and
+allows the first desktop frame to present before freezing the simulation. This
+preserves the paused title-screen contract while avoiding a transparent blank
+initial frame on the OpenGL compatibility renderer. Exact silent live review
+uses Godot Dummy audio with `--quiet-audio`; no live speakers are used.
