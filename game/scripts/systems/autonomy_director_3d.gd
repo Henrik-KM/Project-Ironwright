@@ -24,6 +24,7 @@ var operation_detail_director: Variant
 var robots: Array[RobotUnit3D] = []
 var salvage_operation: Dictionary = {}
 var expedition_operation: Dictionary = {}
+var external_operation_members: Array[RobotUnit3D] = []
 var assignment_clock: float = 0.0
 var _robot_serial: int = 1
 
@@ -69,6 +70,34 @@ func living_robots(archetype_filter: StringName = &"") -> Array[RobotUnit3D]:
             continue
         result.append(robot)
     return result
+
+
+func available_living_robots(archetype_filter: StringName = &"") -> Array[RobotUnit3D]:
+    var result: Array[RobotUnit3D] = []
+    for robot in living_robots(archetype_filter):
+        if robot not in external_operation_members:
+            result.append(robot)
+    return result
+
+
+func set_external_operation_members(members: Array[RobotUnit3D]) -> void:
+    external_operation_members.clear()
+    for robot in members:
+        if is_instance_valid(robot) and robot.is_alive() and robot not in external_operation_members:
+            external_operation_members.append(robot)
+
+
+func clear_external_operation_members() -> void:
+    external_operation_members.clear()
+
+
+func external_operation_member_count() -> int:
+    _remove_invalid_external_members()
+    return external_operation_members.size()
+
+
+func has_external_operation() -> bool:
+    return external_operation_member_count() > 0
 
 
 func count_robots(archetype_filter: StringName = &"") -> int:
@@ -117,10 +146,18 @@ func _remove_invalid_robots() -> void:
         var robot := robots[index]
         if not is_instance_valid(robot) or not robot.is_alive():
             robots.remove_at(index)
+    _remove_invalid_external_members()
+
+
+func _remove_invalid_external_members() -> void:
+    for index in range(external_operation_members.size() - 1, -1, -1):
+        var robot := external_operation_members[index]
+        if not is_instance_valid(robot) or not robot.is_alive():
+            external_operation_members.remove_at(index)
 
 
 func _assign_defensive_ring() -> void:
-    var defenders := living_robots()
+    var defenders := available_living_robots()
     var slot := 0
     for robot in defenders:
         if robot.archetype == &"companion":
@@ -141,7 +178,7 @@ func _keep_unassigned_defending() -> void:
     reserved.append_array(_salvage_guardians(&"player_guardians"))
     reserved.append_array(_salvage_scouts())
     var slot := 0
-    for robot in living_robots():
+    for robot in available_living_robots():
         if robot.archetype == &"companion" or robot in reserved:
             continue
         var angle := TAU * float(slot) / 6.0
@@ -156,7 +193,7 @@ func _keep_unassigned_defending() -> void:
 # -----------------------------------------------------------------------------
 
 func _try_start_salvage_operation() -> bool:
-    var salvagers := living_robots(&"salvager")
+    var salvagers := available_living_robots(&"salvager")
     if salvagers.is_empty() or _available_salvage_piles().is_empty():
         return false
 
@@ -197,7 +234,7 @@ func _refresh_distributed_salvagers() -> void:
     if salvage_operation.is_empty() or not bool(salvage_operation.get("distributed", false)):
         return
     var members: Array[RobotUnit3D] = []
-    members.append_array(living_robots(&"salvager"))
+    members.append_array(available_living_robots(&"salvager"))
     salvage_operation["members"] = members
 
     var existing_assignments: Dictionary = salvage_operation.get("assignments", {})
@@ -214,7 +251,7 @@ func _refresh_distributed_salvagers() -> void:
         existing_assignments.erase(raw_key)
     salvage_operation["assignments"] = existing_assignments
 
-    var scouts := living_robots(&"scout")
+    var scouts := available_living_robots(&"scout")
     var active_scouts: Array[RobotUnit3D] = []
     if not scouts.is_empty():
         active_scouts.append(scouts[0])
@@ -634,7 +671,7 @@ func _assign_specific_salvage_target(robot: RobotUnit3D, assignment: Dictionary,
 func _refresh_salvage_escort_assignments() -> void:
     if salvage_operation.is_empty() or player_reference == null:
         return
-    var guardians := living_robots(&"guardian")
+    var guardians := available_living_robots(&"guardian")
     if guardians.is_empty():
         salvage_operation["salvage_guardians"] = []
         salvage_operation["player_guardians"] = []
@@ -767,9 +804,9 @@ func _salvage_scouts() -> Array[RobotUnit3D]:
 func can_authorize_expedition() -> bool:
     return (
         expedition_operation.is_empty()
-        and count_robots(&"scout") >= 1
-        and count_robots(&"guardian") >= 1
-        and count_robots(&"salvager") >= 1
+        and available_living_robots(&"scout").size() >= 1
+        and available_living_robots(&"guardian").size() >= 1
+        and available_living_robots(&"salvager").size() >= 1
     )
 
 
@@ -781,10 +818,10 @@ func authorize_north_expedition() -> bool:
         salvage_operation.clear()
 
     var members: Array[RobotUnit3D] = []
-    members.append(living_robots(&"scout")[0])
-    members.append(living_robots(&"guardian")[0])
-    members.append(living_robots(&"salvager")[0])
-    var extra_guardians := living_robots(&"guardian")
+    members.append(available_living_robots(&"scout")[0])
+    members.append(available_living_robots(&"guardian")[0])
+    members.append(available_living_robots(&"salvager")[0])
+    var extra_guardians := available_living_robots(&"guardian")
     if extra_guardians.size() > 1:
         members.append(extra_guardians[1])
 
