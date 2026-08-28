@@ -12,10 +12,10 @@ const SESSION_DIAGNOSTICS_SCRIPT := preload("res://scripts/release/release_sessi
 const COLOR_FILTER_SCRIPT := preload("res://scripts/release/release_color_filter_3d.gd")
 const REMOTE_CAMERA_HEIGHT_EXPANSION := 5.5
 const REMOTE_CAMERA_DISTANCE_EXPANSION := 6.5
-const OBSERVATORY_PRESENTATION_REVIEW_SCENE: PackedScene = preload("res://assets/observatory/observatory.gltf")
-const BURIED_LABS_PRESENTATION_REVIEW_SCENE: PackedScene = preload("res://assets/buried_labs/buried_labs.gltf")
-const TRAM_GRAVEYARD_PRESENTATION_REVIEW_SCENE: PackedScene = preload("res://assets/tram_graveyard/tram_graveyard.gltf")
-const OUTPOST_PRESENTATION_REVIEW_SCENE: PackedScene = preload("res://scenes/world/outpost_3d.tscn")
+const OBSERVATORY_PRESENTATION_REVIEW_SCENE := "res://assets/observatory/observatory.gltf"
+const BURIED_LABS_PRESENTATION_REVIEW_SCENE := "res://assets/buried_labs/buried_labs.gltf"
+const TRAM_GRAVEYARD_PRESENTATION_REVIEW_SCENE := "res://assets/tram_graveyard/tram_graveyard.gltf"
+const OUTPOST_PRESENTATION_REVIEW_SCENE := "res://scenes/world/outpost_3d.tscn"
 
 static var pending_launch_mode: StringName = &"title"
 
@@ -34,7 +34,7 @@ const PRESENTATION_REVIEW_REGIONS: Array[StringName] = [
 	&"region.tram_graveyard", &"region.cathedral_quarter", &"region.observatory_ridge",
 	&"region.buried_labs", &"region.root_cistern",
 ]
-const ROOT_CISTERN_PRESENTATION_REVIEW_SCENE: PackedScene = preload("res://assets/root_cistern/root_cistern.gltf")
+const ROOT_CISTERN_PRESENTATION_REVIEW_SCENE := "res://assets/root_cistern/root_cistern.gltf"
 
 var localization_service: LocalizationService3D
 var settings_service: ReleaseSettingsService3D
@@ -1058,7 +1058,8 @@ func _start_presentation_review() -> void:
 			presentation_review_pages[3 + index].append(review_actor)
 	var outpost_review_page: Array = presentation_review_pages[3 + PRESENTATION_REVIEW_REGIONS.size()]
 	for index in 4:
-		var outpost := OUTPOST_PRESENTATION_REVIEW_SCENE.instantiate() as Outpost3D
+		var outpost_scene := _load_presentation_review_scene(OUTPOST_PRESENTATION_REVIEW_SCENE, "outpost review")
+		var outpost := outpost_scene.instantiate() as Outpost3D if outpost_scene != null else null
 		if outpost == null:
 			continue
 		outpost.name = "PresentationReviewOutpost%02d" % index
@@ -1072,6 +1073,14 @@ func _start_presentation_review() -> void:
 	_show_presentation_review_page(_presentation_review_start_page())
 	get_tree().paused = true
 	run_state.log_event("Presentation review mode: 1 friendly roster, 2 early organics, 3 late organics, 4-14 all remote regions, 15 autonomous outpost roles. Arrow keys browse; Escape exits review.")
+
+
+func _load_presentation_review_scene(path: String, label: String) -> PackedScene:
+	var resource := ResourceLoader.load(path, "PackedScene", ResourceLoader.CACHE_MODE_REUSE)
+	if not (resource is PackedScene):
+		push_error("Presentation review scene could not be loaded for %s: %s" % [label, path])
+		return null
+	return resource as PackedScene
 
 
 func _start_stream_ring_review() -> void:
@@ -1600,7 +1609,10 @@ func _create_root_cistern_presentation_review_actor(landmark: RegionLandmark3D) 
 	# instead of placing one directly over the core; runtime landmark orientation
 	# and all gameplay spatial contracts remain unchanged.
 	review_actor.rotation.y = PI / 6.0
-	var authored_scene := ROOT_CISTERN_PRESENTATION_REVIEW_SCENE.instantiate()
+	var authored_resource := _load_presentation_review_scene(ROOT_CISTERN_PRESENTATION_REVIEW_SCENE, "Root Cistern")
+	if authored_resource == null:
+		return review_actor
+	var authored_scene := authored_resource.instantiate()
 	authored_scene.name = "RootCisternPresentationReviewModel"
 	review_actor.add_child(authored_scene)
 	_tune_root_cistern_basin_material(authored_scene)
@@ -1664,7 +1676,10 @@ func _create_observatory_presentation_review_actor(landmark: RegionLandmark3D) -
 	review_actor.name = "ObservatoryPresentationReviewActor"
 	add_child(review_actor)
 	review_actor.global_position = landmark.global_position
-	var authored_scene := OBSERVATORY_PRESENTATION_REVIEW_SCENE.instantiate()
+	var authored_resource := _load_presentation_review_scene(OBSERVATORY_PRESENTATION_REVIEW_SCENE, "Observatory Ridge")
+	if authored_resource == null:
+		return review_actor
+	var authored_scene := authored_resource.instantiate()
 	authored_scene.name = "ObservatoryPresentationReviewModel"
 	review_actor.add_child(authored_scene)
 	_tune_observatory_presentation_review_materials(authored_scene)
@@ -1768,7 +1783,10 @@ func _create_buried_labs_presentation_review_actor(landmark: RegionLandmark3D) -
 	review_actor.name = "BuriedLabsPresentationReviewActor"
 	add_child(review_actor)
 	review_actor.global_position = landmark.global_position
-	var authored_scene := BURIED_LABS_PRESENTATION_REVIEW_SCENE.instantiate()
+	var authored_resource := _load_presentation_review_scene(BURIED_LABS_PRESENTATION_REVIEW_SCENE, "Buried Laboratories")
+	if authored_resource == null:
+		return review_actor
+	var authored_scene := authored_resource.instantiate()
 	authored_scene.name = "BuriedLabsPresentationReviewModel"
 	review_actor.add_child(authored_scene)
 	_tone_buried_labs_presentation_review_walls(authored_scene)
@@ -1898,7 +1916,10 @@ func _create_tram_graveyard_presentation_review_actor(landmark: RegionLandmark3D
 	review_actor.name = "TramGraveyardPresentationReviewActor"
 	add_child(review_actor)
 	review_actor.global_position = landmark.global_position
-	var authored_scene := TRAM_GRAVEYARD_PRESENTATION_REVIEW_SCENE.instantiate()
+	var authored_resource := _load_presentation_review_scene(TRAM_GRAVEYARD_PRESENTATION_REVIEW_SCENE, "Tram Graveyard")
+	if authored_resource == null:
+		return review_actor
+	var authored_scene := authored_resource.instantiate()
 	authored_scene.name = "TramGraveyardPresentationReviewModel"
 	review_actor.add_child(authored_scene)
 	# The authored carriage pair supplies the landmark identity. Add a bounded
@@ -2163,6 +2184,28 @@ func _start_release_world() -> void:
 		var variant_name := localization_service.text("world.condition.%s.name" % variant_key)
 		hud.push_notification(localization_service.text("notification.world_condition", [variant_name]))
 	hud.push_notification(localization_service.text("notification.survival_profile"))
+
+
+func _should_build_city_on_boot() -> bool:
+	# A normal windowed launch is a title-screen boot. Keep the forge, player and
+	# companion available for the authored title backdrop, but defer the costly
+	# city construction until New World/Continue or an explicit review mode.
+	# Headless validation and all review fixtures intentionally retain the full
+	# world so their structural and visual contracts remain meaningful.
+	if _is_headless_release() or pending_launch_mode in [&"new", &"continue"]:
+		return true
+	var arguments := OS.get_cmdline_args()
+	arguments.append_array(OS.get_cmdline_user_args())
+	for argument in arguments:
+		if str(argument) in [
+			"--new", "--new-world", "--presentation-review", "--title-review",
+			"--stream-ring-review", "--route-memory-review", "--route-recovery-marker-review",
+			"--dynamic-operation-review", "--authored-operation-review", "--casualty-recovery-review",
+			"--run-variation-review", "--heartforge-progression-review", "--adaptive-defense-review",
+			"--complete-objective-review", "--endgame-protocol-review", "--mechromancer-evolution-review",
+		]:
+			return true
+	return false
 
 
 func _on_run_state_event_logged(message: String) -> void:

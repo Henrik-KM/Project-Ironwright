@@ -168,7 +168,8 @@ func _setup_environment() -> void:
 
 
 func _spawn_world() -> void:
-    add_child(CITY_SCENE.instantiate())
+    if _should_build_city_on_boot():
+        add_child(CITY_SCENE.instantiate())
 
     run_state = RunState3D.new()
     run_state.name = "RunState"
@@ -212,6 +213,10 @@ func _spawn_world() -> void:
     companion.name = "Bulwark_01"
 
     _spawn_initial_salvage()
+
+
+func _should_build_city_on_boot() -> bool:
+    return true
 
 
 func _connect_systems() -> void:

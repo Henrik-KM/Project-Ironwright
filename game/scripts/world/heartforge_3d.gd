@@ -4,7 +4,7 @@ extends StaticBody3D
 signal health_changed(current: float, maximum: float)
 signal destroyed
 
-const AUTHORED_HEARTFORGE_MODEL_SCENE: PackedScene = preload("res://assets/heartforge/heartforge.gltf")
+const AUTHORED_HEARTFORGE_MODEL_SCENE := "res://assets/heartforge/heartforge.gltf"
 const RESTING_CORE_LIGHT_ENERGY: float = 1.8
 const ACTIVE_CORE_LIGHT_ENERGY: float = 2.8
 
@@ -293,7 +293,12 @@ func _build_visuals() -> void:
     # named procedural socket set hidden as a migration-compatible contract;
     # adaptive tiers, retrofits, damage, lights and the interaction surface
     # remain runtime-owned around the imported production asset.
-    var authored_model := AUTHORED_HEARTFORGE_MODEL_SCENE.instantiate()
+    var authored_resource := ResourceLoader.load(AUTHORED_HEARTFORGE_MODEL_SCENE, "PackedScene", ResourceLoader.CACHE_MODE_REUSE)
+    if not (authored_resource is PackedScene):
+        push_error("Heartforge authored scene could not be loaded: %s" % AUTHORED_HEARTFORGE_MODEL_SCENE)
+    var authored_model := (authored_resource as PackedScene).instantiate() if authored_resource is PackedScene else null
+    if authored_model == null:
+        return
     authored_model.name = "HeartforgeAuthoredModel"
     _model_root.add_child(authored_model)
     _retune_authored_materials(authored_model)

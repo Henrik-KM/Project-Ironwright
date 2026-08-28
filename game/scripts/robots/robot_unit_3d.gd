@@ -1,12 +1,12 @@
 class_name RobotUnit3D
 extends CharacterBody3D
 
-const AUTHORED_BULWARK_MODEL_SCENE: PackedScene = preload("res://assets/bulwark/bulwark.gltf")
-const AUTHORED_WARDEN_MODEL_SCENE: PackedScene = preload("res://assets/warden/warden.gltf")
-const AUTHORED_SCRAPPER_MODEL_SCENE: PackedScene = preload("res://assets/scrapper/scrapper.gltf")
-const AUTHORED_PATHFINDER_MODEL_SCENE: PackedScene = preload("res://assets/pathfinder/pathfinder.gltf")
-const AUTHORED_ENGINEER_MODEL_SCENE: PackedScene = preload("res://assets/engineer/engineer.gltf")
-const AUTHORED_RELAY_MODEL_SCENE: PackedScene = preload("res://assets/relay/relay.gltf")
+const AUTHORED_BULWARK_MODEL_SCENE := "res://assets/bulwark/bulwark.gltf"
+const AUTHORED_WARDEN_MODEL_SCENE := "res://assets/warden/warden.gltf"
+const AUTHORED_SCRAPPER_MODEL_SCENE := "res://assets/scrapper/scrapper.gltf"
+const AUTHORED_PATHFINDER_MODEL_SCENE := "res://assets/pathfinder/pathfinder.gltf"
+const AUTHORED_ENGINEER_MODEL_SCENE := "res://assets/engineer/engineer.gltf"
+const AUTHORED_RELAY_MODEL_SCENE := "res://assets/relay/relay.gltf"
 const DISABLED_PRESENTATION_SECONDS := 0.86
 
 const CALLSIGN_PREFIXES: Dictionary = {
@@ -394,6 +394,17 @@ func ensure_authored_visuals() -> void:
         _deferred_proxy_root.free()
     _deferred_proxy_root = null
     _build_visuals()
+
+
+func _instantiate_authored_scene(path: String, label: String) -> Node3D:
+    var resource := ResourceLoader.load(path, "PackedScene", ResourceLoader.CACHE_MODE_REUSE)
+    if not (resource is PackedScene):
+        push_error("Robot authored scene could not be loaded for %s: %s" % [label, path])
+        return null
+    var instance := (resource as PackedScene).instantiate() as Node3D
+    if instance == null:
+        push_error("Robot authored scene could not be instantiated for %s: %s" % [label, path])
+    return instance
 
 
 func set_damage_presentation_enabled(value: bool) -> void:
@@ -811,7 +822,9 @@ func _build_authored_companion_visuals() -> void:
     # The opening companion is the one machine the player must trust. Give it
     # a real authored shell while preserving this node's collision, sockets,
     # deterministic animation lookup, and role feedback systems.
-    var authored_model := AUTHORED_BULWARK_MODEL_SCENE.instantiate()
+    var authored_model := _instantiate_authored_scene(AUTHORED_BULWARK_MODEL_SCENE, "Bulwark")
+    if authored_model == null:
+        return
     authored_model.name = "BulwarkAuthoredModel"
     _model_root.add_child(authored_model)
 
@@ -883,7 +896,9 @@ func _build_authored_warden_visuals() -> void:
     # Warden is the second production silhouette: an escort machine whose
     # broad armour, counterweight and heat hardware communicate a defensive
     # doctrine without adding a new player-managed role or resource.
-    var authored_model := AUTHORED_WARDEN_MODEL_SCENE.instantiate()
+    var authored_model := _instantiate_authored_scene(AUTHORED_WARDEN_MODEL_SCENE, "Warden")
+    if authored_model == null:
+        return
     authored_model.name = "WardenAuthoredModel"
     _model_root.add_child(authored_model)
 
@@ -961,7 +976,9 @@ func _build_authored_scrapper_visuals() -> void:
     # Scrapper's authored shell makes the machine society's routine burden
     # visible: the hopper, arms and intake say "recover useful material" at a
     # glance without exposing a per-robot work queue to the player.
-    var authored_scene_instance := AUTHORED_SCRAPPER_MODEL_SCENE.instantiate()
+    var authored_scene_instance := _instantiate_authored_scene(AUTHORED_SCRAPPER_MODEL_SCENE, "Scrapper")
+    if authored_scene_instance == null:
+        return
     # Flatten the imported scene so the existing release-art path
     # `RobotModel/Chassis/ChassisCore` remains valid for late-fabricated units.
     # Keep a marker node for diagnostics without making it an extra visual
@@ -1040,7 +1057,9 @@ func _build_authored_pathfinder_visuals() -> void:
     # Pathfinder's scout silhouette is intentionally taller and lighter: the
     # mast, dish and paired optics make screening and survey behavior legible
     # without exposing a route-planning dashboard or per-unit chores.
-    var authored_scene_instance := AUTHORED_PATHFINDER_MODEL_SCENE.instantiate()
+    var authored_scene_instance := _instantiate_authored_scene(AUTHORED_PATHFINDER_MODEL_SCENE, "Pathfinder")
+    if authored_scene_instance == null:
+        return
     var imported_root := authored_scene_instance.get_node_or_null("PathfinderModel") as Node
     if imported_root == null:
         imported_root = authored_scene_instance
@@ -1114,7 +1133,9 @@ func _build_authored_pathfinder_visuals() -> void:
 func _build_authored_engineer_visuals() -> void:
     # Engineer is the construction specialist: the visual language emphasizes
     # assembly tooling and a contained forge rather than another combat loadout.
-    var authored_scene_instance := AUTHORED_ENGINEER_MODEL_SCENE.instantiate()
+    var authored_scene_instance := _instantiate_authored_scene(AUTHORED_ENGINEER_MODEL_SCENE, "Engineer")
+    if authored_scene_instance == null:
+        return
     var imported_root := authored_scene_instance.get_node_or_null("EngineerModel") as Node
     if imported_root == null:
         imported_root = authored_scene_instance
@@ -1194,7 +1215,9 @@ func _build_signal_relay_visuals() -> void:
     # remains alongside RelayModel. The other authored shells predate this
     # animation contract and can be extracted safely; the Relay keeps the
     # source scene as one bounded presentation unit.
-    var authored_model := AUTHORED_RELAY_MODEL_SCENE.instantiate()
+    var authored_model := _instantiate_authored_scene(AUTHORED_RELAY_MODEL_SCENE, "Relay")
+    if authored_model == null:
+        return
     authored_model.name = "RelayAuthoredModel"
     _model_root.add_child(authored_model)
 

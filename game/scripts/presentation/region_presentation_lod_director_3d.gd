@@ -9,8 +9,12 @@ signal region_stream_changed(region_id: StringName, streamed_in: bool)
 
 const FULL_RADIUS := 76.0
 const REDUCED_RADIUS := 120.0
-const STREAM_IN_RADIUS := 120.0
-const STREAM_OUT_RADIUS := 144.0
+# Keep the opening resident set to the Heartforge district. Remote authored
+# packages are still streamed when the player physically approaches them, but
+# the title/opening frame must not synchronously import half the town before it
+# can draw. The hysteresis gap prevents thrashing at a district boundary.
+const STREAM_IN_RADIUS := 68.0
+const STREAM_OUT_RADIUS := 84.0
 
 var region_director: WorldRegionDirector3D
 var player: Node3D
