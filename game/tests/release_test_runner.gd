@@ -704,6 +704,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     world._start_presentation_review()
     await process_frame
     _expect(world.presentation_review_pages.size() == 15, "Presentation review must expose the three core pages, all eleven remote regions and the autonomous outpost role page.")
+    _expect(world.presentation_review_label != null and "1-9, 0 DIRECT PAGE" in world.presentation_review_label.text, "Presentation review navigation must describe the digit-key page controls clearly.")
     _expect(world.release_world_art != null and world.release_world_art.dressing_root != null, "Presentation review must retain the release dressing root alongside its controller.")
     world._show_presentation_review_page(0)
     await process_frame

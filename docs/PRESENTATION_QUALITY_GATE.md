@@ -1,5 +1,13 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused presentation-review navigation polish — 2026-08-28
+
+The development presentation gallery now describes its ten direct digit-key
+shortcuts as `1-9, 0`, removing the malformed `1-9 / 0` legend observed during
+the merged-build live review. The correction is covered by the release suite
+and is presentation-tooling-only; it does not alter gameplay state. Live review
+continues to use Godot Dummy audio with `--quiet-audio` only.
+
 ## Focused late-organic palette refinement — 2026-08-28
 
 The late organic families now use a restrained mineral-biological tint range:

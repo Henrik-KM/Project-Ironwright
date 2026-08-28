@@ -1,5 +1,12 @@
 # Implementation status
 
+## Focused presentation-review navigation polish
+
+- corrected the development gallery legend so the direct digit-key controls
+  are readable as `1-9, 0`, matching the ten direct page shortcuts;
+- added release regression coverage for the visible navigation copy; this is a
+  development review-surface fix and does not alter gameplay or player state.
+
 ## Focused late-organic palette refinement
 
 - reduced the late-family release tint saturation so broad membranes retain

@@ -1445,7 +1445,7 @@ func _show_presentation_review_page(page: int) -> void:
 		"REMOTE · BURIED LABORATORIES", "REMOTE · ROOT CISTERN", "AUTONOMOUS OUTPOST ROLES · TIER III",
 	]
 	var page_title: String = page_titles[presentation_review_page]
-	presentation_review_label.text = "PRESENTATION REVIEW  ·  %s  ·  %d/%d\n1-9 / 0 DIRECT PAGE   ←/→ BROWSE   ESC EXIT" % [page_title, presentation_review_page + 1, presentation_review_pages.size()]
+	presentation_review_label.text = "PRESENTATION REVIEW  ·  %s  ·  %d/%d\n1-9, 0 DIRECT PAGE   ←/→ BROWSE   ESC EXIT" % [page_title, presentation_review_page + 1, presentation_review_pages.size()]
 	if is_region_page and not actors.is_empty():
 		presentation_review_camera_target = (actors[0] as Node3D).global_position + Vector3.UP * 2.0
 		presentation_review_camera_desired = presentation_review_camera_target + _presentation_review_region_camera_offset(region_id)
