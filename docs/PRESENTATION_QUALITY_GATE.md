@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Observatory Ridge gallery framing — 2026-08-28
+
+The Observatory Ridge page in the development presentation gallery now uses a
+bounded diagonal review frame. This shifts the relay mast off the dish hub so
+the reflector bowl, feed hardware and service deck read as a layered survey
+station at the exact export review size. The change is isolated to the gallery
+fixture; runtime landmark placement, navigation, collision, simulation and
+audio are unchanged. Live acceptance uses Godot Dummy audio with
+`--quiet-audio` only; no live speakers are used.
+
 ## Focused close-camera organic roster framing — 2026-08-28
 
 The early and late organic roster pages in the development presentation gallery

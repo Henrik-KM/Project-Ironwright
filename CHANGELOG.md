@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-08-28 — Observatory Ridge gallery framing
+
+- replaced the centered Observatory Ridge review angle with a bounded diagonal
+  frame so the relay mast no longer sits directly over the dish hub and the
+  reflector, feed hardware and service deck read as one survey station;
+- kept the change presentation-only, with no runtime navigation, collision,
+  save, ecology or recurring-task impact.
+
 ## 2026-08-28 — Cathedral Quarter gallery framing
 
 - replaced the over-close centered Cathedral Quarter review angle with a

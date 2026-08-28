@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Observatory Ridge gallery framing pass
+
+- moved the development-only Observatory Ridge review camera to a bounded
+  diagonal frame so the relay mast no longer occludes the authored dish hub;
+- preserved the persistent landmark placement, collision, navigation, region
+  simulation and tactical camera; this is composition-only and adds no player
+  workload or world state;
+- added a release regression guard for the bounded review offset; the exact
+  Windows review remains silent and uses Godot Dummy audio with `--quiet-audio`.
+
 ## Focused East Tenements review-framing pass
 
 - moved the development-only East Tenements gallery camera to a closer

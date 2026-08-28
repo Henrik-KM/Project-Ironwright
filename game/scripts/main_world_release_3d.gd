@@ -1522,9 +1522,11 @@ func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3
 		# placement and encounter geometry remain untouched.
 		return Vector3(6.6, 8.5, 18.8)
 	if region_id == &"region.observatory_ridge":
-		# The authored dish is vertically dominant; give the review camera enough
-		# distance to keep the dish, mast, service ring and platform in one frame.
-		return Vector3(0.0, 8.6, 14.8)
+		# The centered frame puts the relay mast directly over the instrument hub.
+		# A bounded diagonal keeps the feed, dish bowl and service deck readable as
+		# one survey station while leaving runtime landmark placement and geometry
+		# untouched.
+		return Vector3(5.2, 8.4, 14.8)
 	if region_id == &"region.buried_labs":
 		return Vector3(0.0, 10.2, 15.0)
 	if region_id == &"region.north_ruins":
