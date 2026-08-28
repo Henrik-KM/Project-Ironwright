@@ -100,6 +100,16 @@ func _run_all() -> void:
     _expect(home_machine != null, "The complete integration fixture must retain at least one non-expedition machine at the Heartforge.")
     if home_machine != null:
         _expect(home_machine.assigned_group != &"long_range_operation", "A machine remaining at the Heartforge must not be marked as part of the departing formation.")
+    first_site.outpost.stored_scrap = 30
+    world.outpost_director.maintenance_clock = 2.0
+    world.outpost_director._process(1.1)
+    _expect(StringName(world.outpost_director.operation.get("kind", &"")) == &"haul", "An autonomous outpost must be able to launch a protected haul while a separate long-range formation is away.")
+    _expect(world.autonomy_director.is_processing(), "A concurrent outpost convoy must not pause the local autonomy director.")
+    var concurrent_outpost_members: Array[RobotUnit3D] = []
+    concurrent_outpost_members.append_array(world.outpost_director.operation.get("members", []))
+    for outpost_member in concurrent_outpost_members:
+        _expect(outpost_member not in active_long_range_members, "Concurrent long-range and outpost convoys must reserve disjoint machine teams.")
+    _expect(world.autonomy_director.external_operation_member_count() == active_long_range_members.size() + concurrent_outpost_members.size(), "Concurrent remote operations must retain the union of both explicit team reservations.")
     world._process(0.1)
     _expect("FOLLOW THE ACTIVE MACHINE GROUP" in world.hud.objective_label.text, "An active long-range operation must replace the previous strategic objective with the physical group follow objective.")
     _expect("F FOLLOW ACTIVE MACHINE GROUP" in world.hud.prompt_label.text, "An active long-range operation must replace stale opening guidance with the direct follow affordance.")
@@ -109,7 +119,18 @@ func _run_all() -> void:
     world._load_game()
     _expect(StringName(world.long_operation_director.active_operation.get("id", &"")) == checkpoint_id, "Loading must restore the active long-range operation identity.")
     _expect(world.autonomy_director.is_processing(), "Loading an in-flight long-range operation must keep local autonomy processing enabled.")
-    _expect(world.autonomy_director.external_operation_member_count() == active_long_range_members.size(), "Loading an in-flight long-range operation must restore its explicit team reservation.")
+    _expect(world.autonomy_director.external_operation_member_count() == active_long_range_members.size() + concurrent_outpost_members.size(), "Loading concurrent in-flight operations must restore the union of their explicit team reservations.")
+    _expect(StringName(world.outpost_director.operation.get("kind", &"")) == &"haul", "Loading concurrent in-flight operations must restore the autonomous outpost convoy.")
+    var restored_outpost_route: PackedVector3Array = world.outpost_director.operation.get("route", PackedVector3Array())
+    world.outpost_director.operation["route_index"] = restored_outpost_route.size()
+    world.outpost_director._update_operation(0.1)
+    world.outpost_director.operation["work_clock"] = 10.0
+    world.outpost_director._update_operation(0.1)
+    var restored_outpost_return_route: PackedVector3Array = world.outpost_director.operation.get("route", PackedVector3Array())
+    world.outpost_director.operation["route_index"] = restored_outpost_return_route.size()
+    world.outpost_director._update_operation(0.1)
+    _expect(world.outpost_director.operation.is_empty(), "A concurrently restored outpost convoy must physically return and release its reservation.")
+    _expect(world.autonomy_director.external_operation_member_count() == active_long_range_members.size(), "Completing the outpost convoy must release only its own team reservation while the long-range formation remains away.")
     var primary_west_route_before_block := world.region_director.route_from_heartforge(&"region.west_grid", world.heartforge.global_position)
     world.long_operation_director.active_operation["anchor"] = primary_west_route_before_block[1]
     world.long_operation_director.active_operation["route_index"] = 2

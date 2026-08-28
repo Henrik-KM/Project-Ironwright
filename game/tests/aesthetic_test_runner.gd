@@ -998,6 +998,10 @@ func _run_all() -> void:
                 heartforge_presentation._process(0.0)
                 _expect(beacon != null and reduced_motion_scale.is_equal_approx(beacon.scale), "Heartforge progression motion must pause when reduced motion is enabled.")
                 settings_service.set_value(&"reduced_motion", previous_reduced_motion, false)
+        var adaptation_settings_service := get_first_node_in_group("release_settings_service") as ReleaseSettingsService3D
+        var adaptation_previous_reduced_motion := bool(adaptation_settings_service.get_value(&"reduced_motion", false)) if adaptation_settings_service != null else false
+        if adaptation_settings_service != null:
+            adaptation_settings_service.set_value(&"reduced_motion", false, false)
         heartforge.set_adaptation_preview(&"adaptation.pending", 0.22)
         var adaptation_preview := heartforge.get_node_or_null("HeartforgeModel/HeartforgeAdaptationPreview") as Node3D
         _expect(adaptation_preview != null and adaptation_preview.visible, "The adaptive Heartforge must expose a visible proposal footprint before authorization.")
@@ -1019,6 +1023,8 @@ func _run_all() -> void:
         heartforge.set_adaptation_profile(&"adaptation.quiet_core")
         _expect(heartforge.find_child("QuietCoreShroud", true, false) != null and heartforge.find_child("QuietCoreDampenerBaffle", true, false) != null and heartforge.find_child("QuietCoreSignalPanel", true, false) != null, "The quiet-core response must expose damped shrouds, baffles and signal-panel detail.")
         heartforge.set_adaptation_profile(&"")
+        if adaptation_settings_service != null:
+            adaptation_settings_service.set_value(&"reduced_motion", adaptation_previous_reduced_motion, false)
         _expect(heartforge.find_child("HeartforgeDamagePresentation", true, false) != null, "The Heartforge must expose a bounded damage-memory presentation layer.")
         _expect(heartforge.find_child("HeartforgeDamageScar00", true, false) != null and heartforge.find_child("HeartforgeDamageLeak00", true, false) != null, "The Heartforge damage layer must expose stable scar and leak sockets.")
         heartforge.apply_damage(heartforge.maximum_health * 0.68)

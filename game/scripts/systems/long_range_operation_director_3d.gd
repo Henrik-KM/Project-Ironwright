@@ -430,7 +430,7 @@ func authorize(operation_id: StringName) -> bool:
         "route_recovery_target": Vector3.ZERO,
         "pending_rewards": {},
     }
-    autonomy_director.set_external_operation_members(team)
+    autonomy_director.reserve_external_operation_members(team)
     _hold_nonmembers_at_home(team)
     var route_detail := "%s has departed as a cohesive physical group." % str(entry.get("display_name", String(operation_id)))
     if _active_relay_count() > 0:
@@ -731,10 +731,11 @@ func _complete_return() -> void:
     for robot in _living_members():
         robot.set_group(&"reserve", 0)
         robot.set_goal(heartforge.global_position, "The long-range objective is complete; returning to the general autonomous machine pool.", robot.move_speed * 0.72)
+    var completed_members := _living_members()
     active_operation.clear()
     if operation_detail_director != null:
         operation_detail_director.clear_operation(operation_id)
-    autonomy_director.clear_external_operation_members()
+    autonomy_director.release_external_operation_members(completed_members)
     run_state.log_event("Long-range operation complete: %s" % str(entry.get("display_name", String(operation_id))))
     operation_returned.emit(operation_id, str(entry.get("display_name", String(operation_id))), rewards.duplicate(true))
     operation_changed.emit(operation_id, &"complete", "The complete group returned to the Heartforge and delivered the objective.")
@@ -837,10 +838,11 @@ func _abort(reason: String) -> void:
     for robot in _living_members():
         robot.set_group(&"reserve", 0)
         robot.set_goal(heartforge.global_position, reason, robot.move_speed * 0.7)
+    var aborted_members := _living_members()
     active_operation.clear()
     if operation_detail_director != null:
         operation_detail_director.clear_operation(operation_id)
-    autonomy_director.clear_external_operation_members()
+    autonomy_director.release_external_operation_members(aborted_members)
     operation_changed.emit(operation_id, &"aborted", reason)
 
 
@@ -982,8 +984,6 @@ func _other_operation_active() -> bool:
     if autonomy_director != null:
         if not autonomy_director.salvage_operation.is_empty() or not autonomy_director.expedition_operation.is_empty():
             return true
-    if outpost_director != null and not outpost_director.operation.is_empty():
-        return true
     return false
 
 
@@ -1285,7 +1285,7 @@ func _restore_active_operation(raw_data: Variant) -> void:
     }
     for index in range(members.size()):
         members[index].set_group(&"long_range_operation", index)
-    autonomy_director.set_external_operation_members(members)
+    autonomy_director.reserve_external_operation_members(members)
     _hold_nonmembers_at_home(members)
     operation_changed.emit(operation_id, StringName(active_operation.get("state", &"outbound")), "The saved long-range group resumed its physical route.")
 
