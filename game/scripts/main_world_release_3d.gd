@@ -1463,7 +1463,7 @@ func _show_presentation_review_page(page: int) -> void:
 			# robots retain their established presentation orientation.
 			actor.rotation.y = 0.0 if presentation_review_page == 0 and index == 0 else PI
 			var late_organic_roster := presentation_review_page == 2
-			var row_capacity := 2 if outpost_page else (4 if late_organic_roster else (3 if presentation_review_page >= 1 else mini(4, actors.size())))
+			var row_capacity := 2 if outpost_page else (3 if presentation_review_page >= 1 else mini(4, actors.size()))
 			var row_index := 0 if index < row_capacity else 1
 			var row_count := mini(row_capacity, actors.size()) if row_index == 0 else actors.size() - row_capacity
 			var row_position := index if row_index == 0 else index - row_capacity

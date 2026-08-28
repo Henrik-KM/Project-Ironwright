@@ -3,7 +3,8 @@
 ## Focused late-organic gallery safe-frame pass — 2026-08-28
 
 The exact development gallery now stages the seven late organic families in a
-tighter two-row composition and uses a slightly wider inspection frame. This
+tighter two-row composition while retaining the deeper second row required for
+layered silhouette separation, and uses a slightly wider inspection frame. This
 keeps the broadest shells and outer actors fully judgeable at the review
 viewport without changing gameplay scale, collision, animation, AI, ecology,
 or tactical spacing. The review remains silent with Godot Dummy audio and
