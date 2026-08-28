@@ -185,7 +185,7 @@ func _refresh_authored_model_package() -> void:
                 var request_error := ResourceLoader.load_threaded_request(
                     _authored_model_path,
                     "PackedScene",
-                    true,
+                    false,
                     ResourceLoader.CACHE_MODE_REUSE
                 )
                 if request_error == OK:
