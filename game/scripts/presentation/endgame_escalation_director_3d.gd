@@ -222,6 +222,16 @@ func _add_ring(parent: Node3D, inner_radius: float, outer_radius: float, positio
 
 
 func _heartforge_capstone_anchor() -> Vector3:
+    var approach := _capstone_approach()
+    # Place the capstone toward, but offset from, the player-facing side. A
+    # centered lattice occupies the cast's silhouette during the crisis; the
+    # lateral offset lets the player and Bulwark remain judgeable while the
+    # transformation still reads against the Heartforge.
+    var lateral := Vector3.UP.cross(approach).normalized()
+    return heartforge.global_position + approach * 4.2 + lateral * 2.15 + Vector3.UP * 0.35
+
+
+func _capstone_approach() -> Vector3:
     var approach := Vector3(0.0, 0.0, 1.0)
     if world != null:
         var focus := world.get("player") as Node3D
@@ -230,12 +240,7 @@ func _heartforge_capstone_anchor() -> Vector3:
             planar_approach.y = 0.0
             if planar_approach.length_squared() > 0.04:
                 approach = planar_approach.normalized()
-    # Place the capstone toward, but offset from, the player-facing side. A
-    # centered lattice occupies the cast's silhouette during the crisis; the
-    # lateral offset lets the player and Bulwark remain judgeable while the
-    # transformation still reads against the Heartforge.
-    var lateral := Vector3.UP.cross(approach).normalized()
-    return heartforge.global_position + approach * 4.2 + lateral * 2.15 + Vector3.UP * 0.35
+    return approach
 
 
 func _apply_lattice_progress(progress: float) -> void:
@@ -267,7 +272,12 @@ func _show_completion() -> void:
     visual_root.visible = true
     lattice_root.visible = false
     completion_root.visible = true
-    completion_root.scale = Vector3.ONE * 0.72
+    # The completed sanctuary is a quiet backdrop for the surviving cast, not
+    # a second foreground cage. Pull it behind the Heartforge-facing approach
+    # and keep the living loop legible without letting its fins cover the
+    # Mechromancer or Bulwark in the close tactical camera.
+    completion_root.position = -_capstone_approach() * 1.65
+    completion_root.scale = Vector3.ONE * 0.62
     for material in _completion_materials:
         material.emission_energy_multiplier = 0.62
     if core_light != null:
@@ -275,7 +285,7 @@ func _show_completion() -> void:
         core_light.light_energy = 1.1
     var tween := create_tween()
     tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-    tween.tween_property(completion_root, "scale", Vector3.ONE, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+    tween.tween_property(completion_root, "scale", Vector3.ONE * 0.78, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 
 func _connect_once(source: Object, signal_name: StringName, callback: Callable) -> void:

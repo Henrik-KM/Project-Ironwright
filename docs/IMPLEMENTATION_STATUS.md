@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused sanctuary capstone framing pass
+
+- moved the completed Transformation sanctuary crown behind the Heartforge-
+  facing approach and reduced its final scale so the living-loop capstone
+  remains legible without covering the surviving Mechromancer, Bulwark or
+  Heartforge in the close tactical camera;
+- added complete-game regression coverage for the bounded completed-crown
+  footprint; the active response, victory overlay and continuing sanctuary
+  were live-reviewed at 1280x720 with Godot Dummy audio and quiet mode only.
+
 ## Focused Mechromancer communications-yoke pass
 
 - added a restrained right-shoulder communications yoke, short antenna, warm
