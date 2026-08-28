@@ -322,6 +322,10 @@ func _start_adaptive_defense_review() -> void:
     if run_state != null:
         run_state.scrap = 900
         run_state.expedition_core_recovered = true
+        # This fixture represents a late-run Heartforge, so the production
+        # shell must hand objective ownership to the complete-game guidance
+        # instead of showing first-session salvage instructions afterward.
+        full_game_milestone_complete = true
     if heartforge != null:
         heartforge.set_progression_tier(5)
         heartforge.current_health = heartforge.maximum_health * 0.55
@@ -613,6 +617,42 @@ func _update_complete_game_objective() -> void:
         _set_complete_objective("objective.complete.victory.title", "FIRST VICTORY", "objective.complete.victory.detail", "The final protocol completed. The surviving machine sanctuary continues beyond the first victory.", [], "objective.complete.victory.prompt", "PRESS P · REVIEW THE CONTINUING SANCTUARY")
         return
 
+    # An adaptive Heartforge response is a rare strategic commitment and must
+    # replace any earlier progression objective while it is waiting or being
+    # built. Otherwise the player can authorize a late-run retrofit while the
+    # HUD still instructs them to recover the first Scrap.
+    if adaptive_defense_director != null and adaptive_defense_director.has_pending_proposal():
+        _set_complete_objective(
+            "objective.adaptive.pending.title",
+            "REVIEW HEARTFORGE ADAPTATION",
+            "objective.adaptive.pending.detail",
+            "The Heartforge architect proposes one rare structural response. Press T to compare principles and authorize the machines.",
+            [],
+            "objective.adaptive.pending.prompt",
+            "PRESS T · REVIEW THE HEARTFORGE ADAPTATION"
+        )
+        return
+
+    if adaptive_defense_director != null and not adaptive_defense_director.active_adaptation.is_empty():
+        var active_id := StringName(str(adaptive_defense_director.active_adaptation.get("id", "")))
+        var active_entry := adaptive_defense_director.localized_adaptation(active_id)
+        var active_name := str(active_entry.get("construction_name", active_entry.get("display_name", String(active_id))))
+        var active_data_variant: Variant = adaptive_defense_director.active_adaptation.get("data", {})
+        var active_data: Dictionary = active_data_variant as Dictionary if active_data_variant is Dictionary else {}
+        var duration := maxf(1.0, float(active_data.get("build_seconds", 12.0)))
+        var elapsed := maxf(0.0, float(adaptive_defense_director.active_adaptation.get("elapsed", 0.0)))
+        var progress_percent := int(round(clampf(elapsed / duration, 0.0, 1.0) * 100.0))
+        _set_complete_objective(
+            "objective.adaptive.building.title",
+            "HOLD THE HEARTFORGE",
+            "objective.adaptive.building.detail",
+            "Machines are building {0} · {1}%. Stay near the Heartforge while the retrofit completes; geometry and repair remain delegated.",
+            [active_name, progress_percent],
+            "objective.adaptive.building.prompt",
+            "HOLD THE HEARTFORGE · MACHINES ARE BUILDING THE RETROFIT"
+        )
+        return
+
     if not long_operation_director.active_operation.is_empty():
         var active_operation_status := _localized_long_operation_summary()
         var locale_service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
@@ -868,6 +908,7 @@ func _on_adaptive_defense_proposal(summary: String) -> void:
         "ADAPTIVE DEFENCE PROPOSAL · PRESS T TO CHOOSE\n{0}",
         [summary]
     ))
+    _update_complete_game_objective()
 
 
 func _on_adaptation_changed(adaptation_id: StringName, state: StringName, detail: String) -> void:
@@ -881,6 +922,7 @@ func _on_adaptation_changed(adaptation_id: StringName, state: StringName, detail
         "HEARTFORGE ADAPTATION · %s · %s\n%s",
         [adaptation_name.to_upper(), localized_state.to_upper(), detail]
     ))
+    _update_complete_game_objective()
 
 
 func _on_adaptation_completed(_adaptation_id: StringName, display_name: String) -> void:
@@ -889,6 +931,7 @@ func _on_adaptation_completed(_adaptation_id: StringName, display_name: String) 
         "HEARTFORGE RESPONSE ONLINE · %s · THE NEW STRUCTURE IS NOW MACHINE-MAINTAINED",
         [display_name.to_upper()]
     ))
+    _update_complete_game_objective()
 
 
 func _on_long_operation_returned(operation_id: StringName, display_name: String, rewards: Dictionary) -> void:

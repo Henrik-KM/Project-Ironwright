@@ -20,10 +20,20 @@ func _ready() -> void:
 func _process(delta: float) -> void:
     super._process(delta)
     _update_first_session_guidance()
-    # The opening guidance still runs for the release shell, but an active
-    # physical operation is the stronger exception and must replace stale
-    # salvage/forge instructions in the same frame.
+    # The opening guidance still runs for the release shell, but a late-run
+    # strategic state is the stronger exception and must replace stale
+    # salvage/forge instructions in the same frame. This includes the brief
+    # proposal, the physical retrofit, and the post-completion handoff.
+    var late_run_state := full_game_milestone_complete
     if long_operation_director != null and not long_operation_director.active_operation.is_empty():
+        late_run_state = true
+    if adaptive_defense_director != null and (
+        adaptive_defense_director.has_pending_proposal()
+        or not adaptive_defense_director.active_adaptation.is_empty()
+        or adaptive_defense_director.completed_adaptation != &""
+    ):
+        late_run_state = true
+    if late_run_state:
         _update_complete_game_objective()
 
 

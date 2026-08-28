@@ -958,6 +958,14 @@ report remained localized after the player authorized the physical retrofit;
 stable adaptation identifiers and saved mechanics remained unchanged. Broader
 professional localization and human acceptance remain open.
 
+The adaptive Heartforge objective handoff received a focused correction on
+2026-08-28. Production first-session guidance no longer overwrites the late-run
+proposal, physical construction, or post-completion objective in the same
+frame. The English 1280×720 Windows review now shows the proposal decision,
+live construction progress and the next late-run objective in sequence; the
+review used Godot Dummy audio with `--quiet-audio`, so no live speakers were
+used. Broader professional localization and human acceptance remain open.
+
 The final-protocol German export was re-reviewed on 2026-08-24 after the
 endgame completion slice exposed mixed-language copy. The active objective,
 intervention prompt, sanctuary damage badge, victory title, protocol name,
