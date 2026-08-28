@@ -32,7 +32,7 @@ func _run_all() -> void:
     _test_run_variation(world)
     _test_localization(world)
     await _test_controller_and_accessibility(world)
-    _test_release_assets_and_art(world)
+    await _test_release_assets_and_art(world)
     await _test_presentation_review(world)
     _test_content_breadth(world)
     await _test_runtime_material_continuity(world)
@@ -570,9 +570,40 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
     # can inspect the complete release catalogue without changing boot policy.
     var region_lod := world.get_node_or_null("RegionPresentationLodDirector") as RegionPresentationLodDirector3D
     if region_lod != null and world.region_director != null:
+        # This is an explicit full-catalogue inspection, not a player-focus
+        # simulation. Freeze automatic reevaluation so the release dressing
+        # rebuilds cannot race a concurrent stream-out during threaded loads.
+        region_lod.set_process(false)
         for raw_region_id in world.region_director.region_data.keys():
             region_lod.set_region_streamed(StringName(raw_region_id), true)
             world.release_world_art.ensure_region_dressing(StringName(raw_region_id))
+        for _frame in range(120):
+            var all_authored_ready := true
+            for raw_region_id in world.region_director.region_data.keys():
+                var landmark := world.region_director.get_landmark(StringName(raw_region_id))
+                if landmark == null or landmark.region_kind == &"sanctuary":
+                    continue
+                landmark.set_streamed_in(true)
+                var package_name: String = str({
+                    &"industrial": "WestGridAuthoredScene",
+                    &"commercial": "FloodMarketAuthoredScene",
+                    &"archive": "ArchiveAuthoredScene",
+                    &"tenement": "TenementAuthoredScene",
+                    &"greenhouse": "GlasshouseAuthoredScene",
+                    &"waterfront": "RiverworksAuthoredScene",
+                    &"rail": "TramGraveyardAuthoredScene",
+                    &"observatory": "ObservatoryAuthoredScene",
+                    &"nest": "CathedralAuthoredScene",
+                    &"research": "BuriedLabsAuthoredScene",
+                    &"endgame": "RootCisternAuthoredScene",
+                }.get(landmark.region_kind, ""))
+                var authored_package := landmark.get_node_or_null("PersistentRegionGeometry/%s" % str(package_name)) as Node3D
+                if authored_package == null or authored_package.get_child_count() == 0:
+                    all_authored_ready = false
+                    break
+            if all_authored_ready:
+                break
+            await process_frame
     var texture_paths := [
         "res://assets/release/textures/asphalt_wet.png",
         "res://assets/release/textures/brick_ruin.png",

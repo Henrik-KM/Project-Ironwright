@@ -199,6 +199,12 @@ func _test_world_labels_are_not_screen_fixed() -> void:
     # Close-detail inspection is an explicit focus promotion now that authored
     # packages are released while a district is outside the stream ring.
     landmark.set_streamed_in(true)
+    for _frame in range(120):
+        landmark.set_streamed_in(true)
+        var authored_scene := landmark.get_node_or_null("PersistentRegionGeometry/WestGridAuthoredScene") as Node3D
+        if authored_scene != null and authored_scene.get_child_count() > 0:
+            break
+        await process_frame
     _expect(landmark._label != null and not landmark._label.fixed_size, "District labels must not be fixed-size screen billboards.")
     _expect(not landmark._label.visible, "District names must stay out of the tactical view by default.")
     _expect(landmark.find_child("WestGridTurbineHall", true, false) != null, "West Grid must retain a readable authored industrial structural shell.")

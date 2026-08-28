@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-08-28 — Threaded authored-region package loading
+
+- replaced synchronous authored landmark package attachment with bounded
+  threaded resource requests and main-thread instantiation after completion;
+- preserved persistent landmark collision, reduced proxies, stream-out cleanup,
+  release material tuning and re-entry behavior, including explicit failure
+  reporting and a compatibility fallback when a request cannot be started;
+- added completion-aware native coverage and silently live-reviewed the
+  West Grid → Root Cistern → West Grid stream-ring fixture with Godot Dummy
+  audio and `--quiet-audio` only.
+
 ## 2026-08-28 — Bounded authored startup loading
 
 - moved authored robot, organic, landmark-review and outpost-review scene
@@ -9,9 +20,9 @@
   until a run starts, and tightened the initial region stream ring to the
   Heartforge neighborhood so the first playable frame arrives without a long
   black startup or live speaker output;
-- retained synchronous loading for the first focused package as the next
-  profiling target, with all validation and live review using Godot Dummy audio
-  and `--quiet-audio`.
+- moved the first focused authored package onto the same threaded loading path,
+  with all validation and live review using Godot Dummy audio and
+  `--quiet-audio`.
 
 ## 2026-08-28 — Synchronize vertical-slice production status
 

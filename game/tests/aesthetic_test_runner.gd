@@ -262,6 +262,11 @@ func _run_all() -> void:
             _expect(tint_max - tint_min <= 0.40, "Late-organic family tints must stay restrained enough for broad membranes to read as mineral biology rather than toy-saturated plates.")
     _expect(story_archive != null, "The complete world must provide the persistent Town Archive director.")
     if encounter_dressing != null and region_director != null:
+        if startup_lod != null:
+            # The catalogue audit deliberately promotes every district. Keep
+            # the live focus evaluator from undoing that explicit promotion
+            # while threaded packages and release dressing finish together.
+            startup_lod.set_process(false)
         for raw_region_id in region_director.region_data.keys():
             region_director.discover_region(StringName(raw_region_id))
         await process_frame
@@ -313,6 +318,7 @@ func _run_all() -> void:
                 startup_lod.set_region_streamed(landmark.region_id, true)
             else:
                 landmark.set_streamed_in(true)
+            await _wait_for_authored_package(landmark, authored_package_name_by_kind.get(landmark.region_kind, ""))
             if release_art != null:
                 release_art.ensure_region_dressing(landmark.region_id)
             var authored_package_name := str(authored_package_name_by_kind.get(landmark.region_kind, ""))
@@ -1880,6 +1886,20 @@ func _run_all() -> void:
 func _expect(condition: bool, message: String) -> void:
     if not condition:
         failures.append(message)
+
+
+func _wait_for_authored_package(landmark: RegionLandmark3D, package_name: Variant) -> void:
+    if landmark == null:
+        return
+    var package := landmark.get_node_or_null("PersistentRegionGeometry/%s" % str(package_name)) as Node3D
+    for _frame in range(120):
+        # The live LOD director may reevaluate the player's focus while a
+        # threaded import is in flight. Keep this explicit inspection
+        # promotion alive until the package has actually attached.
+        landmark.set_streamed_in(true)
+        if package != null and package.get_child_count() > 0:
+            return
+        await process_frame
 
 
 func _find_world_environment(node: Node) -> WorldEnvironment:

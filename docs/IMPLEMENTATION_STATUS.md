@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused threaded authored-region loading pass
+
+- replaced synchronous authored landmark package attachment with bounded
+  threaded resource requests and main-thread instantiation after completion;
+- retained persistent landmark collision, coarse proxies, stream-out cleanup,
+  release material tuning and re-entry behavior, with explicit request/load
+  failures and a compatibility fallback when a threaded request cannot start;
+- added completion-aware native coverage and silently live-reviewed the
+  West Grid → Root Cistern → West Grid stream-ring fixture with Godot Dummy
+  audio and `--quiet-audio` only; representative cache/package profiling and
+  target-hardware profiling remain follow-up work.
+
 ## Focused authored startup loading pass
 
 - moved authored robot, organic, landmark-review and outpost-review scene
@@ -13,8 +25,8 @@
   neighborhood, preserving persistent landmarks, reduced proxies, physical
   collision and automatic stream-in as the player approaches a district;
 - full native/repository validation and the fresh-world Windows live review
-  passed with Godot Dummy audio and `--quiet-audio`; asynchronous loading and
-  representative target-hardware profiling remain external follow-up work.
+  passed with Godot Dummy audio and `--quiet-audio`; representative
+  cache/package profiling and target-hardware profiling remain follow-up work.
 
 ## Pause overlay localization
 
