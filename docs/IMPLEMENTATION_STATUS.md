@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Observatory Ridge instrument finish
+
+- added a raised, tilted aperture ring to the release Observatory dressing and
+  its development review actor so the dense parabolic reflector has a second
+  readable contour at remote distance;
+- lowered the bounded Observatory gallery camera frame and kept the change
+  presentation-only, with no changes to placement, navigation, collision,
+  simulation, audio or player workload;
+- added an aesthetic-contract assertion; silent live review uses Godot Dummy
+  audio and `--quiet-audio` only.
+
 ## Focused authored-organic hierarchy stability pass
 
 - preserved each authored organic glTF scene and generated `AnimationPlayer`

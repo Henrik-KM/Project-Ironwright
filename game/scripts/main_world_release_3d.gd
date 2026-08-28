@@ -1579,11 +1579,10 @@ func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3
 		# placement and encounter geometry remain untouched.
 		return Vector3(6.6, 8.5, 18.8)
 	if region_id == &"region.observatory_ridge":
-		# The centered frame puts the relay mast directly over the instrument hub.
-		# A bounded diagonal keeps the feed, dish bowl and service deck readable as
-		# one survey station while leaving runtime landmark placement and geometry
-		# untouched.
-		return Vector3(5.2, 8.4, 14.8)
+		# Lower the review eye so the reflector's parabolic depth and pivot cradle
+		# read as one instrument instead of a broad blue disc. Runtime landmark
+		# placement and geometry remain untouched.
+		return Vector3(6.0, 3.2, 15.4)
 	if region_id == &"region.buried_labs":
 		return Vector3(0.0, 10.2, 15.0)
 	if region_id == &"region.north_ruins":
@@ -1815,6 +1814,17 @@ func _dress_observatory_presentation_review_actor(review_actor: Node3D) -> void:
 			Vector3.ZERO,
 			"ObservatoryApproachReadout"
 		)
+	ModelKit3D.add_torus(
+		dressing,
+		2.18,
+		0.075,
+		Vector3(-0.4, 3.58, 0.92),
+		warm_signal,
+		Vector3(PI * 0.12, 0.0, 0.0),
+		"ObservatoryDishApertureRing",
+		48,
+		8
+	)
 	ModelKit3D.add_beveled_box(
 		dressing,
 		Vector3(8.6, 0.14, 0.16),
