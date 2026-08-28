@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused endgame command localization pass — 2026-08-28
+
+The final-protocol command surface now resolves protocol names, descriptions
+and inactive/progress status through the selected release catalog. German live
+review no longer mixes translated chrome with canonical English endgame data;
+the corrected panel was checked at 1600×900 with Godot's Dummy audio driver and
+`--quiet-audio`, with no live speakers. Broader professional localization and
+human full-run acceptance remain open.
+
 ## Focused route-recovery marker localization pass — 2026-08-28
 
 The physical autonomous detour marker now resolves its operation name and
