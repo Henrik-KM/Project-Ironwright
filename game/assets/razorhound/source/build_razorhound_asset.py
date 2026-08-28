@@ -49,6 +49,7 @@ def main() -> None:
         # silhouette. Keep the old mesh for the fallback contract, while the
         # authored node below uses a denser folded living shell.
         "CheekLobe": mesh("CheekLobe", add_organic_lobe(builder, (0.26, 0.34, 0.72), shell, lobes=3, rings=9, sides=40, scallop_amplitude=0.12, leading_extension=0.22, fold_strength=0.82)),
+        "BrowGuard": mesh("BrowGuard", add_organic_lobe(builder, (0.24, 0.12, 0.46), shell, lobes=2, rings=8, sides=36, scallop_amplitude=0.09, leading_extension=0.18, fold_strength=0.76)),
         "Ear": mesh("Ear", add_uv_sphere(builder, 0.16, bone, 16, 24)),
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.07, eye, 16, 24)),
         "Fang": mesh("Fang", add_cylinder(builder, 0.052, 0.62, bone, 24)),
@@ -81,13 +82,16 @@ def main() -> None:
         add_node("RazorhoundThoraxRib", mesh_ids["Rib"], (0.0, 0.96, z), parent=torso)
         add_node("ThoraxFastener", mesh_ids["Fastener"], (-0.45, 0.84, z), parent=torso)
         add_node("ThoraxFastener", mesh_ids["Fastener"], (0.45, 0.84, z), parent=torso)
-    add_node("RazorhoundHead", mesh_ids["Head"], (0.0, 0.84, -0.82))
+    head = add_node("RazorhoundHead", mesh_ids["Head"], (0.0, 0.84, -0.82))
     add_node("RazorhoundSnout", mesh_ids["Snout"], (0.0, 0.78, -1.18), extras={"socket_type": "snout"})
     add_node("OrganicDorsalPlate", mesh_ids["Rib"], (0.0, 1.04, 0.16), rotation=(0.0, 0.0, 0.05), extras={"surface": "layered_shell_break"})
     for side in (-1.0, 1.0):
         add_node("RazorhoundCheekPlate", mesh_ids["CheekLobe"], (side * 0.44, 0.82, -0.94))
         add_node("RazorhoundEar", mesh_ids["Ear"], (side * 0.28, 1.14, -0.9), rotation=(0.0, 0.0, side * 0.28))
         add_node("RazorhoundEye", mesh_ids["Eye"], (side * 0.2, 1.02, -1.27), extras={"socket_type": "threat_eye"})
+        # This node is parented to the head, so keep the eye-guard placement
+        # head-local; the target world position remains around y=1.1, z=-1.22.
+        add_node("RazorhoundBrowGuard", mesh_ids["BrowGuard"], (side * 0.2, 0.26, -0.4), rotation=(0.0, side * 0.08, side * 0.12), parent=head, extras={"surface": "folded_eye_guard"})
         add_node("RazorhoundFang", mesh_ids["Fang"], (side * 0.17, 0.54, -1.45), rotation=(0.78, 0.0, side * 0.1))
     for index in range(4):
         z = -0.5 + index * 0.38
@@ -181,7 +185,7 @@ def main() -> None:
         "accessors": builder.accessors, "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "animations": animations,
-        "extras": {"ironwright_asset_id": "razorhound.predator.v1", "required_nodes": ["RazorhoundModel", "Torso", "TorsoCore", "RazorhoundSnout", "RazorhoundCheekPlate", "RazorhoundFang", "RazorhoundSpine", "RazorhoundTail", "ProductionAssetMarker"], "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]},
+        "extras": {"ironwright_asset_id": "razorhound.predator.v1", "required_nodes": ["RazorhoundModel", "Torso", "TorsoCore", "RazorhoundSnout", "RazorhoundCheekPlate", "RazorhoundBrowGuard", "RazorhoundFang", "RazorhoundSpine", "RazorhoundTail", "ProductionAssetMarker"], "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]},
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")

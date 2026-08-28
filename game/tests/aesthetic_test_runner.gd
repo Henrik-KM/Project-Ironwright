@@ -1710,8 +1710,10 @@ func _run_all() -> void:
     var roofleaper_asset := ROOFLEAPER_ASSET_SCENE.instantiate()
     var glassmoth_asset := GLASSMOTH_ASSET_SCENE.instantiate()
     var razorhound_cheek := _find_named(razorhound_asset, "RazorhoundCheekPlate") as MeshInstance3D
-    _expect(_mesh_vertex_count(_find_named(razorhound_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(razorhound_cheek) >= 48, "The authored Razorhound dorsal and cheek plates must retain beveled high-definition anatomy edges.")
+    var razorhound_brow := _find_named(razorhound_asset, "RazorhoundBrowGuard") as MeshInstance3D
+    _expect(_mesh_vertex_count(_find_named(razorhound_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(razorhound_cheek) >= 48 and _mesh_vertex_count(razorhound_brow) >= 96, "The authored Razorhound dorsal, cheek and eye-guard plates must retain dense high-definition anatomy edges.")
     _expect(razorhound_cheek != null and razorhound_cheek.mesh.get_aabb().size.y >= 0.28, "The Razorhound cheek plates must retain closed folded volume around the bite line rather than reading as rectangular bars.")
+    _expect(razorhound_brow != null and razorhound_brow.get_parent().name == "RazorhoundHead" and razorhound_brow.mesh.get_aabb().size.y >= 0.10, "The Razorhound brow guard must remain a dense child of the authored head so its eye silhouette does not detach.")
     var spore_sac_rim := _find_named(sporecaster_asset, "SporecasterSacRim0") as MeshInstance3D
     var spore_sac_pore := _find_named(sporecaster_asset, "SporecasterSacPore0") as MeshInstance3D
     _expect(_mesh_vertex_count(_find_named(sporecaster_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(sporecaster_asset, "SporecasterGillFan0") as MeshInstance3D) >= 48 and _mesh_vertex_count(spore_sac_rim) >= 100 and _mesh_vertex_count(spore_sac_pore) >= 48, "The authored Sporecaster dorsal, gill and sac-aperture surfaces must retain beveled high-definition anatomy edges.")
