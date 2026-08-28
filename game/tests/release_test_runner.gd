@@ -316,16 +316,17 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     var route_detail := world.operation_detail_director as OperationDetailDirector3D
     _expect(route_detail != null, "Release runtime must retain the operation detail presentation director.")
     if route_detail != null:
-        route_detail.show_route_recovery(&"operation.test", Vector3(4.0, 0.0, 6.0), 1, 3)
-        _expect("AUTONOMER UMWEG" in route_detail.route_recovery_label.text and "SEITENROUTE 1/3" in route_detail.route_recovery_label.text, "German locale must localize the visible autonomous detour marker.")
+        route_detail.show_route_recovery(&"operation.detour", Vector3(4.0, 0.0, 6.0), 1, 3)
+        _expect("AUTONOMER UMWEG" in route_detail.route_recovery_label.text and "SEITENROUTE 1/3" in route_detail.route_recovery_label.text and "operation.detour.name" not in route_detail.route_recovery_label.text, "German locale must localize the visible autonomous detour marker without exposing a raw operation key.")
         route_detail.show_casualty_recovery(&"casualty.test_frame", Vector3(4.0, 0.0, 6.0), "Siebzehn")
         _expect("AUSFALLSIGNAL" in route_detail.casualty_recovery_label.text and "FELDSIGNAL TEST FRAME" in route_detail.casualty_recovery_label.text, "German locale must localize the visible casualty beacon marker.")
         service.set_locale(&"sv")
         route_detail.refresh_localized_text()
-        _expect("AUTONOM OMVÄG" in route_detail.route_recovery_label.text and "FÖRLUSTSIGNAL" in route_detail.casualty_recovery_label.text, "Swedish locale must refresh already-visible autonomous markers.")
+        _expect("AUTONOM OMVÄG" in route_detail.route_recovery_label.text and "FÖRLUSTSIGNAL" in route_detail.casualty_recovery_label.text and "operation.detour.name" not in route_detail.route_recovery_label.text, "Swedish locale must refresh already-visible autonomous markers without exposing a raw operation key.")
         route_detail.clear_route_recovery()
         route_detail.clear_casualty_recovery()
         service.set_locale(&"de")
+    _expect(world.localization_service.text("notification.complete.route_recovery_marker_review") != "notification.complete.route_recovery_marker_review", "Route recovery marker review notifications must resolve to readable localized copy.")
 
     var tier_hud := world.get_node_or_null("EnemyTierHUD") as EnemyTierHUD3D
     _expect(tier_hud != null, "Release runtime must expose the population-tier command-map panel.")
