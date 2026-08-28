@@ -1193,6 +1193,7 @@ func _run_all() -> void:
             _expect(_find_named(role_samples[index], "ProductionAssetMarker") != null, "The authored Engineer model must expose its production asset marker.")
             _expect(_find_named(role_samples[index], "EngineerCradleLatch") != null and _find_named(role_samples[index], "EngineerForgeGuard") != null, "The authored Engineer model must expose maintained cradle and forge-guard hardware.")
             _expect(_find_named(role_samples[index], "EngineerToolCollarLeft") != null and _find_named(role_samples[index], "EngineerClampJawRight") != null, "The authored Engineer model must expose close-camera tool and clamp hardware.")
+            _expect(_find_named(role_samples[index], "EngineerForgeStatusPanel") != null and _find_named(role_samples[index], "EngineerForgeStatusLens") != null, "The authored Engineer model must expose a readable forge status face.")
         elif role_names[index] == &"relay":
             _expect(_find_named(role_samples[index], "RelayAuthoredModel") != null, "The Signal Relay must use the authored Relay model shell.")
             _expect(_find_named(role_samples[index], "ProductionAssetMarker") != null, "The authored Signal Relay model must expose its production asset marker.")

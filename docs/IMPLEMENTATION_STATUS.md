@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Engineer forge-status finish
+
+- added a compact front forge-status face and recessed cyan lens to the
+  authored Engineer builder;
+- preserved the construction role's existing sockets, collision, animation,
+  autonomy, save state and player workload;
+- extended the stable asset manifest and aesthetic regression coverage; silent
+  live review uses Godot Dummy audio and `--quiet-audio` only.
+
 ## Focused Mechromancer hood and visor finish
 
 - added a lower hood seam, protective visor brow and paired visor mounts to
