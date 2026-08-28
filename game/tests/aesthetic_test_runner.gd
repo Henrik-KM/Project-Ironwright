@@ -314,13 +314,18 @@ func _run_all() -> void:
             # pass. Promote each landmark explicitly for the inspection, then
             # let the camera-focused LOD checks below stream the distant
             # package back out.
-            if startup_lod != null:
-                startup_lod.set_region_streamed(landmark.region_id, true)
-            else:
-                landmark.set_streamed_in(true)
+            # This is a catalogue inspection, not a focus simulation. Promote
+            # the landmark directly so the LOD signal cannot rebuild release
+            # dressing while the threaded package is attaching.
+            landmark.set_streamed_in(true)
             await _wait_for_authored_package(landmark, authored_package_name_by_kind.get(landmark.region_kind, ""))
             if release_art != null:
                 release_art.ensure_region_dressing(landmark.region_id)
+            if startup_lod != null:
+                # Keep the director's stream-state ledger consistent for the
+                # later camera-driven release/re-entry assertions. The
+                # package and release dressing are ready before this signal.
+                startup_lod.set_region_streamed(landmark.region_id, true)
             var authored_package_name := str(authored_package_name_by_kind.get(landmark.region_kind, ""))
             var authored_package := landmark.get_node_or_null("PersistentRegionGeometry/%s" % authored_package_name) as Node3D
             _expect(authored_package != null and authored_package.get_child_count() > 0, "Each non-sanctuary region must instantiate its authored package when promoted into the inspection ring.")
@@ -1893,10 +1898,6 @@ func _wait_for_authored_package(landmark: RegionLandmark3D, package_name: Varian
         return
     var package := landmark.get_node_or_null("PersistentRegionGeometry/%s" % str(package_name)) as Node3D
     for _frame in range(120):
-        # The live LOD director may reevaluate the player's focus while a
-        # threaded import is in flight. Keep this explicit inspection
-        # promotion alive until the package has actually attached.
-        landmark.set_streamed_in(true)
         if package != null and package.get_child_count() > 0:
             return
         await process_frame

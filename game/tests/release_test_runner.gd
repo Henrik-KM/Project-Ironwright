@@ -575,15 +575,15 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         # rebuilds cannot race a concurrent stream-out during threaded loads.
         region_lod.set_process(false)
         for raw_region_id in world.region_director.region_data.keys():
-            region_lod.set_region_streamed(StringName(raw_region_id), true)
-            world.release_world_art.ensure_region_dressing(StringName(raw_region_id))
+            var landmark := world.region_director.get_landmark(StringName(raw_region_id))
+            if landmark != null:
+                landmark.set_streamed_in(true)
         for _frame in range(120):
             var all_authored_ready := true
             for raw_region_id in world.region_director.region_data.keys():
                 var landmark := world.region_director.get_landmark(StringName(raw_region_id))
                 if landmark == null or landmark.region_kind == &"sanctuary":
                     continue
-                landmark.set_streamed_in(true)
                 var package_name: String = str({
                     &"industrial": "WestGridAuthoredScene",
                     &"commercial": "FloodMarketAuthoredScene",
@@ -604,6 +604,10 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
             if all_authored_ready:
                 break
             await process_frame
+        for raw_region_id in world.region_director.region_data.keys():
+            var region_id := StringName(raw_region_id)
+            world.release_world_art.ensure_region_dressing(region_id)
+            region_lod.set_region_streamed(region_id, true)
     var texture_paths := [
         "res://assets/release/textures/asphalt_wet.png",
         "res://assets/release/textures/brick_ruin.png",
