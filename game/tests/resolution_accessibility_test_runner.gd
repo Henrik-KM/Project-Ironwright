@@ -49,10 +49,13 @@ func _run_case(label: String, viewport_size: Vector2i) -> void:
     var hud := world.hud as IronwrightBeautifulHUD3D
     _expect(hud != null, "%s resolution must expose the cinematic HUD." % label)
     if hud != null:
+        hud.apply_safe_layout(Vector2(viewport_size))
         var health_panel := hud.root_control.get_node_or_null("HealthPanel") as PanelContainer
         _expect(_fits(hud.objective_panel, viewport_size), "%s resolution must keep the objective panel inside the viewport at large text." % label)
         _expect(_fits(hud.resource_panel, viewport_size), "%s resolution must keep the resource panel inside the viewport at large text." % label)
         _expect(_fits(health_panel, viewport_size), "%s resolution must keep the health panel inside the viewport at large text." % label)
+        _expect(not hud.objective_panel.get_global_rect().intersects(health_panel.get_global_rect()), "%s resolution must keep the expanded objective card separate from the health stack at large text." % label)
+        _expect(hud.objective_label.get_global_rect().end.y <= hud.objective_panel.get_global_rect().end.y + 0.5, "%s resolution must keep large objective copy inside its measured card." % label)
 
         hud.show_forge_menu()
         await process_frame

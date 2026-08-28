@@ -1,5 +1,11 @@
 # Changelog
 
+## Pre-alpha large-text HUD resilience milestone
+
+- measured the opening objective card against the active accessibility text scale so large copy stays inside its panel and never overlaps the Mechromancer/Bulwark health stack;
+- reflowed the tactical HUD immediately when accessibility settings change, and added deterministic first-session and multi-resolution regression coverage;
+- live-reviewed the maximum text-scale opening at 1280×720 with Dummy audio and quiet mode.
+
 ## Pre-alpha victory overlay readability milestone
 
 - centered the first-victory overlay with viewport-safe offsets instead of relying on a bottom-right anchor;

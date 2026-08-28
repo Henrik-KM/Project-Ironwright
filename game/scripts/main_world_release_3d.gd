@@ -628,6 +628,7 @@ func _connect_release_services() -> void:
 
 func _finish_release_boot() -> void:
 	settings_service.apply_accessibility_to_tree(self)
+	_refresh_hud_accessibility_layout()
 	_apply_command_line_locale_override()
 	var mode := pending_launch_mode
 	pending_launch_mode = &"title"
@@ -2221,6 +2222,7 @@ func _on_front_end_settings_applied(values: Dictionary) -> void:
 	balance_director.set_profile(StringName(str(values.get("difficulty", "survival"))))
 	performance_director.target_fps = int(values.get("target_fps", 60))
 	settings_service.apply_accessibility_to_tree(self)
+	_refresh_hud_accessibility_layout()
 	release_audio.play_effect(&"ui_confirm", "", 0.0, -4.0)
 
 
@@ -2256,7 +2258,14 @@ func _apply_release_settings() -> void:
 		performance_director.target_fps = int(settings_service.get_value(&"target_fps", 60))
 	if objective_guidance != null:
 		objective_guidance.visible = bool(settings_service.get_value(&"show_world_guidance", true))
+	_refresh_hud_accessibility_layout()
 	refresh_input_legend()
+
+
+func _refresh_hud_accessibility_layout() -> void:
+	if hud == null or not is_instance_valid(hud):
+		return
+	hud.apply_safe_layout(Vector2(get_viewport().get_visible_rect().size))
 
 
 func _apply_balance_profile() -> void:
