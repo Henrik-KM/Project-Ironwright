@@ -2199,3 +2199,15 @@ rebuilding the imported creature. Threaded authored district packages defer
 scene attachment by one idle frame so imported renderer resources finish their
 handoff before promotion. Exact silent live review uses Godot Dummy audio with
 `--quiet-audio`; no live speakers are used.
+
+## Focused sanctuary-crown framing pass — 2026-08-28
+
+The completed final-protocol crown now resolves farther behind the Heartforge
+at a compact scale with a restrained emissive and point-light budget. This
+keeps the post-victory transformation present as a readable sanctuary landmark
+without competing with the surviving cast, Heartforge focal hardware or
+tactical HUD. The pass is presentation-only and preserves the final-protocol,
+continuation, collision, save and archive contracts. Exact silent victory,
+continuation and settled-sanctuary review passed with Godot Dummy audio and
+`--quiet-audio`; no live speakers are used. Broader human production-art and
+localization acceptance remains open.

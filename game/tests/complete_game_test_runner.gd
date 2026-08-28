@@ -379,7 +379,9 @@ func _run_all() -> void:
     _expect(world.endgame_director.completed_protocol == &"protocol.severance", "The final protocol must complete after its sustained defence interval.")
     _expect(world.endgame_director.remote_support_progress() >= 0.999 and world.endgame_director.homefront_hold_progress() >= 0.999, "Victory must require both remote relay support and a completed Heartforge hold.")
     _expect(world.endgame_escalation_director.current_state == &"completed", "Final protocol completion must resolve the crisis lattice into the sanctuary crown.")
-    _expect(world.get_node("EndgameProtocolVisuals/SanctuaryCrown").visible, "The completed protocol must leave a calm capstone presentation at the Heartforge.")
+    var severance_crown := world.get_node("EndgameProtocolVisuals/SanctuaryCrown") as Node3D
+    _expect(severance_crown != null and severance_crown.visible, "The completed protocol must leave a calm capstone presentation at the Heartforge.")
+    _expect(severance_crown != null and severance_crown.scale.x <= 0.64 and world.endgame_escalation_director.core_light.light_energy <= 0.9, "The completed sanctuary crown must remain a compact, restrained backdrop instead of blooming over the surviving cast.")
     _expect(world.first_victory_achieved, "Completing a final protocol must produce the first victory.")
     _expect(world.game_ended, "The complete systemic run must have a real end state.")
     _expect(world.hud.has_method(&"set_sanctuary_integrity") and world.hud.sanctuary_integrity >= 0.7, "The first-victory frame must clear the active crisis damage badge instead of carrying stale sanctuary damage into the ending.")
