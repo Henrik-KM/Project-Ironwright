@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Engineer forge-status finish — 2026-08-28
+
+The authored Engineer now carries a compact front forge-status face with a
+recessed cyan lens, giving the construction specialist a readable instrument
+focal instead of relying only on its arms and material cradle. The additions
+are presentation-only: stable sockets, collision, animation ownership,
+autonomy, save-state and player workload are unchanged. The exact page 1/15
+friendly-roster review uses Godot Dummy audio with `--quiet-audio` only; no
+live speakers are used. Broader human machine-roster and production-art
+acceptance remains open.
+
 ## Focused Mechromancer hood and visor finish — 2026-08-28
 
 The canonical Mechromancer now carries a restrained lower hood seam and a

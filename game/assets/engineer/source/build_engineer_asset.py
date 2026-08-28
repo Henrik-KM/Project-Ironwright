@@ -64,6 +64,8 @@ def main() -> None:
         # engineer read as maintained fabrication equipment at approach range.
         "CradleLatch": mesh("CradleLatch", add_cylinder(builder, 0.06, 0.12, amber, 20)),
         "ForgeGuard": mesh("ForgeGuard", add_beveled_box(builder, (0.4, 0.1, 0.12), steel, 0.022)),
+        "ForgeStatusPanel": mesh("ForgeStatusPanel", add_beveled_box(builder, (0.42, 0.11, 0.07), steel, 0.018)),
+        "ForgeStatusLens": mesh("ForgeStatusLens", add_uv_sphere(builder, 0.055, cyan, 12, 20)),
         "ToolCollar": mesh("ToolCollar", add_cylinder(builder, 0.13, 0.08, cyan, 24)),
         "CableSpool": mesh("CableSpool", add_cylinder(builder, 0.13, 0.12, oxide, 24)),
         "WeldingShield": mesh("WeldingShield", add_beveled_box(builder, (0.3, 0.12, 0.16), steel, 0.025)),
@@ -117,6 +119,8 @@ def main() -> None:
     add_node("CradleLip", mesh_ids["CradleLip"], (0.0, 1.77, 0.24))
     add_node("EngineerCradleLatch", mesh_ids["CradleLatch"], (0.0, 1.86, -0.2), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("EngineerForgeGuard", mesh_ids["ForgeGuard"], (0.0, 1.48, 0.02))
+    add_node("EngineerForgeStatusPanel", mesh_ids["ForgeStatusPanel"], (0.0, 1.18, -0.79), extras={"surface": "forge_status_face"})
+    add_node("EngineerForgeStatusLens", mesh_ids["ForgeStatusLens"], (0.0, 1.18, -0.865), extras={"socket_type": "forge_status"})
     for side in (-1.0, 1.0):
         add_node("PistonJoint", mesh_ids["Joint"], (side * 0.72, 1.05, -0.1))
         add_node("EngineerToolCollar%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["ToolCollar"], (side * 0.72, 1.05, -0.1), extras={"socket_type": "construction_tool_collar"})
