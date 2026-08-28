@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused North Ruins catalogue-witness pass
+
+- added a bounded physical Lower Catalogue witness beside the North Ruins
+  civic gateway, with sealed steps, a record case, index hardware and a small
+  service lamp;
+- kept the witness presentation-only: the existing Town Archive record remains
+  authoritative, with no sublevel, interaction, inventory, collision, route,
+  resource or recurring workload added;
+- extended aesthetic and commercial release coverage; live review uses
+  Godot's Dummy audio driver and `--quiet-audio` only.
+
 ## Focused Observatory migration-witness pass
 
 - added a bounded physical migration-map witness beside the Observatory Ridge

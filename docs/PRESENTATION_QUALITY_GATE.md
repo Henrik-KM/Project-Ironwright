@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused North Ruins catalogue witness — 2026-08-29
+
+North Ruins now carries a physical Lower Catalogue witness beside the civic
+gateway: three sealed steps, a dark record case with index hardware, a rusted
+seal and a small service lamp make the existing archive record read as a
+maintained civic place rather than only a generic panel. The assembly is
+bounded presentation dressing only; the Town Archive remains authoritative
+and no sublevel, interaction, collision, route, resource or player workload
+was added. Exact live review uses Godot Dummy audio with `--quiet-audio` only;
+no live speakers are used.
+
 ## Focused Observatory migration witness — 2026-08-29
 
 Observatory Ridge now carries a physical migration-map witness beside the
