@@ -341,7 +341,12 @@ func _refresh() -> void:
     if mode == &"archive":
         authorize_button.visible = false
         var kind_label := _text("command.archive.story_thread", "STORY THREAD") if str(item.get("kind", "")) == "story_thread" else _text("command.archive.physical_record", "PHYSICAL RECORD")
-        requirements_label.text = "%s · %s %s\n%s %s · %s" % [kind_label, _text("command.archive.source", "SOURCE:"), str(item.get("source_name", "Unknown")).to_upper(), _text("command.archive.arc", "ARC:"), str(item.get("arc", "town_history")).replace("_", " ").to_upper(), _text("command.archive.close_hint", "Press L or ESC to close.")]
+        var source_name := str(item.get("source_name", "Unknown"))
+        var source_key := source_name.to_lower().replace(" ", "_").replace("-", "_")
+        var localized_source := _localized_archive_label("story.source.%s" % source_key, source_name)
+        var arc_name := str(item.get("arc", "town_history"))
+        var localized_arc := _localized_archive_label("story.arc.%s" % arc_name, arc_name.replace("_", " ").capitalize())
+        requirements_label.text = "%s · %s %s\n%s %s · %s" % [kind_label, _text("command.archive.source", "SOURCE:"), localized_source.to_upper(), _text("command.archive.arc", "ARC:"), localized_arc.to_upper(), _text("command.archive.close_hint", "Press L or ESC to close.")]
         return
     authorize_button.visible = true
     authorize_button.disabled = operation_active and mode == &"operations"
@@ -399,6 +404,13 @@ func _localized_protocol_name(raw_name: String) -> String:
 
 
 func _localized_operation_field(item: Dictionary, field: String, fallback: String) -> String:
+    if mode == &"archive":
+        var archive_id := str(item.get("id", ""))
+        if archive_id.begins_with("story."):
+            var record_key := archive_id.trim_prefix("story.").replace(".", "_")
+            var localized_record := _text("story.record.%s.%s" % [record_key, field], fallback)
+            if localized_record != "story.record.%s.%s" % [record_key, field]:
+                return localized_record
     var template_id := str(item.get("dynamic_template_id", ""))
     var operation_id := str(item.get("id", "")).trim_prefix("operation.")
     var key_base := "operation.%s" % operation_id.replace(".", "_")
@@ -475,6 +487,14 @@ func _text(key: String, fallback: String, replacements: Array = []) -> String:
     for index in range(replacements.size()):
         result = result.replace("{%d}" % index, str(replacements[index]))
     return result
+
+
+func _localized_archive_label(key: String, fallback: String) -> String:
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service == null:
+        return fallback
+    var localized := service.text(key)
+    return fallback if localized == key else localized
 
 
 func _label(text_value: String, font_size: int, color: Color) -> Label:

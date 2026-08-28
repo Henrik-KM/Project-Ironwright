@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Town Archive record-localization pass
+
+- externalized all 30 non-ending physical Town Archive records plus their
+  source and arc metadata into the English, Swedish and German catalogs;
+- resolved archive presentation through stable record identifiers without
+  changing persisted IDs, story triggers or adding a recurring task surface;
+- added release coverage for the real archive surface; silent live review uses
+  Godot's Dummy audio driver and `--quiet-audio` only; professional prose
+  review remains an external release gate.
+
 ## Focused late-organic gallery safe-frame pass
 
 - tightened the two-row late-organic presentation review layout and widened
