@@ -743,6 +743,73 @@ func _build_observatory_vignette(parent: Node3D) -> void:
 
 
 func _build_research_vignette(parent: Node3D) -> void:
+    var containment_shell := ModelKit3D.material(Color("344349"), 0.72, 0.34)
+    var containment_edge := ModelKit3D.material(Color("76533b"), 0.42, 0.58)
+    var containment_dark := ModelKit3D.material(Color("111f25"), 0.76, 0.28)
+    var containment_glass := ModelKit3D.material(Color("294658"), 0.18, 0.22, Color("6fb9da"), 1.0)
+    var containment_signal := ModelKit3D.material(Color("3b315c"), 0.26, 0.3, Color("c68be8"), 1.35)
+    var containment_warning := ModelKit3D.material(Color("6b422f"), 0.18, 0.5, Color("e79a55"), 0.72)
+
+    # The research landmark is a sealed containment hall. This spine gives the
+    # discovered encounter a readable approach-facing centre instead of a
+    # collection of isolated specimen boxes. It is deliberately presentation
+    # only: no collision, storage, route, resource or operation state.
+    var containment_spine := Node3D.new()
+    containment_spine.name = "BuriedLabsContainmentSpine"
+    parent.add_child(containment_spine)
+    ModelKit3D.add_beveled_box(
+        containment_spine,
+        Vector3(9.8, 3.2, 0.28),
+        Vector3(0.0, 1.82, -8.35),
+        containment_shell,
+        Vector3.ZERO,
+        "LabContainmentBackwall",
+        0.18
+    )
+    ModelKit3D.add_beveled_box(
+        containment_spine,
+        Vector3(8.85, 0.16, 0.48),
+        Vector3(0.0, 3.47, -8.18),
+        containment_edge,
+        Vector3.ZERO,
+        "LabContainmentHeader",
+        0.18
+    )
+    for side in [-1.0, 1.0]:
+        _add_beam(containment_spine, Vector3(side * 4.65, 0.38, -8.18), Vector3(side * 4.65, 3.35, -8.18), 0.075, containment_edge, "LabContainmentWallBrace")
+        _add_beam(containment_spine, Vector3(side * 4.25, 0.56, -8.05), Vector3(side * 3.35, 2.92, -8.05), 0.045, containment_warning, "LabContainmentDiagonalBrace")
+
+    # A compact airlock marks the safe approach and gives the cases a scale
+    # reference. The frame is shallow enough to keep the landmark readable
+    # from the tactical camera.
+    for side in [-1.0, 1.0]:
+        _add_beam(containment_spine, Vector3(side * 2.05, 0.42, -7.92), Vector3(side * 2.05, 2.72, -7.92), 0.09, containment_edge, "LabAirlockFramePost")
+    _add_beam(containment_spine, Vector3(-2.05, 2.72, -7.92), Vector3(2.05, 2.72, -7.92), 0.09, containment_edge, "LabAirlockFrameHeader")
+    ModelKit3D.add_beveled_box(containment_spine, Vector3(2.9, 1.72, 0.12), Vector3(0.0, 1.22, -7.96), containment_dark, Vector3.ZERO, "LabAirlockDoor", 0.14)
+    ModelKit3D.add_surface_panel(containment_spine, Vector3(0.78, 0.48, 0.08), Vector3(0.0, 1.42, -8.08), containment_dark, containment_signal, Vector3.ZERO, "LabAirlockReader")
+
+    # The central vessel is a single high-contrast focal object, with a cap,
+    # collar, sample ports and a rear cooling stack to imply a working lab.
+    ModelKit3D.add_beveled_box(containment_spine, Vector3(2.5, 0.18, 1.35), Vector3(0.0, 0.34, -8.03), containment_dark, Vector3.ZERO, "LabContainmentVesselPlinth", 0.18)
+    ModelKit3D.add_cylinder(containment_spine, 0.7, 2.2, Vector3(0.0, 1.55, -8.04), containment_glass, Vector3.ZERO, "LabContainmentVessel")
+    ModelKit3D.add_cylinder(containment_spine, 0.11, 2.62, Vector3(0.0, 1.55, -8.04), containment_signal, Vector3.ZERO, "LabContainmentCore")
+    ModelKit3D.add_torus(containment_spine, 0.73, 0.085, Vector3(0.0, 0.78, -8.04), containment_edge, Vector3.ZERO, "LabContainmentCollar", 40, 8)
+    ModelKit3D.add_cylinder(containment_spine, 0.88, 0.16, Vector3(0.0, 2.72, -8.04), containment_edge, Vector3.ZERO, "LabContainmentCap")
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_surface_panel(containment_spine, Vector3(0.38, 0.44, 0.08), Vector3(side * 0.76, 1.46, -8.17), containment_dark, containment_warning, Vector3.ZERO, "LabContainmentSamplePort")
+        _add_beam(containment_spine, Vector3(side * 0.82, 1.46, -8.05), Vector3(side * 1.55, 1.46, -8.05), 0.035, containment_signal, "LabContainmentSampleLine")
+
+    ModelKit3D.add_louvered_panel(containment_spine, Vector3(1.8, 1.18, 0.16), Vector3(-3.45, 1.62, -8.17), containment_dark, containment_signal, Vector3.ZERO, "LabSpineCoolingLouver", 5)
+    ModelKit3D.add_surface_panel(containment_spine, Vector3(1.35, 0.68, 0.08), Vector3(3.35, 1.56, -8.17), containment_dark, containment_signal, Vector3.ZERO, "LabSpineInstrumentFace")
+    ModelKit3D.add_surface_panel(containment_spine, Vector3(0.48, 0.32, 0.08), Vector3(3.35, 2.24, -8.17), containment_dark, containment_warning, Vector3.ZERO, "LabSpineWarningLens")
+    for index in range(3):
+        var pipe_x := -2.45 + float(index) * 0.72
+        _add_beam(containment_spine, Vector3(pipe_x, 2.95, -8.04), Vector3(pipe_x + 0.18, 3.58, -8.04), 0.035, containment_edge, "LabSpineTransferPipe")
+    _add_beam(containment_spine, Vector3(-4.0, 0.72, -8.04), Vector3(-3.45, 1.06, -8.04), 0.05, containment_warning, "LabSpineCoolingFeed")
+    _add_beam(containment_spine, Vector3(4.0, 0.72, -8.04), Vector3(3.35, 1.12, -8.04), 0.05, containment_signal, "LabSpineInstrumentFeed")
+    _add_light(containment_spine, Vector3(0.0, 1.64, -8.42), Color("a979d9"), 0.58, 5.5)
+    _add_light(containment_spine, Vector3(3.35, 1.56, -8.38), Color("e49a56"), 0.26, 3.8)
+
     ModelKit3D.add_beveled_box(parent, Vector3(7.8, 0.24, 2.8), Vector3(0.0, 0.24, -7.0), _dark_steel, Vector3.ZERO, "LabExclusionPad", 0.2)
     for index in range(4):
         var x := -3.6 + float(index) * 2.4

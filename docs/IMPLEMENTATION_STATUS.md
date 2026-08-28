@@ -4909,6 +4909,16 @@ presentation restore, with release regression coverage for that migration path.
 - added release coverage for the stable balcony, railing, support, service and
   clothing detail sockets.
 
+## Focused discovered research-encounter depth milestone
+
+- added a presentation-only Buried Laboratories containment spine with a
+  sealed backwall, approach-facing airlock, central vessel, sample ports,
+  cooling louver, instrument face and transfer-pipe detail;
+- kept the discovered encounter contract unchanged: no collision, storage,
+  resources, routes, operations or player-managed maintenance were added;
+- added aesthetic coverage for the spine's stable anatomy sockets, curved
+  geometry and restrained practical lighting.
+
 ## Focused deferred authored-visual population milestone
 
 - release-spawned actors outside the active visual radius now begin with their

@@ -1499,6 +1499,13 @@ Riverworks now also carries a bounded wet-infrastructure depth pass: separated w
 
 Remote East Tenements release dressing now carries the same model grammar as well: eight balcony assemblies use beveled floors, rails, support posts, service faces, clotheslines and varied hanging cloth panels instead of isolated balcony and clothing boxes. The detail is presentation-only and preserves the existing residential landmark, route, ecology and operation contracts.
 
+The discovered Buried Laboratories encounter now carries a bounded containment
+spine as well: a sealed backwall and airlock frame the approach, while a
+central specimen vessel, sample ports, cooling louver, instrument face and
+transfer pipes give the active encounter the same authored depth as its remote
+release review. This layer remains presentation-only and preserves the
+existing research landmark, operation, ecology and progression contracts.
+
 Remote Root Cistern release dressing now carries the same model grammar as well: the final basin uses a layered service ring, signal ring, approach control deck, pump housing, header pipes and living-root anchors instead of a circular basin with repeated pylons alone. The detail is presentation-only and preserves the existing endgame landmark, ecology, operation and reduced-detail contracts.
 
 ## Release-readiness rule
