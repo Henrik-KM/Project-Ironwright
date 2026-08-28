@@ -53,7 +53,7 @@ func _process(delta: float) -> void:
         return
 
     if not endgame_director.active_protocol.is_empty():
-        var protocol_status := endgame_director.status_summary()
+        var protocol_status := _localized_endgame_status_summary()
         hud.set_operation(protocol_status)
         # The resource panel already carries the live protocol percentage. A
         # second bottom badge duplicates that status and competes with the
@@ -676,11 +676,11 @@ func _update_complete_game_objective() -> void:
     else:
         var locale_service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
         var objective_title := "HOLD THE HEARTFORGE"
-        var objective_detail := "%s. Routine machines and outposts continue acting autonomously; intervene only where the final response breaks through." % endgame_director.status_summary()
+        var objective_detail := "%s. Routine machines and outposts continue acting autonomously; intervene only where the final response breaks through." % _localized_endgame_status_summary()
         var objective_prompt := "HOLD THE HEARTFORGE · INTERVENE ONLY IF THE FINAL RESPONSE BREAKS THROUGH"
         if locale_service != null:
             objective_title = locale_service.text("objective.endgame.active.title")
-            objective_detail = locale_service.text("objective.endgame.active.detail", [endgame_director.status_summary()])
+            objective_detail = locale_service.text("objective.endgame.active.detail", [_localized_endgame_status_summary()])
             objective_prompt = locale_service.text("objective.endgame.active.prompt")
         hud.set_objective(objective_title, objective_detail)
         hud.set_prompt(objective_prompt)
@@ -983,12 +983,42 @@ func _on_complete_game_noise(position: Vector3, radius: float, intensity: float,
 
 
 func _on_endgame_started(protocol_id: StringName, display_name: String) -> void:
-    hud.push_notification(_localized_text("notification.final_protocol.converging", "FINAL PROTOCOL · {0} · ORGANIC PRESSURE IS CONVERGING", [display_name.to_upper()]))
+    var localized_name := display_name
+    var locale_service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if locale_service != null:
+        localized_name = _localized_endgame_protocol_name(display_name, locale_service)
+    hud.push_notification(_localized_text("notification.final_protocol.converging", "FINAL PROTOCOL · {0} · ORGANIC PRESSURE IS CONVERGING", [localized_name.to_upper()]))
 
 
 func _on_endgame_progress(protocol_id: StringName, progress: float, detail: String) -> void:
     if int(progress * 100.0) % 20 == 0:
-        hud.set_operation("%s · %d%%" % [String(protocol_id).replace("protocol.", "").capitalize(), int(round(progress * 100.0))])
+        hud.set_operation(_localized_endgame_status_summary("%s · %d%%" % [String(protocol_id).replace("protocol.", "").capitalize(), int(round(progress * 100.0))]))
+
+
+func _localized_endgame_status_summary(raw_status: String = "") -> String:
+    var status := raw_status
+    if status.is_empty() and endgame_director != null:
+        status = endgame_director.status_summary()
+    var locale_service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if locale_service == null:
+        return status
+    if status == "No final protocol active":
+        return locale_service.text("command.endgame.none")
+    if status.ends_with(" completed"):
+        var completed_name := status.trim_suffix(" completed")
+        return locale_service.text("command.endgame.completed", [_localized_endgame_protocol_name(completed_name, locale_service)])
+    var separator := status.find(" · ")
+    if separator > 0:
+        var active_name := status.substr(0, separator)
+        var progress_text := status.substr(separator + 3)
+        return locale_service.text("command.endgame.progress", [_localized_endgame_protocol_name(active_name, locale_service), progress_text])
+    return status
+
+
+func _localized_endgame_protocol_name(raw_name: String, locale_service: LocalizationService3D) -> String:
+    var protocol_key := raw_name.to_lower().replace(" ", "_")
+    var localized := locale_service.text("endgame.%s.name" % protocol_key)
+    return raw_name if localized == "endgame.%s.name" % protocol_key else localized
 
 
 func _on_endgame_completed(protocol_id: StringName, display_name: String, ending: String) -> void:
