@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Thornback jaw-silhouette finish — 2026-08-28
+
+Thornback’s existing jaw plates now carry a dense paired tooth edge, with the
+rounded bases seated into the lower head volume and the points extending just
+below the plate. The teeth remain children of the existing animated jaw
+sockets, so the territorial attack silhouette gains close-camera clarity
+without changing gameplay, collision or recurring work. The corrected page 3/15
+late-organic review passed on the merged-build candidate with Godot Dummy audio
+and `--quiet-audio` only; no live speakers were used. Broader human
+production-art acceptance remains open.
+
 ## Focused Carrion Bell resonator finish — 2026-08-28
 
 The Carrion Bell authored signal organ now has a dense closed bell lip,

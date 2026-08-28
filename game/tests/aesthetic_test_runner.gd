@@ -1518,6 +1518,9 @@ func _run_all() -> void:
                 _expect(_find_named(enemy_samples[index], "ThornbackJawPlateL") != null and _find_named(enemy_samples[index], "ThornbackCrown") != null, "The Thornback must expose layered jaw and crown hardware.")
                 var thornback_barb := _find_named(enemy_samples[index], "ThornbackBarb0") as MeshInstance3D
                 _expect(thornback_barb != null and _mesh_vertex_count(thornback_barb) >= 96 and _find_named(enemy_samples[index], "ThornbackBarb2") != null, "The Thornback must expose a dense three-barb dorsal threat edge rather than a flat ridge-only back.")
+                var thornback_tooth_l := _find_named(enemy_samples[index], "ThornbackJawToothL0") as MeshInstance3D
+                var thornback_tooth_r := _find_named(enemy_samples[index], "ThornbackJawToothR1") as MeshInstance3D
+                _expect(thornback_tooth_l != null and thornback_tooth_r != null and _mesh_vertex_count(thornback_tooth_l) >= 96 and thornback_tooth_l.get_parent().name == "ThornbackJawPlateL" and thornback_tooth_r.get_parent().name == "ThornbackJawPlateR", "The Thornback jaw plates must carry a dense paired tooth edge under their existing animated sockets.")
             &"ashmantle":
                 _expect(_find_named(enemy_samples[index], "AshmantleHeatLouverL") != null and _find_named(enemy_samples[index], "AshmantleHeatLouverR") != null, "The Ashmantle must expose paired heat-louver anatomy.")
                 _expect(_find_named(enemy_samples[index], "AshmantleSiphon") != null and _find_named(enemy_samples[index], "AshmantleTendrilR") != null, "The Ashmantle must expose a route siphon and sensory tendril signature.")

@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Thornback jaw-silhouette finish
+
+- added a dense paired tooth edge beneath the authored Thornback jaw plates so
+  its territorial threat reads clearly at close tactical and gallery distance;
+- kept each tooth parented to the existing animated jaw socket, preserving
+  collision, targeting, ecology, save state and the current animation channel
+  ownership with no recurring player work;
+- added manifest and aesthetic-contract coverage; the corrected merged-build
+  late-organic review passed silently with Godot Dummy audio and
+  `--quiet-audio` only.
+
 ## Focused Carrion Bell resonator finish
 
 - added a dense closed bell lip, suspended clapper and clapper tip to the
