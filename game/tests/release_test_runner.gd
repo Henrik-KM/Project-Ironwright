@@ -620,6 +620,12 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
             var region_id := StringName(raw_region_id)
             world.release_world_art.ensure_region_dressing(region_id)
             region_lod.set_region_streamed(region_id, true)
+            # Let the compatibility renderer retire deferred resources before
+            # the next high-definition district is rebuilt. The release audit
+            # intentionally promotes the complete catalogue in one run, so
+            # keeping one region per frame avoids same-frame renderer churn
+            # without changing the runtime streaming contract.
+            await process_frame
     var texture_paths := [
         "res://assets/release/textures/asphalt_wet.png",
         "res://assets/release/textures/brick_ruin.png",
