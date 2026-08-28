@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused review-audio safety cap — 2026-08-29
+
+All development review modes now automatically engage the existing very-low
+`-30 dB` audio ceiling from their launch argument, even if a caller forgets to
+add `--quiet-audio`. Ordinary non-review launches keep their configured
+levels. This is a safety guard around development inspection, not a gameplay
+mix change. Verification continues through Godot's Dummy audio driver and
+`--quiet-audio`; no live speakers are used.
+
 ## Focused North Ruins catalogue witness — 2026-08-29
 
 North Ruins now carries a physical Lower Catalogue witness beside the civic
