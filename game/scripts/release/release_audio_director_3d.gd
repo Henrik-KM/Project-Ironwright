@@ -378,7 +378,7 @@ func _play_spatial_effect(effect_id: StringName, world_position: Vector3, volume
 
 
 func show_caption(key: String, seconds: float = 2.2) -> void:
-    if settings_service != null and not bool(settings_service.get_value(&"subtitles", true)):
+    if settings_service != null and not bool(settings_service.get_value(&"sound_captions", true)):
         return
     caption_label.text = "[%s]" % (localization.text(key) if localization != null else key)
     caption_panel.visible = true
