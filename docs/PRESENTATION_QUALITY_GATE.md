@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused sanctuary capstone framing pass — 2026-08-28
+
+The completed Transformation sanctuary crown now shifts behind the Heartforge-
+facing approach and resolves to a bounded final footprint. Its living loop and
+beacon remain visible as a distinct post-victory identity, while the
+Mechromancer, Bulwark and Heartforge stay readable in the close tactical frame.
+The active Transformation response, first-victory overlay and continuing
+sanctuary were live-reviewed at 1280x720 with Godot Dummy audio and
+`--quiet-audio`; no live speakers were used. Broader human production-art and
+external acceptance remain open.
+
 ## Focused Mechromancer communications-yoke pass — 2026-08-28
 
 The canonical Blender Mechromancer now carries a restrained right-shoulder

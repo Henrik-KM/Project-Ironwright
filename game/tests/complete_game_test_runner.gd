@@ -513,6 +513,8 @@ func _run_all() -> void:
     _expect(world.endgame_director.completed_protocol == &"protocol.transformation", "Transformation must complete after its sustained, lower-pressure defence interval.")
     _expect(world.first_victory_achieved, "Completing Transformation must produce the first victory state.")
     _expect(world.get_node_or_null("EndgameProtocolVisuals/SanctuaryCrown/SanctuaryLivingLoop") != null, "Transformation victory must leave a distinct living-loop sanctuary capstone.")
+    var sanctuary_crown := world.get_node_or_null("EndgameProtocolVisuals/SanctuaryCrown") as Node3D
+    _expect(sanctuary_crown != null and sanctuary_crown.scale.x <= 0.82, "The completed sanctuary crown must remain a readable backdrop instead of covering the surviving cast.")
 
     world.endgame_director.completed_protocol = &""
     world.first_victory_achieved = false

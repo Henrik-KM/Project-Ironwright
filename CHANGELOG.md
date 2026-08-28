@@ -1,5 +1,11 @@
 # Changelog
 
+## Pre-alpha sanctuary capstone framing milestone
+
+- moved the completed Transformation sanctuary crown behind the Heartforge-facing approach and reduced its final footprint so the living loop remains legible without covering the surviving Mechromancer, Bulwark or Heartforge;
+- added a complete-game regression guard for the calm completed-crown scale;
+- live-reviewed the active Transformation response, victory overlay and continuing sanctuary at 1280×720 with Dummy audio and quiet mode.
+
 ## Pre-alpha authored asset provenance milestone
 
 - normalized every runtime art manifest with an explicit `authored_high_definition` quality declaration;
