@@ -1462,6 +1462,7 @@ func _show_presentation_review_page(page: int) -> void:
 			# instead of repeating the live third-person rear angle. Friendly
 			# robots retain their established presentation orientation.
 			actor.rotation.y = 0.0 if presentation_review_page == 0 and index == 0 else PI
+			var late_organic_roster := presentation_review_page == 2
 			var row_capacity := 2 if outpost_page else (3 if presentation_review_page >= 1 else mini(4, actors.size()))
 			var row_index := 0 if index < row_capacity else 1
 			var row_count := mini(row_capacity, actors.size()) if row_index == 0 else actors.size() - row_capacity
@@ -1475,12 +1476,11 @@ func _show_presentation_review_page(page: int) -> void:
 			# review gallery enough air to judge those layers individually;
 			# this only changes the development review fixture, not gameplay
 			# scale, collision or tactical spacing.
-			var late_organic_roster := presentation_review_page == 2
 			# The late families have the broadest folded shells in the roster. Give
 			# that page a little more lateral and depth separation while keeping the
 			# review fixture bounded; runtime scale, collision and gameplay spacing
 			# remain untouched.
-			var spacing := 5.4 if outpost_page else (4.55 if late_organic_roster else (4.1 if presentation_review_page >= 1 else 4.2))
+			var spacing := 5.4 if outpost_page else (3.35 if late_organic_roster else (4.1 if presentation_review_page >= 1 else 4.2))
 			var centered_x := (float(row_position) - float(row_count - 1) * 0.5) * spacing
 			var row_z := 1.05 if row_index == 0 else -2.15
 			if presentation_review_page == 0:
@@ -1535,7 +1535,7 @@ func _show_presentation_review_page(page: int) -> void:
 			# collision, LOD and tactical spacing remain unchanged.
 			var late_organic_roster := presentation_review_page == 2
 			presentation_review_camera_target = Vector3(0.0, 1.18 if late_organic_roster else 1.22, -0.85 if late_organic_roster else core_target_depth)
-			presentation_review_camera_desired = Vector3(0.0, 4.35 if late_organic_roster else 4.05, 10.8 if late_organic_roster else 9.35)
+			presentation_review_camera_desired = Vector3(0.0, 4.45 if late_organic_roster else 4.05, 12.8 if late_organic_roster else 9.35)
 		else:
 			presentation_review_camera_target = Vector3(0.0, core_target_height, core_target_depth)
 			presentation_review_camera_desired = Vector3(0.0, 5.25, 12.4) if outpost_page else (Vector3(0.0, 4.45, 12.8) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5))

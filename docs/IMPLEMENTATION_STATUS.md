@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused late-organic gallery safe-frame pass
+
+- tightened the two-row late-organic presentation review layout and widened
+  only its inspection camera so all seven broad late families remain visible,
+  while retaining the deeper second row for layered silhouette separation;
+- preserved runtime scale, collision, animation, AI, ecology and tactical
+  spacing; the exact review uses Godot Dummy audio and quiet mode only.
+
 ## Focused Engineer forge-status finish
 
 - added a compact front forge-status face and recessed cyan lens to the
