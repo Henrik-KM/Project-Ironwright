@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-08-28 — Synchronize vertical-slice production status
+
+- updated the 3D vertical-slice contract to record the implemented authored
+  region stream ring, persistent distant proxies and bounded reduced-detail
+  simulation;
+- kept synchronous resource loading, broader authored audio, target-hardware
+  profiling and external human acceptance clearly identified as remaining work.
+
 ## 2026-08-28 — Pause overlay localization
 
 - localized the pause-overlay subtitle alongside its existing translated
