@@ -1541,6 +1541,98 @@ func _dress_observatory(root: Node3D) -> void:
         "ObservatoryArrayStatusPanel"
     )
 
+    # The recovered migration record needs a physical interpretation in the
+    # survey station, not only a HUD line. Keep the witness on the edge of the
+    # service deck so it enriches the approach without competing with the
+    # reflector. It is presentation-only: the archive director remains the
+    # authority for discovery and the map does not create a new interaction.
+    var migration_witness := Node3D.new()
+    migration_witness.name = "ObservatoryMigrationWitness"
+    observatory_detail.add_child(migration_witness)
+    var witness_frame := _textured_material(&"metal", Color("172429"), 0.82, 0.34)
+    var witness_edge := _textured_material(&"rust", Color("8e5636"), 0.42, 0.62)
+    var witness_plate := ModelKit3D.material(Color("102a31"), 0.28, 0.3, Color("4aaeb9"), 0.24)
+    var migration_cyan := ModelKit3D.material(Color("1c5660"), 0.22, 0.28, Color("76e0e8"), 0.82)
+    var migration_amber := ModelKit3D.material(Color("6d4b2d"), 0.3, 0.48, Color("e0aa62"), 0.64)
+    var migration_violet := ModelKit3D.material(Color("40345f"), 0.3, 0.42, Color("a38ce8"), 0.58)
+    var witness_position := Vector3(3.05, 1.38, 1.78)
+    ModelKit3D.add_beveled_box(
+        migration_witness,
+        Vector3(2.85, 1.82, 0.18),
+        witness_position,
+        witness_frame,
+        Vector3(0.0, -0.12, 0.0),
+        "ObservatoryMigrationWitnessFrame",
+        0.16
+    )
+    ModelKit3D.add_surface_panel(
+        migration_witness,
+        Vector3(2.36, 1.32, 0.1),
+        witness_position + Vector3(0.0, 0.0, 0.12),
+        witness_plate,
+        migration_cyan,
+        Vector3(0.0, PI - 0.12, 0.0),
+        "ObservatoryMigrationMapPlate"
+    )
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_cylinder(
+            migration_witness,
+            0.085,
+            1.1,
+            witness_position + Vector3(side * 0.98, -0.94, 0.0),
+            witness_edge,
+            Vector3.ZERO,
+            "ObservatoryMigrationWitnessLeg%s" % ("L" if side < 0.0 else "R")
+        )
+    var trace_materials: Array[Material] = [migration_cyan, migration_amber, migration_violet]
+    for trace_index in range(3):
+        var trace_material: Material = trace_materials[trace_index]
+        var trace_y := witness_position.y + 0.22 - float(trace_index) * 0.32
+        var trace_x := witness_position.x - 0.42 + float(trace_index) * 0.16
+        ModelKit3D.add_beveled_box(
+            migration_witness,
+            Vector3(1.45 - float(trace_index) * 0.16, 0.055, 0.045),
+            Vector3(trace_x, trace_y, witness_position.z + 0.205),
+            trace_material,
+            Vector3(0.0, 0.0, -0.08 + float(trace_index) * 0.13),
+            "ObservatoryMigrationTrace%02d" % trace_index,
+            0.025
+        )
+        ModelKit3D.add_sphere(
+            migration_witness,
+            0.105,
+            Vector3(witness_position.x + 0.72 - float(trace_index) * 0.18, trace_y, witness_position.z + 0.22),
+            trace_material,
+            Vector3(1.2, 0.8, 0.42),
+            "ObservatoryMigrationNode%02d" % trace_index
+        )
+    ModelKit3D.add_cylinder(
+        migration_witness,
+        0.06,
+        0.88,
+        witness_position + Vector3(-1.02, 0.2, 0.24),
+        witness_edge,
+        Vector3(0.0, 0.0, PI * 0.5),
+        "ObservatoryMigrationCalibrationBar"
+    )
+    ModelKit3D.add_cylinder(
+        migration_witness,
+        0.055,
+        1.25,
+        witness_position + Vector3(0.0, 1.06, 0.0),
+        witness_edge,
+        Vector3(0.0, 0.0, PI * 0.5),
+        "ObservatoryMigrationWitnessCanopy"
+    )
+    ModelKit3D.add_sphere(
+        migration_witness,
+        0.14,
+        witness_position + Vector3(-1.16, 0.2, 0.26),
+        migration_amber,
+        Vector3.ONE,
+        "ObservatoryMigrationCalibrationLens"
+    )
+
 
 func _dress_research(root: Node3D) -> void:
     var concrete := _textured_material(&"concrete", Color("3f4243"), 0.0, 0.7)
