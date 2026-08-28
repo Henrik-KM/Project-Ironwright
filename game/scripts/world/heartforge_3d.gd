@@ -468,6 +468,10 @@ func _build_adaptation_detail(profile: StringName) -> void:
             for side in [-1.0, 1.0]:
                 ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(0.3, 2.55, 0.62), Vector3(side * 2.02, 1.65, 0.0), iron, Vector3(0.0, side * 0.12, 0.0), "AnchorShellBrace", 0.1)
                 ModelKit3D.add_cylinder(_adaptation_detail, 0.1, 3.2, Vector3(side * 2.24, 1.8, 0.0), rust, Vector3.ZERO, "AnchorShellServiceColumn")
+                for depth in [-1.0, 1.0]:
+                    var footing_position := Vector3(side * 2.18, 0.58, depth * 0.78)
+                    ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(0.62, 0.18, 0.42), footing_position, dark, Vector3(0.0, side * 0.08, 0.0), "AnchorShellFooting", 0.06)
+                    ModelKit3D.add_cylinder(_adaptation_detail, 0.055, 0.28, footing_position + Vector3(0.0, 0.18, 0.0), rust, Vector3.ZERO, "AnchorShellAnchorPin")
             ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(4.9, 0.22, 0.34), Vector3(0.0, 3.32, 0.0), dark, Vector3.ZERO, "AnchorShellCrossbar", 0.08)
             ModelKit3D.add_cylinder(_adaptation_detail, 2.38, 0.1, Vector3(0.0, 3.42, 0.0), cyan, Vector3.ZERO, "AnchorShellSignalRing")
         &"adaptation.sacrificial_hollow":
@@ -475,11 +479,14 @@ func _build_adaptation_detail(profile: StringName) -> void:
                 var angle := TAU * float(angle_index) / 8.0
                 var position := Vector3(cos(angle) * 2.52, 1.34, sin(angle) * 2.52)
                 ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(0.22, 1.24, 0.48), position, rust, Vector3(0.0, -angle, 0.0), "SacrificialHollowRib", 0.08)
+                var cap_position := Vector3(cos(angle) * 2.52, 2.02, sin(angle) * 2.52)
+                ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(0.28, 0.14, 0.34), cap_position, dark, Vector3(0.0, -angle, 0.0), "SacrificialHollowCap", 0.05)
             ModelKit3D.add_cylinder(_adaptation_detail, 2.78, 0.14, Vector3(0.0, 0.86, 0.0), amber, Vector3.ZERO, "SacrificialHollowRing")
             ModelKit3D.add_louvered_panel(_adaptation_detail, Vector3(0.82, 0.72, 0.12), Vector3(0.0, 1.72, 2.42), dark, amber, Vector3.ZERO, "SacrificialHollowService", 5)
         &"adaptation.quiet_core":
             for side in [-1.0, 1.0]:
                 ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(0.5, 2.5, 0.24), Vector3(side * 1.92, 2.05, 0.0), dark, Vector3(0.0, side * 0.08, 0.0), "QuietCoreShroud", 0.14)
                 ModelKit3D.add_cylinder(_adaptation_detail, 0.07, 2.7, Vector3(side * 2.15, 2.1, 0.0), cyan, Vector3.ZERO, "QuietCoreDampedRail")
+                ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(0.18, 0.42, 0.62), Vector3(side * 1.67, 1.1, 0.0), iron, Vector3(0.0, side * 0.06, 0.0), "QuietCoreDampenerBaffle", 0.06)
             ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(2.32, 0.16, 0.88), Vector3(0.0, 2.18, 2.02), dark, Vector3.ZERO, "QuietCoreServiceShroud", 0.12)
             ModelKit3D.add_surface_panel(_adaptation_detail, Vector3(1.2, 0.5, 0.1), Vector3(0.0, 2.2, 2.48), dark, cyan, Vector3.ZERO, "QuietCoreSignalPanel")
