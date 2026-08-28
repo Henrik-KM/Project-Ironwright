@@ -306,6 +306,9 @@ func _run_all() -> void:
     world.heartforge.health_changed.emit(world.heartforge.current_health, world.heartforge.maximum_health)
     world.adaptive_defense_director.evaluate_now()
     _expect(world.adaptive_defense_director.has_pending_proposal(), "Observed Heartforge damage must create one exceptional adaptive defence proposal.")
+    world._update_complete_game_objective()
+    _expect(world.hud.objective_label.text.to_lower().find("adaptation") >= 0, "A pending adaptive proposal must replace stale opening or progression guidance with a Heartforge decision objective.")
+    _expect(world.hud.prompt_label.text.to_lower().find("press t") >= 0, "A pending adaptive proposal must expose its strategic review action in the live prompt.")
     var pending_adaptation_preview := world.heartforge.get_node_or_null("HeartforgeModel/HeartforgeAdaptationPreview") as Node3D
     _expect(pending_adaptation_preview != null and pending_adaptation_preview.visible, "A pending adaptive proposal must mark its affected Heartforge perimeter without changing gameplay geometry.")
     _expect(world.heartforge.find_child("AdaptationPreviewRing", true, false) != null, "A pending adaptive proposal must expose a bounded physical footprint before construction begins.")
@@ -317,6 +320,9 @@ func _run_all() -> void:
     _expect(chosen_adaptation != &"", "The adaptive defence surface must expose a stable selected plan id.")
     world._authorize_adaptation(chosen_adaptation)
     _expect(not world.adaptive_defense_director.active_adaptation.is_empty(), "Authorizing an adaptive response must start an autonomous Heartforge construction operation.")
+    world._update_complete_game_objective()
+    _expect(world.hud.objective_label.text.to_lower().find("heartforge") >= 0 and world.hud.objective_label.text.to_lower().find("recover your first scrap") == -1, "An active adaptive retrofit must replace stale opening guidance while machines build the response.")
+    _expect(world.hud.prompt_label.text.to_lower().find("building") >= 0, "An active adaptive retrofit must expose its machine-building state in the live prompt.")
     var construction_preview := world.heartforge.get_node_or_null("HeartforgeModel/HeartforgeAdaptationPreview") as Node3D
     _expect(construction_preview != null and construction_preview.visible, "An authorized adaptive response must keep a visible physical construction preview during the machine-run interval.")
     var preview_scale_before := construction_preview.scale if construction_preview != null else Vector3.ZERO

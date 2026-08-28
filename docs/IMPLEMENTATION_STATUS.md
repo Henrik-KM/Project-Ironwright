@@ -5604,3 +5604,16 @@ roster checks and requires silent late-organic live review before merge.
   guard for the compact crown and restrained light budget;
 - exact silent victory-to-sanctuary live review passed with Godot Dummy audio
   and `--quiet-audio`; broader human production-art acceptance remains open.
+
+## Focused adaptive-objective handoff correction
+
+- gave the late-run adaptive proposal, autonomous Heartforge construction and
+  completion transition ownership of the production objective surface so the
+  opening Scrap guidance cannot overwrite them frame-by-frame;
+- added localized proposal/building objective and prompt keys for English,
+  Swedish and German, plus regression assertions for the pending and active
+  states;
+- exact silent Windows review confirmed proposal → live build progress → next
+  late-run objective in one continuous flow with Godot Dummy audio and
+  `--quiet-audio`; broader human production-art and localization acceptance
+  remain open.
