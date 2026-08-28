@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Razorhound eye-guard silhouette finish
+
+- added a dense paired brow guard around the authored threat eyes so the
+  Razorhound face reads as a deliberate predator head at compact gallery and
+  tactical distance;
+- parented the guards to the existing authored head while leaving the snout,
+  fang and attack animation ownership unchanged; collision, ecology, targeting,
+  save state and player workload are unaffected;
+- added manifest and aesthetic-contract coverage; silent live review uses
+  Godot Dummy audio and `--quiet-audio` only.
+
 ## Focused independent sound-caption accessibility pass
 
 - separated strategic sound captions from spoken/gameplay subtitles in the
