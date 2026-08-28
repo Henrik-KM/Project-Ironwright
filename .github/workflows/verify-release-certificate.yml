@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - agent/commercial-release-candidate
+      - agent/commercial-release-candidate-recertification
   workflow_dispatch:
 
 permissions:
