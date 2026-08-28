@@ -1,5 +1,11 @@
 # Changelog
 
+## Pre-alpha presentation-review navigation polish
+
+- corrected the development gallery navigation legend so the direct digit-key
+  controls read as `1-9, 0` instead of a malformed counter;
+- added a release regression guard for the visible navigation copy.
+
 ## Pre-alpha late-organic palette refinement
 
 - reduced the late-family membrane tint saturation while retaining distinct
