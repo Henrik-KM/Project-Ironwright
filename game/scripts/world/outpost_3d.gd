@@ -10,7 +10,7 @@ signal activity_changed(outpost: Outpost3D, status: StringName)
 signal state_changed(outpost: Outpost3D)
 
 const ROLES: Array[StringName] = [&"resource", &"defence", &"scout", &"repair"]
-const AUTHORED_OUTPOST_MODEL_SCENE: PackedScene = preload("res://assets/outpost/outpost.gltf")
+const AUTHORED_OUTPOST_MODEL_SCENE := "res://assets/outpost/outpost.gltf"
 
 var site_id: StringName = &"site.unknown"
 var role: StringName = &"resource"
@@ -419,7 +419,12 @@ func _refresh_visuals() -> void:
     # role-signature assemblies below remain bounded runtime detail so the
     # outpost still communicates evolution and autonomous purpose without
     # adding another managed structure or queue.
-    var authored_model := AUTHORED_OUTPOST_MODEL_SCENE.instantiate()
+    var authored_resource := ResourceLoader.load(AUTHORED_OUTPOST_MODEL_SCENE, "PackedScene", ResourceLoader.CACHE_MODE_REUSE)
+    if not (authored_resource is PackedScene):
+        push_error("Outpost authored scene could not be loaded: %s" % AUTHORED_OUTPOST_MODEL_SCENE)
+    var authored_model := (authored_resource as PackedScene).instantiate() if authored_resource is PackedScene else null
+    if authored_model == null:
+        return
     authored_model.name = "OutpostAuthoredModel"
     _model_root.add_child(authored_model)
 

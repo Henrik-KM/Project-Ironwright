@@ -1,5 +1,21 @@
 # Implementation status
 
+## Focused authored startup loading pass
+
+- moved authored robot, organic, landmark-review and outpost-review scene
+  acquisition from script-load preloads to cached on-demand loading without
+  changing the authored shells, stable sockets, animation lookup, collision or
+  release material contracts;
+- kept the normal title boot lightweight by deferring full procedural city
+  construction until New World/Continue or an explicit review fixture, while
+  headless validation and review modes still construct the complete world;
+- tightened the initial authored region stream ring to the Heartforge
+  neighborhood, preserving persistent landmarks, reduced proxies, physical
+  collision and automatic stream-in as the player approaches a district;
+- full native/repository validation and the fresh-world Windows live review
+  passed with Godot Dummy audio and `--quiet-audio`; asynchronous loading and
+  representative target-hardware profiling remain external follow-up work.
+
 ## Pause overlay localization
 
 - routed the pause-overlay subtitle through the shared release localization

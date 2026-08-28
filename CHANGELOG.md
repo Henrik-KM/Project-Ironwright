@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-08-28 — Bounded authored startup loading
+
+- moved authored robot, organic, landmark-review and outpost-review scene
+  acquisition from script-load preloads to cached on-demand loading, preserving
+  the existing shells, sockets, animations, collision and release material pass;
+- kept the normal title boot lightweight by deferring full city construction
+  until a run starts, and tightened the initial region stream ring to the
+  Heartforge neighborhood so the first playable frame arrives without a long
+  black startup or live speaker output;
+- retained synchronous loading for the first focused package as the next
+  profiling target, with all validation and live review using Godot Dummy audio
+  and `--quiet-audio`.
+
 ## 2026-08-28 — Synchronize vertical-slice production status
 
 - updated the 3D vertical-slice contract to record the implemented authored

@@ -91,8 +91,12 @@ and coarse regional proxies. Remote-operation follow uses the same focus, so
 the observed district can restore its authored presentation as the camera
 arrives. Imported authored package nodes and release-only encounter dressing
 are now instantiated on focus and released when the district leaves the ring;
-Godot resource loading remains synchronous and resource-cache/package-budget
-work is still outstanding. The release runtime also applies bounded active,
+authored actor and review scenes also load on demand through the shared resource
+cache. The normal title boot defers full procedural city construction until a
+run starts, while headless and explicit review fixtures retain the complete
+world. The first focused package is still loaded synchronously, so
+resource-cache/package-budget profiling remains outstanding. The release runtime
+also applies bounded active,
 medium and reduced-detail simulation budgets to actors, while region dressing
 uses persistent landmark proxies outside the focus ring.
 

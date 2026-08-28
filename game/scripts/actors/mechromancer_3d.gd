@@ -1,7 +1,7 @@
 class_name Mechromancer3D
 extends CharacterBody3D
 
-const AUTHORED_MODEL_SCENE: PackedScene = preload("res://assets/mechromancer/mechromancer.gltf")
+const AUTHORED_MODEL_SCENE := "res://assets/mechromancer/mechromancer.gltf"
 const DEATH_PRESENTATION_SECONDS := 0.9
 
 signal health_changed(current: float, maximum: float)
@@ -296,7 +296,11 @@ func is_alive() -> bool:
 
 func _build_visuals() -> void:
     ModelKit3D.add_collision_capsule(self, 0.42, 1.75, Vector3(0.0, 0.88, 0.0))
-    var authored_model := AUTHORED_MODEL_SCENE.instantiate() as Node3D
+    var authored_resource := ResourceLoader.load(AUTHORED_MODEL_SCENE, "PackedScene", ResourceLoader.CACHE_MODE_REUSE)
+    if not (authored_resource is PackedScene):
+        push_error("Mechromancer authored scene could not be loaded: %s" % AUTHORED_MODEL_SCENE)
+        authored_resource = null
+    var authored_model := (authored_resource as PackedScene).instantiate() as Node3D if authored_resource is PackedScene else null
     if authored_model == null:
         push_error("Mechromancer authored glTF could not be instantiated.")
         _body_root = Node3D.new()

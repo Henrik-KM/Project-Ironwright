@@ -1,20 +1,20 @@
 class_name OrganicEnemy3D
 extends CharacterBody3D
 
-const AUTHORED_VEILSTALKER_MODEL_SCENE: PackedScene = preload("res://assets/veilstalker/veilstalker.gltf")
-const AUTHORED_RAZORHOUND_MODEL_SCENE: PackedScene = preload("res://assets/razorhound/razorhound.gltf")
-const AUTHORED_APEX_MODEL_SCENE: PackedScene = preload("res://assets/apex/apex.gltf")
-const AUTHORED_SPORECASTER_MODEL_SCENE: PackedScene = preload("res://assets/sporecaster/sporecaster.gltf")
-const AUTHORED_BROODMASS_MODEL_SCENE: PackedScene = preload("res://assets/broodmass/broodmass.gltf")
-const AUTHORED_BURROWER_MODEL_SCENE: PackedScene = preload("res://assets/burrower/burrower.gltf")
-const AUTHORED_SKITTERLING_MODEL_SCENE: PackedScene = preload("res://assets/skitterling/skitterling.gltf")
-const AUTHORED_ROOFLEAPER_MODEL_SCENE: PackedScene = preload("res://assets/roofleaper/roofleaper.gltf")
-const AUTHORED_GLASSMOTH_MODEL_SCENE: PackedScene = preload("res://assets/glassmoth/glassmoth.gltf")
-const AUTHORED_MIREMAW_MODEL_SCENE: PackedScene = preload("res://assets/miremaw/miremaw.gltf")
-const AUTHORED_CARRIONBELL_MODEL_SCENE: PackedScene = preload("res://assets/carrionbell/carrionbell.gltf")
-const AUTHORED_ROOTWEAVER_MODEL_SCENE: PackedScene = preload("res://assets/rootweaver/rootweaver.gltf")
-const AUTHORED_THORNBACK_MODEL_SCENE: PackedScene = preload("res://assets/thornback/thornback.gltf")
-const AUTHORED_ASHMANTLE_MODEL_SCENE: PackedScene = preload("res://assets/ashmantle/ashmantle.gltf")
+const AUTHORED_VEILSTALKER_MODEL_SCENE := "res://assets/veilstalker/veilstalker.gltf"
+const AUTHORED_RAZORHOUND_MODEL_SCENE := "res://assets/razorhound/razorhound.gltf"
+const AUTHORED_APEX_MODEL_SCENE := "res://assets/apex/apex.gltf"
+const AUTHORED_SPORECASTER_MODEL_SCENE := "res://assets/sporecaster/sporecaster.gltf"
+const AUTHORED_BROODMASS_MODEL_SCENE := "res://assets/broodmass/broodmass.gltf"
+const AUTHORED_BURROWER_MODEL_SCENE := "res://assets/burrower/burrower.gltf"
+const AUTHORED_SKITTERLING_MODEL_SCENE := "res://assets/skitterling/skitterling.gltf"
+const AUTHORED_ROOFLEAPER_MODEL_SCENE := "res://assets/roofleaper/roofleaper.gltf"
+const AUTHORED_GLASSMOTH_MODEL_SCENE := "res://assets/glassmoth/glassmoth.gltf"
+const AUTHORED_MIREMAW_MODEL_SCENE := "res://assets/miremaw/miremaw.gltf"
+const AUTHORED_CARRIONBELL_MODEL_SCENE := "res://assets/carrionbell/carrionbell.gltf"
+const AUTHORED_ROOTWEAVER_MODEL_SCENE := "res://assets/rootweaver/rootweaver.gltf"
+const AUTHORED_THORNBACK_MODEL_SCENE := "res://assets/thornback/thornback.gltf"
+const AUTHORED_ASHMANTLE_MODEL_SCENE := "res://assets/ashmantle/ashmantle.gltf"
 const DEATH_PRESENTATION_SECONDS := 0.72
 
 signal killed(enemy: OrganicEnemy3D, killer: Node)
@@ -660,6 +660,17 @@ func ensure_authored_visuals() -> void:
     _build_visuals()
 
 
+func _instantiate_authored_scene(path: String, label: String) -> Node3D:
+    var resource := ResourceLoader.load(path, "PackedScene", ResourceLoader.CACHE_MODE_REUSE)
+    if not (resource is PackedScene):
+        push_error("Organic authored scene could not be loaded for %s: %s" % [label, path])
+        return null
+    var instance := (resource as PackedScene).instantiate() as Node3D
+    if instance == null:
+        push_error("Organic authored scene could not be instantiated for %s: %s" % [label, path])
+    return instance
+
+
 func set_damage_presentation_enabled(value: bool) -> void:
     _damage_presentation_enabled = value
     _refresh_damage_presentation()
@@ -1065,7 +1076,9 @@ func _build_authored_veilstalker_visuals() -> void:
     # Keep the imported production shell flat under OrganicModel so the
     # release material pass and existing animation lookup retain their stable
     # paths. Only presentation changes; species stats and ecology stay here.
-    var authored_scene_instance := AUTHORED_VEILSTALKER_MODEL_SCENE.instantiate()
+    var authored_scene_instance := _instantiate_authored_scene(AUTHORED_VEILSTALKER_MODEL_SCENE, "Veilstalker")
+    if authored_scene_instance == null:
+        return
     var imported_root := authored_scene_instance.get_node_or_null("VeilstalkerModel") as Node
     if imported_root == null:
         imported_root = authored_scene_instance
@@ -1095,7 +1108,9 @@ func _build_authored_razorhound_visuals() -> void:
     # Razorhound is a common early predator, so its authored shell carries
     # most of the hostile roster's day-to-day silhouette without changing the
     # ecology or combat contract.
-    var authored_scene_instance := AUTHORED_RAZORHOUND_MODEL_SCENE.instantiate()
+    var authored_scene_instance := _instantiate_authored_scene(AUTHORED_RAZORHOUND_MODEL_SCENE, "Razorhound")
+    if authored_scene_instance == null:
+        return
     var imported_root := authored_scene_instance.get_node_or_null("RazorhoundModel") as Node
     if imported_root == null:
         imported_root = authored_scene_instance
@@ -1117,7 +1132,9 @@ func _build_authored_apex_visuals() -> void:
     # The Cistern Apex is the late-world landmark threat. Its authored shell
     # carries the crown, jaw, membrane and root signatures while this node
     # continues to own all gameplay state and collision.
-    var authored_scene_instance := AUTHORED_APEX_MODEL_SCENE.instantiate()
+    var authored_scene_instance := _instantiate_authored_scene(AUTHORED_APEX_MODEL_SCENE, "Apex")
+    if authored_scene_instance == null:
+        return
     var imported_root := authored_scene_instance.get_node_or_null("ApexModel") as Node
     if imported_root == null:
         imported_root = authored_scene_instance
@@ -1139,7 +1156,9 @@ func _build_authored_sporecaster_visuals() -> void:
     # The Sporecaster is a ranged infestation role. Keep its sac/gill language
     # in the authored shell while the enemy node retains targeting, ecology
     # and channel timing ownership.
-    var authored_scene_instance := AUTHORED_SPORECASTER_MODEL_SCENE.instantiate()
+    var authored_scene_instance := _instantiate_authored_scene(AUTHORED_SPORECASTER_MODEL_SCENE, "Sporecaster")
+    if authored_scene_instance == null:
+        return
     var imported_root := authored_scene_instance.get_node_or_null("SporecasterModel") as Node
     if imported_root == null:
         imported_root = authored_scene_instance
@@ -1160,7 +1179,9 @@ func _build_authored_sporecaster_visuals() -> void:
 func _build_authored_broodmass_visuals() -> void:
     # Broodmass is a large nest organism. Its authored shell carries the
     # lobe, maw, spine, fin and hook signatures while gameplay stays here.
-    var authored_scene_instance := AUTHORED_BROODMASS_MODEL_SCENE.instantiate()
+    var authored_scene_instance := _instantiate_authored_scene(AUTHORED_BROODMASS_MODEL_SCENE, "Broodmass")
+    if authored_scene_instance == null:
+        return
     var imported_root := authored_scene_instance.get_node_or_null("BroodmassModel") as Node
     if imported_root == null:
         imported_root = authored_scene_instance
@@ -1181,7 +1202,9 @@ func _build_authored_broodmass_visuals() -> void:
 func _build_authored_burrower_visuals() -> void:
     # Burrower's authored shell carries its drill and bore-lamp language while
     # patrol, collision and attack ownership remain on the enemy node.
-    var authored_scene_instance := AUTHORED_BURROWER_MODEL_SCENE.instantiate()
+    var authored_scene_instance := _instantiate_authored_scene(AUTHORED_BURROWER_MODEL_SCENE, "Burrower")
+    if authored_scene_instance == null:
+        return
     var imported_root := authored_scene_instance.get_node_or_null("BurrowerModel") as Node
     if imported_root == null:
         imported_root = authored_scene_instance
@@ -1202,7 +1225,9 @@ func _build_authored_burrower_visuals() -> void:
 func _build_authored_skitterling_visuals() -> void:
     # Skitterling is the common scavenger. Its authored shell keeps the small
     # creature readable without changing its ecology or noise response.
-    var authored_scene_instance := AUTHORED_SKITTERLING_MODEL_SCENE.instantiate()
+    var authored_scene_instance := _instantiate_authored_scene(AUTHORED_SKITTERLING_MODEL_SCENE, "Skitterling")
+    if authored_scene_instance == null:
+        return
     var imported_root := authored_scene_instance.get_node_or_null("SkitterlingModel") as Node
     if imported_root == null:
         imported_root = authored_scene_instance
@@ -1228,12 +1253,14 @@ func _build_authored_skitterling_visuals() -> void:
     _model_root.add_child(authored_marker)
 
 
-func _build_authored_organic_family_visuals(model_scene: PackedScene, imported_root_name: StringName, marker_name: StringName) -> void:
+func _build_authored_organic_family_visuals(model_path: String, imported_root_name: StringName, marker_name: StringName) -> void:
     # Tier-2 and tier-4 families use the same stable shell handoff as the
     # opening production creatures. The imported geometry is flattened under
     # OrganicModel so material continuity, LOD and tier signals remain owned
     # by the runtime actor without introducing a second gameplay hierarchy.
-    var authored_scene_instance := model_scene.instantiate()
+    var authored_scene_instance := _instantiate_authored_scene(model_path, String(imported_root_name))
+    if authored_scene_instance == null:
+        return
     var imported_root := authored_scene_instance.get_node_or_null(NodePath(String(imported_root_name))) as Node
     if imported_root == null:
         imported_root = authored_scene_instance
