@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused late-organic gallery safe-frame pass — 2026-08-28
+
+The exact development gallery now stages the seven late organic families in a
+tighter two-row composition and uses a slightly wider inspection frame. This
+keeps the broadest shells and outer actors fully judgeable at the review
+viewport without changing gameplay scale, collision, animation, AI, ecology,
+or tactical spacing. The review remains silent with Godot Dummy audio and
+`--quiet-audio`; no live speakers are used.
+
 ## Focused Engineer forge-status finish — 2026-08-28
 
 The authored Engineer now carries a compact front forge-status face with a
