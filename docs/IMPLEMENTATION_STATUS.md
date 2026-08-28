@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Mechromancer hood and visor finish
+
+- added a lower hood seam, protective visor brow and paired visor mounts to
+  the canonical Blender source and dependency-free fallback builder;
+- kept the additions inside the authored presentation contract, preserving
+  stable sockets, collision, animation, player weapon behaviour, progression,
+  save state and player workload;
+- extended the Mechromancer manifest plus aesthetic and release regression
+  coverage; silent live review uses Godot Dummy audio and `--quiet-audio` only.
+
 ## Focused export package hygiene
 
 - configured both committed Godot export presets to exclude the generated

@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Mechromancer hood and visor finish — 2026-08-28
+
+The canonical Mechromancer now carries a restrained lower hood seam and a
+fastened protective visor brow. The added hard-surface breaks clarify the
+field-engineer face at close tactical distance and are mirrored in the
+dependency-free fallback builder. The additions are presentation-only: player
+sockets, collision, animation ownership, weapon behaviour, progression,
+save-state and workload are unchanged. The exact page 1/15 friendly-roster
+review uses Godot Dummy audio with `--quiet-audio` only; no live speakers are
+used. Broader human Mechromancer and production-art acceptance remains open.
+
 ## Focused Observatory Ridge instrument finish — 2026-08-28
 
 The Observatory Ridge presentation now adds a raised inner aperture ring that

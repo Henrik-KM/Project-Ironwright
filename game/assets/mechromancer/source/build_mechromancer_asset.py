@@ -352,8 +352,11 @@ def main() -> None:
         "ChestPlate": mesh("ChestPlate", add_beveled_box(builder, (0.48, 0.36, 0.10), metal, 0.025)),
         "Scarf": mesh("Scarf", add_cylinder(builder, 0.22, 0.14, leather, 10)),
         "Hood": mesh("Hood", add_cone(builder, 0.35, 0.22, 0.40, coat, 10)),
+        "HoodLowerSeam": mesh("HoodLowerSeam", add_beveled_box(builder, (0.30, 0.045, 0.055), leather, 0.014)),
         "Face": mesh("Face", add_beveled_box(builder, (0.27, 0.20, 0.12), skin, 0.025)),
         "Visor": mesh("Visor", add_beveled_box(builder, (0.25, 0.045, 0.035), cyan, 0.012)),
+        "VisorBrow": mesh("VisorBrow", add_beveled_box(builder, (0.29, 0.05, 0.055), metal, 0.016)),
+        "VisorMount": mesh("VisorMount", add_uv_sphere(builder, 0.035, metal, 12, 20)),
         "Shoulder": mesh("Shoulder", add_beveled_box(builder, (0.24, 0.16, 0.34), metal, 0.025)),
         "Pack": mesh("Pack", add_beveled_box(builder, (0.42, 0.52, 0.20), leather, 0.035)),
         "PackPlate": mesh("PackPlate", add_beveled_box(builder, (0.28, 0.20, 0.045), metal, 0.012)),
@@ -402,9 +405,13 @@ def main() -> None:
     add_node("ChestPlate", mesh_ids["ChestPlate"], (0.0, 1.43, -0.22))
     add_node("Scarf", mesh_ids["Scarf"], (0.0, 1.69, 0.0))
     add_node("Hood", mesh_ids["Hood"], (0.0, 1.88, 0.03))
+    add_node("HoodLowerSeam", mesh_ids["HoodLowerSeam"], (0.0, 1.72, -0.20), extras={"surface": "hood_lower_seam"})
     add_node("FaceAnchor", None, (0.0, 1.84, -0.25), extras={"socket_type": "face_anchor"})
     add_node("Face", mesh_ids["Face"], (0.0, 1.84, -0.25))
     add_node("Visor", mesh_ids["Visor"], (0.0, 1.88, -0.325))
+    add_node("VisorBrow", mesh_ids["VisorBrow"], (0.0, 1.98, -0.30), extras={"surface": "visor_protection"})
+    add_node("VisorMountLeft", mesh_ids["VisorMount"], (-0.145, 1.88, -0.355))
+    add_node("VisorMountRight", mesh_ids["VisorMount"], (0.145, 1.88, -0.355))
     add_node("LeftShoulder", mesh_ids["Shoulder"], (-0.37, 1.52, 0.0), (0.0, 0.0, -0.08))
     add_node("RightShoulder", mesh_ids["Shoulder"], (0.37, 1.52, 0.0), (0.0, 0.0, 0.08))
     add_node("FieldPack", mesh_ids["Pack"], (0.0, 1.20, 0.24), extras={"socket_type": "equipment_mount"})
@@ -503,7 +510,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "mechromancer.player.v1",
-            "required_nodes": ["MechromancerModel", "PistolMuzzle", "ShoulderLamp", "FaceAnchor", "FieldPack", "FieldCommsYoke", "FieldCommsAntenna", "FieldCommsBeacon", "FieldCommsCable", "CoatTailLeft", "CoatTailRight"],
+            "required_nodes": ["MechromancerModel", "PistolMuzzle", "ShoulderLamp", "FaceAnchor", "FieldPack", "FieldCommsYoke", "FieldCommsAntenna", "FieldCommsBeacon", "FieldCommsCable", "CoatTailLeft", "CoatTailRight", "HoodLowerSeam", "VisorBrow", "VisorMountLeft", "VisorMountRight"],
             "animation_clips": ["Idle", "Walk", "Fire", "Work", "Upgrade", "Hit"],
         },
     }
