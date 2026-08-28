@@ -466,8 +466,12 @@ func _build_tenement_vignette(parent: Node3D) -> void:
     var vertical_life := Node3D.new()
     vertical_life.name = "TenementVerticalLifeDetails"
     parent.add_child(vertical_life)
-    var facade := ModelKit3D.material(Color("4a5050"), 0.4, 0.58)
-    var facade_edge := ModelKit3D.material(Color("7c523e"), 0.42, 0.68)
+    # The residential shell sits behind several close rails and laundry
+    # pieces. Keep it materially darker and reduce its practical lights so the
+    # attached hardware reads as part of a building instead of floating in a
+    # blown-out gallery slab.
+    var facade := ModelKit3D.material(Color("303a3c"), 0.28, 0.72)
+    var facade_edge := ModelKit3D.material(Color("5b4038"), 0.34, 0.76)
     var window_dark := ModelKit3D.material(Color("172326"), 0.35, 0.34)
     var window_warm := ModelKit3D.material(Color("7d4e30"), 0.2, 0.32, Color("e9a35d"), 1.2)
     var service_cyan := ModelKit3D.material(Color("24494e"), 0.32, 0.3, Color("63d4d8"), 1.8)
@@ -500,8 +504,8 @@ func _build_tenement_vignette(parent: Node3D) -> void:
     ModelKit3D.add_cylinder(vertical_life, 0.1, 1.5, Vector3(8.4, 7.85, -6.9), service_cyan, Vector3.ZERO, "TenementRoofTankVent")
     _add_beam(vertical_life, Vector3(7.2, 5.72, -7.0), Vector3(8.4, 6.0, -6.9), 0.045, service_cyan, "TenementServicePipe")
     ModelKit3D.add_membrane_fan(vertical_life, 0.72, Vector3(1.95, 0.68, -7.63), growth, 5, "TenementBreachGrowth")
-    _add_light(vertical_life, Vector3(4.6, 3.05, -7.58), Color("e5a15d"), 1.15, 7.0)
-    _add_light(vertical_life, Vector3(1.0, 2.15, -7.7), Color("68d7d5"), 0.8, 5.5)
+    _add_light(vertical_life, Vector3(4.6, 3.05, -7.58), Color("e5a15d"), 0.38, 7.0)
+    _add_light(vertical_life, Vector3(1.0, 2.15, -7.7), Color("68d7d5"), 0.32, 5.5)
 
     for level in range(3):
         var y := 1.0 + float(level) * 1.8

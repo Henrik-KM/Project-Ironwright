@@ -242,7 +242,39 @@ func _apply_authored_model_tuning() -> void:
             light_material.emission_energy_multiplier = 0.24 if canopy else 0.34
             light_material.roughness = 0.46
             light_mesh.material_override = light_material
-
+    elif region_id == &"region.east_tenements":
+        # The imported residential shell contains several broad catch surfaces.
+        # Their direct-light response can wash the blocks toward white, flattening
+        # the facade and making the attached balconies read as floating rails.
+        # Keep every authored mesh and socket, but tune only the imported material
+        # lanes so brick, concrete, service iron, windows and cloth separate.
+        for candidate in _authored_model_root.find_children("*", "MeshInstance3D", true, false):
+            var tenement_mesh := candidate as MeshInstance3D
+            if tenement_mesh == null:
+                continue
+            var tenement_name := String(tenement_mesh.name)
+            var source_material := tenement_mesh.get_active_material(0) as StandardMaterial3D
+            var tenement_material := source_material.duplicate(true) as StandardMaterial3D if source_material != null else StandardMaterial3D.new()
+            tenement_material.emission_enabled = false
+            if tenement_name in ["TenementBlockL", "TenementBlockR"]:
+                tenement_material.albedo_color = Color("33272a")
+                tenement_material.metallic = 0.04
+                tenement_material.roughness = 0.94
+            elif tenement_name == "TenementFloor":
+                tenement_material.albedo_color = Color("16272c")
+                tenement_material.metallic = 0.12
+                tenement_material.roughness = 0.9
+            elif tenement_name.begins_with("TenementBlock") or tenement_name.begins_with("TenementFacade"):
+                tenement_material.albedo_color = Color("273338")
+                tenement_material.metallic = 0.18
+                tenement_material.roughness = 0.84
+            elif tenement_name.begins_with("TenementFrontWindow") or tenement_name.begins_with("TenementWindow"):
+                tenement_material.albedo_color = Color("12323a")
+                tenement_material.metallic = 0.08
+                tenement_material.roughness = 0.38
+            else:
+                continue
+            tenement_mesh.material_override = tenement_material
 
 func set_discovered(value: bool) -> void:
     if discovered == value:

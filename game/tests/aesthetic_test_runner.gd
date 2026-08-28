@@ -789,7 +789,13 @@ func _run_all() -> void:
                     _expect(not labs_prism_ring.scale.is_equal_approx(labs_prism_ring_before), "Buried Laboratories prism ring must pulse with the extraction signal.")
                     _expect(not labs_cradle.position.is_equal_approx(labs_cradle_before), "Buried Laboratories extraction cradle must carry restrained suspension motion.")
             if landmark.region_kind == &"tenement":
+                var tenement_floor := landmark.find_child("TenementFloor", true, false) as MeshInstance3D
+                var tenement_floor_material := tenement_floor.material_override as StandardMaterial3D if tenement_floor != null else null
+                _expect(tenement_floor_material != null and tenement_floor_material.albedo_color.r < 0.16 and tenement_floor_material.albedo_color.g < 0.3 and not tenement_floor_material.emission_enabled, "East Tenements must keep the broad authored floor dark enough to preserve the residential block silhouette under the review key.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing/TenementVerticalLifeDetails") != null, "East Tenements must expose an authored vertical residential vignette.")
+                var tenement_facade_shell := landmark.find_child("TenementFacadeShellCore", true, false) as MeshInstance3D
+                var tenement_facade_material := tenement_facade_shell.material_override as StandardMaterial3D if tenement_facade_shell != null else null
+                _expect(tenement_facade_material != null and tenement_facade_material.albedo_color.r < 0.3 and not tenement_facade_material.emission_enabled, "East Tenements encounter dressing must keep its broad facade shell dark enough to support attached residential detail.")
                 _expect(landmark.find_child("TenementFireEscapeLadder", true, false) != null, "East Tenements must expose a readable fire-escape route signature.")
                 _expect(landmark.find_child("TenementRoofWaterTank", true, false) != null, "East Tenements must expose a rooftop service identity.")
                 _expect(landmark.find_child("TenementFrontWindowL0_0", true, false) != null and landmark.find_child("TenementBlockLEdgeL", true, false) != null, "East Tenements must expose approach-facing windows and facade edge breaks.")

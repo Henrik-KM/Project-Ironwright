@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-08-28 — East Tenements gallery framing
+
+- tightened the development-only East Tenements presentation frame so the
+  authored residential block and attached life-detail read clearly at close
+  review distance;
+- kept the change presentation-only, with no gameplay, navigation, save or
+  recurring-task impact.
+
 ## Pre-alpha close-camera organic roster framing
 
 - tightened the development gallery camera for the early and late organic

@@ -959,6 +959,11 @@ func _start_presentation_review() -> void:
 	presentation_review_page = 0
 	presentation_review_capture_path = _presentation_review_capture_argument()
 	presentation_review_capture_frames = 0
+	# The gallery deliberately promotes every authored landmark, so the normal
+	# proximity LOD loop must not downgrade the selected review fixture back to a
+	# reduced proxy while the capture is being inspected.
+	if region_lod_director != null:
+		region_lod_director.set_process(false)
 	# The gallery is an authored visual fixture, not a normal run. Reveal every
 	# regional story witness here so the exact Windows review can judge the
 	# physical archive connection while ordinary gameplay remains discovery-gated.
@@ -1035,6 +1040,11 @@ func _start_presentation_review() -> void:
 		elif PRESENTATION_REVIEW_REGIONS[index] == &"region.cathedral_quarter" and landmark != null:
 			_apply_cathedral_presentation_material_overrides(landmark)
 		if review_actor != null:
+			# Bounded runtime startup intentionally keeps remote authored packages
+			# unloaded. The development gallery is an explicit whole-library review,
+			# so promote each real landmark before staging it; otherwise a page can
+			# show only its secondary dressing and falsely read as incomplete.
+			landmark.set_streamed_in(true)
 			landmark.set_presentation_detail_level(0)
 			if PRESENTATION_REVIEW_REGIONS[index] == &"region.root_cistern":
 				landmark.visible = false
@@ -1447,7 +1457,8 @@ func _show_presentation_review_page(page: int) -> void:
 	var page_title: String = page_titles[presentation_review_page]
 	presentation_review_label.text = "PRESENTATION REVIEW  ·  %s  ·  %d/%d\n1-9, 0 DIRECT PAGE   ←/→ BROWSE   ESC EXIT" % [page_title, presentation_review_page + 1, presentation_review_pages.size()]
 	if is_region_page and not actors.is_empty():
-		presentation_review_camera_target = (actors[0] as Node3D).global_position + Vector3.UP * 2.0
+		var review_target_height := 3.8 if region_id == &"region.east_tenements" else 2.0
+		presentation_review_camera_target = (actors[0] as Node3D).global_position + Vector3.UP * review_target_height
 		presentation_review_camera_desired = presentation_review_camera_target + _presentation_review_region_camera_offset(region_id)
 	elif is_region_page and region_director != null:
 		presentation_review_camera_target = region_director.center(region_id) + Vector3.UP * 2.0
@@ -1516,6 +1527,12 @@ func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3
 		return Vector3(0.0, 10.2, 15.0)
 	if region_id == &"region.north_ruins":
 		return Vector3(-7.0, 9.6, 14.8)
+	if region_id == &"region.east_tenements":
+		# The residential blocks are broad and low-detail from the shared remote
+		# angle. A closer diagonal frame lets the facade bands, balconies and
+		# laundry read as attached lived-in infrastructure instead of a distant
+		# symmetrical rail grid. This is review-fixture composition only.
+		return Vector3(7.0, 9.0, 19.0)
 	return Vector3(0.0, 12.0, 19.0)
 
 
