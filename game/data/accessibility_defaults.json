@@ -16,6 +16,7 @@
     "hold_interactions": true,
     "controller_vibration": true,
     "subtitles": true,
+    "sound_captions": true,
     "show_world_guidance": true,
     "target_fps": 60,
     "game_speed": 1.0,

@@ -285,13 +285,15 @@ func _build_settings_rows(parent: VBoxContainer) -> void:
     settings_controls["game_speed"] = game_speed
     parent.add_child(_settings_row("settings.game_speed", game_speed))
 
-    for key in ["high_contrast_ui", "reduced_motion", "reduced_flashes", "hold_interactions", "controller_vibration", "subtitles", "show_world_guidance"]:
+    for key in ["high_contrast_ui", "reduced_motion", "reduced_flashes", "hold_interactions", "controller_vibration", "subtitles", "sound_captions", "show_world_guidance"]:
         var toggle := CheckButton.new()
         toggle.text = ""
         settings_controls[key] = toggle
         var label_key := "settings.%s" % key
         if key == "high_contrast_ui":
             label_key = "settings.high_contrast"
+        elif key == "sound_captions":
+            label_key = "settings.sound_captions"
         elif key == "show_world_guidance":
             label_key = "settings.world_guidance"
         parent.add_child(_settings_row(label_key, toggle))
@@ -407,7 +409,7 @@ func _populate_settings_controls() -> void:
         var slider := settings_controls.get(key) as HSlider
         if slider != null:
             slider.value = float(settings_service.get_value(StringName(key), slider.value))
-    for key in ["high_contrast_ui", "reduced_motion", "reduced_flashes", "hold_interactions", "controller_vibration", "subtitles", "show_world_guidance"]:
+    for key in ["high_contrast_ui", "reduced_motion", "reduced_flashes", "hold_interactions", "controller_vibration", "subtitles", "sound_captions", "show_world_guidance"]:
         var toggle := settings_controls.get(key) as CheckButton
         if toggle != null:
             toggle.button_pressed = bool(settings_service.get_value(StringName(key), false))
@@ -444,7 +446,7 @@ func _apply_settings() -> void:
         var slider := settings_controls.get(key) as HSlider
         if slider != null:
             values[key] = slider.value
-    for key in ["high_contrast_ui", "reduced_motion", "reduced_flashes", "hold_interactions", "controller_vibration", "subtitles", "show_world_guidance"]:
+    for key in ["high_contrast_ui", "reduced_motion", "reduced_flashes", "hold_interactions", "controller_vibration", "subtitles", "sound_captions", "show_world_guidance"]:
         var toggle := settings_controls.get(key) as CheckButton
         if toggle != null:
             values[key] = toggle.button_pressed

@@ -69,6 +69,17 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
         _expect(is_equal_approx(world.release_audio._safe_volume_db(0.0), -30.0), "Quiet audio review mode must cap a full-scale cue at a very low playback level.")
         _expect(is_equal_approx(world.release_audio._safe_volume_db(-36.0), -36.0), "Quiet audio review mode must preserve already-quiet cues without boosting them.")
         world.release_audio.quiet_audio = false
+        world.release_audio.caption_panel.visible = false
+        world.settings_service.set_value(&"subtitles", false, false)
+        world.settings_service.set_value(&"sound_captions", true, false)
+        world.release_audio.show_caption("audio.caption.report")
+        _expect(world.release_audio.caption_panel.visible, "Sound captions must remain available when general subtitles are disabled.")
+        world.release_audio.caption_panel.visible = false
+        world.settings_service.set_value(&"sound_captions", false, false)
+        world.release_audio.show_caption("audio.caption.report")
+        _expect(not world.release_audio.caption_panel.visible, "Sound captions must have an independent accessibility toggle.")
+        world.settings_service.set_value(&"subtitles", true, false)
+        world.settings_service.set_value(&"sound_captions", true, false)
         world.release_audio.music_duck_remaining = 0.0
         _expect(is_equal_approx(world.release_audio.music_target_volume_db(), -7.0), "Release music must return to its calm target when no immediate danger is present.")
         world.release_audio._arm_music_duck(1.2)

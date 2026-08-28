@@ -381,7 +381,7 @@ func _sanitize() -> void:
     settings["camera_shake"] = clampf(float(settings.get("camera_shake", 0.65)), 0.0, 1.0)
     settings["target_fps"] = clampi(int(settings.get("target_fps", 60)), 30, 120)
     settings["game_speed"] = clampf(float(settings.get("game_speed", defaults.get("game_speed", 1.0))), 0.75, 1.25)
-    for key in ["high_contrast_ui", "reduced_motion", "reduced_flashes", "hold_interactions", "controller_vibration", "subtitles", "show_world_guidance"]:
+    for key in ["high_contrast_ui", "reduced_motion", "reduced_flashes", "hold_interactions", "controller_vibration", "subtitles", "sound_captions", "show_world_guidance"]:
         settings[key] = bool(settings.get(key, defaults.get(key, false)))
     var colorblind_mode := StringName(str(settings.get("colorblind_mode", "off")))
     settings["colorblind_mode"] = String(colorblind_mode if SUPPORTED_COLORBLIND_MODES.has(colorblind_mode) else &"off")
@@ -414,6 +414,7 @@ func _fallback_defaults() -> Dictionary:
         "hold_interactions": true,
         "controller_vibration": true,
         "subtitles": true,
+        "sound_captions": true,
         "show_world_guidance": true,
         "target_fps": 60,
         "game_speed": 1.0,

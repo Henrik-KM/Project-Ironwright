@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused independent sound-caption accessibility pass
+
+- separated strategic sound captions from spoken/gameplay subtitles in the
+  release settings contract, so players can keep readable sound cues while
+  disabling subtitle text or vice versa;
+- added English, German and Swedish labels plus persistence and release-test
+  coverage for both combinations; the existing very-low-volume silent review
+  policy remains unchanged.
+
 ## Focused Thornback jaw-silhouette finish
 
 - added a dense paired tooth edge beneath the authored Thornback jaw plates so
