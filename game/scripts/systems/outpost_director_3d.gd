@@ -444,20 +444,20 @@ func _select_team(kind: StringName) -> Array[RobotUnit3D]:
     if autonomy_director == null:
         return result
     if kind == &"haul":
-        var salvagers := autonomy_director.living_robots(&"salvager")
-        var guards := autonomy_director.living_robots(&"guardian")
+        var salvagers := autonomy_director.available_living_robots(&"salvager")
+        var guards := autonomy_director.available_living_robots(&"guardian")
         if salvagers.is_empty() or guards.is_empty():
             return result
         result.append(salvagers[0])
         result.append(guards[0])
     else:
-        var engineers := autonomy_director.living_robots(&"engineer")
-        var guardians := autonomy_director.living_robots(&"guardian")
+        var engineers := autonomy_director.available_living_robots(&"engineer")
+        var guardians := autonomy_director.available_living_robots(&"guardian")
         if engineers.is_empty() or guardians.is_empty():
             return result
         result.append(engineers[0])
         result.append(guardians[0])
-    var scouts := autonomy_director.living_robots(&"scout")
+    var scouts := autonomy_director.available_living_robots(&"scout")
     if not scouts.is_empty() and scouts[0] not in result:
         result.push_front(scouts[0])
     return result
@@ -519,7 +519,11 @@ func _hostile_near(position: Vector3, radius: float) -> bool:
 func _other_remote_operation_active() -> bool:
     if autonomy_director == null:
         return false
-    return not autonomy_director.salvage_operation.is_empty() or not autonomy_director.expedition_operation.is_empty()
+    return (
+        not autonomy_director.salvage_operation.is_empty()
+        or not autonomy_director.expedition_operation.is_empty()
+        or autonomy_director.has_external_operation()
+    )
 
 
 func _route_between(origin: Vector3, destination: Vector3) -> PackedVector3Array:

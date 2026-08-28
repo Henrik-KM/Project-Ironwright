@@ -84,6 +84,22 @@ func _run_all() -> void:
     var cores_before_west := world.run_state.rare_cores
     world.transactional_save_service.configure(TEST_SAVE_ROOT, 3)
     _expect(world.long_operation_director.authorize(&"operation.west_grid_survey"), "A long-range operation must be authorizable before checkpoint testing.")
+    var active_long_range_members: Array[RobotUnit3D] = []
+    active_long_range_members.append_array(world.long_operation_director.active_operation.get("members", []))
+    _expect(world.autonomy_director.is_processing(), "A long-range operation must leave the local autonomy director processing the machines that stayed home.")
+    _expect(world.outpost_director.is_processing(), "A long-range operation must leave autonomous outpost maintenance processing while the remote group travels.")
+    _expect(world.autonomy_director.external_operation_member_count() == active_long_range_members.size(), "The long-range team must be explicitly reserved so local autonomy cannot reassign its members.")
+    world.autonomy_director._refresh_macro_assignments()
+    for long_range_member in active_long_range_members:
+        _expect(long_range_member.assigned_group == &"long_range_operation", "A reserved long-range member must retain its physical expedition group after local assignment refresh.")
+    var home_machine: RobotUnit3D
+    for candidate in world.autonomy_director.living_robots():
+        if candidate not in active_long_range_members and candidate.archetype != &"companion":
+            home_machine = candidate
+            break
+    _expect(home_machine != null, "The complete integration fixture must retain at least one non-expedition machine at the Heartforge.")
+    if home_machine != null:
+        _expect(home_machine.assigned_group != &"long_range_operation", "A machine remaining at the Heartforge must not be marked as part of the departing formation.")
     world._process(0.1)
     _expect("FOLLOW THE ACTIVE MACHINE GROUP" in world.hud.objective_label.text, "An active long-range operation must replace the previous strategic objective with the physical group follow objective.")
     _expect("F FOLLOW ACTIVE MACHINE GROUP" in world.hud.prompt_label.text, "An active long-range operation must replace stale opening guidance with the direct follow affordance.")
@@ -92,6 +108,8 @@ func _run_all() -> void:
     _expect(FileAccess.file_exists(TEST_SAVE_PATH), "The complete-world save hook must write while a long-range group is in flight.")
     world._load_game()
     _expect(StringName(world.long_operation_director.active_operation.get("id", &"")) == checkpoint_id, "Loading must restore the active long-range operation identity.")
+    _expect(world.autonomy_director.is_processing(), "Loading an in-flight long-range operation must keep local autonomy processing enabled.")
+    _expect(world.autonomy_director.external_operation_member_count() == active_long_range_members.size(), "Loading an in-flight long-range operation must restore its explicit team reservation.")
     var primary_west_route_before_block := world.region_director.route_from_heartforge(&"region.west_grid", world.heartforge.global_position)
     world.long_operation_director.active_operation["anchor"] = primary_west_route_before_block[1]
     world.long_operation_director.active_operation["route_index"] = 2

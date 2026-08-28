@@ -430,9 +430,7 @@ func authorize(operation_id: StringName) -> bool:
         "route_recovery_target": Vector3.ZERO,
         "pending_rewards": {},
     }
-    autonomy_director.set_process(false)
-    if outpost_director != null:
-        outpost_director.set_process(false)
+    autonomy_director.set_external_operation_members(team)
     _hold_nonmembers_at_home(team)
     var route_detail := "%s has departed as a cohesive physical group." % str(entry.get("display_name", String(operation_id)))
     if _active_relay_count() > 0:
@@ -736,9 +734,7 @@ func _complete_return() -> void:
     active_operation.clear()
     if operation_detail_director != null:
         operation_detail_director.clear_operation(operation_id)
-    autonomy_director.set_process(true)
-    if outpost_director != null:
-        outpost_director.set_process(true)
+    autonomy_director.clear_external_operation_members()
     run_state.log_event("Long-range operation complete: %s" % str(entry.get("display_name", String(operation_id))))
     operation_returned.emit(operation_id, str(entry.get("display_name", String(operation_id))), rewards.duplicate(true))
     operation_changed.emit(operation_id, &"complete", "The complete group returned to the Heartforge and delivered the objective.")
@@ -844,9 +840,7 @@ func _abort(reason: String) -> void:
     active_operation.clear()
     if operation_detail_director != null:
         operation_detail_director.clear_operation(operation_id)
-    autonomy_director.set_process(true)
-    if outpost_director != null:
-        outpost_director.set_process(true)
+    autonomy_director.clear_external_operation_members()
     operation_changed.emit(operation_id, &"aborted", reason)
 
 
@@ -858,7 +852,7 @@ func _select_team(raw_roles: Array) -> Array[RobotUnit3D]:
     for raw_role in raw_roles:
         var role := StringName(str(raw_role))
         var selected: RobotUnit3D
-        for robot in autonomy_director.living_robots(role):
+        for robot in autonomy_director.available_living_robots(role):
             if robot not in used:
                 selected = robot
                 break
@@ -871,7 +865,7 @@ func _select_team(raw_roles: Array) -> Array[RobotUnit3D]:
 
 func _hold_nonmembers_at_home(members: Array[RobotUnit3D]) -> void:
     var slot := 0
-    for robot in autonomy_director.living_robots():
+    for robot in autonomy_director.available_living_robots():
         if robot in members or robot.archetype == &"companion":
             continue
         var angle := TAU * float(slot) / 8.0
@@ -1291,9 +1285,7 @@ func _restore_active_operation(raw_data: Variant) -> void:
     }
     for index in range(members.size()):
         members[index].set_group(&"long_range_operation", index)
-    autonomy_director.set_process(false)
-    if outpost_director != null:
-        outpost_director.set_process(false)
+    autonomy_director.set_external_operation_members(members)
     _hold_nonmembers_at_home(members)
     operation_changed.emit(operation_id, StringName(active_operation.get("state", &"outbound")), "The saved long-range group resumed its physical route.")
 

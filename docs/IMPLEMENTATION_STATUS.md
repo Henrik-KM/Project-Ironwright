@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused remote-operation autonomy continuity pass
+
+- long-range expedition members now hold an explicit reservation while the
+  autonomy director continues processing the machines that remain at the
+  Heartforge;
+- local defensive coverage, salvage selection and autonomous outpost upkeep
+  exclude the travelling formation without pausing the wider machine society,
+  and overlapping outpost authorization is blocked by the same reservation;
+- active reservations are restored across save/load and cleared on completion
+  or retreat; integration coverage verifies both live processing and the
+  persisted in-flight state.
+
 ## Focused adaptive Heartforge geometry and motion pass
 
 - completed adaptive Heartforge responses now retain distinct high-definition
