@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused late-organic palette refinement — 2026-08-28
+
+The late organic families now use a restrained mineral-biological tint range:
+smoky brood, algae root, muted plum, ochre territorial, slate thermal and rust
+apex lanes remain distinct without the former bright pink convergence across
+broad membranes. Authored geometry, normal/detail treatment, sockets,
+animation and gameplay ownership are unchanged. The exact 1600×900 hostile
+gallery review is the acceptance gate and uses Godot Dummy audio with
+`--quiet-audio` only; no live speakers are used.
+
 ## Focused endgame command localization pass — 2026-08-28
 
 The final-protocol command surface now resolves protocol names, descriptions

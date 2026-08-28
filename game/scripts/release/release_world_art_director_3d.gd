@@ -68,10 +68,10 @@ const AUTHORED_ORGANIC_TINTS: Dictionary = {
     "veilstalker": Color("8b9aa3"),
     "razorhound": Color("a27d68"),
     "sporecaster": Color("98a86b"),
-    "broodmass": Color("a2687d"),
+    "broodmass": Color("756879"),
     "burrower": Color("a39277"),
     "skitterling": Color("78a9a9"),
-    "apex": Color("a85d5d"),
+    "apex": Color("875b53"),
     "roofleaper": Color("78aeb7"),
     "glassmoth": Color("78c8c8"),
     "miremaw": Color("9eac78"),
@@ -82,10 +82,10 @@ const AUTHORED_ORGANIC_TINTS: Dictionary = {
     # late terrestrial families into clearly different mineral-biological
     # colour lanes. This is a material-only presentation pass: authored mesh
     # density, sockets, animation and gameplay scale remain unchanged.
-    "carrionbell": Color("a83f64"),
-    "rootweaver": Color("3a8f67"),
-    "thornback": Color("bd7d3b"),
-    "ashmantle": Color("4b7f9a"),
+    "carrionbell": Color("8e5268"),
+    "rootweaver": Color("3f7953"),
+    "thornback": Color("ad7f4e"),
+    "ashmantle": Color("547b8b"),
 }
 
 var world: Node3D

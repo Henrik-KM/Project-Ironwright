@@ -1,5 +1,15 @@
 # Changelog
 
+## Pre-alpha late-organic palette refinement
+
+- reduced the late-family membrane tint saturation while retaining distinct
+  smoky, algae, plum, ochre, slate and rust-biological lanes;
+- preserved authored meshes, anatomy sockets, animation, collision, ecology,
+  LOD and save ownership; the pass is presentation-only and adds no player
+  workload;
+- exact 1600x900 hostile-family gallery review remains part of the visual gate,
+  using Godot Dummy audio and quiet-audio mode only.
+
 ## Pre-alpha endgame command localization milestone
 
 - localized final-protocol names, descriptions and inactive/progress status text through the supported English, Swedish and German catalogs;
