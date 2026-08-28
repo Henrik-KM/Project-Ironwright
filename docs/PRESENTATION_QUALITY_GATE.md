@@ -1506,6 +1506,13 @@ transfer pipes give the active encounter the same authored depth as its remote
 release review. This layer remains presentation-only and preserves the
 existing research landmark, operation, ecology and progression contracts.
 
+The discovered Riverworks encounter now carries a bounded dock assembly as
+well: flow-channel breaks, a framed sluice gate, pump housing, rotor ring and
+raised header manifold give the active waterworks space a readable flow
+hierarchy. This layer remains presentation-only and preserves the existing
+Riverworks landmark, waterline, salvage, route, ecology and operation
+contracts.
+
 Remote Root Cistern release dressing now carries the same model grammar as well: the final basin uses a layered service ring, signal ring, approach control deck, pump housing, header pipes and living-root anchors instead of a circular basin with repeated pylons alone. The detail is presentation-only and preserves the existing endgame landmark, ecology, operation and reduced-detail contracts.
 
 ## Release-readiness rule

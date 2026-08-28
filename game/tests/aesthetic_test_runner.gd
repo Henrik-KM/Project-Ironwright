@@ -759,6 +759,15 @@ func _run_all() -> void:
                     _expect(not riverworks_valve_handle.rotation.is_equal_approx(valve_handle_before), "Riverworks maintenance handle must carry restrained service motion.")
                     _expect(not riverworks_signal_housing.scale.is_equal_approx(signal_housing_before), "Riverworks flow-signal housing must carry restrained signal motion.")
                     _expect(not riverworks_tendril.rotation.is_equal_approx(tendril_before), "Riverworks organic tendril must carry deterministic presentation motion.")
+                var riverworks_dock_assembly := landmark.find_child("RiverworksDockAssembly", true, false) as Node3D
+                _expect(riverworks_dock_assembly != null, "Riverworks must expose a bounded discovered-space dock assembly around its water-management focal.")
+                if riverworks_dock_assembly != null:
+                    _expect(riverworks_dock_assembly.find_child("RiverworksEncounterSluice", true, false) != null and riverworks_dock_assembly.find_child("RiverworksEncounterGate", true, false) != null and riverworks_dock_assembly.find_child("RiverworksEncounterGateLouver", true, false) != null, "Riverworks discovered space must expose a framed sluice gate with readable service detail.")
+                    _expect(riverworks_dock_assembly.find_child("RiverworksEncounterManifold", true, false) != null and riverworks_dock_assembly.find_child("RiverworksEncounterPumpHousing", true, false) != null and riverworks_dock_assembly.find_child("RiverworksEncounterHeaderManifold", true, false) != null, "Riverworks discovered space must expose a pump housing and raised header manifold.")
+                    var encounter_rotor_ring := riverworks_dock_assembly.find_child("RiverworksEncounterRotorRing", true, false) as MeshInstance3D
+                    var encounter_light := riverworks_dock_assembly.find_child("EncounterPractical", true, false) as OmniLight3D
+                    _expect(encounter_rotor_ring != null and _mesh_vertex_count(encounter_rotor_ring) >= 300, "Riverworks discovered pump hardware must retain dense curved high-definition geometry.")
+                    _expect(encounter_light != null and encounter_light.light_energy <= 0.50, "Riverworks discovered practical lighting must remain a restrained cyan cue instead of blooming over the waterline.")
             if landmark.region_kind == &"research":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/BuriedLaboratoriesIdentityDetails") != null, "Buried Laboratories must expose its authored containment vignette.")
                 _expect(landmark.find_child("LabContainmentVessel", true, false) != null, "Buried Laboratories must expose readable containment vessels.")

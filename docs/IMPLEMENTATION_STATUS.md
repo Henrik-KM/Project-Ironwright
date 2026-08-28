@@ -4919,6 +4919,17 @@ presentation restore, with release regression coverage for that migration path.
 - added aesthetic coverage for the spine's stable anatomy sockets, curved
   geometry and restrained practical lighting.
 
+## Focused discovered Riverworks-encounter depth milestone
+
+- added a presentation-only dock assembly to the discovered Riverworks space,
+  with a framed sluice gate, flow-channel breaks, pump housing, rotor ring and
+  raised header manifold;
+- preserved the existing Riverworks landmark, waterline, salvage, route,
+  ecology and operation contracts without adding collision or player-managed
+  infrastructure;
+- added aesthetic coverage for the assembly's stable sluice, pump, manifold,
+  curved-geometry and restrained-lighting sockets.
+
 ## Focused deferred authored-visual population milestone
 
 - release-spawned actors outside the active visual radius now begin with their
