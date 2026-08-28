@@ -206,7 +206,7 @@ func _on_region_stream_changed(region_id: StringName, streamed_in: bool) -> void
     if root == null or not is_instance_valid(root):
         return
     if streamed_in:
-        if root.get_child_count() == 0:
+        if not _has_region_dressing_content(root):
             _rebuild_region_dressing(region_id, root)
         return
     # The landmark keeps its gameplay state and coarse proxy. Only the
@@ -227,9 +227,16 @@ func ensure_region_dressing(region_id: StringName) -> Node3D:
     var root := region_dressing_roots.get(region_id) as Node3D
     if root == null or not is_instance_valid(root):
         return null
-    if root.get_child_count() == 0:
+    if not _has_region_dressing_content(root):
         _rebuild_region_dressing(region_id, root)
     return root
+
+
+func _has_region_dressing_content(root: Node3D) -> bool:
+    for child in root.get_children():
+        if child.name != &"ReleaseSecondaryMotion3D":
+            return true
+    return false
 
 
 func region_dressing_root(region_id: StringName) -> Node3D:
@@ -503,8 +510,23 @@ func _dress_region(region_id: StringName) -> void:
     var kind := StringName(str(data.get("kind", "urban")))
     var root := _region_root("Release_%s" % String(region_id).replace("region.", "").to_pascal_case(), center)
     region_dressing_roots[region_id] = root
-    _dress_region_contents(kind, root)
     regions_dressed += 1
+    # Keep the authored high-definition encounter layer bounded during boot.
+    # The persistent landmark and coarse proxy remain available for every
+    # region; close dressing is rebuilt automatically when the LOD director
+    # streams a region into the focus ring.
+    if not _is_region_streamed(region_id):
+        return
+    _dress_region_contents(kind, root)
+
+
+func _is_region_streamed(region_id: StringName) -> bool:
+    if world == null or not is_instance_valid(world):
+        return true
+    var region_lod := world.get_node_or_null("RegionPresentationLodDirector")
+    if region_lod != null and region_lod.has_method(&"is_region_streamed"):
+        return bool(region_lod.call(&"is_region_streamed", region_id))
+    return true
 
 
 func _dress_region_contents(kind: StringName, root: Node3D) -> void:

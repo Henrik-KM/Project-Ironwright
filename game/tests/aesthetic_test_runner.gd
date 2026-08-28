@@ -38,6 +38,10 @@ func _run_all() -> void:
 
     _expect(world is IronwrightBeautifulWorld3D, "The main scene must boot the aesthetic-overhaul world.")
     _expect(world.get_node_or_null("AestheticDirector") is AestheticDirector3D, "The aesthetic director must exist at runtime.")
+    var startup_lod := world.get_node_or_null("RegionPresentationLodDirector") as RegionPresentationLodDirector3D
+    _expect(startup_lod != null and startup_lod.streamed_region_count() < 11, "Startup must keep the authored stream ring bounded instead of importing every remote district before the first frame.")
+    if startup_lod != null:
+        _expect(not startup_lod.is_region_streamed(&"region.root_cistern"), "The distant endgame package must remain unloaded during the opening frame.")
     var audio_director := world.get_node_or_null("AudioFeedbackDirector") as AudioFeedbackDirector3D
     _expect(audio_director != null, "The world must provide spatial survival audio feedback.")
     if audio_director != null:
@@ -305,7 +309,12 @@ func _run_all() -> void:
             # pass. Promote each landmark explicitly for the inspection, then
             # let the camera-focused LOD checks below stream the distant
             # package back out.
-            landmark.set_streamed_in(true)
+            if startup_lod != null:
+                startup_lod.set_region_streamed(landmark.region_id, true)
+            else:
+                landmark.set_streamed_in(true)
+            if release_art != null:
+                release_art.ensure_region_dressing(landmark.region_id)
             var authored_package_name := str(authored_package_name_by_kind.get(landmark.region_kind, ""))
             var authored_package := landmark.get_node_or_null("PersistentRegionGeometry/%s" % authored_package_name) as Node3D
             _expect(authored_package != null and authored_package.get_child_count() > 0, "Each non-sanctuary region must instantiate its authored package when promoted into the inspection ring.")

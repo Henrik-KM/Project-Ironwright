@@ -8,9 +8,9 @@ signal detail_changed(region_id: StringName, detail_level: int)
 signal region_stream_changed(region_id: StringName, streamed_in: bool)
 
 const FULL_RADIUS := 76.0
-const REDUCED_RADIUS := 152.0
-const STREAM_IN_RADIUS := 214.0
-const STREAM_OUT_RADIUS := 252.0
+const REDUCED_RADIUS := 120.0
+const STREAM_IN_RADIUS := 120.0
+const STREAM_OUT_RADIUS := 144.0
 
 var region_director: WorldRegionDirector3D
 var player: Node3D
@@ -48,7 +48,10 @@ func refresh_now() -> void:
             continue
         var distance := focus.distance_to(landmark.global_position)
         landmark.set_player_proximity(distance)
-        var previous_streamed := bool(stream_states.get(landmark.region_id, true))
+        # Start with only the focus ring resident. The previous default of
+        # true caused every authored district to import during the first
+        # frame because the whole town fits inside the old stream-out radius.
+        var previous_streamed := bool(stream_states.get(landmark.region_id, false))
         var next_streamed := distance <= STREAM_IN_RADIUS if not previous_streamed else distance <= STREAM_OUT_RADIUS
         stream_states[landmark.region_id] = next_streamed
         landmark.set_streamed_in(next_streamed)
@@ -72,6 +75,17 @@ func detail_mode_for(region_id: StringName) -> int:
 
 func is_region_streamed(region_id: StringName) -> bool:
     return bool(stream_states.get(region_id, true))
+
+
+func set_region_streamed(region_id: StringName, streamed_in: bool) -> void:
+    var landmark := region_director.get_landmark(region_id) if region_director != null else null
+    if landmark == null:
+        return
+    var previous_streamed := bool(stream_states.get(region_id, false))
+    stream_states[region_id] = streamed_in
+    landmark.set_streamed_in(streamed_in)
+    if previous_streamed != streamed_in:
+        region_stream_changed.emit(region_id, streamed_in)
 
 
 func streamed_region_count() -> int:

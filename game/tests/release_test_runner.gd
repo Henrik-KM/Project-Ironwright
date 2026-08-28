@@ -551,6 +551,14 @@ func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void
 
 
 func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
+    # The runtime intentionally starts with a bounded authored stream ring.
+    # This broad asset audit explicitly promotes every persistent region so it
+    # can inspect the complete release catalogue without changing boot policy.
+    var region_lod := world.get_node_or_null("RegionPresentationLodDirector") as RegionPresentationLodDirector3D
+    if region_lod != null and world.region_director != null:
+        for raw_region_id in world.region_director.region_data.keys():
+            region_lod.set_region_streamed(StringName(raw_region_id), true)
+            world.release_world_art.ensure_region_dressing(StringName(raw_region_id))
     var texture_paths := [
         "res://assets/release/textures/asphalt_wet.png",
         "res://assets/release/textures/brick_ruin.png",
@@ -871,6 +879,14 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
 
 
 func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
+    # Content breadth is a catalogue audit, so explicitly restore every
+    # authored region before checking its stable landmark sockets.
+    var region_lod := world.get_node_or_null("RegionPresentationLodDirector") as RegionPresentationLodDirector3D
+    if region_lod != null and world.region_director != null:
+        for raw_region_id in world.region_director.region_data.keys():
+            var region_id := StringName(raw_region_id)
+            region_lod.set_region_streamed(region_id, true)
+            world.release_world_art.ensure_region_dressing(region_id)
     _expect(world.region_director.region_data.size() >= 12, "Commercial release must contain at least twelve persistent regions.")
     _expect(world.long_operation_director.operations.size() >= 16, "Commercial release must contain at least sixteen physical long-range operations.")
     for operation_id in [

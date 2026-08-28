@@ -227,3 +227,12 @@
 - Locked one run-critical Heartforge, one ordinary resource, organic enemies and no scheduled-wave main loop.
 - Defined autonomy as permanent removal of player work.
 - Added the revised GDD, ecology, sandbox, art, architecture, roadmap and playtest documents.
+
+## 2026-08-28 — Bounded startup authored streaming
+
+- fixed the first-frame launch path importing every remote high-definition
+  district package;
+- the region LOD director now starts with only the nearby focus ring resident,
+  releasing distant packages to persistent coarse proxies while preserving
+  physical landmarks and automatic restoration on approach;
+- added a native aesthetic regression for bounded opening residency.

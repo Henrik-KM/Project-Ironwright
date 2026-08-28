@@ -421,6 +421,19 @@ before merge.
 - added release regression coverage for activation, target volume and expiry;
   all live review remains on dummy audio with no speaker output.
 
+## Focused startup residency correction
+
+- corrected the initial authored-region stream state so only the bounded camera
+  focus ring is resident during startup instead of treating every landmark as
+  already streamed in;
+- tightened the hysteretic full/reduced/stream-out radii to match the actual
+  town layout, preventing all high-definition district packages from importing
+  before the first visible frame while preserving persistent landmarks, coarse
+  proxies, physical collision and automatic re-entry;
+- added an aesthetic regression assertion that the distant Root Cistern package
+  remains unloaded during the opening frame. This is presentation/performance
+  infrastructure only and adds no player-managed streaming task.
+
 ## Focused authored-region streaming pass
 
 - added a bounded hysteretic stream ring around the current camera focus so
