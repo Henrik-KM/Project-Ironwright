@@ -258,6 +258,19 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     _expect(service.text("objective.opening.salvage.title") == "BÄRGA DITT FÖRSTA SKROT", "Swedish catalog must localize the opening objective title.")
     _expect(service.text("notification.forge.insufficient_scrap", [42]) == "OTILLRÄCKLIGT MED SKROT · 42 KRÄVS" and service.text("notification.complete.systems_online") == "STADENS NÄTVERK ÖPPNA · P LÅNGDISTANSOPERATIONER · V SLUTPROTOKOLL", "Swedish gameplay reports must localize fabrication and complete-run guidance.")
     _expect(service.text("notification.outpost.foundation_complete").begins_with("FULLSPELGRUND KLAR") and service.text("objective.full_game.outpost.title") == "GODKÄNN EN UTPOST", "Swedish full-game foundation reports and outpost objectives must resolve through the selected catalog.")
+    world.operations_hud.open_archive([{
+        "id": "story.heartforge.last_light",
+        "display_name": "The Last Light",
+        "description": "The town's final service ledger names the Heartforge as a shelter, not a weapon.",
+        "source_name": "Heartforge District",
+        "arc": "civic_afterimage",
+    }])
+    var swedish_archive_metadata := world.operations_hud.requirements_label.text.to_lower()
+    _expect(world.operations_hud.selection_label.text == "DET SISTA LJUSET" and world.operations_hud.description_label.text.begins_with("Stadens sista servicelogg"), "Swedish Town Archive records must localize their recovered name and description in the actual archive surface.")
+    _expect(service.text("story.source.heartforge_district") == "Hjärtsmedjedistriktet" and service.text("story.arc.civic_afterimage") == "Medborgerligt efterljus", "Swedish Town Archive source and arc catalog entries must resolve.")
+    _expect("hjärtsmedjedistriktet" in swedish_archive_metadata, "Swedish Town Archive must render its localized source label.")
+    _expect("medborgerligt efterljus" in swedish_archive_metadata, "Swedish Town Archive must render its localized arc label.")
+    world.operations_hud.close()
     _expect(service.text("objective.complete.initiate.title") == "STARTA SLUTPROTOKOLLET" and service.text("objective.complete.initiate.prompt").begins_with("TRYCK V"), "Swedish late-run objective title and prompt must resolve through the selected catalog.")
     world.release_front_end.show_pause()
     service.set_locale(&"sv")
@@ -288,6 +301,19 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     _expect(service.text("hud.sanctuary.damaged") == "ZUFUCHT BESCHÄDIGT · HERZSCHMIEDE HALTEN", "German sanctuary status badge must be localized.")
     _expect(service.text("world.condition.mist_lull.name") == "Nebelruhe" and service.text("world.condition.mist_lull.description").begins_with("Der Regen lässt nach"), "German authored world-condition name and description must resolve for the opening report.")
     _expect(service.text("story.record.endgame_severance.name") == "Die abgetrennte Wurzel" and service.text("story.record.endgame_transformation.name") == "Die verwandelte Wurzel" and service.text("notification.first_victory_achieved", ["Trennung"]) == "ERSTER SIEG · Trennung", "German endgame machine-report events must resolve stable localized record and victory text.")
+    world.operations_hud.open_archive([{
+        "id": "story.heartforge.last_light",
+        "display_name": "Das letzte Licht",
+        "description": "Das letzte Serviceprotokoll der Stadt bezeichnet die Herzschmiede als Zuflucht, nicht als Waffe.",
+        "source_name": "Heartforge District",
+        "arc": "civic_afterimage",
+    }])
+    var german_archive_metadata := world.operations_hud.requirements_label.text.to_lower()
+    _expect(world.operations_hud.selection_label.text == "DAS LETZTE LICHT" and world.operations_hud.description_label.text.begins_with("Das letzte Serviceprotokoll"), "German Town Archive records must localize their recovered name and description in the actual archive surface.")
+    _expect(service.text("story.source.heartforge_district") == "Herzschmiedeviertel" and service.text("story.arc.civic_afterimage") == "Bürgerliches Nachbild", "German Town Archive source and arc catalog entries must resolve.")
+    _expect("herzschmiedeviertel" in german_archive_metadata, "German Town Archive must render its localized source label.")
+    _expect("bürgerliches nachbild" in german_archive_metadata, "German Town Archive must render its localized arc label.")
+    world.operations_hud.close()
     _expect(service.text("notification.technology_online", ["FELDTECHNIK"]) == "TECHNOLOGIE AKTIV · FELDTECHNIK" and service.text("notification.outpost_status", ["Ressourcenposten", "Nördlicher Verkehrshof", "1", "100"]) == "Ressourcenposten bei Nördlicher Verkehrshof · STUFE 1 · INTEGRITÄT 100%", "German endgame technology and outpost reports must resolve stable localized presentation text.")
     _expect(service.text("notification.technology_unlocked", ["FELDTECHNIK"]) == "TECHNOLOGIE FREIGESCHALTET · FELDTECHNIK", "German canonical technology-unlocked reports must resolve stable localized presentation text.")
     _expect(service.text("notification.long_operation.authorized") == "LANGSTRECKENOPERATION AUTORISIERT · FOLGT REALEN STRASSEN · F ZUM FOLGEN" and service.text("notification.long_operation.outbound", ["FORGEHAND BERGEN"]).begins_with("FORGEHAND BERGEN · AUFBRUCH"), "German physical-operation reports must resolve stable localized presentation text.")
