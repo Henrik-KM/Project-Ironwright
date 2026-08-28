@@ -53,6 +53,9 @@ var _motion_base_transforms: Dictionary = {}
 var _authored_model_root: Node3D
 var _authored_model_path: String = ""
 var _authored_imported_root_name: StringName = &""
+var _authored_model_scene: PackedScene
+var _authored_model_load_requested: bool = false
+var _authored_model_load_failed: bool = false
 var _pressure_read_root: Node3D
 var _pressure_signal_material: StandardMaterial3D
 var _reduced_proxy_root: Node3D
@@ -85,6 +88,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+    _poll_authored_model_package()
     _elapsed += delta
     if _beacon_root == null or not discovered:
         return
@@ -161,6 +165,9 @@ func add_presentation_detail(node: Node3D) -> bool:
 func _prepare_authored_model_package(path: String, package_name: StringName, imported_root_name: StringName = &"") -> void:
     _authored_model_path = path
     _authored_imported_root_name = imported_root_name
+    _authored_model_scene = null
+    _authored_model_load_requested = false
+    _authored_model_load_failed = false
     _authored_model_root = Node3D.new()
     _authored_model_root.name = package_name
     _visual_root.add_child(_authored_model_root)
@@ -172,32 +179,78 @@ func _refresh_authored_model_package() -> void:
         return
     if streamed_in:
         if _authored_model_root.get_child_count() == 0:
-            var authored_scene := load(_authored_model_path) as PackedScene
-            if authored_scene == null:
-                push_error("Could not load authored region package: %s" % _authored_model_path)
-                return
-            var authored_instance := authored_scene.instantiate()
-            if _authored_imported_root_name != &"":
-                var imported_root := authored_instance.get_node_or_null(NodePath(String(_authored_imported_root_name))) as Node
-                if imported_root == null:
-                    imported_root = authored_instance
-                var authored_children := imported_root.get_children()
-                for child in authored_children:
-                    child.owner = null
-                    imported_root.remove_child(child)
-                    _authored_model_root.add_child(child)
-                if imported_root != authored_instance:
-                    imported_root.free()
-                authored_instance.free()
-            else:
-                authored_instance.name = "ImportedAuthoredModel"
-                _authored_model_root.add_child(authored_instance)
-            _apply_authored_model_tuning()
-            _capture_region_motion_nodes()
+            if _authored_model_scene != null:
+                _attach_authored_model_scene()
+            elif not _authored_model_load_requested and not _authored_model_load_failed:
+                var request_error := ResourceLoader.load_threaded_request(
+                    _authored_model_path,
+                    "PackedScene",
+                    false,
+                    ResourceLoader.CACHE_MODE_REUSE
+                )
+                if request_error == OK:
+                    _authored_model_load_requested = true
+                    _sync_process_state()
+                else:
+                    # A threaded request can fail before a worker is created
+                    # (for example after an import error). Keep the failure
+                    # explicit and use the same cached loader as a bounded
+                    # compatibility fallback rather than leaving a blank
+                    # district that looks like successful streaming.
+                    push_error("Could not request authored region package: %s" % _authored_model_path)
+                    _authored_model_load_failed = true
+                    var fallback_scene := ResourceLoader.load(_authored_model_path, "PackedScene", ResourceLoader.CACHE_MODE_REUSE) as PackedScene
+                    if fallback_scene != null:
+                        _authored_model_scene = fallback_scene
+                        _attach_authored_model_scene()
+                    else:
+                        push_error("Could not load authored region package: %s" % _authored_model_path)
     elif _authored_model_root.get_child_count() > 0:
         for child in _authored_model_root.get_children():
             child.free()
         _capture_region_motion_nodes()
+
+
+func _poll_authored_model_package() -> void:
+    if not _authored_model_load_requested or _authored_model_path.is_empty():
+        return
+    var load_status := ResourceLoader.load_threaded_get_status(_authored_model_path)
+    if load_status == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+        return
+    _authored_model_load_requested = false
+    if load_status == ResourceLoader.THREAD_LOAD_LOADED:
+        _authored_model_scene = ResourceLoader.load_threaded_get(_authored_model_path) as PackedScene
+        if _authored_model_scene == null:
+            _authored_model_load_failed = true
+            push_error("Threaded authored region package was not a PackedScene: %s" % _authored_model_path)
+            return
+        _refresh_authored_model_package()
+        return
+    _authored_model_load_failed = true
+    push_error("Could not asynchronously load authored region package: %s (status %d)" % [_authored_model_path, load_status])
+
+
+func _attach_authored_model_scene() -> void:
+    if _authored_model_scene == null or _authored_model_root == null or _authored_model_root.get_child_count() > 0:
+        return
+    var authored_instance := _authored_model_scene.instantiate()
+    if _authored_imported_root_name != &"":
+        var imported_root := authored_instance.get_node_or_null(NodePath(String(_authored_imported_root_name))) as Node
+        if imported_root == null:
+            imported_root = authored_instance
+        var authored_children := imported_root.get_children()
+        for child in authored_children:
+            child.owner = null
+            imported_root.remove_child(child)
+            _authored_model_root.add_child(child)
+        if imported_root != authored_instance:
+            imported_root.free()
+        authored_instance.free()
+    else:
+        authored_instance.name = "ImportedAuthoredModel"
+        _authored_model_root.add_child(authored_instance)
+    _apply_authored_model_tuning()
+    _capture_region_motion_nodes()
 
 
 func _apply_authored_model_tuning() -> void:
@@ -1318,7 +1371,10 @@ func _refresh_discovery() -> void:
 func _sync_process_state() -> void:
     # Region motion is presentation-only. Keep the beacon and close-detail
     # animation live only while a discovered, streamed region can display it.
-    set_process(discovered and streamed_in and presentation_detail_level < 2)
+    # A pending authored package request is also a bounded process obligation,
+    # even before discovery, so a physically approaching district can finish
+    # loading without a synchronous frame hitch.
+    set_process(_authored_model_load_requested or (discovered and streamed_in and presentation_detail_level < 2))
 
 
 func _region_color() -> Color:
