@@ -18,7 +18,9 @@ jobs:
       - name: Check out certification commit and tested parent
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          # The merge gate verifies the same bootstrap provenance as the
+          # standalone certificate workflow, so it needs the complete history.
+          fetch-depth: 0
 
       - name: Verify exact certificate provenance
         run: python3 scripts/verify_release_certificate.py
