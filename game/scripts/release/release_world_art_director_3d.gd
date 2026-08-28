@@ -1845,6 +1845,83 @@ func _dress_archive(root: Node3D) -> void:
             0.03
         )
     ModelKit3D.add_sphere(gateway, 0.18, Vector3(-1.6, 4.78, 4.96), gateway_panel, Vector3.ONE, "ArchiveGatewayBeacon")
+
+    # The Lower Catalogue record is the archive's physical counterpoint to
+    # the civic gateway. Keep its sealed stair and record case on the approach
+    # edge so the player can read the history as a place that was maintained,
+    # not just as a text entry. This remains presentation dressing only: no
+    # stairs, inventory, interaction or simulated sublevel is introduced.
+    var sublevel_witness := Node3D.new()
+    sublevel_witness.name = "ArchiveSublevelWitness"
+    archive_detail.add_child(sublevel_witness)
+    var sublevel_frame := _textured_material(&"stone", Color("3e4a4b"), 0.38, 0.64)
+    var sublevel_dark := _textured_material(&"metal", Color("18252a"), 0.78, 0.38)
+    var sublevel_rust := _textured_material(&"rust", Color("8a5337"), 0.42, 0.66)
+    var sublevel_signal := ModelKit3D.material(Color("153d43"), 0.24, 0.3, Color("66d1d5"), 0.86)
+    var sublevel_position := Vector3(4.05, 0.0, 4.12)
+    ModelKit3D.add_beveled_box(
+        sublevel_witness,
+        Vector3(2.9, 0.18, 1.65),
+        sublevel_position + Vector3(0.0, 0.12, 0.0),
+        sublevel_frame,
+        Vector3(0.0, 0.0, 0.02),
+        "ArchiveSublevelFoundation",
+        0.12
+    )
+    for step_index in range(3):
+        ModelKit3D.add_beveled_box(
+            sublevel_witness,
+            Vector3(1.45 - float(step_index) * 0.16, 0.12, 0.34),
+            sublevel_position + Vector3(0.0, 0.2 + float(step_index) * 0.12, 3.1 - float(step_index) * 0.34),
+            sublevel_dark,
+            Vector3.ZERO,
+            "ArchiveSublevelStep%02d" % step_index,
+            0.06
+        )
+    var record_case := ModelKit3D.add_beveled_box(
+        sublevel_witness,
+        Vector3(1.72, 1.18, 0.92),
+        sublevel_position + Vector3(0.0, 0.88, 4.55),
+        sublevel_dark,
+        Vector3(0.0, 0.0, 0.015),
+        "ArchiveSublevelRecordCase",
+        0.14
+    )
+    ModelKit3D.add_surface_panel(
+        record_case,
+        Vector3(1.24, 0.62, 0.1),
+        Vector3(0.0, 0.0, -0.49),
+        sublevel_dark,
+        sublevel_signal,
+        Vector3.ZERO,
+        "ArchiveSublevelIndex"
+    )
+    ModelKit3D.add_beveled_box(
+        record_case,
+        Vector3(1.35, 0.08, 0.08),
+        Vector3(0.0, 0.32, -0.52),
+        sublevel_rust,
+        Vector3.ZERO,
+        "ArchiveSublevelSeal",
+        0.03
+    )
+    ModelKit3D.add_cylinder(
+        sublevel_witness,
+        0.07,
+        1.4,
+        sublevel_position + Vector3(-1.05, 1.0, 4.18),
+        sublevel_rust,
+        Vector3.ZERO,
+        "ArchiveSublevelLampPost"
+    )
+    ModelKit3D.add_sphere(
+        sublevel_witness,
+        0.16,
+        sublevel_position + Vector3(-1.05, 1.78, 4.18),
+        sublevel_signal,
+        Vector3.ONE,
+        "ArchiveSublevelLamp"
+    )
     for index in range(6):
         var height := 5.0 + float(index % 3) * 2.0
         var position := Vector3(-12.0 + float(index) * 4.8, 2.5, -3.0 + float(index % 2) * 6.0)
