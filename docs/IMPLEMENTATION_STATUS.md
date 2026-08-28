@@ -5438,3 +5438,14 @@ roster checks and requires silent late-organic live review before merge.
   recurring player or machine task;
 - added commercial-release coverage for the dedicated camera offset; exact
   exported live review remains required for the region-family acceptance gate.
+
+## Focused Cathedral Quarter gallery framing pass
+
+- replaced the over-close centered Cathedral Quarter presentation frame with a
+  bounded diagonal review angle and raised target so the nave, tower silhouette
+  and choir hardware remain judgeable together;
+- preserved runtime landmark placement, navigation, collision, ecology,
+  operation ownership and save state; this is presentation-only and adds no
+  recurring player or machine task;
+- added commercial-release coverage for the dedicated camera offset; exact
+  exported live review remains required for the region-family acceptance gate.
