@@ -1460,8 +1460,17 @@ func _show_presentation_review_page(page: int) -> void:
 		# scale, gameplay spacing, collision or tactical camera behaviour.
 		var core_target_height := 2.1 if outpost_page else (1.5 if organic_roster_detail else (1.08 if presentation_review_page >= 1 else 1.45))
 		var core_target_depth := -0.38 if presentation_review_page >= 1 else -0.7
-		presentation_review_camera_target = Vector3(0.0, core_target_height, core_target_depth)
-		presentation_review_camera_desired = Vector3(0.0, 5.25, 12.4) if outpost_page else (Vector3(0.0, 4.35, 10.6) if organic_roster_detail else (Vector3(0.0, 4.45, 12.8) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5)))
+		if organic_roster_detail:
+			# The two organic roster pages are the close-camera art gate. Lower the
+			# target slightly and bring the review camera in so the authored shells
+			# use the frame instead of leaving a large unused sky band above them.
+			# This is review-fixture composition only; gameplay camera, actor scale,
+			# collision, LOD and tactical spacing remain unchanged.
+			presentation_review_camera_target = Vector3(0.0, 1.22, core_target_depth)
+			presentation_review_camera_desired = Vector3(0.0, 4.05, 9.35)
+		else:
+			presentation_review_camera_target = Vector3(0.0, core_target_height, core_target_depth)
+			presentation_review_camera_desired = Vector3(0.0, 5.25, 12.4) if outpost_page else (Vector3(0.0, 4.45, 12.8) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5))
 	_set_presentation_review_stage_for_page(is_region_page)
 	_update_presentation_review_camera(1.0)
 
