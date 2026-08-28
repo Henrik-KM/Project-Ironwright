@@ -288,6 +288,33 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.operations_hud.selection_label.text == "TRÅD · STADEN SOM STANNADE · 1/5" and "TRÅDFÖRLOPP" in world.operations_hud.description_label.text and "NÄSTA SPÅR" in world.operations_hud.description_label.text, "Swedish Town Archive threads must localize their title, progress and next-trace copy on the actual archive surface.")
     _expect("CIVILT SPÅR FÖR OMGÅNGEN" in world.operations_hud.requirements_label.text and "MEDBORGERLIGT EFTERLJUS" in world.operations_hud.requirements_label.text, "Swedish Town Archive threads must localize their source and arc metadata on the actual archive surface.")
     world.operations_hud.close()
+    world.operations_hud.open_archive([{
+        "id": "bestiary.razorhound",
+        "archive_kind": "bestiary",
+        "species_key": "razorhound",
+        "behaviour_keys": ["hunt", "track_last_known"],
+        "display_name": "Bestiary · Razorhound",
+        "description": "Field evidence identifies Razorhound.",
+        "source_name": "Regional ecology",
+        "arc": "bestiary",
+    }])
+    var swedish_bestiary_description := world.operations_hud.description_label.text.to_upper()
+    _expect(world.operations_hud.selection_label.text == "BESTIARIUM · RAZORHOUND" and "FÄLTBEVIS" in swedish_bestiary_description and "JAGA" in swedish_bestiary_description and "FÖLJ SENAST KÄNDA" in swedish_bestiary_description, "Swedish Town Archive bestiary records must localize their title and observed behaviour on the actual archive surface.")
+    _expect("REGIONAL EKOLOGI" in world.operations_hud.requirements_label.text and "BESTIARIUM" in world.operations_hud.requirements_label.text, "Swedish Town Archive bestiary records must localize their source and arc metadata on the actual archive surface.")
+    world.operations_hud.close()
+    world.operations_hud.open_archive([{
+        "id": "pressure.region.west_grid",
+        "archive_kind": "pressure",
+        "region_key": "region.west_grid",
+        "peak_pressure": 91,
+        "display_name": "Pressure Chronicle · West Grid",
+        "description": "West Grid reached 91% ecological pressure during the run.",
+        "source_name": "Regional ecology",
+        "arc": "pressure",
+    }])
+    _expect(world.operations_hud.selection_label.text == "TRYCKKRÖNIKA · VÄSTRA NÄTET" and "91% EKOLOGISKT TRYCK" in world.operations_hud.description_label.text.to_upper(), "Swedish Town Archive pressure records must localize their title, region and pressure description on the actual archive surface.")
+    _expect("REGIONAL EKOLOGI" in world.operations_hud.requirements_label.text and "TRYCKKRÖNIKA" in world.operations_hud.requirements_label.text, "Swedish Town Archive pressure records must localize their source and arc metadata on the actual archive surface.")
+    world.operations_hud.close()
     _expect(service.text("objective.complete.initiate.title") == "STARTA SLUTPROTOKOLLET" and service.text("objective.complete.initiate.prompt").begins_with("TRYCK V"), "Swedish late-run objective title and prompt must resolve through the selected catalog.")
     world.release_front_end.show_pause()
     service.set_locale(&"sv")
@@ -347,6 +374,33 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     }])
     _expect(world.operations_hud.selection_label.text == "FADEN · DIE STADT, DIE BLIEB · 1/5" and "FADENFORTSCHRITT" in world.operations_hud.description_label.text and "NÄCHSTE SPUR" in world.operations_hud.description_label.text, "German Town Archive threads must localize their title, progress and next-trace copy on the actual archive surface.")
     _expect("BÜRGERLICHER LAUF-FADEN" in world.operations_hud.requirements_label.text and "BÜRGERLICHES NACHBILD" in world.operations_hud.requirements_label.text, "German Town Archive threads must localize their source and arc metadata on the actual archive surface.")
+    world.operations_hud.close()
+    world.operations_hud.open_archive([{
+        "id": "bestiary.razorhound",
+        "archive_kind": "bestiary",
+        "species_key": "razorhound",
+        "behaviour_keys": ["hunt", "track_last_known"],
+        "display_name": "Bestiary · Razorhound",
+        "description": "Field evidence identifies Razorhound.",
+        "source_name": "Regional ecology",
+        "arc": "bestiary",
+    }])
+    var german_bestiary_description := world.operations_hud.description_label.text.to_upper()
+    _expect(world.operations_hud.selection_label.text == "BESTIARIUM · RAZORHOUND" and "FELDBELEGE" in german_bestiary_description and "JAGEN" in german_bestiary_description and "LETZTE SPUR VERFOLGEN" in german_bestiary_description, "German Town Archive bestiary records must localize their title and observed behaviour on the actual archive surface.")
+    _expect("REGIONALE ÖKOLOGIE" in world.operations_hud.requirements_label.text and "BESTIARIUM" in world.operations_hud.requirements_label.text, "German Town Archive bestiary records must localize their source and arc metadata on the actual archive surface.")
+    world.operations_hud.close()
+    world.operations_hud.open_archive([{
+        "id": "pressure.region.west_grid",
+        "archive_kind": "pressure",
+        "region_key": "region.west_grid",
+        "peak_pressure": 91,
+        "display_name": "Pressure Chronicle · West Grid",
+        "description": "West Grid reached 91% ecological pressure during the run.",
+        "source_name": "Regional ecology",
+        "arc": "pressure",
+    }])
+    _expect(world.operations_hud.selection_label.text == "DRUCKCHRONIK · WESTLICHES NETZ" and "91% ÖKOLOGISCHEN DRUCK" in world.operations_hud.description_label.text.to_upper(), "German Town Archive pressure records must localize their title, region and pressure description on the actual archive surface.")
+    _expect("REGIONALE ÖKOLOGIE" in world.operations_hud.requirements_label.text and "DRUCKCHRONIK" in world.operations_hud.requirements_label.text, "German Town Archive pressure records must localize their source and arc metadata on the actual archive surface.")
     world.operations_hud.close()
     _expect(service.text("notification.technology_online", ["FELDTECHNIK"]) == "TECHNOLOGIE AKTIV · FELDTECHNIK" and service.text("notification.outpost_status", ["Ressourcenposten", "Nördlicher Verkehrshof", "1", "100"]) == "Ressourcenposten bei Nördlicher Verkehrshof · STUFE 1 · INTEGRITÄT 100%", "German endgame technology and outpost reports must resolve stable localized presentation text.")
     _expect(service.text("notification.technology_unlocked", ["FELDTECHNIK"]) == "TECHNOLOGIE FREIGESCHALTET · FELDTECHNIK", "German canonical technology-unlocked reports must resolve stable localized presentation text.")

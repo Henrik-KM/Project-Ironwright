@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Town Archive ecology-localization pass
+
+- added stable archive metadata for persistent bestiary observations and
+  regional pressure chronicles, keeping raw run-state evidence unchanged;
+- localized generated bestiary and pressure titles, behaviour prose, region
+  names, source and arc metadata in the English, Swedish and German catalogs;
+- extended commercial release coverage to both generated archive surfaces;
+  professional translation review remains an external release gate.
+
 ## Focused Town Archive thread-localization pass
 
 - exposed stable arc, stage and missing-record identifiers from the derived
