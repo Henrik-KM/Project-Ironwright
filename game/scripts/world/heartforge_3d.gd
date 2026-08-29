@@ -16,10 +16,12 @@ var progression_tier: int = 1
 var adaptation_profile: StringName = &""
 var incoming_damage_multiplier: float = 1.0
 var _core_light: OmniLight3D
+var _core_collision: CollisionShape3D
 var _model_root: Node3D
 var _adaptive_geometry: Node3D
 var _adaptation_detail: Node3D
 var _adaptation_preview: Node3D
+var _adaptive_collision_shapes: Array[CollisionShape3D] = []
 var _damage_visual_root: Node3D
 var _damage_signal_material: StandardMaterial3D
 var adaptation_preview_profile: StringName = &""
@@ -66,6 +68,7 @@ func set_operation(kind: StringName) -> void:
 
 func set_adaptation_profile(next_profile: StringName) -> void:
     _clear_adaptation_preview()
+    _clear_adaptation_collision()
     adaptation_profile = next_profile
     match next_profile:
         &"adaptation.anchored_shell":
@@ -84,6 +87,7 @@ func set_adaptation_profile(next_profile: StringName) -> void:
     _adaptation_detail.name = "HeartforgeAdaptationDetail"
     _model_root.add_child(_adaptation_detail)
     _build_adaptation_detail(next_profile)
+    _build_adaptation_collision(next_profile)
 
 
 ## Shows the physical footprint of a pending or active autonomous retrofit.
@@ -115,6 +119,46 @@ func set_adaptation_preview(profile: StringName, progress: float) -> void:
     _adaptation_preview.scale = Vector3.ONE * reveal
 
 
+## Returns the number of profile-specific physical shell pieces currently
+## attached to the Heartforge. Pending previews intentionally return zero:
+## the player has not authorized a geometry change yet.
+func adaptive_collision_shape_count() -> int:
+    return _adaptive_collision_shapes.size()
+
+
+func _clear_adaptation_collision() -> void:
+    for collision in _adaptive_collision_shapes:
+        if collision != null and is_instance_valid(collision):
+            collision.queue_free()
+    _adaptive_collision_shapes.clear()
+
+
+func _build_adaptation_collision(profile: StringName) -> void:
+    if profile == &"":
+        return
+    match profile:
+        &"adaptation.anchored_shell":
+            _add_adaptation_collision(Vector3(0.42, 2.8, 3.9), Vector3(-2.85, 1.42, 0.0), Vector3.ZERO, "AnchorShellCollisionWest")
+            _add_adaptation_collision(Vector3(0.42, 2.8, 3.9), Vector3(2.85, 1.42, 0.0), Vector3.ZERO, "AnchorShellCollisionEast")
+            _add_adaptation_collision(Vector3(3.9, 2.8, 0.42), Vector3(0.0, 1.42, -2.85), Vector3.ZERO, "AnchorShellCollisionNorth")
+            _add_adaptation_collision(Vector3(3.9, 2.8, 0.42), Vector3(0.0, 1.42, 2.85), Vector3.ZERO, "AnchorShellCollisionSouth")
+        &"adaptation.sacrificial_hollow":
+            for index in range(8):
+                var angle := TAU * float(index) / 8.0
+                var position := Vector3(cos(angle) * 2.86, 1.34, sin(angle) * 2.86)
+                _add_adaptation_collision(Vector3(0.34, 1.55, 0.72), position, Vector3(0.0, -angle, 0.0), "SacrificialHollowCollision%02d" % index)
+        &"adaptation.quiet_core":
+            _add_adaptation_collision(Vector3(0.42, 2.7, 1.48), Vector3(-1.86, 1.58, 0.0), Vector3.ZERO, "QuietCoreCollisionWest")
+            _add_adaptation_collision(Vector3(0.42, 2.7, 1.48), Vector3(1.86, 1.58, 0.0), Vector3.ZERO, "QuietCoreCollisionEast")
+
+
+func _add_adaptation_collision(size: Vector3, position: Vector3, rotation: Vector3, name_hint: String) -> void:
+    var collision := ModelKit3D.add_collision_box(self, size, position)
+    collision.name = name_hint
+    collision.rotation = rotation
+    _adaptive_collision_shapes.append(collision)
+
+
 func _clear_adaptation_preview() -> void:
     if _adaptation_preview != null and is_instance_valid(_adaptation_preview):
         _adaptation_preview.free()
@@ -140,7 +184,8 @@ func set_progression_tier(next_tier: int) -> void:
 
 
 func _build_visuals() -> void:
-    ModelKit3D.add_collision_box(self, Vector3(5.4, 3.6, 5.4), Vector3(0.0, 1.8, 0.0))
+    _core_collision = ModelKit3D.add_collision_box(self, Vector3(5.4, 3.6, 5.4), Vector3(0.0, 1.8, 0.0))
+    _core_collision.name = "HeartforgeCoreCollision"
     _model_root = Node3D.new()
     _model_root.name = "HeartforgeModel"
     add_child(_model_root)

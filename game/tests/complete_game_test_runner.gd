@@ -386,9 +386,11 @@ func _run_all() -> void:
     _expect(world.adaptive_defense_director.completed_adaptation == chosen_adaptation, "The selected Heartforge adaptation must complete after its machine-run construction interval.")
     _expect(world.heartforge.get_node_or_null("HeartforgeModel/HeartforgeAdaptationPreview") == null, "The temporary adaptive construction preview must resolve when the authored retrofit completes.")
     _expect(world.heartforge.get_node_or_null("HeartforgeModel/HeartforgeAdaptationDetail") != null, "The completed adaptation must leave a visible high-definition Heartforge detail layer.")
+    _expect(world.heartforge.adaptive_collision_shape_count() > 0, "The completed adaptive response must leave a bounded physical shell layer, not only a visual retrofit.")
     var adaptation_snapshot := world.adaptive_defense_director.to_dictionary()
     world.adaptive_defense_director.restore_from_dictionary(adaptation_snapshot)
     _expect(world.adaptive_defense_director.completed_adaptation == chosen_adaptation, "The completed adaptive response must persist as a stable run choice.")
+    _expect(world.heartforge.adaptive_collision_shape_count() > 0, "Restoring a completed adaptive response must rebuild its physical shell layer.")
     _expect(world.adaptive_defense_director.activity_noise_multiplier() > 1.0, "Anchor Deeply must expose its intended noise trade-off rather than being a free defensive bonus.")
     world.heartforge.current_health = world.heartforge.maximum_health
     world.heartforge.apply_damage(100.0)

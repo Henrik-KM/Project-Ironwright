@@ -1,5 +1,19 @@
 # Implementation status
 
+## Focused autonomous Heartforge geometry pass
+
+- completed adaptive Heartforge principles now rebuild a bounded physical shell
+  layer after authorization: four outer braces for Anchor Deeply, eight rib
+  pieces for Create a Sacrificial Hollow, and paired dampener housings for
+  Reduce Vibration;
+- pending proposals remain presentation-only until the player authorizes the
+  rare run-level commitment, while completed choices rebuild their collision
+  layer after save/load without adding placement, repair, routing or a new
+  player-managed task;
+- native coverage now checks the profile-specific collision contract and keeps
+  the permanent Heartforge core collision intact; release review remains silent
+  with Dummy audio and `--quiet-audio` only.
+
 ## Focused adaptive Heartforge audio identity pass
 
 - connected the existing release audio director to the adaptive Heartforge

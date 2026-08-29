@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused autonomous Heartforge geometry pass — 2026-08-29
+
+Completed adaptive principles now leave a bounded physical shell layer as well
+as their visible hardware: Anchor Deeply adds four perimeter braces, Create a
+Sacrificial Hollow adds eight rib contacts, and Reduce Vibration adds paired
+dampener housings. The preview remains non-colliding until authorization, and
+the selected shell is rebuilt from the persisted profile after save/load. This
+adds no manual placement, repair, routing or recurring player work. Review and
+validation use Godot Dummy audio with `--quiet-audio` only; no live speakers
+are used.
+
 ## Focused Observatory Ridge grounding — 2026-08-29
 
 The Observatory Ridge review frame now gives the authored survey station a
