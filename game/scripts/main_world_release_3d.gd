@@ -1561,10 +1561,11 @@ func _show_presentation_review_page(page: int) -> void:
 			actor.rotation.y = 0.0 if presentation_review_page == 0 and index == 0 else PI
 			var late_organic_roster := presentation_review_page == 2
 			# Early families have several broad flight and limb silhouettes. Give
-			# that page four positions in the near row so the rear row does not
-			# push its outer actors into the screen edge; late families keep the
-			# deeper three-across composition that suits their folded mass.
-			var row_capacity := 2 if outpost_page else (4 if presentation_review_page == 1 else (3 if presentation_review_page >= 1 else mini(4, actors.size())))
+			# that page three positions in the near row and four in the rear row so
+			# the broadest shells do not merge into one silhouette band; late
+			# families keep the deeper three-across composition that suits their
+			# folded mass.
+			var row_capacity := 2 if outpost_page else (3 if presentation_review_page == 1 else (3 if presentation_review_page >= 1 else mini(4, actors.size())))
 			var row_index := 0 if index < row_capacity else 1
 			var row_count := mini(row_capacity, actors.size()) if row_index == 0 else actors.size() - row_capacity
 			var row_position := index if row_index == 0 else index - row_capacity
@@ -1584,13 +1585,12 @@ func _show_presentation_review_page(page: int) -> void:
 			var spacing := 5.4 if outpost_page else (3.35 if late_organic_roster else (3.0 if presentation_review_page == 1 else (4.1 if presentation_review_page >= 1 else 4.2)))
 			var centered_x := (float(row_position) - float(row_count - 1) * 0.5) * spacing
 			if presentation_review_page == 1:
-				# The four early families in the near row need a close-art lens but
-				# also carry wide wings, fans and limb spans. Keep the first pair at
-				# the authored readability gap while compressing the outer positions
-				# into the bounded frame; the rear trio gets the same controlled air.
-				var early_positions := [-3.5, -0.5, 0.5, 3.5] if row_index == 0 else [-3.0, 0.0, 3.0]
+				# The early families carry wide wings, fans and limb spans. Use a
+				# triangular near row and a wider rear row so every shell keeps a
+				# readable outline while remaining inside the bounded review frame.
+				var early_positions := [-4.4, 0.0, 4.4] if row_index == 0 else [-4.8, -1.6, 1.6, 4.8]
 				centered_x = early_positions[row_position]
-			var row_z := 1.05 if row_index == 0 else -2.15
+			var row_z := 1.45 if row_index == 0 else -3.35
 			if presentation_review_page == 0:
 				row_z = 0.7 if row_index == 0 else -2.5
 			elif outpost_page:

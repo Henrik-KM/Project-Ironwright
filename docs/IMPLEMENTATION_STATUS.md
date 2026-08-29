@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused early-organic gallery composition pass
+
+- the development presentation gallery now stages the seven early organic
+  families as a widened three-across near row plus a four-across rear row;
+- the extra lateral and depth separation keeps broad wings, fans and limb
+  spans visually distinct without changing gameplay scale, collision, LOD,
+  ecology or save state;
+- release coverage now guards the widened near-row anchors and the clear
+  depth gap, while live review remains on Godot Dummy audio with `--quiet-audio`.
+
 ## Focused release-art residency guard pass
 
 - deferred release material work now rejects stale instance IDs, detached

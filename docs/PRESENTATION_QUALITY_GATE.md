@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused early-organic gallery composition pass — 2026-08-29
+
+The development presentation gallery now stages the seven early organic
+families as a widened three-across near row plus a four-across rear row. The
+extra lateral and depth separation keeps broad wings, fans and limb spans
+visually distinct without changing gameplay scale, collision, LOD, ecology or
+save state. Release coverage guards the widened near-row anchors and clear
+depth gap. Review and validation use Godot Dummy audio with `--quiet-audio`; no
+physical speakers are used.
+
 ## Focused release-art residency guard pass — 2026-08-29
 
 Deferred release material work now rejects stale instance IDs, detached meshes

@@ -942,10 +942,14 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     await process_frame
     _expect(world.presentation_review_camera_desired.z - world.presentation_review_camera_target.z <= 14.0, "Organic presentation pages must use a dedicated close detail frame for authored anatomy review.")
     var early_review_page: Array = world.presentation_review_pages[1]
-    if early_review_page.size() >= 2:
+    if early_review_page.size() >= 7:
         var first_early_actor := early_review_page[0] as Node3D
         var second_early_actor := early_review_page[1] as Node3D
         _expect(first_early_actor != null and second_early_actor != null and absf(second_early_actor.position.x - first_early_actor.position.x) >= 3.0, "Organic presentation rows must preserve a readable horizontal gap between authored families.")
+        var third_early_actor := early_review_page[2] as Node3D
+        var fourth_early_actor := early_review_page[3] as Node3D
+        _expect(third_early_actor != null and fourth_early_actor != null and third_early_actor.position.z > fourth_early_actor.position.z + 3.0, "Early organic presentation must separate its broad near row from the rear row so wing and limb silhouettes remain judgeable.")
+        _expect(is_equal_approx(first_early_actor.position.x, -4.4) and is_equal_approx(third_early_actor.position.x, 4.4), "Early organic presentation must use the widened triangular near-row composition.")
     var late_review_page: Array = world.presentation_review_pages[2]
     if late_review_page.size() >= 1:
         var first_late_actor := late_review_page[0] as Node3D
