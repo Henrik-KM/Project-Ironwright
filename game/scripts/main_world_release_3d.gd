@@ -2342,10 +2342,13 @@ func _set_title_camera() -> void:
 	# The title is an authored world threshold, not an abstract loading card.
 	# Frame the Heartforge and the two opening silhouettes on the open side of
 	# the left-weighted menu while leaving the playable tactical camera unchanged.
+	# A slightly higher, calmer angle clears the foreground service gantry that
+	# previously cut across the forge's thermal core and made the title image
+	# read as infrastructure before sanctuary.
 	if camera == null or heartforge == null:
 		return
-	var title_target := heartforge.global_position + Vector3(0.0, 1.75, 1.4)
-	camera.global_position = title_target + Vector3(9.6, 6.6, 14.8)
+	var title_target := heartforge.global_position + Vector3(0.0, 2.0, 1.4)
+	camera.global_position = title_target + Vector3(9.2, 8.1, 16.0)
 	camera.look_at(title_target, Vector3.UP)
 	camera.fov = 44.0
 

@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused title threshold camera readability pass
+
+- raised and eased the title-screen authored-world camera so the foreground
+  service gantry no longer cuts across the Heartforge thermal core;
+- preserved the left-weighted menu, warm/cool sanctuary contrast and the
+  playable tactical camera, with no input, save, simulation or workload change;
+- the title review remains a silent development fixture and the existing
+  release camera-composition gate continues to guard its threshold framing.
+
 ## Focused adaptive proposal report localization pass
 
 - routed the mirrored adaptive Heartforge proposal and completion events
