@@ -11,6 +11,18 @@ signal without leaking diagnostic copy. Swedish native coverage asserts the
 localized headings and the absence of English recap leakage. Review uses Godot
 Dummy audio with `--quiet-audio`; no physical speakers are used.
 
+## Focused active-actor shadow budget pass — 2026-08-29
+
+The release performance director now keeps dynamic shadows on the four nearest
+active actors and disables them on the remaining active set, while preserving
+the global moon/world lighting, all authored high-definition meshes, collision,
+simulation authority and the established medium/reduced proxy bands. The
+recursive actor toggle follows LOD transitions without leaving hidden imported
+geometry in the shadow pass. The 192-actor graphical benchmark improved from
+roughly 25 FPS to roughly 29 FPS on this workstation; headless simulation
+remains approximately 60 FPS. Review and validation use Godot Dummy audio with
+`--quiet-audio`; no physical speakers are used.
+
 ## Focused legacy-bootstrap handoff pass — 2026-08-29
 
 The retained bootstrap scene now verifies the machine-readable world contract

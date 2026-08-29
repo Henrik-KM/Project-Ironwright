@@ -12,6 +12,20 @@
   objective copy and prompt leakage, with silent graphical review captured
   through Godot Dummy audio and `--quiet-audio`.
 
+## Focused active-actor shadow budget pass
+
+- the release performance director now caps expensive dynamic actor shadow
+  casters to the four nearest active actors, while retaining global world
+  lighting, authored high-definition meshes, collision, simulation authority
+  and the existing medium/reduced proxy bands;
+- robot and organic release actors expose a presentation-only recursive shadow
+  toggle so LOD transitions do not leave hidden imported geometry in the shadow
+  pass;
+- the 192-actor graphical benchmark improved from roughly 25 FPS with every
+  active actor casting shadows to roughly 29 FPS on this workstation, while
+  headless simulation remains approximately 60 FPS; target-hardware profiling
+  remains a separate release gate.
+
 ## Focused legacy-bootstrap handoff pass
 
 - the retained `bootstrap.tscn` path now verifies the existing machine-readable

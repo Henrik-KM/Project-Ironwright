@@ -6,6 +6,7 @@ signal performance_snapshot(snapshot: Dictionary)
 var focus_provider: Callable
 var _spatial_index: SpatialIndex3D
 var target_fps: int = 60
+const ACTIVE_SHADOW_CASTER_BUDGET := 4
 var active_radius: float = 58.0
 var medium_radius: float = 118.0
 var active_entity_budget: int = 24
@@ -31,6 +32,7 @@ var medium_robots: Array[RobotUnitRelease3D] = []
 var last_snapshot: Dictionary = {}
 var last_candidate_count: int = 0
 var last_sorted_candidate_count: int = 0
+var active_shadow_casters: int = 0
 
 
 func configure(next_focus_provider: Callable, next_target_fps: int = 60) -> void:
@@ -84,6 +86,7 @@ func _evaluate_entities() -> void:
     reduced_robots.clear()
     medium_enemies.clear()
     medium_robots.clear()
+    active_shadow_casters = 0
     var nearby_candidates: Array[Dictionary] = []
     last_candidate_count = 0
     var active_radius_squared := active_radius * active_radius
@@ -130,6 +133,10 @@ func _evaluate_entities() -> void:
             reduced_entities += 1
 
         _apply_actor_detail(actor, lod_level)
+        var shadow_enabled := lod_level == 0 and active_shadow_casters < ACTIVE_SHADOW_CASTER_BUDGET
+        if shadow_enabled:
+            active_shadow_casters += 1
+        _apply_actor_shadow_budget(actor, shadow_enabled)
         if actor is OrganicEnemyRelease3D:
             var enemy := actor as OrganicEnemyRelease3D
             if lod_level == 2:
@@ -150,6 +157,8 @@ func _evaluate_entities() -> void:
         "medium_radius": medium_radius,
         "active_entity_budget": active_entity_budget,
         "medium_entity_budget": medium_entity_budget,
+        "active_shadow_casters": active_shadow_casters,
+        "active_shadow_caster_budget": ACTIVE_SHADOW_CASTER_BUDGET,
         "active_entities": active_entities,
         "medium_entities": medium_entities,
         "reduced_entities": reduced_entities,
@@ -272,6 +281,11 @@ func _apply_actor_detail(actor: Node, lod_level: int) -> void:
         robot.set_reduced_detail(lod_level == 2)
         robot.set_coarse_simulation(lod_level == 1)
         robot.set_visual_lod(lod_level)
+
+
+func _apply_actor_shadow_budget(actor: Node, enabled: bool) -> void:
+    if actor != null and actor.has_method(&"set_runtime_shadow_enabled"):
+        actor.call(&"set_runtime_shadow_enabled", enabled)
 
 
 func _adapt_budgets() -> void:

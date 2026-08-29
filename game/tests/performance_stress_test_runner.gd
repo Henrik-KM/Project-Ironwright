@@ -47,6 +47,7 @@ func _run_all() -> void:
     _expect(int(snapshot.get("reduced_entities", 0)) >= 64, "Large populations must place distant actors into reduced-detail simulation.")
     _expect(int(snapshot.get("candidate_count", 0)) >= 192, "The stress population must register every spawned actor with the detail director.")
     _expect(int(snapshot.get("sorted_candidate_count", 0)) < int(snapshot.get("candidate_count", 0)), "Large populations must sort only the medium-detail neighborhood instead of every distant actor.")
+    _expect(int(snapshot.get("active_shadow_casters", 0)) <= int(snapshot.get("active_shadow_caster_budget", 0)), "Large populations must cap expensive actor shadow casters without changing authored model detail.")
 
     var near_enemy := actors[0] as OrganicEnemyRelease3D
     var near_robot := actors[1] as RobotUnitRelease3D

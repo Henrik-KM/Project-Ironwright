@@ -12,6 +12,7 @@ var coarse_simulation: bool = false
 var _cached_nearest_target: Node3D
 var _nearest_target_refresh_remaining: float = 0.0
 var _reduced_proxy: MeshInstance3D
+var _runtime_shadow_enabled: bool = true
 
 
 func _ready() -> void:
@@ -140,15 +141,30 @@ func set_visual_lod(level_value: int) -> void:
     if _model_root == null:
         return
     _ensure_reduced_proxy()
-    var cast_mode := GeometryInstance3D.SHADOW_CASTING_SETTING_ON if visual_lod_level == 0 else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+    var cast_mode := GeometryInstance3D.SHADOW_CASTING_SETTING_ON if visual_lod_level == 0 and _runtime_shadow_enabled else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
     for child in _model_root.get_children():
         if child == _reduced_proxy:
             _reduced_proxy.visible = visual_lod_level >= 1
             continue
         if child is Node3D:
             child.visible = visual_lod_level < 1
-        if child is GeometryInstance3D:
-            (child as GeometryInstance3D).cast_shadow = cast_mode
+    _set_model_shadow_casting(_model_root, cast_mode)
+
+
+func set_runtime_shadow_enabled(enabled: bool) -> void:
+    if _runtime_shadow_enabled == enabled:
+        return
+    _runtime_shadow_enabled = enabled
+    if _model_root != null and is_instance_valid(_model_root):
+        var cast_mode := GeometryInstance3D.SHADOW_CASTING_SETTING_ON if enabled and visual_lod_level == 0 else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+        _set_model_shadow_casting(_model_root, cast_mode)
+
+
+func _set_model_shadow_casting(node: Node, cast_mode: int) -> void:
+    if node is GeometryInstance3D:
+        (node as GeometryInstance3D).cast_shadow = cast_mode
+    for child in node.get_children():
+        _set_model_shadow_casting(child, cast_mode)
 
 
 func _sync_presentation_lod() -> void:
