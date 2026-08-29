@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused autonomous-report localization pass
+
+- routed outpost departure, work, construction, return, haul, discovery,
+  destruction and sensor-contact reports through stable localized activity
+  templates instead of copying the director's English diagnostic detail into
+  the release HUD;
+- added localized names for the full fixed outpost-site pool in English,
+  Swedish and German, preserving site identity without introducing player
+  placement or management work;
+- added release coverage that exercises the actual HUD notification surface in
+  Swedish and German; verification continues with Godot Dummy audio and
+  `--quiet-audio`.
+
 ## Focused late-organic gallery framing pass
 
 - lowered and brought in the development-only late-organic review lens so the

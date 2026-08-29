@@ -316,6 +316,9 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     _expect(service.text("objective.opening.salvage.title") == "BÄRGA DITT FÖRSTA SKROT", "Swedish catalog must localize the opening objective title.")
     _expect(service.text("notification.forge.insufficient_scrap", [42]) == "OTILLRÄCKLIGT MED SKROT · 42 KRÄVS" and service.text("notification.complete.systems_online") == "STADENS NÄTVERK ÖPPNA · P LÅNGDISTANSOPERATIONER · V SLUTPROTOKOLL", "Swedish gameplay reports must localize fabrication and complete-run guidance.")
     _expect(service.text("notification.outpost.foundation_complete").begins_with("FULLSPELGRUND KLAR") and service.text("objective.full_game.outpost.title") == "GODKÄNN EN UTPOST", "Swedish full-game foundation reports and outpost objectives must resolve through the selected catalog.")
+    world.hud.notifications.clear()
+    world._on_outpost_operation_changed(&"outpost_build", &"outbound", "An Engineer and escort are physically travelling to North Transit Yard.")
+    _expect(world.hud.notification_label.text.contains("UTPOSTLAGET AVRESER") and world.hud.notification_label.text.contains("Norra trafikgården") and not world.hud.notification_label.text.contains("Engineer") and not world.hud.notification_label.text.contains("travelling"), "Swedish autonomous outpost reports must localize the stable activity and site instead of copying English diagnostic detail.")
     world.operations_hud.open_archive([{
         "id": "story.heartforge.last_light",
         "display_name": "The Last Light",
@@ -395,6 +398,9 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     _expect(service.text("objective.opening.salvage.title") == "BERGE DEIN ERSTES SCHROTTGUT", "German catalog must localize the opening objective title.")
     _expect(service.text("notification.forge.insufficient_scrap", [42]) == "NICHT GENUG SCHROTT · 42 ERFORDERLICH" and service.text("notification.final_protocol.initiated") == "ENDPROTOKOLL GESTARTET · DIE REAKTION IST KAUSAL UND UNWIDERRUFLICH", "German gameplay reports must localize fabrication and final-protocol guidance.")
     _expect(service.text("notification.evolution.tier_online", [2]) == "HERZSCHMIEDE-STUFE 2 AKTIV · INGENIEUR- UND AUSSENPOSTENPROTOKOLLE VERFÜGBAR" and service.text("objective.full_game.outpost.title") == "EINEN AUSSENPOSTEN GENEHMIGEN", "German full-game evolution reports and outpost objectives must resolve through the selected catalog.")
+    world.hud.notifications.clear()
+    world._on_outpost_operation_changed(&"outpost_build", &"outbound", "An Engineer and escort are physically travelling to North Transit Yard.")
+    _expect(world.hud.notification_label.text.contains("AUSSENPOSTENTEAM BRICHT AUF") and world.hud.notification_label.text.contains("Nördlicher Verkehrshof") and not world.hud.notification_label.text.contains("Engineer") and not world.hud.notification_label.text.contains("travelling"), "German autonomous outpost reports must localize the stable activity and site instead of copying English diagnostic detail.")
     _expect(service.text("objective.complete.initiate.title") == "DAS ENDPROTOKOLL EINLEITEN" and service.text("objective.complete.initiate.detail").begins_with("Drücke V") and service.text("objective.complete.initiate.prompt").begins_with("V DRÜCKEN"), "German late-run objective title, detail and prompt must resolve through the selected catalog.")
     _expect(world._localized_ecology_report("Organic activity is concentrating around West Grid after strategic_operation.") == "ORGANISCHE AKTIVITÄT KONZENTRIERT SICH UM WEST GRID NACH STRATEGIC OPERATION", "German strategic ecology reports must resolve through the selected catalog.")
     _expect(service.text("hud.ending.first_light_secured") == "ERSTES LICHT GESICHERT" and service.text("hud.ending.continue") == "EINGABE DRÜCKEN, UM WEITER ZU ERKUNDEN.", "German victory overlay chrome must resolve localized title and continuation prompt.")

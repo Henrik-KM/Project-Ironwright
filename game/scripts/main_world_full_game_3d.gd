@@ -393,13 +393,65 @@ func _on_heartforge_tier_changed(tier: int) -> void:
 
 
 func _on_outpost_operation_changed(kind: StringName, state: StringName, detail: String) -> void:
-    hud.push_notification(_localized_runtime_text("notification.operation.updated", "{0} · {1}\n{2}", [String(kind).to_upper(), String(state).to_upper(), detail]))
+    hud.push_notification(_localized_outpost_operation_report(kind, state, detail))
     var release_audio := get_node_or_null("ReleaseAudioDirector") as ReleaseAudioDirector3D
     if release_audio != null:
         var anchor := heartforge.global_position if heartforge != null else Vector3.ZERO
         if outpost_director != null and not outpost_director.operation.is_empty():
             anchor = outpost_director.operation.get("anchor", anchor)
         release_audio.notify_operation(kind, state, detail, anchor)
+
+
+func _localized_outpost_operation_report(kind: StringName, state: StringName, detail: String) -> String:
+    # OutpostDirector3D deliberately emits stable English diagnostic detail for
+    # logs and audio diagnostics. The release HUD must not copy that detail
+    # into Swedish or German notifications, so resolve the player-facing
+    # report from the stable operation state and site identity instead.
+    var site_name := _localized_outpost_site_name(detail)
+    var key := "notification.outpost.activity.%s" % String(state)
+    if kind == &"site_discovery" and state == &"complete":
+        key = "notification.outpost.activity.discovery"
+    var fallback := "OUTPOST ACTIVITY · {0}"
+    if state == &"outbound":
+        fallback = "OUTPOST TEAM DEPARTING\nA protected machine group is travelling to {0}."
+    elif state == &"working":
+        fallback = "OUTPOST TEAM WORKING\nThe complete group began autonomous work at {0}."
+    elif state == &"constructed":
+        fallback = "OUTPOST ESTABLISHED · {0}\nThe builders are returning home."
+    elif kind == &"site_discovery" and state == &"complete":
+        fallback = "OUTPOST SITE DISCOVERED\n{0} is available for one autonomous project."
+    elif state == &"complete":
+        fallback = "OUTPOST PROJECT COMPLETE · {0}\nThe protected team is returning."
+    elif state == &"loaded":
+        fallback = "OUTPOST HAUL LOADED\nThe convoy is returning from {0}."
+    elif state == &"returning":
+        fallback = "OUTPOST TEAM RETURNING\nThe machines are travelling back from {0}."
+    elif state == &"idle":
+        fallback = "OUTPOST GROUP HOME\nThe remote group returned to the Heartforge."
+    elif state == &"destroyed":
+        fallback = "OUTPOST DESTROYED AT {0}\nAutonomous rebuilding will be attempted when resources and an escort are available."
+    elif state == &"contact":
+        fallback = "OUTPOST CONTACT · {0}\nOrganic movement entered the sensor envelope."
+    elif state == &"aborted":
+        fallback = "OUTPOST PROJECT ABORTED\nThe protected team returned without completing work at {0}."
+    return _localized_runtime_text(key, fallback, [site_name])
+
+
+func _localized_outpost_site_name(detail: String) -> String:
+    var site: OutpostSite3D = null
+    if outpost_director != null:
+        for candidate in outpost_director.sites:
+            if detail.contains(String(candidate.site_id)) or detail.contains(candidate.display_name):
+                site = candidate
+                break
+        if site == null and not outpost_director.operation.is_empty():
+            var active_site := outpost_director.operation.get("site") as OutpostSite3D
+            if active_site != null:
+                site = active_site
+    if site == null:
+        return _localized_runtime_text("outpost.site.unknown.name", "REMOTE SITE")
+    var site_key := "outpost.site.%s.name" % String(site.site_id).replace(".", "_")
+    return _localized_runtime_text(site_key, site.display_name)
 
 
 func _on_outpost_changed(outpost: Outpost3D) -> void:
