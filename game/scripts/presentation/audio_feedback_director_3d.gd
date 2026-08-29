@@ -13,6 +13,10 @@ signal sound_event(profile: StringName, position: Vector3)
 const MIX_RATE := 22050
 const MAX_ACTIVE_PLAYERS := 18
 const QUIET_AUDIO_FLAG := "--quiet-audio"
+const REVIEW_AUDIO_MARKER := "review"
+## New-world fixtures are development entrypoints, not ordinary player
+## launches. Keep them safe even when a caller forgets the explicit flag.
+const SAFE_DEVELOPMENT_AUDIO_FLAG := "--new-world"
 ## Review-mode ceiling: deliberately far below normal playback so an accidental
 ## speaker route cannot produce a startling test burst.
 const QUIET_AUDIO_CAP_DB := -30.0
@@ -47,7 +51,9 @@ func configure(next_world: Node3D, next_player: Node3D, next_heartforge: Node3D,
 
 func _ready() -> void:
     process_mode = Node.PROCESS_MODE_ALWAYS
-    quiet_audio = _has_command_line_flag(QUIET_AUDIO_FLAG)
+    var launch_arguments: Array = OS.get_cmdline_args()
+    launch_arguments.append_array(OS.get_cmdline_user_args())
+    quiet_audio = _should_quiet_audio(launch_arguments)
     for profile in [&"pistol", &"machine_weapon", &"machine_impact", &"player_impact", &"salvage", &"forge", &"organic_attack", &"organic_impact", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition", &"endgame_start", &"endgame_stage", &"endgame_complete", &"endgame_failure"]:
         profiles[profile] = _build_profile(profile)
     for species in ORGANIC_SPECIES:
@@ -227,12 +233,10 @@ func _safe_volume_db(volume_db: float) -> float:
     return minf(volume_db, QUIET_AUDIO_CAP_DB) if quiet_audio else volume_db
 
 
-func _has_command_line_flag(flag: String) -> bool:
-    for argument in OS.get_cmdline_args():
-        if str(argument) == flag:
-            return true
-    for argument in OS.get_cmdline_user_args():
-        if str(argument) == flag:
+func _should_quiet_audio(arguments: Array) -> bool:
+    for raw_argument in arguments:
+        var argument := str(raw_argument).to_lower()
+        if argument == QUIET_AUDIO_FLAG or argument == SAFE_DEVELOPMENT_AUDIO_FLAG or argument.contains(REVIEW_AUDIO_MARKER):
             return true
     return false
 

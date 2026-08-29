@@ -66,6 +66,9 @@
   very-low `-30 dB` audio ceiling, so a live opening check cannot accidentally
   start at the authored mix level when the explicit `--quiet-audio` flag is
   omitted;
+- the legacy spatial feedback director now applies the same ceiling to
+  `--new-world` and any `*review*` fixture, keeping lower-level scene reviews
+  safe even when they do not use the release entrypoint;
 - ordinary player launches retain their normal adaptive mix, while review
   fixtures and all automated checks continue to use Dummy audio and quiet mode;
 - the release regression suite covers the fresh-world safety rule.

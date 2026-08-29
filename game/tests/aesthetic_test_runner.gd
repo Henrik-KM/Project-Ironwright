@@ -45,6 +45,14 @@ func _run_all() -> void:
     var audio_director := world.get_node_or_null("AudioFeedbackDirector") as AudioFeedbackDirector3D
     _expect(audio_director != null, "The world must provide spatial survival audio feedback.")
     if audio_director != null:
+        _expect(audio_director._should_quiet_audio(["--quiet-audio"]), "The spatial audio director must honor the explicit quiet-audio review flag.")
+        _expect(audio_director._should_quiet_audio(["--new-world"]), "Fresh-world development fixtures must automatically use the quiet audio ceiling.")
+        _expect(audio_director._should_quiet_audio(["--presentation-review"]), "Presentation review fixtures must automatically use the quiet audio ceiling.")
+        _expect(not audio_director._should_quiet_audio(["--headless", "--path", "game"]), "Ordinary non-review launches must retain their authored spatial audio mix.")
+        audio_director.quiet_audio = true
+        _expect(is_equal_approx(audio_director._safe_volume_db(0.0), -30.0), "Spatial audio review mode must cap a full-scale cue at a very low playback level.")
+        _expect(is_equal_approx(audio_director._safe_volume_db(-36.0), -36.0), "Spatial audio review mode must preserve already-quiet cues without boosting them.")
+        audio_director.quiet_audio = false
         for profile in [&"pistol", &"machine_weapon", &"machine_impact", &"player_impact", &"salvage", &"forge", &"organic_attack", &"organic_impact", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition", &"endgame_start", &"endgame_stage", &"endgame_complete", &"endgame_failure"]:
             _expect(audio_director.has_profile(profile), "The audio director must provide the %s profile." % profile)
         for species in [&"veilstalker", &"razorhound", &"apex", &"sporecaster", &"broodmass", &"burrower", &"skitterling", &"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle"]:
