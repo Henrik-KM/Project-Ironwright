@@ -210,8 +210,8 @@ func _setup_vertical_slice_presentation() -> void:
 		hud.notification_ages.clear()
 		hud._refresh_notifications()
 		hud.push_notification(_localized_runtime_text("notification.heartforge.district", "HEARTFORGE DISTRICT · KEEP THE BULWARK CLOSE"))
-	run_state.log_event("Presentation status: pre-alpha production prototype. The Heartforge district is the current representative vertical slice.")
-	run_state.log_event("The Heartforge district now uses the representative vertical presentation slice. The remainder of the world inherits this quality only after the slice passes human review.")
+	run_state.log_event("Presentation status: release candidate. The Heartforge district is the inhabited opening of the persistent town.")
+	run_state.log_event("The opening district, remote regions and endgame landmarks share the authored release presentation while the machine society carries the long run forward.")
 
 
 func _update_camera(delta: float) -> void:

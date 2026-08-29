@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused release-facing presentation language pass
+
+- the canonical release world now records release-candidate presentation status
+  and the persistent-town continuity instead of stale pre-alpha/vertical-slice
+  messaging;
+- the change is run-history copy only and does not alter the opening, autonomy,
+  progression, save schema or world simulation;
+- release validation now rejects those obsolete prototype phrases from the
+  canonical entrypoint; live review remains on Godot Dummy audio with
+  `--quiet-audio`.
+
 ## Focused outpost load-path presentation pass
 
 - tiered outposts now expose four continuous load pylons with tier collars,

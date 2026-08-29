@@ -162,6 +162,8 @@ def validate_release_entrypoint() -> None:
     ]:
         if token not in world:
             raise legacy.ValidationError(f"Release world is missing integration token {token!r}")
+    if "pre-alpha production prototype" in world or "remainder of the world inherits" in world:
+        raise legacy.ValidationError("Canonical release world still exposes stale prototype presentation messaging")
 
 
 def validate_release_manifest() -> None:
