@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Signal Relay reflector pass
+
+- the authored Signal Relay directional dish now uses a dense shallow
+  parabolic bowl profile instead of a flat cylinder, improving its role
+  silhouette and highlight response at tactical distance;
+- the existing mast, beacon, sockets, animation channels, collision and
+  autonomous relay behaviour are unchanged;
+- the aesthetic suite now guards the reflector tessellation and all visual
+  review launches continue through Dummy audio and the quiet safety cap.
+
 ## Focused safe fresh-world audio fixture pass
 
 - the `--new-world` development fixture now automatically uses the existing

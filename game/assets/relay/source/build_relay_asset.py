@@ -12,10 +12,65 @@ from typing import Sequence
 
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_ellipsoid, add_uv_sphere, quat  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_box, add_cylinder, add_ellipsoid, add_uv_sphere, quat, vec_min_max  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "relay.gltf"
+
+
+def add_parabolic_dish(
+    builder: BufferBuilder,
+    radius: float,
+    depth: float,
+    material: int,
+    sides: int = 36,
+    rings: int = 6,
+) -> tuple[int, int, int, int]:
+    """Build a shallow, smooth signal bowl with a readable concave profile."""
+    sides = max(24, sides)
+    rings = max(3, rings)
+    positions: list[float] = [0.0, -depth * 0.5, 0.0]
+    normals: list[float] = [0.0, 1.0, 0.0]
+    indices: list[int] = []
+
+    for ring in range(1, rings + 1):
+        fraction = ring / rings
+        ring_radius = radius * fraction
+        ring_y = -depth * 0.5 + depth * fraction * fraction
+        slope = depth * 2.0 * fraction / max(radius, 0.001)
+        for side in range(sides):
+            angle = math.tau * side / sides
+            radial_x = math.cos(angle)
+            radial_z = math.sin(angle)
+            normal_length = math.sqrt(slope * slope + 1.0)
+            positions.extend([radial_x * ring_radius, ring_y, radial_z * ring_radius])
+            normals.extend([-radial_x * slope / normal_length, 1.0 / normal_length, -radial_z * slope / normal_length])
+
+    first_ring = 1
+    for side in range(sides):
+        next_side = (side + 1) % sides
+        indices.extend([0, first_ring + next_side, first_ring + side])
+    for ring in range(1, rings):
+        previous_start = 1 + (ring - 1) * sides
+        current_start = 1 + ring * sides
+        for side in range(sides):
+            next_side = (side + 1) % sides
+            indices.extend([
+                previous_start + side,
+                previous_start + next_side,
+                current_start + next_side,
+                previous_start + side,
+                current_start + next_side,
+                current_start + side,
+            ])
+
+    position_min, position_max = vec_min_max(zip(*[iter(positions)] * 3))
+    position_accessor = builder.accessor(
+        positions, 5126, "VEC3", len(positions) // 3, 34962, position_min, position_max
+    )
+    normal_accessor = builder.accessor(normals, 5126, "VEC3", len(normals) // 3, 34962)
+    index_accessor = builder.accessor(indices, 5123, "SCALAR", len(indices), 34963)
+    return position_accessor, normal_accessor, index_accessor, material
 
 
 def main() -> None:
@@ -52,7 +107,7 @@ def main() -> None:
         "Optic": mesh("Optic", add_uv_sphere(builder, 0.085, cyan)),
         "Mast": mesh("Mast", add_cylinder(builder, 0.07, 1.18, rubber, 20)),
         "Collar": mesh("Collar", add_cylinder(builder, 0.115, 0.08, amber, 20)),
-        "Dish": mesh("Dish", add_cylinder(builder, 0.34, 0.12, ceramic, 24)),
+        "Dish": mesh("Dish", add_parabolic_dish(builder, 0.40, 0.18, ceramic)),
         "DishRim": mesh("DishRim", add_cylinder(builder, 0.39, 0.04, cyan, 24)),
         "Beacon": mesh("Beacon", add_uv_sphere(builder, 0.095, cyan)),
         "Brace": mesh("Brace", add_beveled_box(builder, (0.08, 0.12, 0.58), chassis, 0.018)),

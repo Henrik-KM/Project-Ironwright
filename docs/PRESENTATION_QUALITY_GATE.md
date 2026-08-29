@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Signal Relay reflector pass — 2026-08-29
+
+The authored Signal Relay directional dish now uses a dense shallow parabolic
+bowl profile instead of a flat cylinder. This strengthens the relay silhouette
+and close-camera highlight response while preserving the existing mast, beacon,
+sockets, animation, collision and autonomous behaviour. The aesthetic suite
+guards the reflector tessellation. Review and validation use Godot Dummy audio
+with `--quiet-audio`; no physical speakers are used.
+
 ## Focused safe fresh-world audio fixture pass — 2026-08-29
 
 The `--new-world` development fixture now automatically activates the existing
