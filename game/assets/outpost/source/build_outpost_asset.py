@@ -20,14 +20,16 @@ from build_bulwark_asset import BufferBuilder, add_beveled_box, add_cylinder, ad
 
 def build() -> None:
     builder = BufferBuilder()
-    dark, iron, rust, panel, signal, glass = range(6)
+    dark, iron, rust, panel, signal, glass, maintenance, shelter_body = range(8)
     materials = [
-        {"name": "Outpost foundation", "pbrMetallicRoughness": {"baseColorFactor": [0.035, 0.045, 0.048, 1.0], "metallicFactor": 0.72, "roughnessFactor": 0.5}},
+        {"name": "Outpost foundation", "pbrMetallicRoughness": {"baseColorFactor": [0.035, 0.045, 0.048, 1.0], "metallicFactor": 0.34, "roughnessFactor": 0.8}},
         {"name": "Outpost shelter iron", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.23, 0.24, 1.0], "metallicFactor": 0.68, "roughnessFactor": 0.42}},
         {"name": "Outpost weathered rust", "pbrMetallicRoughness": {"baseColorFactor": [0.38, 0.20, 0.13, 1.0], "metallicFactor": 0.4, "roughnessFactor": 0.68}},
-        {"name": "Outpost service ceramic", "pbrMetallicRoughness": {"baseColorFactor": [0.33, 0.39, 0.39, 1.0], "metallicFactor": 0.58, "roughnessFactor": 0.36}},
+        {"name": "Outpost service ceramic", "pbrMetallicRoughness": {"baseColorFactor": [0.24, 0.30, 0.30, 1.0], "metallicFactor": 0.34, "roughnessFactor": 0.62}},
         {"name": "Outpost signal cyan", "pbrMetallicRoughness": {"baseColorFactor": [0.08, 0.55, 0.58, 1.0], "metallicFactor": 0.05, "roughnessFactor": 0.24}, "emissiveFactor": [0.12, 0.72, 0.78]},
         {"name": "Outpost cold glass", "pbrMetallicRoughness": {"baseColorFactor": [0.08, 0.22, 0.25, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.18}, "emissiveFactor": [0.02, 0.12, 0.14]},
+        {"name": "Outpost maintenance trim", "pbrMetallicRoughness": {"baseColorFactor": [0.16, 0.09, 0.08, 1.0], "metallicFactor": 0.22, "roughnessFactor": 0.9}},
+        {"name": "Outpost shelter body", "pbrMetallicRoughness": {"baseColorFactor": [0.12, 0.16, 0.17, 1.0], "metallicFactor": 0.3, "roughnessFactor": 0.82}},
     ]
     meshes: list[dict] = []
 
@@ -51,8 +53,8 @@ def build() -> None:
     mesh_ids = {
         "foundation": mesh("Foundation", add_cylinder(builder, 2.65, 0.45, dark, 28)),
         "foundation_inset": mesh("FoundationInset", add_cylinder(builder, 2.38, 0.12, dark, 28)),
-        "shelter_core": mesh("CoreShelterCore", add_beveled_box(builder, (3.7, 2.1, 3.4), iron)),
-        "shelter_band": mesh("ShelterMaintenanceBand", add_beveled_box(builder, (3.28, 0.12, 0.16), rust)),
+        "shelter_core": mesh("CoreShelterCore", add_beveled_box(builder, (3.7, 2.1, 3.4), shelter_body)),
+        "shelter_band": mesh("ShelterMaintenanceBand", add_beveled_box(builder, (3.28, 0.12, 0.16), maintenance)),
         "window_frame": mesh("ShelterWindowFrame", add_beveled_box(builder, (0.1, 0.72, 1.28), panel)),
         "window_mullion": mesh("ShelterWindowMullion", add_beveled_box(builder, (0.12, 0.58, 0.08), rust)),
         "window_glass": mesh("ShelterWindowGlass", add_beveled_box(builder, (0.06, 0.54, 0.92), glass)),

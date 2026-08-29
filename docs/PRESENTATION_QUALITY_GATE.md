@@ -1,5 +1,18 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused outpost role-gallery refinement — 2026-08-29
+
+The exact Tier III autonomous-outpost gallery now uses a staggered four-shelter
+composition within its close elevated lens so resource recovery, proxy defence, early warning
+and field repair read as separate machine roles rather than a rigid two-by-two
+block. The tier-frame rails are deliberately darker and rougher than the
+role-coded plates, and the authored shelter shell uses a restrained matte
+industrial grade so the foreground foundation edge does not become a single
+specular band. Runtime outpost geometry, footprint, collision, navigation,
+operation, persistence and player-control boundaries are unchanged. Exact
+1280x720 review uses Godot Dummy audio with `--quiet-audio`; no physical speakers
+are used. Broader human outpost and production-art acceptance remains open.
+
 ## Focused Root Cistern control-silhouette pass — 2026-08-29
 
 The Root Cistern release dressing now keeps its service deck, protocol panel

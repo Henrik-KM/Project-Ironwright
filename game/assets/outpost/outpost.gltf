@@ -579,7 +579,7 @@
             "NORMAL": 7
           },
           "indices": 8,
-          "material": 1
+          "material": 7
         }
       ]
     },
@@ -592,7 +592,7 @@
             "NORMAL": 10
           },
           "indices": 11,
-          "material": 2
+          "material": 6
         }
       ]
     },
@@ -880,8 +880,8 @@
           0.048,
           1.0
         ],
-        "metallicFactor": 0.72,
-        "roughnessFactor": 0.5
+        "metallicFactor": 0.34,
+        "roughnessFactor": 0.8
       }
     },
     {
@@ -914,13 +914,13 @@
       "name": "Outpost service ceramic",
       "pbrMetallicRoughness": {
         "baseColorFactor": [
-          0.33,
-          0.39,
-          0.39,
+          0.24,
+          0.3,
+          0.3,
           1.0
         ],
-        "metallicFactor": 0.58,
-        "roughnessFactor": 0.36
+        "metallicFactor": 0.34,
+        "roughnessFactor": 0.62
       }
     },
     {
@@ -958,6 +958,32 @@
         0.12,
         0.14
       ]
+    },
+    {
+      "name": "Outpost maintenance trim",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.16,
+          0.09,
+          0.08,
+          1.0
+        ],
+        "metallicFactor": 0.22,
+        "roughnessFactor": 0.9
+      }
+    },
+    {
+      "name": "Outpost shelter body",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.12,
+          0.16,
+          0.17,
+          1.0
+        ],
+        "metallicFactor": 0.3,
+        "roughnessFactor": 0.82
+      }
     }
   ],
   "accessors": [

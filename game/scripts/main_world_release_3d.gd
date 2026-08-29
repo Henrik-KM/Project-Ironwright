@@ -1611,6 +1611,16 @@ func _show_presentation_review_page(page: int) -> void:
 			if review_model_root != null:
 				review_model_root.scale = Vector3.ONE * _presentation_review_model_scale(actor)
 			actor.position = Vector3(centered_x, 0.0, row_z)
+			if outpost_page:
+				# Break the four role shelters out of a rigid two-by-two grid while
+				# preserving the authored front-facing presentation basis.
+				var outpost_positions: Array[Vector3] = [
+					Vector3(-3.0, 0.0, 1.1), Vector3(3.0, 0.0, 0.9),
+					Vector3(-2.35, 0.0, -2.85), Vector3(2.35, 0.0, -3.1),
+				]
+				if index < outpost_positions.size():
+					actor.position = outpost_positions[index]
+					actor.rotation.y = PI
 	var page_titles: Array[String] = [
 		"PLAYER + FRIENDLY MACHINE SOCIETY", "EARLY ORGANIC FAMILIES", "LATE ORGANIC FAMILIES",
 		"REMOTE · NORTH RUINS", "REMOTE · WEST GRID", "REMOTE · EAST TENEMENTS",

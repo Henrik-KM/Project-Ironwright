@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused outpost role-gallery refinement
+
+- staggered the exact Tier III outpost review gallery within its close elevated
+  lens so the
+  four autonomous roles no longer collapse into a rigid two-by-two silhouette;
+- separated the tier-frame rails from the role plates with a darker, rougher
+  structural grade and refined the authored shelter shell with matte industrial
+  materials, while preserving the existing role hardware and runtime outpost
+  footprint;
+- preserved the outpost simulation, operation, collision, navigation, save,
+  rebuild and no-player-queue contracts; exact review and verification remain
+  silent through Godot Dummy audio with `--quiet-audio`.
+
 ## Focused Root Cistern control-silhouette pass
 
 - tightened the presentation-only service deck, protocol panel and braces at
