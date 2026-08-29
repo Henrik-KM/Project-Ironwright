@@ -81,6 +81,7 @@ def main() -> None:
         "SluiceRib": mesh("SluiceRib", add_beveled_box(builder, (0.16, 1.55, 0.38), rust, 0.025)),
         "Rotor": mesh("Rotor", add_cylinder(builder, 0.92, 0.18, water, 32)),
         "PumpVoluteRing": mesh("PumpVoluteRing", add_torus(builder, 1.08, 0.12, ceramic, 48, 10)),
+        "RotorBlade": mesh("RotorBlade", add_beveled_box(builder, (0.22, 0.09, 0.64), water, 0.035)),
         "Valve": mesh("Valve", add_cylinder(builder, 0.44, 0.16, amber, 24)),
         "Signal": mesh("Signal", add_uv_sphere(builder, 0.20, amber, 18, 28)),
         "Growth": mesh("Growth", add_uv_sphere(builder, 0.42, growth, 18, 28)),
@@ -140,6 +141,16 @@ def main() -> None:
     add_node("RiverworksRotor", mesh_ids["Rotor"], (0.0, 1.68, -2.67), rotation=(math.pi * 0.5, 0.0, 0.0), parent=pump_core, extras={"socket_type": "water_impeller"})
     add_node("RiverworksRotorHub", mesh_ids["RotorHub"], (0.0, 1.68, -2.67), rotation=(math.pi * 0.5, 0.0, 0.0), parent=pump_core, extras={"surface": "impeller_hub"})
     add_node("RiverworksPumpVoluteRing", mesh_ids["PumpVoluteRing"], (0.0, 1.68, -2.69), rotation=(math.pi * 0.5, 0.0, 0.0), parent=pump_core, extras={"surface": "sealed_volute_service_ring"})
+    for index in range(6):
+        angle = math.tau * index / 6.0
+        add_node(
+            "RiverworksRotorBlade%02d" % index,
+            mesh_ids["RotorBlade"],
+            (math.sin(angle) * 0.46, 1.68, -2.67 - math.cos(angle) * 0.46),
+            rotation=(0.0, angle, 0.0),
+            parent=pump_core,
+            extras={"surface": "impeller_blade"},
+        )
     add_node("RiverworksMaintenanceValve", mesh_ids["Valve"], (2.65, 2.15, -0.65), rotation=(0.0, math.pi * 0.5, 0.0), parent=pump_core, extras={"socket_type": "maintenance_valve"})
     add_node("RiverworksValveHandle", mesh_ids["ValveHandle"], (2.65, 2.15, -0.65), rotation=(0.0, math.pi * 0.5, 0.0), parent=pump_core, extras={"surface": "maintenance_handle"})
 
@@ -172,7 +183,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "riverworks.landmark.v1",
-            "required_nodes": ["RiverworksModel", "RiverworksPumpCore", "RiverworksPumpHousing", "RiverworksPumpPanel", "RiverworksRotor", "RiverworksRotorHub", "RiverworksPumpVoluteRing", "RiverworksMaintenanceValve", "RiverworksValveHandle", "RiverworksSluiceGate", "RiverworksSluiceRail", "RiverworksSluiceLatch", "RiverworksSluiceSignalHousing", "RiverworksSluiceSignal", "RiverworksCableClamp", "RiverworksGrowth0", "RiverworksGrowthTendril0_0", "ProductionAssetMarker"],
+            "required_nodes": ["RiverworksModel", "RiverworksPumpCore", "RiverworksPumpHousing", "RiverworksPumpPanel", "RiverworksRotor", "RiverworksRotorHub", "RiverworksPumpVoluteRing", "RiverworksRotorBlade00", "RiverworksRotorBlade03", "RiverworksMaintenanceValve", "RiverworksValveHandle", "RiverworksSluiceGate", "RiverworksSluiceRail", "RiverworksSluiceLatch", "RiverworksSluiceSignalHousing", "RiverworksSluiceSignal", "RiverworksCableClamp", "RiverworksGrowth0", "RiverworksGrowthTendril0_0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

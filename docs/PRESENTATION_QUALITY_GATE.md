@@ -2816,3 +2816,12 @@ transformation review fixture was captured from the native release world with
 Godot Dummy audio and `--quiet-audio`; no physical speakers were used. The
 result retains the authored city, Heartforge, surviving cast and restrained
 sanctuary crown behind the readable ending surface.
+
+## 2026-08-30 — Riverworks impeller-definition review
+
+The Riverworks hero pump now presents a six-blade beveled impeller inside its
+existing dense volute ring, strengthening the working-waterworks silhouette at
+the exact page-9 review distance. The added geometry is presentation-only and
+retains the existing pump socket, deterministic rotor motion, collision, route,
+ecology and operation contracts. Exact live review uses Godot Dummy audio with
+`--quiet-audio`; no physical speakers were used.

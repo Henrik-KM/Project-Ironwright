@@ -12,6 +12,17 @@ and complete-game regressions cover the boundary. Exact transformation victory
 review passed with Godot Dummy audio and `--quiet-audio`; no physical speakers
 were used.
 
+## Focused Riverworks impeller-definition pass — 2026-08-30
+
+The authored Riverworks hero pump now carries a six-blade beveled impeller
+inside its dense ceramic volute ring, making the waterworks focal read as a
+working pump rather than a flat rotor disc at the exact remote review distance.
+The blades are parented to the existing pump assembly and share its deterministic
+presentation motion; pump sockets, collision, route, ecology, operation and save
+contracts remain unchanged. The asset manifest and aesthetic gate cover the
+stable impeller nodes. Exact page-9 live review uses Godot Dummy audio and
+`--quiet-audio`; no physical speakers are used.
+
 ## Focused Razorhound bite-line detail pass
 
 - added a dense parented muzzle guard, articulated throat lobe and paired
