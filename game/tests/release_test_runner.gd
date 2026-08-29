@@ -981,6 +981,8 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     _expect(cathedral_dressing != null and cathedral_dressing.visible and cathedral_dressing.find_child("CathedralReleaseFacade", true, false) != null, "Cathedral Quarter presentation review must retain its release facade dressing when selected.")
     if cathedral_dressing != null:
         _expect(cathedral_dressing.find_child("CathedralChoirCrownRail", true, false) != null and cathedral_dressing.find_child("CathedralChoirPipe03", true, false) != null and cathedral_dressing.find_child("CathedralChoirSignal", true, false) != null, "Cathedral Quarter presentation review must retain its layered choir crown and signal detail.")
+        var bell_yard := cathedral_dressing.find_child("CathedralBellYardWitness", true, false)
+        _expect(bell_yard != null and bell_yard.find_child("CathedralBellYardBell", true, false) != null and bell_yard.find_child("CathedralBellYardSilenceCollar", true, false) != null, "Cathedral Quarter presentation review must retain a physical bell-yard witness for the brood-suppression history.")
     world._show_presentation_review_page(13)
     await process_frame
     var page: Array = world.presentation_review_pages[13] if world.presentation_review_pages.size() > 13 else []

@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Cathedral Quarter bell-yard witness pass
+
+- added a bounded release-only bell-yard assembly beside the Cathedral Quarter
+  nave: paired service posts, lintel, suspended bell, clapper, silence collar,
+  suppression plate, signal braces and an organic root witness;
+- anchored the authored `operation.cathedral_brood_suppression` history in a
+  visible physical encounter cue while preserving the civic facade and choir
+  silhouette at the exact remote review frame;
+- kept the assembly presentation-only: no collision, interaction, route,
+  ecology, operation state or player-managed work changed; native release and
+  aesthetic coverage now guard its stable witness names.
+
 ## Focused review-audio safety cap
 
 - development review launch arguments now automatically enable the existing
