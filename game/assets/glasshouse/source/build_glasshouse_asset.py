@@ -59,6 +59,9 @@ def main() -> None:
         "GrowthTendril": mesh("GlasshouseGrowthTendril", add_cylinder(builder, 0.045, 0.92, growth, 14)),
         "LightHousing": mesh("GlasshouseLightHousing", add_cylinder(builder, 0.11, 0.16, frame, 16)),
         "ClimateActuator": mesh("GlasshouseClimateActuator", add_cylinder(builder, 0.08, 0.54, amber, 14)),
+        "TrellisPost": mesh("GlasshouseTrellisPost", add_beveled_box(builder, (0.12, 2.35, 0.12), rust, 0.025)),
+        "TrellisRail": mesh("GlasshouseTrellisRail", add_beveled_box(builder, (2.95, 0.12, 0.12), rust, 0.025)),
+        "TrellisWire": mesh("GlasshouseTrellisWire", add_cylinder(builder, 0.025, 1.9, growth, 14)),
     }
 
     nodes: list[dict] = [{
@@ -117,6 +120,13 @@ def main() -> None:
             add_node("GlasshouseGrowthTendril%d_%d" % (index, tendril_index), mesh_ids["GrowthTendril"], (tendril_x, 1.02, 0.0), rotation=(0.0, 0.0, -0.28 + float(tendril_index) * 0.56), extras={"surface": "growth_tendril"}, parent=bed)
         add_node("GlasshouseBedLight%d" % index, mesh_ids["GrowthLight"], (0.0, 1.65, -0.10), extras={"socket_type": "grow_light"}, parent=bed)
         add_node("GlasshouseLightHousing%d" % index, mesh_ids["LightHousing"], (0.0, 1.65, -0.10), extras={"surface": "grow_light_housing"}, parent=bed)
+        trellis = add_node("GlasshouseBedTrellis%d" % index, None, (0.0, 0.0, 0.22), extras={"socket_type": "growth_trellis"}, parent=bed)
+        add_node("GlasshouseTrellisPost%dL" % index, mesh_ids["TrellisPost"], (-1.34, 1.12, 0.0), extras={"surface": "trellis_support"}, parent=trellis)
+        add_node("GlasshouseTrellisPost%dR" % index, mesh_ids["TrellisPost"], (1.34, 1.12, 0.0), extras={"surface": "trellis_support"}, parent=trellis)
+        add_node("GlasshouseTrellisRail%d" % index, mesh_ids["TrellisRail"], (0.0, 1.95, 0.0), extras={"surface": "trellis_rail"}, parent=trellis)
+        for wire_index, wire_x in enumerate((-0.78, 0.0, 0.78)):
+            add_node("GlasshouseTrellisWire%d_%d" % (index, wire_index), mesh_ids["TrellisWire"], (wire_x, 0.92, 0.0), extras={"surface": "trellis_growth_wire"}, parent=trellis)
+            add_node("GlasshouseTrellisGrowth%d_%d" % (index, wire_index), mesh_ids["Growth"], (wire_x, 1.18, 0.0), scale=(0.42, 0.78, 0.42), extras={"socket_type": "trellis_growth"}, parent=trellis)
 
     louver = add_node("GlasshouseClimateLouver", mesh_ids["Louver"], (-6.2, 3.35, 5.28), extras={"socket_type": "climate_louver"})
     for index in range(4):
@@ -142,7 +152,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "glasshouse.municipal.v1",
-            "required_nodes": ["GlasshouseModel", "GlasshouseFrameBay0", "GlasshouseRoofRib0", "GlasshousePaneLatch0", "GlasshouseClimateLouver", "GlasshouseClimateActuator", "GlasshouseBrokenSkylight", "GlasshouseGrowthBed0", "GlasshouseBedEdge0", "GlasshouseGrowthTendril0_0", "GlasshouseLightHousing0", "GlasshouseServiceDoor", "ProductionAssetMarker"],
+            "required_nodes": ["GlasshouseModel", "GlasshouseFrameBay0", "GlasshouseRoofRib0", "GlasshousePaneLatch0", "GlasshouseClimateLouver", "GlasshouseClimateActuator", "GlasshouseBrokenSkylight", "GlasshouseGrowthBed0", "GlasshouseBedEdge0", "GlasshouseGrowthTendril0_0", "GlasshouseLightHousing0", "GlasshouseBedTrellis0", "GlasshouseTrellisRail0", "GlasshouseTrellisGrowth0_0", "GlasshouseServiceDoor", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

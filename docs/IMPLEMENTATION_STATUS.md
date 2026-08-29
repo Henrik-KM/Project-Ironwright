@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Glasshouse cultivation-depth pass
+
+- added bounded trellis supports, growth wires and raised plant clusters to
+  each authored cultivation bed, so the Municipal Glasshouse reads as an
+  inhabited growing facility rather than an empty frame volume;
+- preserved the landmark's presentation-only contract, climate and growth
+  motion sockets, collision, navigation, ecology and gameplay scale, with new
+  manifest and aesthetic guards for the added geometry.
+
 ## Focused Broodmass lower-maw shell pass
 
 - added a dense folded lower-maw shell parented to the existing animated brood

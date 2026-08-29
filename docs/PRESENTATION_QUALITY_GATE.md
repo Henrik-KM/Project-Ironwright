@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Glasshouse cultivation-depth pass — 2026-08-29
+
+The Municipal Glasshouse release shell now carries bounded trellis supports,
+growth wires and raised plant clusters through its cultivation beds. The added
+interior structure gives the transparent landmark a readable inhabited depth at
+compact review distance without blocking its climate-frame silhouette. This is
+presentation-only: motion sockets, collision, navigation, ecology and gameplay
+scale are unchanged. The exact graphical review uses Godot Dummy audio with
+`--quiet-audio`; no physical speakers are used.
+
 ## Focused Broodmass lower-maw shell pass — 2026-08-29
 
 The Broodmass release shell now carries a dense folded lower-maw volume below
