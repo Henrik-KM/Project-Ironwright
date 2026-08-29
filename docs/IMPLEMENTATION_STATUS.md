@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Observatory Ridge grounding pass
+
+- added a shallow broken service foundation, instrument pad, retaining edges,
+  approach plates, conduit and powered boundary markers around the authored
+  Observatory Ridge station;
+- the survey installation now reads as a place in the town instead of an
+  isolated prop on a bare review plane, while the reflector remains the focal
+  instrument;
+- the pass is presentation-only and adds no collision, route, interaction,
+  resource or recurring player work.
+
 ## Focused autonomous-formation follow framing pass
 
 - the release camera now follows the living midpoint of an active long-range
