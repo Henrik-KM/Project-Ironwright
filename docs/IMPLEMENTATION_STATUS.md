@@ -6371,3 +6371,14 @@ roster checks and requires silent late-organic live review before merge.
 - lowered the release-only Observatory foundation into a restrained plinth with
   a service collar, keeping the azimuth pedestal visible instead of presenting
   a tall proxy-like black drum in the approach frame.
+## Focused Riverworks pump-volute refinement milestone
+
+- added a dense ceramic volute ring around the authored central impeller so
+  the exact remote view reads a sealed working pump rather than a smooth blue
+  volume on a flat service plate;
+- preserved the Riverworks landmark, waterline, salvage, route, ecology and
+  operation contracts; the added geometry is presentation-only and introduces
+  no collision, interaction or recurring player-managed work;
+- extended the asset manifest, static validation and native aesthetic coverage
+  for the new stable pump-face socket; silent exact-export review remains part
+  of the release gate.

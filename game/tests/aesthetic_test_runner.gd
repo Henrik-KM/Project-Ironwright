@@ -781,18 +781,20 @@ func _run_all() -> void:
                 var riverworks_retaining_core := riverworks_retaining_edge.get_node_or_null("RetainingWallCore") as MeshInstance3D if riverworks_retaining_edge != null else null
                 _expect(riverworks_retaining_core != null and riverworks_retaining_core.mesh != null and riverworks_retaining_core.mesh.get_aabb().size.y <= 0.75 and riverworks_retaining_core.mesh.get_aabb().size.x <= 12.0, "Riverworks retaining edge must remain a low, bounded foreground cue so the authored pump stays readable.")
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/RiverworksAuthoredModel") != null, "Riverworks must expose its authored pump landmark shell.")
-                _expect(landmark.find_child("RiverworksPumpPanel", true, false) != null and landmark.find_child("RiverworksRotorHub", true, false) != null and landmark.find_child("RiverworksValveHandle", true, false) != null, "Riverworks must expose pump service and maintenance hardware.")
+                _expect(landmark.find_child("RiverworksPumpPanel", true, false) != null and landmark.find_child("RiverworksRotorHub", true, false) != null and landmark.find_child("RiverworksPumpVoluteRing", true, false) != null and landmark.find_child("RiverworksValveHandle", true, false) != null, "Riverworks must expose pump service, volute and maintenance hardware.")
                 var riverworks_housing := landmark.find_child("RiverworksPumpHousing", true, false) as MeshInstance3D
                 var riverworks_sluice := landmark.find_child("RiverworksSluiceGate", true, false) as MeshInstance3D
                 _expect(riverworks_housing != null and riverworks_sluice != null and _mesh_vertex_count(riverworks_housing) >= 48 and _mesh_vertex_count(riverworks_sluice) >= 48, "Riverworks authored housing and sluice pieces must retain beveled high-definition geometry.")
                 _expect(landmark.find_child("RiverworksSluiceRail", true, false) != null and landmark.find_child("RiverworksSluiceLatch", true, false) != null and landmark.find_child("RiverworksSluiceSignalHousing", true, false) != null, "Riverworks must expose layered sluice and flow-signal hardware.")
                 _expect(landmark.find_child("RiverworksCableClamp", true, false) != null and landmark.find_child("RiverworksGrowthTendril0_0", true, false) != null, "Riverworks must expose maintenance-cable and organic detail.")
                 var riverworks_rotor := landmark.find_child("RiverworksRotor", true, false) as Node3D
+                var riverworks_volute := landmark.find_child("RiverworksPumpVoluteRing", true, false) as MeshInstance3D
                 var riverworks_signal := landmark.find_child("RiverworksSluiceSignal", true, false) as Node3D
                 var riverworks_valve_handle := landmark.find_child("RiverworksValveHandle", true, false) as Node3D
                 var riverworks_signal_housing := landmark.find_child("RiverworksSluiceSignalHousing", true, false) as Node3D
                 var riverworks_tendril := landmark.find_child("RiverworksGrowthTendril0_0", true, false) as Node3D
-                _expect(riverworks_rotor != null and riverworks_signal != null and riverworks_valve_handle != null and riverworks_signal_housing != null and riverworks_tendril != null, "Riverworks must expose named pump, flow, valve, signal-housing and tendril motion sockets.")
+                _expect(riverworks_rotor != null and riverworks_volute != null and riverworks_signal != null and riverworks_valve_handle != null and riverworks_signal_housing != null and riverworks_tendril != null, "Riverworks must expose named pump, volute, flow, valve, signal-housing and tendril motion sockets.")
+                _expect(riverworks_volute != null and _mesh_vertex_count(riverworks_volute) >= 480, "Riverworks hero pump volute must retain dense curved high-definition geometry.")
                 if riverworks_rotor != null and riverworks_signal != null and riverworks_valve_handle != null and riverworks_signal_housing != null and riverworks_tendril != null:
                     var riverworks_gate := landmark.find_child("RiverworksSluiceGate", true, false) as Node3D
                     var riverworks_rib := landmark.find_child("RiverworksSluiceRib1", true, false) as Node3D

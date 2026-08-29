@@ -2687,3 +2687,10 @@ simulation contracts. The release-only foundation is also a low service plinth
 with a collar, so it grounds rather than obscures the azimuth support. The live
 review uses Godot Dummy audio with
 `--quiet-audio`; no physical speakers are used.
+Riverworks received a focused hero-pump silhouette refinement on 2026-08-29.
+The authored central impeller now carries a dense ceramic volute ring, giving
+the remote waterworks frame a clearer sealed-machine focal and stronger material
+separation from the cold-water channels. The pass is presentation-only and
+preserves the landmark, collision, route, ecology, salvage and operation
+contracts; exact silent page 9/15 review remains required, and broader human
+Riverworks and production-art acceptance remains open.

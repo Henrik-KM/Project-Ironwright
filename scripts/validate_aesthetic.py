@@ -273,6 +273,7 @@ AUTHORED_REGION_ASSETS = {
             "RiverworksPumpPanel",
             "RiverworksRotor",
             "RiverworksRotorHub",
+            "RiverworksPumpVoluteRing",
             "RiverworksMaintenanceValve",
             "RiverworksValveHandle",
             "RiverworksSluiceGate",
