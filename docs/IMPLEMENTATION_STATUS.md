@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused complete-recap copy integrity pass
+
+- the returning-world recap now builds its section headings from the selected
+  localization catalog instead of embedding English labels in the HUD;
+- the recap keeps a localization-aware objective snapshot and next-action
+  prompt, clearing stale operation guidance when the run is between milestones;
+- raw English event-log prose no longer spills into the visible threat section;
+  the panel uses a bounded localized ecological-pressure observation instead;
+- Swedish coverage now asserts the absence of the former English headings,
+  objective copy and prompt leakage, with silent graphical review captured
+  through Godot Dummy audio and `--quiet-audio`.
+
 ## Focused legacy-bootstrap handoff pass
 
 - the retained `bootstrap.tscn` path now verifies the existing machine-readable

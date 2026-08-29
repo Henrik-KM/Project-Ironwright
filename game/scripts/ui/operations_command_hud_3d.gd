@@ -171,9 +171,17 @@ func open_recap(condition: String, unresolved_problem: String, expedition: Strin
     mode = &"recap"
     selected_index = 0
     current_operation_status = condition
+    var description := "%s\n%s\n\n%s\n%s\n\n%s\n%s" % [
+        _text("command.recap.unresolved_problem", "CURRENT UNRESOLVED PROBLEM"),
+        unresolved_problem,
+        _text("command.recap.active_expedition", "ACTIVE OR PROPOSED EXPEDITION"),
+        expedition,
+        _text("command.recap.recent_threats", "UNFAMILIAR THREATS RECENTLY OBSERVED"),
+        threats,
+    ]
     archive_records = [{
         "display_name": "RETURNING TO THE HEARTFORGE",
-        "description": "CURRENT UNRESOLVED PROBLEM\n%s\n\nACTIVE OR PROPOSED EXPEDITION\n%s\n\nUNFAMILIAR THREATS RECENTLY OBSERVED\n%s" % [unresolved_problem, expedition, threats],
+        "description": description,
         "recap_choices": next_choices,
     }]
     backdrop.visible = true

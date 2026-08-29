@@ -27,6 +27,9 @@ var adaptive_defense_review_capture_path: String = ""
 var adaptive_defense_review_capture_frames: int = 0
 var spawned_region_salvage: Dictionary = {}
 var machine_relationship_moments: Dictionary = {}
+var _current_objective_title: String = ""
+var _current_objective_detail: String = ""
+var _current_objective_prompt: String = ""
 
 
 func _ready() -> void:
@@ -612,6 +615,9 @@ func _build_collapse_report() -> String:
 func _update_complete_game_objective() -> void:
     if long_operation_director == null or endgame_director == null:
         return
+    _current_objective_title = ""
+    _current_objective_detail = ""
+    _current_objective_prompt = ""
 
     if endgame_director.completed_protocol != &"":
         _set_complete_objective("objective.complete.victory.title", "FIRST VICTORY", "objective.complete.victory.detail", "The final protocol completed. The surviving machine sanctuary continues beyond the first victory.", [], "objective.complete.victory.prompt", "PRESS P · REVIEW THE CONTINUING SANCTUARY")
@@ -663,6 +669,9 @@ func _update_complete_game_objective() -> void:
             objective_title = locale_service.text("objective.active_operation.title")
             objective_detail = locale_service.text("objective.active_operation.detail", [active_operation_status])
             objective_prompt = locale_service.text("objective.active_operation.prompt")
+        _current_objective_title = objective_title
+        _current_objective_detail = objective_detail
+        _current_objective_prompt = objective_prompt
         hud.set_objective(
             objective_title,
             objective_detail
@@ -724,6 +733,9 @@ func _update_complete_game_objective() -> void:
             objective_title = locale_service.text("objective.endgame.active.title")
             objective_detail = locale_service.text("objective.endgame.active.detail", [_localized_endgame_status_summary()])
             objective_prompt = locale_service.text("objective.endgame.active.prompt")
+        _current_objective_title = objective_title
+        _current_objective_detail = objective_detail
+        _current_objective_prompt = objective_prompt
         hud.set_objective(objective_title, objective_detail)
         hud.set_prompt(objective_prompt)
 
@@ -782,8 +794,9 @@ func _show_session_recap() -> void:
         "WORLD CONDITION · {0}\nHEARTFORGE {1}% INTEGRITY · TIER {2} · SCRAP {3} · CORES {4}",
         [world_condition, integrity, progression.heartforge_tier, run_state.scrap, run_state.rare_cores]
     )
-    var objective_parts := hud.objective_label.text.split("\n", false, 1)
-    var unresolved_problem := hud.objective_label.text if objective_parts.is_empty() else "%s\n%s" % [objective_parts[0], objective_parts[1] if objective_parts.size() > 1 else ""]
+    var unresolved_problem := _localized_text("command.recap.unresolved_fallback", "No unresolved strategic problem is recorded.")
+    if not _current_objective_title.strip_edges().is_empty():
+        unresolved_problem = "%s\n%s" % [_current_objective_title, _current_objective_detail]
     var expedition := _localized_text("command.recap.no_operation", "No long-range operation is in motion. Press P to review the next physical route.")
     if long_operation_director != null and not long_operation_director.active_operation.is_empty():
         expedition = _localized_long_operation_summary()
@@ -792,8 +805,8 @@ func _show_session_recap() -> void:
     if not recent_threats.is_empty():
         threats = "%s\n%s" % [threats, recent_threats]
     var next_choices := _localized_text("command.recap.current_objective", "Review the current objective on the tactical HUD.")
-    if not hud.prompt_label.text.strip_edges().is_empty():
-        next_choices = hud.prompt_label.text
+    if not _current_objective_prompt.strip_edges().is_empty():
+        next_choices = _current_objective_prompt
     if adaptive_defense_director != null and adaptive_defense_director.has_pending_proposal():
         next_choices = _localized_text("command.recap.adaptation_choice", "PRESS T · REVIEW THE HEARTFORGE'S PROPOSED ADAPTATION")
     operations_hud.open_recap(condition, unresolved_problem, expedition, threats, next_choices)
@@ -801,14 +814,19 @@ func _show_session_recap() -> void:
 
 
 func _recent_threat_recap() -> String:
-    var observations: Array[String] = []
-    for event in run_state.event_log:
-        var lower := event.to_lower()
-        if lower.contains("organic") or lower.contains("pressure") or lower.contains("brood") or lower.contains("destroyed") or lower.contains("protocol"):
-            observations.append("• " + event)
-        if observations.size() >= 2:
-            break
-    return "\n".join(observations)
+    if strategic_ecology_director == null:
+        return ""
+    var summary := strategic_ecology_director.pressure_summary_data()
+    var region_id := StringName(str(summary.get("region_id", "region.heartforge_district")))
+    var region_name := _localized_region_name(region_id)
+    var pressure := float(summary.get("pressure", 0.0))
+    if pressure <= 0.01:
+        return _localized_text("command.recap.no_recent_threats", "No unfamiliar threat signal was recorded since the last return.")
+    return _localized_text(
+        "command.recap.recent_pressure",
+        "Recent ecology remains active around {0} · pressure {1}.",
+        [region_name, "%.2f" % pressure]
+    )
 
 
 func _ensure_region_salvage(region_id: StringName) -> void:
@@ -844,14 +862,14 @@ func _localized_pressure_summary() -> String:
 
 
 func _set_complete_objective(title_key: String, title_fallback: String, detail_key: String, detail_fallback: String, replacements: Array = [], prompt_key: String = "", prompt_fallback: String = "") -> void:
+    _current_objective_title = _localized_text(title_key, title_fallback, replacements)
+    _current_objective_detail = _localized_text(detail_key, detail_fallback, replacements)
+    _current_objective_prompt = _localized_text(prompt_key, prompt_fallback, replacements) if not prompt_key.is_empty() else ""
     if hud == null:
         return
-    hud.set_objective(
-        _localized_text(title_key, title_fallback, replacements),
-        _localized_text(detail_key, detail_fallback, replacements)
-    )
+    hud.set_objective(_current_objective_title, _current_objective_detail)
     if not prompt_key.is_empty():
-        hud.set_prompt(_localized_text(prompt_key, prompt_fallback, replacements))
+        hud.set_prompt(_current_objective_prompt)
 
 
 func _localized_region_name(region_id: StringName) -> String:

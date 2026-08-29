@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused complete-recap copy integrity pass — 2026-08-29
+
+The returning-world recap now sources all visible section headings from the
+selected catalog, carries a localization-aware objective snapshot and prompt,
+and clears stale operation guidance when no complete-game milestone is active.
+Raw English event-log prose is excluded from the visible threat section; a
+bounded localized ecological-pressure observation preserves the strategic
+signal without leaking diagnostic copy. Swedish native coverage asserts the
+localized headings and the absence of English recap leakage. Review uses Godot
+Dummy audio with `--quiet-audio`; no physical speakers are used.
+
 ## Focused legacy-bootstrap handoff pass — 2026-08-29
 
 The retained bootstrap scene now verifies the machine-readable world contract
