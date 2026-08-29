@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Tram Graveyard yard-depth pass
+
+- added a bounded maintenance crate, cable reel and tipped service panel to the
+  authored rail-yard apron, so the landmark reads as a derelict working yard
+  rather than three isolated intact carriages;
+- preserved the existing carriage, pit, rail, navigation, collision, ecology
+  and gameplay contracts, with new manifest and aesthetic guards for the
+  presentation-only remnants.
+
 ## Focused Glasshouse cultivation-depth pass
 
 - added bounded trellis supports, growth wires and raised plant clusters to

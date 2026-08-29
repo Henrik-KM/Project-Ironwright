@@ -680,13 +680,17 @@ func _run_all() -> void:
                 _expect(tram_wheel_rim != null and _mesh_vertex_count(tram_wheel_rim) >= 384, "Tram authored carriage wheels must retain smooth high-definition rims.")
                 _expect(landmark.find_child("TramCarriageAFrontHeadlampHousing", true, false) != null and landmark.find_child("TramCarriageABogiePlate0", true, false) != null and landmark.find_child("TramCarriageABogieCrossbar0", true, false) != null and landmark.find_child("TramCarriageAWheelHubFront0", true, false) != null and landmark.find_child("TramCarriageARoofRib0", true, false) != null and landmark.find_child("TramCarriageACornerPostFront0", true, false) != null and landmark.find_child("TramCarriageAPantograph", true, false) != null, "Tram Graveyard must expose layered carriage service hardware.")
                 _expect(landmark.find_child("TramCarriageASidePanelFront0", true, false) != null and landmark.find_child("TramYardDeck", true, false) != null, "Tram Graveyard must expose maintained carriage side panels and a grounded rail-yard deck.")
-                _expect(landmark.find_child("TramPitRung0", true, false) != null and landmark.find_child("TramCableClamp0", true, false) != null and landmark.find_child("TramSignalHousing", true, false) != null, "Tram Graveyard must expose maintenance-pit and overhead service details.")
+                _expect(landmark.find_child("TramPitRung0", true, false) != null and landmark.find_child("TramCableClamp0", true, false) != null and landmark.find_child("TramSignalHousing", true, false) != null and landmark.find_child("TramYardCrate0", true, false) != null and landmark.find_child("TramCableReel0", true, false) != null and landmark.find_child("TramYardDebris0", true, false) != null, "Tram Graveyard must expose maintenance-pit, overhead-service and derelict-yard details.")
                 var tram_signal := landmark.find_child("TramSignalLamp", true, false) as Node3D
                 var tram_seep := landmark.find_child("TramOrganicSeep0", true, false) as Node3D
                 var tram_signal_housing := landmark.find_child("TramSignalHousing", true, false) as Node3D
                 var tram_headlamp := landmark.find_child("TramCarriageAFrontHeadlampLens", true, false) as Node3D
                 var tram_tendril := landmark.find_child("TramOrganicSeepTendril0_0", true, false) as Node3D
                 _expect(tram_signal != null and tram_seep != null and tram_signal_housing != null and tram_headlamp != null and tram_tendril != null, "Tram Graveyard must expose named signal, headlamp, housing and organic motion sockets.")
+                var tram_yard_crate := landmark.find_child("TramYardCrate0", true, false) as MeshInstance3D
+                var tram_cable_reel := landmark.find_child("TramCableReel0", true, false) as MeshInstance3D
+                var tram_yard_debris := landmark.find_child("TramYardDebris0", true, false) as MeshInstance3D
+                _expect(tram_yard_crate != null and tram_cable_reel != null and tram_yard_debris != null and _mesh_vertex_count(tram_yard_crate) >= 48 and _mesh_vertex_count(tram_cable_reel) >= 48 and _mesh_vertex_count(tram_yard_debris) >= 48, "Tram Graveyard yard remnants must retain dense beveled geometry at approach distance.")
                 if tram_signal != null and tram_seep != null and tram_signal_housing != null and tram_headlamp != null and tram_tendril != null:
                     landmark.set_presentation_detail_level(0)
                     var tram_mast := landmark.find_child("TramSignalMast", true, false) as Node3D

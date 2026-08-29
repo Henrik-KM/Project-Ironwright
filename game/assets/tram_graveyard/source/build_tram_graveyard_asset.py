@@ -118,6 +118,11 @@ def main() -> None:
         "SeepTendril": mesh("SeepTendril", add_cylinder(builder, 0.055, 0.82, organic, 14)),
         "ServiceLamp": mesh("ServiceLamp", add_uv_sphere(builder, 0.10, amber, 16, 24)),
         "Marker": mesh("Marker", add_beveled_box(builder, (0.7, 0.08, 0.7), amber, 0.025)),
+        "YardCrate": mesh("YardMaintenanceCrate", add_beveled_box(builder, (1.18, 0.78, 0.86), dark, 0.07)),
+        "YardCrateBand": mesh("YardMaintenanceCrateBand", add_beveled_box(builder, (1.28, 0.10, 0.10), rust, 0.02)),
+        "CableReel": mesh("YardCableReel", add_cylinder(builder, 0.62, 0.42, dark, 28)),
+        "CableReelRim": mesh("YardCableReelRim", add_torus(builder, 0.50, 0.075, rust)),
+        "YardDebris": mesh("YardDebrisPanel", add_beveled_box(builder, (1.75, 0.16, 0.42), rust, 0.035)),
     }
 
     nodes: list[dict] = [{
@@ -240,6 +245,14 @@ def main() -> None:
         seep = add_node("TramOrganicSeep%d" % index, mesh_ids["Seep"], (x, 0.52, z), scale=scale, extras={"socket_type": "organic_seepage"})
         add_node("TramOrganicSeepTendril%d_0" % index, mesh_ids["SeepTendril"], (-0.20, 0.46, 0.15), rotation=(0.0, 0.0, -0.20), parent=seep)
         add_node("TramOrganicSeepTendril%d_1" % index, mesh_ids["SeepTendril"], (0.24, 0.40, -0.10), rotation=(0.0, 0.0, 0.24), parent=seep)
+    # Keep the approach apron from reading as an empty display plinth. These
+    # bounded service remnants establish a lived-in maintenance yard without
+    # adding collision, navigation, or a new interactable work loop.
+    crate = add_node("TramYardCrate0", mesh_ids["YardCrate"], (-7.15, 0.46, -3.65), rotation=(0.0, 0.10, -0.04), extras={"surface": "yard_service_stock"})
+    add_node("TramYardCrateBand0", mesh_ids["YardCrateBand"], (0.0, 0.08, 0.0), extras={"surface": "yard_crate_band"}, parent=crate)
+    reel = add_node("TramCableReel0", mesh_ids["CableReel"], (6.15, 0.48, 4.15), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "yard_cable_reel"})
+    add_node("TramCableReelRim0", mesh_ids["CableReelRim"], (0.0, 0.0, 0.0), extras={"surface": "yard_cable_reel_rim"}, parent=reel)
+    add_node("TramYardDebris0", mesh_ids["YardDebris"], (-7.10, 0.24, 0.55), rotation=(0.10, 0.0, -0.38), extras={"surface": "yard_derelict_panel"})
     add_node("TramServiceMarker", mesh_ids["Marker"], (7.0, 0.20, 4.6), extras={"socket_type": "service_marker"})
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "tram.graveyard.v1", "source": "original_procedural_mesh_builder"})
 
@@ -255,7 +268,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "tram.graveyard.v1",
-            "required_nodes": ["TramGraveyardModel", "TramCarriageA", "TramCarriageAFrontWindow0", "TramCarriageAFrontDoor", "TramCarriageAFrontHeadlampHousing", "TramCarriageABogiePlate0", "TramCarriageABogieCrossbar0", "TramCarriageAWheelRimFront0", "TramCarriageAWheelHubFront0", "TramCarriageARoofRib0", "TramCarriageACornerPostFront0", "TramCarriageAPantograph", "TramCarriageASidePanelFront0", "TramYardDeck", "TramMaintenancePit", "TramPitRung0", "TramSignalMast", "TramSignalHousing", "TramSignalLamp", "TramCableClamp0", "TramOrganicSeep0", "TramOrganicSeepTendril0_0", "ProductionAssetMarker"],
+            "required_nodes": ["TramGraveyardModel", "TramCarriageA", "TramCarriageAFrontWindow0", "TramCarriageAFrontDoor", "TramCarriageAFrontHeadlampHousing", "TramCarriageABogiePlate0", "TramCarriageABogieCrossbar0", "TramCarriageAWheelRimFront0", "TramCarriageAWheelHubFront0", "TramCarriageARoofRib0", "TramCarriageACornerPostFront0", "TramCarriageAPantograph", "TramCarriageASidePanelFront0", "TramYardDeck", "TramMaintenancePit", "TramPitRung0", "TramSignalMast", "TramSignalHousing", "TramSignalLamp", "TramCableClamp0", "TramOrganicSeep0", "TramOrganicSeepTendril0_0", "TramYardCrate0", "TramYardCrateBand0", "TramCableReel0", "TramCableReelRim0", "TramYardDebris0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

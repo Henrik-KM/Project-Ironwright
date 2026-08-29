@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Tram Graveyard yard-depth pass — 2026-08-29
+
+The Tram Graveyard release shell now carries a bounded maintenance crate, cable
+reel and tipped service panel around the authored rail-yard apron. The added
+remnants establish a lived-in derelict service yard around the carriages while
+preserving the clean rail and maintenance-pit hierarchy. This is
+presentation-only: collision, navigation, ecology and gameplay scale are
+unchanged. The exact graphical review uses Godot Dummy audio with
+`--quiet-audio`; no physical speakers are used.
+
 ## Focused Glasshouse cultivation-depth pass — 2026-08-29
 
 The Municipal Glasshouse release shell now carries bounded trellis supports,
