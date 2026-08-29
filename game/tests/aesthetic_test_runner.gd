@@ -499,6 +499,8 @@ func _run_all() -> void:
                 var cathedral_release_rose_rim := cathedral_release_detail.find_child("CathedralReleaseRoseRim", true, false) as MeshInstance3D if cathedral_release_detail != null else null
                 _expect(cathedral_release_detail != null and cathedral_release_detail.find_child("CathedralReleaseRoseFrame", true, false) != null and cathedral_release_detail.find_child("CathedralReleaseRoseGlass", true, false) != null and cathedral_release_rose_rim != null, "Cathedral Quarter release dressing must expose a readable rose-window focal cue.")
                 _expect(cathedral_release_rose_rim != null and _mesh_vertex_count(cathedral_release_rose_rim) >= 384, "Cathedral release rose-window rim must retain dense curved high-definition geometry.")
+                var cathedral_bell_yard := release_art.dressing_root.find_child("CathedralBellYardWitness", true, false) if release_art != null and release_art.dressing_root != null else null
+                _expect(cathedral_bell_yard != null and cathedral_bell_yard.find_child("CathedralBellYardBell", true, false) != null and cathedral_bell_yard.find_child("CathedralBellYardSuppressionPlate", true, false) != null, "Cathedral Quarter release dressing must retain a readable bell-yard witness for its authored suppression history.")
                 if cathedral_choir_signal != null and cathedral_bell != null and cathedral_choir_ring != null and cathedral_vein_knuckle != null:
                     var choir_signal_before := cathedral_choir_signal.scale
                     var choir_ring_before := cathedral_choir_ring.scale

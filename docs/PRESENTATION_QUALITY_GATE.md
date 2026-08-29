@@ -1,5 +1,13 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Cathedral Quarter bell-yard witness — 2026-08-29
+
+The Cathedral Quarter release frame now includes a small physical bell-yard
+beside the civic facade. Its suspended bell, clapper, silence collar and
+suppression plate make the authored brood-suppression history legible as a
+place in the world, while the shallow assembly remains presentation-only and
+does not add collision, routing, interaction or recurring player work.
+
 ## Focused review-audio safety cap — 2026-08-29
 
 All development review modes now automatically engage the existing very-low

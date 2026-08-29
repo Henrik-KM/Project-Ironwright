@@ -1384,6 +1384,152 @@ func _dress_nest(root: Node3D) -> void:
             "CathedralReleaseButtress%s" % ("L" if side < 0.0 else "R"),
             0.12
         )
+
+    # The authored operation is the suppression of the Cathedral brood's
+    # resonant reproductive organ. Give that history a physical witness in
+    # the release frame: a small bell-yard rig sits beside the civic facade,
+    # so the player can read what was silenced instead of seeing only a
+    # generic nest shell. This is presentation dressing only; it adds no
+    # collision, interaction, route, ecology or player-managed work.
+    var bell_yard := Node3D.new()
+    bell_yard.name = "CathedralBellYardWitness"
+    root.add_child(bell_yard)
+    var bell_iron := _textured_material(&"metal", Color("403b3d"), 0.72, 0.4)
+    var bell_edge := _textured_material(&"rust", Color("8a5b45"), 0.38, 0.62)
+    var bell_dark := _textured_material(&"metal", Color("1b2529"), 0.82, 0.34)
+    var bell_signal := ModelKit3D.material(Color("4f2947"), 0.2, 0.3, Color("d763a4"), 0.7)
+    var bell_membrane := _textured_material(&"membrane", Color("342331"), 0.0, 0.84)
+    var yard_center := Vector3(-6.35, 0.0, 9.0)
+
+    ModelKit3D.add_beveled_box(
+        bell_yard,
+        Vector3(3.7, 0.18, 2.15),
+        yard_center + Vector3(0.0, 0.12, 0.0),
+        bell_dark,
+        Vector3.ZERO,
+        "CathedralBellYardPlinth",
+        0.2
+    )
+    for side in [-1.0, 1.0]:
+        var post_x: float = yard_center.x + side * 1.42
+        ModelKit3D.add_beveled_box(
+            bell_yard,
+            Vector3(0.38, 3.45, 0.42),
+            Vector3(post_x, 1.88, yard_center.z),
+            bell_iron,
+            Vector3(0.0, 0.0, side * 0.04),
+            "CathedralBellYardPost%s" % ("L" if side < 0.0 else "R"),
+            0.16
+        )
+        ModelKit3D.add_beveled_box(
+            bell_yard,
+            Vector3(0.58, 0.18, 0.62),
+            Vector3(post_x, 3.64, yard_center.z),
+            bell_edge,
+            Vector3.ZERO,
+            "CathedralBellYardPostCap%s" % ("L" if side < 0.0 else "R"),
+            0.16
+        )
+    ModelKit3D.add_beveled_box(
+        bell_yard,
+        Vector3(3.05, 0.26, 0.36),
+        Vector3(yard_center.x, 3.55, yard_center.z),
+        bell_edge,
+        Vector3.ZERO,
+        "CathedralBellYardLintel",
+        0.14
+    )
+    ModelKit3D.add_beveled_box(
+        bell_yard,
+        Vector3(2.9, 0.12, 0.18),
+        Vector3(yard_center.x, 3.82, yard_center.z),
+        bell_dark,
+        Vector3.ZERO,
+        "CathedralBellYardSuppressionRail",
+        0.12
+    )
+    var bell_position := yard_center + Vector3(0.0, 2.65, 0.0)
+    ModelKit3D.add_tapered_cylinder(
+        bell_yard,
+        0.43,
+        0.62,
+        0.58,
+        bell_position,
+        bell_edge,
+        Vector3.ZERO,
+        "CathedralBellYardBell"
+    )
+    ModelKit3D.add_torus(
+        bell_yard,
+        0.51,
+        0.065,
+        bell_position + Vector3(0.0, -0.24, 0.0),
+        bell_dark,
+        Vector3.ZERO,
+        "CathedralBellYardBellLip",
+        40,
+        8
+    )
+    ModelKit3D.add_cylinder(
+        bell_yard,
+        0.065,
+        0.46,
+        bell_position + Vector3(0.0, -0.46, 0.0),
+        bell_dark,
+        Vector3.ZERO,
+        "CathedralBellYardClapper"
+    )
+    ModelKit3D.add_torus(
+        bell_yard,
+        0.67,
+        0.052,
+        bell_position + Vector3(0.0, 0.03, 0.0),
+        bell_signal,
+        Vector3.ZERO,
+        "CathedralBellYardSilenceCollar",
+        40,
+        8
+    )
+    for index in range(4):
+        var angle := TAU * float(index) / 4.0
+        ModelKit3D.add_beveled_box(
+            bell_yard,
+            Vector3(0.08, 0.62, 0.08),
+            bell_position + Vector3(cos(angle) * 0.63, -0.28, sin(angle) * 0.63),
+            bell_signal,
+            Vector3(0.0, angle, 0.0),
+            "CathedralBellYardQuietingStrap%d" % index,
+            0.2
+        )
+    ModelKit3D.add_surface_panel(
+        bell_yard,
+        Vector3(1.08, 0.56, 0.1),
+        yard_center + Vector3(0.0, 1.24, -0.25),
+        bell_dark,
+        bell_signal,
+        Vector3.ZERO,
+        "CathedralBellYardSuppressionPlate"
+    )
+    ModelKit3D.add_organic_plate(
+        bell_yard,
+        0.56,
+        yard_center + Vector3(0.0, 0.62, 0.66),
+        bell_membrane,
+        bell_edge,
+        Vector3(1.45, 0.5, 0.82),
+        "CathedralBellYardRootWitness",
+        true
+    )
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(
+            bell_yard,
+            Vector3(0.1, 1.1, 0.1),
+            yard_center + Vector3(side * 1.06, 2.78, 0.0),
+            bell_signal,
+            Vector3(0.0, 0.0, side * 0.22),
+            "CathedralBellYardSignalBrace%s" % ("L" if side < 0.0 else "R"),
+            0.18
+        )
     for index in range(12):
         var angle := TAU * float(index) / 12.0
         var radius := 7.0 + float(index % 4) * 2.5
