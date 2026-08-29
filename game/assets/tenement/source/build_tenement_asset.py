@@ -72,6 +72,12 @@ def main() -> None:
         "TankValve": mesh("TenementTankValve", add_cylinder(builder, 0.12, 0.18, rust, 16)),
         "CreepTendril": mesh("TenementCreepTendril", add_cylinder(builder, 0.045, 0.78, organic, 14)),
         "LightHousing": mesh("TenementLightHousing", add_cylinder(builder, 0.10, 0.14, iron, 16)),
+        # A small left-roof maintenance cluster breaks the otherwise flat
+        # apartment silhouette and balances the existing right-hand tank.
+        "RoofServiceHousing": mesh("TenementRoofServiceHousing", add_beveled_box(builder, (1.8, 0.48, 1.2), concrete, 0.06)),
+        "RoofVent": mesh("TenementRoofVent", add_cylinder(builder, 0.40, 0.58, iron, 24)),
+        "RoofVentCap": mesh("TenementRoofVentCap", add_cylinder(builder, 0.49, 0.10, rust, 24)),
+        "RoofPipe": mesh("TenementRoofPipe", add_cylinder(builder, 0.085, 1.35, rust, 16)),
     }
 
     nodes: list[dict] = [{
@@ -175,6 +181,10 @@ def main() -> None:
     add_node("TenementRoofWaterTank", mesh_ids["Tank"], (5.8, 10.4, 2.6), extras={"socket_type": "roof_water_tank"})
     add_node("TenementRoofWaterTankCap", mesh_ids["TankCap"], (5.8, 11.55, 2.6), parent=0)
     add_node("TenementTankValve", mesh_ids["TankValve"], (5.8, 10.4, 1.35), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "tank_service_valve"})
+    add_node("TenementLeftRoofServiceHousing", mesh_ids["RoofServiceHousing"], (-5.25, 9.30, 0.55), extras={"socket_type": "roof_maintenance_housing"})
+    add_node("TenementLeftRoofVent", mesh_ids["RoofVent"], (-5.25, 9.82, 0.55), extras={"surface": "roof_vent_stack"})
+    add_node("TenementLeftRoofVentCap", mesh_ids["RoofVentCap"], (-5.25, 10.15, 0.55), parent=0)
+    add_node("TenementLeftRoofPipe", mesh_ids["RoofPipe"], (-4.20, 9.66, 0.72), rotation=(0.0, 0.0, math.pi * 0.5), extras={"surface": "roof_service_pipe"})
     hanging_cloth_meshes = [mesh_ids["Cloth"], mesh_ids["ClothTeal"], mesh_ids["ClothCream"]]
     for index, (x, y, z) in enumerate(((-4.2, 2.35, 3.9), (0.8, 4.55, 6.0), (5.1, 1.4, -2.9))):
         add_node(
@@ -210,7 +220,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "tenement.east_blocks.v1",
-            "required_nodes": ["TenementModel", "TenementBlockL", "TenementFrontWindowL0_0", "TenementFrontWindowRevealL0_0", "TenementFrontWindowJambL0_0", "TenementFrontWindowMullionL0_0", "TenementFrontWindowLintelL0_0", "TenementFrontWindowSillL0_0", "TenementBlockLEdgeL", "TenementFacadeBandL0", "TenementFacadePillarL", "TenementBalcony0", "TenementBalconyBrace0_L", "TenementFireEscapeLadder", "TenementRoofWaterTank", "TenementTankValve", "TenementLaundryLine0", "TenementLightHousingL", "TenementOrganicCreep0", "TenementOrganicTendril0_0", "ProductionAssetMarker"],
+            "required_nodes": ["TenementModel", "TenementBlockL", "TenementFrontWindowL0_0", "TenementFrontWindowRevealL0_0", "TenementFrontWindowJambL0_0", "TenementFrontWindowMullionL0_0", "TenementFrontWindowLintelL0_0", "TenementFrontWindowSillL0_0", "TenementBlockLEdgeL", "TenementFacadeBandL0", "TenementFacadePillarL", "TenementBalcony0", "TenementBalconyBrace0_L", "TenementFireEscapeLadder", "TenementRoofWaterTank", "TenementTankValve", "TenementLeftRoofServiceHousing", "TenementLeftRoofVent", "TenementLeftRoofVentCap", "TenementLeftRoofPipe", "TenementLaundryLine0", "TenementLightHousingL", "TenementOrganicCreep0", "TenementOrganicTendril0_0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused East Tenements roofline model pass
+
+- added a compact left-roof maintenance housing, vent cap and service pipe to
+  balance the existing rooftop tank and break the flat apartment silhouette;
+- preserved the authored residential window, balcony, fire-escape and route
+  contract, with all new geometry presentation-only and outside collision;
+- extended the asset manifest and aesthetic gate so the high-definition
+  skyline layer remains reproducible.
+
 ## Focused release interaction localization pass
 
 - localized the canonical base interaction prompts for exposed channels, the

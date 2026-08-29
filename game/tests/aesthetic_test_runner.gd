@@ -858,6 +858,10 @@ func _run_all() -> void:
                 _expect(tenement_facade_material != null and tenement_facade_material.albedo_color.r < 0.3 and not tenement_facade_material.emission_enabled, "East Tenements encounter dressing must keep its broad facade shell dark enough to support attached residential detail.")
                 _expect(landmark.find_child("TenementFireEscapeLadder", true, false) != null, "East Tenements must expose a readable fire-escape route signature.")
                 _expect(landmark.find_child("TenementRoofWaterTank", true, false) != null, "East Tenements must expose a rooftop service identity.")
+                var tenement_roof_housing := landmark.find_child("TenementLeftRoofServiceHousing", true, false) as MeshInstance3D
+                var tenement_roof_vent := landmark.find_child("TenementLeftRoofVent", true, false) as MeshInstance3D
+                _expect(tenement_roof_housing != null and tenement_roof_vent != null and _mesh_vertex_count(tenement_roof_housing) >= 48 and _mesh_vertex_count(tenement_roof_vent) >= 48, "East Tenements must retain a layered left-roof maintenance housing and vent silhouette.")
+                _expect(landmark.find_child("TenementLeftRoofVentCap", true, false) != null and landmark.find_child("TenementLeftRoofPipe", true, false) != null, "East Tenements left-roof service hardware must retain a cap and connected pipe detail.")
                 _expect(landmark.find_child("TenementFrontWindowL0_0", true, false) != null and landmark.find_child("TenementBlockLEdgeL", true, false) != null, "East Tenements must expose approach-facing windows and facade edge breaks.")
                 var tenement_facade_band := landmark.find_child("TenementFacadeBandL0", true, false) as MeshInstance3D
                 var tenement_facade_pillar := landmark.find_child("TenementFacadePillarL", true, false) as MeshInstance3D
