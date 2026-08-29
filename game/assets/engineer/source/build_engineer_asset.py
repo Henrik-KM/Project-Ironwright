@@ -70,6 +70,12 @@ def main() -> None:
         "CableSpool": mesh("CableSpool", add_cylinder(builder, 0.13, 0.12, oxide, 24)),
         "WeldingShield": mesh("WeldingShield", add_beveled_box(builder, (0.3, 0.12, 0.16), steel, 0.025)),
         "ClampJaw": mesh("ClampJaw", add_beveled_box(builder, (0.18, 0.16, 0.28), steel, 0.025)),
+        # The front service bay is a second readable layer at roster and
+        # approach distance: raised ribs, a split access hatch and captive
+        # fasteners break up the broad chassis without changing its envelope.
+        "ServiceRib": mesh("ServiceRib", add_beveled_box(builder, (0.11, 0.34, 0.14), steel, 0.024)),
+        "ServiceHatch": mesh("ServiceHatch", add_beveled_box(builder, (0.30, 0.12, 0.055), chassis, 0.018)),
+        "ServiceLatch": mesh("ServiceLatch", add_cylinder(builder, 0.045, 0.055, amber, 16)),
     }
 
     nodes: list[dict] = [{
@@ -133,6 +139,9 @@ def main() -> None:
         add_node("EngineerClampJaw%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["ClampJaw"], (side * 0.92, 0.74, -0.12), rotation=(0.0, 0.0, -side * 0.2))
         add_node("WelderGlow", mesh_ids["Glow"], (side * 1.15, 0.74, -0.28))
         add_node("EngineerCable", mesh_ids["Cable"], (side * 0.58, 1.02, 0.02), rotation=(0.0, 0.0, side * 0.18))
+        add_node("EngineerServiceRib%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["ServiceRib"], (side * 0.52, 0.98, -0.72), rotation=(0.0, 0.0, side * 0.10), extras={"surface": "raised_service_bay_rib"})
+        add_node("EngineerServiceHatch%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["ServiceHatch"], (side * 0.25, 0.91, -0.795), extras={"surface": "split_service_hatch"})
+        add_node("EngineerServiceLatch%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["ServiceLatch"], (side * 0.25, 0.92, -0.84), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "service_latch"})
     add_node("ForgeCoil", mesh_ids["ForgeCoil"], (0.0, 1.48, 0.22), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "forge_coil"})
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "engineer.constructor.v1", "source": "original_shared_mesh_builder"})
 
@@ -214,7 +223,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "engineer.constructor.v1",
-            "required_nodes": ["EngineerModel", "Sensor", "OpticLens", "MaterialCradle", "PistonJoint", "WelderArm", "ToolHead", "ForgeCoil", "EngineerCradleLatch", "EngineerForgeGuard", "EngineerToolCollarLeft", "EngineerCableSpoolRight", "EngineerWeldingShieldLeft", "EngineerClampJawRight", "ProductionAssetMarker"],
+            "required_nodes": ["EngineerModel", "Sensor", "OpticLens", "MaterialCradle", "PistonJoint", "WelderArm", "ToolHead", "ForgeCoil", "EngineerCradleLatch", "EngineerForgeGuard", "EngineerToolCollarLeft", "EngineerCableSpoolRight", "EngineerWeldingShieldLeft", "EngineerClampJawRight", "EngineerServiceRibLeft", "EngineerServiceHatchRight", "EngineerServiceLatchLeft", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Work", "Hit", "Retreat", "Death"],
         },
     }

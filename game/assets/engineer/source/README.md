@@ -9,11 +9,18 @@ The chassis, internal core and front plate use smooth authored ellipsoidal
 envelopes while the cradle and construction hardware keep their role-specific
 edges and sockets.
 
+The front service bay now carries raised ribs, a split access hatch and captive
+fasteners. This second manufactured layer keeps the Engineer's construction
+identity readable through its body at roster and approach distance without
+changing its collision envelope or gameplay sockets.
+
 Stable nodes include `Chassis`, `ChassisCore`, `ChassisCornerCap`, `Sensor`,
 `OpticLens`, `MaterialCradle`, `PistonJoint`, `WelderArm`, `ToolHead`,
 `ForgeCoil`, `EngineerCradleLatch`, `EngineerForgeGuard`,
 `EngineerToolCollarLeft`, `EngineerCableSpoolRight`,
-`EngineerWeldingShieldLeft`, `EngineerClampJawRight`, and
+`EngineerWeldingShieldLeft`, `EngineerClampJawRight`,
+`EngineerServiceRibLeft`, `EngineerServiceHatchRight`,
+`EngineerServiceLatchLeft`, and
 `ProductionAssetMarker`. The asset exposes `Idle`, `Walk`, and `Work` clips for
 tooling while deterministic runtime motion remains owned by the procedural
 animator.

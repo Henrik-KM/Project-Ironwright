@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Engineer service-bay model pass
+
+- The authored Engineer construction-machine asset now carries a second front
+  service layer: paired raised ribs, a split access hatch, and captive amber
+  fasteners. This improves the specialist's body-level construction read in
+  the roster and at approach distance while preserving the stable socket
+  contract, collision envelope, and procedural animation ownership.
+- `aesthetic_test_runner.gd` now guards the new manufactured surfaces and
+  latches. The source builder and asset README document the deliberate
+  detail layer.
+
 ## Focused title threshold camera readability pass
 
 - raised and eased the title-screen authored-world camera so the foreground
