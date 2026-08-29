@@ -43,7 +43,7 @@
   "commercial_scope": {
     "single_player": true,
     "persistent_sandbox": true,
-    "complete_victory_paths": 2,
+    "complete_victory_paths": 3,
     "ordinary_resources": ["scrap"],
     "organic_enemy_families_target": 12,
     "enemy_intelligence_tiers": 5,

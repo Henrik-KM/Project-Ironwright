@@ -174,6 +174,12 @@ def validate_release_manifest() -> None:
         raise legacy.ValidationError("Transactional release save schema must be version 4")
     if set(manifest.get("supported_locales", [])) != {"en", "sv", "de"}:
         raise legacy.ValidationError("Release locales must include en, sv and de")
+    protocols = _load_json("game/data/endgame_protocols.json").get("protocols", [])
+    commercial_scope = manifest.get("commercial_scope", {})
+    if commercial_scope.get("complete_victory_paths") != len(protocols):
+        raise legacy.ValidationError(
+            "Release manifest victory-path count must match the endgame protocol data"
+        )
     services = set(manifest.get("production_services", []))
     required_services = {
         "transactional_save_service",
