@@ -111,6 +111,8 @@ func _polish_player(player: Mechromancer3D) -> void:
     ModelKit3D.add_beveled_box(detail, Vector3(0.13, 0.15, 0.65), Vector3(0.48, 1.06, -0.42), dark_steel, Vector3(0.0, 0.0, 0.01), "PistolSlide", 0.2)
     ModelKit3D.add_cylinder(detail, 0.045, 0.62, Vector3(0.48, 1.08, -0.72), steel, Vector3(1.5708, 0.0, 0.0), "PistolBarrel")
     ModelKit3D.add_beveled_box(detail, Vector3(0.14, 0.38, 0.16), Vector3(0.48, 0.83, -0.27), leather, Vector3(0.1, 0.0, 0.0), "PistolGrip", 0.24)
+    ModelKit3D.add_cylinder(detail, 0.07, 0.1, Vector3(0.48, 1.08, -1.03), dark_steel, Vector3(1.5708, 0.0, 0.0), "PistolMuzzleCollar")
+    ModelKit3D.add_beveled_box(detail, Vector3(0.055, 0.07, 0.1), Vector3(0.48, 1.16, -0.54), steel, Vector3.ZERO, "PistolFrontSight", 0.018)
 
     # Final field-kit pass: asymmetric protection and communications hardware
     # reinforce the Mechromancer as a vulnerable technician who survives by

@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused weak-pistol finishing pass
+
+- the opening Mechromancer presentation now gives the weak sidearm a compact
+  muzzle collar and front sight alongside its existing slide, barrel and grip;
+- the additions remain presentation-only and preserve the existing weapon
+  socket, firing behavior, animation channels and collision contract;
+- aesthetic coverage now guards the complete close-camera pistol assembly.
+
 ## Focused Signal Relay reflector pass
 
 - the authored Signal Relay directional dish now uses a dense shallow

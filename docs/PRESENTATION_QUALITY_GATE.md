@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused weak-pistol finishing pass — 2026-08-29
+
+The opening Mechromancer presentation now gives the weak sidearm a compact
+muzzle collar and front sight alongside its existing slide, barrel and grip.
+The additions are presentation-only and preserve the existing weapon socket,
+firing behavior, animation channels and collision contract. Aesthetic coverage
+guards the complete close-camera pistol assembly. Review and validation use
+Godot Dummy audio with `--quiet-audio`; no physical speakers are used.
+
 ## Focused Signal Relay reflector pass — 2026-08-29
 
 The authored Signal Relay directional dish now uses a dense shallow parabolic
