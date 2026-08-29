@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Miremaw lower-jaw shell pass — 2026-08-29
+
+The Miremaw release shell now carries a dense folded lower jaw beneath its
+existing head, jaw hooks and gill hardware. The added assembly gives the
+closest-facing amphibious family a readable mouth volume and moves with the
+existing attack and feeding channels. This is presentation-only: sockets,
+collision, species behaviour, animation ownership and gameplay scale are
+unchanged. The exact graphical review was run with Godot Dummy audio and
+`--quiet-audio`; no physical speakers were used.
+
 ## Focused critical Heartforge audio pass — 2026-08-29
 
 The survival audio layer now emits a restrained low integrity-warning cue while

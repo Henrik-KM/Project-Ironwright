@@ -132,7 +132,7 @@ AUTHORED_ORGANIC_ASSETS = {
     "miremaw": {
         "asset_id": "miremaw.amphibious.v1",
         "root": "MiremawModel",
-        "required": ["MiremawModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "MiremawHead", "MiremawGillFan", "MiremawGillRidgeL", "MiremawGillRidgeR", "MiremawJawPlateL", "MiremawGillSpineR", "ProductionAssetMarker"],
+        "required": ["MiremawModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "MiremawHead", "MiremawJawLower", "MiremawGillFan", "MiremawGillRidgeL", "MiremawGillRidgeR", "MiremawJawPlateL", "MiremawGillSpineR", "ProductionAssetMarker"],
     },
     "carrionbell": {
         "asset_id": "carrionbell.signal.v1",

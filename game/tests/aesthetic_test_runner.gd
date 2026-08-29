@@ -1613,7 +1613,7 @@ func _run_all() -> void:
                 _expect(glassmoth_wing_l != null and glassmoth_wing_r != null and absf(glassmoth_wing_l.basis.y.z) >= 0.12 and absf(glassmoth_wing_r.basis.y.z) >= 0.12 and glassmoth_wing_l.basis.y.z * glassmoth_wing_r.basis.y.z < 0.0, "The Glassmoth wing pair must carry opposing pitch so its luminous membranes read as a living V-shaped silhouette rather than coplanar discs.")
             &"miremaw":
                 _expect(_find_named(enemy_samples[index], "MiremawGillRidgeL") != null and _find_named(enemy_samples[index], "MiremawGillRidgeR") != null, "The Miremaw must expose layered gill-ridge surface detail.")
-                _expect(_find_named(enemy_samples[index], "MiremawJawPlateL") != null and _find_named(enemy_samples[index], "MiremawGillSpineR") != null, "The Miremaw must expose jaw plating and gill spines for readable amphibious anatomy.")
+                _expect(_find_named(enemy_samples[index], "MiremawJawPlateL") != null and _find_named(enemy_samples[index], "MiremawJawLower") != null and _find_named(enemy_samples[index], "MiremawGillSpineR") != null, "The Miremaw must expose a layered articulated jaw and gill spines for readable amphibious anatomy.")
                 _expect(_find_named(enemy_samples[index], "MiremawGillCollarL") != null and _find_named(enemy_samples[index], "MiremawGillCollarR") != null, "The Miremaw must expose paired folded gill collars so its breathing anatomy reads in layered profile.")
                 _expect(_find_named(enemy_samples[index], "MiremawJawHingeL") != null and _find_named(enemy_samples[index], "MiremawJawHingeR") != null, "The Miremaw must expose paired jaw hinges so the amphibious maw reads as articulated anatomy.")
                 var miremaw_fin_l := _find_named(enemy_samples[index], "MiremawWaterFinL") as Node3D
@@ -1893,6 +1893,8 @@ func _run_all() -> void:
     var miremaw_collar_r := _find_named(miremaw_asset, "MiremawGillCollarR") as MeshInstance3D
     _expect(miremaw_collar_l != null and miremaw_collar_r != null and _mesh_vertex_count(miremaw_collar_l) >= 700 and _mesh_vertex_count(miremaw_collar_r) >= 700, "Miremaw's paired folded gill collars must retain dense scalloped close-camera geometry.")
     _expect(miremaw_collar_l != null and miremaw_collar_r != null and miremaw_collar_l.mesh.get_aabb().size.y >= 0.20 and miremaw_collar_r.mesh.get_aabb().size.y >= 0.20, "Miremaw's folded gill collars must retain closed membrane depth rather than collapsing into thin plates.")
+    var miremaw_jaw_lower := _find_named(miremaw_asset, "MiremawJawLower") as MeshInstance3D
+    _expect(miremaw_jaw_lower != null and _mesh_vertex_count(miremaw_jaw_lower) >= 900 and miremaw_jaw_lower.mesh.get_aabb().size.y >= 0.20, "Miremaw's lower jaw must retain a dense folded shell with readable depth.")
     _expect(_mesh_vertex_count(_find_named(miremaw_asset, "MiremawJawHingeL") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(miremaw_asset, "MiremawJawHingeR") as MeshInstance3D) >= 48, "Miremaw's paired jaw hinges must retain rounded close-camera hardware geometry.")
     var carrionbell_crown := _find_named(carrionbell_asset, "CarrionbellCrownPlate") as Node3D
     var thornback_crown := _find_named(thornback_asset, "ThornbackCrownPlate") as Node3D

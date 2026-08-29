@@ -639,6 +639,23 @@ def build_family(name: str, spec: dict) -> None:
                 fold_strength=0.86,
             ),
         )
+        # The amphibious maw is the closest-facing identity cue in the compact
+        # release gallery. Give its lower jaw a closed folded shell so the head
+        # reads as articulated living anatomy instead of two thin side plates.
+        mesh_ids["MiremawJawLobe"] = mesh(
+            "MiremawJawLobe",
+            add_organic_lobe(
+                builder,
+                (0.62, 0.24, 0.42),
+                bone,
+                lobes=5,
+                rings=11,
+                sides=48,
+                scallop_amplitude=0.13,
+                leading_extension=0.24,
+                fold_strength=0.84,
+            ),
+        )
     # Ashmantle's heat louvers and mantle ribs are its vented thermal identity.
     # Give those existing sockets a thicker folded living surface so the
     # family does not fall back to broad horizontal bars at gallery distance.
@@ -834,6 +851,7 @@ def build_family(name: str, spec: dict) -> None:
         attack_node = "GlassmothWingR1"
     elif name == "miremaw":
         add_node("MiremawHead", mesh_ids["Soft"], (0.0, 0.78, -1.18), scale=(1.3, 0.8, 1.2), extras={"socket_type": "maw"})
+        add_node("MiremawJawLower", mesh_ids["MiremawJawLobe"], (0.0, 0.56, -1.50), rotation=(0.18, 0.0, 0.0), scale=(1.12, 0.86, 0.74), extras={"surface": "lower_jaw_shell"})
         add_node("MiremawHeadRidge0", mesh_ids["Ridge"], (-0.42, 1.15, -1.5), rotation=(0.0, -0.2, -0.12), scale=(0.62, 1.0, 0.72), extras={"surface": "head_ridge"})
         add_node("MiremawHeadRidge1", mesh_ids["Ridge"], (0.42, 1.15, -1.5), rotation=(0.0, 0.2, 0.12), scale=(0.62, 1.0, 0.72), extras={"surface": "head_ridge"})
         add_node("MiremawGillFan", mesh_ids["DeepMembrane"], (0.0, 1.25, 0.35), rotation=(0.0, 0.0, 1.5708), scale=(0.72, 1.0, 0.78), extras={"socket_type": "gill_fan"})
@@ -842,7 +860,7 @@ def build_family(name: str, spec: dict) -> None:
         for side in (-1.0, 1.0):
             suffix = "L" if side < 0 else "R"
             add_node(f"MiremawJawHook{suffix}", mesh_ids["LongBone"], (side * 0.42, 0.55, -1.62), rotation=(side * 0.72, 0.0, side * 0.18), extras={"socket_type": "jaw_hook"})
-            add_node(f"MiremawJawPlate{suffix}", mesh_ids["PlateCap"], (side * 0.44, 0.68, -1.42), rotation=(side * 0.36, 0.0, side * 0.12), scale=(0.82, 1.0, 0.76), extras={"surface": "jaw_plate"})
+            add_node(f"MiremawJawPlate{suffix}", mesh_ids["MiremawJawLobe"], (side * 0.44, 0.68, -1.42), rotation=(side * 0.36, 0.0, side * 0.12), scale=(0.82, 1.0, 0.76), extras={"surface": "jaw_plate"})
             add_node(f"MiremawJawHinge{suffix}", mesh_ids["CrownFastener"], (side * 0.53, 0.76, -1.52), scale=(1.35, 1.15, 1.10), extras={"surface": "jaw_hinge"})
             fin_pitch = 0.20
             add_node(f"MiremawWaterFin{suffix}", mesh_ids["DeepMembrane"], (side * 1.08, 0.68, 0.18), rotation=(side * fin_pitch, side * 0.28, side * 0.08), scale=(0.62, 0.84, 1.1), extras={"socket_type": "water_fin"})
@@ -1091,6 +1109,7 @@ def build_family(name: str, spec: dict) -> None:
             ("MiremawJawHookR", "rotation", [0.0, 0.24, 0.48], quat((0.72, 0.0, 0.18)) + quat((0.98, 0.0, 0.28)) + quat((0.72, 0.0, 0.18))),
             ("MiremawJawPlateL", "rotation", [0.0, 0.24, 0.48], quat((-0.36, 0.0, -0.12)) + quat((-0.58, 0.0, -0.18)) + quat((-0.36, 0.0, -0.12))),
             ("MiremawJawPlateR", "rotation", [0.0, 0.24, 0.48], quat((0.36, 0.0, 0.12)) + quat((0.58, 0.0, 0.18)) + quat((0.36, 0.0, 0.12))),
+            ("MiremawJawLower", "rotation", [0.0, 0.24, 0.48], quat((0.18, 0.0, 0.0)) + quat((0.42, 0.0, 0.0)) + quat((0.18, 0.0, 0.0))),
         ])
         feed_channels.extend([
             ("MiremawGillCollarL", "rotation", [0.0, 0.3, 0.6], quat((0.18, -0.28, -0.18)) + quat((0.02, -0.14, -0.10)) + quat((0.18, -0.28, -0.18))),
@@ -1098,6 +1117,7 @@ def build_family(name: str, spec: dict) -> None:
             ("MiremawJawHookL", "rotation", [0.0, 0.3, 0.6], quat((-0.72, 0.0, -0.18)) + quat((-0.88, 0.0, -0.24)) + quat((-0.72, 0.0, -0.18))),
             ("MiremawJawHookR", "rotation", [0.0, 0.3, 0.6], quat((0.72, 0.0, 0.18)) + quat((0.88, 0.0, 0.24)) + quat((0.72, 0.0, 0.18))),
             ("MiremawGillFan", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.0, 1.57)) + quat((0.0, 0.0, 1.32)) + quat((0.0, 0.0, 1.57))),
+            ("MiremawJawLower", "rotation", [0.0, 0.3, 0.6], quat((0.18, 0.0, 0.0)) + quat((0.34, 0.0, 0.0)) + quat((0.18, 0.0, 0.0))),
         ])
         retreat_channels.extend([
             ("MiremawGillCollarL", "rotation", [0.0, 0.22, 0.44], quat((0.18, -0.28, -0.18)) + quat((-0.10, -0.38, -0.26)) + quat((0.18, -0.28, -0.18))),

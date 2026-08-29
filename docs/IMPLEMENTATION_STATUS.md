@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Miremaw lower-jaw shell pass
+
+- added a dense folded lower-jaw shell and paired its attack/feed motion to the
+  existing authored animation channels, so the amphibious head reads as an
+  articulated living maw rather than two thin side plates;
+- preserved the existing Miremaw sockets, collision, species behaviour,
+  animation ownership and gameplay scale, with new manifest and aesthetic
+  guards for the authored geometry.
+
 ## Focused critical Heartforge audio pass
 
 - added a low, rate-limited integrity-warning cue when the Heartforge remains
