@@ -26,6 +26,7 @@ var scout_serial: int = 0
 var pack_id: StringName = &""
 var spatial_index: Node
 var world: Node
+var player_reference: Node3D
 var remote_update_interval: float = 0.45
 var active_distance: float = 115.0
 var simulation_lod: int = 0
@@ -85,6 +86,7 @@ func _initialize() -> void:
     initialized = true
     world = get_tree().current_scene
     spatial_index = get_tree().get_first_node_in_group(&"spatial_index_service")
+    player_reference = get_tree().get_first_node_in_group(&"player_character") as Node3D
     home_nest = null
     if director != null:
         var raw_home_nest: Variant = director.nests.get(home_nest_id, null)
@@ -142,10 +144,6 @@ func _choose_next_behaviour(force: bool) -> void:
     if enemy == null:
         return
     current_target = _validate_target(current_target)
-    if current_target != null:
-        var retention_radius: float = [16.0, 30.0, 58.0, 88.0, 145.0][enemy_tier - 1]
-        if enemy.global_position.distance_to(current_target.global_position) > retention_radius:
-            current_target = null
     if current_target != null:
         var retention_radius: float = [16.0, 30.0, 58.0, 88.0, 145.0][enemy_tier - 1]
         if enemy.global_position.distance_to(current_target.global_position) > retention_radius:
@@ -282,10 +280,6 @@ func _decide_tier_five(force: bool) -> void:
 
 func _execute_behaviour(delta: float, remote: bool) -> void:
     current_target = _validate_target(current_target)
-    if current_target != null:
-        var retention_radius: float = [16.0, 30.0, 58.0, 88.0, 145.0][enemy_tier - 1]
-        if enemy.global_position.distance_to(current_target.global_position) > retention_radius:
-            current_target = null
     if current_target != null:
         var retention_radius: float = [16.0, 30.0, 58.0, 88.0, 145.0][enemy_tier - 1]
         if enemy.global_position.distance_to(current_target.global_position) > retention_radius:
@@ -675,8 +669,9 @@ func _find_node_with_method(root: Node, method_name: StringName) -> Node:
 
 
 func _simulation_focus_position() -> Vector3:
-    var player := get_tree().get_first_node_in_group(&"player_character") as Node3D
-    return player.global_position if player != null else Vector3.ZERO
+    if player_reference == null or not is_instance_valid(player_reference):
+        player_reference = get_tree().get_first_node_in_group(&"player_character") as Node3D
+    return player_reference.global_position if player_reference != null else Vector3.ZERO
 
 
 func _random_point(center: Vector3, radius: float, serial: int) -> Vector3:

@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused tier-brain hot-path pass — 2026-08-29
+
+Active tier-brained organisms now cache the stable player reference used for
+focus-distance checks, and the movement authority no longer repeats its target
+retention test. Behaviour selection, target ranges, movement, population
+budgets, diagnostic reasons and save state are unchanged. This is a bounded
+simulation-cost pass; benchmark and review runs use Godot Dummy audio with
+`--quiet-audio`, with no physical speakers used. Target-hardware profiling
+remains open.
+
 ## Focused title-world readability pass — 2026-08-29
 
 The title screen now gives the authored Heartforge backdrop more visual

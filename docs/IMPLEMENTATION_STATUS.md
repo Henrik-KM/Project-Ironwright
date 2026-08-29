@@ -1,5 +1,12 @@
 # Implementation status
 
+## Focused tier-brain hot-path pass
+
+- cached the stable player reference used by active tier-brain focus checks;
+- removed a duplicate target-retention calculation while preserving all
+  behaviour selection and movement contracts; benchmark and verification stay
+  silent through Godot Dummy audio with `--quiet-audio`.
+
 ## Focused title-world readability pass
 
 - reduced title-screen overlay and atmosphere strength so the authored
