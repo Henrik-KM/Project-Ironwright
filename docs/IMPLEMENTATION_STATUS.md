@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused streamed-dressing teardown guard pass
+
+- stopped deferred region-dressing cleanup and authored landmark attachment
+  from rebuilding renderer meshes after their owning release world is queued for
+  deletion;
+- preserved normal stream-in/stream-out behaviour while removing a teardown
+  race that could emit dummy-renderer RID errors and leave one mesh allocation
+  alive at test exit.
+
 ## Focused release-version label consistency pass
 
 - aligned the title and pause-shell release label with the authoritative

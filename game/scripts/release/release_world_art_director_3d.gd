@@ -286,6 +286,8 @@ func _on_region_detail_changed(region_id: StringName, detail_level: int) -> void
 
 
 func _on_region_stream_changed(region_id: StringName, streamed_in: bool) -> void:
+    if world == null or not is_instance_valid(world) or world.is_queued_for_deletion() or is_queued_for_deletion():
+        return
     var root := region_dressing_roots.get(region_id) as Node3D
     if root == null or not is_instance_valid(root):
         return
@@ -324,6 +326,8 @@ func _finish_region_stream_cleanup(region_id: StringName) -> void:
     # queue_free() is intentionally allowed to complete for one frame before
     # a streamed-in dressing tree creates fresh procedural meshes.
     region_stream_cleanup_pending.erase(region_id)
+    if world == null or not is_instance_valid(world) or world.is_queued_for_deletion() or is_queued_for_deletion():
+        return
     var root := region_dressing_roots.get(region_id) as Node3D
     if root == null or not is_instance_valid(root):
         return
@@ -336,6 +340,8 @@ func _finish_region_stream_cleanup(region_id: StringName) -> void:
 
 
 func _rebuild_region_dressing(region_id: StringName, root: Node3D) -> void:
+    if world == null or not is_instance_valid(world) or world.is_queued_for_deletion() or is_queued_for_deletion():
+        return
     var data := region_director.get_region_data(region_id)
     if data.is_empty():
         return

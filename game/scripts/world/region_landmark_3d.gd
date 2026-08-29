@@ -217,7 +217,7 @@ func _refresh_authored_model_package() -> void:
 
 
 func _finish_authored_model_cleanup() -> void:
-    if not _authored_model_cleanup_pending or _authored_model_root == null:
+    if not _authored_model_cleanup_pending or _authored_model_root == null or not is_inside_tree() or is_queued_for_deletion():
         return
     if _authored_model_root.get_child_count() > 0:
         return
@@ -258,7 +258,7 @@ func _schedule_authored_model_attachment() -> void:
 
 func _attach_authored_model_scene() -> void:
     _authored_model_attach_requested = false
-    if _authored_model_scene == null or _authored_model_root == null or not streamed_in or _authored_model_root.get_child_count() > 0:
+    if _authored_model_scene == null or _authored_model_root == null or not is_inside_tree() or is_queued_for_deletion() or not streamed_in or _authored_model_root.get_child_count() > 0:
         return
     var authored_instance := _authored_model_scene.instantiate()
     if _authored_imported_root_name != &"":
