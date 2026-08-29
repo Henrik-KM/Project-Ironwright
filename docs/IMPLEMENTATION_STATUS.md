@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Root Cistern control-silhouette pass
+
+- tightened the presentation-only service deck, protocol panel and braces at
+  the Root Cistern so the approach cue remains legible without obscuring the
+  central capstone in the compact remote-region review frame;
+- preserved the authored capstone, causeway, landmark placement, collision,
+  navigation, ecology, operation and persistence contracts, with native
+  aesthetic guards for the bounded dressing dimensions.
+
 ## Deferred release-art teardown hardening
 
 - guarded deferred release-art collection, region dressing and mesh-texture

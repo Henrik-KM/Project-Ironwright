@@ -1708,6 +1708,12 @@ func _presentation_review_region_camera_offset(region_id: StringName) -> Vector3
 		# laundry read as attached lived-in infrastructure instead of a distant
 		# symmetrical rail grid. This is review-fixture composition only.
 		return Vector3(7.0, 9.0, 19.0)
+	if region_id == &"region.root_cistern":
+		# A slight diagonal separates the foreground control threshold from the
+		# capstone's lower relay anatomy, keeping both the approach cue and the
+		# central living machine legible in the exact review frame. Runtime camera,
+		# landmark placement and traversal geometry remain untouched.
+		return Vector3(-5.4, 9.0, 18.0)
 	return Vector3(0.0, 12.0, 19.0)
 
 

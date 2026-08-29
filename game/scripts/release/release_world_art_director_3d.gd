@@ -2190,13 +2190,15 @@ func _dress_cistern(root: Node3D) -> void:
     var control := Node3D.new()
     control.name = "CisternControlWalkway"
     depth_detail.add_child(control)
-    ModelKit3D.add_beveled_box(control, Vector3(7.8, 0.22, 1.5), Vector3(0.0, 1.22, -8.6), concrete, Vector3.ZERO, "CisternControlDeck", 0.16)
+    # Keep the approach readable without letting the control dressing become a
+    # foreground wall across the capstone on the compact remote-region frame.
+    ModelKit3D.add_beveled_box(control, Vector3(6.4, 0.18, 1.15), Vector3(0.0, 1.18, -8.22), concrete, Vector3.ZERO, "CisternControlDeck", 0.14)
     for index in range(5):
-        ModelKit3D.add_beveled_box(control, Vector3(1.12, 0.06, 1.1), Vector3(-2.8 + float(index) * 1.4, 1.37, -8.6), metal, Vector3.ZERO, "CisternDeckGrate%02d" % index, 0.08)
-    ModelKit3D.add_surface_panel(control, Vector3(1.8, 0.9, 0.1), Vector3(0.0, 1.86, -8.02), metal, cool_signal, Vector3.ZERO, "CisternProtocolPanel")
-    ModelKit3D.add_beveled_box(control, Vector3(2.6, 0.12, 0.12), Vector3(0.0, 2.34, -8.0), rust, Vector3.ZERO, "CisternPanelHeader", 0.06)
+        ModelKit3D.add_beveled_box(control, Vector3(0.96, 0.06, 0.86), Vector3(-2.25 + float(index) * 1.125, 1.3, -8.22), metal, Vector3.ZERO, "CisternDeckGrate%02d" % index, 0.07)
+    ModelKit3D.add_surface_panel(control, Vector3(1.6, 0.68, 0.1), Vector3(0.0, 1.7, -7.72), metal, cool_signal, Vector3.ZERO, "CisternProtocolPanel")
+    ModelKit3D.add_beveled_box(control, Vector3(2.2, 0.1, 0.12), Vector3(0.0, 2.08, -7.7), rust, Vector3.ZERO, "CisternPanelHeader", 0.05)
     for side in [-1.0, 1.0]:
-        ModelKit3D.add_cylinder(control, 0.08, 1.8, Vector3(side * 3.3, 2.0, -8.0), rust, Vector3.ZERO, "CisternPanelBrace%s" % ("L" if side < 0.0 else "R"))
+        ModelKit3D.add_cylinder(control, 0.07, 1.15, Vector3(side * 2.55, 1.72, -7.7), rust, Vector3.ZERO, "CisternPanelBrace%s" % ("L" if side < 0.0 else "R"))
     var pump_housing := ModelKit3D.add_beveled_box(depth_detail, Vector3(4.6, 2.2, 2.8), Vector3(0.0, 1.45, 8.4), concrete, Vector3.ZERO, "CisternPumpHousing", 0.22)
     ModelKit3D.add_louvered_panel(pump_housing, Vector3(2.3, 0.92, 0.1), Vector3(0.0, 0.6, -1.46), metal, rust, Vector3.ZERO, "CisternPumpLouver", 5)
     ModelKit3D.add_surface_panel(pump_housing, Vector3(0.95, 0.62, 0.1), Vector3(1.25, 1.05, -1.48), metal, cool_signal, Vector3.ZERO, "CisternPumpReadout")

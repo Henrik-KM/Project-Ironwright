@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Root Cistern control-silhouette pass — 2026-08-29
+
+The Root Cistern release dressing now keeps its service deck, protocol panel
+and braces low and compact enough to preserve the central capstone as the
+dominant visual signal. The approach cue remains present as a bounded machine
+control threshold, while the relay shell, signal pylons and wet basin retain
+their authored hierarchy. This is presentation-only: landmark placement,
+collision, navigation, ecology, operation and persistence are unchanged. The
+exact silent review uses Godot Dummy audio with `--quiet-audio`; no physical
+speakers are used.
+
 ## Deferred release-art teardown hardening — 2026-08-29
 
 Deferred release-art callbacks now fail closed when their world or art director
