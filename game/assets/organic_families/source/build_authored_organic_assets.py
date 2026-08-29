@@ -61,7 +61,7 @@ FAMILIES = {
         "colors": ([0.035, 0.05, 0.04, 1.0], [0.20, 0.23, 0.14, 1.0], [0.29, 0.06, 0.12, 1.0], [0.48, 0.38, 0.24, 1.0], [0.16, 0.72, 0.63, 1.0], [0.28, 0.08, 0.09, 1.0]),
         "body_profile": ((1.18, 1.05, 1.45), (1.04, 0.84, 1.18), 0.025),
         "socket_contract": "root_arms, route_spines, spore_fan, crown_oculi",
-        "signature_nodes": ["RootweaverKnuckleL", "RootweaverKnuckleR", "RootweaverCrownPlate0", "RootweaverRootSpineR"],
+        "signature_nodes": ["RootweaverKnuckleL", "RootweaverKnuckleR", "RootweaverCrownPlate0", "RootweaverJawPlateL", "RootweaverJawPlateR", "RootweaverRootSpineR"],
     },
     "thornback": {
         "display": "Thornback",
@@ -730,6 +730,24 @@ def build_family(name: str, spec: dict) -> None:
                 fold_strength=0.9,
             ),
         )
+        # The route-controller head needs a lower facial frame beneath the
+        # paired oculi. These folded jaw plates turn the front of the broad
+        # torso into a readable living face instead of leaving the crown to
+        # float above an unbroken shell.
+        mesh_ids["RootweaverJawLobe"] = mesh(
+            "RootweaverJawLobe",
+            add_organic_lobe(
+                builder,
+                (0.68, 0.22, 0.42),
+                bone,
+                lobes=5,
+                rings=10,
+                sides=48,
+                scallop_amplitude=0.12,
+                leading_extension=0.22,
+                fold_strength=0.78,
+            ),
+        )
 
     root_name = f"{name.capitalize()}Model"
     nodes: list[dict] = [{
@@ -860,6 +878,9 @@ def build_family(name: str, spec: dict) -> None:
         add_node("RootweaverCrown", mesh_ids["Soft"], (0.0, 1.55, -0.42), scale=(1.28, 1.2, 1.18), extras={"socket_type": "crown_oculi"})
         add_node("RootweaverCrownPlate0", mesh_ids["RootweaverCrownLobe"], (-0.36, 1.92, -0.44), rotation=(0.0, -0.22, -0.08), scale=(0.72, 1.0, 0.84), extras={"surface": "crown_plate"})
         add_node("RootweaverCrownPlate1", mesh_ids["RootweaverCrownLobe"], (0.36, 1.92, -0.44), rotation=(0.0, 0.22, 0.08), scale=(0.72, 1.0, 0.84), extras={"surface": "crown_plate"})
+        for side in (-1.0, 1.0):
+            suffix = "L" if side < 0.0 else "R"
+            add_node(f"RootweaverJawPlate{suffix}", mesh_ids["RootweaverJawLobe"], (side * 0.34, 1.57, -0.82), rotation=(0.0, side * 0.2, side * 0.12), scale=(0.84, 0.92, 0.96), extras={"surface": "jaw_plate"})
         fan_pitch = 0.24
         add_node("RootweaverSporeFan", mesh_ids["DeepMembrane"], (0.0, 1.76, 0.24), rotation=(fan_pitch, 0.0, 1.5708), scale=(1.0, 1.0, 1.24), extras={"socket_type": "spore_fan"})
         add_node("RootweaverSporeRib0", mesh_ids["MembraneRib"], (-0.38, 1.76, 0.24), rotation=(fan_pitch, -0.18, -0.46), scale=(0.78, 1.0, 0.84), extras={"surface": "spore_fan_rib"})

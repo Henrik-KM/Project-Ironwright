@@ -1594,6 +1594,7 @@ func _run_all() -> void:
             &"rootweaver":
                 _expect(_find_named(enemy_samples[index], "RootweaverKnuckleL") != null and _find_named(enemy_samples[index], "RootweaverKnuckleR") != null, "The Rootweaver must expose joint detail where its route arms meet the body.")
                 _expect(_find_named(enemy_samples[index], "RootweaverCrownPlate0") != null and _find_named(enemy_samples[index], "RootweaverRootSpineR") != null, "The Rootweaver must expose crown plating and layered route spines.")
+                _expect(_find_named(enemy_samples[index], "RootweaverJawPlateL") != null and _find_named(enemy_samples[index], "RootweaverJawPlateR") != null, "The Rootweaver must expose paired folded jaw plates beneath its route-controller oculi.")
                 var rootweaver_fan := _find_named(enemy_samples[index], "RootweaverSporeFan") as Node3D
                 _expect(rootweaver_fan != null and absf(rootweaver_fan.basis.y.z) >= 0.18, "The Rootweaver spore fan must carry a raised authored cant so its route-control membrane reads as an elevated fan rather than a horizontal disc.")
             &"thornback":

@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Rootweaver facial-silhouette pass
+
+- the route-controller Rootweaver now carries paired folded jaw plates beneath
+  its crown oculi, giving the broad late-organic shell a readable face and a
+  stronger lower silhouette in the close presentation gallery;
+- the added geometry is presentation-only and remains inside the existing
+  actor scale, collision, ecology, animation and save contracts;
+- the source builder, asset manifest and aesthetic runner guard the new
+  high-definition nodes; live review remains on Godot Dummy audio with
+  `--quiet-audio`.
+
 ## Focused localized world-recap pass
 
 - the returning-world recap now localizes its world condition, Heartforge

@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Rootweaver facial-silhouette pass — 2026-08-29
+
+The route-controller Rootweaver now carries paired folded jaw plates beneath
+its crown oculi. The lower facial frame gives the broad late-organic shell a
+clearer front and a more deliberate biological silhouette in the close gallery
+while preserving the existing animation sockets, scale, collision, ecology and
+save state. Review and validation use Godot Dummy audio with `--quiet-audio`; no
+physical speakers are used.
+
 ## Focused localized world-recap pass — 2026-08-29
 
 The returning-world recap now keeps its visible world condition, Heartforge

@@ -142,7 +142,7 @@ AUTHORED_ORGANIC_ASSETS = {
     "rootweaver": {
         "asset_id": "rootweaver.route_controller.v1",
         "root": "RootweaverModel",
-        "required": ["RootweaverModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "RootweaverCrown", "RootweaverSporeFan", "RootweaverKnuckleL", "RootweaverKnuckleR", "RootweaverCrownPlate0", "RootweaverRootSpineR", "ProductionAssetMarker"],
+        "required": ["RootweaverModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "RootweaverCrown", "RootweaverSporeFan", "RootweaverKnuckleL", "RootweaverKnuckleR", "RootweaverCrownPlate0", "RootweaverJawPlateL", "RootweaverJawPlateR", "RootweaverRootSpineR", "ProductionAssetMarker"],
     },
     "thornback": {
         "asset_id": "thornback.territorial.v1",
