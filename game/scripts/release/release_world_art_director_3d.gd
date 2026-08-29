@@ -105,6 +105,7 @@ var texture_flush_scheduled: bool = false
 var texture_queue: Array[MeshInstance3D] = []
 var texture_queue_index: int = 0
 var texture_queue_active: bool = false
+var region_stream_cleanup_pending: Dictionary = {}
 
 
 func configure(next_world: Node3D, next_regions: WorldRegionDirector3D, next_settings: ReleaseSettingsService3D) -> void:
@@ -286,13 +287,49 @@ func _on_region_stream_changed(region_id: StringName, streamed_in: bool) -> void
     if root == null or not is_instance_valid(root):
         return
     if streamed_in:
+        # Stream transitions can reverse before the previous dressing tree has
+        # reached the end-of-frame queue-free boundary. Do not instantiate a
+        # new procedural tree into that renderer handoff: the dummy renderer
+        # (and some low-end real drivers) can still be releasing the old mesh
+        # RIDs. The deferred completion below observes the latest stream state
+        # and rebuilds only after queued children are gone.
+        if bool(region_stream_cleanup_pending.get(region_id, false)):
+            return
         if not _has_region_dressing_content(root):
             _rebuild_region_dressing(region_id, root)
         return
     # The landmark keeps its gameplay state and coarse proxy. Only the
     # release-only close dressing is removed from the active scene tree.
+    if bool(region_stream_cleanup_pending.get(region_id, false)):
+        return
+    region_stream_cleanup_pending[region_id] = true
     for child in root.get_children():
-        child.free()
+        # Detach immediately so the coarse proxy and the release root expose
+        # the streamed-out state synchronously to diagnostics and UI code.
+        # queue_free() still owns the actual renderer-resource release at the
+        # end of the frame, which is the part that prevents stale mesh RIDs.
+        root.remove_child(child)
+        child.queue_free()
+    # A SceneTreeTimer lets queue_free() complete before the check without
+    # keeping a suspended GDScript frame alive if this short-lived review
+    # world is torn down in the meantime.
+    var cleanup_timer := get_tree().create_timer(0.0)
+    cleanup_timer.timeout.connect(Callable(self, "_finish_region_stream_cleanup").bind(region_id), CONNECT_ONE_SHOT)
+
+
+func _finish_region_stream_cleanup(region_id: StringName) -> void:
+    # queue_free() is intentionally allowed to complete for one frame before
+    # a streamed-in dressing tree creates fresh procedural meshes.
+    region_stream_cleanup_pending.erase(region_id)
+    var root := region_dressing_roots.get(region_id) as Node3D
+    if root == null or not is_instance_valid(root):
+        return
+    var region_lod := world.get_node_or_null("RegionPresentationLodDirector") if world != null else null
+    var should_stream_in := false
+    if region_lod != null and region_lod.has_method(&"is_region_streamed"):
+        should_stream_in = bool(region_lod.call(&"is_region_streamed", region_id))
+    if should_stream_in and not _has_region_dressing_content(root):
+        _rebuild_region_dressing(region_id, root)
 
 
 func _rebuild_region_dressing(region_id: StringName, root: Node3D) -> void:

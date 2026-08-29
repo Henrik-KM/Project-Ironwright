@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused streamed-dressing teardown pass
+
+- release-only close dressing now queues its generated meshes for end-of-frame
+  teardown instead of freeing renderer resources synchronously during a region
+  stream transition;
+- a tree-owned one-shot cleanup check observes the latest focus state before
+  rebuilding procedural dressing, so rapid West Grid ↔ Root Cistern changes do
+  not rebuild into stale rendering RIDs or leave callbacks suspended after a
+  short-lived review world is closed;
+- the complete native presentation/streaming fixture now exits with no dummy
+  renderer or dangling-callback errors, and the graphical stream-ring review
+  completes silently with Godot Dummy audio and `--quiet-audio`.
+
 ## Focused complete-recap copy integrity pass
 
 - the returning-world recap now builds its section headings from the selected

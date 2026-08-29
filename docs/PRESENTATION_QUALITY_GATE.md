@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused streamed-dressing teardown pass — 2026-08-29
+
+Release-only close dressing now uses queued end-of-frame teardown and a
+tree-owned one-shot cleanup check before rebuilding procedural region detail.
+Rapid stream reversals therefore preserve a clean renderer handoff and do not
+leave suspended callbacks when a short-lived review world is torn down. The
+native presentation/streaming fixture exits without dummy-renderer or
+dangling-callback errors, and the graphical stream-ring review completes with
+Godot Dummy audio and `--quiet-audio`; no physical speakers are used.
+
 ## Focused complete-recap copy integrity pass — 2026-08-29
 
 The returning-world recap now sources all visible section headings from the
