@@ -5,11 +5,13 @@
 Nearby release actors now cache their authored presentation transform nodes and
 named anatomy channels, avoiding a recursive model walk on every animation
 update. Deferred promotion rebuilds the cache when the authored shell appears,
+and base transforms for registered nodes restore through stable instance IDs,
 so the existing gait, family motion, imported clips and reduced-motion behavior
-remain intact. Repeated 192-actor native benchmarks improved from the earlier
-roughly 21 FPS baseline into the roughly 38–45 FPS range on this workstation;
-target-hardware profiling remains open. Validation and live review use Dummy
-audio with `--quiet-audio` only.
+remain intact without typed-cache lookup errors. Repeated 192-actor native
+benchmarks now measure roughly 45–51 FPS on this workstation, up from the
+earlier roughly 21 FPS baseline; target-hardware profiling and the remaining
+60 FPS gap remain open. Validation and live review use Dummy audio with
+`--quiet-audio` only; no live speakers are used.
 
 ## Focused tiered-release movement-authority pass — 2026-08-29
 

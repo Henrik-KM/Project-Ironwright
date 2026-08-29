@@ -8,7 +8,10 @@ extends Node
 var subject: Node3D
 var model_root: Node3D
 var base_transforms: Dictionary = {}
+var base_transform_ids: Dictionary = {}
 var base_nodes: Array[Node3D] = []
+var animated_nodes: Array[Node3D] = []
+var animated_node_ids: Dictionary = {}
 var base_cache_child_count: int = -1
 var prefix_nodes: Dictionary = {}
 var prefix_cache_root: Node3D
@@ -87,7 +90,10 @@ func _resolve_model_root() -> void:
 
 func _capture_base_transforms(root: Node) -> void:
     base_transforms.clear()
+    base_transform_ids.clear()
     base_nodes.clear()
+    animated_nodes.clear()
+    animated_node_ids.clear()
     prefix_nodes.clear()
     prefix_cache_root = root as Node3D
     prefix_cache_child_count = root.get_child_count()
@@ -99,6 +105,7 @@ func _capture_recursive(node: Node) -> void:
     if node is Node3D:
         var node_3d := node as Node3D
         base_transforms[node_3d] = node_3d.transform
+        base_transform_ids[node_3d.get_instance_id()] = node_3d.transform
         base_nodes.append(node_3d)
     for child in node.get_children():
         _capture_recursive(child)
@@ -108,6 +115,7 @@ func _capture_missing_recursive(node: Node) -> void:
     if node is Node3D and not base_transforms.has(node):
         var node_3d := node as Node3D
         base_transforms[node_3d] = node_3d.transform
+        base_transform_ids[node_3d.get_instance_id()] = node_3d.transform
         base_nodes.append(node_3d)
         prefix_nodes.clear()
         prefix_cache_root = model_root
@@ -148,6 +156,7 @@ func _process(delta: float) -> void:
     if model_root.get_child_count() != base_cache_child_count:
         _capture_missing_recursive(model_root)
         base_cache_child_count = model_root.get_child_count()
+    _register_animated_node(model_root)
     recoil = move_toward(recoil, 0.0, animation_delta * 8.5)
     hit_impulse = move_toward(hit_impulse, 0.0, animation_delta * 5.0)
     idle_phase = fmod(idle_phase + animation_delta * 1.35, TAU)
@@ -180,10 +189,13 @@ func _animation_cadence() -> int:
 
 
 func _restore_base_transforms() -> void:
-    for node in base_nodes:
+    for node in animated_nodes:
         if not is_instance_valid(node):
             continue
-        node.transform = base_transforms[node]
+        var instance_id := node.get_instance_id()
+        if not base_transform_ids.has(instance_id):
+            continue
+        node.transform = base_transform_ids[instance_id]
 
 
 func _animate_mechromancer(movement_blend: float) -> void:
@@ -605,11 +617,28 @@ func _nodes_with_prefix(root: Node, prefix: String) -> Array[Node3D]:
             prefix_cache_child_count = root_3d.get_child_count()
         var cached: Variant = prefix_nodes.get(prefix, null)
         if cached is Array:
+            _register_animated_nodes(cached as Array[Node3D])
             return cached as Array[Node3D]
     var result: Array[Node3D] = []
     _collect_nodes_with_prefix(root, prefix, result)
     prefix_nodes[prefix] = result
+    _register_animated_nodes(result)
     return result
+
+
+func _register_animated_node(node: Node3D) -> void:
+    if node == null or not is_instance_valid(node):
+        return
+    var instance_id := node.get_instance_id()
+    if animated_node_ids.has(instance_id):
+        return
+    animated_node_ids[instance_id] = true
+    animated_nodes.append(node)
+
+
+func _register_animated_nodes(nodes: Array[Node3D]) -> void:
+    for node in nodes:
+        _register_animated_node(node)
 
 
 func _collect_nodes_with_prefix(node: Node, prefix: String, result: Array[Node3D]) -> void:

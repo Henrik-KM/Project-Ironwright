@@ -8,9 +8,12 @@
 - deferred model promotion still rebuilds the cache when the authored shell
   appears or its direct structure changes, preserving the same procedural
   gait, family motion, authored clips and reduced-motion behavior;
-- repeated 192-actor benchmarks now measure roughly 38–45 FPS on this
+- base transforms for registered animated nodes are restored through stable
+  instance IDs, avoiding invalid object-key lookups when typed cached arrays
+  cross the GDScript boundary;
+- repeated 192-actor benchmarks now measure roughly 45–51 FPS on this
   workstation, up from the earlier roughly 21 FPS baseline; target-hardware
-  profiling remains open.
+  profiling and the remaining 60 FPS gap remain open.
 
 ## Focused tiered-release movement-authority pass
 
