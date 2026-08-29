@@ -1843,7 +1843,12 @@ func _dress_observatory(root: Node3D) -> void:
                 Vector3.ONE,
                 "ObservatoryRidgeBoundarySignal%s%02d" % ["L" if side < 0.0 else "R", index]
             )
-    ModelKit3D.add_cylinder(observatory_detail, 3.2, 2.0, Vector3(0.0, 1.0, 0.0), metal, Vector3.ZERO, "ObservatoryBase")
+    # Keep the release foundation low enough that it grounds the instrument
+    # without swallowing the authored pedestal into a featureless black drum.
+    # The earlier tall proxy-like base dominated the approach frame and hid the
+    # reflector's azimuth hardware.
+    ModelKit3D.add_cylinder(observatory_detail, 3.2, 0.82, Vector3(0.0, 0.55, 0.0), metal, Vector3.ZERO, "ObservatoryBase")
+    ModelKit3D.add_torus(observatory_detail, 2.72, 0.11, Vector3(0.0, 0.98, 0.0), rust, Vector3.ZERO, "ObservatoryBaseCollar", 48, 8)
     ModelKit3D.add_beveled_box(observatory_detail, Vector3(5.8, 0.22, 4.8), Vector3(0.0, 0.16, 0.0), dark_metal, Vector3.ZERO, "ObservatoryServiceDeck", 0.18)
     ModelKit3D.add_surface_panel(observatory_detail, Vector3(1.25, 0.68, 0.1), Vector3(0.0, 0.9, -3.1), dark_metal, signal_material, Vector3.ZERO, "ObservatoryAccessPanel")
     for side in [-1.0, 1.0]:

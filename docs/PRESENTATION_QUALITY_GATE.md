@@ -2677,3 +2677,13 @@ continuation, collision, save and archive contracts. Exact silent victory,
 continuation and settled-sanctuary review passed with Godot Dummy audio and
 `--quiet-audio`; no live speakers are used. Broader human production-art and
 localization acceptance remains open.
+## Focused Observatory Ridge receiver-silhouette pass — 2026-08-29
+
+The authored Observatory Ridge landmark now presents the concave reflector and
+near-side receiver toward the exact approach camera. A bounded tapered feed
+horn, service rim and signal lens strengthen the surviving-optics identity while
+preserving the landmark footprint, collision, navigation, operation and
+simulation contracts. The release-only foundation is also a low service plinth
+with a collar, so it grounds rather than obscures the azimuth support. The live
+review uses Godot Dummy audio with
+`--quiet-audio`; no physical speakers are used.

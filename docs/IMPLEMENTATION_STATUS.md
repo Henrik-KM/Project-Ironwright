@@ -6360,3 +6360,14 @@ roster checks and requires silent late-organic live review before merge.
   late-run objective in one continuous flow with Godot Dummy audio and
   `--quiet-audio`; broader human production-art and localization acceptance
   remain open.
+## Focused Observatory Ridge receiver-silhouette pass
+
+- turned the authored reflector toward the approach camera so the concave bowl,
+  service rim and support cradle read as one instrument rather than a blue
+  convex platform;
+- moved the receiver to the near side of the bowl and added a bounded tapered
+  feed horn, rim and signal lens, preserving the existing dish, feed and
+  animation sockets without changing collision, navigation or survey logic.
+- lowered the release-only Observatory foundation into a restrained plinth with
+  a service collar, keeping the azimuth pedestal visible instead of presenting
+  a tall proxy-like black drum in the approach frame.

@@ -94,6 +94,51 @@ def add_torus(
     return _geometry(builder, positions, normals, indices, material)
 
 
+def add_tapered_cylinder(
+    builder: BufferBuilder,
+    bottom_radius: float,
+    top_radius: float,
+    height: float,
+    material: int,
+    sides: int = 32,
+) -> tuple[int, int, int, int]:
+    """Build a compact receiver horn with a smooth, high-definition profile."""
+    sides = max(sides, 24)
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+    bottom = len(positions) // 3
+    slope = (bottom_radius - top_radius) / max(height, 0.001)
+    for y, radius in ((-height * 0.5, bottom_radius), (height * 0.5, top_radius)):
+        for side in range(sides):
+            angle = math.tau * side / sides
+            positions.extend([math.cos(angle) * radius, y, math.sin(angle) * radius])
+            normal = [math.cos(angle), slope, math.sin(angle)]
+            normal_length = math.sqrt(sum(value * value for value in normal)) or 1.0
+            normals.extend(value / normal_length for value in normal)
+    for side in range(sides):
+        next_side = (side + 1) % sides
+        indices.extend([
+            bottom + side,
+            bottom + next_side,
+            bottom + sides + next_side,
+            bottom + side,
+            bottom + sides + next_side,
+            bottom + sides + side,
+        ])
+    bottom_center = len(positions) // 3
+    positions.extend([0.0, -height * 0.5, 0.0])
+    normals.extend([0.0, -1.0, 0.0])
+    top_center = len(positions) // 3
+    positions.extend([0.0, height * 0.5, 0.0])
+    normals.extend([0.0, 1.0, 0.0])
+    for side in range(sides):
+        next_side = (side + 1) % sides
+        indices.extend([bottom_center, bottom + next_side, bottom + side])
+        indices.extend([top_center, bottom + sides + side, bottom + sides + next_side])
+    return _geometry(builder, positions, normals, indices, material)
+
+
 def main() -> None:
     builder = BufferBuilder()
     materials = [
@@ -136,6 +181,9 @@ def main() -> None:
         # readable instead of turning the arm into a dark centre bar.
         "FeedArm": mesh("FeedArm", add_cylinder(builder, 0.10, 4.6, alloy, 16)),
         "Feed": mesh("Feed", add_uv_sphere(builder, 0.30, cyan, 18, 28)),
+        "FeedHorn": mesh("FeedHorn", add_tapered_cylinder(builder, 0.34, 0.14, 0.62, alloy, 48)),
+        "FeedHornRim": mesh("FeedHornRim", add_torus(builder, 0.31, 0.055, rust, 40, 10)),
+        "FeedHornLens": mesh("FeedHornLens", add_uv_sphere(builder, 0.18, cyan, 18, 28)),
         "Mast": mesh("Mast", add_cylinder(builder, 0.20, 6.0, rust, 20)),
         "Cable": mesh("Cable", add_cylinder(builder, 0.045, 4.5, warm, 10)),
         "Console": mesh("Console", add_beveled_box(builder, (1.1, 0.55, 0.12), warm, 0.03)),
@@ -219,21 +267,32 @@ def main() -> None:
     add_node("ObservatoryFrontConsoleFrame", mesh_ids["ConsoleFrame"], (3.6, 1.42, -0.82), extras={"surface": "front_console_frame"})
     add_node("ObservatoryServiceCase", mesh_ids["ServiceCase"], (0.2, 0.9, -3.2), extras={"socket_type": "survey_service_case"})
 
-    add_node("ObservatoryDish", mesh_ids["Dish"], (-0.4, 3.05, 1.0), scale=(1.0, 1.0, 0.82), rotation=(math.pi * 0.12, 0.0, 0.0), extras={"socket_type": "dish"})
-    add_node("ObservatoryDishRimRing", mesh_ids["DishRimRing"], (-0.4, 3.05, 1.0), scale=(1.0, 1.0, 0.82), rotation=(math.pi * 0.12, 0.0, 0.0), extras={"surface": "dish_rim_service_ring"})
+    # The authored bowl opens toward the approach camera. The previous
+    # positive tilt showed its convex back and made the focal instrument read
+    # as a blue platform; the negative tilt exposes the concave reflector,
+    # rim and feed assembly without changing the landmark footprint.
+    dish_tilt = -math.pi * 0.12
+    add_node("ObservatoryDish", mesh_ids["Dish"], (-0.4, 3.05, 1.0), scale=(1.0, 1.0, 0.82), rotation=(dish_tilt, 0.0, 0.0), extras={"socket_type": "dish"})
+    add_node("ObservatoryDishRimRing", mesh_ids["DishRimRing"], (-0.4, 3.05, 1.0), scale=(1.0, 1.0, 0.82), rotation=(dish_tilt, 0.0, 0.0), extras={"surface": "dish_rim_service_ring"})
     add_node("ObservatoryDishRim", mesh_ids["DishRim"], (-0.4, 3.15, -1.52), rotation=(0.0, 0.0, 0.0))
     add_node("ObservatoryDishPedestal", mesh_ids["DishPedestal"], (-0.4, 2.05, 1.0), extras={"surface": "dish_azimuth_pedestal"})
     add_node("ObservatoryDishSupportRing", mesh_ids["DishSupportRing"], (-0.4, 1.12, 1.0), extras={"surface": "dish_pedestal_service_ring"})
     add_node("ObservatoryDishPivotHousing", mesh_ids["DishPivotHousing"], (-0.4, 3.02, 1.0), extras={"socket_type": "dish_pivot"})
     add_node("ObservatoryDishPivotBand", mesh_ids["DishPivotBand"], (-0.4, 3.02, 1.0), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "dish_pivot_signal_band"})
     for index, rotation_y in enumerate((0.0, math.pi * 0.33, -math.pi * 0.33)):
-        add_node("ObservatoryDishRib%d" % index, mesh_ids["DishRib"], (-0.4, 3.18, 1.0), rotation=(math.pi * 0.12, rotation_y, 0.0), extras={"surface": "dish_structural_rib"})
+        add_node("ObservatoryDishRib%d" % index, mesh_ids["DishRib"], (-0.4, 3.18, 1.0), rotation=(dish_tilt, rotation_y, 0.0), extras={"surface": "dish_structural_rib"})
     add_node("ObservatoryDishBraceL", mesh_ids["DishBrace"], (-2.2, 3.25, 1.0), rotation=(0.0, 0.0, 0.08))
     add_node("ObservatoryDishBraceR", mesh_ids["DishBrace"], (1.4, 3.25, 1.0), rotation=(0.0, 0.0, -0.08))
     add_node("ObservatoryDishActuator", mesh_ids["DishActuator"], (-0.4, 2.14, 1.0), extras={"socket_type": "dish_actuator"})
-    add_node("ObservatoryFeedArm", mesh_ids["FeedArm"], (-0.4, 4.1, -0.75), rotation=(math.pi * 0.5, 0.0, 0.0))
-    add_node("ObservatoryFeedSignal", mesh_ids["Feed"], (-0.4, 4.1, -3.05), extras={"socket_type": "feed_signal"})
-    add_node("ObservatoryFeedCollar", mesh_ids["FeedCollar"], (-0.4, 4.1, -3.05), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "feed_signal_collar"})
+    # Place the receiver on the near side of the reflector so the instrument
+    # reads as a telescope from the authored positive-Z approach frame.
+    feed_position = (-0.4, 4.1, 4.55)
+    add_node("ObservatoryFeedArm", mesh_ids["FeedArm"], (-0.4, 4.1, 2.25), rotation=(math.pi * 0.5, 0.0, 0.0))
+    feed = add_node("ObservatoryFeedSignal", mesh_ids["Feed"], feed_position, extras={"socket_type": "feed_signal"})
+    add_node("ObservatoryFeedHorn", mesh_ids["FeedHorn"], (0.0, 0.0, 0.0), rotation=(math.pi * 0.5, 0.0, 0.0), parent=feed, extras={"surface": "feed_receiver_horn"})
+    add_node("ObservatoryFeedHornRim", mesh_ids["FeedHornRim"], (0.0, 0.0, 0.31), rotation=(math.pi * 0.5, 0.0, 0.0), parent=feed, extras={"surface": "feed_receiver_rim"})
+    add_node("ObservatoryFeedHornLens", mesh_ids["FeedHornLens"], (0.0, 0.0, 0.34), rotation=(math.pi * 0.5, 0.0, 0.0), parent=feed, extras={"surface": "feed_receiver_lens"})
+    add_node("ObservatoryFeedCollar", mesh_ids["FeedCollar"], feed_position, rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "feed_signal_collar"})
     add_node("ObservatoryMast", mesh_ids["Mast"], (-4.0, 3.0, 2.2), extras={"socket_type": "mast"})
     add_node("ObservatoryMastLight", mesh_ids["Light"], (-4.0, 6.1, 2.2))
     add_node("ObservatoryMastCollar", mesh_ids["MastCollar"], (-4.0, 5.85, 2.2), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "mast_service_collar"})
