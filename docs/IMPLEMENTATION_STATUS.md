@@ -1,5 +1,27 @@
 # Implementation status
 
+## Focused long-run enemy identity persistence correction
+
+- unified release snapshots now retain each living organic's assigned tier and
+  home nest alongside its position, health and species;
+- tiered-world restoration reapplies that identity before the canonical
+  population director reconciles, preserving population caps and physical nest
+  provenance across a save/load boundary;
+- legacy snapshots without the fields resolve a deterministic tier from species
+  during restoration.
+
+## Focused twenty-hour-equivalent long-run soak pass
+
+- added a bounded deterministic soak over twenty simulated hours using the
+  release run clock and canonical population-driven enemy-tier simulation;
+- rotates verified transactional saves, restores the complete release snapshot,
+  restores the enemy-tier sidecar, and checks save-clock equivalence at regular
+  checkpoints;
+- asserts capped event history, physical nest and rate-source registries,
+  tier populations, organic actor count and serialized save size;
+- validation, release packaging and release certification now run this gate
+  with Godot Dummy audio and `--quiet-audio` only.
+
 ## Focused adaptive collision rebuild correction
 
 - adaptive shell collision pieces now remove synchronously before an immediate

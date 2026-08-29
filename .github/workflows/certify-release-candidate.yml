@@ -68,6 +68,9 @@ jobs:
       - name: Run large-population performance regression
         run: godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/performance_stress_test_runner.gd
 
+      - name: Run twenty-hour-equivalent long-run soak regression
+        run: godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/long_run_soak_test_runner.gd
+
       - name: Export Windows and Linux release candidates
         run: |
           rm -rf dist

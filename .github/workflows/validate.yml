@@ -98,6 +98,9 @@ jobs:
       - name: Run large-population performance tests
         run: godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/performance_stress_test_runner.gd
 
+      - name: Run twenty-hour-equivalent long-run soak
+        run: godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/long_run_soak_test_runner.gd
+
       - name: Capture release population benchmark
         shell: bash
         run: |

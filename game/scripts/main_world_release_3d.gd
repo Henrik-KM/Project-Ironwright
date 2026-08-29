@@ -2726,7 +2726,14 @@ func _collect_release_snapshot() -> Dictionary:
 	var enemies: Array[Dictionary] = []
 	for enemy in get_tree().get_nodes_in_group(&"organic_enemies"):
 		if enemy is OrganicEnemy3D and enemy.is_alive():
-			enemies.append({"species": String(enemy.species), "position": _vector_to_array(enemy.global_position), "health": enemy.current_health, "aggression": enemy.aggression})
+			enemies.append({
+				"species": String(enemy.species),
+				"position": _vector_to_array(enemy.global_position),
+				"health": enemy.current_health,
+				"aggression": enemy.aggression,
+				"tier": int(enemy.get_meta(&"enemy_tier", 0)),
+				"home_nest_id": str(enemy.get_meta(&"home_nest_id", "")),
+			})
 	return {
 		"schema_version": 4,
 		"base": {
@@ -2799,9 +2806,17 @@ func _restore_release_snapshot(snapshot: Dictionary) -> void:
 			pile.collision_layer = 0
 
 	for enemy_data in base.get("enemies", []):
-		var enemy := _spawn_enemy(_array_to_vector(enemy_data.get("position", [20, 0, -20])), StringName(str(enemy_data.get("species", "skitterling"))))
+		var species := StringName(str(enemy_data.get("species", "skitterling")))
+		var enemy := _spawn_enemy(_array_to_vector(enemy_data.get("position", [20, 0, -20])), species)
 		enemy.current_health = clampf(float(enemy_data.get("health", enemy.maximum_health)), 0.0, enemy.maximum_health)
 		enemy.aggression = clampf(float(enemy_data.get("aggression", enemy.aggression)), 0.0, 1.0)
+		var tier_progression := get_tree().get_first_node_in_group(&"enemy_tier_progression")
+		if tier_progression != null and tier_progression.has_method(&"assign_enemy_tier"):
+			var restored_tier := int(enemy_data.get("tier", 0))
+			if restored_tier <= 0 and tier_progression.has_method(&"infer_tier_for_species"):
+				restored_tier = int(tier_progression.call(&"infer_tier_for_species", species))
+			var home_nest_id := StringName(str(enemy_data.get("home_nest_id", "")))
+			tier_progression.call(&"assign_enemy_tier", enemy, restored_tier, home_nest_id)
 	ecology_director.restore_from_dictionary(base.get("ecology", {}))
 	autonomy_director.restore_from_dictionary(base.get("autonomy", {}))
 

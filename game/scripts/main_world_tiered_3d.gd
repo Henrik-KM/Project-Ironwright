@@ -108,6 +108,13 @@ func _spawn_enemy(position: Vector3, species: StringName) -> OrganicEnemy3D:
 	tier = clampi(tier if tier > 0 else 1, 1, 5)
 	var config := enemy_tier_director.tier_config(tier) if enemy_tier_director != null else {}
 	tiered.configure_tier(tier, config)
+	if not restored.is_empty() and not str(restored.get("name", "")).is_empty():
+		tiered.name = str(restored.get("name"))
+	var canonical_tier_director := get_tree().get_first_node_in_group(&"enemy_tier_progression")
+	if canonical_tier_director != null and canonical_tier_director.has_method(&"assign_enemy_tier"):
+		var canonical_tier := int(restored.get("canonical_enemy_tier", restored.get("enemy_tier", tier)))
+		var home_nest_id := StringName(str(restored.get("home_nest_id", "")))
+		canonical_tier_director.call(&"assign_enemy_tier", tiered, canonical_tier, home_nest_id)
 	if not restored.is_empty():
 		var territory := _array_to_vector(restored.get("territory_origin", _vector_to_array(position)))
 		var radius := float(restored.get("territory_radius", tiered.territory_radius))
@@ -180,8 +187,11 @@ func _collect_release_snapshot() -> Dictionary:
 			continue
 		var tier := enemy_tier_director.enemy_tier_for(enemy) if enemy_tier_director != null else 1
 		enemies.append({
+			"name": String(enemy.name),
 			"species": String(enemy.species),
 			"enemy_tier": tier,
+			"canonical_enemy_tier": int(enemy.get_meta(&"enemy_tier", tier)),
+			"home_nest_id": str(enemy.get_meta(&"home_nest_id", "")),
 			"position": _vector_to_array(enemy.global_position),
 			"health": enemy.current_health,
 			"aggression": enemy.aggression,
@@ -215,6 +225,21 @@ func _restore_release_snapshot(snapshot: Dictionary) -> void:
 	if enemy_tier_director != null:
 		enemy_tier_director.restore_from_dictionary(release.get("enemy_tiers", {}))
 		enemy_tier_director.simulation_enabled = true
+	var canonical_tier_director := get_tree().get_first_node_in_group(&"enemy_tier_progression")
+	if canonical_tier_director != null and canonical_tier_director.has_method(&"assign_enemy_tier"):
+		for raw_enemy in base.get("enemies", []):
+			if not (raw_enemy is Dictionary):
+				continue
+			var saved_enemy := raw_enemy as Dictionary
+			var saved_name := str(saved_enemy.get("name", ""))
+			if saved_name.is_empty():
+				continue
+			var restored_enemy := get_node_or_null(NodePath(saved_name))
+			if restored_enemy == null or not (restored_enemy is OrganicEnemy3D):
+				continue
+			var restored_tier := int(saved_enemy.get("canonical_enemy_tier", saved_enemy.get("enemy_tier", 1)))
+			var restored_home := StringName(str(saved_enemy.get("home_nest_id", "")))
+			canonical_tier_director.call(&"assign_enemy_tier", restored_enemy, restored_tier, restored_home)
 	if enemy_tier_event_bridge != null:
 		enemy_tier_event_bridge.restore_from_dictionary(release.get("enemy_tier_events", {}))
 		enemy_tier_event_bridge.reconcile_existing_state()
