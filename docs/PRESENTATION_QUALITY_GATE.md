@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Broodmass lower-maw shell pass — 2026-08-29
+
+The Broodmass release shell now carries a dense folded lower-maw volume below
+its existing animated maw plate. The added shell follows the existing attack
+motion and gives the nest organism a more readable layered mouth at compact
+review distance. This is presentation-only: sockets, animation ownership,
+collision, ecology and gameplay scale are unchanged. The exact graphical review
+uses Godot Dummy audio with `--quiet-audio`; no physical speakers are used.
+
 ## Focused Miremaw lower-jaw shell pass — 2026-08-29
 
 The Miremaw release shell now carries a dense folded lower jaw beneath its

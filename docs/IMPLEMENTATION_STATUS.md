@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Broodmass lower-maw shell pass
+
+- added a dense folded lower-maw shell parented to the existing animated brood
+  maw, so the nest organism reads as a layered living mouth rather than a broad
+  upper plate;
+- preserved the existing Broodmass sockets, animation ownership, collision,
+  ecology and gameplay scale, with new manifest and aesthetic guards for the
+  authored geometry.
+
 ## Focused Miremaw lower-jaw shell pass
 
 - added a dense folded lower-jaw shell and paired its attack/feed motion to the

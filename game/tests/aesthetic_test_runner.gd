@@ -1598,7 +1598,7 @@ func _run_all() -> void:
                 _expect(_find_named(enemy_samples[index], "SporecasterGillRib0") != null and _find_named(enemy_samples[index], "SporecasterSacCap0") != null, "The Sporecaster must expose layered gill ribs and capped spore sacs.")
                 _expect(_find_named(enemy_samples[index], "SporecasterSacRim0") != null and _find_named(enemy_samples[index], "SporecasterSacPore0") != null, "The Sporecaster must expose layered sac rims and visible pore apertures for ranged-infestation readability.")
             &"broodmass":
-                _expect(_find_named(enemy_samples[index], "BroodmassLobeRidgeL") != null and _find_named(enemy_samples[index], "BroodmassMawRidge") != null and _find_named(enemy_samples[index], "CrownFastener0") != null, "The Broodmass must expose layered lobe, maw and crown hardware.")
+                _expect(_find_named(enemy_samples[index], "BroodmassLobeRidgeL") != null and _find_named(enemy_samples[index], "BroodmassMawRidge") != null and _find_named(enemy_samples[index], "BroodmassMawLower") != null and _find_named(enemy_samples[index], "CrownFastener0") != null, "The Broodmass must expose layered lobe, maw and crown hardware.")
             &"roofleaper":
                 _expect(_find_named(enemy_samples[index], "RoofleaperFineVeinL") != null and _find_named(enemy_samples[index], "RoofleaperFineVeinR") != null, "The Roofleaper must expose fine vascular wing detail on both membranes.")
                 _expect(_find_named(enemy_samples[index], "RoofleaperWingFrameL") != null and _find_named(enemy_samples[index], "RoofleaperWingFastenerR") != null, "The Roofleaper must expose structural wing spars and socket fasteners.")
@@ -1663,10 +1663,11 @@ func _run_all() -> void:
         if species_names[index] == &"broodmass":
             var brood_maw := _find_named(enemy_samples[index], "BroodmassMaw") as Node3D
             var brood_plate := _find_named(enemy_samples[index], "BroodmassMawPlate") as Node3D
+            var brood_lower := _find_named(enemy_samples[index], "BroodmassMawLower") as Node3D
             var brood_hook := _find_named(enemy_samples[index], "BroodmassMawHookL") as Node3D
             var brood_crown_cap := _find_named(enemy_samples[index], "BroodmassCrownCap") as Node3D
             var brood_crown_plate := _find_named(enemy_samples[index], "BroodmassCrownCapPlate") as Node3D
-            _expect(brood_maw != null and brood_plate != null and brood_hook != null and brood_plate.position.distance_to(Vector3(0.0, 0.24, -0.02)) < 0.01 and brood_hook.position.distance_to(Vector3(-0.34, -0.42, -0.24)) < 0.01, "Broodmass maw hardware must remain attached through local authored sockets.")
+            _expect(brood_maw != null and brood_plate != null and brood_lower != null and brood_lower.get_parent() == brood_maw and brood_plate.position.distance_to(Vector3(0.0, 0.24, -0.02)) < 0.01 and brood_hook != null and brood_hook.position.distance_to(Vector3(-0.34, -0.42, -0.24)) < 0.01, "Broodmass maw hardware must remain attached through local authored sockets.")
             _expect(brood_crown_cap != null and brood_crown_plate != null and brood_crown_plate.position.distance_to(Vector3(0.0, 0.16, 0.02)) < 0.01, "Broodmass crown cap must retain its local plate socket for a unified late-family silhouette.")
         if species_names[index] == &"sporecaster":
             var spore_cowl := _find_named(enemy_samples[index], "SporecasterCowl") as Node3D
@@ -1865,8 +1866,10 @@ func _run_all() -> void:
     _expect(_mesh_vertex_count(_find_named(burrower_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(burrower_asset, "BurrowerLampGuardL") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(burrower_asset, "BurrowerDrillCutter0") as MeshInstance3D) >= 24, "The authored Burrower dorsal, lamp guards and drill cutters must retain beveled high-definition anatomy edges.")
     var broodmass_dorsal := _find_named(broodmass_asset, "OrganicDorsalPlate") as MeshInstance3D
     var broodmass_maw_plate := _find_named(broodmass_asset, "BroodmassMawPlate") as MeshInstance3D
+    var broodmass_maw_lower := _find_named(broodmass_asset, "BroodmassMawLower") as MeshInstance3D
     _expect(_mesh_vertex_count(broodmass_dorsal) >= 48 and _mesh_vertex_count(_find_named(broodmass_asset, "BroodmassFanL") as MeshInstance3D) >= 48, "The authored Broodmass dorsal and membrane hardware must retain beveled high-definition anatomy edges.")
     _expect(broodmass_dorsal != null and broodmass_dorsal.mesh.get_aabb().size.y >= 0.30 and broodmass_maw_plate != null and broodmass_maw_plate.mesh.get_aabb().size.y >= 0.30, "The authored Broodmass dorsal and maw plates must retain closed folded volume rather than broad horizontal sheets.")
+    _expect(broodmass_maw_lower != null and _mesh_vertex_count(broodmass_maw_lower) >= 500 and broodmass_maw_lower.mesh.get_aabb().size.y >= 0.20 and broodmass_maw_lower.get_parent().name == "BroodmassMaw", "Broodmass's lower maw must retain a dense folded shell with readable depth on the animated maw socket.")
     var broodmass_rib := _find_named(broodmass_asset, "BroodmassThoraxRib0") as MeshInstance3D
     _expect(broodmass_rib != null and _mesh_vertex_count(broodmass_rib) >= 200 and absf(broodmass_rib.rotation.z) >= 1.4, "The authored Broodmass thorax ribs must retain dense rounded struts rather than horizontal flat bars.")
     veilstalker_asset.queue_free()

@@ -168,6 +168,10 @@ def main() -> None:
     # Maw hardware is parented to the maw shell; use local offsets so it does
     # not double-apply the shell's world-space position.
     add_node("BroodmassMawPlate", mesh_ids["FoldedPlate"], (0.0, 0.24, -0.02), scale=(0.86, 0.82, 1.1), parent=maw)
+    # The nest maw needs a lower living volume beneath its upper plate. Keep it
+    # on the existing animated maw socket so the added depth follows attack and
+    # preserves one clear motion owner.
+    add_node("BroodmassMawLower", mesh_ids["FoldedPlate"], (0.0, -0.38, -0.12), rotation=(0.24, 0.0, 0.0), scale=(0.72, 0.70, 0.82), extras={"surface": "lower_maw_shell"}, parent=maw)
     add_node("BroodmassMawRidge", mesh_ids["MawRidge"], (0.0, 0.34, -0.28), scale=(0.88, 1.0, 0.9), parent=maw, extras={"surface": "maw_ridge"})
     for side in (-1.0, 1.0):
         add_node("BroodmassMawHook%s" % ("L" if side < 0 else "R"), mesh_ids["Hook"], (side * 0.34, -0.42, -0.24), rotation=(0.78, 0.0, side * 0.15), parent=maw)
