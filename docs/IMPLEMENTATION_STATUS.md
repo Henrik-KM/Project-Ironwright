@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused active animation hot-path pass
+
+- `ProceduralAnimator3D` now caches actor capability flags, fixed group
+  membership and organic species during setup instead of scanning property
+  lists and groups during every active animation update;
+- the cached path preserves the same attack, movement, death, tier-signal and
+  family-signature motion while removing repeated metadata work from the live
+  presentation loop;
+- repeated 192-actor benchmarks now measure roughly 60.0–60.7 FPS on this
+  workstation, with the active/medium/reduced population contract unchanged.
+
 ## Focused active-presentation animation cache pass
 
 - nearby release actors now cache their base transform nodes and named

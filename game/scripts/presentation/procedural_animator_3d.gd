@@ -26,6 +26,14 @@ var animation_frame_offset: int = 0
 var _has_state_name: bool = false
 var _has_channel_kind: bool = false
 var _has_visual_lod_level: bool = false
+var _has_attack_windup: bool = false
+var _has_death_presentation: bool = false
+var _has_enemy_tier: bool = false
+var _has_species: bool = false
+var _is_player_character: bool = false
+var _is_friendly_robot: bool = false
+var _is_organic_enemy: bool = false
+var _cached_species: StringName = &""
 var _last_health: float = -1.0
 
 
@@ -44,6 +52,15 @@ func _ready() -> void:
     _has_state_name = _property_exists(subject, &"state_name")
     _has_channel_kind = _property_exists(subject, &"channel_kind")
     _has_visual_lod_level = _property_exists(subject, &"visual_lod_level")
+    _has_attack_windup = _property_exists(subject, &"attack_windup_remaining")
+    _has_death_presentation = _property_exists(subject, &"death_presentation_remaining")
+    _has_enemy_tier = _property_exists(subject, &"enemy_tier")
+    _has_species = _property_exists(subject, &"species")
+    _is_player_character = subject.is_in_group(&"player_character")
+    _is_friendly_robot = subject.is_in_group(&"friendly_robots")
+    _is_organic_enemy = subject.is_in_group(&"organic_enemies")
+    if _has_species:
+        _cached_species = StringName(subject.get(&"species"))
     _resolve_model_root()
     if model_root == null:
         call_deferred("_resolve_and_capture")
@@ -169,11 +186,11 @@ func _process(delta: float) -> void:
     phase = fmod(phase + animation_delta * lerpf(2.4, 8.6, movement_blend), TAU)
 
     _restore_base_transforms()
-    if subject.is_in_group(&"player_character"):
+    if _is_player_character:
         _animate_mechromancer(movement_blend)
-    elif subject.is_in_group(&"friendly_robots"):
+    elif _is_friendly_robot:
         _animate_robot(movement_blend, delta)
-    elif subject.is_in_group(&"organic_enemies"):
+    elif _is_organic_enemy:
         _animate_organic(movement_blend)
 
 
@@ -305,7 +322,7 @@ func _animate_organic(movement_blend: float) -> void:
     var windup := _attack_windup_remaining()
     var threat_blend := clampf(windup / 0.34, 0.0, 1.0)
     var death_blend := 1.0 if dead else 0.0
-    if _property_exists(subject, &"death_presentation_remaining"):
+    if _has_death_presentation:
         var death_remaining := maxf(0.0, float(subject.get(&"death_presentation_remaining")))
         if death_remaining > 0.0:
             death_blend = clampf(1.0 - death_remaining / 0.72, 0.0, 1.0)
@@ -437,7 +454,7 @@ func _animate_organic(movement_blend: float) -> void:
 
 
 func _animate_tier_anatomy(threat_blend: float, movement_blend: float) -> void:
-    if subject == null or not _property_exists(subject, &"enemy_tier"):
+    if subject == null or not _has_enemy_tier:
         return
     var tier := clampi(int(subject.get(&"enemy_tier")), 1, 5)
     var channel_pulse := 1.0 + sin(idle_phase * (1.55 + float(tier) * 0.18) + deterministic_offset) * (0.08 + float(tier) * 0.018)
@@ -459,9 +476,7 @@ func _animate_tier_anatomy(threat_blend: float, movement_blend: float) -> void:
 
 
 func _organic_species() -> StringName:
-    if subject == null or not _property_exists(subject, &"species"):
-        return &""
-    return StringName(subject.get(&"species"))
+    return _cached_species
 
 
 func _animate_authored_family_signature(species: StringName, threat_blend: float, movement_blend: float) -> void:
@@ -603,7 +618,7 @@ func _animate_authored_family_signature(species: StringName, threat_blend: float
 
 
 func _attack_windup_remaining() -> float:
-    if subject == null or not _property_exists(subject, &"attack_windup_remaining"):
+    if subject == null or not _has_attack_windup:
         return 0.0
     return maxf(0.0, float(subject.get(&"attack_windup_remaining")))
 

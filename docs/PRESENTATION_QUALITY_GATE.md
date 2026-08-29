@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused active animation hot-path pass — 2026-08-29
+
+`ProceduralAnimator3D` now caches actor capability flags, fixed group
+membership and organic species during setup instead of scanning property lists
+and groups during every active animation update. The attack, movement, death,
+tier-signal and family-signature motion remains unchanged. Repeated 192-actor
+native benchmarks now measure roughly 60.0–60.7 FPS on this workstation, with
+the active/medium/reduced population contract unchanged. Validation and live
+review use Dummy audio with `--quiet-audio` only; no live speakers are used.
+
 ## Focused active-presentation animation cache pass — 2026-08-29
 
 Nearby release actors now cache their authored presentation transform nodes and
