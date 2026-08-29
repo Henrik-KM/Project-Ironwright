@@ -557,6 +557,19 @@ def build_family(name: str, spec: dict) -> None:
         {"name": f"{spec['display']} threat light", "pbrMetallicRoughness": {"baseColorFactor": list(colors[4]), "metallicFactor": 0.0, "roughnessFactor": 0.22}, "emissiveFactor": threat_emissive},
         {"name": f"{spec['display']} tendon", "pbrMetallicRoughness": {"baseColorFactor": list(colors[5]), "metallicFactor": 0.0, "roughnessFactor": 0.55}},
     ]
+    if name == "glassmoth":
+        # A muted cyan living vein separates the broad luminous membrane from
+        # the pale structural spars without turning the wing into a glowing
+        # grid. It remains presentation-only under the existing wing rig.
+        materials.append({
+            "name": "Glassmoth wing vascular detail",
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [0.40, 0.66, 0.60, 1.0],
+                "metallicFactor": 0.02,
+                "roughnessFactor": 0.44,
+            },
+            "emissiveFactor": [0.035, 0.24, 0.20],
+        })
     meshes: list[dict] = []
 
     def mesh(mesh_name: str, geometry: tuple[int, int, int, int]) -> int:
@@ -609,6 +622,11 @@ def build_family(name: str, spec: dict) -> None:
         # so existing mesh indices remain stable in generated assets.
         "DeepMembrane": mesh("DeepMembrane", add_organic_lobe(builder, (1.18, 0.62, 1.02), membrane, lobes=5, rings=16, sides=64, scallop_amplitude=0.18, leading_extension=0.42, fold_strength=1.68)),
     }
+    if name == "glassmoth":
+        mesh_ids["GlassmothWingVein"] = mesh(
+            "GlassmothWingVein",
+            add_capsule(builder, 0.024, 0.92, len(materials) - 1, 24),
+        )
     # Thornback's crown is a broad territorial shield. Build its thicker
     # folded lobe only for that family so the other six assets remain stable
     # when this focused pass changes.
@@ -841,7 +859,20 @@ def build_family(name: str, spec: dict) -> None:
             suffix = "L" if side < 0 else "R"
             for level in range(2):
                 wing_pitch = 0.36 + level * 0.10
-                add_node(f"GlassmothWing{suffix}{level}", mesh_ids["WingMembrane"], (side * (0.88 + level * 0.16), 1.18 + level * 0.22, 0.12 + level * 0.28), rotation=(side * wing_pitch, side * (0.28 + level * 0.10), side * 0.24), scale=(1.3 - level * 0.12, 0.82, 0.76), extras={"socket_type": "wing_pair"})
+                wing_node = add_node(f"GlassmothWing{suffix}{level}", mesh_ids["WingMembrane"], (side * (0.88 + level * 0.16), 1.18 + level * 0.22, 0.12 + level * 0.28), rotation=(side * wing_pitch, side * (0.28 + level * 0.10), side * 0.24), scale=(1.3 - level * 0.12, 0.82, 0.76), extras={"socket_type": "wing_pair"})
+                # Three fine radial veins give each broad membrane a living
+                # root-to-edge rhythm. Parenting them to the existing wing
+                # node keeps the imported animation hierarchy authoritative.
+                for vein_index in range(3):
+                    add_node(
+                        f"GlassmothWingVein{suffix}{level}{chr(65 + vein_index)}",
+                        mesh_ids["GlassmothWingVein"],
+                        (side * (0.10 + level * 0.03), 0.14, -0.25 + vein_index * 0.25),
+                        rotation=(math.pi * 0.5, side * (0.12 + level * 0.04), side * 0.06),
+                        scale=(1.0, 0.92, 1.0),
+                        extras={"surface": "luminous_wing_vascular_detail"},
+                        parent=wing_node,
+                    )
                 add_node(f"GlassmothWingFrame{suffix}{level}", mesh_ids["WingFrame"], (side * (1.10 + level * 0.16), 1.22 + level * 0.16, 0.12 + level * 0.18), rotation=(side * (wing_pitch + 0.04), side * (0.28 + level * 0.08), side * 0.64), scale=(0.62, 1.0, 0.82), extras={"surface": "glasswing_spar"})
                 add_node(f"GlassmothWingFastener{suffix}{level}", mesh_ids["CrownFastener"], (side * (0.58 + level * 0.12), 1.22 + level * 0.14, 0.08 + level * 0.16), extras={"surface": "wing_socket"})
                 add_node(f"GlassmothFineVein{suffix}{level}", mesh_ids["FineVein"], (side * (0.9 + level * 0.15), 1.2 + level * 0.15, 0.14 + level * 0.17), rotation=(side * (wing_pitch + 0.02), side * (0.26 + level * 0.06), side * 0.24), scale=(0.65, 1.0, 0.76), extras={"surface": "luminous_wing_vein"})

@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Glassmoth wing vascular-detail pass
+
+- added a restrained, parented three-vein lattice to each authored Glassmoth
+  wing, giving the luminous membranes a readable root-to-edge construction at
+  tactical-camera distance without turning them into a neon grid;
+- kept the veins under the existing imported wing animation and preserved the
+  species socket contract, collision, ecology, attack behaviour and gameplay
+  workload;
+- extended the Glassmoth asset manifest and aesthetic gate, regenerated the
+  source-authored glTF, and live-reviewed the early-organic gallery with Godot
+  Dummy audio and `--quiet-audio`.
+
 ## Focused autonomous-report localization pass
 
 - routed outpost departure, work, construction, return, haul, discovery,

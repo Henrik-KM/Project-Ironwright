@@ -152,9 +152,10 @@ Clutter must leave important routes readable from the high-angle camera.
 
 The Mechromancer now uses a regenerated authored glTF character asset with
 denser cloth, face and equipment forms. The friendly machine roster now uses
-authored glTF shells with role-readable silhouettes. Veilstalker and the common
-Razorhound now receive the same authored-shell treatment; the other organic
-families remain procedural until their own production asset milestones.
+authored glTF shells with role-readable silhouettes. All fourteen current
+organic families now use authored glTF shells with stable anatomy contracts;
+the runtime still owns collision, ecology and deterministic motion while each
+shell carries its own close-camera silhouette language.
 
 ### Mechromancer
 

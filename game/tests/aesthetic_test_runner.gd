@@ -1868,6 +1868,8 @@ func _run_all() -> void:
     _expect(_mesh_vertex_count(_find_named(glassmoth_asset, "GlassmothWingL0") as MeshInstance3D) >= 700, "The authored Glassmoth wing must retain a dense swept membrane silhouette rather than a low-detail disc.")
     var glassmoth_wing := _find_named(glassmoth_asset, "GlassmothWingL0") as Node3D
     _expect(glassmoth_wing != null and absf(glassmoth_wing.rotation.x) >= 0.30 and glassmoth_wing.scale.z <= 0.80, "The authored Glassmoth wing pair must retain a pitched, depth-separated flight silhouette.")
+    var glassmoth_vein := _find_named(glassmoth_asset, "GlassmothWingVeinL0A") as MeshInstance3D
+    _expect(glassmoth_vein != null and _mesh_vertex_count(glassmoth_vein) >= 48 and glassmoth_vein.get_parent() == glassmoth_wing, "The Glassmoth wing must retain a dense parented vascular lattice that follows the existing wing animation.")
     razorhound_asset.queue_free()
     sporecaster_asset.queue_free()
     skitterling_asset.queue_free()

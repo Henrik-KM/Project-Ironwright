@@ -5,6 +5,6 @@
   "runtime_path": "res://assets/glassmoth/glassmoth.gltf",
   "quality": "authored_high_definition",
   "license": "Original Project Ironwright asset",
-  "required_nodes": ["GlassmothModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "GlassmothThorax", "GlassmothWingL0", "GlassmothAntennaL", "GlassmothFineVeinL0", "GlassmothFineVeinR0", "GlassmothWingFrameL0", "GlassmothWingFastenerR1", "ProductionAssetMarker"],
+  "required_nodes": ["GlassmothModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "GlassmothThorax", "GlassmothWingL0", "GlassmothWingVeinL0A", "GlassmothAntennaL", "GlassmothFineVeinL0", "GlassmothFineVeinR0", "GlassmothWingFrameL0", "GlassmothWingFastenerR1", "ProductionAssetMarker"],
   "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]
 }

@@ -277,7 +277,7 @@ func _connect_region_lod() -> void:
 
 func _on_region_detail_changed(region_id: StringName, detail_level: int) -> void:
     var root := region_dressing_roots.get(region_id) as Node3D
-    if root == null or not is_instance_valid(root):
+    if root == null or not is_instance_valid(root) or root.is_queued_for_deletion():
         return
     # PersistentRegionGeometry owns the reduced landmark proxy. The release
     # dressing is the close-range authored layer, so it must disappear outside
@@ -289,7 +289,7 @@ func _on_region_stream_changed(region_id: StringName, streamed_in: bool) -> void
     if world == null or not is_instance_valid(world) or world.is_queued_for_deletion() or is_queued_for_deletion():
         return
     var root := region_dressing_roots.get(region_id) as Node3D
-    if root == null or not is_instance_valid(root):
+    if root == null or not is_instance_valid(root) or root.is_queued_for_deletion():
         return
     if streamed_in:
         # Stream transitions can reverse before the previous dressing tree has
@@ -329,7 +329,7 @@ func _finish_region_stream_cleanup(region_id: StringName) -> void:
     if world == null or not is_instance_valid(world) or world.is_queued_for_deletion() or is_queued_for_deletion():
         return
     var root := region_dressing_roots.get(region_id) as Node3D
-    if root == null or not is_instance_valid(root):
+    if root == null or not is_instance_valid(root) or root.is_queued_for_deletion():
         return
     var region_lod := world.get_node_or_null("RegionPresentationLodDirector") if world != null else null
     var should_stream_in := false
@@ -351,7 +351,7 @@ func _rebuild_region_dressing(region_id: StringName, root: Node3D) -> void:
 
 func ensure_region_dressing(region_id: StringName) -> Node3D:
     var root := region_dressing_roots.get(region_id) as Node3D
-    if root == null or not is_instance_valid(root):
+    if root == null or not is_instance_valid(root) or root.is_queued_for_deletion():
         return null
     if not _has_region_dressing_content(root):
         _rebuild_region_dressing(region_id, root)
