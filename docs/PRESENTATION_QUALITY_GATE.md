@@ -2805,3 +2805,14 @@ separation from the cold-water channels. The pass is presentation-only and
 preserves the landmark, collision, route, ecology, salvage and operation
 contracts; exact silent page 9/15 review remains required, and broader human
 Riverworks and production-art acceptance remains open.
+
+## 2026-08-30 — First-victory transient-boundary review
+
+The first-victory frame now suppresses stale machine-report toasts, interaction
+prompts, map/channel overlays and sound captions while the centered ending
+surface is visible. Deferred objective refreshes and late autonomous callbacks
+remain suppressed until the player continues into the living sanctuary. The
+transformation review fixture was captured from the native release world with
+Godot Dummy audio and `--quiet-audio`; no physical speakers were used. The
+result retains the authored city, Heartforge, surviving cast and restrained
+sanctuary crown behind the readable ending surface.

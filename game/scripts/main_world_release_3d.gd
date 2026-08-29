@@ -2861,6 +2861,7 @@ func _on_heartforge_destroyed() -> void:
 
 func _on_endgame_completed(protocol_id: StringName, display_name: String, ending: String) -> void:
 	balance_director.record_victory(run_state.elapsed_seconds)
+	release_audio.clear_transient_feedback()
 	release_audio.notify_victory()
 	if not endgame_protocol_review_active:
 		_save_release_game()

@@ -457,6 +457,8 @@ func _run_all() -> void:
     _expect(world.endgame_escalation_director.current_progress > 0.0, "Final protocol progress must drive the visual lattice continuously.")
     _expect(world.endgame_director.remote_support_progress() > 0.0 and world.endgame_director.homefront_hold_progress() == 0.0, "The final protocol must begin with a remote relay phase before the home-front hold.")
     var severance := world.endgame_director.protocol(&"protocol.severance")
+    world.hud.push_notification("STALE MACHINE REPORT")
+    world.hud.set_prompt("STALE INTERACTION PROMPT")
     world.endgame_director._process(float(severance.get("duration_seconds", 210.0)) + 1.0)
     _expect(world.endgame_director.completed_protocol == &"protocol.severance", "The final protocol must complete after its sustained defence interval.")
     _expect(world.endgame_director.remote_support_progress() >= 0.999 and world.endgame_director.homefront_hold_progress() >= 0.999, "Victory must require both remote relay support and a completed Heartforge hold.")
@@ -469,11 +471,14 @@ func _run_all() -> void:
     _expect(world.hud.has_method(&"set_sanctuary_integrity") and world.hud.sanctuary_integrity >= 0.7, "The first-victory frame must clear the active crisis damage badge instead of carrying stale sanctuary damage into the ending.")
     _expect(world.hud.operation_label.text.find("%") == -1 and (world.hud.operation_label.text.to_lower().find("victory") >= 0 or world.hud.operation_label.text.to_lower().find("sieg") >= 0), "First victory must replace the stale active-protocol percentage in the live resource panel.")
     _expect(world.hud.objective_label.text.to_lower().find("victory") >= 0 or world.hud.objective_label.text.to_lower().find("sieg") >= 0, "First victory must replace the active hold-the-Heartforge objective.")
-    _expect(world.hud.prompt_label.text.to_lower().find("sanctuary") >= 0 or world.hud.prompt_label.text.to_lower().find("heiligtum") >= 0, "First victory must expose the continuing-sanctuary prompt.")
+    _expect(world.hud.ending_panel != null and world.hud.ending_panel.visible, "First victory must expose the continuing-sanctuary ending surface.")
+    _expect(world.hud.notifications.is_empty() and not world.hud.notification_panel.visible, "First victory must clear stale machine-report toasts before showing the ending surface.")
+    _expect(not world.hud.prompt_panel.visible and world.hud.prompt_label.text.is_empty(), "First victory must clear stale interaction guidance so the ending surface owns the continuation prompt.")
     _expect(not world.long_operation_director.available_operations().any(func(entry: Dictionary) -> bool: return StringName(str(entry.get("id", ""))) == &"operation.post_victory_archive"), "The post-victory archive must remain unavailable behind the victory boundary until continuation is chosen.")
     world.hud.show_ending(true, "The signal collapses. Organisms remain in the streets, but the intelligence coordinating them is gone. The machines inherit a wounded, survivable town.", true)
     var ending_panel := world.hud.ending_panel
     var ending_label := ending_panel.get_node("PanelContent").get_child(0) as Label
+    _expect(ending_label != null and ending_label.text.to_lower().find("continue") >= 0, "The victory ending surface must own the explicit continuation prompt.")
     _expect(ending_label != null and ending_label.text.count("\n") >= 4, "The victory overlay must wrap its long ending copy into readable lines.")
     var ending_style := ending_panel.get_theme_stylebox("panel") as StyleBoxFlat
     _expect(ending_style != null and ending_style.bg_color.a >= 0.9 and ending_style.border_color.g > ending_style.border_color.r, "The victory overlay must use an opaque sanctuary panel with a restrained cyan edge.")

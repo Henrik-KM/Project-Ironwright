@@ -98,6 +98,7 @@ var adaptive_build_cue_count: int = 0
 var adaptive_completion_cue_count: int = 0
 var adaptive_build_audio_played: bool = false
 var quiet_audio: bool = false
+var transient_feedback_locked: bool = false
 var title_screen_active: bool = true
 var current_region_kind: StringName = &"sanctuary"
 
@@ -233,6 +234,8 @@ func _build_caption_ui() -> void:
 
 
 func play_effect(effect_id: StringName, caption_key: String = "", pitch_variation: float = 0.0, volume_db: float = 0.0, base_pitch: float = 1.0) -> void:
+    if transient_feedback_locked:
+        return
     var stream: AudioStream = stream_library.get(effect_id, null)
     if stream == null or sfx_pool.is_empty():
         return
@@ -389,11 +392,29 @@ func _play_spatial_effect(effect_id: StringName, world_position: Vector3, volume
 
 
 func show_caption(key: String, seconds: float = 2.2) -> void:
+    if transient_feedback_locked:
+        return
     if settings_service != null and not bool(settings_service.get_value(&"sound_captions", true)):
         return
     caption_label.text = "[%s]" % (localization.text(key) if localization != null else key)
     caption_panel.visible = true
     caption_clock = maxf(caption_clock, seconds)
+
+
+func clear_transient_feedback() -> void:
+    transient_feedback_locked = false
+    for audio in sfx_pool:
+        if is_instance_valid(audio):
+            audio.stop()
+    for audio in spatial_operation_reports:
+        if is_instance_valid(audio):
+            audio.stop()
+            audio.queue_free()
+    spatial_operation_reports.clear()
+    caption_clock = 0.0
+    if caption_panel != null:
+        caption_panel.visible = false
+    last_effect_id = &""
 
 
 func notify_machine_report() -> void:
@@ -406,7 +427,9 @@ func notify_danger() -> void:
 
 
 func notify_victory() -> void:
+    clear_transient_feedback()
     play_effect(&"victory", "audio.caption.victory", 0.0, 0.0)
+    transient_feedback_locked = true
     _switch_music(&"sovereignty")
 
 

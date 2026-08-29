@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused endgame transient-boundary pass — 2026-08-30
+
+The first-victory surface now owns the complete handoff frame. It clears stale
+machine-report toasts, interaction guidance, map/channel overlays and release
+sound captions; deferred objective refreshes and late machine callbacks cannot
+repopulate those transient layers until the player explicitly continues into
+the sanctuary. The release audio director also stops transient SFX and spatial
+operation cues before playing the restrained victory cue. HUD, release-audio
+and complete-game regressions cover the boundary. Exact transformation victory
+review passed with Godot Dummy audio and `--quiet-audio`; no physical speakers
+were used.
+
 ## Focused Razorhound bite-line detail pass
 
 - added a dense parented muzzle guard, articulated throat lobe and paired
@@ -10,7 +22,7 @@
   attack socket contracts; all new geometry is presentation-only and follows
   the existing snout movement;
 - extended the Razorhound manifest and aesthetic regression gate, with the
-  exact early-organic gallery review queued for the quiet live pass.
+  exact early-organic gallery review confirmed in the quiet live pass.
 
 ## Focused Glassmoth wing vascular-detail pass
 

@@ -141,6 +141,10 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
         world.release_audio.outpost_cue_clock = 0.0
         world.release_audio.notify_outpost_activity(audio_outpost, &"repairing")
         _expect(world.release_audio.outpost_cue_count == outpost_cue_count_before + 2, "A changed outpost activity must become available after its short overlap window.")
+        world.release_audio.show_caption("audio.caption.report")
+        world.release_audio.clear_transient_feedback()
+        _expect(not world.release_audio.caption_panel.visible and is_zero_approx(world.release_audio.caption_clock), "The ending boundary must clear transient sound captions instead of leaving a stale cue beneath the final surface.")
+        _expect(world.release_audio.spatial_operation_reports.is_empty(), "The ending boundary must release transient spatial operation cues.")
         audio_outpost.free()
         # Headless release boot does not materialize combat actors, so use a
         # real OrganicEnemy3D fixture through the same connection path rather

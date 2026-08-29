@@ -48,6 +48,7 @@ var operation_badge: PanelContainer
 var operation_badge_label: Label
 var ending_panel: Control
 var forge_open: bool = false
+var transient_feedback_locked: bool = false
 var notifications: Array[String] = []
 var notification_ages: Array[float] = []
 var displayed_scrap: int = 24
@@ -480,6 +481,8 @@ func set_objective(title: String, detail: String) -> void:
 
 
 func set_prompt(text_value: String) -> void:
+    if transient_feedback_locked:
+        return
     prompt_label.text = text_value
     prompt_panel.visible = not text_value.strip_edges().is_empty()
 
@@ -549,6 +552,8 @@ func show_map_banner(visible_value: bool) -> void:
 
 
 func push_notification(message: String) -> void:
+    if transient_feedback_locked:
+        return
     var cleaned := message.strip_edges()
     if cleaned.is_empty():
         return
@@ -562,6 +567,15 @@ func push_notification(message: String) -> void:
         notifications.resize(MAX_VISIBLE_NOTIFICATIONS)
         notification_ages.resize(MAX_VISIBLE_NOTIFICATIONS)
     _refresh_notifications()
+
+
+func clear_transient_feedback() -> void:
+    notifications.clear()
+    notification_ages.clear()
+    _refresh_notifications()
+    set_prompt("")
+    hide_channel()
+    show_map_banner(false)
 
 
 func _refresh_notifications() -> void:
@@ -623,6 +637,8 @@ func _text(key: String, fallback: String, replacements: Array = []) -> String:
 
 func show_ending(victory: bool, detail: String, allow_continuation: bool = false) -> void:
     dismiss_ending()
+    clear_transient_feedback()
+    transient_feedback_locked = true
     ending_panel = _ending_surface()
     ending_panel.name = "EndingPanel"
     ending_panel.set_anchors_preset(Control.PRESET_CENTER)
@@ -734,6 +750,7 @@ func _wrap_multiline_detail(detail: String, max_chars: int) -> String:
 
 
 func dismiss_ending() -> void:
+    transient_feedback_locked = false
     if is_instance_valid(ending_panel):
         # Keep the surface mounted and hide it. Destroying a CanvasItem during
         # the first-victory handoff can invalidate the renderer's next 3D
