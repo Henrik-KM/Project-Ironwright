@@ -1246,7 +1246,7 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     var roofleaper_frame_mesh := _find_first_mesh(later_families[0].find_child("RoofleaperWingFrameL", true, false) if later_families.size() > 0 and later_families[0] != null else null)
     var roofleaper_frame_material := roofleaper_frame_mesh.material_override as StandardMaterial3D if roofleaper_frame_mesh != null else null
     _expect(roofleaper_frame_mesh != null and roofleaper_frame_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Wing-frame supports must use the structural chitin material lane rather than the membrane lane.")
-    _expect(roofleaper_frame_material != null and roofleaper_frame_material.albedo_texture == null and not roofleaper_frame_material.normal_enabled and roofleaper_frame_material.roughness >= 0.67, "Wing-frame supports must retain a clean darker, rough structural surface instead of a pale membrane texture.")
+    _expect(roofleaper_frame_material != null and roofleaper_frame_material.albedo_texture == null and not roofleaper_frame_material.normal_enabled and roofleaper_frame_material.roughness >= 0.71 and roofleaper_frame_material.albedo_color.get_luminance() < 0.52, "Wing-frame supports must retain a clean darker, rough structural surface instead of a pale membrane texture.")
     var rootweaver_rib_mesh := _find_first_mesh(late_authored_family.find_child("RootweaverSporeRib0", true, false) if late_authored_family != null else null)
     _expect(rootweaver_rib_mesh != null and rootweaver_rib_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Spore-fan ribs must use the structural chitin material lane while the fan membrane stays living.")
     for family in later_families:

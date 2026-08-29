@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-08-29 — Organic structural material finish
+
+- lowered the structural chitin value and raised its roughness for imported
+  ribs, wing spars, bones and hard supports;
+- kept living membranes, vascular detail and signal accents on their lighter
+  biological lanes without changing geometry, animation or gameplay;
+- verified the release material contract and live late-organic gallery with
+  Dummy audio and `--quiet-audio` only.
+
 ## 2026-08-29 — Release material-stream cadence
 
 - kept the opening player and companion cast prioritized while processing

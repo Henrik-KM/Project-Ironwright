@@ -408,7 +408,7 @@ func _texture_mesh(mesh_instance: MeshInstance3D) -> void:
                 material.albedo_texture = null
                 material.normal_enabled = false
                 material.normal_texture = null
-                material.roughness = 0.68
+                material.roughness = 0.72
             material.albedo_color = _organic_detail_tint(mesh_instance, authored_tint, category)
             _tune_organic_surface_finish(material, category, detail_name)
     mesh_instance.material_override = material
@@ -511,7 +511,10 @@ func _organic_detail_tint(mesh_instance: MeshInstance3D, family_tint: Color, cat
     if "finevein" in detail_name or "vascular" in detail_name:
         return family_tint.lightened(0.10)
     if _is_organic_structural_detail(detail_name):
-        return family_tint.darkened(0.26)
+        # Hard anatomy is a separate, weathered biological material lane. The
+        # stronger value drop keeps ribs, spars and bone from reading as pale
+        # placeholder rods under the blue-hour review key.
+        return family_tint.darkened(0.38)
     if category == &"membrane" or _contains_any(detail_name, ["membrane", "fan", "gill", "fin", "wing", "mantle", "spore", "vein"]):
         var authored_path := str(mesh_instance.get_path()).to_lower()
         # Late-family membranes are already broad and layered; a smaller lift

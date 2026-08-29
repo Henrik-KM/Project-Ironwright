@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused organic structural material finish pass
+
+- lowered the structural chitin value and raised its roughness so imported
+  ribs, wing spars, bones and hard supports stop reading as pale rods under the
+  blue-hour key;
+- preserved the lighter living membrane, vascular and signal lanes, keeping
+  the high-definition silhouettes and biological focal hierarchy intact;
+- release material assertions and the live late-organic gallery remain green.
+
 ## Focused release material-stream cadence pass
 
 - kept the prioritized opening cast at the front of the release material queue
