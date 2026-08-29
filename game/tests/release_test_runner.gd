@@ -52,6 +52,7 @@ func _run_all() -> void:
 func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.audio_director != null and not world.audio_director.release_overlap_bindings_enabled, "The release entrypoint must hand overlapping player and organic cues to the canonical release mixer.")
     _expect(world.localization_service is LocalizationService3D, "Release runtime must install localization.")
+    _expect(world.localization_service.text("menu.release_candidate").contains("1.0.0 RC.1"), "The release shell must display the authoritative 1.0.0 RC.1 version label.")
     _expect(world.settings_service is ReleaseSettingsService3D, "Release runtime must install accessibility and controller settings.")
     _expect(world.transactional_save_service is ReleaseTransactionalSaveService3D, "Release runtime must install transactional persistence.")
     _expect(world.spatial_index is SpatialIndex3D, "Release runtime must install the spatial index.")
@@ -311,6 +312,7 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     _expect(service.set_locale(&"sv"), "Swedish locale must be selectable.")
     var swedish := service.text("menu.new_world")
     _expect(swedish == "NY VÄRLD" and swedish != english, "Swedish catalog must resolve localized release strings.")
+    _expect(service.text("menu.release_candidate").contains("1.0.0 RC.1"), "Swedish release shell must display the authoritative 1.0.0 RC.1 version label.")
     _expect(service.text("objective.opening.salvage.title") == "BÄRGA DITT FÖRSTA SKROT", "Swedish catalog must localize the opening objective title.")
     _expect(service.text("notification.forge.insufficient_scrap", [42]) == "OTILLRÄCKLIGT MED SKROT · 42 KRÄVS" and service.text("notification.complete.systems_online") == "STADENS NÄTVERK ÖPPNA · P LÅNGDISTANSOPERATIONER · V SLUTPROTOKOLL", "Swedish gameplay reports must localize fabrication and complete-run guidance.")
     _expect(service.text("notification.outpost.foundation_complete").begins_with("FULLSPELGRUND KLAR") and service.text("objective.full_game.outpost.title") == "GODKÄNN EN UTPOST", "Swedish full-game foundation reports and outpost objectives must resolve through the selected catalog.")
@@ -389,6 +391,7 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     _expect(language_control != null and str(language_control.get_item_metadata(language_control.selected)) == "en", "The settings language selector must follow the active catalog during a non-saving locale override.")
     _expect(service.set_locale(&"de"), "German locale must remain selectable after the override alignment check.")
     _expect(service.text("menu.settings") == "EINSTELLUNGEN", "German catalog must resolve release settings text.")
+    _expect(service.text("menu.release_candidate").contains("1.0.0 RC.1"), "German release shell must display the authoritative 1.0.0 RC.1 version label.")
     _expect(service.text("objective.opening.salvage.title") == "BERGE DEIN ERSTES SCHROTTGUT", "German catalog must localize the opening objective title.")
     _expect(service.text("notification.forge.insufficient_scrap", [42]) == "NICHT GENUG SCHROTT · 42 ERFORDERLICH" and service.text("notification.final_protocol.initiated") == "ENDPROTOKOLL GESTARTET · DIE REAKTION IST KAUSAL UND UNWIDERRUFLICH", "German gameplay reports must localize fabrication and final-protocol guidance.")
     _expect(service.text("notification.evolution.tier_online", [2]) == "HERZSCHMIEDE-STUFE 2 AKTIV · INGENIEUR- UND AUSSENPOSTENPROTOKOLLE VERFÜGBAR" and service.text("objective.full_game.outpost.title") == "EINEN AUSSENPOSTEN GENEHMIGEN", "German full-game evolution reports and outpost objectives must resolve through the selected catalog.")

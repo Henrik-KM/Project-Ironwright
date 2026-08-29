@@ -1,5 +1,12 @@
 # Implementation status
 
+## Focused release-version label consistency pass
+
+- aligned the title and pause-shell release label with the authoritative
+  `1.0.0-rc.1` manifest in English, Swedish and German;
+- preserved the title layout, localization keys, save flow and release
+  behaviour while removing the visible `1.0`/`1.0.0-rc.1` mismatch.
+
 ## Focused East Tenements roofline model pass
 
 - added a compact left-roof maintenance housing, vent cap and service pipe to
