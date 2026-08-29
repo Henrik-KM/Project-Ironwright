@@ -343,16 +343,17 @@ func _update_interaction_context() -> void:
             nearest_salvage = candidate
             best_distance = current_distance
 
+    var interact_hint := _input_binding_hint(&"iw_interact", "E")
     if player.is_channeling():
-        hud.set_prompt("Do not move. Any hit interrupts the exposed operation.")
+        hud.set_prompt(_localized_runtime_text("prompt.interaction.channeling", "DO NOT MOVE · ANY HIT INTERRUPTS THE EXPOSED OPERATION"))
     elif hud.forge_open:
-        hud.set_prompt("Choose one manual fabrication or class upgrade. ESC closes the forge.")
+        hud.set_prompt(_localized_runtime_text("prompt.interaction.forge", "CHOOSE ONE MANUAL FABRICATION OR CLASS UPGRADE · ESC CLOSES THE FORGE"))
     elif nearest_salvage != null:
-        hud.set_prompt("HOLD %s · salvage %s · loud, slow, pistol disabled" % [_input_binding_hint(&"iw_interact", "E"), nearest_salvage.display_name])
+        hud.set_prompt(_localized_runtime_text("prompt.interaction.salvage", "HOLD {0} · SALVAGE {1} · LOUD, SLOW, PISTOL DISABLED", [interact_hint, nearest_salvage.display_name]))
     elif forge_in_range:
-        hud.set_prompt("%s · operate Heartforge manually" % _input_binding_hint(&"iw_interact", "E"))
+        hud.set_prompt(_localized_runtime_text("prompt.interaction.heartforge", "{0} · OPERATE THE HEARTFORGE MANUALLY", [interact_hint]))
     else:
-        hud.set_prompt("The pistol buys seconds. Stay close enough for the Bulwark to intercept.")
+        hud.set_prompt(_localized_runtime_text("prompt.interaction.bulwark", "THE PISTOL BUYS SECONDS · STAY CLOSE ENOUGH FOR THE BULWARK TO INTERCEPT"))
 
 
 func _handle_context_interaction() -> void:
@@ -447,12 +448,14 @@ func _on_channel_completed(kind: StringName, target: Node, metadata: Dictionary)
         var recovered := pile.extract_manual()
         run_state.add_scrap(recovered, false)
         run_state.log_event("You recovered %d Scrap while the salvage noise drew organisms closer." % recovered)
+        hud.push_notification(_localized_runtime_text("notification.event.scrap_recovered", "RECOVERED {0} SCRAP · SALVAGE NOISE DREW ORGANISMS CLOSER", [recovered]))
     elif kind == &"forge_build":
         var archetype := StringName(str(metadata.get("archetype", "salvager")))
         var spawn_offset := Vector3(2.4 + float(run_state.robots_built % 3), 0.0, 3.5 + float(run_state.robots_built % 2))
         _spawn_robot(archetype, heartforge.global_position + spawn_offset, run_state.level_for(archetype))
         run_state.robots_built += 1
         run_state.log_event("A level %d %s was built manually at the Heartforge." % [run_state.level_for(archetype), String(archetype).capitalize()])
+        hud.push_notification(_localized_runtime_text("notification.event.manual_build", "LEVEL {0} {1} BUILT MANUALLY AT THE HEARTFORGE", [run_state.level_for(archetype), String(archetype).to_upper()]))
     elif kind == &"forge_upgrade":
         var upgrade_archetype := StringName(str(metadata.get("archetype", "salvager")))
         run_state.purchase_upgrade(upgrade_archetype)
@@ -534,6 +537,7 @@ func _on_companion_destroyed(robot: RobotUnit3D) -> void:
 func _on_enemy_killed(enemy: OrganicEnemy3D, killer: Node) -> void:
     if killer == player:
         run_state.log_event("The weak pistol finished a %s only after sustained exposure." % String(enemy.species))
+        hud.push_notification(_localized_runtime_text("notification.event.pistol_kill", "WEAK PISTOL FINISHED A {0} AFTER SUSTAINED EXPOSURE", [String(enemy.species).to_upper()]))
 
 
 func _spawn_tracer(origin: Vector3, target: Vector3, target_node: Node) -> void:

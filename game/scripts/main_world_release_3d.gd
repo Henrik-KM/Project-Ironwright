@@ -2412,6 +2412,38 @@ func _should_build_city_on_boot() -> bool:
 
 
 func _on_run_state_event_logged(message: String) -> void:
+	if message == "The Heartforge light is weak. The companion is your only reliable protection.":
+		hud.push_notification(_localized_runtime_text(
+			"notification.event.heartforge_weak",
+			"HEARTFORGE LIGHT IS WEAK · THE COMPANION IS YOUR ONLY RELIABLE PROTECTION"
+		))
+		return
+	if message == "The Bulwark projects a visible route to the nearest recoverable wreck.":
+		hud.push_notification(_localized_runtime_text(
+			"notification.event.route_ready",
+			"THE BULWARK PROJECTS A VISIBLE ROUTE TO THE NEAREST RECOVERABLE WRECK"
+		))
+		return
+	# These stable log entries are useful in diagnostics but are not player
+	# reports. Suppress their raw English copy from the release HUD; the
+	# actionable release callbacks already provide localized summaries.
+	for diagnostic_prefix in [
+		"Presentation status:",
+		"The opening district, remote regions and endgame landmarks share",
+		"The complete systemic run is active.",
+		"Full-game progression is active.",
+		"Enemy escalation is population-driven.",
+		"MACHINE WITNESS ·",
+		"Long-range operation complete:",
+		"Disabled machine recovered:",
+		"CASUALTY BEACON ·",
+		"You recovered ",
+		"A level ",
+		"The weak pistol finished a ",
+		"Distributed Continuity rebuilt the Heartforge after catastrophic failure.",
+	]:
+		if message.begins_with(diagnostic_prefix):
+			return
 	if message.begins_with("Adaptive Heartforge proposal available:"):
 		var proposal_summary := message.trim_prefix("Adaptive Heartforge proposal available:").strip_edges()
 		var proposal_director := get_node_or_null("AdaptiveDefenseDirector") as AdaptiveDefenseDirector3D

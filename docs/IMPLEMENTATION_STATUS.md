@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused release interaction localization pass
+
+- localized the canonical base interaction prompts for exposed channels, the
+  forge, salvage, Heartforge use and Bulwark protection across English,
+  Swedish and German;
+- localized the early salvage, manual-build and weak-pistol reports while
+  suppressing diagnostic-only English event-log entries from the release HUD;
+  the stable English log remains available for debugging and saved history;
+- preserved the existing action flow, channel lockouts, audio routing and
+  simulation state.
+
 ## Focused Engineer service-bay model pass
 
 - The authored Engineer construction-machine asset now carries a second front
