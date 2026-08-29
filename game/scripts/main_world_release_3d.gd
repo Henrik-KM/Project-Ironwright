@@ -1090,39 +1090,72 @@ func _start_presentation_review() -> void:
 			enemy.set_physics_process(false)
 			enemy.set_process(false)
 			presentation_review_pages[2].append(enemy)
-	for index in PRESENTATION_REVIEW_REGIONS.size():
-		var landmark := _presentation_review_landmark(PRESENTATION_REVIEW_REGIONS[index])
-		var review_actor: Node3D = landmark
-		if PRESENTATION_REVIEW_REGIONS[index] == &"region.root_cistern" and landmark != null:
-			review_actor = _create_root_cistern_presentation_review_actor(landmark)
-		elif PRESENTATION_REVIEW_REGIONS[index] == &"region.observatory_ridge" and landmark != null:
-			review_actor = _create_observatory_presentation_review_actor(landmark)
-		elif PRESENTATION_REVIEW_REGIONS[index] == &"region.buried_labs" and landmark != null:
-			review_actor = _create_buried_labs_presentation_review_actor(landmark)
-		elif PRESENTATION_REVIEW_REGIONS[index] == &"region.tram_graveyard" and landmark != null:
-			review_actor = _create_tram_graveyard_presentation_review_actor(landmark)
-		elif PRESENTATION_REVIEW_REGIONS[index] == &"region.cathedral_quarter" and landmark != null:
-			_apply_cathedral_presentation_material_overrides(landmark)
-		if review_actor != null:
-			# Bounded runtime startup intentionally keeps remote authored packages
-			# unloaded. The development gallery is an explicit whole-library review,
-			# so promote each real landmark before staging it; otherwise a page can
-			# show only its secondary dressing and falsely read as incomplete.
-			landmark.set_streamed_in(true)
-			landmark.set_presentation_detail_level(0)
-			if PRESENTATION_REVIEW_REGIONS[index] == &"region.root_cistern":
-				landmark.visible = false
-				var review_persistent_scene := landmark.get_node_or_null("RootCisternAuthoredScene") as Node3D
-				if review_persistent_scene != null:
-					review_persistent_scene.visible = false
-				var review_reduced_proxy := landmark.get_node_or_null("ReducedRegionProxy") as Node3D
-				if review_reduced_proxy != null:
-					review_reduced_proxy.visible = false
-			landmark.set_map_emphasis(false)
-			presentation_review_pages[3 + index].append(review_actor)
+	if _is_headless_release():
+		for index in PRESENTATION_REVIEW_REGIONS.size():
+			_populate_presentation_review_region(index)
 	var outpost_review_page: Array = presentation_review_pages[3 + PRESENTATION_REVIEW_REGIONS.size()]
+	if _is_headless_release():
+		_populate_presentation_review_outposts(outpost_review_page)
+	_create_presentation_review_stage()
+	_show_presentation_review_page(_presentation_review_start_page())
+	get_tree().paused = true
+	run_state.log_event("Presentation review mode: 1 friendly roster, 2 early organics, 3 late organics, 4-14 all remote regions, 15 autonomous outpost roles. Arrow keys browse; Escape exits review.")
+
+
+func _ensure_presentation_review_page_loaded(page: int) -> void:
+	if page >= 3 and page < 3 + PRESENTATION_REVIEW_REGIONS.size():
+		var region_index := page - 3
+		if presentation_review_pages[page].is_empty():
+			_populate_presentation_review_region(region_index)
+	elif page == 3 + PRESENTATION_REVIEW_REGIONS.size():
+		if presentation_review_pages[page].is_empty():
+			_populate_presentation_review_outposts(presentation_review_pages[page])
+
+
+func _populate_presentation_review_region(index: int) -> void:
+	if index < 0 or index >= PRESENTATION_REVIEW_REGIONS.size():
+		return
+	var page := 3 + index
+	if not presentation_review_pages[page].is_empty():
+		return
+	var region_id: StringName = PRESENTATION_REVIEW_REGIONS[index]
+	if region_director != null:
+		region_director.discover_region(region_id)
+	var landmark := _presentation_review_landmark(region_id)
+	var review_actor: Node3D = landmark
+	if region_id == &"region.root_cistern" and landmark != null:
+		review_actor = _create_root_cistern_presentation_review_actor(landmark)
+	elif region_id == &"region.observatory_ridge" and landmark != null:
+		review_actor = _create_observatory_presentation_review_actor(landmark)
+	elif region_id == &"region.buried_labs" and landmark != null:
+		review_actor = _create_buried_labs_presentation_review_actor(landmark)
+	elif region_id == &"region.tram_graveyard" and landmark != null:
+		review_actor = _create_tram_graveyard_presentation_review_actor(landmark)
+	elif region_id == &"region.cathedral_quarter" and landmark != null:
+		_apply_cathedral_presentation_material_overrides(landmark)
+	if review_actor == null or landmark == null:
+		return
+	# Promote only the selected fixture. Other remote packages remain streamed out
+	# until their page is selected, keeping the live review startup bounded.
+	landmark.set_streamed_in(true)
+	landmark.set_presentation_detail_level(0)
+	if region_id == &"region.root_cistern":
+		landmark.visible = false
+		var review_persistent_scene := landmark.get_node_or_null("RootCisternAuthoredScene") as Node3D
+		if review_persistent_scene != null:
+			review_persistent_scene.visible = false
+		var review_reduced_proxy := landmark.get_node_or_null("ReducedRegionProxy") as Node3D
+		if review_reduced_proxy != null:
+			review_reduced_proxy.visible = false
+	landmark.set_map_emphasis(false)
+	presentation_review_pages[page].append(review_actor)
+
+
+func _populate_presentation_review_outposts(page: Array) -> void:
+	if not page.is_empty():
+		return
+	var outpost_scene := _load_presentation_review_scene(OUTPOST_PRESENTATION_REVIEW_SCENE, "outpost review")
 	for index in 4:
-		var outpost_scene := _load_presentation_review_scene(OUTPOST_PRESENTATION_REVIEW_SCENE, "outpost review")
 		var outpost := outpost_scene.instantiate() as Outpost3D if outpost_scene != null else null
 		if outpost == null:
 			continue
@@ -1132,11 +1165,7 @@ func _start_presentation_review() -> void:
 		outpost.set_physics_process(false)
 		outpost.set_process(false)
 		outpost.set_presentation_review_mode()
-		outpost_review_page.append(outpost)
-	_create_presentation_review_stage()
-	_show_presentation_review_page(_presentation_review_start_page())
-	get_tree().paused = true
-	run_state.log_event("Presentation review mode: 1 friendly roster, 2 early organics, 3 late organics, 4-14 all remote regions, 15 autonomous outpost roles. Arrow keys browse; Escape exits review.")
+		page.append(outpost)
 
 
 func _load_presentation_review_scene(path: String, label: String) -> PackedScene:
@@ -1475,6 +1504,7 @@ func _show_presentation_review_page(page: int) -> void:
 	if presentation_review_pages.size() != 4 + PRESENTATION_REVIEW_REGIONS.size():
 		return
 	presentation_review_page = clampi(page, 0, presentation_review_pages.size() - 1)
+	_ensure_presentation_review_page_loaded(presentation_review_page)
 	for page_actors in presentation_review_pages:
 		for actor in page_actors:
 			if is_instance_valid(actor):

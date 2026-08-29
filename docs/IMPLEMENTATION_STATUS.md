@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused presentation-review page residency pass
+
+- the live presentation gallery now loads its selected remote landmark or
+  outpost page on demand, while the headless review path still materializes
+  and checks the complete fifteen-page library;
+- this keeps the exact native model review usable for friendly and organic
+  roster inspection without importing every remote fixture into the first
+  review frame; live checks used Dummy audio and `--quiet-audio`.
+
 ## Focused release art startup residency pass
 
 - release material overrides now share cached hard-surface resources and use
