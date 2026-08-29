@@ -235,13 +235,18 @@ func _update_camera(delta: float) -> void:
 
 	var target := player.global_position
 	var home_focus := false
+	var formation_spread := 0.0
 	if follow_operation:
 		var operation_target := _active_follow_target()
 		if operation_target != null:
 			target = operation_target.global_position
 			if long_operation_director != null and not long_operation_director.active_operation.is_empty():
+				var follow_focus := long_operation_director.get_follow_focus()
+				if not follow_focus.is_empty():
+					target = follow_focus.get("center", target)
+					formation_spread = float(follow_focus.get("spread", 0.0))
 				release_camera_departure_clock += delta
-				home_focus = release_camera_departure_clock < 3.0 or operation_target.global_position.distance_to(heartforge.global_position) < 18.0
+				home_focus = release_camera_departure_clock < 3.0 or target.distance_to(heartforge.global_position) < 18.0
 				if home_focus:
 					target = player.global_position
 		else:
@@ -265,6 +270,12 @@ func _update_camera(delta: float) -> void:
 		var remote_expansion := _remote_camera_expansion()
 		dynamic_height += remote_expansion.x
 		dynamic_distance += remote_expansion.y
+	if follow_operation and formation_spread > 2.5:
+		# Keep every member readable in a broad formation while preserving the
+		# close tactical feel once the group has regrouped.
+		var spread_excess := formation_spread - 2.5
+		dynamic_height += minf(4.0, spread_excess * 0.72)
+		dynamic_distance += minf(7.0, spread_excess * 1.15)
 	var desired := target + Vector3(0.0, dynamic_height, 0.0) + _camera_horizontal_offset(dynamic_distance)
 	var resolved := desired if home_focus else _resolve_camera_occlusion(target, desired, dynamic_height, dynamic_distance)
 	if camera.global_position.distance_to(resolved) > 20.0:

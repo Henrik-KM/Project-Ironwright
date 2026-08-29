@@ -113,6 +113,14 @@ func _run_all() -> void:
     world._process(0.1)
     _expect("FOLLOW THE ACTIVE MACHINE GROUP" in world.hud.objective_label.text, "An active long-range operation must replace the previous strategic objective with the physical group follow objective.")
     _expect("F FOLLOW ACTIVE MACHINE GROUP" in world.hud.prompt_label.text, "An active long-range operation must replace stale opening guidance with the direct follow affordance.")
+    var follow_focus := world.long_operation_director.get_follow_focus()
+    _expect(int(follow_focus.get("member_count", 0)) == active_long_range_members.size(), "The follow focus must represent the complete living long-range formation rather than one arbitrary machine.")
+    var expected_center := Vector3.ZERO
+    for active_member in active_long_range_members:
+        expected_center += active_member.global_position
+    expected_center /= float(active_long_range_members.size())
+    _expect((follow_focus.get("center", Vector3.INF) as Vector3).distance_to(expected_center) < 0.01, "The follow focus must center the camera on the formation's living midpoint.")
+    _expect(float(follow_focus.get("spread", 0.0)) >= 0.0, "The follow focus must expose bounded formation spread for readable camera framing.")
     var checkpoint_id := StringName(world.long_operation_director.active_operation.get("id", &""))
     world._save_game()
     _expect(FileAccess.file_exists(TEST_SAVE_PATH), "The complete-world save hook must write while a long-range group is in flight.")

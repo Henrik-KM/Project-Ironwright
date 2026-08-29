@@ -992,6 +992,28 @@ func get_follow_target() -> Node3D:
     return members[0] if not members.is_empty() else null
 
 
+func get_follow_focus() -> Dictionary:
+    ## The camera follows the formation's living center, not an arbitrary slot.
+    ## Spread lets the release camera give a broad formation enough breathing
+    ## room without turning every follow shot into a distant map view.
+    var members := _living_members()
+    if members.is_empty():
+        return {}
+    var center := Vector3.ZERO
+    for member in members:
+        center += member.global_position
+    center /= float(members.size())
+    var spread := 0.0
+    for member in members:
+        spread = maxf(spread, center.distance_to(member.global_position))
+    return {
+        "center": center,
+        "spread": spread,
+        "forward": active_operation.get("last_forward", Vector3.FORWARD),
+        "member_count": members.size(),
+    }
+
+
 func operation_summary() -> String:
     if active_operation.is_empty():
         return "No long-range operation"

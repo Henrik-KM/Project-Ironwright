@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused autonomous-formation follow framing — 2026-08-29
+
+Following an active long-range operation now centers the living formation and
+gives a broad group a bounded amount of additional camera space. The camera
+does not add a management view or new player task: it simply keeps the same
+physical group readable while the existing F follow affordance is active.
+Complete-game coverage verifies that the focus uses every living member and
+the live concurrent-operation review was inspected with Godot Dummy audio and
+`--quiet-audio` only.
+
 ## Focused Cathedral Quarter bell-yard witness — 2026-08-29
 
 The Cathedral Quarter release frame now includes a small physical bell-yard
