@@ -102,7 +102,7 @@ AUTHORED_ORGANIC_ASSETS = {
     "skitterling": {
         "asset_id": "skitterling.scavenger.v1",
         "root": "SkitterlingModel",
-        "required": ["SkitterlingModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SkitterlingCarapace0", "SkitterlingCarapaceCap0", "SkitterlingAntennaL", "SkitterlingAntennaJointL", "SkitterlingMandibleL", "SkitterlingMandiblePlateL", "SkitterlingSensoryFan0", "ProductionAssetMarker"],
+        "required": ["SkitterlingModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SkitterlingCarapace0", "SkitterlingCarapaceCap0", "SkitterlingHeadShield", "SkitterlingHeadRidge", "SkitterlingAntennaL", "SkitterlingAntennaJointL", "SkitterlingMandibleL", "SkitterlingMandiblePlateL", "SkitterlingSensoryFan0", "ProductionAssetMarker"],
     },
     "burrower": {
         "asset_id": "burrower.drill.v1",

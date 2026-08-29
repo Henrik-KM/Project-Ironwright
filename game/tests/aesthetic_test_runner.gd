@@ -1801,7 +1801,10 @@ func _run_all() -> void:
     var spore_sac_pore := _find_named(sporecaster_asset, "SporecasterSacPore0") as MeshInstance3D
     _expect(_mesh_vertex_count(_find_named(sporecaster_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(sporecaster_asset, "SporecasterGillFan0") as MeshInstance3D) >= 48 and _mesh_vertex_count(spore_sac_rim) >= 100 and _mesh_vertex_count(spore_sac_pore) >= 48, "The authored Sporecaster dorsal, gill and sac-aperture surfaces must retain beveled high-definition anatomy edges.")
     var skitterling_fan := _find_named(skitterling_asset, "SkitterlingSensoryFan0") as MeshInstance3D
+    var skitterling_head := _find_named(skitterling_asset, "SkitterlingHeadShield") as MeshInstance3D
+    var skitterling_head_ridge := _find_named(skitterling_asset, "SkitterlingHeadRidge") as MeshInstance3D
     _expect(_mesh_vertex_count(_find_named(skitterling_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(skitterling_fan) >= 500, "The authored Skitterling dorsal and sensory membranes must retain dense high-definition anatomy edges.")
+    _expect(skitterling_head != null and _mesh_vertex_count(skitterling_head) >= 500 and skitterling_head_ridge != null, "The authored Skitterling must retain a smooth cephalic shield and raised ridge for tactical-distance head readability.")
     _expect(skitterling_fan != null and skitterling_fan.mesh.get_aabb().size.x >= 0.16, "The Skitterling sensory fans must retain closed rounded membrane volume rather than reading as thin bars.")
     _expect(_mesh_vertex_count(_find_named(roofleaper_asset, "RoofleaperWingL") as MeshInstance3D) >= 700, "The authored Roofleaper wing must retain a dense swept membrane silhouette rather than a low-detail disc.")
     _expect(_mesh_vertex_count(_find_named(glassmoth_asset, "GlassmothWingL0") as MeshInstance3D) >= 700, "The authored Glassmoth wing must retain a dense swept membrane silhouette rather than a low-detail disc.")

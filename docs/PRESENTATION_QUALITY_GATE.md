@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Skitterling cephalic detail pass — 2026-08-29
+
+The common Tier-I Skitterling now carries a smooth cephalic shell shield and
+raised ridge behind its paired eyes. This gives the small, frequently seen
+scavenger a readable head silhouette at tactical distance while preserving its
+existing scale compensation, collision, ecology, animation and stable socket
+contracts. The source builder, manifest and aesthetic runner protect the
+high-definition detail. Review and validation use Godot Dummy audio with
+`--quiet-audio`; no physical speakers are used.
+
 ## Current release boundary — 2026-08-29
 
 The canonical native entrypoint is now the repository-complete `1.0.0-rc.1`

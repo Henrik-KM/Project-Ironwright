@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Skitterling cephalic detail pass
+
+- the common Tier-I Skitterling now carries a smooth cephalic shell shield and
+  raised ridge behind its paired eyes, giving its small tactical silhouette a
+  readable head instead of a dark body mass;
+- the detail is presentation-only and preserves the existing collision,
+  ecology, animation sockets, scale compensation and save state;
+- the source builder, asset manifest and aesthetic runner guard the new
+  high-definition nodes; live review remains on Godot Dummy audio with
+  `--quiet-audio`.
+
 ## Focused release-facing presentation language pass
 
 - the canonical release world now records release-candidate presentation status

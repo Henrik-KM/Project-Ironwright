@@ -48,6 +48,10 @@ def main() -> None:
         "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.03, bone, 16, 24)),
         "CarapaceCap": mesh("CarapaceCap", add_beveled_box(builder, (0.42, 0.08, 0.14), shell, 0.02)),
         "SensoryRib": mesh("SensoryRib", add_cylinder(builder, 0.022, 0.46, bone, 24)),
+        # A small smooth cephalic envelope keeps the common Tier-I silhouette
+        # readable at tactical distance without hiding the paired eyes.
+        "HeadShield": mesh("HeadShield", add_ellipsoid(builder, (0.30, 0.12, 0.14), shell, rings=18, sides=36)),
+        "HeadRidge": mesh("HeadRidge", add_beveled_box(builder, (0.38, 0.06, 0.08), bone, 0.018)),
     }
 
     nodes: list[dict] = [{
@@ -92,6 +96,8 @@ def main() -> None:
         add_node("SkitterlingFastenerL%d" % index, mesh_ids["Fastener"], (-0.32, 0.68, z), parent=torso)
         add_node("SkitterlingFastenerR%d" % index, mesh_ids["Fastener"], (0.32, 0.68, z), parent=torso)
     add_node("OrganicDorsalPlate", mesh_ids["Ridge"], (-0.1, 0.92, 0.18), scale=(1.1, 0.9, 1.2), extras={"surface": "layered_shell_break"})
+    add_node("SkitterlingHeadShield", mesh_ids["HeadShield"], (0.0, 0.72, -0.79), extras={"surface": "cephalic_shell"})
+    add_node("SkitterlingHeadRidge", mesh_ids["HeadRidge"], (0.0, 0.84, -0.75), extras={"surface": "cephalic_ridge"})
 
     for side in (-1.0, 1.0):
         suffix = "L" if side < 0 else "R"
@@ -202,7 +208,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "skitterling.scavenger.v1",
-            "required_nodes": ["SkitterlingModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SkitterlingCarapace0", "SkitterlingCarapaceCap0", "SkitterlingAntennaL", "SkitterlingAntennaJointL", "SkitterlingMandibleL", "SkitterlingMandiblePlateL", "SkitterlingSensoryFan0", "ProductionAssetMarker"],
+            "required_nodes": ["SkitterlingModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SkitterlingCarapace0", "SkitterlingCarapaceCap0", "SkitterlingHeadShield", "SkitterlingHeadRidge", "SkitterlingAntennaL", "SkitterlingAntennaJointL", "SkitterlingMandibleL", "SkitterlingMandiblePlateL", "SkitterlingSensoryFan0", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
         },
     }
