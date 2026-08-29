@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused friendly-machine material separation pass — 2026-08-29
+
+The shared friendly-machine utility materials now use deeper teal and amber
+values with a lower emission ceiling, keeping repeated status strips from
+clipping toward white in the compact roster frame. Authored shells, role
+silhouettes, sockets, animation, collision, autonomy and save state are
+unchanged. Live review uses Godot Dummy audio with `--quiet-audio` only; no
+live speakers are used.
+
 ## Focused friendly-machine accent pass — 2026-08-29
 
 The close friendly-roster review now keeps cognition and utility accents

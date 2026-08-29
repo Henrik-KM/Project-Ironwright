@@ -34,13 +34,13 @@ func _ready() -> void:
     leather = ModelKit3D.material(Color("493329"), 0.06, 0.88)
     # Keep the cognition and utility accents luminous without washing the
     # authored machine shells into white bands at the close review distance.
-    cyan = ModelKit3D.material(Color("23454b"), 0.34, 0.26, Color("6adbe1"), 1.25)
-    warm = ModelKit3D.material(Color("72421f"), 0.24, 0.32, Color("f29a48"), 1.15)
+    cyan = ModelKit3D.material(Color("23454b"), 0.34, 0.26, Color("58c7cf"), 0.95)
+    warm = ModelKit3D.material(Color("72421f"), 0.24, 0.32, Color("ee8b3e"), 0.9)
     ceramic = ModelKit3D.material(Color("707777"), 0.08, 0.72)
     finish_panel = ModelKit3D.material(Color("273338"), 0.68, 0.34)
     finish_cable = ModelKit3D.material(Color("10181c"), 0.35, 0.52)
     finish_warning = ModelKit3D.material(Color("6e3d27"), 0.34, 0.58, Color("d58a48"), 0.42)
-    finish_status = ModelKit3D.material(Color("1b555b"), 0.26, 0.24, Color("75e6e8"), 1.35)
+    finish_status = ModelKit3D.material(Color("153f45"), 0.26, 0.24, Color("4fc4cc"), 0.72)
     _polish_existing()
     get_tree().node_added.connect(_on_node_added)
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-29 — Friendly-machine material separation
+
+- deepened the shared friendly-machine teal and amber utility materials and
+  lowered their emission so compact status strips preserve shell and hardware
+  separation;
+- kept the pass presentation-only, with no changes to gameplay, sockets,
+  animation, collision, autonomy, save state or recurring player work;
+- silently live-reviewed the roster with Godot Dummy audio and
+  `--quiet-audio` only.
+
 ## 2026-08-29 — Friendly-machine accent response
 
 - lowered the shared close-review cognition and utility accent emissions so
