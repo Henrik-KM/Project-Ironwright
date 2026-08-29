@@ -374,10 +374,13 @@ func _run_all() -> void:
     var construction_preview := world.heartforge.get_node_or_null("HeartforgeModel/HeartforgeAdaptationPreview") as Node3D
     _expect(construction_preview != null and construction_preview.visible, "An authorized adaptive response must keep a visible physical construction preview during the machine-run interval.")
     _expect(world.heartforge.find_child("AdaptationBuilderTool00", true, false) != null, "An authorized adaptive response must retain visible machine tooling during construction.")
+    var initial_visible_adaptation_pieces := world.heartforge.adaptation_preview_visible_piece_count()
     var preview_scale_before := construction_preview.scale if construction_preview != null else Vector3.ZERO
     world.adaptive_defense_director._process(2.0)
     _expect(world.heartforge.adaptation_preview_progress > 0.0 and world.heartforge.adaptation_preview_progress < 1.0, "Adaptive construction progress must drive a bounded intermediate Heartforge presentation state.")
     _expect(construction_preview != null and not preview_scale_before.is_equal_approx(construction_preview.scale), "The adaptive construction footprint must visibly advance as the machine operation progresses.")
+    world.adaptive_defense_director._process(6.0)
+    _expect(world.heartforge.adaptation_preview_visible_piece_count() > initial_visible_adaptation_pieces, "Adaptive construction must reveal retrofit pieces progressively without hiding the autonomous worksite crew.")
     var adaptation_checkpoint := world.adaptive_defense_director.to_dictionary()
     world.adaptive_defense_director.restore_from_dictionary(adaptation_checkpoint)
     _expect(not world.adaptive_defense_director.active_adaptation.is_empty(), "An in-progress Heartforge adaptation must survive save/load.")
