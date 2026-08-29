@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-08-29 — Friendly-machine accent response
+
+- lowered the shared close-review cognition and utility accent emissions so
+  machine status strips preserve metal, copper and service-panel separation;
+- kept the pass presentation-only, with no changes to gameplay, sockets,
+  animation, collision, autonomy, save state or recurring player work;
+- silently live-reviewed the friendly roster with Godot Dummy audio and
+  `--quiet-audio` only.
+
 ## 2026-08-28 — Thornback jaw-silhouette finish
 
 - added a dense paired tooth edge beneath the authored Thornback jaw plates;

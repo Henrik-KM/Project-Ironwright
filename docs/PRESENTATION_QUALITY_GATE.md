@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused friendly-machine accent pass — 2026-08-29
+
+The close friendly-roster review now keeps cognition and utility accents
+luminous without clipping status strips into white bands. The pass lowers only
+the shared presentation-layer accent emissions; authored shells, role
+silhouettes, sockets, animation, collision, autonomy and save state are
+unchanged. Live review uses Godot Dummy audio with `--quiet-audio` only; no
+live speakers are used.
+
 ## Focused organic tier signal-material pass — 2026-08-29
 
 Tiered organic shells now keep their primary dorsal and crest anatomy in a
