@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Glasshouse service-aisle pass
+
+- added a bounded authored maintenance trolley to the Municipal Glasshouse
+  source and runtime model, with a beveled body, tray, smooth wheels, canister,
+  soil crate and raised handles;
+- preserved the landmark's presentation-only contract, collision, navigation,
+  climate/growth sockets and gameplay scale, with manifest and aesthetic guards
+  for the new service detail;
+- exact review and validation remain silent through Godot Dummy audio with
+  `--quiet-audio`.
+
 ## Focused tier-brain hot-path pass
 
 - cached the stable player reference used by active tier-brain focus checks;

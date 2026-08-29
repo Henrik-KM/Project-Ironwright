@@ -20,6 +20,13 @@
     "GlasshouseTrellisRail0",
     "GlasshouseTrellisGrowth0_0",
     "GlasshouseServiceDoor",
+    "GlasshouseServiceTrolley",
+    "GlasshouseTrolleyBody",
+    "GlasshouseTrolleyTray",
+    "GlasshouseTrolleyWheelL",
+    "GlasshouseTrolleyCanister",
+    "GlasshouseTrolleyCrate",
+    "GlasshouseTrolleyHandleL",
     "ProductionAssetMarker"
   ],
   "presentation_only": true

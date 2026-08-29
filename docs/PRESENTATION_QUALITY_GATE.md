@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Glasshouse service-aisle pass — 2026-08-29
+
+The Municipal Glasshouse authored landmark now carries a compact service
+trolley in the central cultivation aisle: a beveled maintenance body, raised
+tray, smooth wheels, amber canister, soil crate and paired handles. This gives
+the empty foreground a human-scale work cue and a stronger authored silhouette
+without adding interaction, collision, inventory, route, climate simulation or
+recurring player work. The exact visual review and validation use Godot Dummy
+audio with `--quiet-audio`; no physical speakers are used.
+
 ## Focused tier-brain hot-path pass — 2026-08-29
 
 Active tier-brained organisms now cache the stable player reference used for

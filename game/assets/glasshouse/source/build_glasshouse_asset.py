@@ -62,6 +62,12 @@ def main() -> None:
         "TrellisPost": mesh("GlasshouseTrellisPost", add_beveled_box(builder, (0.12, 2.35, 0.12), rust, 0.025)),
         "TrellisRail": mesh("GlasshouseTrellisRail", add_beveled_box(builder, (2.95, 0.12, 0.12), rust, 0.025)),
         "TrellisWire": mesh("GlasshouseTrellisWire", add_cylinder(builder, 0.025, 1.9, growth, 14)),
+        "TrolleyBody": mesh("GlasshouseServiceTrolleyBody", add_beveled_box(builder, (2.0, 0.46, 0.92), rust, 0.08)),
+        "TrolleyTray": mesh("GlasshouseServiceTrolleyTray", add_beveled_box(builder, (1.62, 0.10, 0.72), amber, 0.035)),
+        "TrolleyWheel": mesh("GlasshouseServiceTrolleyWheel", add_cylinder(builder, 0.20, 0.12, frame, 24)),
+        "TrolleyCanister": mesh("GlasshouseServiceTrolleyCanister", add_cylinder(builder, 0.16, 0.42, grow_light, 24)),
+        "TrolleyHandle": mesh("GlasshouseServiceTrolleyHandle", add_cylinder(builder, 0.045, 1.05, amber, 24)),
+        "TrolleyCrate": mesh("GlasshouseServiceTrolleyCrate", add_beveled_box(builder, (0.48, 0.22, 0.42), soil, 0.04)),
     }
 
     nodes: list[dict] = [{
@@ -70,7 +76,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "glasshouse.municipal.v1",
             "asset_quality": "authored_high_definition",
-            "socket_contract": "greenhouse_frame, climate_louver, growth_beds, broken_skylight, service_door",
+            "socket_contract": "greenhouse_frame, climate_louver, growth_beds, broken_skylight, service_door, service_trolley",
         },
     }]
 
@@ -138,6 +144,15 @@ def main() -> None:
     add_node("GlasshouseCanopyPulse", mesh_ids["GrowthLight"], (0.0, 6.25, 0.6), scale=(8.0, 0.55, 0.55), extras={"socket_type": "canopy_signal"})
     add_node("GlasshouseClimateCable0", mesh_ids["Cable"], (-6.2, 3.0, 4.8), rotation=(0.0, 0.0, math.pi * 0.5), extras={"socket_type": "climate_cable"})
     add_node("GlasshouseClimateCable1", mesh_ids["Cable"], (6.2, 3.0, 4.8), rotation=(0.0, 0.0, math.pi * 0.5), extras={"socket_type": "climate_cable"})
+    trolley = add_node("GlasshouseServiceTrolley", None, (2.25, 0.0, 3.05), extras={"socket_type": "service_trolley"})
+    add_node("GlasshouseTrolleyBody", mesh_ids["TrolleyBody"], (0.0, 0.56, 0.0), extras={"surface": "service_trolley_body"}, parent=trolley)
+    add_node("GlasshouseTrolleyTray", mesh_ids["TrolleyTray"], (0.0, 0.84, 0.0), extras={"surface": "service_trolley_tray"}, parent=trolley)
+    add_node("GlasshouseTrolleyWheelL", mesh_ids["TrolleyWheel"], (-0.72, 0.22, -0.36), rotation=(0.0, 0.0, math.pi * 0.5), extras={"surface": "service_trolley_wheel"}, parent=trolley)
+    add_node("GlasshouseTrolleyWheelR", mesh_ids["TrolleyWheel"], (0.72, 0.22, -0.36), rotation=(0.0, 0.0, math.pi * 0.5), extras={"surface": "service_trolley_wheel"}, parent=trolley)
+    add_node("GlasshouseTrolleyCanister", mesh_ids["TrolleyCanister"], (-0.48, 1.13, 0.0), extras={"surface": "service_trolley_canister"}, parent=trolley)
+    add_node("GlasshouseTrolleyCrate", mesh_ids["TrolleyCrate"], (0.43, 1.13, 0.0), extras={"surface": "service_trolley_crate"}, parent=trolley)
+    add_node("GlasshouseTrolleyHandleL", mesh_ids["TrolleyHandle"], (-0.76, 1.33, 0.30), extras={"surface": "service_trolley_handle"}, parent=trolley)
+    add_node("GlasshouseTrolleyHandleR", mesh_ids["TrolleyHandle"], (0.76, 1.33, 0.30), extras={"surface": "service_trolley_handle"}, parent=trolley)
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "glasshouse.municipal.v1", "source": "original_procedural_mesh_builder"})
 
     document = {
@@ -152,7 +167,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "glasshouse.municipal.v1",
-            "required_nodes": ["GlasshouseModel", "GlasshouseFrameBay0", "GlasshouseRoofRib0", "GlasshousePaneLatch0", "GlasshouseClimateLouver", "GlasshouseClimateActuator", "GlasshouseBrokenSkylight", "GlasshouseGrowthBed0", "GlasshouseBedEdge0", "GlasshouseGrowthTendril0_0", "GlasshouseLightHousing0", "GlasshouseBedTrellis0", "GlasshouseTrellisRail0", "GlasshouseTrellisGrowth0_0", "GlasshouseServiceDoor", "ProductionAssetMarker"],
+            "required_nodes": ["GlasshouseModel", "GlasshouseFrameBay0", "GlasshouseRoofRib0", "GlasshousePaneLatch0", "GlasshouseClimateLouver", "GlasshouseClimateActuator", "GlasshouseBrokenSkylight", "GlasshouseGrowthBed0", "GlasshouseBedEdge0", "GlasshouseGrowthTendril0_0", "GlasshouseLightHousing0", "GlasshouseBedTrellis0", "GlasshouseTrellisRail0", "GlasshouseTrellisGrowth0_0", "GlasshouseServiceDoor", "GlasshouseServiceTrolley", "GlasshouseTrolleyBody", "GlasshouseTrolleyTray", "GlasshouseTrolleyWheelL", "GlasshouseTrolleyCanister", "GlasshouseTrolleyCrate", "GlasshouseTrolleyHandleL", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
