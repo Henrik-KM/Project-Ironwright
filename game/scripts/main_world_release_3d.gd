@@ -1652,8 +1652,8 @@ func _show_presentation_review_page(page: int) -> void:
 			# This is review-fixture composition only; gameplay camera, actor scale,
 			# collision, LOD and tactical spacing remain unchanged.
 			var late_organic_roster := presentation_review_page == 2
-			presentation_review_camera_target = Vector3(0.0, 1.18 if late_organic_roster else 1.22, -0.85 if late_organic_roster else core_target_depth)
-			presentation_review_camera_desired = Vector3(0.0, 4.45 if late_organic_roster else 4.05, 12.8 if late_organic_roster else 9.35)
+			presentation_review_camera_target = Vector3(0.0, 1.1 if late_organic_roster else 1.22, -0.85 if late_organic_roster else core_target_depth)
+			presentation_review_camera_desired = Vector3(0.0, 4.15 if late_organic_roster else 4.05, 11.35 if late_organic_roster else 9.35)
 		else:
 			presentation_review_camera_target = Vector3(0.0, core_target_height, core_target_depth)
 			presentation_review_camera_desired = Vector3(0.0, 5.25, 12.4) if outpost_page else (Vector3(0.0, 4.45, 12.8) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5))

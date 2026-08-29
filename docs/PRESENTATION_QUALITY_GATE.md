@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused late-organic review-frame refinement — 2026-08-29
+
+The exact late-organic gallery now uses a tighter close camera for its seven
+authored families. Folded shells, membranes, spines and family-specific
+secondary anatomy occupy more of the 1280x720 review frame while retaining the
+bounded two-row layout and deeper rear row. This is development-fixture-only:
+actor roots, gameplay spacing, collision, animation, AI, ecology and the tactical
+camera are unchanged. Focused review uses Godot Dummy audio with
+`--quiet-audio`; no physical speakers are used. Broader human hostile-family and
+production-art acceptance remains open.
+
 ## Focused outpost role-gallery refinement — 2026-08-29
 
 The exact Tier III autonomous-outpost gallery now uses a staggered four-shelter

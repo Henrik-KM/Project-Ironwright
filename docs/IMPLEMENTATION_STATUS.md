@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused late-organic review-frame refinement
+
+- tightened the development-only late-organic gallery camera so the seven
+  authored families occupy a judgeable close frame without changing actor roots,
+  gameplay spacing, collision, animation, AI or tactical camera behaviour;
+- preserved the existing bounded two-row composition and deeper rear row, with
+  focused aesthetic and release coverage continuing to guard the close-art gate.
+
 ## Focused outpost role-gallery refinement
 
 - staggered the exact Tier III outpost review gallery within its close elevated
