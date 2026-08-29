@@ -160,7 +160,11 @@ func adaptive_collision_shape_count() -> int:
 func _clear_adaptation_collision() -> void:
     for collision in _adaptive_collision_shapes:
         if collision != null and is_instance_valid(collision):
-            collision.queue_free()
+            # These shapes are rebuilt synchronously when a persisted profile
+            # is restored. Deferred deletion would leave duplicate physics
+            # shapes alive until the next frame and could rename the new
+            # stable sockets during an immediate profile switch.
+            collision.free()
     _adaptive_collision_shapes.clear()
 
 

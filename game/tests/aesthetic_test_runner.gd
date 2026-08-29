@@ -1034,6 +1034,8 @@ func _run_all() -> void:
         _expect(heartforge.find_child("HeartforgeAdaptationDetail", true, false) != null, "The adaptive Heartforge must expose a visible authored retrofit detail layer.")
         _expect(heartforge.find_child("AnchorShellBrace", true, false) != null and heartforge.find_child("AnchorShellSignalRing", true, false) != null and heartforge.find_child("AnchorShellFooting", true, false) != null and heartforge.find_child("AnchorShellAnchorPin", true, false) != null, "The anchored-shell response must expose structural braces, anchored footings and a signal ring.")
         _expect(heartforge.adaptive_collision_shape_count() == 4 and heartforge.find_child("AnchorShellCollisionWest", false, false) != null and heartforge.find_child("AnchorShellCollisionSouth", false, false) != null, "The anchored-shell response must add four bounded physical perimeter braces after authorization.")
+        heartforge.set_adaptation_profile(&"adaptation.anchored_shell")
+        _expect(heartforge.adaptive_collision_shape_count() == 4 and heartforge.get_node_or_null("AnchorShellCollisionWest") != null and heartforge.get_node_or_null("AnchorShellCollisionEast") != null, "Restoring the same adaptive profile immediately must rebuild exactly one stable collision layer without duplicate sockets.")
         if heartforge_presentation != null:
             var anchor_ring := heartforge.find_child("AnchorShellSignalRing", true, false) as Node3D
             var anchor_ring_before := anchor_ring.rotation.z if anchor_ring != null else 0.0

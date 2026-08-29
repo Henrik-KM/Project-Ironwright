@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused adaptive collision rebuild correction
+
+- adaptive shell collision pieces now remove synchronously before an immediate
+  profile rebuild, preventing duplicate physics shapes or renamed stable
+  sockets during save/load restoration;
+- added regression coverage for repeated same-profile restoration while
+  preserving the bounded core and profile collision contracts.
+
 ## Focused adaptive Heartforge staged-build pass
 
 - authorized retrofit previews now reveal their selected structural pieces in
