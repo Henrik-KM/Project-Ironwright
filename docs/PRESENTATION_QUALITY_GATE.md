@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Buried Laboratories vessel-material refinement — 2026-08-29
+
+Buried Laboratories now uses a restrained review-only material grade for the
+authored containment-vessel bodies, internal cores and signal lights. The
+pressure envelopes retain visible dark glass depth instead of clipping into a
+flat cyan mass under the compact exact-export key, while the violet internal
+signal remains readable. This is presentation-only and preserves the landmark,
+collision, route, ecology, operation and persistence contracts. The exact silent
+page 13/15 review is required; broader human Buried Laboratories and
+production-art acceptance remains open.
+
 ## Focused Tram Graveyard yard-depth pass — 2026-08-29
 
 The Tram Graveyard release shell now carries a bounded maintenance crate, cable

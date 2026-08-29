@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Buried Laboratories vessel-material refinement
+
+- tuned the development-only exact-review material override for the authored
+  containment vessels, cores and signal lights so the pressure envelopes retain
+  dark glass depth and the internal signal remains a distinct focal accent;
+- preserved the runtime laboratory materials, landmark geometry, collision,
+  route, ecology, operation and persistence contracts; this is a review-only
+  presentation correction with no new player work;
+- extended native aesthetic coverage for the bounded vessel material hierarchy.
+
 ## Focused Tram Graveyard yard-depth pass
 
 - added a bounded maintenance crate, cable reel and tipped service panel to the

@@ -2028,6 +2028,16 @@ func _run_all() -> void:
                 break
         var skitterling_review_root := skitterling_review_actor.get_node_or_null("OrganicModel") as Node3D if skitterling_review_actor != null else null
         _expect(skitterling_review_root != null and skitterling_review_root.scale.x >= 1.2, "The small Skitterling must receive a bounded gallery-only scale compensation so its authored anatomy is judgeable beside the early predators.")
+        release_world._show_presentation_review_page(12)
+        var buried_labs_review_actor: Node3D
+        for review_actor in release_world.presentation_review_pages[12]:
+            var candidate := review_actor as Node3D
+            if candidate != null and candidate.name.to_lower().begins_with("buriedlabs"):
+                buried_labs_review_actor = candidate
+                break
+        var buried_vessel := _find_named(buried_labs_review_actor, "BuriedLabsVesselBody0") as MeshInstance3D if buried_labs_review_actor != null else null
+        var buried_vessel_material := buried_vessel.material_override as StandardMaterial3D if buried_vessel != null else null
+        _expect(buried_vessel_material != null and buried_vessel_material.emission_energy_multiplier <= 0.50 and buried_vessel_material.albedo_color.get_luminance() <= 0.30, "Buried Laboratories review vessels must retain glass/metal separation instead of clipping into flat cyan bodies.")
 
     if failures.is_empty():
         print("Project Ironwright aesthetic overhaul tests passed.")

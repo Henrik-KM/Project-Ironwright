@@ -1962,6 +1962,9 @@ func _create_buried_labs_presentation_review_actor(landmark: RegionLandmark3D) -
 
 func _tone_buried_labs_presentation_review_walls(authored_scene: Node) -> void:
 	var wall_material := ModelKit3D.material(Color("172a30"), 0.26, 0.72)
+	var vessel_glass_material := ModelKit3D.material(Color("16434b"), 0.22, 0.44, Color("3c9fa6"), 0.42)
+	var vessel_core_material := ModelKit3D.material(Color("281638"), 0.14, 0.42, Color("9259bb"), 0.45)
+	var vessel_light_material := ModelKit3D.material(Color("3f2d72"), 0.08, 0.32, Color("ae72df"), 0.62)
 	for child in authored_scene.find_children("*", "MeshInstance3D", true, false):
 		if not child is MeshInstance3D:
 			continue
@@ -1969,6 +1972,14 @@ func _tone_buried_labs_presentation_review_walls(authored_scene: Node) -> void:
 		var node_name := mesh.name.to_lower()
 		if node_name.contains("wall") or node_name.contains("containmenthall"):
 			mesh.material_override = wall_material
+		elif node_name.contains("vesselbody"):
+			# Keep the pressure envelope readable as glass under the shared review
+			# key; the imported emissive surface was clipping into a flat cyan mass.
+			mesh.material_override = vessel_glass_material
+		elif node_name.contains("vesselcore"):
+			mesh.material_override = vessel_core_material
+		elif node_name.contains("vessellight"):
+			mesh.material_override = vessel_light_material
 
 
 func _dress_buried_labs_presentation_review_actor(review_actor: Node3D) -> void:
