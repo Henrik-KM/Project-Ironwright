@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused late-organic gallery framing pass — 2026-08-29
+
+The exact late-organic review page now lowers and brings in its development-only
+camera so the seven authored families use the 1280x720 frame more effectively.
+The broad folded silhouettes, membranes and secondary anatomy remain fully
+separated without changing actor scale, collision, animation, AI, ecology or
+tactical camera behaviour. The updated capture was exercised with Godot Dummy
+audio and `--quiet-audio`; no physical speakers were used.
+
 ## Focused fresh-world review fixture pass — 2026-08-29
 
 The reproducible `--new-world` release launch now accepts an exact screenshot

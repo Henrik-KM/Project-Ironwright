@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused late-organic gallery framing pass
+
+- lowered and brought in the development-only late-organic review lens so the
+  seven authored families occupy the frame instead of leaving a large unused
+  upper band;
+- preserved the bounded two-row fixture, actor scale, collision, animation,
+  AI, ecology and tactical camera; the updated 1280x720 capture was reviewed
+  with silent dummy audio.
+
 ## Focused fresh-world review fixture pass
 
 - added a non-saving screenshot hook to the reproducible `--new-world`
