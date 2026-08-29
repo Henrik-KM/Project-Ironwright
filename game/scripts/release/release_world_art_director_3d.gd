@@ -64,6 +64,7 @@ const ORGANIC_MEMBRANE_TOKENS: Array[String] = [
     "spore",
     "vein",
 ]
+const TEXTURE_BATCH_SIZE := 96
 const AUTHORED_ORGANIC_TINTS: Dictionary = {
     "veilstalker": Color("8b9aa3"),
     "razorhound": Color("a27d68"),
@@ -128,7 +129,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
     if not texture_queue_active:
         return
-    var chunk_end := mini(texture_queue_index + 240, texture_queue.size())
+    var chunk_end := mini(texture_queue_index + TEXTURE_BATCH_SIZE, texture_queue.size())
     while texture_queue_index < chunk_end:
         var mesh := texture_queue[texture_queue_index]
         if mesh != null and is_instance_valid(mesh):

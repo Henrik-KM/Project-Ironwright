@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused release material-stream cadence pass
+
+- kept the prioritized opening cast at the front of the release material queue
+  while reducing background texture application to smaller bounded batches;
+- preserved the high-definition texture, normal-relief and material-family
+  contract while reducing frame monopolization during world startup and actor
+  growth;
+- the release suite and 192-actor benchmark pass after the change.
+
 ## Focused machine-society target-acquisition pass
 
 - medium- and reduced-detail release robots now retain a bounded nearest-target

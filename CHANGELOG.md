@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-08-29 — Release material-stream cadence
+
+- kept the opening player and companion cast prioritized while processing
+  background release material work in smaller bounded batches;
+- preserved the high-definition texture, normal-relief and material-family
+  contract while reducing startup frame monopolization;
+- verified release coverage and the 192-actor benchmark with Dummy audio and
+  `--quiet-audio` only.
+
 ## 2026-08-29 — Machine-society target acquisition
 
 - bounded nearest-target reuse for medium- and reduced-detail release robots,
