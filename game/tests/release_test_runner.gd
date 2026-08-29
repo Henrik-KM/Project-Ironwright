@@ -463,6 +463,17 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     _expect(service.text("notification.long_operation.authorized") == "LANGSTRECKENOPERATION AUTORISIERT · FOLGT REALEN STRASSEN · F ZUM FOLGEN" and service.text("notification.long_operation.outbound", ["FORGEHAND BERGEN"]).begins_with("FORGEHAND BERGEN · AUFBRUCH"), "German physical-operation reports must resolve stable localized presentation text.")
     _expect(service.text("adaptive.proposal.reason.damage", [55]).begins_with("Der Herzschmiede-Architekt") and service.text("adaptation.anchored_shell.display_name") == "Tief verankern", "German adaptive-defence proposal copy and adaptation names must resolve stable localized presentation text.")
     _expect(service.text("notification.adaptive.proposal", ["Tief verankern"]).begins_with("VORSCHLAG FÜR ADAPTIVE VERTEIDIGUNG") and service.text("adaptive.state.building", ["Tief verankern", 50]) == "Maschinen bauen Tief verankern · 50%", "German adaptive-defence state reports must resolve stable localized presentation text.")
+    world.adaptive_defense_director.pending_reason = "The Heartforge architect found repeated perimeter damage at 55% integrity and proposes one structural response."
+    world.adaptive_defense_director.pending_reason_kind = &"damage"
+    world.adaptive_defense_director.pending_reason_value = 55.0
+    world.localization_service.set_locale(&"de")
+    world._on_run_state_event_logged("Adaptive Heartforge proposal available: The Heartforge architect found repeated perimeter damage at 55% integrity and proposes one structural response.")
+    _expect(world.hud.notification_label.text.contains("VORSCHLAG FÜR ADAPTIVE VERTEIDIGUNG") and not world.hud.notification_label.text.contains("Adaptive Heartforge proposal available"), "German adaptive proposal machine reports must use the localized proposal surface instead of leaking the canonical event text.")
+    world.adaptive_defense_director.completed_adaptation = &"adaptation.anchored_shell"
+    world._on_run_state_event_logged("Adaptive Heartforge response completed: Anchor Deeply")
+    _expect(world.hud.notification_label.text.contains("TIEF VERANKERN") and not world.hud.notification_label.text.contains("Adaptive Heartforge response completed"), "German adaptive completion machine reports must localize the selected response name instead of leaking the canonical event text.")
+    world.adaptive_defense_director.pending_reason = ""
+    world.adaptive_defense_director.completed_adaptation = &""
     var protocol_fixture := world.endgame_director.protocol(&"protocol.severance")
     world.operations_hud.update_protocols([protocol_fixture], "No final protocol active")
     world.operations_hud.open_endgame()

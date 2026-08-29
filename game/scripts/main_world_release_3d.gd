@@ -2409,6 +2409,29 @@ func _should_build_city_on_boot() -> bool:
 
 
 func _on_run_state_event_logged(message: String) -> void:
+	if message.begins_with("Adaptive Heartforge proposal available:"):
+		var proposal_summary := message.trim_prefix("Adaptive Heartforge proposal available:").strip_edges()
+		var proposal_director := get_node_or_null("AdaptiveDefenseDirector") as AdaptiveDefenseDirector3D
+		if proposal_director != null and proposal_director.has_pending_proposal():
+			proposal_summary = proposal_director.proposal_summary()
+		hud.push_notification(_localized_runtime_text(
+			"notification.adaptive.proposal",
+			"ADAPTIVE DEFENCE PROPOSAL · PRESS T TO CHOOSE\n{0}",
+			[proposal_summary]
+		))
+		return
+	if message.begins_with("Adaptive Heartforge response completed:"):
+		var completed_name := message.trim_prefix("Adaptive Heartforge response completed:").strip_edges()
+		var completion_director := get_node_or_null("AdaptiveDefenseDirector") as AdaptiveDefenseDirector3D
+		if completion_director != null and completion_director.completed_adaptation != &"":
+			var localized_entry := completion_director.localized_adaptation(completion_director.completed_adaptation)
+			completed_name = str(localized_entry.get("display_name", completed_name))
+		hud.push_notification(_localized_runtime_text(
+			"notification.adaptive.complete",
+			"HEARTFORGE RESPONSE ONLINE · {0} · THE NEW STRUCTURE IS NOW MACHINE-MAINTAINED",
+			[completed_name.to_upper()]
+		))
+		return
 	if message.begins_with("World condition: "):
 		var variant_key := String(run_state.world_variant_id).replace("weather.", "")
 		var variant_name := localization_service.text("world.condition.%s.name" % variant_key)

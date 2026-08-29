@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused adaptive proposal report localization pass
+
+- routed the mirrored adaptive Heartforge proposal and completion events
+  through the release localization service, so the machine-report toast no
+  longer exposes canonical English event text in German or Swedish;
+- reused the existing localized proposal rationale and selected adaptation
+  names, preserving the stable English event log used for diagnostics;
+- added release regression coverage for both proposal and completion report
+  paths, with no change to adaptive gameplay, save state or audio behaviour.
+
 ## Focused Cathedral nave facade-depth pass
 
 - added shallow masonry course breaks, paired stained-glass lancets and angled
