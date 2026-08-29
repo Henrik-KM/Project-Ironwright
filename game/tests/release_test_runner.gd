@@ -1243,6 +1243,12 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
         rootweaver_material_delta = absf(rootweaver_spine_material.albedo_color.r - rootweaver_membrane_material.albedo_color.r) + absf(rootweaver_spine_material.albedo_color.g - rootweaver_membrane_material.albedo_color.g) + absf(rootweaver_spine_material.albedo_color.b - rootweaver_membrane_material.albedo_color.b)
     _expect(rootweaver_spine_material != null and rootweaver_membrane_material != null and rootweaver_material_delta > 0.12, "Authored organic structural ridges must retain a visible material break from living membranes.")
     _expect(rootweaver_spine_material != null and rootweaver_spine_material.rim_enabled and rootweaver_spine_material.clearcoat_enabled and rootweaver_spine_material.get_meta(&"release_organic_surface_finish", &"") == "chitin_rim_clearcoat", "Authored organic structural anatomy must retain the wet-chitin surface finish.")
+    var roofleaper_frame_mesh := _find_first_mesh(later_families[0].find_child("RoofleaperWingFrameL", true, false) if later_families.size() > 0 and later_families[0] != null else null)
+    var roofleaper_frame_material := roofleaper_frame_mesh.material_override as StandardMaterial3D if roofleaper_frame_mesh != null else null
+    _expect(roofleaper_frame_mesh != null and roofleaper_frame_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Wing-frame supports must use the structural chitin material lane rather than the membrane lane.")
+    _expect(roofleaper_frame_material != null and roofleaper_frame_material.albedo_texture == null and not roofleaper_frame_material.normal_enabled, "Wing-frame supports must retain a clean darker structural surface instead of a pale membrane texture.")
+    var rootweaver_rib_mesh := _find_first_mesh(late_authored_family.find_child("RootweaverSporeRib0", true, false) if late_authored_family != null else null)
+    _expect(rootweaver_rib_mesh != null and rootweaver_rib_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Spore-fan ribs must use the structural chitin material lane while the fan membrane stays living.")
     for family in later_families:
         var family_mesh := _find_first_mesh(family.get_node_or_null("OrganicModel") if family != null else null)
         _expect(family_mesh != null and family_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Every later organic family shell must receive the release chitin material pass.")

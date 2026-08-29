@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused organic structural-material separation pass
+
+- classified authored wing frames, membrane ribs, fin rays and related hard
+  anatomy as structural chitin instead of broad membrane surfaces, preventing
+  close tactical silhouettes from blooming into pale bars;
+- kept fine and surface vascular veins on a restrained living-material lane so
+  they still read as biological signal detail;
+- added native release coverage for Roofleaper wing frames and Rootweaver
+  spore ribs, with no change to collision, animation, ecology or gameplay.
+
 ## Focused release-catalogue stream audit hardening
 
 - the commercial release audit now promotes authored districts sequentially,

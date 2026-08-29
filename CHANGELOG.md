@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-08-29 — Organic structural-material separation
+
+- moved authored wing frames, membrane ribs, fin rays and related hard anatomy
+  onto the darker structural chitin lane so close tactical silhouettes retain
+  material separation instead of blooming into pale bars;
+- preserved restrained living treatment for surface and fine vascular veins;
+- added native release coverage for Roofleaper wing frames and Rootweaver
+  spore ribs without changing gameplay, animation or ecology behavior.
+
 ## 2026-08-29 — Harden release-catalogue streaming audit
 
 - changed the commercial release audit to promote one authored district at a

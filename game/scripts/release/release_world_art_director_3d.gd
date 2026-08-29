@@ -397,7 +397,7 @@ func _texture_mesh(mesh_instance: MeshInstance3D) -> void:
             # spines need to catch the key as structural anatomy, while
             # membranes and vascular details need a separate living lift.
             var detail_name := String(mesh_instance.name).to_lower()
-            var structural_detail := _contains_any(detail_name, ["plate", "rib", "ridge", "spine", "hook", "knuckle", "fastener", "bone", "frame", "ray", "cap", "leg", "arm", "talon", "jaw", "tiercrest", "tierdorsal", "tiercrown"])
+            var structural_detail := _is_organic_structural_detail(detail_name)
             if structural_detail:
                 # The chitin atlas is intentionally dark and patterned for wet flesh.
                 # Applying it to bone, ribs and limbs made every family read as a
@@ -438,7 +438,11 @@ func _texture_category(mesh_instance: MeshInstance3D) -> StringName:
     # procedural naming heuristics so the high-definition assets receive the
     # same triplanar material language as the rest of the release world.
     if _contains_any(combined, AUTHORED_ORGANIC_TOKENS):
-        return &"membrane" if _contains_organic_membrane_name(name_text) else &"chitin"
+        # Wing frames, membrane ribs, fin rays and similar supports are living
+        # anatomy, but they are structural rather than broad membrane sheets.
+        # Keep them on the darker chitin lane so close tactical review does not
+        # turn the silhouette into a row of pale bars.
+        return &"chitin" if _is_organic_structural_detail(name_text) else (&"membrane" if _contains_organic_membrane_name(name_text) else &"chitin")
     if _contains_any(combined, AUTHORED_MACHINE_TOKENS):
         return &"metal"
     if "organic" in combined or "torso" in name_text or "carapace" in name_text or "head" in name_text and "mechromancer" not in combined:
@@ -472,6 +476,15 @@ func _contains_organic_membrane_name(name_text: String) -> bool:
     return _contains_any(detail_name, ORGANIC_MEMBRANE_TOKENS)
 
 
+func _is_organic_structural_detail(detail_name: String) -> bool:
+    # Surface and fine veins are vascular accents and should retain the living
+    # membrane treatment. The remaining support vocabulary identifies ribs,
+    # spars, rays and hard anatomy that need a darker structural material lane.
+    if _contains_any(detail_name, ["surfacevein", "finevein", "vascular"]):
+        return false
+    return _contains_any(detail_name, ["plate", "rib", "ridge", "spine", "hook", "knuckle", "fastener", "bone", "frame", "ray", "cap", "leg", "arm", "talon", "jaw", "wingvein", "tiercrest", "tierdorsal", "tiercrown"])
+
+
 func _organic_family_tint(path_text: String) -> Color:
     for family_token in AUTHORED_ORGANIC_TOKENS:
         if family_token in path_text:
@@ -491,6 +504,12 @@ func _organic_family_tint_for_mesh(mesh_instance: MeshInstance3D, path_text: Str
 
 func _organic_detail_tint(mesh_instance: MeshInstance3D, family_tint: Color, category: StringName) -> Color:
     var detail_name := String(mesh_instance.name).to_lower()
+    if "surfacevein" in detail_name:
+        return family_tint.lightened(0.045)
+    if "finevein" in detail_name or "vascular" in detail_name:
+        return family_tint.lightened(0.10)
+    if _is_organic_structural_detail(detail_name):
+        return family_tint.darkened(0.18)
     if category == &"membrane" or _contains_any(detail_name, ["membrane", "fan", "gill", "fin", "wing", "mantle", "spore", "vein"]):
         var authored_path := str(mesh_instance.get_path()).to_lower()
         # Late-family membranes are already broad and layered; a smaller lift
@@ -499,8 +518,6 @@ func _organic_detail_tint(mesh_instance: MeshInstance3D, family_tint: Color, cat
         # stronger lift needed for compact silhouette separation.
         var late_family := _contains_any(authored_path, ["miremaw", "carrionbell", "rootweaver", "thornback", "ashmantle"])
         return family_tint.lightened(0.055 if late_family else 0.16)
-    if _contains_any(detail_name, ["plate", "rib", "ridge", "spine", "hook", "knuckle", "fastener", "bone", "frame", "ray", "cap", "leg", "arm", "talon", "jaw", "tiercrest", "tierdorsal", "tiercrown"]):
-        return family_tint.darkened(0.16)
     if _contains_any(detail_name, ["eye", "oculus", "resonator", "siphon", "tendon", "tiervascular", "tiersignal"]):
         return family_tint.lightened(0.22)
     return family_tint.darkened(0.06)
