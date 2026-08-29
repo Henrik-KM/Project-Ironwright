@@ -515,6 +515,7 @@ AUTHORED_REGION_ASSETS = {
             "RootCisternCore",
             "RootCisternCoreCollar",
             "RootCisternCoreMass",
+            "RootCisternCoreMantle0",
             "RootCisternCoreHalo",
             "RootCisternCorePlate0",
             "RootCisternCoreClaw0",

@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Root Cistern mantle-shell pass — 2026-08-29
+
+The Root Cistern focal organism now carries ten overlapping mantle lobes with
+alternating scale and pitch around its wet-root body. The added shell breakup
+restores a segmented biological read at compact approach distance without
+adding rigid stakes or changing the capstone's sockets, animation, collision,
+endgame state or route ownership. The pass is presentation-only; live review
+uses Godot Dummy audio with `--quiet-audio` and no physical speakers.
+
 ## Focused Cathedral nave facade-depth pass — 2026-08-29
 
 The Cathedral Quarter release facade now carries shallow masonry course breaks,

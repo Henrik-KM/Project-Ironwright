@@ -107,6 +107,10 @@ def main() -> None:
         "BasinSpine": mesh("BasinSpine", add_ellipsoid(builder, (0.28, 0.20, 0.65), bone, rings=18, sides=36)),
         "BasinRootTendril": mesh("BasinRootTendril", add_cylinder(builder, 0.055, 0.90, root, 14)),
         "CorePlate": mesh("CorePlate", add_ellipsoid(builder, (0.78, 0.12, 0.16), bark, rings=18, sides=36)),
+        # Overlapping mantle lobes break the smooth focal mass into a living
+        # segmented shell without turning the capstone into another crown of
+        # rigid stakes.
+        "CoreMantle": mesh("CoreMantle", add_ellipsoid(builder, (0.52, 0.34, 0.24), bark, rings=18, sides=36)),
         "CoreClaw": mesh("CoreClaw", add_ellipsoid(builder, (0.12, 0.75, 0.12), bone, rings=18, sides=36)),
         "CoreVein": mesh("CoreVein", add_cylinder(builder, 0.06, 1.8, pulse, 14)),
         "CoreHalo": mesh("CoreHalo", add_uv_sphere(builder, 0.34, pulse, 18, 28)),
@@ -180,6 +184,11 @@ def main() -> None:
         add_node("RootCisternCorePlate%d" % index, mesh_ids["CorePlate"], (x, 2.02, z), rotation=(0.0, -angle, 0.0), parent=core, extras={"socket_type": "core_surface_plate"})
         add_node("RootCisternCoreClaw%d" % index, mesh_ids["CoreClaw"], (x * 0.88, 2.78, z * 0.88), rotation=(0.0, -angle, 0.38), scale=(1.0, 0.78, 1.0), parent=core, extras={"socket_type": "core_claw"})
         add_node("RootCisternCoreVein%d" % index, mesh_ids["CoreVein"], (x * 0.72, 2.42, z * 0.72), rotation=(0.0, -angle, 0.22), parent=core, extras={"socket_type": "core_vein"})
+    for index in range(10):
+        angle = 6.283185307179586 * index / 10.0 + 0.08
+        x, z = math.cos(angle) * 2.12, math.sin(angle) * 2.12
+        mantle_scale = (1.08, 1.0, 1.28) if index % 2 == 0 else (0.92, 1.16, 1.05)
+        add_node("RootCisternCoreMantle%d" % index, mesh_ids["CoreMantle"], (x, 1.62 + float(index % 2) * 0.08, z), rotation=(0.0, math.pi * 0.5 - angle, 0.0), scale=mantle_scale, parent=core, extras={"socket_type": "core_mantle_lobe"})
     for index in range(6):
         angle = 6.283185307179586 * index / 6.0 + 0.22
         x, z = math.cos(angle) * 2.75, math.sin(angle) * 2.75
@@ -221,7 +230,7 @@ def main() -> None:
         "accessors": builder.accessors,
         "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
-        "extras": {"ironwright_asset_id": "root_cistern.landmark.v1", "required_nodes": ["RootCisternModel", "RootCisternBasin", "RootCisternBasinWater", "RootCisternBasinSpine0", "RootCisternBasinRootTendril0", "RootCisternBasinInlay00", "RootCisternBasinSocket00", "RootCisternCore", "RootCisternCoreCollar", "RootCisternCoreMass", "RootCisternCoreHalo", "RootCisternCoreCrownRing", "RootCisternCoreCapPlate", "RootCisternCoreCapCollar", "RootCisternCoreCapSocket", "RootCisternCoreCapRib00", "RootCisternCoreCapSocket00", "RootCisternCorePlate0", "RootCisternCoreClaw0", "RootCisternCoreVein0", "RootCisternCoreRoot0", "RootCisternCoreCrownPlate00", "RootCisternCoreCrownSocket00", "RootCisternLayer0", "RootCisternRib0", "RootCisternPylon0", "RootCisternPylonFoot0", "RootCisternPylonCollar0", "RootCisternPylonShoulder0", "RootCisternPylonBrace0", "RootCisternPylonCrown0", "RootCisternPylonRing0", "RootCisternSignal0", "RootCisternPulseCap0", "RootCisternCable0", "RootCisternCableClamp0", "ProductionAssetMarker"]},
+        "extras": {"ironwright_asset_id": "root_cistern.landmark.v1", "required_nodes": ["RootCisternModel", "RootCisternBasin", "RootCisternBasinWater", "RootCisternBasinSpine0", "RootCisternBasinRootTendril0", "RootCisternBasinInlay00", "RootCisternBasinSocket00", "RootCisternCore", "RootCisternCoreCollar", "RootCisternCoreMass", "RootCisternCoreMantle0", "RootCisternCoreHalo", "RootCisternCoreCrownRing", "RootCisternCoreCapPlate", "RootCisternCoreCapCollar", "RootCisternCoreCapSocket", "RootCisternCoreCapRib00", "RootCisternCoreCapSocket00", "RootCisternCorePlate0", "RootCisternCoreClaw0", "RootCisternCoreVein0", "RootCisternCoreRoot0", "RootCisternCoreCrownPlate00", "RootCisternCoreCrownSocket00", "RootCisternLayer0", "RootCisternRib0", "RootCisternPylon0", "RootCisternPylonFoot0", "RootCisternPylonCollar0", "RootCisternPylonShoulder0", "RootCisternPylonBrace0", "RootCisternPylonCrown0", "RootCisternPylonRing0", "RootCisternSignal0", "RootCisternPulseCap0", "RootCisternCable0", "RootCisternCableClamp0", "ProductionAssetMarker"]},
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")

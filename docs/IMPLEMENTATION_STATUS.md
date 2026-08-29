@@ -1,5 +1,12 @@
 # Implementation status
 
+## Focused Root Cistern mantle-shell pass
+
+- added ten overlapping, alternating-scale mantle lobes around the focal root
+  organism so its smooth central mass now reads as a segmented living shell;
+- preserved the capstone's stable sockets, imported animation, collision-free
+  presentation ownership, endgame state and signal-pylon hierarchy.
+
 ## Focused streamed-dressing teardown guard pass
 
 - stopped deferred region-dressing cleanup and authored landmark attachment

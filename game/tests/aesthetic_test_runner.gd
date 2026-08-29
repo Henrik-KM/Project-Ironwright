@@ -452,6 +452,10 @@ func _run_all() -> void:
                 var cistern_layer_1 := landmark.find_child("RootCisternLayer1", true, false) as Node3D
                 _expect(cistern_core_mass != null and cistern_core_mass.scale.y >= 2.20, "The Root Cistern capstone must retain a raised vertical core profile rather than flattening into a saucer.")
                 _expect(cistern_layer_0 != null and cistern_layer_1 != null and not cistern_layer_0.scale.is_equal_approx(cistern_layer_1.scale), "The Root Cistern mantle must retain staggered layered anatomy instead of identical repeated petals.")
+                var cistern_mantle_0 := landmark.find_child("RootCisternCoreMantle0", true, false) as Node3D
+                var cistern_mantle_1 := landmark.find_child("RootCisternCoreMantle1", true, false) as Node3D
+                _expect(cistern_mantle_0 != null and cistern_mantle_1 != null, "The Root Cistern focal shell must expose its overlapping mantle lobes.")
+                _expect(cistern_mantle_0 != null and cistern_mantle_1 != null and (not cistern_mantle_0.scale.is_equal_approx(cistern_mantle_1.scale) or not is_equal_approx(cistern_mantle_0.position.y, cistern_mantle_1.position.y)), "The Root Cistern focal shell must retain alternating overlapping mantle lobes instead of a smooth unbroken mass.")
                 var cistern_pulse := landmark.find_child("RootCisternPulse0", true, false) as Node3D
                 var cistern_collar := landmark.find_child("RootCisternPylonCollar0", true, false) as Node3D
                 var cistern_pylon_ring := landmark.find_child("RootCisternPylonRing0", true, false) as MeshInstance3D
