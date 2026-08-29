@@ -65,6 +65,7 @@ const ORGANIC_MEMBRANE_TOKENS: Array[String] = [
     "vein",
 ]
 const TEXTURE_BATCH_SIZE := 96
+const REGION_DRESSING_CLEANUP_DELAY := 0.1
 const AUTHORED_ORGANIC_TINTS: Dictionary = {
     "veilstalker": Color("8b9aa3"),
     "razorhound": Color("a27d68"),
@@ -315,28 +316,46 @@ func _on_region_stream_changed(region_id: StringName, streamed_in: bool) -> void
         # end of the frame, which is the part that prevents stale mesh RIDs.
         root.remove_child(child)
         child.queue_free()
-    # A SceneTreeTimer lets queue_free() complete before the check without
-    # keeping a suspended GDScript frame alive if this short-lived review
-    # world is torn down in the meantime.
-    var cleanup_timer := get_tree().create_timer(0.0)
+    # A short real-time guard lets queue_free() and the renderer release their
+    # mesh RIDs before the check. Zero-second timers can run in the same frame
+    # as the detach on the Dummy renderer, which makes a rapid stream reversal
+    # rebuild into a mesh still being retired. The delay is bounded and only
+    # affects presentation dressing; the persistent landmark remains active.
+    var cleanup_timer := get_tree().create_timer(REGION_DRESSING_CLEANUP_DELAY)
     cleanup_timer.timeout.connect(Callable(self, "_finish_region_stream_cleanup").bind(region_id), CONNECT_ONE_SHOT)
 
 
 func _finish_region_stream_cleanup(region_id: StringName) -> void:
     # queue_free() is intentionally allowed to complete for one frame before
     # a streamed-in dressing tree creates fresh procedural meshes.
-    region_stream_cleanup_pending.erase(region_id)
     if world == null or not is_instance_valid(world) or world.is_queued_for_deletion() or is_queued_for_deletion():
+        region_stream_cleanup_pending.erase(region_id)
         return
     var root := region_dressing_roots.get(region_id) as Node3D
     if root == null or not is_instance_valid(root) or root.is_queued_for_deletion():
+        region_stream_cleanup_pending.erase(region_id)
         return
+    # The scene tree has now processed queue_free(), but the compatibility
+    # renderer can retire the old procedural mesh RIDs one or two frames later.
+    # Yield across two idle frames before clearing the guard, then rebuild on a
+    # deferred call. This keeps a rapid stream reversal from constructing a new
+    # louver/tank batch while the previous batch is still in renderer teardown.
+    await get_tree().process_frame
+    await get_tree().process_frame
+    if world == null or not is_instance_valid(world) or world.is_queued_for_deletion() or is_queued_for_deletion():
+        region_stream_cleanup_pending.erase(region_id)
+        return
+    root = region_dressing_roots.get(region_id) as Node3D
+    if root == null or not is_instance_valid(root) or root.is_queued_for_deletion():
+        region_stream_cleanup_pending.erase(region_id)
+        return
+    region_stream_cleanup_pending.erase(region_id)
     var region_lod := world.get_node_or_null("RegionPresentationLodDirector") if world != null else null
     var should_stream_in := false
     if region_lod != null and region_lod.has_method(&"is_region_streamed"):
         should_stream_in = bool(region_lod.call(&"is_region_streamed", region_id))
     if should_stream_in and not _has_region_dressing_content(root):
-        _rebuild_region_dressing(region_id, root)
+        call_deferred("_rebuild_region_dressing", region_id, root)
 
 
 func _rebuild_region_dressing(region_id: StringName, root: Node3D) -> void:

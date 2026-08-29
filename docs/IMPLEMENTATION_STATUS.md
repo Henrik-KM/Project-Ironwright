@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Razorhound bite-line detail pass
+
+- added a dense parented muzzle guard, articulated throat lobe and paired
+  nostril sensor details to the authored Razorhound shell so its close-camera
+  predator face reads as one finished bite assembly rather than detached cheek
+  plates;
+- preserved the existing snout, cheek, fang, animation, collision, ecology and
+  attack socket contracts; all new geometry is presentation-only and follows
+  the existing snout movement;
+- extended the Razorhound manifest and aesthetic regression gate, with the
+  exact early-organic gallery review queued for the quiet live pass.
+
 ## Focused Glassmoth wing vascular-detail pass
 
 - added a restrained, parented three-vein lattice to each authored Glassmoth

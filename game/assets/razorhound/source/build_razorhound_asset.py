@@ -29,6 +29,7 @@ def main() -> None:
         {"name": "Razorhound bone", "pbrMetallicRoughness": {"baseColorFactor": [0.52, 0.44, 0.32, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.6}},
         {"name": "Razorhound threat eye", "pbrMetallicRoughness": {"baseColorFactor": [0.3, 0.03, 0.008, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.28}, "emissiveFactor": [1.0, 0.06, 0.01]},
         {"name": "Razorhound tendon", "pbrMetallicRoughness": {"baseColorFactor": [0.26, 0.08, 0.07, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.55}},
+        {"name": "Razorhound mouth seam", "pbrMetallicRoughness": {"baseColorFactor": [0.035, 0.012, 0.014, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.62}},
     ]
     meshes: list[dict] = []
 
@@ -37,37 +38,48 @@ def main() -> None:
         meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
-    wet, shell, flesh, bone, eye, tendon = range(6)
+    wet, shell, flesh, bone, eye, tendon, mouth = range(7)
     mesh_ids = {
-        "Core": mesh("Core", add_uv_sphere(builder, 0.5, wet, 20, 32)),
-        "Segment": mesh("Segment", add_uv_sphere(builder, 0.42, shell, 16, 28)),
+        # Spend the close-camera tessellation budget on the wet body and
+        # articulated head surfaces so highlights roll across the predator
+        # rather than breaking into the old low-radial facets.
+        "Core": mesh("Core", add_uv_sphere(builder, 0.5, wet, 24, 36)),
+        "Segment": mesh("Segment", add_uv_sphere(builder, 0.42, shell, 24, 36)),
         "Rib": mesh("Rib", add_beveled_box(builder, (1.08, 0.12, 0.18), shell, 0.025)),
-        "Head": mesh("Head", add_uv_sphere(builder, 0.34, wet, 16, 28)),
-        "Snout": mesh("Snout", add_uv_sphere(builder, 0.33, shell, 16, 28)),
+        "Head": mesh("Head", add_uv_sphere(builder, 0.34, wet, 24, 36)),
+        "Snout": mesh("Snout", add_uv_sphere(builder, 0.33, shell, 24, 36)),
         "Cheek": mesh("Cheek", add_beveled_box(builder, (0.18, 0.34, 0.7), shell, 0.03)),
         # Razorhound's cheek sockets sit directly on the close-camera head
         # silhouette. Keep the old mesh for the fallback contract, while the
         # authored node below uses a denser folded living shell.
         "CheekLobe": mesh("CheekLobe", add_organic_lobe(builder, (0.26, 0.34, 0.72), shell, lobes=3, rings=9, sides=40, scallop_amplitude=0.12, leading_extension=0.22, fold_strength=0.82)),
         "BrowGuard": mesh("BrowGuard", add_organic_lobe(builder, (0.24, 0.12, 0.46), shell, lobes=2, rings=8, sides=36, scallop_amplitude=0.09, leading_extension=0.18, fold_strength=0.76)),
-        "Ear": mesh("Ear", add_uv_sphere(builder, 0.16, bone, 16, 24)),
-        "Eye": mesh("Eye", add_uv_sphere(builder, 0.07, eye, 16, 24)),
+        # The bite line is a close-camera identity cue. These closed lobes
+        # replace the visual gap between the snout and cheek plates while the
+        # existing socket nodes remain authoritative for gameplay and motion.
+        "JawLobe": mesh("JawLobe", add_organic_lobe(builder, (0.34, 0.18, 0.30), flesh, lobes=3, rings=10, sides=40, scallop_amplitude=0.10, leading_extension=0.18, fold_strength=0.78)),
+        "MuzzleGuard": mesh("MuzzleGuard", add_organic_lobe(builder, (0.54, 0.14, 0.28), shell, lobes=4, rings=9, sides=40, scallop_amplitude=0.08, leading_extension=0.16, fold_strength=0.74)),
+        "Nostril": mesh("Nostril", add_uv_sphere(builder, 0.046, mouth, 16, 24)),
+        "Ear": mesh("Ear", add_uv_sphere(builder, 0.16, bone, 24, 32)),
+        "Eye": mesh("Eye", add_uv_sphere(builder, 0.07, eye, 20, 28)),
         "Fang": mesh("Fang", add_cylinder(builder, 0.052, 0.62, bone, 24)),
         "Spine": mesh("Spine", add_cylinder(builder, 0.06, 0.72, bone, 24)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.08, 1.12, tendon, 24)),
         "Talon": mesh("Talon", add_cylinder(builder, 0.055, 0.62, bone, 24)),
         "Tail": mesh("Tail", add_cylinder(builder, 0.075, 1.2, tendon, 24)),
-        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 16, 24)),
+        "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 20, 28)),
     }
 
     nodes: list[dict] = [{"name": "RazorhoundModel", "children": [], "extras": {"ironwright_asset_id": "razorhound.predator.v1", "asset_quality": "authored_high_definition", "socket_contract": "snout, cheek_plates, fangs, spine_tail"}}]
 
-    def add_node(name: str, mesh_id: int | None = None, translation: Sequence[float] = (0.0, 0.0, 0.0), rotation: Sequence[float] = (0.0, 0.0, 0.0), extras: dict | None = None, parent: int = 0) -> int:
+    def add_node(name: str, mesh_id: int | None = None, translation: Sequence[float] = (0.0, 0.0, 0.0), rotation: Sequence[float] = (0.0, 0.0, 0.0), scale: Sequence[float] | None = None, extras: dict | None = None, parent: int = 0) -> int:
         entry: dict = {"name": name, "translation": list(translation)}
         if mesh_id is not None:
             entry["mesh"] = mesh_id
         if rotation != (0.0, 0.0, 0.0):
             entry["rotation"] = quat(rotation)
+        if scale is not None:
+            entry["scale"] = list(scale)
         if extras:
             entry["extras"] = extras
         nodes.append(entry)
@@ -83,7 +95,11 @@ def main() -> None:
         add_node("ThoraxFastener", mesh_ids["Fastener"], (-0.45, 0.84, z), parent=torso)
         add_node("ThoraxFastener", mesh_ids["Fastener"], (0.45, 0.84, z), parent=torso)
     head = add_node("RazorhoundHead", mesh_ids["Head"], (0.0, 0.84, -0.82))
-    add_node("RazorhoundSnout", mesh_ids["Snout"], (0.0, 0.78, -1.18), extras={"socket_type": "snout"})
+    snout = add_node("RazorhoundSnout", mesh_ids["Snout"], (0.0, 0.78, -1.18), extras={"socket_type": "snout"})
+    add_node("RazorhoundMuzzleGuard", mesh_ids["MuzzleGuard"], (0.0, 0.10, -0.12), scale=(1.08, 1.0, 0.96), parent=snout, extras={"surface": "layered_muzzle_guard"})
+    add_node("RazorhoundThroatLobe", mesh_ids["JawLobe"], (0.0, -0.18, -0.10), scale=(1.28, 1.02, 1.0), parent=snout, extras={"surface": "articulated_bite_line"})
+    for side in (-1.0, 1.0):
+        add_node("RazorhoundNostril%s" % ("L" if side < 0.0 else "R"), mesh_ids["Nostril"], (side * 0.09, 0.05, -0.25), scale=(1.0, 0.72, 0.68), parent=snout, extras={"surface": "muzzle_sensor_detail"})
     add_node("OrganicDorsalPlate", mesh_ids["Rib"], (0.0, 1.04, 0.16), rotation=(0.0, 0.0, 0.05), extras={"surface": "layered_shell_break"})
     for side in (-1.0, 1.0):
         add_node("RazorhoundCheekPlate", mesh_ids["CheekLobe"], (side * 0.44, 0.82, -0.94))

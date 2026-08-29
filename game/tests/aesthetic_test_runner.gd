@@ -1852,9 +1852,15 @@ func _run_all() -> void:
     var glassmoth_asset := GLASSMOTH_ASSET_SCENE.instantiate()
     var razorhound_cheek := _find_named(razorhound_asset, "RazorhoundCheekPlate") as MeshInstance3D
     var razorhound_brow := _find_named(razorhound_asset, "RazorhoundBrowGuard") as MeshInstance3D
+    var razorhound_muzzle := _find_named(razorhound_asset, "RazorhoundMuzzleGuard") as MeshInstance3D
+    var razorhound_throat := _find_named(razorhound_asset, "RazorhoundThroatLobe") as MeshInstance3D
+    var razorhound_nostril := _find_named(razorhound_asset, "RazorhoundNostrilL") as MeshInstance3D
     _expect(_mesh_vertex_count(_find_named(razorhound_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(razorhound_cheek) >= 48 and _mesh_vertex_count(razorhound_brow) >= 96, "The authored Razorhound dorsal, cheek and eye-guard plates must retain dense high-definition anatomy edges.")
     _expect(razorhound_cheek != null and razorhound_cheek.mesh.get_aabb().size.y >= 0.28, "The Razorhound cheek plates must retain closed folded volume around the bite line rather than reading as rectangular bars.")
     _expect(razorhound_brow != null and razorhound_brow.get_parent().name == "RazorhoundHead" and razorhound_brow.mesh.get_aabb().size.y >= 0.10, "The Razorhound brow guard must remain a dense child of the authored head so its eye silhouette does not detach.")
+    _expect(razorhound_muzzle != null and _mesh_vertex_count(razorhound_muzzle) >= 500 and razorhound_muzzle.get_parent().name == "RazorhoundSnout" and razorhound_muzzle.mesh.get_aabb().size.y >= 0.12, "The Razorhound muzzle guard must retain a dense parented shell that follows the existing bite socket.")
+    _expect(razorhound_throat != null and _mesh_vertex_count(razorhound_throat) >= 500 and razorhound_throat.get_parent().name == "RazorhoundSnout" and razorhound_throat.mesh.get_aabb().size.y >= 0.16, "The Razorhound throat lobe must close the bite line as a parented articulated living surface.")
+    _expect(razorhound_nostril != null and razorhound_nostril.get_parent().name == "RazorhoundSnout", "The Razorhound muzzle must retain paired parented nostril sensor details.")
     var spore_sac_rim := _find_named(sporecaster_asset, "SporecasterSacRim0") as MeshInstance3D
     var spore_sac_pore := _find_named(sporecaster_asset, "SporecasterSacPore0") as MeshInstance3D
     _expect(_mesh_vertex_count(_find_named(sporecaster_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(sporecaster_asset, "SporecasterGillFan0") as MeshInstance3D) >= 48 and _mesh_vertex_count(spore_sac_rim) >= 100 and _mesh_vertex_count(spore_sac_pore) >= 48, "The authored Sporecaster dorsal, gill and sac-aperture surfaces must retain beveled high-definition anatomy edges.")
