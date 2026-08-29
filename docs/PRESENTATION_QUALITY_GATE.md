@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused critical Heartforge audio pass — 2026-08-29
+
+The survival audio layer now emits a restrained low integrity-warning cue while
+the Heartforge remains below its critical threshold. The cue repeats only at a
+bounded interval, leaving ordinary damage impacts distinct and avoiding a
+constant alarm. This is feedback-only: Heartforge health, HUD, save state and
+the no-secondary-home contract are unchanged. Automated and live review use
+Godot Dummy audio with `--quiet-audio`; no physical speakers are used.
+
 ## Focused Root Cistern mantle-shell pass — 2026-08-29
 
 The Root Cistern focal organism now carries ten overlapping mantle lobes with

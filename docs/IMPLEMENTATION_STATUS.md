@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused critical Heartforge audio pass
+
+- added a low, rate-limited integrity-warning cue when the Heartforge remains
+  below the critical threshold, so sustained home-front danger is readable even
+  after the initial damage impact;
+- preserved the existing damage cue, captions, volume controls, quiet review
+  cap, bounded player pool and all Heartforge gameplay state.
+
 ## Focused Root Cistern mantle-shell pass
 
 - added ten overlapping, alternating-scale mantle lobes around the focal root

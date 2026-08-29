@@ -20,6 +20,8 @@ const SAFE_DEVELOPMENT_AUDIO_FLAG := "--new-world"
 ## Review-mode ceiling: deliberately far below normal playback so an accidental
 ## speaker route cannot produce a startling test burst.
 const QUIET_AUDIO_CAP_DB := -30.0
+const HEARTFORGE_CRITICAL_RATIO := 0.28
+const HEARTFORGE_CRITICAL_CUE_INTERVAL := 3.4
 const ORGANIC_SPECIES := [
     &"veilstalker", &"razorhound", &"apex", &"sporecaster", &"broodmass", &"burrower",
     &"skitterling", &"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle",
@@ -37,6 +39,7 @@ var last_profile: StringName = &""
 var last_actor_health: Dictionary = {}
 var last_player_health: float = -1.0
 var _last_heartforge_health: float = -1.0
+var heartforge_critical_clock: float = 0.0
 var _last_endgame_stage: int = -1
 var quiet_audio: bool = false
 var release_overlap_bindings_enabled: bool = true
@@ -54,7 +57,7 @@ func _ready() -> void:
     var launch_arguments: Array = OS.get_cmdline_args()
     launch_arguments.append_array(OS.get_cmdline_user_args())
     quiet_audio = _should_quiet_audio(launch_arguments)
-    for profile in [&"pistol", &"machine_weapon", &"machine_impact", &"player_impact", &"salvage", &"forge", &"organic_attack", &"organic_impact", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition", &"endgame_start", &"endgame_stage", &"endgame_complete", &"endgame_failure"]:
+    for profile in [&"pistol", &"machine_weapon", &"machine_impact", &"player_impact", &"salvage", &"forge", &"organic_attack", &"organic_impact", &"organic_death", &"heartforge_damage", &"heartforge_critical", &"noise_pulse", &"region_transition", &"endgame_start", &"endgame_stage", &"endgame_complete", &"endgame_failure"]:
         profiles[profile] = _build_profile(profile)
     for species in ORGANIC_SPECIES:
         profiles[_organic_profile_id(species, false)] = _build_profile(_organic_profile_id(species, false))
@@ -74,11 +77,13 @@ func _ready() -> void:
         heartforge.connect(&"health_changed", Callable(self, "_on_heartforge_health_changed"))
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
     for index in range(active_players.size() - 1, -1, -1):
         var audio_player := active_players[index]
         if not is_instance_valid(audio_player):
             active_players.remove_at(index)
+    heartforge_critical_clock = maxf(0.0, heartforge_critical_clock - delta)
+    _maybe_play_heartforge_critical_warning()
 
 
 func available_profiles() -> Array[StringName]:
@@ -323,8 +328,21 @@ func _on_channel_completed(kind: StringName, _target: Node, _metadata: Dictionar
 
 func _on_heartforge_health_changed(current: float, _maximum: float) -> void:
     if _last_heartforge_health >= 0.0 and current < _last_heartforge_health:
-        play_profile(&"heartforge_damage", heartforge.global_position, -6.5)
+        var maximum := maxf(1.0, float(heartforge.get("maximum_health")))
+        if current / maximum > HEARTFORGE_CRITICAL_RATIO:
+            play_profile(&"heartforge_damage", heartforge.global_position, -6.5)
     _last_heartforge_health = current
+
+
+func _maybe_play_heartforge_critical_warning() -> void:
+    if heartforge == null or not is_instance_valid(heartforge) or heartforge.is_queued_for_deletion() or heartforge_critical_clock > 0.0:
+        return
+    var maximum := maxf(1.0, float(heartforge.get("maximum_health")))
+    var current := float(heartforge.get("current_health"))
+    if current <= 0.0 or current / maximum > HEARTFORGE_CRITICAL_RATIO:
+        return
+    heartforge_critical_clock = HEARTFORGE_CRITICAL_CUE_INTERVAL
+    play_profile(&"heartforge_critical", heartforge.global_position, -5.5, 0.74)
 
 
 func _on_region_atmosphere_changed(_region_id: StringName, kind: StringName) -> void:
@@ -404,6 +422,8 @@ func _build_profile(profile: StringName) -> AudioStreamWAV:
                 duration = 0.55
             &"heartforge_damage":
                 duration = 0.34
+            &"heartforge_critical":
+                duration = 0.9
             &"noise_pulse":
                 duration = 0.16
             &"region_transition":
@@ -473,6 +493,10 @@ func _sample_profile(profile: StringName, normalized: float, time: float, durati
             return (noise * 0.28 + sin(TAU * (360.0 * time - 270.0 * time * time / duration)) * 0.48) * envelope
         &"heartforge_damage":
             return (sin(TAU * 72.0 * time) * 0.56 + sin(TAU * 144.0 * time) * 0.18) * envelope
+        &"heartforge_critical":
+            var pulse := sin(TAU * (54.0 * time - 8.0 * time * time / duration)) * 0.52
+            var warning := sin(TAU * 162.0 * time) * 0.16
+            return (pulse + warning + noise * 0.12) * envelope
         &"noise_pulse":
             return sin(TAU * (280.0 * time + 210.0 * time * time / duration)) * envelope
         &"region_transition":

@@ -53,7 +53,7 @@ func _run_all() -> void:
         _expect(is_equal_approx(audio_director._safe_volume_db(0.0), -30.0), "Spatial audio review mode must cap a full-scale cue at a very low playback level.")
         _expect(is_equal_approx(audio_director._safe_volume_db(-36.0), -36.0), "Spatial audio review mode must preserve already-quiet cues without boosting them.")
         audio_director.quiet_audio = false
-        for profile in [&"pistol", &"machine_weapon", &"machine_impact", &"player_impact", &"salvage", &"forge", &"organic_attack", &"organic_impact", &"organic_death", &"heartforge_damage", &"noise_pulse", &"region_transition", &"endgame_start", &"endgame_stage", &"endgame_complete", &"endgame_failure"]:
+        for profile in [&"pistol", &"machine_weapon", &"machine_impact", &"player_impact", &"salvage", &"forge", &"organic_attack", &"organic_impact", &"organic_death", &"heartforge_damage", &"heartforge_critical", &"noise_pulse", &"region_transition", &"endgame_start", &"endgame_stage", &"endgame_complete", &"endgame_failure"]:
             _expect(audio_director.has_profile(profile), "The audio director must provide the %s profile." % profile)
         for species in [&"veilstalker", &"razorhound", &"apex", &"sporecaster", &"broodmass", &"burrower", &"skitterling", &"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle"]:
             _expect(audio_director.has_profile(audio_director.organic_profile_id(species)), "Each organic species must provide a distinct attack vocal signature.")
@@ -61,6 +61,21 @@ func _run_all() -> void:
         for archetype in [&"companion", &"guardian", &"salvager", &"scout", &"engineer", &"relay"]:
             _expect(audio_director.has_profile(audio_director.robot_profile_id(archetype)), "Each friendly robot archetype must provide a distinct weapon signature.")
             _expect(audio_director.has_profile(audio_director.robot_profile_id(archetype, true)), "Each friendly robot archetype must provide a distinct shutdown signature.")
+        if world.heartforge != null:
+            var original_heartforge_health: float = world.heartforge.current_health
+            audio_director.heartforge_critical_clock = 0.0
+            world.heartforge.current_health = world.heartforge.maximum_health * 0.2
+            var critical_audio_before := audio_director.event_count
+            audio_director.call("_process", 0.016)
+            _expect(audio_director.last_profile == &"heartforge_critical" and audio_director.event_count == critical_audio_before + 1, "Critical Heartforge integrity must emit a readable warning cue.")
+            var rate_limited_audio_count := audio_director.event_count
+            audio_director.call("_process", 1.0)
+            _expect(audio_director.event_count == rate_limited_audio_count, "Critical Heartforge warning audio must be rate-limited instead of becoming an alarm loop.")
+            audio_director.call("_process", 3.5)
+            _expect(audio_director.event_count == rate_limited_audio_count + 1 and audio_director.last_profile == &"heartforge_critical", "Critical Heartforge warning audio must repeat only after its bounded interval.")
+            world.heartforge.current_health = original_heartforge_health
+            audio_director.heartforge_critical_clock = 0.0
+            audio_director.stop_all()
         if world.noise_system != null:
             var construction_audio_before := audio_director.event_count
             world.noise_system.emit_noise(Vector3(0.0, 0.0, -12.0), 27.0, 0.72, &"outpost_construction")
