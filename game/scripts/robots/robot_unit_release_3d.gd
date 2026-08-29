@@ -2,11 +2,15 @@ class_name RobotUnitRelease3D
 extends RobotUnit3D
 
 const REDUCED_PROXY_MESH: BoxMesh = preload("res://assets/release/proxies/robot_proxy_mesh.tres")
+const COARSE_TARGET_REFRESH_SECONDS := 0.44
+const REDUCED_TARGET_REFRESH_SECONDS := 0.9
 
 var _spatial_index: SpatialIndex3D
 var visual_lod_level: int = 0
 var reduced_detail: bool = false
 var coarse_simulation: bool = false
+var _cached_nearest_target: Node3D
+var _nearest_target_refresh_remaining: float = 0.0
 var _reduced_proxy: MeshInstance3D
 
 
@@ -20,17 +24,30 @@ func _resolve_spatial_index() -> void:
 
 
 func _nearest_enemy(maximum_range: float) -> Node3D:
+    if reduced_detail or coarse_simulation:
+        if _nearest_target_refresh_remaining > 0.0:
+            if _cached_nearest_target == null or not is_instance_valid(_cached_nearest_target):
+                return null
+            if _cached_nearest_target.has_method(&"is_alive") and not bool(_cached_nearest_target.call(&"is_alive")):
+                return null
+            return _cached_nearest_target if global_position.distance_to(_cached_nearest_target.global_position) <= maximum_range else null
     if _spatial_index == null or not is_instance_valid(_spatial_index):
         _resolve_spatial_index()
     if _spatial_index == null:
         return super._nearest_enemy(maximum_range)
     var unit_target := _spatial_index.nearest(&"organic_enemies", global_position, maximum_range)
     var nest_target := _spatial_index.nearest(&"enemy_tier_nests", global_position, maximum_range)
+    var result: Node3D
     if unit_target == null:
-        return nest_target
-    if nest_target == null:
-        return unit_target
-    return nest_target if global_position.distance_to(nest_target.global_position) < global_position.distance_to(unit_target.global_position) else unit_target
+        result = nest_target
+    elif nest_target == null:
+        result = unit_target
+    else:
+        result = nest_target if global_position.distance_to(nest_target.global_position) < global_position.distance_to(unit_target.global_position) else unit_target
+    if reduced_detail or coarse_simulation:
+        _cached_nearest_target = result
+        _nearest_target_refresh_remaining = REDUCED_TARGET_REFRESH_SECONDS if reduced_detail else COARSE_TARGET_REFRESH_SECONDS
+    return result
 
 
 func set_reduced_detail(value: bool) -> void:
@@ -38,6 +55,8 @@ func set_reduced_detail(value: bool) -> void:
         return
     reduced_detail = value
     coarse_simulation = false
+    _cached_nearest_target = null
+    _nearest_target_refresh_remaining = 0.0
     _update_release_collision()
     set_physics_process(not reduced_detail)
     if reduced_detail:
@@ -48,6 +67,8 @@ func set_coarse_simulation(value: bool) -> void:
     if reduced_detail or coarse_simulation == value:
         return
     coarse_simulation = value
+    _cached_nearest_target = null
+    _nearest_target_refresh_remaining = 0.0
     _update_release_collision()
     set_physics_process(not coarse_simulation)
 
@@ -68,6 +89,7 @@ func _coarse_detail_tick(delta: float) -> void:
     if not alive:
         return
     attack_cooldown = maxf(0.0, attack_cooldown - delta)
+    _nearest_target_refresh_remaining = maxf(0.0, _nearest_target_refresh_remaining - delta)
     if archetype == &"companion" and player_reference != null and is_instance_valid(player_reference):
         _update_companion_goal()
     if salvage_target != null and is_instance_valid(salvage_target):

@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-08-29 — Machine-society target acquisition
+
+- bounded nearest-target reuse for medium- and reduced-detail release robots,
+  with faster refresh in medium range and remote-style refresh at distance;
+- invalid or out-of-range targets still reacquire immediately, while
+  full-detail close combat remains per-physics-frame;
+- verified release coverage and the 192-actor benchmark with Dummy audio and
+  `--quiet-audio` only.
+
 ## 2026-08-29 — Machine-society collision residency
 
 - medium- and reduced-detail release actors now disable their collision shapes

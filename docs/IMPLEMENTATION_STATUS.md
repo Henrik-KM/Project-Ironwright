@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused machine-society target-acquisition pass
+
+- medium- and reduced-detail release robots now retain a bounded nearest-target
+  result between their already cadence-limited simulation ticks, refreshing it
+  sooner in medium range and at the remote interval when distant;
+- invalid or out-of-range targets still trigger an immediate search, while
+  full-detail robots keep per-physics-frame acquisition for close combat;
+- native release coverage and the 192-actor benchmark remain green, with no
+  change to autonomy reasons, save state or player-facing workload.
+
 ## Focused machine-society collision residency pass
 
 - medium- and reduced-detail release actors now disable their collision shapes
