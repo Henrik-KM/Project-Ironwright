@@ -83,10 +83,13 @@ const AUTHORED_ORGANIC_TINTS: Dictionary = {
     # late terrestrial families into clearly different mineral-biological
     # colour lanes. This is a material-only presentation pass: authored mesh
     # density, sockets, animation and gameplay scale remain unchanged.
-    "carrionbell": Color("8e5268"),
-    "rootweaver": Color("3f7953"),
-    "thornback": Color("ad7f4e"),
-    "ashmantle": Color("547b8b"),
+    # Late membranes occupy large screen areas in the exact gallery. Keep the
+    # family lanes distinct, but lower their value and saturation so layered
+    # anatomy reads as wet mineral biology rather than pastel plastic plates.
+    "carrionbell": Color("70485a"),
+    "rootweaver": Color("3f6a4d"),
+    "thornback": Color("8a704d"),
+    "ashmantle": Color("526f78"),
 }
 
 var world: Node3D

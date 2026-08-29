@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused late-organic palette refinement — 2026-08-29
+
+The four late-organic family lanes now use darker, lower-saturation mineral
+biology colours. This keeps their high-density membranes, ribs and spines
+distinct while removing the pastel-plastic impression caused by broad bright
+plates under the exact blue-hour gallery key. The aesthetic gate now enforces
+both family separation and a shared luminance ceiling; geometry, sockets,
+animation, ecology and combat ownership are unchanged. The review remains
+silent with Godot Dummy audio and `--quiet-audio`.
+
 ## Focused authored-package residency benchmark — 2026-08-29
 
 The native release benchmark now promotes all eleven remote authored-region

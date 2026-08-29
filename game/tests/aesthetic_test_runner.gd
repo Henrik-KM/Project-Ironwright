@@ -268,6 +268,7 @@ func _run_all() -> void:
             var tint_max := maxf(tint.r, maxf(tint.g, tint.b))
             var tint_min := minf(tint.r, minf(tint.g, tint.b))
             _expect(tint_max - tint_min <= 0.40, "Late-organic family tints must stay restrained enough for broad membranes to read as mineral biology rather than toy-saturated plates.")
+            _expect(tint.get_luminance() <= 0.52, "Late-organic family tints must keep broad gallery membranes below the pastel value range under the shared blue-hour key.")
     _expect(story_archive != null, "The complete world must provide the persistent Town Archive director.")
     if encounter_dressing != null and region_director != null:
         if startup_lod != null:

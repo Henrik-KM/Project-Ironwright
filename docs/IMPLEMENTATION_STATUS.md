@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused late-organic palette refinement
+
+- lowered and desaturated the four late-organic family lanes so broad membrane
+  sheets retain wet mineral-biological contrast instead of reading as pastel
+  plastic plates in the exact close-detail gallery;
+- extended the aesthetic gate with a luminance ceiling for those family tints,
+  while preserving the existing family separation and algae/amber/slate lane
+  checks.
+
 ## Focused authored-package residency benchmark
 
 - added a representative native benchmark that promotes every remote authored
