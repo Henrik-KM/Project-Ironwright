@@ -5,6 +5,8 @@
 - classified authored wing frames, membrane ribs, fin rays and related hard
   anatomy as structural chitin instead of broad membrane surfaces, preventing
   close tactical silhouettes from blooming into pale bars;
+- deepened the structural tint and roughness so hard anatomy retains a quiet
+  wet-shell response against the brighter living membranes;
 - kept fine and surface vascular veins on a restrained living-material lane so
   they still read as biological signal detail;
 - added native release coverage for Roofleaper wing frames and Rootweaver

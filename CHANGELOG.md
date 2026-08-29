@@ -5,6 +5,7 @@
 - moved authored wing frames, membrane ribs, fin rays and related hard anatomy
   onto the darker structural chitin lane so close tactical silhouettes retain
   material separation instead of blooming into pale bars;
+- deepened structural tint and roughness for a quieter wet-shell response;
 - preserved restrained living treatment for surface and fine vascular veins;
 - added native release coverage for Roofleaper wing frames and Rootweaver
   spore ribs without changing gameplay, animation or ecology behavior.
