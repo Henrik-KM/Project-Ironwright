@@ -288,6 +288,17 @@ def validate_godot_scaffold() -> None:
     script_text = (ROOT / "game/scripts/bootstrap.gd").read_text(encoding="utf-8")
     if "res://data/prototype_scope.json" not in script_text:
         raise ValidationError("Bootstrap script must load prototype scope data")
+    if "res://scenes/main_3d.tscn" not in script_text:
+        raise ValidationError("Bootstrap script must hand off to the full game entrypoint")
+
+    bootstrap_scene_text = (ROOT / "game/scenes/bootstrap.tscn").read_text(encoding="utf-8")
+    for stale_phrase in [
+        "SURVIVAL-FIRST REPOSITORY SCAFFOLD",
+        "Loading prototype scope",
+        "Required prototype systems",
+    ]:
+        if stale_phrase in bootstrap_scene_text or stale_phrase in script_text:
+            raise ValidationError(f"Bootstrap entrypoint still exposes stale scaffold messaging: {stale_phrase!r}")
 
 
 def validate_design_documents() -> None:

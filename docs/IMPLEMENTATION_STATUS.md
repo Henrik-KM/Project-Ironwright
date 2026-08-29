@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused legacy-bootstrap handoff pass
+
+- the retained `bootstrap.tscn` path now verifies the existing machine-readable
+  scope contract and hands off to the full persistent Heartforge world instead
+  of stopping at a prototype-only scaffold;
+- its visible copy now describes a systems check and the complete first-salvage
+  to first-victory journey, while the required scope file remains validated;
+- repository validation guards the handoff and rejects the stale scaffold copy;
+  the handoff is covered by a silent headless boot and the normal release gates.
+
 ## Focused Rootweaver facial-silhouette pass
 
 - the route-controller Rootweaver now carries paired folded jaw plates beneath

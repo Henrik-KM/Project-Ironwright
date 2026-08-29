@@ -56,7 +56,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_colors/font_color = Color(0.42, 0.9, 0.9, 1)
 theme_override_font_sizes/font_size = 16
-text = "SURVIVAL-FIRST REPOSITORY SCAFFOLD"
+text = "IRONWRIGHT SYSTEMS CHECK"
 
 [node name="Title" type="Label" parent="Margin/Content"]
 layout_mode = 2
@@ -81,7 +81,7 @@ custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.84, 0.86, 0.86, 1)
 theme_override_font_sizes/font_size = 18
-text = "Loading prototype scope…"
+text = "Verifying the persistent Heartforge world…"
 autowrap_mode = 2
 
 [node name="Spacer" type="Control" parent="Margin/Content"]
@@ -92,4 +92,4 @@ size_flags_vertical = 3
 layout_mode = 2
 theme_override_colors/font_color = Color(0.5, 0.54, 0.55, 1)
 theme_override_font_sizes/font_size = 14
-text = "Read AGENTS.md and docs/DESIGN_LOCKS.md before implementing gameplay."
+text = "Persistent Heartforge district · one run from first salvage to first victory"

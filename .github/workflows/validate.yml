@@ -47,6 +47,9 @@ jobs:
       - name: Import and parse native project
         run: godot --headless --audio-driver Dummy --quiet-audio --path game --editor --quit
 
+      - name: Verify the legacy bootstrap hands off to the full game
+        run: godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/bootstrap_handoff_test_runner.gd
+
       - name: Run core native gameplay tests
         run: godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/test_runner.gd
 

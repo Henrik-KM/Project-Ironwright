@@ -41,6 +41,7 @@ RELEASE_REQUIRED_PATHS = [
     "game/scripts/actors/mechromancer_release_3d.gd",
     "game/scripts/robots/robot_unit_release_3d.gd",
     "game/scripts/enemies/organic_enemy_release_3d.gd",
+    "game/tests/bootstrap_handoff_test_runner.gd",
     "game/tests/release_test_runner.gd",
     "game/tests/resolution_accessibility_test_runner.gd",
     "game/export_presets.cfg",

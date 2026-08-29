@@ -1,5 +1,13 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused legacy-bootstrap handoff pass — 2026-08-29
+
+The retained bootstrap scene now verifies the machine-readable world contract
+and immediately hands off to the full persistent Heartforge release world. Its
+visible copy no longer presents a dead prototype scaffold. Silent headless boot
+and repository validation confirm the handoff; Godot review continues to use
+the Dummy audio driver and `--quiet-audio`, with no live speakers.
+
 ## Focused Rootweaver facial-silhouette pass — 2026-08-29
 
 The route-controller Rootweaver now carries paired folded jaw plates beneath
