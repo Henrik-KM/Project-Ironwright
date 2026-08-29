@@ -70,6 +70,7 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
         _expect(is_equal_approx(world.release_audio._safe_volume_db(-36.0), -36.0), "Quiet audio review mode must preserve already-quiet cues without boosting them.")
         _expect(world.release_audio._should_quiet_audio(["--presentation-review"]), "Any presentation review launch must activate the quiet audio ceiling even when the explicit quiet flag is omitted.")
         _expect(world.release_audio._should_quiet_audio(["--complete-objective-review"]), "Any objective review launch must activate the quiet audio ceiling even when the explicit quiet flag is omitted.")
+        _expect(world.release_audio._should_quiet_audio(["--new-world"]), "Fresh-world development fixtures must activate the quiet audio ceiling even when the explicit quiet flag is omitted.")
         _expect(not world.release_audio._should_quiet_audio(["--headless", "--path", "game"]), "Ordinary non-review launches must not be forced into the review-only audio ceiling.")
         world.release_audio.quiet_audio = false
         world.release_audio.caption_panel.visible = false

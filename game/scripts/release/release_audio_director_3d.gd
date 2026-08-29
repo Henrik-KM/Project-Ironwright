@@ -6,6 +6,10 @@ signal mood_changed(mood: StringName)
 const AUDIO_ROOT := "res://assets/release/audio"
 const QUIET_AUDIO_FLAG := "--quiet-audio"
 const REVIEW_AUDIO_MARKER := "review"
+## Fresh-world development fixtures are safe to launch even when the caller
+## forgets the explicit quiet flag. Normal player launches keep their authored
+## mix; only this fixture and existing review modes receive the ceiling.
+const SAFE_DEVELOPMENT_AUDIO_FLAG := "--new-world"
 ## Review-mode ceiling: deliberately far below normal playback so an accidental
 ## speaker route cannot produce a startling test burst.
 const QUIET_AUDIO_CAP_DB := -30.0
@@ -697,7 +701,7 @@ func _safe_volume_db(volume_db: float) -> float:
 func _should_quiet_audio(arguments: Array) -> bool:
     for raw_argument in arguments:
         var argument := str(raw_argument).to_lower()
-        if argument == QUIET_AUDIO_FLAG or (argument.begins_with("--") and argument.contains(REVIEW_AUDIO_MARKER)):
+        if argument == QUIET_AUDIO_FLAG or argument == SAFE_DEVELOPMENT_AUDIO_FLAG or (argument.begins_with("--") and argument.contains(REVIEW_AUDIO_MARKER)):
             return true
     return false
 

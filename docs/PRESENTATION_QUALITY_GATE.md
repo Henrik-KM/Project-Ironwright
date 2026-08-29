@@ -1,5 +1,13 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused safe fresh-world audio fixture pass — 2026-08-29
+
+The `--new-world` development fixture now automatically activates the existing
+very-low `-30 dB` audio ceiling even when `--quiet-audio` is omitted. Ordinary
+player launches retain their normal adaptive mix. Automated and live review
+checks continue through Godot Dummy audio with `--quiet-audio`; no physical
+speakers are used.
+
 ## Focused active animation hot-path pass — 2026-08-29
 
 `ProceduralAnimator3D` now caches actor capability flags, fixed group

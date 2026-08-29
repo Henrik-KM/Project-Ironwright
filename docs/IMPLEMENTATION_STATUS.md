@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused safe fresh-world audio fixture pass
+
+- the `--new-world` development fixture now automatically uses the existing
+  very-low `-30 dB` audio ceiling, so a live opening check cannot accidentally
+  start at the authored mix level when the explicit `--quiet-audio` flag is
+  omitted;
+- ordinary player launches retain their normal adaptive mix, while review
+  fixtures and all automated checks continue to use Dummy audio and quiet mode;
+- the release regression suite covers the fresh-world safety rule.
+
 ## Focused active animation hot-path pass
 
 - `ProceduralAnimator3D` now caches actor capability flags, fixed group
