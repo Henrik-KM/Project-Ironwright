@@ -13,6 +13,12 @@ func _initialize() -> void:
 
 func _run_all() -> void:
     var world := MAIN_SCENE.instantiate() as IronwrightReleaseWorld3D
+    # The normal graphical release boot intentionally stops at the title scene
+    # until the player chooses New World or Continue. This integration runner
+    # exercises the complete playable world directly in both headless and
+    # graphical validation, so select the same explicit New World path before
+    # adding the scene to the tree.
+    world.pending_launch_mode = &"new"
     root.add_child(world)
     await process_frame
     await physics_frame
