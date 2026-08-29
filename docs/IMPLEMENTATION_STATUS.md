@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused adaptive Heartforge staged-build pass
+
+- authorized retrofit previews now reveal their selected structural pieces in
+  bounded stages as the existing machine construction interval advances;
+- the three-machine worksite crew remains visible for the whole interval, so
+  progress reads as autonomous assembly rather than a suddenly swapped mesh;
+- this is presentation-only: construction timing, costs, collision activation,
+  save state, player choice and the anti-chore contract remain unchanged.
+
 ## Focused autonomous Heartforge geometry pass
 
 - completed adaptive Heartforge principles now rebuild a bounded physical shell

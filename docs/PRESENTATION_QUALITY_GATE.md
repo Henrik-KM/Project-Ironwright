@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused adaptive Heartforge staged-build pass — 2026-08-29
+
+During an authorized retrofit, the selected shell pieces now assemble in
+bounded stages across the existing machine-run interval, while the three
+tracked worksite machines remain visible throughout. This makes autonomous
+construction legible as progressive physical work instead of a single visual
+swap. Timing, cost, collision activation, persistence and player workload are
+unchanged. Review uses Godot Dummy audio with `--quiet-audio` only; no live
+speakers are used.
+
 ## Focused autonomous Heartforge geometry pass — 2026-08-29
 
 Completed adaptive principles now leave a bounded physical shell layer as well

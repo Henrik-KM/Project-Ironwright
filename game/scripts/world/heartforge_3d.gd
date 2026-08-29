@@ -117,6 +117,37 @@ func set_adaptation_preview(profile: StringName, progress: float) -> void:
     _adaptation_preview.visible = true
     var reveal := lerpf(0.35, 1.0, adaptation_preview_progress)
     _adaptation_preview.scale = Vector3.ONE * reveal
+    _refresh_adaptation_preview_staging()
+
+
+## Counts the direct retrofit pieces visible during an authorized build.
+## The worksite crew is deliberately excluded because it stays visible for the
+## entire interval as the readable proof of autonomous construction.
+func adaptation_preview_visible_piece_count() -> int:
+    if _adaptation_preview == null or not is_instance_valid(_adaptation_preview):
+        return 0
+    var count := 0
+    for child in _adaptation_preview.get_children():
+        var piece := child as Node3D
+        if piece != null and piece.name != "AdaptationWorksiteCrew" and piece.visible:
+            count += 1
+    return count
+
+
+func _refresh_adaptation_preview_staging() -> void:
+    if _adaptation_preview == null or adaptation_preview_profile == &"adaptation.pending":
+        return
+    var pieces: Array[Node3D] = []
+    for child in _adaptation_preview.get_children():
+        var piece := child as Node3D
+        if piece == null or piece.name == "AdaptationWorksiteCrew":
+            continue
+        pieces.append(piece)
+    if pieces.is_empty():
+        return
+    var reveal_count := clampi(1 + int(floor(adaptation_preview_progress * float(pieces.size()))), 1, pieces.size())
+    for index in range(pieces.size()):
+        pieces[index].visible = index < reveal_count
 
 
 ## Returns the number of profile-specific physical shell pieces currently
