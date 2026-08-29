@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-29 — Machine-society spatial-index residency
+
+- cached indexed group membership in the release spatial service and refresh it
+  only on node entry or exit, while preserving the existing position rebuild
+  cadence for moving actors;
+- kept visible filtering, nearest/query behavior, population counts and LOD
+  budgets unchanged, with release coverage passing silently using Dummy audio;
+- removed repeated scene-tree membership discovery from the long-run population
+  path without adding any player-managed maintenance work.
+
 ## 2026-08-29 — Organic structural-material separation
 
 - moved authored wing frames, membrane ribs, fin rays and related hard anatomy

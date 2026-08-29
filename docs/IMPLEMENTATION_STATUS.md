@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused machine-society spatial-index residency pass
+
+- the release spatial service now caches indexed group membership and refreshes
+  that membership only when scene nodes enter or leave, while rebuilding cell
+  positions on the existing cadence for moving actors;
+- preserved visible-node filtering, nearest/query results, population counts
+  and release LOD budgets, with release coverage passing under Dummy audio and
+  `--quiet-audio`;
+- this reduces repeated scene-tree membership work at long-run population
+  scale without adding a player-facing management task.
+
 ## Focused organic structural-material separation pass
 
 - classified authored wing frames, membrane ribs, fin rays and related hard

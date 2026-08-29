@@ -15,10 +15,16 @@ var rebuild_clock: float = 0.0
 var grids: Dictionary = {}
 var indexed_counts: Dictionary = {}
 var flat_nodes: Dictionary = {}
+var group_members: Dictionary = {}
+var membership_dirty: bool = true
 
 
 func _ready() -> void:
     add_to_group(&"spatial_index_service")
+    for group_name in INDEXED_GROUPS:
+        group_members[group_name] = []
+    get_tree().node_added.connect(_on_tree_node_added)
+    call_deferred("_refresh_membership")
     rebuild()
 
 
@@ -31,6 +37,7 @@ func _process(delta: float) -> void:
 
 
 func rebuild() -> void:
+    _refresh_membership()
     grids.clear()
     indexed_counts.clear()
     flat_nodes.clear()
@@ -38,7 +45,10 @@ func rebuild() -> void:
         var grid: Dictionary = {}
         var nodes: Array[Node3D] = []
         var count := 0
-        for candidate in get_tree().get_nodes_in_group(group_name):
+        var members: Variant = group_members.get(group_name, [])
+        if not (members is Array):
+            members = []
+        for candidate in members:
             if not is_instance_valid(candidate) or not (candidate is Node3D):
                 continue
             var node := candidate as Node3D
@@ -53,6 +63,35 @@ func rebuild() -> void:
         grids[group_name] = grid
         flat_nodes[group_name] = nodes
         indexed_counts[group_name] = count
+
+
+func _on_tree_node_added(node: Node) -> void:
+    if node is Node3D:
+        # Group membership is normally assigned from _ready(), after the
+        # SceneTree emits node_added. Defer the refresh so the new actor is
+        # visible to the next rebuild without scanning every group each tick.
+        membership_dirty = true
+
+
+func _on_indexed_node_exiting() -> void:
+    membership_dirty = true
+
+
+func _refresh_membership() -> void:
+    if not membership_dirty:
+        return
+    for group_name in INDEXED_GROUPS:
+        var nodes: Array[Node3D] = []
+        for candidate in get_tree().get_nodes_in_group(group_name):
+            if not is_instance_valid(candidate) or not (candidate is Node3D):
+                continue
+            var node := candidate as Node3D
+            nodes.append(node)
+            var callback := Callable(self, "_on_indexed_node_exiting")
+            if not node.tree_exiting.is_connected(callback):
+                node.tree_exiting.connect(callback, CONNECT_ONE_SHOT)
+        group_members[group_name] = nodes
+    membership_dirty = false
 
 
 func indexed_nodes(group_name: StringName) -> Array[Node3D]:
