@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused release art startup residency pass
+
+- release material overrides now share cached hard-surface resources and use
+  shallow material copies, so texture graphs are not duplicated for every
+  mesh instance;
+- the initial release-world texture pass is processed in bounded frame-sized
+  batches, and late mesh additions are coalesced into one flush instead of
+  creating one deferred callback per mesh;
+- this preserves the existing high-definition material and normal-relief
+  contract while allowing the native opening to reach its first playable
+  frame; live review used Godot's Dummy audio driver and `--quiet-audio`.
+
 ## Focused long-run enemy identity persistence correction
 
 - unified release snapshots now retain each living organic's assigned tier and

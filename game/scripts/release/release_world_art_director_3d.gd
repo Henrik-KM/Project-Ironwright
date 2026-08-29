@@ -98,6 +98,12 @@ var region_dressing_roots: Dictionary = {}
 var meshes_textured: int = 0
 var regions_dressed: int = 0
 var load_errors: Array[String] = []
+var material_cache: Dictionary = {}
+var pending_mesh_instance_ids: Dictionary = {}
+var texture_flush_scheduled: bool = false
+var texture_queue: Array[MeshInstance3D] = []
+var texture_queue_index: int = 0
+var texture_queue_active: bool = false
 
 
 func configure(next_world: Node3D, next_regions: WorldRegionDirector3D, next_settings: ReleaseSettingsService3D) -> void:
@@ -119,13 +125,41 @@ func _ready() -> void:
     call_deferred("_connect_region_lod")
 
 
+func _process(_delta: float) -> void:
+    if not texture_queue_active:
+        return
+    var chunk_end := mini(texture_queue_index + 240, texture_queue.size())
+    while texture_queue_index < chunk_end:
+        var mesh := texture_queue[texture_queue_index]
+        if mesh != null and is_instance_valid(mesh):
+            _texture_mesh(mesh)
+        texture_queue_index += 1
+    if texture_queue_index < texture_queue.size():
+        return
+    texture_queue.clear()
+    texture_queue_index = 0
+    texture_queue_active = false
+
+
 func _on_node_added(node: Node) -> void:
     # Actors, outpost upgrades and discovered-region dressing are created
     # throughout a run. Keep the release material pass live instead of
     # leaving late-created meshes on their greybox fallback materials.
     if node == null or not (node is MeshInstance3D):
         return
-    call_deferred("_texture_subtree_id", node.get_instance_id())
+    pending_mesh_instance_ids[node.get_instance_id()] = true
+    if texture_flush_scheduled:
+        return
+    texture_flush_scheduled = true
+    call_deferred("_flush_pending_mesh_textures")
+
+
+func _flush_pending_mesh_textures() -> void:
+    texture_flush_scheduled = false
+    var pending_ids := pending_mesh_instance_ids.keys()
+    pending_mesh_instance_ids.clear()
+    for raw_id in pending_ids:
+        _texture_subtree_id(int(raw_id))
 
 
 func _load_textures() -> void:
@@ -158,7 +192,10 @@ func _apply_release_art() -> void:
     meshes_textured = 0
     regions_dressed = 0
     region_dressing_roots.clear()
-    _texture_recursive(world)
+    material_cache.clear()
+    _collect_texture_meshes(world)
+    texture_queue_index = 0
+    texture_queue_active = not texture_queue.is_empty()
     _dress_heartforge_district()
     if region_director != null:
         for raw_region_id in region_director.region_data:
@@ -252,6 +289,15 @@ func _texture_recursive(node: Node) -> void:
         _texture_recursive(child)
 
 
+func _collect_texture_meshes(node: Node) -> void:
+    if node is MeshInstance3D:
+        texture_queue.append(node as MeshInstance3D)
+    for child in node.get_children():
+        if child == dressing_root:
+            continue
+        _collect_texture_meshes(child)
+
+
 func _texture_subtree_id(instance_id: int) -> void:
     var mesh := instance_from_id(instance_id) as MeshInstance3D
     if mesh == null or not is_instance_valid(mesh) or mesh == dressing_root:
@@ -272,7 +318,19 @@ func _texture_mesh(mesh_instance: MeshInstance3D) -> void:
     if category == &"" or not textures.has(category):
         return
     var source_material := mesh_instance.material_override as StandardMaterial3D
-    var material := source_material.duplicate(true) as StandardMaterial3D if source_material != null else StandardMaterial3D.new()
+    var can_share_material := source_material != null and category not in [&"chitin", &"membrane"]
+    var cache_key := "%s:%d" % [String(category), source_material.get_instance_id()] if can_share_material else ""
+    if can_share_material and material_cache.has(cache_key):
+        mesh_instance.material_override = material_cache[cache_key]
+        mesh_instance.visibility_range_end = 250.0
+        mesh_instance.set_meta(&"release_material_family", category)
+        meshes_textured += 1
+        return
+    # A shallow duplicate keeps the material override independent while
+    # sharing the already-loaded texture and sampler resources. Deep-copying
+    # every override made a full live-world boot allocate a private copy of
+    # the texture graph for thousands of meshes before the first frame.
+    var material := source_material.duplicate(false) as StandardMaterial3D if source_material != null else StandardMaterial3D.new()
     material.albedo_texture = textures[category]
     material.uv1_triplanar = true
     material.uv1_world_triplanar = true
@@ -312,6 +370,8 @@ func _texture_mesh(mesh_instance: MeshInstance3D) -> void:
     mesh_instance.material_override = material
     mesh_instance.visibility_range_end = 250.0
     mesh_instance.set_meta(&"release_material_family", category)
+    if can_share_material:
+        material_cache[cache_key] = material
     meshes_textured += 1
 
 
