@@ -309,6 +309,14 @@ def validate_release_packaging() -> None:
     for token in ["include-templates: true", "upload-artifact", "one-hundred-hour-equivalent long-run soak"]:
         if token not in workflow:
             raise legacy.ValidationError(f"Release workflow is missing {token!r}")
+    for relative in [
+        ".github/workflows/validate.yml",
+        ".github/workflows/release.yml",
+        ".github/workflows/certify-release-candidate.yml",
+    ]:
+        workflow_text = (ROOT / relative).read_text(encoding="utf-8")
+        if "one-hundred-hour-equivalent" not in workflow_text or "long_run_soak_test_runner.gd" not in workflow_text:
+            raise legacy.ValidationError(f"{relative} must run the one-hundred-hour-equivalent long-run soak")
     if not any(
         command in workflow
         for command in [
