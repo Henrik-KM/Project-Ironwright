@@ -717,44 +717,37 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         # rebuilds cannot race a concurrent stream-out during threaded loads.
         region_lod.set_process(false)
         for raw_region_id in world.region_director.region_data.keys():
-            var landmark := world.region_director.get_landmark(StringName(raw_region_id))
-            if landmark != null:
-                landmark.set_streamed_in(true)
-        for _frame in range(120):
-            var all_authored_ready := true
-            for raw_region_id in world.region_director.region_data.keys():
-                var landmark := world.region_director.get_landmark(StringName(raw_region_id))
-                if landmark == null or landmark.region_kind == &"sanctuary":
-                    continue
-                var package_name: String = str({
-                    &"industrial": "WestGridAuthoredScene",
-                    &"commercial": "FloodMarketAuthoredScene",
-                    &"archive": "ArchiveAuthoredScene",
-                    &"tenement": "TenementAuthoredScene",
-                    &"greenhouse": "GlasshouseAuthoredScene",
-                    &"waterfront": "RiverworksAuthoredScene",
-                    &"rail": "TramGraveyardAuthoredScene",
-                    &"observatory": "ObservatoryAuthoredScene",
-                    &"nest": "CathedralAuthoredScene",
-                    &"research": "BuriedLabsAuthoredScene",
-                    &"endgame": "RootCisternAuthoredScene",
-                }.get(landmark.region_kind, ""))
-                var authored_package := landmark.get_node_or_null("PersistentRegionGeometry/%s" % str(package_name)) as Node3D
-                if authored_package == null or authored_package.get_child_count() == 0:
-                    all_authored_ready = false
-                    break
-            if all_authored_ready:
-                break
-            await process_frame
-        for raw_region_id in world.region_director.region_data.keys():
             var region_id := StringName(raw_region_id)
+            var landmark := world.region_director.get_landmark(region_id)
+            if landmark == null or landmark.region_kind == &"sanctuary":
+                continue
+            # Promote one authored district at a time. This mirrors the
+            # bounded runtime stream ring and prevents the compatibility
+            # renderer from receiving a burst of simultaneous glTF imports
+            # during a complete-catalogue audit.
+            landmark.set_streamed_in(true)
+            var package_name: String = str({
+                &"industrial": "WestGridAuthoredScene",
+                &"commercial": "FloodMarketAuthoredScene",
+                &"archive": "ArchiveAuthoredScene",
+                &"tenement": "TenementAuthoredScene",
+                &"greenhouse": "GlasshouseAuthoredScene",
+                &"waterfront": "RiverworksAuthoredScene",
+                &"rail": "TramGraveyardAuthoredScene",
+                &"observatory": "ObservatoryAuthoredScene",
+                &"nest": "CathedralAuthoredScene",
+                &"research": "BuriedLabsAuthoredScene",
+                &"endgame": "RootCisternAuthoredScene",
+            }.get(landmark.region_kind, ""))
+            for _frame in range(120):
+                var authored_package := landmark.get_node_or_null("PersistentRegionGeometry/%s" % package_name) as Node3D
+                if authored_package != null and authored_package.get_child_count() > 0:
+                    break
+                await process_frame
             world.release_world_art.ensure_region_dressing(region_id)
             region_lod.set_region_streamed(region_id, true)
             # Let the compatibility renderer retire deferred resources before
-            # the next high-definition district is rebuilt. The release audit
-            # intentionally promotes the complete catalogue in one run, so
-            # keeping one region per frame avoids same-frame renderer churn
-            # without changing the runtime streaming contract.
+            # the next high-definition district is promoted.
             await process_frame
     var texture_paths := [
         "res://assets/release/textures/asphalt_wet.png",

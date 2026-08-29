@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-08-29 — Harden release-catalogue streaming audit
+
+- changed the commercial release audit to promote one authored district at a
+  time and wait for its imported package before building the next dressing;
+- preserved complete authored-region coverage while matching the bounded
+  runtime stream ring and avoiding a simultaneous compatibility-renderer burst;
+- verified two consecutive release-suite passes with Dummy audio and
+  `--quiet-audio` only.
+
 ## 2026-08-29 — Friendly-machine material separation
 
 - deepened the shared friendly-machine teal and amber utility materials and

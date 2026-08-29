@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused release-catalogue stream audit hardening
+
+- the commercial release audit now promotes authored districts sequentially,
+  waits for each imported package, and yields before building the next
+  presentation dressing layer;
+- this mirrors the bounded runtime stream ring while preserving complete
+  authored-catalogue coverage and avoids an artificial simultaneous glTF
+  import burst in the compatibility renderer;
+- the release suite passed twice consecutively with Godot Dummy audio and
+  `--quiet-audio`.
+
 ## Focused organic tier signal-material pass
 
 - grounded tier crest anatomy in a darker, higher-roughness material and
