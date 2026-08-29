@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused fresh-world review fixture pass
+
+- added a non-saving screenshot hook to the reproducible `--new-world`
+  launch path, using the existing review-only quiet audio ceiling;
+- the current exported 1280x720 opening capture shows the first-Scrap objective,
+  weak pistol, Bulwark protection and Heartforge approach space together for
+  direct visual acceptance.
+
 ## Focused complete-objective review fixture pass
 
 - added an exact exported screenshot hook for the late-run objective fixture,

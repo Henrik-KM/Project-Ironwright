@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused fresh-world review fixture pass — 2026-08-29
+
+The reproducible `--new-world` release launch now accepts an exact screenshot
+path without saving or bypassing gameplay gates. The current 1280x720 opening
+capture keeps the first-Scrap objective, weak pistol, Bulwark protection and
+Heartforge approach readable in the same tactical frame. The capture was
+exercised with Godot Dummy audio and `--quiet-audio`; no physical speakers were
+used.
+
 ## Focused complete-objective review fixture pass — 2026-08-29
 
 The late-run objective fixture now accepts an exact screenshot path from the

@@ -76,6 +76,8 @@ var heartforge_progression_review_capture_path: String = ""
 var heartforge_progression_review_capture_frames: int = 0
 var complete_objective_review_capture_path: String = ""
 var complete_objective_review_capture_frames: int = 0
+var new_world_review_capture_path: String = ""
+var new_world_review_capture_frames: int = 0
 var title_review_capture_path: String = ""
 var title_review_capture_frames: int = 0
 var stream_ring_review_active: bool = false
@@ -164,6 +166,16 @@ func _process(delta: float) -> void:
 			else:
 				push_error("Complete objective review screenshot failed: %s" % capture_error)
 			complete_objective_review_capture_path = ""
+	if not new_world_review_capture_path.is_empty():
+		new_world_review_capture_frames += 1
+		if new_world_review_capture_frames == 45:
+			var review_image := get_viewport().get_texture().get_image()
+			var capture_error := review_image.save_png(new_world_review_capture_path)
+			if capture_error == OK:
+				print("New-world review screenshot written to %s" % new_world_review_capture_path)
+			else:
+				push_error("New-world review screenshot failed: %s" % capture_error)
+			new_world_review_capture_path = ""
 	if not adaptive_defense_review_capture_path.is_empty():
 		adaptive_defense_review_capture_frames += 1
 		if adaptive_defense_review_capture_frames == 45:
@@ -698,6 +710,8 @@ func _finish_release_boot() -> void:
 	if _is_headless_release():
 		_start_release_world()
 	elif _has_new_world_flag():
+		new_world_review_capture_path = _new_world_review_capture_argument()
+		new_world_review_capture_frames = 0
 		# A direct fresh-world launch keeps exact-export playtests reproducible
 		# without requiring UI automation through the title screen. It is a
 		# developer-facing launch flag and does not bypass any in-world gate.
@@ -766,6 +780,18 @@ func _has_new_world_flag() -> bool:
 		if str(argument) in ["--new", "--new-world"]:
 			return true
 	return false
+
+
+func _new_world_review_capture_argument() -> String:
+	var arguments: Array = OS.get_cmdline_args()
+	arguments.append_array(OS.get_cmdline_user_args())
+	for index in arguments.size():
+		var argument := str(arguments[index])
+		if argument.begins_with("--new-world-screenshot="):
+			return argument.get_slice("=", 1)
+		if argument == "--new-world-screenshot" and index + 1 < arguments.size():
+			return str(arguments[index + 1])
+	return ""
 
 
 func _has_presentation_review_flag() -> bool:
