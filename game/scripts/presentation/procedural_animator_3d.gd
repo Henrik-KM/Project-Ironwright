@@ -8,6 +8,11 @@ extends Node
 var subject: Node3D
 var model_root: Node3D
 var base_transforms: Dictionary = {}
+var base_nodes: Array[Node3D] = []
+var base_cache_child_count: int = -1
+var prefix_nodes: Dictionary = {}
+var prefix_cache_root: Node3D
+var prefix_cache_child_count: int = -1
 var phase: float = 0.0
 var idle_phase: float = 0.0
 var recoil: float = 0.0
@@ -82,19 +87,31 @@ func _resolve_model_root() -> void:
 
 func _capture_base_transforms(root: Node) -> void:
     base_transforms.clear()
+    base_nodes.clear()
+    prefix_nodes.clear()
+    prefix_cache_root = root as Node3D
+    prefix_cache_child_count = root.get_child_count()
+    base_cache_child_count = root.get_child_count()
     _capture_recursive(root)
 
 
 func _capture_recursive(node: Node) -> void:
     if node is Node3D:
-        base_transforms[node] = (node as Node3D).transform
+        var node_3d := node as Node3D
+        base_transforms[node_3d] = node_3d.transform
+        base_nodes.append(node_3d)
     for child in node.get_children():
         _capture_recursive(child)
 
 
 func _capture_missing_recursive(node: Node) -> void:
     if node is Node3D and not base_transforms.has(node):
-        base_transforms[node] = (node as Node3D).transform
+        var node_3d := node as Node3D
+        base_transforms[node_3d] = node_3d.transform
+        base_nodes.append(node_3d)
+        prefix_nodes.clear()
+        prefix_cache_root = model_root
+        prefix_cache_child_count = -1
     for child in node.get_children():
         _capture_missing_recursive(child)
 
@@ -113,8 +130,13 @@ func _connect_feedback_signals() -> void:
 
 
 func _process(delta: float) -> void:
-    if subject == null or not is_instance_valid(subject) or model_root == null:
+    if subject == null or not is_instance_valid(subject):
         return
+    if model_root == null or not is_instance_valid(model_root):
+        _resolve_model_root()
+        if model_root == null or not is_instance_valid(model_root):
+            return
+        _capture_base_transforms(model_root)
     if _has_visual_lod_level and int(subject.get(&"visual_lod_level")) >= 1:
         return
     animation_elapsed += delta
@@ -123,7 +145,9 @@ func _process(delta: float) -> void:
         return
     var animation_delta := animation_elapsed
     animation_elapsed = 0.0
-    _capture_missing_recursive(model_root)
+    if model_root.get_child_count() != base_cache_child_count:
+        _capture_missing_recursive(model_root)
+        base_cache_child_count = model_root.get_child_count()
     recoil = move_toward(recoil, 0.0, animation_delta * 8.5)
     hit_impulse = move_toward(hit_impulse, 0.0, animation_delta * 5.0)
     idle_phase = fmod(idle_phase + animation_delta * 1.35, TAU)
@@ -156,11 +180,10 @@ func _animation_cadence() -> int:
 
 
 func _restore_base_transforms() -> void:
-    for key in base_transforms.keys():
-        if not is_instance_valid(key) or not key is Node3D:
+    for node in base_nodes:
+        if not is_instance_valid(node):
             continue
-        var node := key as Node3D
-        node.transform = base_transforms[key]
+        node.transform = base_transforms[node]
 
 
 func _animate_mechromancer(movement_blend: float) -> void:
@@ -574,8 +597,18 @@ func _attack_windup_remaining() -> float:
 
 
 func _nodes_with_prefix(root: Node, prefix: String) -> Array[Node3D]:
+    if root is Node3D:
+        var root_3d := root as Node3D
+        if prefix_cache_root != root_3d or prefix_cache_child_count != root_3d.get_child_count():
+            prefix_nodes.clear()
+            prefix_cache_root = root_3d
+            prefix_cache_child_count = root_3d.get_child_count()
+        var cached: Variant = prefix_nodes.get(prefix, null)
+        if cached is Array:
+            return cached as Array[Node3D]
     var result: Array[Node3D] = []
     _collect_nodes_with_prefix(root, prefix, result)
+    prefix_nodes[prefix] = result
     return result
 
 

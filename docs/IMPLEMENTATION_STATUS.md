@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused active-presentation animation cache pass
+
+- nearby release actors now cache their base transform nodes and named
+  presentation channels instead of recursively rebuilding those lists every
+  animation update;
+- deferred model promotion still rebuilds the cache when the authored shell
+  appears or its direct structure changes, preserving the same procedural
+  gait, family motion, authored clips and reduced-motion behavior;
+- repeated 192-actor benchmarks now measure roughly 38–45 FPS on this
+  workstation, up from the earlier roughly 21 FPS baseline; target-hardware
+  profiling remains open.
+
 ## Focused tiered-release movement-authority pass
 
 - tiered organic release actors now keep the legacy organic body callback

@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused active-presentation animation cache pass — 2026-08-29
+
+Nearby release actors now cache their authored presentation transform nodes and
+named anatomy channels, avoiding a recursive model walk on every animation
+update. Deferred promotion rebuilds the cache when the authored shell appears,
+so the existing gait, family motion, imported clips and reduced-motion behavior
+remain intact. Repeated 192-actor native benchmarks improved from the earlier
+roughly 21 FPS baseline into the roughly 38–45 FPS range on this workstation;
+target-hardware profiling remains open. Validation and live review use Dummy
+audio with `--quiet-audio` only.
+
 ## Focused tiered-release movement-authority pass — 2026-08-29
 
 Tiered organic release actors now keep the legacy body simulation disabled

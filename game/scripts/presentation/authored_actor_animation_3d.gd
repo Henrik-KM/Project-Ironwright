@@ -18,6 +18,7 @@ var _has_attack_windup: bool = false
 var _has_visual_lod_level: bool = false
 var _has_current_health: bool = false
 var _last_health: float = -1.0
+var _last_loop_key: StringName = &""
 
 
 func configure(next_subject: Node3D) -> void:
@@ -115,8 +116,13 @@ func _configure_animation_loops() -> void:
 func _select_loop_clip() -> void:
     if animation_player == null or one_shot_remaining > 0.0:
         return
-    var selected := &"Idle"
     var state := _state_name()
+    var behaviour := _behaviour_name() if subject.is_in_group(&"organic_enemies") else &""
+    var loop_key := StringName("%s|%s|%s" % [String(state), String(behaviour), str(subject.is_in_group(&"friendly_robots"))])
+    if loop_key == _last_loop_key and animation_player.is_playing():
+        return
+    _last_loop_key = loop_key
+    var selected := &"Idle"
     if subject.is_in_group(&"friendly_robots"):
         if state in [&"salvaging", &"repairing", &"building"]:
             selected = &"Work"
@@ -126,9 +132,9 @@ func _select_loop_clip() -> void:
             selected = &"Walk"
     elif subject.is_in_group(&"organic_enemies"):
         if state == &"attacking" and _has_attack_windup and float(subject.get(&"attack_windup_remaining")) > 0.0:
+            _last_loop_key = &""
             _play_one_shot(&"Attack")
             return
-        var behaviour := _behaviour_name()
         if state == &"feeding" or behaviour == &"feed":
             selected = &"Feed"
         elif state == &"nest_guard" or behaviour in [&"guard_nest", &"nest_guard"]:
@@ -153,6 +159,7 @@ func _play_one_shot(requested: StringName) -> void:
     var resolved := _resolve_clip(requested)
     if resolved == &"":
         return
+    _last_loop_key = &""
     _play_clip(resolved, false)
     var animation := animation_player.get_animation(resolved)
     one_shot_remaining = maxf(0.18, animation.length if animation != null else 0.24)
