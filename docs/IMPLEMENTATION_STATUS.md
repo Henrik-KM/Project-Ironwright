@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Root Cistern wet-mineral material pass
+
+- retuned the authored Root Cistern glTF's wet-root, layered-bark and bone
+  materials toward deeper claret, umber and mineral tones so the focal
+  organism does not bloom into a pink plastic mass under the blue-hour review
+  key;
+- changed the root pulse accent to restrained warm amber, preserving the
+  landmark's contrast against its cold cyan relay pylons while keeping the
+  existing mesh density, socket contract, animation and gameplay ownership;
+- the source builder remains the canonical reproducible asset path, and the
+  regenerated runtime glTF is included with the same stable node contract.
+
 ## Focused late-organic palette refinement
 
 - lowered and desaturated the four late-organic family lanes so broad membrane

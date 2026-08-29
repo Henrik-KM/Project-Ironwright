@@ -56,12 +56,15 @@ def add_torus(
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Cistern wet root", "pbrMetallicRoughness": {"baseColorFactor": [0.06, 0.008, 0.03, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.52}, "emissiveFactor": [0.04, 0.0, 0.012]},
-        {"name": "Cistern layered bark", "pbrMetallicRoughness": {"baseColorFactor": [0.10, 0.018, 0.05, 1.0], "metallicFactor": 0.02, "roughnessFactor": 0.68}, "emissiveFactor": [0.025, 0.0, 0.008]},
-        {"name": "Cistern bone", "pbrMetallicRoughness": {"baseColorFactor": [0.15, 0.065, 0.055, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.76}},
+        # Keep the focal organism in a wet mineral-biological lane. The
+        # previous red-violet values bloomed pink under the blue-hour review
+        # key and made the endgame landmark read like a plastic toy.
+        {"name": "Cistern wet root", "pbrMetallicRoughness": {"baseColorFactor": [0.035, 0.009, 0.02, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.58}, "emissiveFactor": [0.015, 0.0, 0.004]},
+        {"name": "Cistern layered bark", "pbrMetallicRoughness": {"baseColorFactor": [0.075, 0.025, 0.032, 1.0], "metallicFactor": 0.02, "roughnessFactor": 0.72}, "emissiveFactor": [0.018, 0.002, 0.004]},
+        {"name": "Cistern bone", "pbrMetallicRoughness": {"baseColorFactor": [0.12, 0.075, 0.05, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.78}},
         {"name": "Cistern buried alloy", "pbrMetallicRoughness": {"baseColorFactor": [0.055, 0.14, 0.16, 1.0], "metallicFactor": 0.38, "roughnessFactor": 0.56}},
         {"name": "Cistern cold signal", "pbrMetallicRoughness": {"baseColorFactor": [0.01, 0.10, 0.14, 1.0], "metallicFactor": 0.10, "roughnessFactor": 0.38}, "emissiveFactor": [0.01, 0.22, 0.30]},
-        {"name": "Cistern root pulse", "pbrMetallicRoughness": {"baseColorFactor": [0.12, 0.006, 0.04, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.56}, "emissiveFactor": [0.12, 0.004, 0.03]},
+        {"name": "Cistern root pulse", "pbrMetallicRoughness": {"baseColorFactor": [0.16, 0.035, 0.018, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.60}, "emissiveFactor": [0.12, 0.012, 0.003]},
         {"name": "Cistern deep root", "pbrMetallicRoughness": {"baseColorFactor": [0.028, 0.004, 0.014, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.60}, "emissiveFactor": [0.012, 0.0, 0.004]},
         {"name": "Cistern capstone plate", "pbrMetallicRoughness": {"baseColorFactor": [0.035, 0.075, 0.085, 1.0], "metallicFactor": 0.34, "roughnessFactor": 0.43}, "emissiveFactor": [0.0, 0.018, 0.022]},
     ]

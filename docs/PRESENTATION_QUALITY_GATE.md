@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Root Cistern wet-mineral material pass — 2026-08-29
+
+The authored Root Cistern focal organism now uses deeper wet-root, claret-bark
+and umber-bone materials, with a restrained warm amber pulse accent. This
+removes the pink plastic bloom visible under the shared blue-hour review key
+while retaining clear separation from the cold cyan relay pylons. Geometry,
+socket names, animation, ecology, operations and endgame ownership are
+unchanged. The pass is reviewed through the graphical presentation entrypoint
+with Godot Dummy audio and quiet-audio flags; physical speakers are not used.
+
 ## Focused late-organic palette refinement — 2026-08-29
 
 The four late-organic family lanes now use darker, lower-saturation mineral
