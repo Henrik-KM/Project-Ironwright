@@ -1,5 +1,25 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused release-art residency guard pass — 2026-08-29
+
+Deferred release material work now rejects stale instance IDs, detached meshes
+and empty mesh resources before touching renderer materials. This keeps
+streamed authored hierarchies and teardown callbacks from reaching released
+rendering RIDs while preserving the bounded texture queue and
+material-family contract. The release runner completes without the prior
+dummy-renderer material warnings.
+
+## Focused title-world threshold composition pass — 2026-08-29
+
+The title screen now uses a dedicated authored-world camera that frames the
+Heartforge and opening cast behind the menu instead of leaving the camera at
+its origin and showing only abstract atmosphere. The title panel is
+left-weighted within the compact viewport margin, leaving the opposing side
+open for the ruined town and warm/cool Heartforge focal read. The playable
+tactical camera is unchanged. Release coverage guards the title camera
+distance, field of view and open-frame composition. Exact live review uses
+Godot Dummy audio with `--quiet-audio`; no physical speakers are used.
+
 ## Focused weak-pistol finishing pass — 2026-08-29
 
 The opening Mechromancer presentation now gives the weak sidearm a compact

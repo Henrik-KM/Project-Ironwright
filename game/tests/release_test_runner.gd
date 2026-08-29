@@ -1463,6 +1463,8 @@ func _test_front_end(world: IronwrightReleaseWorld3D) -> void:
     var title_viewport := front_end.get_viewport().get_visible_rect()
     _expect(title_rect.position.y >= title_viewport.position.y - 0.5 and title_rect.end.y <= title_viewport.end.y + 0.5, "The first-run title panel must fit inside the current viewport instead of clipping its no-save guidance.")
     world._show_title_screen()
+    _expect(world.camera.global_position.distance_to(world.heartforge.global_position) > 12.0 and is_equal_approx(world.camera.fov, 44.0), "The title screen must use the authored world threshold camera instead of the playable camera origin.")
+    _expect(front_end.title_panel.get_global_rect().position.x < title_viewport.size.x * 0.5, "The title panel must leave the opposing side of the frame open for the Heartforge and opening cast.")
     _expect(not world.hud.visible and not world.strategic_hud.visible and not world.operations_hud.visible, "The title screen must hide tactical HUD layers instead of leaving gameplay guidance behind the modal.")
     world._start_release_world()
     _expect(world.hud.visible and world.strategic_hud.visible and world.operations_hud.visible, "Entering the playable world must restore all tactical HUD layers.")

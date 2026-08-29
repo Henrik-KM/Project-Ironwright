@@ -165,6 +165,15 @@ void fragment() {
     var viewport_height := get_viewport().get_visible_rect().size.y
     var title_height := 560.0 if viewport_height <= 0.0 else minf(560.0, maxf(440.0, viewport_height - 28.0))
     title_panel = _panel(Vector2(660, title_height))
+    # Keep the title hierarchy readable while leaving the authored Heartforge
+    # and companion backdrop visible on the opposing side of the frame. The
+    # left-weighted composition is bounded by the same compact-width margin;
+    # it changes only the front-end layout, not the playable camera or world.
+    var viewport_width := get_viewport().get_visible_rect().size.x
+    var title_left := clampf(viewport_width * 0.06, 24.0, 72.0)
+    title_panel.set_anchors_preset(Control.PRESET_CENTER_LEFT)
+    title_panel.offset_left = title_left
+    title_panel.offset_right = title_left + 660.0
     var title_box := _vertical_content(title_panel, 10)
     title_label = _heading("PROJECT IRONWRIGHT", 42, Color("f2eadc"))
     title_box.add_child(title_label)

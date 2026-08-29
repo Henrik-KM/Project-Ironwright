@@ -1,5 +1,27 @@
 # Implementation status
 
+## Focused release-art residency guard pass
+
+- deferred release material work now rejects stale instance IDs, detached
+  meshes and empty mesh resources before touching renderer materials;
+- this keeps streamed authored hierarchies and teardown callbacks from
+  reaching released rendering RIDs while preserving the bounded texture queue
+  and material-family contract;
+- the release runner now completes without the prior dummy-renderer material
+  warnings.
+
+## Focused title-world threshold composition pass
+
+- the title screen now uses a dedicated authored-world camera that frames the
+  Heartforge and opening cast behind the menu instead of leaving the camera at
+  its origin and showing only abstract atmosphere;
+- the title panel is left-weighted within the compact viewport margin, leaving
+  the opposing side open for the ruined town and warm/cool Heartforge focal
+  read while the playable tactical camera remains unchanged;
+- release coverage now guards the title camera distance, field of view and
+  open-frame composition; live review uses Godot Dummy audio with
+  `--quiet-audio` only.
+
 ## Focused weak-pistol finishing pass
 
 - the opening Mechromancer presentation now gives the weak sidearm a compact

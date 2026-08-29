@@ -2327,6 +2327,7 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 func _show_title_screen() -> void:
 	release_started = false
 	paused = true
+	_set_title_camera()
 	if release_audio != null:
 		release_audio.set_title_screen_active(true)
 	player.input_enabled = false
@@ -2335,6 +2336,18 @@ func _show_title_screen() -> void:
 	release_front_end.show_title(transactional_save_service.has_valid_save(RELEASE_SLOT) or _legacy_save_exists())
 	if title_pause_timer != null:
 		title_pause_timer.start(0.12)
+
+
+func _set_title_camera() -> void:
+	# The title is an authored world threshold, not an abstract loading card.
+	# Frame the Heartforge and the two opening silhouettes on the open side of
+	# the left-weighted menu while leaving the playable tactical camera unchanged.
+	if camera == null or heartforge == null:
+		return
+	var title_target := heartforge.global_position + Vector3(0.0, 1.75, 1.4)
+	camera.global_position = title_target + Vector3(9.6, 6.6, 14.8)
+	camera.look_at(title_target, Vector3.UP)
+	camera.fov = 44.0
 
 
 func _pause_title_after_first_frame() -> void:

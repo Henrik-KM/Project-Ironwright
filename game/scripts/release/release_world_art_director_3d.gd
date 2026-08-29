@@ -342,8 +342,11 @@ func _collect_texture_meshes(node: Node) -> void:
 
 
 func _texture_subtree_id(instance_id: int) -> void:
-    var mesh := instance_from_id(instance_id) as MeshInstance3D
-    if mesh == null or not is_instance_valid(mesh) or mesh == dressing_root:
+    var candidate := instance_from_id(instance_id)
+    if candidate == null or not is_instance_valid(candidate) or not candidate is MeshInstance3D:
+        return
+    var mesh := candidate as MeshInstance3D
+    if mesh == null or mesh == dressing_root or not mesh.is_inside_tree() or mesh.mesh == null:
         return
     _texture_mesh(mesh)
 
@@ -355,6 +358,8 @@ func apply_to_node(node: Node) -> void:
 
 
 func _texture_mesh(mesh_instance: MeshInstance3D) -> void:
+    if mesh_instance == null or not is_instance_valid(mesh_instance) or not mesh_instance.is_inside_tree() or mesh_instance.mesh == null:
+        return
     if mesh_instance.has_meta(&"release_material_family"):
         return
     var category := _texture_category(mesh_instance)
