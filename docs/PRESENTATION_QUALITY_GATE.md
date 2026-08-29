@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Cathedral nave facade-depth pass — 2026-08-29
+
+The Cathedral Quarter release facade now carries shallow masonry course breaks,
+paired stained-glass lancets and angled doorway framing. The additions restore
+vertical and horizontal architectural rhythm to the broad nave face while
+leaving the rose window, choir crown and organic brood witness legible. The
+geometry is presentation-only and collision-free; route, ecology, operation,
+animation and player-workload contracts are unchanged. Review uses the
+graphical Godot path with Dummy/quiet audio and no physical speakers.
+
 ## Focused Root Cistern wet-mineral material pass — 2026-08-29
 
 The authored Root Cistern focal organism now uses deeper wet-root, claret-bark

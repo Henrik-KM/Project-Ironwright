@@ -1425,6 +1425,45 @@ func _dress_nest(root: Node3D) -> void:
         "CathedralReleaseDoor",
         0.12
     )
+    # Break the wide nave face into believable masonry bays. These shallow
+    # pieces are presentation-only: they sit in front of the release shell and
+    # do not create a second collision volume or route blocker.
+    for course_index in range(5):
+        var course_y := -1.05 + float(course_index) * 0.62
+        for side in [-1.0, 1.0]:
+            ModelKit3D.add_beveled_box(
+                nave,
+                Vector3(1.88, 0.07, 0.10),
+                Vector3(side * 2.12, course_y, 0.48),
+                brick_dark,
+                Vector3.ZERO,
+                "CathedralReleaseNaveCourse%02d%s" % [course_index, "L" if side < 0.0 else "R"],
+                0.025
+            )
+    # Two narrow stained-glass lancets give the nave a vertical rhythm without
+    # competing with the larger rose window or hiding the brood witness.
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_surface_panel(
+            nave,
+            Vector3(0.48, 1.12, 0.08),
+            Vector3(side * 2.05, 0.62, 0.50),
+            brick_dark,
+            stained_glass,
+            Vector3.ZERO,
+            "CathedralReleaseNaveLancet%s" % ("L" if side < 0.0 else "R")
+        )
+    # A pair of angled voussoir blocks makes the entry read as a framed civic
+    # threshold rather than a dark rectangle pasted onto the facade.
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(
+            nave,
+            Vector3(0.16, 1.05, 0.15),
+            Vector3(side * 0.50, 0.58, 0.56),
+            brick_dark,
+            Vector3(0.0, 0.0, side * 0.64),
+            "CathedralReleaseDoorArch%s" % ("L" if side < 0.0 else "R"),
+            0.06
+        )
     for side in [-1.0, 1.0]:
         var tower := ModelKit3D.add_beveled_box(
             cathedral_facade,

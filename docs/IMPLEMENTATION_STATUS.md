@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Cathedral nave facade-depth pass
+
+- added shallow masonry course breaks, paired stained-glass lancets and angled
+  doorway framing to the Cathedral Quarter's release facade so the civic shell
+  reads as authored architecture rather than one broad slab at tactical
+  distance;
+- kept every new piece presentation-only and collision-free, with no route,
+  ecology, encounter, operation or player-workload change;
+- extended the aesthetic gate to require the new facade sockets.
+
 ## Focused localized collapse-report pass
 
 - moved the defeat report's structural sections and empty-state copy through
