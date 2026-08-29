@@ -98,6 +98,19 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
         _expect(world.release_audio._organic_call_id(&"glassmoth") == &"organic_call_wing", "Glassmoth warnings must use the authored wing variant.")
         _expect(world.release_audio._organic_call_id(&"rootweaver") == &"organic_call_root", "Rootweaver warnings must use the authored root variant.")
         _expect(world.release_audio._organic_call_id(&"carrionbell") == &"organic_call_bell", "Carrion Bell warnings must use the authored bell variant.")
+        var adaptive_director := world.get_node_or_null("AdaptiveDefenseDirector") as AdaptiveDefenseDirector3D
+        _expect(adaptive_director != null, "Release audio must be able to observe the adaptive Heartforge director.")
+        if adaptive_director != null:
+            var proposal_cues_before := world.release_audio.adaptive_proposal_cue_count
+            adaptive_director.proposal_available.emit("Test adaptive proposal")
+            _expect(world.release_audio.adaptive_proposal_cue_count == proposal_cues_before + 1 and world.release_audio.last_effect_id == &"machine_report", "An adaptive Heartforge proposal must emit one restrained machine-report cue.")
+            var build_cues_before := world.release_audio.adaptive_build_cue_count
+            adaptive_director.adaptation_changed.emit(&"adaptation.anchored_shell", &"building", "Test build")
+            adaptive_director.adaptation_changed.emit(&"adaptation.anchored_shell", &"building", "Repeated test build")
+            _expect(world.release_audio.adaptive_build_cue_count == build_cues_before + 1 and world.release_audio.last_effect_id == &"forge", "Adaptive construction must emit one rate-limited forge-start cue.")
+            var completion_cues_before := world.release_audio.adaptive_completion_cue_count
+            adaptive_director.adaptation_completed.emit(&"adaptation.anchored_shell", "Anchor Deeply")
+            _expect(world.release_audio.adaptive_completion_cue_count == completion_cues_before + 1 and not world.release_audio.adaptive_build_audio_played and world.release_audio.last_effect_id == &"forge", "Adaptive completion must emit one forge-resolution cue and reset its build rate limit.")
         var tier_callback := Callable(world.release_audio, "_on_heartforge_tier_changed")
         _expect(world.progression.heartforge_tier_changed.is_connected(tier_callback), "Heartforge tier changes must connect to the release progression audio cue.")
         var tier_cue_count_before := world.release_audio.heartforge_tier_cue_count

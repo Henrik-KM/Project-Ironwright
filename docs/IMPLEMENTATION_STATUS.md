@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused adaptive Heartforge audio identity pass
+
+- connected the existing release audio director to the adaptive Heartforge
+  proposal, machine-build start and completed-response signals;
+- added one restrained, rate-limited cue for each major state so the retrofit
+  has an audible machine-society identity without repeated progress spam;
+- review and validation continue to use Dummy audio or the automatic very-low
+  review cap, with no live-speaker playback required.
+
 ## Focused adaptive Heartforge worksite pass
 
 - added a bounded three-machine construction crew with tracked chassis, tool

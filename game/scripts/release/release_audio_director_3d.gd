@@ -89,6 +89,10 @@ var last_effect_id: StringName = &""
 var music_duck_remaining: float = 0.0
 var last_heartforge_tier: int = 1
 var heartforge_tier_cue_count: int = 0
+var adaptive_proposal_cue_count: int = 0
+var adaptive_build_cue_count: int = 0
+var adaptive_completion_cue_count: int = 0
+var adaptive_build_audio_played: bool = false
 var quiet_audio: bool = false
 var title_screen_active: bool = true
 var current_region_kind: StringName = &"sanctuary"
@@ -419,6 +423,39 @@ func set_title_screen_active(active: bool) -> void:
         _switch_music(&"title", true)
     elif current_mood == &"title":
         _switch_music(&"embers")
+
+
+func register_adaptive_defense(source: AdaptiveDefenseDirector3D) -> void:
+    if source == null:
+        return
+    var proposal_callback := Callable(self, "_on_adaptive_proposal_available")
+    if not source.proposal_available.is_connected(proposal_callback):
+        source.proposal_available.connect(proposal_callback)
+    var change_callback := Callable(self, "_on_adaptation_changed")
+    if not source.adaptation_changed.is_connected(change_callback):
+        source.adaptation_changed.connect(change_callback)
+    var completion_callback := Callable(self, "_on_adaptation_completed")
+    if not source.adaptation_completed.is_connected(completion_callback):
+        source.adaptation_completed.connect(completion_callback)
+
+
+func _on_adaptive_proposal_available(_summary: String) -> void:
+    adaptive_proposal_cue_count += 1
+    play_effect(&"machine_report", "audio.caption.report", 0.01, -10.0, 0.86)
+
+
+func _on_adaptation_changed(_adaptation_id: StringName, state: StringName, _detail: String) -> void:
+    if state != &"building" or adaptive_build_audio_played:
+        return
+    adaptive_build_audio_played = true
+    adaptive_build_cue_count += 1
+    play_effect(&"forge", "audio.caption.forge", 0.015, -8.0, 0.8)
+
+
+func _on_adaptation_completed(_adaptation_id: StringName, _display_name: String) -> void:
+    adaptive_build_audio_played = false
+    adaptive_completion_cue_count += 1
+    play_effect(&"forge", "audio.caption.forge", 0.015, -4.0, 1.02)
 
 
 func _connect_existing_nodes() -> void:
