@@ -194,6 +194,7 @@ func _apply_release_art() -> void:
     region_dressing_roots.clear()
     material_cache.clear()
     _collect_texture_meshes(world)
+    _prioritize_opening_cast_meshes()
     texture_queue_index = 0
     texture_queue_active = not texture_queue.is_empty()
     _dress_heartforge_district()
@@ -202,6 +203,47 @@ func _apply_release_art() -> void:
             _dress_region(raw_region_id as StringName)
     _connect_region_lod()
     art_pass_completed.emit(meshes_textured, regions_dressed)
+
+
+func _prioritize_opening_cast_meshes() -> void:
+    # The opening player and companion must be visually complete when the
+    # first playable validation frame arrives. Keep the broad world pass
+    # deferred, but move this small, visible cast to the front of the same
+    # bounded queue so slow CI machines cannot observe greybox shells.
+    var priority_nodes: Array[Node] = []
+    var player_node := world.get_node_or_null("Mechromancer") if world != null else null
+    if player_node != null:
+        priority_nodes.append(player_node)
+    if world != null:
+        for robot in world.get_tree().get_nodes_in_group(&"friendly_robots"):
+            if robot is Node:
+                priority_nodes.append(robot as Node)
+    if priority_nodes.is_empty() or texture_queue.is_empty():
+        return
+    var priority_ids: Dictionary = {}
+    var priority_meshes: Array[MeshInstance3D] = []
+    for node in priority_nodes:
+        _collect_unique_texture_meshes(node, priority_ids, priority_meshes)
+    if priority_meshes.is_empty():
+        return
+    var reordered: Array[MeshInstance3D] = []
+    reordered.append_array(priority_meshes)
+    for mesh in texture_queue:
+        if mesh == null or not is_instance_valid(mesh) or priority_ids.has(mesh.get_instance_id()):
+            continue
+        reordered.append(mesh)
+    texture_queue = reordered
+
+
+func _collect_unique_texture_meshes(node: Node, seen_ids: Dictionary, result: Array[MeshInstance3D]) -> void:
+    if node is MeshInstance3D:
+        var mesh := node as MeshInstance3D
+        var mesh_id := mesh.get_instance_id()
+        if not seen_ids.has(mesh_id):
+            seen_ids[mesh_id] = true
+            result.append(mesh)
+    for child in node.get_children():
+        _collect_unique_texture_meshes(child, seen_ids, result)
 
 
 func _connect_region_lod() -> void:
