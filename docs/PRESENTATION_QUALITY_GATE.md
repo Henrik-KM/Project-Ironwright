@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused outpost load-path presentation pass — 2026-08-29
+
+Tiered outposts now expose four continuous load pylons with tier collars,
+visually connecting the shelter, service decks and role hardware. The supports
+stay inside the existing outpost footprint and are presentation-only, preserving
+collision, navigation, autonomous role simulation, save state and the
+no-manual-placement contract. Aesthetic and release coverage guard the named
+load path. Review and validation use Godot Dummy audio with `--quiet-audio`; no
+physical speakers are used.
+
 ## Focused early-organic gallery composition pass — 2026-08-29
 
 The development presentation gallery now stages the seven early organic

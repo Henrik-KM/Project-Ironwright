@@ -649,6 +649,35 @@ func _refresh_visuals() -> void:
                 0.045
             )
 
+    # Four continuous load pylons make the stacked autonomous frames read as a
+    # single machine-built structure instead of floating service decks. They are
+    # presentation-only supports inside the existing footprint; no collision,
+    # navigation, role simulation or player-managed structure is introduced.
+    var support_top := 2.75 + float(maxi(tier - 1, 0)) * 0.62 - 0.18
+    for side_x in [-1.0, 1.0]:
+        for side_z in [-1.0, 1.0]:
+            var support_start := Vector3(side_x * 1.38, 0.58, side_z * 1.38)
+            var support_end := Vector3(side_x * 1.38, support_top, side_z * 1.38)
+            _add_strut(
+                _model_root,
+                support_start,
+                support_end,
+                iron,
+                "OutpostLoadPylon%s%s" % ["L" if side_x < 0.0 else "R", "F" if side_z < 0.0 else "B"],
+                0.085
+            )
+            for tier_index in range(tier):
+                var collar_y := 2.75 + float(tier_index) * 0.62 - 0.12
+                ModelKit3D.add_beveled_box(
+                    _model_root,
+                    Vector3(0.26, 0.12, 0.26),
+                    Vector3(side_x * 1.38, collar_y, side_z * 1.38),
+                    frame_rust,
+                    Vector3.ZERO,
+                    "OutpostLoadPylonCollar%d%s%s" % [tier_index + 1, "L" if side_x < 0.0 else "R", "F" if side_z < 0.0 else "B"],
+                    0.08
+                )
+
     # A small shared service crown makes the stacked frames read as one
     # machine-built system. Role hardware remains the foreground signal.
     var crown := Node3D.new()

@@ -1430,6 +1430,7 @@ func _run_all() -> void:
         _expect(_find_named(sample, "OutpostDamagePresentation") != null and _find_named(sample, "OutpostDamageScar00") != null and _find_named(sample, "OutpostDamageLeak00") != null, "Outposts must expose bounded integrity damage-memory presentation sockets.")
         _expect(_find_named(sample, "CoreShelterCore") != null and _find_named(sample, "CoreVent") != null, "Outposts must use the high-definition shelter and service-surface treatment.")
         _expect(_find_named(sample, "OutpostServiceSpine") != null and _find_named(sample, "ServiceSpineHousing") != null and _find_named(sample, "ServiceSpinePanel") != null, "Tiered outposts must expose a coherent high-definition service spine behind their role hardware.")
+        _expect(_find_named(sample, "OutpostLoadPylonLF") != null and _find_named(sample, "OutpostLoadPylonRB") != null and _find_named(sample, "OutpostLoadPylonCollar3LF") != null, "Tiered outposts must expose continuous load pylons and tier collars so stacked frames read as one grounded machine structure.")
         _expect(_find_named(sample, "ServiceSpineLouver") != null and _find_named(sample, "ServiceSpineRoleBadge") != null and _find_named(sample, "ServiceSpineBeacon") != null, "Tiered outposts must expose bounded service ventilation, role identity and status hardware.")
         var shell_core := _find_named(sample, "CoreShelterCore") as MeshInstance3D
         var shell_vertices := PackedVector3Array()

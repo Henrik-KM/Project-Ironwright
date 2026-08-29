@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused outpost load-path presentation pass
+
+- tiered outposts now expose four continuous load pylons with tier collars,
+  visually connecting the shelter, service decks and role hardware;
+- the supports stay inside the existing outpost footprint and are
+  presentation-only, preserving collision, navigation, autonomous role
+  simulation, save state and the no-manual-placement contract;
+- aesthetic and release coverage guard the named load path, with live review
+  remaining on Godot Dummy audio and `--quiet-audio`.
+
 ## Focused early-organic gallery composition pass
 
 - the development presentation gallery now stages the seven early organic
