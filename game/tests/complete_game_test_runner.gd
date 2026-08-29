@@ -504,6 +504,12 @@ func _run_all() -> void:
     _expect(collapse_label != null and collapse_label.text.contains("POST-COLLAPSE REPORT") and collapse_label.text.contains("UNRESOLVED THREAT"), "The defeat boundary must expose a readable causal post-collapse report.")
     _expect(bool(collapse_panel.get_meta("expanded_report", false)), "The causal report must use an expanded, viewport-safe reading surface rather than clipping the timeline.")
     world.hud.dismiss_ending()
+    if world.localization_service != null:
+        _expect(world.localization_service.set_locale(&"sv"), "The collapse-report localization check must be able to select Swedish.")
+        var localized_collapse_report := world._build_collapse_report()
+        _expect(localized_collapse_report.contains("VÄRLDSDURATION") and localized_collapse_report.contains("OLÖST HOT") and localized_collapse_report.contains("RESURSSTATUS"), "The Swedish collapse report must localize its structural headings.")
+        _expect(not localized_collapse_report.contains("WORLD DURATION") and not localized_collapse_report.contains("UNRESOLVED THREAT") and not localized_collapse_report.contains("RESOURCE POSITION"), "The Swedish collapse report must not leak English structural headings.")
+        _expect(world.localization_service.set_locale(&"en"), "The collapse-report localization check must restore English.")
     world.run_state.scrap = report_scrap
     world.run_state.scrap_high_water_mark = report_high_water_mark
     world.run_state.last_scrap_total = report_last_scrap_total

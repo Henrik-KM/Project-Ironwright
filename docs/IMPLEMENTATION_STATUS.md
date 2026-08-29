@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused localized collapse-report pass
+
+- moved the defeat report's structural sections and empty-state copy through
+  the release localization service, so Swedish and German runs no longer
+  revert to English at the most consequential end-of-run screen;
+- preserved the report's dynamic species, event, pressure and resource
+  evidence, while localizing its world-duration, evolution, resource, loss,
+  threat and alternative-response framing;
+- added complete-game regression coverage for Swedish section headings and
+  English-leak prevention before restoring the selected locale.
+
 ## Focused Root Cistern wet-mineral material pass
 
 - retuned the authored Root Cistern glTF's wet-root, layered-bark and bone

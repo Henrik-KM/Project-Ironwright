@@ -564,11 +564,11 @@ func _build_collapse_report() -> String:
     if progression != null:
         for technology_id in progression.unlocked_technologies:
             evolution_names.append(str(progression.technology(technology_id).get("display_name", String(technology_id))))
-    var evolution_text := ", ".join(evolution_names.slice(0, 5)) if not evolution_names.is_empty() else "No major evolution had been recorded."
+    var evolution_text := ", ".join(evolution_names.slice(0, 5)) if not evolution_names.is_empty() else _localized_text("hud.collapse.no_major_evolution", "No major evolution had been recorded.")
     if evolution_names.size() > 5:
         evolution_text += " · +%d more" % (evolution_names.size() - 5)
 
-    var species_text := run_state.observed_species_report() if run_state != null else "Persistent species observations were unavailable."
+    var species_text := run_state.observed_species_report() if run_state != null else _localized_text("hud.collapse.species_unavailable", "Persistent species observations were unavailable.")
 
     var machine_losses := 0
     var loss_archetypes: Array[String] = []
@@ -584,7 +584,8 @@ func _build_collapse_report() -> String:
             var archetype := str(sample.get("archetype", "unknown"))
             if archetype not in loss_archetypes:
                 loss_archetypes.append(archetype)
-    var loss_text := "%d recorded machine loss%s" % [machine_losses, "" if machine_losses == 1 else "es"]
+    var loss_key := "hud.collapse.machine_loss.one" if machine_losses == 1 else "hud.collapse.machine_loss.many"
+    var loss_text := _localized_text(loss_key, "%d recorded machine loss%s" % [machine_losses, "" if machine_losses == 1 else "es"], [machine_losses])
     if not loss_archetypes.is_empty():
         loss_text += " (%s)" % ", ".join(loss_archetypes)
 
@@ -596,12 +597,12 @@ func _build_collapse_report() -> String:
                 decisive_events.append(event)
             if decisive_events.size() >= 3:
                 break
-    var events_text := "\n".join(decisive_events) if not decisive_events.is_empty() else "No decisive event was recorded before collapse."
+    var events_text := "\n".join(decisive_events) if not decisive_events.is_empty() else _localized_text("hud.collapse.no_decisive_event", "No decisive event was recorded before collapse.")
 
     var pressure_text := _localized_pressure_summary()
-    var resource_text := "SCRAP %d · CORES %d · MANUAL RECOVERED %d · AUTONOMOUS RECOVERED %d" % [run_state.scrap, run_state.rare_cores, run_state.manual_scrap_recovered, run_state.autonomous_scrap_recovered]
-    var resource_decline_text := run_state.resource_decline_report() if run_state != null else "Resource history was unavailable."
-    var alternatives := "No unspent response was recorded."
+    var resource_text := _localized_text("hud.collapse.resource_totals", "SCRAP {0} · CORES {1} · MANUAL RECOVERED {2} · AUTONOMOUS RECOVERED {3}", [run_state.scrap, run_state.rare_cores, run_state.manual_scrap_recovered, run_state.autonomous_scrap_recovered])
+    var resource_decline_text := run_state.resource_decline_report() if run_state != null else _localized_text("hud.collapse.resource_history_unavailable", "Resource history was unavailable.")
+    var alternatives := _localized_text("hud.collapse.no_unspent_response", "No unspent response was recorded.")
     if progression != null:
         var available := progression.available_technologies()
         var names: Array[String] = []
@@ -609,7 +610,11 @@ func _build_collapse_report() -> String:
             names.append(str(entry.get("display_name", "Unnamed response")))
         if not names.is_empty():
             alternatives = ", ".join(names)
-    return "WORLD DURATION · %s\nMAJOR EVOLUTIONS · %s\nECOLOGY OBSERVATIONS · %s\nDECISIVE TIMELINE\n%s\nRESOURCE POSITION · %s\nFIRST SUSTAINED RESOURCE DECLINE · %s\nMACHINE-LOSS PATTERN · %s\nUNRESOLVED THREAT · %s\nALTERNATIVE RESPONSES OBSERVED OR UNLOCKED · %s" % [duration_text, evolution_text, species_text, events_text, resource_text, resource_decline_text, loss_text, pressure_text, alternatives]
+    return _localized_text(
+        "hud.collapse.report",
+        "WORLD DURATION · {0}\nMAJOR EVOLUTIONS · {1}\nECOLOGY OBSERVATIONS · {2}\nDECISIVE TIMELINE\n{3}\nRESOURCE POSITION · {4}\nFIRST SUSTAINED RESOURCE DECLINE · {5}\nMACHINE-LOSS PATTERN · {6}\nUNRESOLVED THREAT · {7}\nALTERNATIVE RESPONSES OBSERVED OR UNLOCKED · {8}",
+        [duration_text, evolution_text, species_text, events_text, resource_text, resource_decline_text, loss_text, pressure_text, alternatives]
+    )
 
 
 func _update_complete_game_objective() -> void:

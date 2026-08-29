@@ -211,7 +211,7 @@ affected-player review remain external release gates.
 The complete release shell and returning-world recap are localized into English,
 Swedish and German.
 
-Catalogs include title and pause menus, settings, difficulty descriptions, transactional-save reports, controller connection messages, sound captions, performance terminology, ecological-intelligence panels, autonomy markers, returning-world recap summaries and first-victory messaging.
+Catalogs include title and pause menus, settings, difficulty descriptions, transactional-save reports, controller connection messages, sound captions, performance terminology, ecological-intelligence panels, autonomy markers, returning-world recap summaries, collapse-report section framing and first-victory messaging.
 
 A static release gate verifies that every locale contains exactly the same keys and that no value is empty. A native runtime test switches between all three locales and verifies translated output.
 
