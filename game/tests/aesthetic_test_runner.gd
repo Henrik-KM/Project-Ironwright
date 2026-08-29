@@ -1017,6 +1017,16 @@ func _run_all() -> void:
         var adaptation_preview := heartforge.get_node_or_null("HeartforgeModel/HeartforgeAdaptationPreview") as Node3D
         _expect(adaptation_preview != null and adaptation_preview.visible, "The adaptive Heartforge must expose a visible proposal footprint before authorization.")
         _expect(heartforge.find_child("AdaptationPreviewRing", true, false) != null, "The adaptive proposal footprint must use a bounded open perimeter ring.")
+        var adaptation_worksite := heartforge.find_child("AdaptationWorksiteCrew", true, false) as Node3D
+        _expect(adaptation_worksite != null and adaptation_worksite.get_child_count() == 3, "The adaptive proposal footprint must expose a bounded three-machine construction crew.")
+        _expect(heartforge.find_child("AdaptationBuilderTool00", true, false) != null and heartforge.find_child("AdaptationBuilderBeacon00", true, false) != null, "The adaptive construction crew must expose a readable tool arm and work beacon.")
+        if heartforge_presentation != null and adaptation_worksite != null:
+            heartforge_presentation.progression_time = 0.0
+            heartforge_presentation._process(0.0)
+            var worksite_rotation_before := adaptation_worksite.rotation.y
+            heartforge_presentation.progression_time = 0.8
+            heartforge_presentation._process(0.0)
+            _expect(not is_equal_approx(worksite_rotation_before, adaptation_worksite.rotation.y), "The adaptive construction crew must carry a restrained perimeter work motion.")
         var adaptation_preview_scale := adaptation_preview.scale if adaptation_preview != null else Vector3.ZERO
         heartforge.set_adaptation_preview(&"adaptation.pending", 0.72)
         _expect(heartforge.adaptation_preview_progress > 0.7 and adaptation_preview != null and not adaptation_preview_scale.is_equal_approx(adaptation_preview.scale), "The adaptive proposal footprint must advance through a readable bounded reveal.")

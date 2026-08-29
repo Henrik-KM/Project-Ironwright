@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused adaptive Heartforge worksite pass
+
+- added a bounded three-machine construction crew with tracked chassis, tool
+  arms and work beacons to the existing adaptive retrofit footprint;
+- gave the crew a restrained orbit, hover and tool/beacon pulse so autonomous
+  construction reads as physical machine work during the existing build
+  interval;
+- kept the crew presentation-only: it adds no units, orders, collision,
+  routing, resources, save state or recurring player workload.
+
 ## Focused Observatory Ridge grounding pass
 
 - added a shallow broken service foundation, instrument pad, retaining edges,

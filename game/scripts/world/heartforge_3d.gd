@@ -105,6 +105,7 @@ func set_adaptation_preview(profile: StringName, progress: float) -> void:
         var previous_detail := _adaptation_detail
         _adaptation_detail = _adaptation_preview
         _build_adaptation_detail(profile)
+        _build_adaptation_worksite()
         _adaptation_detail = previous_detail
     # The footprint must remain visible even on the first frame of a build;
     # zero elapsed time is still meaningful autonomous work, not an invisible
@@ -490,3 +491,31 @@ func _build_adaptation_detail(profile: StringName) -> void:
                 ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(0.18, 0.42, 0.62), Vector3(side * 1.67, 1.1, 0.0), iron, Vector3(0.0, side * 0.06, 0.0), "QuietCoreDampenerBaffle", 0.06)
             ModelKit3D.add_beveled_box(_adaptation_detail, Vector3(2.32, 0.16, 0.88), Vector3(0.0, 2.18, 2.02), dark, Vector3.ZERO, "QuietCoreServiceShroud", 0.12)
             ModelKit3D.add_surface_panel(_adaptation_detail, Vector3(1.2, 0.5, 0.1), Vector3(0.0, 2.2, 2.48), dark, cyan, Vector3.ZERO, "QuietCoreSignalPanel")
+
+
+func _build_adaptation_worksite() -> void:
+    if _adaptation_detail == null:
+        return
+    var worksite := Node3D.new()
+    worksite.name = "AdaptationWorksiteCrew"
+    _adaptation_detail.add_child(worksite)
+    var chassis := ModelKit3D.material(Color("303a3c"), 0.8, 0.44)
+    var edge := ModelKit3D.material(Color("765039"), 0.46, 0.68)
+    var dark := ModelKit3D.material(Color("12191b"), 0.72, 0.56)
+    var signal_material := ModelKit3D.material(Color("255d61"), 0.36, 0.32, Color("70e5e6"), 1.35)
+    var tool := ModelKit3D.material(Color("8a431f"), 0.28, 0.44, Color("ff7430"), 1.05)
+    for index in range(3):
+        var angle := TAU * float(index) / 3.0 + PI * 0.5
+        var builder := Node3D.new()
+        builder.name = "AdaptationBuilder%02d" % index
+        builder.position = Vector3(cos(angle) * 2.78, 0.0, sin(angle) * 2.78)
+        builder.rotation.y = -angle + PI * 0.5
+        worksite.add_child(builder)
+        ModelKit3D.add_beveled_box(builder, Vector3(0.58, 0.22, 0.82), Vector3(0.0, 0.32, 0.0), chassis, Vector3.ZERO, "AdaptationBuilderChassis%02d" % index, 0.08)
+        ModelKit3D.add_beveled_box(builder, Vector3(0.42, 0.12, 0.5), Vector3(0.0, 0.51, 0.02), edge, Vector3.ZERO, "AdaptationBuilderDeck%02d" % index, 0.06)
+        for side in [-1.0, 1.0]:
+            var wheel_side := "L" if side < 0.0 else "R"
+            ModelKit3D.add_cylinder(builder, 0.12, 0.18, Vector3(side * 0.3, 0.22, -0.22), dark, Vector3(0.0, 0.0, PI * 0.5), "AdaptationBuilderWheel%02d%s" % [index, wheel_side])
+        ModelKit3D.add_beveled_box(builder, Vector3(0.12, 0.72, 0.14), Vector3(0.0, 0.87, 0.22), edge, Vector3(0.0, -0.16, 0.0), "AdaptationBuilderArm%02d" % index, 0.04)
+        ModelKit3D.add_beveled_box(builder, Vector3(0.28, 0.12, 0.22), Vector3(0.0, 1.22, 0.34), tool, Vector3(0.0, 0.18, 0.0), "AdaptationBuilderTool%02d" % index, 0.04)
+        ModelKit3D.add_sphere(builder, 0.075, Vector3(0.0, 0.68, -0.2), signal_material, Vector3(1.0, 0.68, 1.0), "AdaptationBuilderBeacon%02d" % index)
