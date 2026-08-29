@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused machine-society simulation cadence pass
+
+- reduced-detail and medium-detail actors now receive their existing
+  simulation intervals through deterministic round-robin slices instead of a
+  single population-wide burst;
+- preserved the same per-actor cadence, movement authority, target selection,
+  population split and LOD budgets while lowering long-run frame spikes;
+- the release suite and 192-actor benchmark pass with Dummy audio and
+  `--quiet-audio`.
+
 ## Focused machine-society spatial-index residency pass
 
 - the release spatial service now caches indexed group membership and refreshes

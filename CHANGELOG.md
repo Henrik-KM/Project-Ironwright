@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-29 — Machine-society simulation cadence
+
+- distributed existing reduced- and medium-detail actor updates through
+  deterministic round-robin slices instead of a population-wide periodic
+  burst;
+- preserved each actor's simulation interval, movement authority, target
+  selection, LOD budgets and save-facing state;
+- verified the release suite and 192-actor benchmark with Dummy audio and
+  `--quiet-audio` only.
+
 ## 2026-08-29 — Machine-society spatial-index residency
 
 - cached indexed group membership in the release spatial service and refresh it

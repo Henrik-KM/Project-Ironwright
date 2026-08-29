@@ -16,6 +16,8 @@ var evaluation_interval: float = 0.32
 var evaluation_clock: float = 0.0
 var reduced_tick_clock: float = 0.0
 var medium_tick_clock: float = 0.0
+var reduced_tick_cursor: int = 0
+var medium_tick_cursor: int = 0
 var frames_clock: float = 0.0
 var frames_count: int = 0
 var measured_fps: float = 60.0
@@ -59,14 +61,8 @@ func _process(delta: float) -> void:
     if evaluation_clock >= evaluation_interval:
         evaluation_clock = 0.0
         _evaluate_entities()
-    if reduced_tick_clock >= reduced_tick_interval:
-        var step := reduced_tick_clock
-        reduced_tick_clock = 0.0
-        _tick_reduced_entities(step)
-    if medium_tick_clock >= medium_tick_interval:
-        var medium_step := medium_tick_clock
-        medium_tick_clock = 0.0
-        _tick_medium_entities(medium_step)
+    _schedule_reduced_ticks()
+    _schedule_medium_ticks()
 
 
 func _focus_position() -> Vector3:
@@ -186,6 +182,39 @@ func _tick_reduced_entities(delta: float) -> void:
             robot.reduced_detail_tick(delta)
 
 
+func _schedule_reduced_ticks() -> void:
+    var total := reduced_enemies.size() + reduced_robots.size()
+    if total <= 0:
+        reduced_tick_clock = 0.0
+        reduced_tick_cursor = 0
+        return
+    var updates_due := int(floor((reduced_tick_clock / reduced_tick_interval) * float(total)))
+    if updates_due <= 0:
+        return
+    reduced_tick_clock -= float(updates_due) / float(total) * reduced_tick_interval
+    reduced_tick_cursor = _tick_reduced_round_robin(updates_due, reduced_tick_cursor, reduced_tick_interval)
+
+
+func _tick_reduced_round_robin(update_count: int, cursor: int, step: float) -> int:
+    var total := reduced_enemies.size() + reduced_robots.size()
+    if total <= 0:
+        return 0
+    var next_cursor := posmod(cursor, total)
+    for _index in range(update_count):
+        if next_cursor < reduced_enemies.size():
+            var enemy := reduced_enemies[next_cursor]
+            if is_instance_valid(enemy):
+                enemy.reduced_detail_tick(step)
+        else:
+            var robot_index := next_cursor - reduced_enemies.size()
+            if robot_index < reduced_robots.size():
+                var robot := reduced_robots[robot_index]
+                if is_instance_valid(robot):
+                    robot.reduced_detail_tick(step)
+        next_cursor = (next_cursor + 1) % total
+    return next_cursor
+
+
 func _tick_medium_entities(delta: float) -> void:
     for enemy in medium_enemies:
         if is_instance_valid(enemy):
@@ -193,6 +222,39 @@ func _tick_medium_entities(delta: float) -> void:
     for robot in medium_robots:
         if is_instance_valid(robot):
             robot.coarse_detail_tick(delta)
+
+
+func _schedule_medium_ticks() -> void:
+    var total := medium_enemies.size() + medium_robots.size()
+    if total <= 0:
+        medium_tick_clock = 0.0
+        medium_tick_cursor = 0
+        return
+    var updates_due := int(floor((medium_tick_clock / medium_tick_interval) * float(total)))
+    if updates_due <= 0:
+        return
+    medium_tick_clock -= float(updates_due) / float(total) * medium_tick_interval
+    medium_tick_cursor = _tick_medium_round_robin(updates_due, medium_tick_cursor, medium_tick_interval)
+
+
+func _tick_medium_round_robin(update_count: int, cursor: int, step: float) -> int:
+    var total := medium_enemies.size() + medium_robots.size()
+    if total <= 0:
+        return 0
+    var next_cursor := posmod(cursor, total)
+    for _index in range(update_count):
+        if next_cursor < medium_enemies.size():
+            var enemy := medium_enemies[next_cursor]
+            if is_instance_valid(enemy):
+                enemy.coarse_detail_tick(step)
+        else:
+            var robot_index := next_cursor - medium_enemies.size()
+            if robot_index < medium_robots.size():
+                var robot := medium_robots[robot_index]
+                if is_instance_valid(robot):
+                    robot.coarse_detail_tick(step)
+        next_cursor = (next_cursor + 1) % total
+    return next_cursor
 
 
 func _sort_candidates_by_distance(left: Dictionary, right: Dictionary) -> bool:
