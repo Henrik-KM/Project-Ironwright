@@ -29,6 +29,7 @@ func _run_all() -> void:
     world.localization_service.set_locale(&"en")
 
     _test_release_services(world)
+    _test_audio_mixer_settings(world)
     _test_run_variation(world)
     _test_localization(world)
     await _test_controller_and_accessibility(world)
@@ -172,6 +173,43 @@ func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
         world.camera.global_position = world.player.global_position
         world._start_release_world()
         _expect(world.camera.global_position.distance_to(world.player.global_position) >= 12.0, "The release world must snap the opening camera to a readable tactical distance before the first playable frame.")
+
+
+func _test_audio_mixer_settings(world: IronwrightReleaseWorld3D) -> void:
+    var settings := world.settings_service as ReleaseSettingsService3D
+    _expect(settings != null, "Audio mixer verification requires the release settings service.")
+    if settings == null:
+        return
+    var values := {
+        "master_volume": settings.get_value(&"master_volume", 0.88),
+        "music_volume": settings.get_value(&"music_volume", 0.68),
+        "ambience_volume": settings.get_value(&"ambience_volume", 0.78),
+        "effects_volume": settings.get_value(&"effects_volume", 0.86),
+    }
+    var probes := {
+        "Master": 0.5,
+        "Music": 0.0,
+        "Ambience": 0.25,
+        "Effects": 1.0,
+    }
+    for bus_name in probes:
+        _expect(AudioServer.get_bus_index(bus_name) >= 0, "Release audio must expose the %s mixer bus to player settings." % bus_name)
+    settings.set_value(&"master_volume", probes["Master"], false)
+    settings.set_value(&"music_volume", probes["Music"], false)
+    settings.set_value(&"ambience_volume", probes["Ambience"], false)
+    settings.set_value(&"effects_volume", probes["Effects"], false)
+    for bus_name in probes:
+        var bus_index := AudioServer.get_bus_index(bus_name)
+        if bus_index < 0:
+            continue
+        var linear_value := float(probes[bus_name])
+        var expected_db := -80.0 if linear_value <= 0.0001 else linear_to_db(linear_value)
+        _expect(AudioServer.is_bus_mute(bus_index) == (linear_value <= 0.0001), "%s volume must update the mixer mute state." % bus_name)
+        _expect(is_equal_approx(AudioServer.get_bus_volume_db(bus_index), expected_db), "%s volume must update the mixer gain." % bus_name)
+    settings.set_value(&"master_volume", values["master_volume"], false)
+    settings.set_value(&"music_volume", values["music_volume"], false)
+    settings.set_value(&"ambience_volume", values["ambience_volume"], false)
+    settings.set_value(&"effects_volume", values["effects_volume"], false)
 
 
 func _test_session_diagnostics() -> void:
