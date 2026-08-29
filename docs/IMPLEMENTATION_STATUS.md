@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused autonomous-formation follow framing pass
+
+- the release camera now follows the living midpoint of an active long-range
+  formation instead of an arbitrary first machine;
+- formation spread is measured from the same living members and adds only a
+  bounded amount of camera breadth, keeping broad groups readable without
+  turning follow mode into a map view;
+- complete-game coverage verifies the focus center and member count, while the
+  live concurrent-operation review was inspected with Dummy audio and the
+  `--quiet-audio` safety flag.
+
 ## Focused Cathedral Quarter bell-yard witness pass
 
 - added a bounded release-only bell-yard assembly beside the Cathedral Quarter
