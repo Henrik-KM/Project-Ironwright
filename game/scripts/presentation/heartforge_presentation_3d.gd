@@ -118,6 +118,22 @@ func _animate_adaptation_hardware() -> void:
         if preview_ring != null:
             preview_ring.rotation.z = sin(progression_time * 0.6) * 0.02
 
+    var worksite := active_root.get_node_or_null("AdaptationWorksiteCrew") as Node3D
+    if worksite != null:
+        worksite.rotation.y = progression_time * 0.16
+        for index in range(worksite.get_child_count()):
+            var builder := worksite.get_child(index) as Node3D
+            if builder == null:
+                continue
+            var phase := float(index) * 2.1
+            builder.position.y = 0.035 + sin(progression_time * 1.25 + phase) * 0.025
+            var tool := builder.get_node_or_null("AdaptationBuilderTool%02d" % index) as Node3D
+            if tool != null:
+                tool.scale.y = 1.0 + sin(progression_time * 2.2 + phase) * 0.08
+            var beacon := builder.get_node_or_null("AdaptationBuilderBeacon%02d" % index) as Node3D
+            if beacon != null:
+                beacon.scale = Vector3.ONE * (1.0 + sin(progression_time * 2.0 + phase) * 0.12)
+
 
 func _named_node(node_name: String) -> Node3D:
     if subject == null:

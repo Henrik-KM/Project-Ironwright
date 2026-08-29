@@ -359,6 +359,7 @@ func _run_all() -> void:
     var pending_adaptation_preview := world.heartforge.get_node_or_null("HeartforgeModel/HeartforgeAdaptationPreview") as Node3D
     _expect(pending_adaptation_preview != null and pending_adaptation_preview.visible, "A pending adaptive proposal must mark its affected Heartforge perimeter without changing gameplay geometry.")
     _expect(world.heartforge.find_child("AdaptationPreviewRing", true, false) != null, "A pending adaptive proposal must expose a bounded physical footprint before construction begins.")
+    _expect(world.heartforge.find_child("AdaptationWorksiteCrew", true, false) != null, "A pending adaptive proposal must expose the bounded autonomous construction crew.")
     _expect(world.adaptive_defense_director.available_plans().size() == 3, "The architect must present three broad structural principles rather than a tuning panel.")
     world._open_evolution_hud()
     _expect(world.strategic_hud.is_open() and world.strategic_hud.mode == &"adaptation", "A pending adaptive proposal must reuse the strategic surface instead of opening a permanent dashboard.")
@@ -372,6 +373,7 @@ func _run_all() -> void:
     _expect(world.hud.prompt_label.text.to_lower().find("building") >= 0, "An active adaptive retrofit must expose its machine-building state in the live prompt.")
     var construction_preview := world.heartforge.get_node_or_null("HeartforgeModel/HeartforgeAdaptationPreview") as Node3D
     _expect(construction_preview != null and construction_preview.visible, "An authorized adaptive response must keep a visible physical construction preview during the machine-run interval.")
+    _expect(world.heartforge.find_child("AdaptationBuilderTool00", true, false) != null, "An authorized adaptive response must retain visible machine tooling during construction.")
     var preview_scale_before := construction_preview.scale if construction_preview != null else Vector3.ZERO
     world.adaptive_defense_director._process(2.0)
     _expect(world.heartforge.adaptation_preview_progress > 0.0 and world.heartforge.adaptation_preview_progress < 1.0, "Adaptive construction progress must drive a bounded intermediate Heartforge presentation state.")
