@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused organic tier signal-material pass
+
+- grounded tier crest anatomy in a darker, higher-roughness material and
+  reserved emission for the narrow living channels and crown signal nodes;
+- retained tier readability while preventing late-organic authored shells from
+  flattening into neon shapes in the close review gallery;
+- confirmed the change is presentation-only and live-reviewed the late-organic
+  gallery with Godot Dummy audio and `--quiet-audio`.
+
 ## Focused presentation-review page residency pass
 
 - the live presentation gallery now loads its selected remote landmark or

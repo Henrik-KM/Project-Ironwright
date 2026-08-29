@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused organic tier signal-material pass — 2026-08-29
+
+Tiered organic shells now keep their primary dorsal and crest anatomy in a
+grounded, higher-roughness surface material. Only the narrow vascular channels
+and crown signal nodes carry restrained tier-scaled emission, preserving the
+population-pressure read without flattening authored family silhouettes into
+glowing toy pieces. This is presentation-only: collision, tier identity,
+ecology, animation and save state are unchanged. Live review used Godot Dummy
+audio with `--quiet-audio` only; no live speakers were used.
+
 ## Focused adaptive Heartforge staged-build pass — 2026-08-29
 
 During an authorized retrofit, the selected shell pieces now assemble in

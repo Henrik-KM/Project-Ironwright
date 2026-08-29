@@ -258,8 +258,27 @@ func _build_tier_visuals() -> void:
     var tier_detail := Node3D.new()
     tier_detail.name = "TierHighDefinitionDetail"
     _tier_visual_root.add_child(tier_detail)
-    var crest_material := ModelKit3D.material(tier_color.darkened(0.48), 0.05, 0.52, tier_color, 0.78 + float(enemy_tier) * 0.28)
-    var channel_material := ModelKit3D.material(tier_color.darkened(0.28), 0.08, 0.42, tier_color, 0.72 + float(enemy_tier) * 0.22)
+    # Keep the tier shell grounded in its surface shading. The previous pass
+    # made every crest and vascular channel emissive, which flattened the
+    # authored family forms in the close gallery and made late tiers read like
+    # glowing toy pieces. Reserve the signal treatment for the narrow living
+    # channels and crown nodes so the anatomy carries the silhouette while the
+    # tier remains legible at tactical distance.
+    var crest_material := ModelKit3D.material(tier_color.darkened(0.52), 0.12, 0.68)
+    var channel_material := ModelKit3D.material(
+        tier_color.darkened(0.30),
+        0.08,
+        0.48,
+        tier_color.lightened(0.10),
+        0.30 + float(enemy_tier) * 0.12
+    )
+    var signal_material := ModelKit3D.material(
+        tier_color.darkened(0.18),
+        0.04,
+        0.40,
+        tier_color.lightened(0.14),
+        0.44 + float(enemy_tier) * 0.14
+    )
     var bone := ModelKit3D.material(Color("a69678"), 0.0, 0.76)
 
     # The tier read is carried by anatomy rather than a floating icon: a
@@ -328,7 +347,7 @@ func _build_tier_visuals() -> void:
             crown_ring,
             0.034 + float(enemy_tier) * 0.007,
             Vector3(cos(angle) * (0.22 + float(enemy_tier) * 0.035), 0.0, sin(angle) * (0.22 + float(enemy_tier) * 0.035)),
-            channel_material,
+            signal_material,
             Vector3(1.0, 0.66, 1.0),
             "TierCrownNode%02d" % index
         )
