@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Current release boundary — 2026-08-29
+
+The canonical native entrypoint is now the repository-complete `1.0.0-rc.1`
+release candidate. The chronological notes below preserve earlier visual
+checkpoints and their open human-review questions; the current implementation
+and remaining external gates are defined by `docs/COMMERCIAL_RELEASE_CANDIDATE.md`
+and `game/data/full_game_manifest.json`. Automated and live review continue to
+use Godot Dummy audio with `--quiet-audio`; no physical speakers are used.
+
 ## Focused outpost load-path presentation pass — 2026-08-29
 
 Tiered outposts now expose four continuous load pylons with tier collars,
@@ -1305,7 +1314,10 @@ depth instead of blooming into a pale central wash. Exact Windows capture at
 1280×720 on page 7/14 confirms the climate volume remains readable; broader
 human region acceptance remains open.
 
-The current visual state is explicitly classified as **pre-alpha production prototype** until the following gates are met.
+At the earlier pre-alpha checkpoint, the visual state was explicitly classified
+as **pre-alpha production prototype** until the then-open gates were met. That
+historical classification is superseded by the current release boundary at the
+top of this document.
 
 The exact merged Windows export was live-reviewed after the latest core-gallery
 cleanup: the friendly roster, early organic and late organic pages now present
