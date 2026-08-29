@@ -74,6 +74,8 @@ var endgame_protocol_review_capture_path: String = ""
 var endgame_protocol_review_capture_frames: int = 0
 var heartforge_progression_review_capture_path: String = ""
 var heartforge_progression_review_capture_frames: int = 0
+var complete_objective_review_capture_path: String = ""
+var complete_objective_review_capture_frames: int = 0
 var title_review_capture_path: String = ""
 var title_review_capture_frames: int = 0
 var stream_ring_review_active: bool = false
@@ -152,6 +154,16 @@ func _process(delta: float) -> void:
 			else:
 				push_error("Heartforge progression review screenshot failed: %s" % capture_error)
 			heartforge_progression_review_capture_path = ""
+	if not complete_objective_review_capture_path.is_empty():
+		complete_objective_review_capture_frames += 1
+		if complete_objective_review_capture_frames == 45:
+			var review_image := get_viewport().get_texture().get_image()
+			var capture_error := review_image.save_png(complete_objective_review_capture_path)
+			if capture_error == OK:
+				print("Complete objective review screenshot written to %s" % complete_objective_review_capture_path)
+			else:
+				push_error("Complete objective review screenshot failed: %s" % capture_error)
+			complete_objective_review_capture_path = ""
 	if not adaptive_defense_review_capture_path.is_empty():
 		adaptive_defense_review_capture_frames += 1
 		if adaptive_defense_review_capture_frames == 45:
@@ -874,6 +886,18 @@ func _has_complete_objective_review_flag() -> bool:
 	return false
 
 
+func _complete_objective_review_capture_argument() -> String:
+	var arguments: Array = OS.get_cmdline_args()
+	arguments.append_array(OS.get_cmdline_user_args())
+	for index in arguments.size():
+		var argument := str(arguments[index])
+		if argument.begins_with("--complete-objective-review-screenshot="):
+			return argument.get_slice("=", 1)
+		if argument == "--complete-objective-review-screenshot" and index + 1 < arguments.size():
+			return str(arguments[index + 1])
+	return ""
+
+
 func _apply_command_line_locale_override() -> void:
 	if localization_service == null:
 		return
@@ -1325,6 +1349,8 @@ func _start_complete_objective_review() -> void:
 	# objective surface. It reaches the same state through stable progression,
 	# operation and outpost contracts, then leaves the final protocol idle so
 	# the player-facing objective can be judged in the selected locale.
+	complete_objective_review_capture_path = _complete_objective_review_capture_argument()
+	complete_objective_review_capture_frames = 0
 	if progression != null:
 		progression.set_heartforge_tier(5)
 		for technology_id in [&"tech.machine.forge_assistance", &"tech.endgame.severance"]:
@@ -1352,7 +1378,14 @@ func _start_complete_objective_review() -> void:
 		run_state.manual_scrap_recovered = 20
 		run_state.autonomous_scrap_recovered = 30
 		run_state.expedition_core_recovered = true
+		run_state.scrap_changed.emit(run_state.scrap)
+		run_state.rare_cores_changed.emit(run_state.rare_cores)
 		full_game_milestone_complete = true
+	if heartforge != null:
+		heartforge.current_health = heartforge.maximum_health
+		heartforge.health_changed.emit(heartforge.current_health, heartforge.maximum_health)
+		if hud != null and hud.has_method(&"set_sanctuary_integrity"):
+			hud.call(&"set_sanctuary_integrity", 1.0)
 	if autonomy_director != null:
 		_spawn_robot(&"salvager", heartforge.global_position + Vector3(0.0, 0.0, 3.8), 1)
 		_spawn_robot(&"guardian", heartforge.global_position + Vector3(3.0, 0.0, 2.0), 1)

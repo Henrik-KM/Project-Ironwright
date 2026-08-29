@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused complete-objective review fixture pass — 2026-08-29
+
+The late-run objective fixture now accepts an exact screenshot path from the
+exported release entrypoint. Its non-saving seed immediately emits the reserve
+updates and restores full sanctuary integrity, so the 1280x720 review shows
+`SCRAP 1200`, `COGNITION CORES 8`, a clean sanctuary status and the intended
+final-protocol objective together. This closes a review-fixture mismatch rather
+than changing the real progression or endgame rules. The capture was exercised
+with Godot Dummy audio and `--quiet-audio`; no physical speakers were used.
+
 ## Focused Glasshouse service-aisle pass — 2026-08-29
 
 The Municipal Glasshouse authored landmark now carries a compact service

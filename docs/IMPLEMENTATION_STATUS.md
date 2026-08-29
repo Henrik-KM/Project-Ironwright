@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused complete-objective review fixture pass
+
+- added an exact exported screenshot hook for the late-run objective fixture,
+  keeping the capture non-saving and under the existing review-only quiet audio
+  ceiling;
+- corrected the fixture's HUD synchronization so seeded Scrap, cognition cores
+  and sanctuary integrity are immediately reflected in the player-facing
+  surface instead of leaving stale reserves or a misleading damage badge;
+- the current silent 1280x720 review now shows the final-protocol objective and
+  the authored Heartforge scene with its late-run state readable.
+
 ## Focused Glasshouse service-aisle pass
 
 - added a bounded authored maintenance trolley to the Municipal Glasshouse
