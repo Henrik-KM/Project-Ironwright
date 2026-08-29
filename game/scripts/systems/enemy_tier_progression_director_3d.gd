@@ -410,12 +410,19 @@ func _reconcile_population() -> void:
         saturated[tier] = after >= unit_cap(tier)
 
 
-func _enforce_population_caps() -> void:
+func _enforce_population_caps() -> bool:
+    var trimmed := false
     for tier in tier_order:
         var cap := unit_cap(tier)
         var members: Array[Node] = []
-        for enemy in get_tree().get_nodes_in_group(StringName("enemy_tier_%d" % tier)):
+        # Use the canonical tier metadata rather than the brain-created group:
+        # newly materialized actors receive their tier before the brain's
+        # deferred _initialize() adds that group, and must still count toward
+        # the cap during the same reduced-detail checkpoint.
+        for enemy in get_tree().get_nodes_in_group(&"organic_enemies"):
             if enemy == null or not is_instance_valid(enemy) or enemy.is_in_group(&"enemy_tier_nests"):
+                continue
+            if int(enemy.get_meta(&"enemy_tier", 0)) != tier:
                 continue
             if enemy.has_method(&"is_alive") and not bool(enemy.call(&"is_alive")):
                 continue
@@ -428,13 +435,23 @@ func _enforce_population_caps() -> void:
         for index in range(cap, members.size()):
             var excess := members[index]
             excess.set_meta(&"removed_by_tier_cap", true)
-            excess.queue_free()
+            # Cap enforcement is a simulation invariant, not a presentation
+            # transition. Remove the excess actor immediately so reduced-detail
+            # simulation and save collection cannot observe a stale over-cap
+            # member while the scene tree is paused between checkpoints.
+            excess.free()
+            trimmed = true
         population[tier] = cap
         tier_population_changed.emit(tier, cap, cap)
+    return trimmed
 
 
 func _simulation_tick(delta: float) -> void:
-    _enforce_population_caps()
+    # Do not let this same tick refill a slot that was just trimmed; otherwise
+    # a cap boundary can expose one transient actor above the sum of configured
+    # tier caps to reduced-detail simulation and save code.
+    if _enforce_population_caps():
+        return
     _add_anonymous_rate(1, tier_1_growth_per_second * delta)
     _process_saturation_high_to_low()
     for tier in tier_order:

@@ -1560,7 +1560,11 @@ func _show_presentation_review_page(page: int) -> void:
 			# robots retain their established presentation orientation.
 			actor.rotation.y = 0.0 if presentation_review_page == 0 and index == 0 else PI
 			var late_organic_roster := presentation_review_page == 2
-			var row_capacity := 2 if outpost_page else (3 if presentation_review_page >= 1 else mini(4, actors.size()))
+			# Early families have several broad flight and limb silhouettes. Give
+			# that page four positions in the near row so the rear row does not
+			# push its outer actors into the screen edge; late families keep the
+			# deeper three-across composition that suits their folded mass.
+			var row_capacity := 2 if outpost_page else (4 if presentation_review_page == 1 else (3 if presentation_review_page >= 1 else mini(4, actors.size())))
 			var row_index := 0 if index < row_capacity else 1
 			var row_count := mini(row_capacity, actors.size()) if row_index == 0 else actors.size() - row_capacity
 			var row_position := index if row_index == 0 else index - row_capacity
@@ -1577,8 +1581,15 @@ func _show_presentation_review_page(page: int) -> void:
 			# that page a little more lateral and depth separation while keeping the
 			# review fixture bounded; runtime scale, collision and gameplay spacing
 			# remain untouched.
-			var spacing := 5.4 if outpost_page else (3.35 if late_organic_roster else (4.1 if presentation_review_page >= 1 else 4.2))
+			var spacing := 5.4 if outpost_page else (3.35 if late_organic_roster else (3.0 if presentation_review_page == 1 else (4.1 if presentation_review_page >= 1 else 4.2)))
 			var centered_x := (float(row_position) - float(row_count - 1) * 0.5) * spacing
+			if presentation_review_page == 1:
+				# The four early families in the near row need a close-art lens but
+				# also carry wide wings, fans and limb spans. Keep the first pair at
+				# the authored readability gap while compressing the outer positions
+				# into the bounded frame; the rear trio gets the same controlled air.
+				var early_positions := [-3.5, -0.5, 0.5, 3.5] if row_index == 0 else [-3.0, 0.0, 3.0]
+				centered_x = early_positions[row_position]
 			var row_z := 1.05 if row_index == 0 else -2.15
 			if presentation_review_page == 0:
 				row_z = 0.7 if row_index == 0 else -2.5
@@ -2204,6 +2215,9 @@ func _update_presentation_review_camera(delta: float) -> void:
 	var target := presentation_review_camera_target
 	var desired := presentation_review_camera_desired
 	camera.global_position = camera.global_position.lerp(desired, 1.0 - exp(-delta * 5.0))
+	# Early flight families need a little more horizontal breathing room than
+	# the late folded silhouettes. Keep the models at their authored review
+	# scale and widen only this gallery lens instead of shrinking the cast.
 	var core_review_fov := 46.0 if presentation_review_page >= 1 else 43.0
 	var outpost_page := presentation_review_page == 3 + PRESENTATION_REVIEW_REGIONS.size()
 	camera.fov = 42.0 if outpost_page else (44.0 if presentation_review_page == 13 else (46.0 if presentation_review_page == 12 else (48.0 if presentation_review_page == 11 else (52.0 if presentation_review_page >= 3 else core_review_fov))))

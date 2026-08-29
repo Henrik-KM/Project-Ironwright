@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused early-organic review safe-frame pass — 2026-08-29
+
+The early-family gallery now uses a four-across near row and a narrower
+three-across rear row, keeping the broad flight and limb silhouettes inside the
+exact review frame. Its gallery lens is also slightly wider so the models keep
+their authored scale without crowding the edges. These changes affect only the
+development fixture; actor scale, collision, animation, ecology and gameplay
+spacing are unchanged. Live review uses Godot Dummy audio with
+`--quiet-audio` only; no live speakers are used.
+
 ## Focused friendly-machine material separation pass — 2026-08-29
 
 The shared friendly-machine utility materials now use deeper teal and amber

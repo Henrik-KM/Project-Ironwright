@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused early-organic review safe-frame pass
+
+- the early-family gallery now uses a four-across near row and a narrower
+  three-across rear row, keeping broad flight and limb silhouettes inside the
+  exact review frame instead of cropping the outer families;
+- the slightly wider early-organic camera lens preserves authored model scale
+  while giving every family a readable silhouette; runtime actor scale,
+  collision, animation, ecology and gameplay spacing are unchanged;
+- live review continues through Godot Dummy audio with `--quiet-audio` only.
+
 ## Focused organic structural material finish pass
 
 - lowered the structural chitin value and raised its roughness so imported

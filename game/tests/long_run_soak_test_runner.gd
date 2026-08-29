@@ -159,6 +159,10 @@ func _organic_actor_count() -> int:
     for candidate in get_nodes_in_group(&"organic_enemies"):
         if candidate.is_in_group(&"enemy_tier_nests"):
             continue
+        # A killed organism may remain briefly for its death presentation, but
+        # it no longer belongs to the living population cap being audited.
+        if candidate.has_method(&"is_alive") and not bool(candidate.call(&"is_alive")):
+            continue
         count += 1
     return count
 
