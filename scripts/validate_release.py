@@ -306,7 +306,7 @@ def validate_release_packaging() -> None:
         if token not in presets:
             raise legacy.ValidationError(f"Release export presets are missing {token!r}")
     workflow = (ROOT / ".github/workflows/release.yml").read_text(encoding="utf-8")
-    for token in ["include-templates: true", "upload-artifact"]:
+    for token in ["include-templates: true", "upload-artifact", "one-hundred-hour-equivalent long-run soak"]:
         if token not in workflow:
             raise legacy.ValidationError(f"Release workflow is missing {token!r}")
     if not any(
