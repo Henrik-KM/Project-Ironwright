@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused title-world readability pass — 2026-08-29
+
+The title screen now gives the authored Heartforge backdrop more visual
+priority by reducing the full-frame darkening and lowering the intensity of the
+cyan service rings. The left-weighted menu hierarchy, title camera, controls and
+runtime behavior are unchanged. This is presentation-only; the exact silent
+review uses Godot Dummy audio with `--quiet-audio`, and no physical speakers are
+used. Broader human readability and target-display acceptance remain open.
+
 ## Focused late-organic review-frame refinement — 2026-08-29
 
 The exact late-organic gallery now uses a tighter close camera for its seven

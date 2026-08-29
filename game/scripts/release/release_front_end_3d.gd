@@ -98,7 +98,7 @@ func _build_ui() -> void:
     # Keep the authored Heartforge scene legible behind the title so the first
     # frame carries the same warm/cool material language as the playable
     # opening. The panel and vignette still protect text contrast.
-    backdrop.color = Color(0.008, 0.018, 0.024, 0.48)
+    backdrop.color = Color(0.008, 0.018, 0.024, 0.38)
     backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
     root_control.add_child(backdrop)
 
@@ -115,7 +115,7 @@ void fragment() {
     vec3 cold = vec3(0.026, 0.065, 0.085);
     vec3 warm = vec3(0.25, 0.11, 0.045);
     float hearth = exp(-length(UV - vec2(0.5, 0.77)) * 5.2);
-    COLOR = vec4(mix(cold, warm, hearth), smoothstep(0.15, 1.5, d) * 0.62 + 0.18);
+    COLOR = vec4(mix(cold, warm, hearth), smoothstep(0.15, 1.5, d) * 0.50 + 0.12);
 }
 """
     var vignette_material := ShaderMaterial.new()
@@ -149,10 +149,10 @@ void fragment() {
     float scan = 0.5 + 0.5 * sin((UV.y * 180.0) + sin(UV.x * 12.0));
     vec3 color = vec3(0.022, 0.09, 0.11);
     color += vec3(0.95, 0.30, 0.09) * (core * 0.82 + halo * 0.20);
-    color += vec3(0.10, 0.62, 0.74) * (ring_a * 0.58 + ring_b * 0.36);
+    color += vec3(0.10, 0.62, 0.74) * (ring_a * 0.40 + ring_b * 0.24);
     color += vec3(0.34, 0.16, 0.06) * horizon * 0.36;
     color += vec3(0.06, 0.34, 0.38) * (service_left + service_right) * 0.28;
-    float alpha = 0.24 + core * 0.28 + halo * 0.12 + (ring_a + ring_b) * 0.18 + horizon * 0.12 + (service_left + service_right) * 0.05;
+    float alpha = 0.16 + core * 0.24 + halo * 0.09 + (ring_a + ring_b) * 0.10 + horizon * 0.09 + (service_left + service_right) * 0.04;
     alpha *= 0.88 + scan * 0.12;
     COLOR = vec4(color, alpha);
 }

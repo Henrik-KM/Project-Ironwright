@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused title-world readability pass
+
+- reduced title-screen overlay and atmosphere strength so the authored
+  Heartforge scene remains visible behind the left-weighted menu;
+- preserved the title camera, panel geometry, menu behavior, localization,
+  input handling and all gameplay state; silent review and verification use
+  Godot Dummy audio with `--quiet-audio`.
+
 ## Focused late-organic review-frame refinement
 
 - tightened the development-only late-organic gallery camera so the seven
