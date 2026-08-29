@@ -328,17 +328,28 @@ func _enemy_count_in_region(region_id: StringName) -> int:
 
 
 func pressure_summary() -> String:
+    var summary := pressure_summary_data()
+    var highest_name := str(summary.get("region_name", "Heartforge District"))
+    var highest_pressure := float(summary.get("pressure", 0.0))
+    return "%s · pressure %.2f" % [highest_name, highest_pressure]
+
+
+func pressure_summary_data() -> Dictionary:
+    var highest_region_id: StringName = &"region.heartforge_district"
     var highest_name := "Heartforge District"
     var highest_pressure := 0.0
+    if region_director == null:
+        return {"region_id": highest_region_id, "region_name": highest_name, "pressure": highest_pressure}
     for raw_region_id in region_director.region_data:
         var region_id := raw_region_id as StringName
         var pressure := region_director.effective_pressure(region_id) * effective_pressure_multiplier()
         if pressure > highest_pressure:
             highest_pressure = pressure
+            highest_region_id = region_id
             var landmark := region_director.get_landmark(region_id)
             if landmark != null:
                 highest_name = landmark.display_name
-    return "%s · pressure %.2f" % [highest_name, highest_pressure]
+    return {"region_id": highest_region_id, "region_name": highest_name, "pressure": highest_pressure}
 
 
 func to_dictionary() -> Dictionary:

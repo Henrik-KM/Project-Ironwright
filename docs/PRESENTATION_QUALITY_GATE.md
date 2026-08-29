@@ -1,5 +1,17 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused localized world-recap pass — 2026-08-29
+
+The returning-world recap now keeps its visible world condition, Heartforge
+status, operation state, regional pressure, no-operation guidance and adaptive
+choice in the supported English, Swedish and German catalogs. The ecological
+director exposes stable summary data so the recap can localize region names
+without parsing English prose or altering pressure simulation. Complete-game
+native coverage switches the recap through Swedish and back to English; the
+remaining historical diagnostic log is still a professional-localization
+follow-up. Review and validation use Godot Dummy audio with `--quiet-audio`; no
+physical speakers are used.
+
 ## Focused Skitterling cephalic detail pass — 2026-08-29
 
 The common Tier-I Skitterling now carries a smooth cephalic shell shield and

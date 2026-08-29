@@ -348,6 +348,19 @@ func _run_all() -> void:
     _expect(world.operations_hud.requirements_label.text.contains("NEXT AVAILABLE MAJOR CHOICES"), "The world recap must expose the next major choices without opening a management dashboard.")
     _expect(not world.operations_hud.authorize_button.visible, "The world recap must remain read-only and cannot authorize an operation accidentally.")
     _expect(world.operations_hud.backdrop.color.a >= 0.9, "Strategic readouts must sufficiently occlude persistent HUD toasts so the fixed close footer remains readable.")
+    if world.localization_service != null:
+        _expect(world.localization_service.set_locale(&"sv"), "The complete-game recap localization check must be able to select Swedish.")
+        world._show_session_recap()
+        var recap_review_capture_path := _recap_review_capture_argument()
+        if not recap_review_capture_path.is_empty():
+            await process_frame
+            var recap_review_image := world.get_viewport().get_texture().get_image()
+            var recap_review_error := recap_review_image.save_png(recap_review_capture_path)
+            _expect(recap_review_error == OK, "The live Swedish recap review must write its requested screenshot.")
+        _expect(world.operations_hud.current_operation_status.contains("VÄRLDSFÖRHÅLLANDE") and world.operations_hud.current_operation_status.contains("HJÄRTSMEDJAN"), "The Swedish world recap must localize its stable condition and Heartforge status instead of leaving the strategic summary in English.")
+        _expect(world.operations_hud.description_label.text.contains("tryck") or world.operations_hud.description_label.text.contains("TRYCK"), "The Swedish world recap must localize the regional pressure summary.")
+        _expect(world.localization_service.set_locale(&"en"), "The complete-game recap localization check must restore English.")
+        world._show_session_recap()
     world._close_operations_hud()
     world.heartforge.current_health = world.heartforge.maximum_health * 0.72
     world.heartforge.health_changed.emit(world.heartforge.current_health, world.heartforge.maximum_health)
@@ -497,7 +510,8 @@ func _run_all() -> void:
     _expect(world.hud.ending_panel != null and not world.hud.ending_panel.visible, "Continuing after victory must hide the ending surface without tearing down the HUD canvas.")
     _expect(world.hud.visible, "Continuing after victory must leave the tactical HUD visible.")
     await process_frame
-    _expect(world.get_node_or_null("ProceduralUrbanDistrict") is Node3D and (world.get_node("ProceduralUrbanDistrict") as Node3D).visible, "Continuing after victory must keep the authored urban world visible.")
+    var continued_city := world.get_node_or_null("ProceduralUrbanDistrict") as Node3D
+    _expect(continued_city != null and continued_city.visible, "Continuing after victory must keep the authored urban world visible (exists=%s, visible=%s, in_tree=%s)." % [continued_city != null, continued_city.visible if continued_city != null else false, continued_city.is_inside_tree() if continued_city != null else false])
     _expect(world.release_world_art != null and world.release_world_art.dressing_root != null and world.release_world_art.dressing_root.visible and world.release_world_art.dressing_root.is_visible_in_tree(), "Continuing after victory must keep the release presentation dressing visible with the living sanctuary.")
     _expect(world.get_node_or_null("Heartforge") is Node3D and (world.get_node("Heartforge") as Node3D).visible, "Continuing after victory must keep the Heartforge visible.")
     _expect(world.get_node_or_null("HeartforgeVerticalSlice") is Node3D and (world.get_node("HeartforgeVerticalSlice") as Node3D).visible, "Continuing after victory must keep the representative sanctuary slice visible.")
@@ -593,6 +607,16 @@ func _run_all() -> void:
     _expect(not world.endgame_director.can_initiate(&"protocol.severance"), "A final protocol must remain unavailable when its autonomous remote relay support has been destroyed.")
 
     _finish()
+
+
+func _recap_review_capture_argument() -> String:
+    var arguments := OS.get_cmdline_args()
+    arguments.append_array(OS.get_cmdline_user_args())
+    for raw_argument in arguments:
+        var argument := str(raw_argument)
+        if argument.begins_with("--recap-review-screenshot="):
+            return argument.get_slice("=", 1)
+    return ""
 
 
 func _spawn_complete_team(world: IronwrightCompleteGameWorld3D) -> void:

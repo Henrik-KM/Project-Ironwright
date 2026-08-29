@@ -595,7 +595,7 @@ func _build_collapse_report() -> String:
                 break
     var events_text := "\n".join(decisive_events) if not decisive_events.is_empty() else "No decisive event was recorded before collapse."
 
-    var pressure_text := strategic_ecology_director.pressure_summary() if strategic_ecology_director != null else "Regional pressure was unavailable."
+    var pressure_text := _localized_pressure_summary()
     var resource_text := "SCRAP %d · CORES %d · MANUAL RECOVERED %d · AUTONOMOUS RECOVERED %d" % [run_state.scrap, run_state.rare_cores, run_state.manual_scrap_recovered, run_state.autonomous_scrap_recovered]
     var resource_decline_text := run_state.resource_decline_report() if run_state != null else "Resource history was unavailable."
     var alternatives := "No unspent response was recorded."
@@ -775,21 +775,27 @@ func _show_session_recap() -> void:
         var display_name := str(variation_director.call(&"current_display_name"))
         if not display_name.is_empty():
             world_condition = display_name
-    var condition := "WORLD CONDITION · %s\nHEARTFORGE %d%% INTEGRITY · TIER %d · SCRAP %d · CORES %d" % [world_condition, integrity, progression.heartforge_tier, run_state.scrap, run_state.rare_cores]
+    var condition_key := String(run_state.world_variant_id).trim_prefix("weather.").replace(".", "_")
+    world_condition = _localized_text("world.condition.%s.name" % condition_key, world_condition)
+    var condition := _localized_text(
+        "command.recap.condition",
+        "WORLD CONDITION · {0}\nHEARTFORGE {1}% INTEGRITY · TIER {2} · SCRAP {3} · CORES {4}",
+        [world_condition, integrity, progression.heartforge_tier, run_state.scrap, run_state.rare_cores]
+    )
     var objective_parts := hud.objective_label.text.split("\n", false, 1)
     var unresolved_problem := hud.objective_label.text if objective_parts.is_empty() else "%s\n%s" % [objective_parts[0], objective_parts[1] if objective_parts.size() > 1 else ""]
-    var expedition := "No long-range operation is in motion. Press P to review the next physical route."
+    var expedition := _localized_text("command.recap.no_operation", "No long-range operation is in motion. Press P to review the next physical route.")
     if long_operation_director != null and not long_operation_director.active_operation.is_empty():
-        expedition = long_operation_director.operation_summary()
-    var threats := strategic_ecology_director.pressure_summary() if strategic_ecology_director != null else "Regional pressure is not currently resolved."
+        expedition = _localized_long_operation_summary()
+    var threats := _localized_pressure_summary()
     var recent_threats := _recent_threat_recap()
     if not recent_threats.is_empty():
         threats = "%s\n%s" % [threats, recent_threats]
-    var next_choices := "Review the current objective on the tactical HUD."
+    var next_choices := _localized_text("command.recap.current_objective", "Review the current objective on the tactical HUD.")
     if not hud.prompt_label.text.strip_edges().is_empty():
         next_choices = hud.prompt_label.text
     if adaptive_defense_director != null and adaptive_defense_director.has_pending_proposal():
-        next_choices = "PRESS T · REVIEW THE HEARTFORGE'S PROPOSED ADAPTATION"
+        next_choices = _localized_text("command.recap.adaptation_choice", "PRESS T · REVIEW THE HEARTFORGE'S PROPOSED ADAPTATION")
     operations_hud.open_recap(condition, unresolved_problem, expedition, threats, next_choices)
     player.input_enabled = false
 
@@ -825,6 +831,16 @@ func _localized_text(key: String, fallback: String, replacements: Array = []) ->
     for index in range(replacements.size()):
         result = result.replace("{%d}" % index, str(replacements[index]))
     return result
+
+
+func _localized_pressure_summary() -> String:
+    if strategic_ecology_director == null:
+        return _localized_text("command.recap.pressure_unavailable", "Regional pressure is not currently resolved.")
+    var summary := strategic_ecology_director.pressure_summary_data()
+    var region_id := StringName(str(summary.get("region_id", "region.heartforge_district")))
+    var region_name := _localized_region_name(region_id)
+    var pressure := float(summary.get("pressure", 0.0))
+    return _localized_text("command.recap.pressure_summary", "{0} · pressure {1}", [region_name, "%.2f" % pressure])
 
 
 func _set_complete_objective(title_key: String, title_fallback: String, detail_key: String, detail_fallback: String, replacements: Array = [], prompt_key: String = "", prompt_fallback: String = "") -> void:

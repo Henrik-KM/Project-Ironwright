@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused localized world-recap pass
+
+- the returning-world recap now localizes its world condition, Heartforge
+  status, no-operation guidance, active operation summary, regional pressure
+  line and adaptive-response choice across the supported catalogs;
+- the ecological summary exposes a stable region identifier and pressure value
+  so the visible report can use localized region names without parsing English
+  prose or changing simulation state;
+- complete-game native coverage switches the recap through Swedish and back to
+  English, while the broader historical diagnostic log remains documented as a
+  separate professional-localization follow-up.
+
 ## Focused Skitterling cephalic detail pass
 
 - the common Tier-I Skitterling now carries a smooth cephalic shell shield and
