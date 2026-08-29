@@ -326,7 +326,7 @@ The roadmap still requires:
 - a larger and more detailed urban environment with authored encounter spaces;
 - profiling and tuning of active/reduced-detail simulation for much larger
   entity counts;
-- repeated twenty-hour-equivalent automated durability soak now covers the
+- repeated one-hundred-hour-equivalent automated durability soak now covers the
   release clock, population ecology, transactional saves, complete restoration
   and bounded state growth; long human play sessions remain open;
 - deeper navigation and route recovery under long-run disruption;

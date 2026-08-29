@@ -5,7 +5,7 @@ const RELEASE_SLOT: StringName = &"world_0"
 const TEST_SAVE_ROOT := "user://ironwright_long_run_soak"
 const TEST_SAVE_PATH := "user://ironwright_long_run_soak/world_0.json"
 const TEST_SIDECAR_PATH := "user://ironwright_long_run_soak/world_0.enemy_tiers.json"
-const CHECKPOINT_COUNT := 120
+const CHECKPOINT_COUNT := 600
 const CHECKPOINT_SECONDS := 600.0
 const EXPECTED_SIMULATED_SECONDS := float(CHECKPOINT_COUNT) * CHECKPOINT_SECONDS
 const SAVE_INTERVAL := 12
@@ -82,7 +82,7 @@ func _run_all() -> void:
             _expect(int(tier_director.get("elapsed_seconds")) >= int(expected_seconds), "The enemy-tier sidecar must restore the simulated time at checkpoint %d." % (checkpoint + 1))
             _prepare_deterministic_simulation(world, bootstrap, tier_director, false)
 
-    _expect(is_equal_approx(world.run_state.elapsed_seconds, EXPECTED_SIMULATED_SECONDS), "The soak must advance the release run by exactly twenty simulated hours.")
+    _expect(is_equal_approx(world.run_state.elapsed_seconds, EXPECTED_SIMULATED_SECONDS), "The soak must advance the release run by exactly one hundred simulated hours.")
     _expect(maximum_save_bytes > 0 and maximum_save_bytes <= maxi(first_save_bytes * 4, 4 * 1024 * 1024), "Save size must remain bounded across the full soak.")
     _assert_bounded_state(world, tier_director)
     _cleanup_save_files()
@@ -175,8 +175,8 @@ func _expect(condition: bool, message: String) -> void:
 
 func _finish() -> void:
     if failures.is_empty():
-        print("Project Ironwright twenty-hour-equivalent long-run soak tests passed.")
+        print("Project Ironwright one-hundred-hour-equivalent long-run soak tests passed.")
         quit(0)
         return
-    print("Project Ironwright twenty-hour-equivalent long-run soak tests failed: %d" % failures.size())
+    print("Project Ironwright one-hundred-hour-equivalent long-run soak tests failed: %d" % failures.size())
     quit(1)

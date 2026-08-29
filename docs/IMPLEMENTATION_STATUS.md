@@ -237,9 +237,9 @@
 - legacy snapshots without the fields resolve a deterministic tier from species
   during restoration.
 
-## Focused twenty-hour-equivalent long-run soak pass
+## Focused one-hundred-hour-equivalent long-run soak pass
 
-- added a bounded deterministic soak over twenty simulated hours using the
+- added a bounded deterministic soak over one hundred simulated hours using the
   release run clock and canonical population-driven enemy-tier simulation;
 - rotates verified transactional saves, restores the complete release snapshot,
   restores the enemy-tier sidecar, and checks save-clock equivalence at regular
