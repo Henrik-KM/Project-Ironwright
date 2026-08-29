@@ -188,6 +188,9 @@ func _update_release_collision() -> void:
     var collision_enabled := not reduced_detail and not coarse_simulation
     collision_layer = 4 if collision_enabled else 0
     collision_mask = (1 | 2 | 4) if collision_enabled else 0
+    for child in get_children():
+        if child is CollisionShape3D:
+            (child as CollisionShape3D).disabled = not collision_enabled
 
 
 func _ensure_reduced_proxy() -> void:

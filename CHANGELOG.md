@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-08-29 — Machine-society collision residency
+
+- medium- and reduced-detail release actors now disable their collision shapes
+  as well as their released collision layers and masks;
+- full-detail actors restore the shape for physical interaction, keeping the
+  existing active/coarse/reduced behavior and save-facing state intact;
+- verified the collision contract and 192-actor benchmark with Dummy audio and
+  `--quiet-audio` only.
+
 ## 2026-08-29 — Machine-society simulation cadence
 
 - distributed existing reduced- and medium-detail actor updates through

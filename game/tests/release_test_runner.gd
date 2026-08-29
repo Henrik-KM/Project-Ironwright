@@ -1315,15 +1315,19 @@ func _test_spatial_and_performance(world: IronwrightReleaseWorld3D) -> void:
     _expect(nearest == near_enemy, "Spatial index must return the nearest active organic enemy.")
     world.performance_director.force_evaluate_for_test()
     _expect(not near_enemy.reduced_detail and near_enemy.visual_lod_level == 0, "Nearby organisms must remain fully active.")
-    _expect(near_enemy.collision_layer == 4 and near_enemy.collision_mask == (1 | 2 | 4), "Nearby organisms must retain release collision.")
+    var near_enemy_shape := _collision_shape_for(near_enemy)
+    _expect(near_enemy.collision_layer == 4 and near_enemy.collision_mask == (1 | 2 | 4) and near_enemy_shape != null and not near_enemy_shape.disabled, "Nearby organisms must retain release collision.")
     _expect(not medium_enemy.reduced_detail and medium_enemy.visual_lod_level == 1 and medium_enemy.coarse_simulation, "Medium-distance organisms must retain state while using coarse simulation.")
-    _expect(medium_enemy.collision_layer == 0 and medium_enemy.collision_mask == 0, "Medium-distance organisms must release physics collision.")
+    var medium_enemy_shape := _collision_shape_for(medium_enemy)
+    _expect(medium_enemy.collision_layer == 0 and medium_enemy.collision_mask == 0 and medium_enemy_shape != null and medium_enemy_shape.disabled, "Medium-distance organisms must release physics collision.")
     _expect(not medium_robot.reduced_detail and medium_robot.visual_lod_level == 1 and medium_robot.coarse_simulation, "Medium-distance machines must retain state while using coarse simulation.")
-    _expect(medium_robot.collision_layer == 0 and medium_robot.collision_mask == 0, "Medium-distance machines must release physics collision.")
+    var medium_robot_shape := _collision_shape_for(medium_robot)
+    _expect(medium_robot.collision_layer == 0 and medium_robot.collision_mask == 0 and medium_robot_shape != null and medium_robot_shape.disabled, "Medium-distance machines must release physics collision.")
     _expect(bool(medium_enemy.find_child("ReducedDetailProxy", true, false).visible), "Medium organisms must retain a lightweight readable silhouette proxy.")
     _expect(bool(medium_robot.find_child("ReducedDetailProxy", true, false).visible), "Medium machines must retain a lightweight readable silhouette proxy.")
     _expect(far_enemy.reduced_detail and far_enemy.visual_lod_level == 2, "Distant organisms must enter reduced-detail simulation.")
-    _expect(far_enemy.collision_layer == 0 and far_enemy.collision_mask == 0, "Distant organisms must release physics collision.")
+    var far_enemy_shape := _collision_shape_for(far_enemy)
+    _expect(far_enemy.collision_layer == 0 and far_enemy.collision_mask == 0 and far_enemy_shape != null and far_enemy_shape.disabled, "Distant organisms must release physics collision.")
     var before := far_enemy.global_position
     far_enemy.investigate_position = before + Vector3(10.0, 0.0, 0.0)
     far_enemy.investigate_seconds = 5.0
@@ -1333,6 +1337,13 @@ func _test_spatial_and_performance(world: IronwrightReleaseWorld3D) -> void:
     medium_enemy.queue_free()
     medium_robot.queue_free()
     far_enemy.queue_free()
+
+
+func _collision_shape_for(actor: Node) -> CollisionShape3D:
+    for child in actor.get_children():
+        if child is CollisionShape3D:
+            return child as CollisionShape3D
+    return null
 
 
 func _test_transactional_save_service() -> void:

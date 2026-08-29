@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused machine-society collision residency pass
+
+- medium- and reduced-detail release actors now disable their collision shapes
+  alongside their already-released collision layers and masks;
+- nearby actors restore the shape for full physical interaction, preserving the
+  active/coarse/reduced contract while removing unnecessary physics-server
+  residency from the distant population;
+- native release coverage checks both collision channels and shape state, and
+  the 192-actor benchmark remains green.
+
 ## Focused machine-society simulation cadence pass
 
 - reduced-detail and medium-detail actors now receive their existing
