@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused Observatory Ridge grounding — 2026-08-29
+
+The Observatory Ridge review frame now gives the authored survey station a
+shallow broken foundation, a raised instrument pad, retaining edges, a short
+approach path and powered boundary markers. The additional context removes
+the floating-prop read and establishes an authored encounter footprint without
+adding collision, routing, interaction or recurring player work. The reflector
+and rear instrument array remain the focal silhouette.
+
 ## Focused autonomous-formation follow framing — 2026-08-29
 
 Following an active long-range operation now centers the living formation and

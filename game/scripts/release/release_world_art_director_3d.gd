@@ -1551,6 +1551,84 @@ func _dress_observatory(root: Node3D) -> void:
     var dark_metal := _textured_material(&"metal", Color("202d31"), 0.78, 0.34)
     var rust := _textured_material(&"rust", Color("754a32"), 0.38, 0.7)
     var signal_material := ModelKit3D.material(Color("1e5964"), 0.26, 0.26, Color("73d9e8"), 1.3)
+    # The observatory is a ridge installation, not a prop floating on a flat
+    # debug plane. This shallow, broken service foundation gives the authored
+    # station an approach, retaining edges and a small powered path while
+    # remaining presentation-only: no collision, routing or simulation state.
+    var ridge_concrete := _textured_material(&"concrete", Color("394346"), 0.04, 0.76)
+    var ridge_edge := _textured_material(&"rust", Color("6f4732"), 0.42, 0.68)
+    var ridge_foundation := Node3D.new()
+    ridge_foundation.name = "ObservatoryRidgeFoundation"
+    observatory_detail.add_child(ridge_foundation)
+    ModelKit3D.add_beveled_box(
+        ridge_foundation,
+        Vector3(14.8, 0.34, 11.8),
+        Vector3(0.0, -0.12, 0.8),
+        ridge_concrete,
+        Vector3(0.0, 0.018, 0.0),
+        "ObservatoryRidgeFoundationSlab",
+        0.16
+    )
+    ModelKit3D.add_beveled_box(
+        ridge_foundation,
+        Vector3(8.8, 0.18, 7.0),
+        Vector3(0.0, 0.18, 0.9),
+        ridge_concrete,
+        Vector3.ZERO,
+        "ObservatoryRidgeInstrumentPad",
+        0.2
+    )
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(
+            ridge_foundation,
+            Vector3(1.35, 0.24, 8.9),
+            Vector3(side * 6.35, 0.16, 0.8),
+            ridge_edge,
+            Vector3(0.0, side * 0.055, side * 0.022),
+            "ObservatoryRidgeRetainingEdge%s" % ("L" if side < 0.0 else "R"),
+            0.18
+        )
+    for index in range(3):
+        var approach_z := 5.05 + float(index) * 1.7
+        var approach_width := 3.9 - float(index) * 0.25
+        ModelKit3D.add_beveled_box(
+            ridge_foundation,
+            Vector3(approach_width, 0.16, 1.18),
+            Vector3(0.0, 0.22, approach_z),
+            ridge_concrete,
+            Vector3(0.0, 0.0, 0.018 if index % 2 == 0 else -0.024),
+            "ObservatoryRidgeApproachPlate%02d" % index,
+            0.18
+        )
+    ModelKit3D.add_cylinder(
+        ridge_foundation,
+        0.11,
+        7.4,
+        Vector3(0.0, 0.34, 4.05),
+        ridge_edge,
+        Vector3(PI * 0.5, 0.0, 0.0),
+        "ObservatoryRidgeApproachConduit"
+    )
+    for side in [-1.0, 1.0]:
+        for index in range(2):
+            var marker_z := -2.55 + float(index) * 5.9
+            ModelKit3D.add_cylinder(
+                ridge_foundation,
+                0.1,
+                1.8,
+                Vector3(side * 6.25, 0.98, marker_z),
+                ridge_edge,
+                Vector3.ZERO,
+                "ObservatoryRidgeBoundaryPost%s%02d" % ["L" if side < 0.0 else "R", index]
+            )
+            ModelKit3D.add_sphere(
+                ridge_foundation,
+                0.16,
+                Vector3(side * 6.25, 1.94, marker_z),
+                signal_material,
+                Vector3.ONE,
+                "ObservatoryRidgeBoundarySignal%s%02d" % ["L" if side < 0.0 else "R", index]
+            )
     ModelKit3D.add_cylinder(observatory_detail, 3.2, 2.0, Vector3(0.0, 1.0, 0.0), metal, Vector3.ZERO, "ObservatoryBase")
     ModelKit3D.add_beveled_box(observatory_detail, Vector3(5.8, 0.22, 4.8), Vector3(0.0, 0.16, 0.0), dark_metal, Vector3.ZERO, "ObservatoryServiceDeck", 0.18)
     ModelKit3D.add_surface_panel(observatory_detail, Vector3(1.25, 0.68, 0.1), Vector3(0.0, 0.9, -3.1), dark_metal, signal_material, Vector3.ZERO, "ObservatoryAccessPanel")
