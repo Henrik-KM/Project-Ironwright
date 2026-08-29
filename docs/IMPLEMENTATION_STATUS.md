@@ -1,5 +1,15 @@
 # Implementation status
 
+## Deferred release-art teardown hardening
+
+- guarded deferred release-art collection, region dressing and mesh-texture
+  callbacks against worlds that have already entered queued deletion;
+- this prevents rapid scene/test teardown from creating renderer resources on a
+  dead world, without changing the persistent landmark, simulation, streaming
+  or presentation contracts;
+- the presentation/salvage regression now serves as a rapid-transition cleanup
+  check in addition to its existing camera and escort coverage.
+
 ## Focused Buried Laboratories vessel-material refinement
 
 - tuned the development-only exact-review material override for the authored

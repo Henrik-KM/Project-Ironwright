@@ -150,7 +150,7 @@ func _on_node_added(node: Node) -> void:
     # Actors, outpost upgrades and discovered-region dressing are created
     # throughout a run. Keep the release material pass live instead of
     # leaving late-created meshes on their greybox fallback materials.
-    if node == null or not (node is MeshInstance3D):
+    if node == null or not (node is MeshInstance3D) or world == null or not is_instance_valid(world) or world.is_queued_for_deletion() or is_queued_for_deletion():
         return
     pending_mesh_instance_ids[node.get_instance_id()] = true
     if texture_flush_scheduled:
@@ -192,7 +192,7 @@ func _load_textures() -> void:
 
 
 func _apply_release_art() -> void:
-    if world == null or dressing_root == null:
+    if world == null or dressing_root == null or not is_instance_valid(world) or world.is_queued_for_deletion() or is_queued_for_deletion():
         return
     meshes_textured = 0
     regions_dressed = 0
@@ -252,7 +252,7 @@ func _collect_unique_texture_meshes(node: Node, seen_ids: Dictionary, result: Ar
 
 
 func _connect_region_lod() -> void:
-    if world == null or not is_instance_valid(world):
+    if world == null or not is_instance_valid(world) or world.is_queued_for_deletion() or is_queued_for_deletion():
         return
     var region_lod := world.get_node_or_null("RegionPresentationLodDirector")
     if region_lod == null:

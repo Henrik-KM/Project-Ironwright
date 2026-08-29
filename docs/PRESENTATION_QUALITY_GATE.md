@@ -1,5 +1,13 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Deferred release-art teardown hardening — 2026-08-29
+
+Deferred release-art callbacks now fail closed when their world or art director
+has entered queued deletion. This closes the rapid-transition path that could
+create a DummyMesh renderer resource after a short-lived presentation fixture
+was torn down. No runtime landmark, streaming, simulation or gameplay contract
+changed; the presentation/salvage regression remains the cleanup evidence.
+
 ## Focused Buried Laboratories vessel-material refinement — 2026-08-29
 
 Buried Laboratories now uses a restrained review-only material grade for the
