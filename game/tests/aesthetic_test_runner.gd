@@ -903,6 +903,8 @@ func _run_all() -> void:
     _expect(region_lod != null, "The complete world must install presentation LOD for persistent region landmarks.")
     if region_lod != null and region_atmosphere != null:
         region_lod.refresh_now()
+        for _frame in range(8):
+            await process_frame
         _expect(region_lod.detail_mode_for(&"region.west_grid") == 0, "The player’s current region must retain full landmark detail.")
         _expect(region_lod.detail_mode_for(&"region.root_cistern") == 2, "Distant endgame landmarks must reduce to beacon detail without leaving the world state.")
         var distant_root := region_director.get_landmark(&"region.root_cistern")
@@ -920,8 +922,11 @@ func _run_all() -> void:
         region_atmosphere.refresh_now()
         region_lod.refresh_now()
         # Authored region packages attach on the next idle frame so imported
-        # renderer resources finish their threaded-load handoff safely.
-        await process_frame
+        # renderer resources finish their threaded-load handoff safely. The
+        # release dressing also waits for its bounded renderer-settle window
+        # after a stream-out before creating fresh procedural meshes.
+        for _frame in range(6):
+            await process_frame
         _expect(region_lod.detail_mode_for(&"region.root_cistern") == 0 and distant_proxy != null and not distant_proxy.visible, "Entering a distant region must restore full detail and retire its coarse proxy.")
         _expect(distant_authored_package != null and distant_authored_package.get_child_count() > 0, "Entering a distant region must re-instantiate its imported authored package nodes.")
         _expect(distant_release_detail != null and distant_release_detail.get_child_count() > 0, "Entering a distant region must re-instantiate its high-definition encounter dressing nodes.")
@@ -929,6 +934,8 @@ func _run_all() -> void:
         world.player.global_position = Vector3(-92.0, 0.0, 18.0)
         region_atmosphere.refresh_now()
         region_lod.refresh_now()
+        for _frame in range(8):
+            await process_frame
         _expect(not region_lod.is_region_streamed(&"region.root_cistern"), "A region beyond the camera stream ring must release its authored dressing while retaining its persistent landmark state.")
         _expect(distant_authored_package != null and distant_authored_package.get_child_count() == 0, "Leaving a restored region must release its imported authored package nodes again.")
         _expect(distant_release_detail != null and distant_release_detail.get_child_count() == 0, "Leaving a restored region must release its high-definition encounter dressing nodes again.")
@@ -936,6 +943,8 @@ func _run_all() -> void:
         world.player.global_position = Vector3(-92.0, 0.0, 18.0)
         region_atmosphere.refresh_now()
         region_lod.refresh_now()
+        for _frame in range(8):
+            await process_frame
     var heartforge := world.get_node_or_null("Heartforge") as Heartforge3D
     _expect(heartforge != null, "The aesthetic test needs the Heartforge progression model.")
     if heartforge != null:

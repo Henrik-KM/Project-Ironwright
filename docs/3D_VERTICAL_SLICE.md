@@ -95,8 +95,9 @@ authored actor, review and region scenes load on demand through the shared
 resource cache, with region packages requested on a worker and instantiated
 only after the resource is ready. The normal title boot defers full procedural
 city construction until a run starts, while headless and explicit review
-fixtures retain the complete world. Resource-cache/package-budget profiling
-remains outstanding. The release runtime
+fixtures retain the complete world. Resource-cache/package-budget profiling is
+covered by the native `resource_streaming_benchmark_runner.gd` gate. The
+release runtime
 also applies bounded active,
 medium and reduced-detail simulation budgets to actors, while region dressing
 uses persistent landmark proxies outside the focus ring.

@@ -1,5 +1,17 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused authored-package residency benchmark — 2026-08-29
+
+The native release benchmark now promotes all eleven remote authored-region
+packages through the real asynchronous stream service, records promotion wait
+frames and static-memory bounds, and verifies that stream-out releases
+instantiated package nodes. The measured residency gate allows at most three
+authored packages at once; target-hardware profiling remains an external gate.
+The current local sweep completes each promotion in one to two frames, with
+one package resident and two streamed regions at most. Static-memory telemetry
+is recorded for later hardware comparison. The benchmark uses Godot Dummy
+audio and `--quiet-audio`; no physical speakers are used.
+
 ## Focused streamed-dressing teardown pass — 2026-08-29
 
 Release-only close dressing now uses queued end-of-frame teardown and a

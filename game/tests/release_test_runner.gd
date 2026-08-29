@@ -44,7 +44,8 @@ func _run_all() -> void:
     _test_front_end(world)
 
     world.queue_free()
-    await process_frame
+    for _cleanup_frame in range(8):
+        await process_frame
     _finish()
 
 

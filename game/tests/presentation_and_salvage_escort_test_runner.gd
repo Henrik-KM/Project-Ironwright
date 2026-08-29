@@ -42,8 +42,9 @@ func _test_remote_ground_continuity() -> void:
     _expect(world.player.global_position.y > -0.1, "Remote-region ground continuity must prevent the Mechromancer from falling through the persistent world.")
     var remote_landmark := world.region_director.get_landmark(&"region.west_grid")
     _expect(remote_landmark != null and remote_landmark.get_node_or_null("PersistentRegionCollision/PersistentRegionGround") != null, "Remote regions must own a persistent ground collision shape outside the authored city floor.")
-    world.free()
-    await process_frame
+    world.queue_free()
+    for _cleanup_frame in range(8):
+        await process_frame
 
 
 func _test_directional_camera_reframe() -> void:
@@ -65,8 +66,9 @@ func _test_directional_camera_reframe() -> void:
     world.player.velocity = Vector3.ZERO
     world._update_camera(0.65)
     _expect(world.camera_heading.distance_to(heading_after_motion) < 0.05, "The tactical camera must hold its established heading when the player stops instead of rotating during idle play.")
-    world.free()
-    await process_frame
+    world.queue_free()
+    for _cleanup_frame in range(8):
+        await process_frame
 
 
 func _test_camera_relative_player_input() -> void:
@@ -91,8 +93,9 @@ func _test_camera_relative_player_input() -> void:
     _expect(right_input.distance_to(camera_right) < 0.01, "D must move along the camera's horizontal right axis.")
     _expect(is_equal_approx(diagonal_input.length(), 1.0), "Camera-relative diagonal movement must remain normalized.")
 
-    world.free()
-    await process_frame
+    world.queue_free()
+    for _cleanup_frame in range(8):
+        await process_frame
 
 
 func _test_threat_camera_readability() -> void:
@@ -107,8 +110,9 @@ func _test_threat_camera_readability() -> void:
     _expect(bias.z <= 0.0, "Nearby threats must not pull the tactical camera farther away from readable organic silhouettes.")
     if enemy != null and is_instance_valid(enemy):
         enemy.queue_free()
-    world.free()
-    await process_frame
+    world.queue_free()
+    for _cleanup_frame in range(8):
+        await process_frame
 
 
 func _test_salvage_escort_split() -> void:
@@ -164,8 +168,9 @@ func _test_salvage_escort_split() -> void:
         _expect(guardian.goal_position.distance_to(world.player.global_position) <= 5.0, "Player-cover Wardens must occupy a useful protective radius around the Mechromancer.")
 
     _expect(world.autonomy_director.operation_summary().to_lower().contains("escort"), "The permanent operation summary must communicate the distributed escort state.")
-    world.free()
-    await process_frame
+    world.queue_free()
+    for _cleanup_frame in range(8):
+        await process_frame
 
 
 func _test_world_labels_are_not_screen_fixed() -> void:
@@ -244,8 +249,9 @@ func _test_prealpha_hud_is_quiet() -> void:
         var sanctuary := hud.root_control.get_node_or_null("SanctuaryBadge") as PanelContainer
         _expect(sanctuary != null and not sanctuary.visible, "Healthy-state sanctuary banners must stay hidden until they communicate an actual problem.")
     _expect(world.camera.fov <= 46.0, "The tactical camera should use the less distorted desktop framing from the presentation reset.")
-    world.free()
-    await process_frame
+    world.queue_free()
+    for _cleanup_frame in range(8):
+        await process_frame
 
 
 func _expect(condition: bool, message: String) -> void:

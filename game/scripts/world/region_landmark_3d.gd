@@ -57,6 +57,7 @@ var _authored_model_scene: PackedScene
 var _authored_model_load_requested: bool = false
 var _authored_model_load_failed: bool = false
 var _authored_model_attach_requested: bool = false
+var _authored_model_cleanup_pending: bool = false
 var _pressure_read_root: Node3D
 var _pressure_signal_material: StandardMaterial3D
 var _reduced_proxy_root: Node3D
@@ -90,6 +91,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
     _poll_authored_model_package()
+    _finish_authored_model_cleanup()
     _elapsed += delta
     if _beacon_root == null or not discovered:
         return
@@ -209,8 +211,19 @@ func _refresh_authored_model_package() -> void:
                         push_error("Could not load authored region package: %s" % _authored_model_path)
     elif _authored_model_root.get_child_count() > 0:
         for child in _authored_model_root.get_children():
-            child.free()
+            child.queue_free()
+        _authored_model_cleanup_pending = true
         _capture_region_motion_nodes()
+
+
+func _finish_authored_model_cleanup() -> void:
+    if not _authored_model_cleanup_pending or _authored_model_root == null:
+        return
+    if _authored_model_root.get_child_count() > 0:
+        return
+    _authored_model_cleanup_pending = false
+    if streamed_in and _authored_model_scene != null:
+        _schedule_authored_model_attachment()
 
 
 func _poll_authored_model_package() -> void:

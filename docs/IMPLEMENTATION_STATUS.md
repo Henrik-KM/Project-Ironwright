@@ -1,14 +1,32 @@
 # Implementation status
 
+## Focused authored-package residency benchmark
+
+- added a representative native benchmark that promotes every remote authored
+  region through the real release stream service, records asynchronous
+  promotion latency and verifies stream-out releases instantiated package
+  nodes;
+- the benchmark isolates imported package loading from the separately tested
+  procedural encounter-dressing transition, keeps a bounded residency budget
+  of three instantiated
+  authored packages and reports streamed-region count, wait frames and static
+  memory before and after the sweep without imposing a machine-specific FPS
+  claim;
+- the current local sweep promoted all eleven packages in one to two frames,
+  held one package resident at a time and observed a 2-region stream maximum;
+  static-memory telemetry is retained as target-hardware input rather than
+  being treated as a machine-independent pass claim.
+
 ## Focused streamed-dressing teardown pass
 
 - release-only close dressing now queues its generated meshes for end-of-frame
   teardown instead of freeing renderer resources synchronously during a region
   stream transition;
-- a tree-owned one-shot cleanup check observes the latest focus state before
-  rebuilding procedural dressing, so rapid West Grid ↔ Root Cistern changes do
-  not rebuild into stale rendering RIDs or leave callbacks suspended after a
-  short-lived review world is closed;
+- a tree-owned one-shot cleanup check observes the latest focus state after a
+  bounded renderer-settle window before rebuilding procedural dressing, so
+  rapid West Grid ↔ Root Cistern changes do not rebuild into stale rendering
+  RIDs or leave callbacks suspended after a short-lived review world is
+  closed;
 - the complete native presentation/streaming fixture now exits with no dummy
   renderer or dangling-callback errors, and the graphical stream-ring review
   completes silently with Godot Dummy audio and `--quiet-audio`.
