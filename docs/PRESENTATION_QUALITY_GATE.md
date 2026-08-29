@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## Focused tiered-release movement-authority pass — 2026-08-29
+
+Tiered organic release actors now keep the legacy body simulation disabled
+while `EnemyTierBrain3D` owns active movement, with both callbacks suspended
+between scheduled medium and reduced-detail ticks. This prevents duplicate
+movement after a detail promotion while preserving the existing ecological
+decisions, visual LOD and player-facing workload. The large-population native
+gate covers all three authority states; audio remains Dummy/quiet during
+validation.
+
 ## Focused early-organic review safe-frame pass — 2026-08-29
 
 The early-family gallery now uses a four-across near row and a narrower

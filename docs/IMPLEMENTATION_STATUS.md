@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused tiered-release movement-authority pass
+
+- tiered organic release actors now keep the legacy organic body callback
+  disabled while `EnemyTierBrain3D` owns active movement, and both callbacks
+  remain suspended during medium or reduced-detail scheduling;
+- added large-population regression coverage for the active, coarse and
+  reduced authority handoffs, preventing duplicate simulation after an LOD
+  promotion without changing ecological decisions or player workload.
+
 ## Focused early-organic review safe-frame pass
 
 - the early-family gallery now uses a four-across near row and a narrower

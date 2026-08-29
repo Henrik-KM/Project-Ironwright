@@ -56,8 +56,10 @@ func _run_all() -> void:
     var far_robot := actors[47] as RobotUnitRelease3D
     _expect(near_enemy != null and near_enemy.get_node_or_null("OrganicModel") != null, "A nearby organic actor must retain its authored presentation shell.")
     _expect(near_robot != null and near_robot.get_node_or_null("RobotModel") != null, "A nearby machine actor must retain its authored presentation shell.")
+    _expect(near_enemy != null and _tier_brain_is_sole_movement_authority(near_enemy, true), "An active tiered organic actor must use its tier brain as the sole movement authority.")
     _expect(medium_enemy != null and medium_enemy.get_node_or_null("OrganicModel") == null and medium_enemy.get_node_or_null("DeferredVisualProxy") != null, "A medium-distance organic actor must remain on a lightweight proxy until active promotion.")
     _expect(medium_robot != null and medium_robot.get_node_or_null("RobotModel") == null and medium_robot.get_node_or_null("DeferredVisualProxy") != null, "A medium-distance machine actor must remain on a lightweight proxy until active promotion.")
+    _expect(medium_enemy != null and _tier_brain_is_sole_movement_authority(medium_enemy, false), "A medium-distance tiered organic actor must suspend both legacy and tier-brain physics callbacks while coarse simulation is scheduled.")
     _expect(medium_enemy != null and not _presentation_controller_processing(medium_enemy), "A medium-distance organic actor must suspend presentation-only controller ticks while its proxy is active.")
     _expect(medium_robot != null and not _presentation_controller_processing(medium_robot), "A medium-distance machine actor must suspend presentation-only controller ticks while its proxy is active.")
     _expect(far_enemy != null and far_enemy.get_node_or_null("OrganicModel") == null and far_enemy.get_node_or_null("DeferredVisualProxy") != null, "A distant organic actor must begin with only a lightweight deferred proxy.")
@@ -70,6 +72,7 @@ func _run_all() -> void:
     _expect(medium_robot_proxy != null and far_robot_proxy != null and medium_robot_proxy.mesh == far_robot_proxy.mesh, "Machine reduced-detail actors must share one proxy mesh resource.")
     _expect(far_enemy != null and far_enemy.reduced_detail and far_enemy.visual_lod_level == 2, "A distant organic actor must retain reduced-detail state at scale.")
     _expect(far_robot != null and far_robot.reduced_detail and far_robot.visual_lod_level == 2, "A distant machine actor must retain reduced-detail state at scale.")
+    _expect(far_enemy != null and _tier_brain_is_sole_movement_authority(far_enemy, false), "A distant tiered organic actor must suspend both legacy and tier-brain physics callbacks while reduced simulation is scheduled.")
     if far_enemy != null and far_robot != null:
         var far_enemy_position := far_enemy.global_position
         var far_robot_position := far_robot.global_position
@@ -124,6 +127,15 @@ func _presentation_controller_processing(actor: Node) -> bool:
         if controller != null and controller.has_method(&"is_processing") and bool(controller.call(&"is_processing")):
             return true
     return false
+
+
+func _tier_brain_is_sole_movement_authority(actor: Node, brain_active: bool) -> bool:
+    if actor == null or not is_instance_valid(actor):
+        return false
+    var brain := actor.get_node_or_null("EnemyTierBrain")
+    if brain == null:
+        return false
+    return not actor.is_physics_processing() and bool(brain.is_physics_processing()) == brain_active
 
 
 func _finish() -> void:

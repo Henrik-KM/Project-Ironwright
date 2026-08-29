@@ -66,10 +66,15 @@ func set_reduced_detail(value: bool) -> void:
     reduced_detail = value
     coarse_simulation = false
     _update_release_collision()
-    set_physics_process(not reduced_detail)
     var tier_brain := get_node_or_null("EnemyTierBrain")
     if tier_brain != null and tier_brain.has_method(&"set_simulation_lod"):
         tier_brain.call(&"set_simulation_lod", 2 if reduced_detail else 0)
+        # Tiered release enemies are moved by EnemyTierBrain3D. Keep the
+        # legacy OrganicEnemy3D callback disabled or active actors are
+        # simulated twice after an LOD promotion.
+        set_physics_process(false)
+    else:
+        set_physics_process(not reduced_detail)
     if reduced_detail:
         velocity = Vector3.ZERO
         state_name = &"remote_simulation"
@@ -81,10 +86,14 @@ func set_coarse_simulation(value: bool) -> void:
         return
     coarse_simulation = value
     _update_release_collision()
-    set_physics_process(not coarse_simulation)
     var tier_brain := get_node_or_null("EnemyTierBrain")
     if tier_brain != null and tier_brain.has_method(&"set_simulation_lod"):
         tier_brain.call(&"set_simulation_lod", 1 if coarse_simulation else 0)
+        # The tier brain owns both active and reduced-detail movement. The
+        # parent body remains a data/presentation shell for tiered actors.
+        set_physics_process(false)
+    else:
+        set_physics_process(not coarse_simulation)
 
 
 func reduced_detail_tick(delta: float) -> void:
