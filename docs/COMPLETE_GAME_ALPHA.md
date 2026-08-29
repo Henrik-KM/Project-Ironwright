@@ -327,7 +327,7 @@ The roadmap still requires:
 - profiling and tuning of active/reduced-detail simulation for much larger
   entity counts;
 - deeper navigation and route recovery under long-run disruption;
-- adaptive autonomous Heartforge geometry;
+- broader authored adaptive Heartforge geometry, animation and balance polish;
 - performance profiling on target hardware;
 - narrative and environmental storytelling;
 - 30–100-hour economy and pressure balancing;

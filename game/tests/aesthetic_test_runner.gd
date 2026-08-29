@@ -1033,6 +1033,7 @@ func _run_all() -> void:
         heartforge.set_adaptation_profile(&"adaptation.anchored_shell")
         _expect(heartforge.find_child("HeartforgeAdaptationDetail", true, false) != null, "The adaptive Heartforge must expose a visible authored retrofit detail layer.")
         _expect(heartforge.find_child("AnchorShellBrace", true, false) != null and heartforge.find_child("AnchorShellSignalRing", true, false) != null and heartforge.find_child("AnchorShellFooting", true, false) != null and heartforge.find_child("AnchorShellAnchorPin", true, false) != null, "The anchored-shell response must expose structural braces, anchored footings and a signal ring.")
+        _expect(heartforge.adaptive_collision_shape_count() == 4 and heartforge.find_child("AnchorShellCollisionWest", false, false) != null and heartforge.find_child("AnchorShellCollisionSouth", false, false) != null, "The anchored-shell response must add four bounded physical perimeter braces after authorization.")
         if heartforge_presentation != null:
             var anchor_ring := heartforge.find_child("AnchorShellSignalRing", true, false) as Node3D
             var anchor_ring_before := anchor_ring.rotation.z if anchor_ring != null else 0.0
@@ -1041,9 +1042,12 @@ func _run_all() -> void:
             _expect(anchor_ring != null and not is_equal_approx(anchor_ring_before, anchor_ring.rotation.z), "The anchored-shell response must carry a restrained structural pulse after construction.")
         heartforge.set_adaptation_profile(&"adaptation.sacrificial_hollow")
         _expect(heartforge.find_child("SacrificialHollowRib", true, false) != null and heartforge.find_child("SacrificialHollowCap", true, false) != null and heartforge.find_child("SacrificialHollowService", true, false) != null, "The sacrificial-hollow response must expose replaceable outer ribs, capped service hardware and an expendable service face.")
+        _expect(heartforge.adaptive_collision_shape_count() == 8 and heartforge.find_child("SacrificialHollowCollision00", false, false) != null, "The sacrificial-hollow response must add one physical shell piece per replaceable rib.")
         heartforge.set_adaptation_profile(&"adaptation.quiet_core")
         _expect(heartforge.find_child("QuietCoreShroud", true, false) != null and heartforge.find_child("QuietCoreDampenerBaffle", true, false) != null and heartforge.find_child("QuietCoreSignalPanel", true, false) != null, "The quiet-core response must expose damped shrouds, baffles and signal-panel detail.")
+        _expect(heartforge.adaptive_collision_shape_count() == 2 and heartforge.find_child("QuietCoreCollisionWest", false, false) != null, "The quiet-core response must retain two bounded physical dampener housings.")
         heartforge.set_adaptation_profile(&"")
+        _expect(heartforge.adaptive_collision_shape_count() == 0 and heartforge.find_child("HeartforgeCoreCollision", false, false) != null, "Clearing an adaptation must remove only its profile shell and retain the permanent Heartforge core collision.")
         if adaptation_settings_service != null:
             adaptation_settings_service.set_value(&"reduced_motion", adaptation_previous_reduced_motion, false)
         _expect(heartforge.find_child("HeartforgeDamagePresentation", true, false) != null, "The Heartforge must expose a bounded damage-memory presentation layer.")
