@@ -53,7 +53,7 @@ FAMILIES = {
         "colors": ([0.065, 0.035, 0.06, 1.0], [0.25, 0.12, 0.22, 1.0], [0.35, 0.08, 0.24, 1.0], [0.56, 0.45, 0.32, 1.0], [0.9, 0.22, 0.14, 1.0], [0.34, 0.09, 0.16, 1.0]),
         "body_profile": ((1.32, 1.15, 1.18), (1.18, 0.86, 1.02), 0.02),
         "socket_contract": "resonator, bell_mantle, signal_tendrils, crown_plate",
-        "signature_nodes": ["CarrionbellResonatorRing", "CarrionbellResonatorCore", "CarrionbellBellRib0"],
+        "signature_nodes": ["CarrionbellResonatorRing", "CarrionbellResonatorCore", "CarrionbellResonatorRootCollar", "CarrionbellBellRib0"],
     },
     "rootweaver": {
         "display": "Rootweaver",
@@ -815,6 +815,20 @@ def build_family(name: str, spec: dict) -> None:
             "CarrionbellResonatorClapper",
             add_capsule(builder, 0.055, 0.42, bone, 24),
         )
+        mesh_ids["CarrionbellResonatorRootCollar"] = mesh(
+            "CarrionbellResonatorRootCollar",
+            add_organic_lobe(
+                builder,
+                (0.96, 0.34, 0.68),
+                shell,
+                lobes=6,
+                rings=11,
+                sides=48,
+                scallop_amplitude=0.13,
+                leading_extension=0.28,
+                fold_strength=0.88,
+            ),
+        )
     # Rootweaver's paired crown plates frame the route-controller oculi. Give
     # those existing sockets a closed folded shell so they read as living
     # crown petals rather than two broad horizontal service plates.
@@ -1015,6 +1029,10 @@ def build_family(name: str, spec: dict) -> None:
         resonator = add_node("CarrionbellResonator", mesh_ids["Eye"], (0.0, 1.92, -0.35), scale=(1.4, 0.8, 1.0), extras={"socket_type": "resonator"})
         add_node("CarrionbellResonatorCore", mesh_ids["Eye"], (0.0, 1.92, -0.44), scale=(0.62, 0.62, 0.72), extras={"surface": "resonator_core"})
         add_node("CarrionbellResonatorRing", mesh_ids["ResonatorRing"], (0.0, 1.92, -0.35), rotation=(1.5708, 0.0, 0.0), scale=(1.8, 1.0, 1.35), extras={"surface": "resonator_lip"})
+        # Close the signal organ into the upper mantle with a folded root
+        # collar. It is owned by the resonator socket so the existing
+        # resonator animation carries the attachment as one living part.
+        add_node("CarrionbellResonatorRootCollar", mesh_ids["CarrionbellResonatorRootCollar"], (0.0, -0.16, 0.18), rotation=(0.18, 0.0, 0.0), scale=(1.08, 0.94, 0.96), extras={"surface": "resonator_root_attachment"}, parent=resonator)
         add_node("CarrionbellResonatorBellLip", mesh_ids["CarrionbellResonatorBellLip"], (0.0, -0.04, 0.08), rotation=(0.24, 0.0, 0.0), scale=(1.28, 0.92, 1.12), extras={"surface": "resonator_bell_lip"}, parent=resonator)
         add_node("CarrionbellResonatorClapper", mesh_ids["CarrionbellResonatorClapper"], (0.0, -0.24, 0.13), rotation=(0.16, 0.0, 0.0), scale=(0.76, 0.92, 0.76), extras={"surface": "resonator_clapper"}, parent=resonator)
         add_node("CarrionbellResonatorClapperTip", mesh_ids["CrownFastener"], (0.0, -0.46, 0.13), scale=(1.18, 1.18, 1.18), extras={"surface": "resonator_clapper_tip"}, parent=resonator)

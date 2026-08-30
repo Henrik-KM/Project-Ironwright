@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Carrion Bell resonator-attachment pass — 2026-08-30
+
+The Carrion Bell authored shell now carries a dense folded root collar under
+the existing animated resonator socket. This closes the visible transition
+between the signal organ and upper mantle so the late organic reads as one
+attached living instrument at close review distance. The addition is
+presentation-only and preserves animation ownership, collision, ecology,
+combat, saves and player workload. The asset manifest and aesthetic runner
+cover the stable node; live review uses Godot Dummy audio with
+`--quiet-audio`, with no physical speakers used.
+
 ## Focused silent-validation documentation pass — 2026-08-30
 
 Every Godot validation example in the README now selects Dummy audio and

@@ -1704,6 +1704,8 @@ func _run_all() -> void:
                 var resonator_clapper_tip := _find_named(enemy_samples[index], "CarrionbellResonatorClapperTip") as MeshInstance3D
                 _expect(resonator_bell_lip != null and _mesh_vertex_count(resonator_bell_lip) >= 500 and resonator_bell_lip.mesh.get_aabb().size.y >= 0.16, "The Carrion Bell resonator must retain a dense closed bell lip with readable depth.")
                 _expect(resonator_clapper != null and resonator_clapper_tip != null and resonator_clapper.get_parent().name == "CarrionbellResonator" and resonator_clapper_tip.get_parent().name == "CarrionbellResonator", "The Carrion Bell clapper assembly must stay parented to the animated resonator socket.")
+                var resonator_root_collar := _find_named(enemy_samples[index], "CarrionbellResonatorRootCollar") as MeshInstance3D
+                _expect(resonator_root_collar != null and resonator_root_collar.get_parent().name == "CarrionbellResonator" and _mesh_vertex_count(resonator_root_collar) >= 700 and resonator_root_collar.mesh.get_aabb().size.y >= 0.24, "The Carrion Bell resonator must carry a dense socket-parented root collar so its signal organ reads as attached to the mantle.")
             &"rootweaver":
                 _expect(_find_named(enemy_samples[index], "RootweaverKnuckleL") != null and _find_named(enemy_samples[index], "RootweaverKnuckleR") != null, "The Rootweaver must expose joint detail where its route arms meet the body.")
                 _expect(_find_named(enemy_samples[index], "RootweaverCrownPlate0") != null and _find_named(enemy_samples[index], "RootweaverRootSpineR") != null, "The Rootweaver must expose crown plating and layered route spines.")
@@ -1982,6 +1984,8 @@ func _run_all() -> void:
         _expect(deep_membrane != null and _mesh_vertex_count(deep_membrane) >= 1000, "%s must retain the dense folded late-organic membrane profile." % deep_membrane_names[index])
         _expect(deep_membrane != null and deep_membrane.mesh.get_aabb().size.y >= 0.45, "%s must retain closed depth rather than reading as a thin horizontal sheet." % deep_membrane_names[index])
     _expect(_mesh_vertex_count(_find_named(carrionbell_asset, "CarrionbellCrownPlate") as MeshInstance3D) >= 500, "Carrion Bell must retain a dense folded crown silhouette.")
+    var carrionbell_root_collar := _find_named(carrionbell_asset, "CarrionbellResonatorRootCollar") as MeshInstance3D
+    _expect(carrionbell_root_collar != null and carrionbell_root_collar.get_parent().name == "CarrionbellResonator" and _mesh_vertex_count(carrionbell_root_collar) >= 700 and carrionbell_root_collar.mesh.get_aabb().size.y >= 0.24, "Carrion Bell's authored signal organ must retain a dense resonator-parented root collar with readable depth.")
     _expect(_mesh_vertex_count(_find_named(thornback_asset, "ThornbackCrownPlate") as MeshInstance3D) >= 500, "Thornback must retain a dense folded territorial crown silhouette.")
     _expect(_mesh_vertex_count(_find_named(ashmantle_asset, "AshmantleHeatLouverL") as MeshInstance3D) >= 700, "Ashmantle must retain a dense folded heat-louver silhouette.")
     var miremaw_collar_l := _find_named(miremaw_asset, "MiremawGillCollarL") as MeshInstance3D

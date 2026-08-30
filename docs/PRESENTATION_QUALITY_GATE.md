@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Carrion Bell resonator-attachment pass
+
+The Carrion Bell authored shell now carries a dense folded root collar under
+the existing animated resonator socket. This closes the visible transition
+between its signal organ and upper mantle, preserving a continuous living
+instrument silhouette at close review distance. The new layer is
+presentation-only: animation ownership, collision, ecology, combat, saves and
+player workload are unchanged. Live review uses Godot Dummy audio with
+`--quiet-audio`; no physical speakers are used.
+
 ## 2026-08-30 — Rootweaver thorax-attachment pass
 
 The authored Rootweaver shell now carries a dense torso-parented route-controller

@@ -137,7 +137,7 @@ AUTHORED_ORGANIC_ASSETS = {
     "carrionbell": {
         "asset_id": "carrionbell.signal.v1",
         "root": "CarrionbellModel",
-        "required": ["CarrionbellModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "CarrionbellMantle", "CarrionbellResonator", "CarrionbellResonatorRing", "CarrionbellResonatorCore", "CarrionbellBellRib0", "ProductionAssetMarker"],
+        "required": ["CarrionbellModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "CarrionbellMantle", "CarrionbellResonator", "CarrionbellResonatorRing", "CarrionbellResonatorCore", "CarrionbellResonatorRootCollar", "CarrionbellBellRib0", "ProductionAssetMarker"],
     },
     "rootweaver": {
         "asset_id": "rootweaver.route_controller.v1",
