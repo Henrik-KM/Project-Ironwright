@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Broodmass throat-attachment pass — 2026-08-30
+
+The Broodmass authored shell now carries a dense folded throat collar inside
+the existing animated maw socket. The collar closes the transition between
+the upper and lower jaw volumes so the nest-organism reads as one attached
+living organ instead of stacked plates at close review distance. The addition
+is presentation-only and preserves the existing animation clips, collision,
+ecology, combat, saves and player workload. The asset manifest and aesthetic
+gate cover the stable node; live review uses Godot Dummy audio with
+`--quiet-audio`, with no physical speakers used.
+
 ## Focused Miremaw throat-attachment pass — 2026-08-30
 
 The Miremaw authored shell now carries a dense folded gill sternum at the

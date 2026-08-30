@@ -99,6 +99,10 @@ def main() -> None:
         # Give them a closed folded volume so they read as living shell lobes
         # instead of horizontal manufactured sheets at tactical distance.
         "FoldedPlate": mesh("FoldedPlate", add_organic_lobe(builder, (1.58, 0.36, 0.72), shell, lobes=5, rings=10, sides=40, scallop_amplitude=0.14, leading_extension=0.34, fold_strength=0.9)),
+        # The maw root needs a soft folded throat transition so the upper and
+        # lower jaw volumes read as one living organ instead of two stacked
+        # plates in the close late-organic gallery.
+        "MawCollar": mesh("MawCollar", add_organic_lobe(builder, (1.18, 0.44, 0.82), membrane, lobes=6, rings=14, sides=56, scallop_amplitude=0.12, leading_extension=0.24, fold_strength=0.86)),
         "Fan": mesh("Fan", add_beveled_box(builder, (0.18, 1.4, 0.8), membrane, 0.025)),
         "Maw": mesh("Maw", add_uv_sphere(builder, 0.44, membrane, 24, 36)),
         # Pointed crown spines keep the nest silhouette organic instead of
@@ -167,6 +171,7 @@ def main() -> None:
     maw = add_node("BroodmassMaw", mesh_ids["Maw"], (0.0, 1.16, -1.52), scale=(1.28, 0.75, 1.4), extras={"socket_type": "brood_maw"})
     # Maw hardware is parented to the maw shell; use local offsets so it does
     # not double-apply the shell's world-space position.
+    add_node("BroodmassMawCollar", mesh_ids["MawCollar"], (0.0, 0.04, 0.16), rotation=(0.18, 0.0, 0.0), scale=(0.96, 0.86, 0.92), parent=maw, extras={"surface": "folded_throat_attachment"})
     add_node("BroodmassMawPlate", mesh_ids["FoldedPlate"], (0.0, 0.24, -0.02), scale=(0.86, 0.82, 1.1), parent=maw)
     # The nest maw needs a lower living volume beneath its upper plate. Keep it
     # on the existing animated maw socket so the added depth follows attack and
@@ -271,7 +276,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "broodmass.nest.v1",
-            "required_nodes": ["BroodmassModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BroodmassLobeL", "BroodmassLobeRidgeL", "BroodmassMaw", "BroodmassMawRidge", "CrownSpine0", "CrownFastener0", "BroodmassCrownCap", "BroodmassCrownCapPlate", "BroodmassFanL", "ProductionAssetMarker"],
+            "required_nodes": ["BroodmassModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BroodmassLobeL", "BroodmassLobeRidgeL", "BroodmassMaw", "BroodmassMawCollar", "BroodmassMawRidge", "CrownSpine0", "CrownFastener0", "BroodmassCrownCap", "BroodmassCrownCapPlate", "BroodmassFanL", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
         },
     }
