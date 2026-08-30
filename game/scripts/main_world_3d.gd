@@ -578,22 +578,40 @@ func _update_objective() -> void:
     var interact_hint := _input_binding_hint(&"iw_interact", "E")
     if run_state.manual_scrap_recovered < 20:
         objective_stage = 0
-        hud.set_objective("LEAVE THE LIGHT", "Hold %s at a nearby wreck. Salvaging takes time, disables the pistol, and alerts the ecology." % interact_hint)
+        hud.set_objective(
+            _localized_runtime_text("objective.base.light.title", "LEAVE THE LIGHT"),
+            _localized_runtime_text("objective.base.light.detail", "Hold {0} at a nearby wreck. Salvaging takes time, disables the pistol, and alerts the ecology.", [interact_hint])
+        )
     elif autonomy_director.count_robots(&"salvager") < 1:
         objective_stage = 1
-        hud.set_objective("FORGE A SCRAPPER", "Return to the Heartforge, press %s, and build it manually while the Bulwark protects you." % interact_hint)
+        hud.set_objective(
+            _localized_runtime_text("objective.base.scrapper.title", "FORGE A SCRAPPER"),
+            _localized_runtime_text("objective.base.scrapper.detail", "Return to the Heartforge, press {0}, and build it manually while the Bulwark protects you.", [interact_hint])
+        )
     elif run_state.autonomous_scrap_recovered < 30:
         objective_stage = 2
-        hud.set_objective("LET THE MACHINES WORK", "Press 2. The Scrapper will leave in a coordinated group, salvage, and physically return with Scrap.")
+        hud.set_objective(
+            _localized_runtime_text("objective.base.autonomy.title", "LET THE MACHINES WORK"),
+            _localized_runtime_text("objective.base.autonomy.detail", "Press 2. The Scrapper will leave in a coordinated group, salvage, and physically return with Scrap.")
+        )
     elif autonomy_director.count_robots(&"guardian") < 1 or autonomy_director.count_robots(&"scout") < 1:
         objective_stage = 3
-        hud.set_objective("PREPARE A REAL EXPEDITION", "Use autonomous salvage to fund one Warden and one Pathfinder. You must still forge both personally.")
+        hud.set_objective(
+            _localized_runtime_text("objective.base.expedition.title", "PREPARE A REAL EXPEDITION"),
+            _localized_runtime_text("objective.base.expedition.detail", "Use autonomous salvage to fund one Warden and one Pathfinder. You must still forge both personally.")
+        )
     elif not run_state.expedition_core_recovered and autonomy_director.expedition_operation.is_empty():
         objective_stage = 4
-        hud.set_objective("NORTH RUINS", "Press X to authorize the group objective. The machines choose formation and local reactions; F follows them.")
+        hud.set_objective(
+            _localized_runtime_text("objective.base.north_ruins.title", "NORTH RUINS"),
+            _localized_runtime_text("objective.base.north_ruins.detail", "Press X to authorize the group objective. The machines choose formation and local reactions; F follows them.")
+        )
     elif not run_state.expedition_core_recovered:
         objective_stage = 5
-        hud.set_objective("KEEP THE HEARTFORGE ALIVE", "The expedition exists physically elsewhere. The home remains exposed while the group travels and returns.")
+        hud.set_objective(
+            _localized_runtime_text("objective.base.heartforge.title", "KEEP THE HEARTFORGE ALIVE"),
+            _localized_runtime_text("objective.base.heartforge.detail", "The expedition exists physically elsewhere. The home remains exposed while the group travels and returns.")
+        )
 
 
 func _input_binding_hint(action: StringName, fallback: String) -> String:
