@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Tram Graveyard catenary pass — 2026-08-30
+
+The sparse background rail dressing now communicates a complete former power
+system: paired masts, crossarms, ceramic insulators, two tension wires and
+suspension drops. This replaces isolated overhead rods with a readable civic
+infrastructure silhouette while remaining presentation-only; no collision,
+route, operation, power-grid or player-managed system was introduced. Release
+regression coverage verifies the assembly, and live checks remain silent
+through Godot Dummy audio with `--quiet-audio`.
+
 ## Focused authored civic-wreck pass — 2026-08-30
 
 The six surrounding town vehicle wrecks now use one original authored

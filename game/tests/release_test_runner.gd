@@ -937,13 +937,17 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
     world.release_audio.strategic_ecology = saved_audio_ecology
     world.release_audio.endgame = saved_audio_endgame
     _expect(not world.release_animation.attached_subjects.is_empty(), "Release secondary animation must attach to world subjects.")
-    var rail_dressing := world.release_world_art.dressing_root.find_child("HighDefinitionRailDressing", true, false) if world.release_world_art.dressing_root != null else null
+    var tram_region_root := world.release_world_art.ensure_region_dressing(&"region.tram_graveyard") if world.release_world_art != null else null
+    await process_frame
+    var rail_dressing := tram_region_root.find_child("HighDefinitionRailDressing", true, false) if tram_region_root != null else null
     _expect(rail_dressing != null, "Release rail dressing must expose a bounded high-definition carriage layer.")
     if rail_dressing != null:
         _expect(rail_dressing.find_child("DerailedTram00", true, false) != null and rail_dressing.find_child("TramWindow00_00", true, false) != null, "Release rail dressing must expose layered carriage shell and window detail.")
         _expect(rail_dressing.find_child("TramRoofPlate00", true, false) != null and rail_dressing.find_child("TramBeltRail00_Front", true, false) != null and rail_dressing.find_child("TramWindow00_00_Front", true, false) != null, "Release rail dressing must expose paired carriage shell sides, roof plate and belt rails.")
         _expect(rail_dressing.find_child("TramServicePanel00", true, false) != null and rail_dressing.find_child("TramRoofVent00", true, false) != null, "Release rail dressing must expose service and roof hardware.")
         _expect(rail_dressing.find_child("TramBogiePlate00_00", true, false) != null and rail_dressing.find_child("TramAxle00_00", true, false) != null, "Release rail dressing must expose readable undercarriage detail.")
+        _expect(rail_dressing.find_child("CatenaryMast00_00", true, false) != null and rail_dressing.find_child("CatenaryCrossarm00_00", true, false) != null, "Release rail dressing must expose paired overhead-service support hardware.")
+        _expect(rail_dressing.find_child("CatenaryInsulator00_00_L", true, false) != null and rail_dressing.find_child("CatenaryDrop00_01", true, false) != null and rail_dressing.find_child("OverheadLine00_00", true, false) != null, "Release rail dressing must expose insulated catenary spans and suspension drops.")
     var archive_dressing := world.release_world_art.dressing_root.find_child("HighDefinitionArchiveDressing", true, false) if world.release_world_art.dressing_root != null else null
     _expect(archive_dressing != null, "Release archive dressing must expose a bounded high-definition records layer.")
     if archive_dressing != null:

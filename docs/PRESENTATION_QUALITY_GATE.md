@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Tram Graveyard catenary pass
+
+The sparse background rail dressing now reads as a former electrified civic
+rail system through paired support masts, crossarms, insulators, tension wires
+and suspension drops. It stays behind the authored carriage focal pair and is
+presentation-only, preserving route, collision, simulation and autonomy
+contracts. Live review uses Godot Dummy audio with `--quiet-audio`; no physical
+speakers are used.
+
 ## 2026-08-30 — Authored civic-wreck pass
 
 The six surrounding civic vehicle wrecks now use one original imported

@@ -1370,7 +1370,25 @@ func _dress_rail(root: Node3D) -> void:
             var bogie_x := -1.4 + float(bogie_index) * 2.8
             ModelKit3D.add_beveled_box(carriage, Vector3(0.95, 0.16, 1.25), Vector3(bogie_x, -0.03, 0.0), rust, Vector3.ZERO, "TramBogiePlate%02d_%02d" % [index, bogie_index], 0.14)
             ModelKit3D.add_cylinder(carriage, 0.18, 1.28, Vector3(bogie_x, -0.16, 0.0), metal, Vector3(0.0, 0.0, PI * 0.5), "TramAxle%02d_%02d" % [index, bogie_index])
-        ModelKit3D.add_cylinder(root, 0.05, 8.0, position + Vector3.UP * 5.0, rust, Vector3(0.0, 0.0, 1.5708), "OverheadLine")
+        # The background service line is a presentation-only catenary: paired
+        # masts, crossarms, ceramic insulators and a tension span make the
+        # railway's former power system legible without adding route blockers
+        # or another simulated infrastructure system.
+        var insulator := ModelKit3D.material(Color("a8b5ad"), 0.18, 0.34)
+        for mast_index in range(2):
+            var mast_x := -2.65 if mast_index == 0 else 2.65
+            var mast_base := position + Vector3(mast_x, 0.0, -1.38)
+            ModelKit3D.add_tapered_cylinder(rail_detail, 0.075, 0.11, 5.45, mast_base + Vector3.UP * 2.72, metal, Vector3.ZERO, "CatenaryMast%02d_%02d" % [index, mast_index])
+            ModelKit3D.add_beveled_box(rail_detail, Vector3(0.18, 0.12, 2.75), mast_base + Vector3.UP * 5.25, metal, Vector3.ZERO, "CatenaryCrossarm%02d_%02d" % [index, mast_index], 0.04)
+            for arm_side in [-1.0, 1.0]:
+                var insulator_position := mast_base + Vector3(0.0, 5.43, arm_side * 1.08)
+                ModelKit3D.add_tapered_cylinder(rail_detail, 0.075, 0.045, 0.22, insulator_position, insulator, Vector3.ZERO, "CatenaryInsulator%02d_%02d_%s" % [index, mast_index, "L" if arm_side < 0.0 else "R"])
+        for wire_index in range(2):
+            var wire_z := -0.30 + float(wire_index) * 0.62
+            ModelKit3D.add_cylinder(rail_detail, 0.026 if wire_index == 0 else 0.022, 5.55, position + Vector3(0.0, 5.43 + float(wire_index) * 0.28, wire_z), rust if wire_index == 0 else metal, Vector3(0.0, 0.0, PI * 0.5), "OverheadLine%02d_%02d" % [index, wire_index])
+        for drop_index in range(3):
+            var drop_x := -1.85 + float(drop_index) * 1.85
+            ModelKit3D.add_cylinder(rail_detail, 0.018, 0.56, position + Vector3(drop_x, 5.62, -0.30), rust, Vector3.ZERO, "CatenaryDrop%02d_%02d" % [index, drop_index])
 
 
 func _dress_nest(root: Node3D) -> void:
