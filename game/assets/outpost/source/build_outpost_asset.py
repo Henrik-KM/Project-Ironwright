@@ -62,6 +62,9 @@ def build() -> None:
         "service_latch": mesh("ShelterServiceLatch", add_beveled_box(builder, (0.08, 0.12, 0.38), signal)),
         "roof_core": mesh("RoofPlateCore", add_beveled_box(builder, (4.1, 0.24, 3.8), rust)),
         "roof_ridge": mesh("RoofPlateRidge", add_beveled_box(builder, (2.4, 0.12, 0.18), panel)),
+        "canopy_core": mesh("ShelterCanopyCore", add_beveled_box(builder, (2.55, 0.38, 1.55), iron)),
+        "canopy_ridge": mesh("ShelterCanopyRidge", add_beveled_box(builder, (1.72, 0.1, 0.18), panel)),
+        "canopy_lens": mesh("ShelterCanopyLens", add_beveled_box(builder, (1.18, 0.16, 0.06), signal)),
         "roof_rib": mesh("RoofServiceRib", add_beveled_box(builder, (0.16, 0.18, 3.32), iron)),
         "roof_brace": mesh("RoofServiceBrace", add_beveled_box(builder, (0.2, 0.2, 0.72), rust)),
         "vent_core": mesh("CoreVentCore", add_beveled_box(builder, (2.1, 0.62, 0.12), panel)),
@@ -99,7 +102,17 @@ def build() -> None:
         shelter_children.append(add(node("CoreShelterCornerCap%02d" % index, mesh_ids["corner_cap"], position)))
     shelter = add(node("CoreShelter", None, (0.0, 1.35, 0.0), shelter_children, {"socket_type": "shared_shelter_shell"}))
 
-    roof_children = [add(node("RoofPlateCore", mesh_ids["roof_core"])), add(node("RoofPlateRidge", mesh_ids["roof_ridge"], (0.0, 0.16, 0.0)))]
+    roof_children = [
+        add(node("RoofPlateCore", mesh_ids["roof_core"])),
+        add(node("RoofPlateRidge", mesh_ids["roof_ridge"], (0.0, 0.16, 0.0))),
+        # A compact raised canopy breaks the repeated frame silhouette and
+        # gives the shelter a legible maintained instrument face at review
+        # distance without changing the outpost footprint or sockets.
+        add(node("ShelterCanopy", mesh_ids["canopy_core"], (0.0, 0.32, -1.0), extras={"surface": "raised_service_canopy"})),
+        add(node("ShelterCanopyRidge", mesh_ids["canopy_ridge"], (0.0, 0.55, -1.0))),
+        add(node("ShelterCanopyLens", mesh_ids["canopy_lens"], (0.0, 0.33, -1.78), extras={"surface": "canopy_service_lens"})),
+        add(node("ShelterCanopyRearLens", mesh_ids["canopy_lens"], (0.0, 0.33, 1.78), extras={"surface": "canopy_service_lens"})),
+    ]
     for index, x in enumerate((-1.35, 0.0, 1.35)):
         roof_children.append(add(node("RoofServiceRib%02d" % index, mesh_ids["roof_rib"], (x, 0.14, 0.0))))
     roof_children.extend([
@@ -139,7 +152,7 @@ def build() -> None:
         "accessors": builder.accessors,
         "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
-        "extras": {"ironwright_asset_id": "outpost.shelter.v1", "asset_quality": "authored_high_definition", "manufactured_surface_profile": "chamfered_high_definition", "required_nodes": ["OutpostModel", "Foundation", "CoreShelter", "CoreShelterCore", "RoofPlate", "CoreVent", "CoreServicePanel", "StatusBeacon", "ProductionAssetMarker", "ShelterWindowFrame00", "ShelterWindowMullion00", "RoofServiceRib01", "FoundationAnchor00"]},
+        "extras": {"ironwright_asset_id": "outpost.shelter.v1", "asset_quality": "authored_high_definition", "manufactured_surface_profile": "chamfered_high_definition", "required_nodes": ["OutpostModel", "Foundation", "CoreShelter", "CoreShelterCore", "RoofPlate", "ShelterCanopy", "ShelterCanopyRidge", "ShelterCanopyLens", "CoreVent", "CoreServicePanel", "StatusBeacon", "ProductionAssetMarker", "ShelterWindowFrame00", "ShelterWindowMullion00", "RoofServiceRib01", "FoundationAnchor00"]},
     }
     output_path = ASSET_ROOT / "outpost" / "outpost.gltf"
     output_path.parent.mkdir(parents=True, exist_ok=True)

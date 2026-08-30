@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused outpost canopy silhouette pass — 2026-08-30
+
+The shared authored outpost shelter now has a compact raised canopy, ridge and
+front service lens parented under its existing roof socket. This breaks the
+repeated horizontal Tier III deck rhythm and gives the fixed-site shelter a
+clearer maintained instrument identity without adding a structure, collision,
+route, operation, save field or player-managed task. The manifest and
+aesthetic gate cover the stable nodes; live review uses Godot Dummy audio with
+`--quiet-audio` and no physical speakers.
+
 ## Focused Sporecaster spray-organ pass — 2026-08-30
 
 The authored Sporecaster now has a parented central spray rim and bright pore

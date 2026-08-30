@@ -1514,6 +1514,10 @@ func _run_all() -> void:
         _expect(_find_named(sample, "ProductionAssetMarker") != null, "The authored outpost shelter must expose its production asset marker.")
         _expect(_find_named(sample, "ShelterWindowFrame00") != null and _find_named(sample, "ShelterWindowMullion00") != null, "The authored outpost shelter must expose layered window-frame and mullion hardware.")
         _expect(_find_named(sample, "ShelterServiceDoor") != null and _find_named(sample, "RoofServiceRib01") != null and _find_named(sample, "FoundationAnchor00") != null, "The authored outpost shelter must expose service-door, roof-rib and foundation-anchor detail.")
+        var shelter_canopy := _find_named(sample, "ShelterCanopy") as MeshInstance3D
+        var shelter_canopy_lens := _find_named(sample, "ShelterCanopyLens") as MeshInstance3D
+        var shelter_canopy_rear_lens := _find_named(sample, "ShelterCanopyRearLens") as MeshInstance3D
+        _expect(shelter_canopy != null and shelter_canopy_lens != null and shelter_canopy_rear_lens != null and shelter_canopy.get_parent().name == "RoofPlate" and shelter_canopy_lens.get_parent().name == "RoofPlate" and shelter_canopy_rear_lens.get_parent().name == "RoofPlate" and _mesh_vertex_count(shelter_canopy) > 24, "The authored outpost shelter must retain a dense parented raised canopy and bidirectional service lenses for a readable non-flat roof silhouette.")
         _expect(_find_named(sample, "OutpostDamagePresentation") != null and _find_named(sample, "OutpostDamageScar00") != null and _find_named(sample, "OutpostDamageLeak00") != null, "Outposts must expose bounded integrity damage-memory presentation sockets.")
         _expect(_find_named(sample, "CoreShelterCore") != null and _find_named(sample, "CoreVent") != null, "Outposts must use the high-definition shelter and service-surface treatment.")
         _expect(_find_named(sample, "OutpostServiceSpine") != null and _find_named(sample, "ServiceSpineHousing") != null and _find_named(sample, "ServiceSpinePanel") != null, "Tiered outposts must expose a coherent high-definition service spine behind their role hardware.")

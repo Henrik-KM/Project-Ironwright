@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Outpost canopy silhouette pass
+
+The authored outpost shelter now carries a compact raised canopy, ridge and
+front service lens above its existing roof plate. The added volume interrupts
+the repeated Tier III deck rhythm and gives the fixed-site machine a stronger
+maintained focal silhouette at review distance. It remains presentation-only,
+inside the existing footprint, and preserves sockets, collision, navigation,
+operation, persistence and player-control boundaries. Live review uses Godot
+Dummy audio with `--quiet-audio`; no physical speakers are used.
+
 ## 2026-08-30 — Sporecaster spray-organ focal pass
 
 The authored Sporecaster now carries a nested central spray rim and luminous
