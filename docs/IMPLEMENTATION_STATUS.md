@@ -6958,3 +6958,13 @@ roster checks and requires silent late-organic live review before merge.
 - strengthened commercial-release coverage for the widened lens and adjacent
   shelter separation; exact exported review remains silent through Godot Dummy
   audio with `--quiet-audio`.
+
+## Focused opening vehicle-wreck anatomy pass — 2026-08-30
+
+- organized the authored civic wreck glTF into a stable runtime high-definition
+  anatomy layer covering its cab, windows, wheels, axles, service access,
+  status hardware, cable bundles and broken-glass group;
+- added a visible undercarriage suspension strut while preserving the existing
+  wreck body, collision, salvage interaction and authored asset transform;
+- closed the opening vertical-slice presentation guard for layered vehicle
+  wrecks, with no new gameplay task or persistent state.

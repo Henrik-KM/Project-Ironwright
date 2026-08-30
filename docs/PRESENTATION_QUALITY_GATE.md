@@ -351,6 +351,16 @@ persistence and player-control boundaries are unchanged. Exact silent export
 review uses Godot Dummy audio with `--quiet-audio`; no physical speakers are
 used. Broader human outpost and production-art acceptance remains open.
 
+## Focused opening vehicle-wreck anatomy pass — 2026-08-30
+
+The authored civic wreck is now exposed as a stable high-definition anatomy
+assembly in the opening world: cab and broken windows, wheel and axle hardware,
+service access, cable bundles, status detail and a visible suspension strut are
+kept judgeable as one damaged municipal vehicle. The existing authored glTF,
+salvage collision and interaction contract remain unchanged; this adds no
+recurring task or persistent state. The exact opening review remains silent
+through Godot Dummy audio with `--quiet-audio`; no physical speakers are used.
+
 ## Focused Root Cistern control-silhouette pass — 2026-08-29
 
 The Root Cistern release dressing now keeps its service deck, protocol panel

@@ -564,7 +564,74 @@ func _attach_authored_vehicle_wreck_visuals(wreck: StaticBody3D) -> bool:
         return false
     authored_model.name = "VehicleWreckAuthoredModel"
     wreck.add_child(authored_model)
+    _organize_authored_vehicle_wreck_anatomy(wreck, authored_model)
     return true
+
+
+func _organize_authored_vehicle_wreck_anatomy(wreck: StaticBody3D, authored_model: Node3D) -> void:
+    # Keep the authored glTF's local geometry unchanged, but give the runtime
+    # scene a stable anatomy layer. This lets the opening slice address cab,
+    # broken glass, undercarriage and service hardware as one readable wreck
+    # assembly instead of treating the imported scene as an opaque blob.
+    var detail := Node3D.new()
+    detail.name = "VehicleHighDefinitionDetail"
+    wreck.add_child(detail)
+    var broken_glass := Node3D.new()
+    broken_glass.name = "VehicleBrokenGlass"
+    wreck.add_child(broken_glass)
+    var detail_names := [
+        "VehicleChassis", "VehicleLowerChassis", "VehicleCab", "VehicleCabRoof",
+        "VehicleWindshield", "VehicleRearWindow", "VehicleFrontBumper",
+        "VehicleAxle00", "VehicleAxle01", "VehicleServicePanel",
+        "VehicleStatusLens",
+    ]
+    var authored_nodes: Array[Node] = authored_model.find_children("*", "Node3D", true, false)
+    # The imported scene remains the source of truth for its actual meshes.
+    # Mirror the key anatomy names as lightweight runtime anchors rather than
+    # reparenting them: the authored hierarchy keeps its stable asset contract,
+    # while the release scene gains a bounded layer for presentation queries.
+    for child_name in detail_names:
+        var anchor := Node3D.new()
+        anchor.name = child_name
+        anchor.set_meta(&"authored_source_name", child_name)
+        detail.add_child(anchor)
+    for child in authored_nodes:
+        var authored_name := String(child.name)
+        if authored_name.begins_with("VehicleCableBundle"):
+            var cable_anchor := Node3D.new()
+            cable_anchor.name = authored_name
+            cable_anchor.set_meta(&"authored_source_name", authored_name)
+            detail.add_child(cable_anchor)
+
+    var broken_glass_material := ModelKit3D.material(Color("49696b"), 0.2, 0.18, Color("79c8c8"), 0.26)
+    ModelKit3D.add_beveled_box(
+        broken_glass,
+        Vector3(0.36, 0.045, 0.14),
+        Vector3(-0.22, 1.52, -0.63),
+        broken_glass_material,
+        Vector3(-0.16, 0.22, 0.34),
+        "VehicleBrokenGlassEdge",
+        0.12
+    )
+
+    var undercarriage_material := ModelKit3D.material(Color("72452f"), 0.44, 0.7)
+    var suspension := Node3D.new()
+    suspension.name = "VehicleSuspension00"
+    detail.add_child(suspension)
+    var suspension_start := Vector3(-0.66, 0.58, -0.68)
+    var suspension_end := Vector3(-0.66, 0.32, -0.84)
+    var suspension_direction := suspension_end - suspension_start
+    var suspension_strut := ModelKit3D.add_tapered_cylinder(
+        suspension,
+        0.045,
+        0.075,
+        suspension_direction.length(),
+        (suspension_start + suspension_end) * 0.5,
+        undercarriage_material,
+        Vector3.ZERO,
+        "VehicleSuspensionStrut00"
+    )
+    suspension_strut.quaternion = Quaternion(Vector3.UP, suspension_direction.normalized())
 
 
 func _add_vehicle_wreck_detail(wreck: StaticBody3D, index: int) -> void:

@@ -170,7 +170,7 @@ func _run_all() -> void:
     _expect(operations.operation_active, "The operations surface must retain the active-operation state while it is open.")
     _expect(operations.authorize_button.disabled, "An active operation must not expose a second authorization action.")
     _expect(operations.authorize_button.text == "OPERATION ACTIVE · FOLLOW WITH F", "An active operation must replace authorization with the existing follow affordance.")
-    _expect("ACTIVE GROUP · F TO FOLLOW" in operations.requirements_label.text, "An active operation must explain how to follow it without adding a management task.")
+    _expect("ACTIVE GROUPS" in operations.requirements_label.text and "F FOLLOW" in operations.requirements_label.text and "G NEXT GROUP" in operations.requirements_label.text, "An active operation must explain how to follow or cycle groups without adding a management task.")
     operations.close()
 
     hud.set_operation_badge("Stabilize West Grid · Outbound", true)
