@@ -1256,3 +1256,158 @@ func _add_authored_family_anatomy_finish() -> void:
             Vector3(1.0, 0.78, 0.92),
             "OrganicVascularNode%s" % ("L" if side_sign < 0.0 else "R")
         )
+    _add_late_family_focal_anatomy(finish_root, tissue, rim, scale_factor)
+
+
+func _add_late_family_focal_anatomy(finish_root: Node3D, tissue: Material, rim: Material, scale_factor: float) -> void:
+    # The imported late-family shells already own animation and silhouette.
+    # This small local layer gives each family one unmistakable focal organ
+    # without touching collision, ecology, gameplay, or recurring workload.
+    match species:
+        &"roofleaper":
+            for side in [-1.0, 1.0]:
+                var side_sign := float(side)
+                ModelKit3D.add_capsule(
+                    finish_root,
+                    0.045 * scale_factor,
+                    0.34 * scale_factor,
+                    Vector3(side_sign * 0.23 * scale_factor, 1.34 * scale_factor, -0.34 * scale_factor),
+                    rim,
+                    Vector3(0.0, side_sign * 0.36, side_sign * 0.58),
+                    "RoofleaperSensoryTalon%s" % ("L" if side_sign < 0.0 else "R")
+                )
+            ModelKit3D.add_sphere(
+                finish_root,
+                0.085 * scale_factor,
+                Vector3(0.0, 1.35 * scale_factor, -0.42 * scale_factor),
+                rim,
+                Vector3(1.35, 0.72, 0.78),
+                "RoofleaperCentralOculus"
+            )
+        &"glassmoth":
+            var ocellus_positions := [Vector3(-0.16, 1.37, -0.36), Vector3(0.0, 1.43, -0.43), Vector3(0.16, 1.37, -0.36)]
+            for index in ocellus_positions.size():
+                ModelKit3D.add_sphere(
+                    finish_root,
+                    (0.07 if index == 1 else 0.052) * scale_factor,
+                    ocellus_positions[index] * scale_factor,
+                    rim,
+                    Vector3(1.0, 0.76, 0.66),
+                    "GlassmothOcellus%d" % index
+                )
+            ModelKit3D.add_torus(
+                finish_root,
+                0.22 * scale_factor,
+                0.022 * scale_factor,
+                Vector3(0.0, 1.34 * scale_factor, -0.35 * scale_factor),
+                rim,
+                Vector3(PI * 0.5, 0.0, 0.0),
+                "GlassmothLensCollar",
+                32,
+                6
+            )
+        &"miremaw":
+            ModelKit3D.add_organic_plate(
+                finish_root,
+                0.24 * scale_factor,
+                Vector3(0.0, 0.84 * scale_factor, -0.46 * scale_factor),
+                tissue,
+                rim,
+                Vector3(1.72, 0.52, 0.82),
+                "MiremawMawGuard",
+                true
+            )
+            for side in [-1.0, 1.0]:
+                var side_sign := float(side)
+                ModelKit3D.add_capsule(
+                    finish_root,
+                    0.038 * scale_factor,
+                    0.26 * scale_factor,
+                    Vector3(side_sign * 0.28 * scale_factor, 0.92 * scale_factor, -0.57 * scale_factor),
+                    rim,
+                    Vector3(0.0, side_sign * 0.52, 0.0),
+                    "MiremawMawLatch%s" % ("L" if side_sign < 0.0 else "R")
+                )
+        &"carrionbell":
+            ModelKit3D.add_torus(
+                finish_root,
+                0.34 * scale_factor,
+                0.058 * scale_factor,
+                Vector3(0.0, 1.08 * scale_factor, -0.45 * scale_factor),
+                rim,
+                Vector3(PI * 0.5, 0.0, 0.0),
+                "CarrionbellThroatCollar",
+                40,
+                8
+            )
+            ModelKit3D.add_sphere(
+                finish_root,
+                0.13 * scale_factor,
+                Vector3(0.0, 1.08 * scale_factor, -0.49 * scale_factor),
+                rim,
+                Vector3(1.0, 0.72, 0.72),
+                "CarrionbellThroatNodule"
+            )
+        &"rootweaver":
+            ModelKit3D.add_organic_plate(
+                finish_root,
+                0.22 * scale_factor,
+                Vector3(0.0, 1.25 * scale_factor, -0.46 * scale_factor),
+                tissue,
+                rim,
+                Vector3(1.28, 0.8, 0.7),
+                "RootweaverRouteMask",
+                true
+            )
+            for side in [-1.0, 1.0]:
+                var side_sign := float(side)
+                ModelKit3D.add_capsule(
+                    finish_root,
+                    0.035 * scale_factor,
+                    0.38 * scale_factor,
+                    Vector3(side_sign * 0.19 * scale_factor, 1.15 * scale_factor, -0.44 * scale_factor),
+                    rim,
+                    Vector3(0.0, side_sign * 0.34, side_sign * 0.3),
+                    "RootweaverRouteTendril%s" % ("L" if side_sign < 0.0 else "R")
+                )
+        &"thornback":
+            ModelKit3D.add_organic_plate(
+                finish_root,
+                0.25 * scale_factor,
+                Vector3(0.0, 1.22 * scale_factor, -0.48 * scale_factor),
+                tissue,
+                rim,
+                Vector3(1.42, 1.0, 0.72),
+                "ThornbackFaceShield",
+                true
+            )
+            ModelKit3D.add_tapered_cylinder(
+                finish_root,
+                0.065 * scale_factor,
+                0.018 * scale_factor,
+                0.42 * scale_factor,
+                Vector3(0.0, 1.46 * scale_factor, -0.5 * scale_factor),
+                rim,
+                Vector3(0.0, 0.0, 0.0),
+                "ThornbackFaceBarb"
+            )
+        &"ashmantle":
+            ModelKit3D.add_torus(
+                finish_root,
+                0.29 * scale_factor,
+                0.052 * scale_factor,
+                Vector3(0.0, 0.98 * scale_factor, -0.48 * scale_factor),
+                rim,
+                Vector3(PI * 0.5, 0.0, 0.0),
+                "AshmantleThermalCollar",
+                40,
+                8
+            )
+            ModelKit3D.add_sphere(
+                finish_root,
+                0.14 * scale_factor,
+                Vector3(0.0, 0.99 * scale_factor, -0.52 * scale_factor),
+                rim,
+                Vector3(1.05, 0.78, 0.7),
+                "AshmantleThermalCore"
+            )

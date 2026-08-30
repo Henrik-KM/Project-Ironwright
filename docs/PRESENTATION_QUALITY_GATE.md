@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Late-organic focal-anatomy review
+
+The seven late-organic families now carry one restrained, family-specific
+focal organ over the shared living finish: Roofleaper sensory talons and
+oculus, Glassmoth lens collar, Miremaw maw guard, Carrion Bell throat collar,
+Rootweaver route mask, Thornback face shield, and Ashmantle thermal collar.
+These structures are presentation-only, remain under the existing imported
+actor hierarchy, and do not change collision, ecology, animation ownership,
+combat, saves, or recurring machine workload. The focused gallery is reviewed
+live with Godot Dummy audio and `--quiet-audio`; no physical speakers are used.
+
 ## 2026-08-30 — Bulwark projector-instrument review
 
 The indispensable Bulwark protection emitter now reads as a finished

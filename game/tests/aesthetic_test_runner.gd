@@ -1584,6 +1584,16 @@ func _run_all() -> void:
                 &"ashmantle": convex_sheet_name = &"AshmantleHeatLouverL"
             var convex_sheet := _find_first_mesh(_find_named(enemy_samples[index], convex_sheet_name) as Node3D)
             _expect(convex_sheet != null and _mesh_vertex_count(convex_sheet) >= 200, "The %s shared anatomy sheet must retain dense convex close-camera geometry." % species_names[index])
+            var focal_anatomy_name := &"RoofleaperCentralOculus"
+            match species_names[index]:
+                &"glassmoth": focal_anatomy_name = &"GlassmothLensCollar"
+                &"miremaw": focal_anatomy_name = &"MiremawMawGuard"
+                &"carrionbell": focal_anatomy_name = &"CarrionbellThroatCollar"
+                &"rootweaver": focal_anatomy_name = &"RootweaverRouteMask"
+                &"thornback": focal_anatomy_name = &"ThornbackFaceShield"
+                &"ashmantle": focal_anatomy_name = &"AshmantleThermalCollar"
+            var focal_anatomy := _find_named(enemy_samples[index], focal_anatomy_name) as Node3D
+            _expect(focal_anatomy != null and _find_first_mesh(focal_anatomy) != null, "The %s late-family focal organ must remain present as readable presentation anatomy." % species_names[index])
             if species_names[index] == &"thornback":
                 var thornback_crown_depth := convex_sheet.mesh.get_aabb().size.y if convex_sheet != null and convex_sheet.mesh != null else 0.0
                 _expect(thornback_crown_depth >= 0.30, "The Thornback crown shield must retain folded living depth rather than collapsing into a thin plate.")
