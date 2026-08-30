@@ -2,6 +2,7 @@ class_name ProceduralCity3D
 extends Node3D
 
 const WORLD_EXTENT := 78.0
+const AUTHORED_VEHICLE_WRECK_SCENE := "res://assets/vehicle_wreck/vehicle_wreck.gltf"
 
 var road_material: StandardMaterial3D
 var sidewalk_material: StandardMaterial3D
@@ -9,6 +10,8 @@ var building_materials: Array[StandardMaterial3D] = []
 var rubble_material: StandardMaterial3D
 var metal_material: StandardMaterial3D
 var curb_material: StandardMaterial3D
+var authored_vehicle_wreck_scene: PackedScene
+var authored_vehicle_wreck_load_attempted := false
 
 
 func _ready() -> void:
@@ -496,12 +499,14 @@ func _build_wrecks_and_debris() -> void:
         wreck.position = car_positions[index]
         wreck.rotation.y = 0.22 * float(index % 3)
         add_child(wreck)
-        ModelKit3D.add_beveled_box(wreck, Vector3(2.8, 0.65, 1.45), Vector3(0.0, 0.48, 0.0), metal_material, Vector3(0.08, 0.0, 0.04), "Vehicle", 0.18)
-        ModelKit3D.add_surface_panel(wreck, Vector3(1.1, 0.38, 0.08), Vector3(0.0, 0.82, -0.7), rubble_material, metal_material, Vector3(0.08, 0.0, 0.0), "VehicleBrokenGlass")
-        for side in [-1.0, 1.0]:
-            ModelKit3D.add_cylinder(wreck, 0.18, 0.12, Vector3(side * 0.92, 0.28, -0.7), metal_material, Vector3(PI * 0.5, 0.0, 0.0), "VehicleWheel")
-        _add_vehicle_wreck_detail(wreck, index)
+        if not _attach_authored_vehicle_wreck_visuals(wreck):
+            ModelKit3D.add_beveled_box(wreck, Vector3(2.8, 0.65, 1.45), Vector3(0.0, 0.48, 0.0), metal_material, Vector3(0.08, 0.0, 0.04), "Vehicle", 0.18)
+            ModelKit3D.add_surface_panel(wreck, Vector3(1.1, 0.38, 0.08), Vector3(0.0, 0.82, -0.7), rubble_material, metal_material, Vector3(0.08, 0.0, 0.0), "VehicleBrokenGlass")
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_cylinder(wreck, 0.18, 0.12, Vector3(side * 0.92, 0.28, -0.7), metal_material, Vector3(PI * 0.5, 0.0, 0.0), "VehicleWheel")
+            _add_vehicle_wreck_detail(wreck, index)
         ModelKit3D.add_collision_box(wreck, Vector3(2.8, 0.65, 1.45), Vector3(0.0, 0.48, 0.0))
+
 
     var debris_positions := [
         Vector3(-7.0, 0.0, -9.0), Vector3(8.0, 0.0, 11.0), Vector3(-31.0, 0.0, 20.0),
@@ -543,6 +548,23 @@ func _build_wrecks_and_debris() -> void:
                 Vector3(0.72, 0.0, 0.38 + float(bar) * 0.22),
                 "RubbleRebar%02d" % bar
             )
+
+
+func _attach_authored_vehicle_wreck_visuals(wreck: StaticBody3D) -> bool:
+    if not authored_vehicle_wreck_load_attempted:
+        authored_vehicle_wreck_load_attempted = true
+        authored_vehicle_wreck_scene = load(AUTHORED_VEHICLE_WRECK_SCENE) as PackedScene
+        if authored_vehicle_wreck_scene == null:
+            push_error("Vehicle wreck authored model failed to load: %s. Using bounded procedural fallback." % AUTHORED_VEHICLE_WRECK_SCENE)
+    if authored_vehicle_wreck_scene == null:
+        return false
+    var authored_model := authored_vehicle_wreck_scene.instantiate() as Node3D
+    if authored_model == null:
+        push_error("Vehicle wreck authored model did not instantiate as Node3D. Using bounded procedural fallback.")
+        return false
+    authored_model.name = "VehicleWreckAuthoredModel"
+    wreck.add_child(authored_model)
+    return true
 
 
 func _add_vehicle_wreck_detail(wreck: StaticBody3D, index: int) -> void:

@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Authored civic-wreck pass
+
+The six surrounding civic vehicle wrecks now use one original imported
+high-definition glTF shell instead of relying on runtime primitives for their
+primary silhouette. Close-range review gains a rounded chassis, layered cab
+and glazing, wheel/rim assemblies, service access, warning hardware, cable
+bundles and damage shards. Existing collision, placement, rotation and the
+bounded procedural fallback remain authoritative. Live review uses Godot
+Dummy audio with `--quiet-audio`; no physical speakers are used.
+
 ## 2026-08-30 — Authored salvage landmark pass
 
 The opening salvage wreck now uses an original imported high-definition glTF

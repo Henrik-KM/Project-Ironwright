@@ -1,0 +1,30 @@
+{
+  "asset_id": "vehicle_wreck.civic_shell.v1",
+  "asset_quality": "authored_high_definition",
+  "runtime_scene": "res://assets/vehicle_wreck/vehicle_wreck.gltf",
+  "source_builder": "game/assets/vehicle_wreck/source/build_vehicle_wreck_asset.py",
+  "source_type": "original_project_ironwright_shared_mesh_builder",
+  "third_party_assets": [],
+  "presentation_only": true,
+  "stable_nodes": [
+    "VehicleWreckModel",
+    "VehicleChassis",
+    "VehicleLowerChassis",
+    "VehicleCab",
+    "VehicleCabRoof",
+    "VehicleWindshield",
+    "VehicleRearWindow",
+    "VehicleFrontBumper",
+    "VehicleServicePanel",
+    "VehicleStatusLens",
+    "VehicleAxle00",
+    "VehicleCableBundle00",
+    "VehicleGlassShard00",
+    "ProductionAssetMarker"
+  ],
+  "socket_contract": [
+    "civic_wreck_shell",
+    "service_panel",
+    "status_lens"
+  ]
+}

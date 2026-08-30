@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused authored civic-wreck pass — 2026-08-30
+
+The six surrounding town vehicle wrecks now use one original authored
+high-definition glTF shell with a rounded chassis, layered cab and glass,
+wheel/rim hardware, axles, service access, warning hardware, cable bundles
+and damage shards. Their existing static collision, placement, rotation and
+bounded procedural detail fallback remain unchanged; the imported shell is
+presentation-only. The manifest, source builder, importer and aesthetic
+runner cover the package contract. Runtime review remains silent through
+Godot Dummy audio with `--quiet-audio`; no physical speakers are used.
+
 ## Focused authored salvage landmark pass — 2026-08-30
 
 The opening salvage target now uses an original authored high-definition glTF
