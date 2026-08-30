@@ -544,6 +544,56 @@ func _refresh_visuals() -> void:
             0.16
         )
 
+    # Continue the manufactured service core through the evolved frames. The
+    # riser is a presentation-only load path: it makes the stacked decks read
+    # as one inhabited shelter instead of a set of floating platforms, while
+    # staying inside the existing footprint and collision contract.
+    var riser_bottom_y := 2.42
+    var riser_top_y := 2.75 + float(maxi(tier - 1, 0)) * 0.62 - 0.18
+    var riser_height := maxf(0.26, riser_top_y - riser_bottom_y)
+    var riser := Node3D.new()
+    riser.name = "OutpostServiceRiser"
+    _model_root.add_child(riser)
+    var riser_center_y := (riser_bottom_y + riser_top_y) * 0.5
+    ModelKit3D.add_beveled_box(
+        riser,
+        Vector3(0.92, riser_height, 0.76),
+        Vector3(0.0, riser_center_y, 0.58),
+        dark,
+        Vector3.ZERO,
+        "ServiceRiserHousing",
+        0.18
+    )
+    ModelKit3D.add_surface_panel(
+        riser,
+        Vector3(0.68, maxf(0.12, riser_height - 0.16), 0.08),
+        Vector3(0.0, riser_center_y, 0.17),
+        panel,
+        tier_signal,
+        Vector3.ZERO,
+        "ServiceRiserFrontPanel"
+    )
+    for index in range(tier):
+        var collar_y := 2.68 + float(index) * 0.62
+        ModelKit3D.add_beveled_box(
+            riser,
+            Vector3(1.08, 0.07, 0.9),
+            Vector3(0.0, collar_y, 0.58),
+            frame_rust,
+            Vector3.ZERO,
+            "ServiceRiserAccessCollar%d" % (index + 1),
+            0.14
+        )
+        ModelKit3D.add_beveled_box(
+            riser,
+            Vector3(0.46, 0.06, 0.08),
+            Vector3(0.0, collar_y, 0.1),
+            tier_signal,
+            Vector3.ZERO,
+            "ServiceRiserAccessSignal%d" % (index + 1),
+            0.08
+        )
+
     for tier_index in range(tier):
         var y := 2.75 + float(tier_index) * 0.62
         var frame_name := "TierFrame%d" % (tier_index + 1)

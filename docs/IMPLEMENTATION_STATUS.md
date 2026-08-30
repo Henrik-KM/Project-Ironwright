@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused outpost silhouette pass — 2026-08-30
+
+The autonomous outpost now carries a bounded presentation-only service riser
+and tier access collars through its evolved frames. The added load path makes
+the authored shelter read as one grounded machine-built structure rather than
+disconnected service decks; it adds no collision, role, queue, resource, or
+player-managed maintenance. The aesthetic runner covers the new assembly.
+
 ## Focused shared late-organic torso-sheath pass — 2026-08-30
 
 The seven late organic authored shells now carry one dense, vertically folded

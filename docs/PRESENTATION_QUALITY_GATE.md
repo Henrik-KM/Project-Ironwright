@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Outpost service-riser silhouette pass
+
+The autonomous outpost now carries a bounded presentation-only vertical
+service riser and tier access collars through its evolved frames. The added
+load path makes the close Tier III shelter review read as one grounded
+machine-built structure while preserving collision, role, autonomy,
+persistence, and bounded-structure contracts. Live review uses Godot Dummy
+audio with `--quiet-audio`; no physical speakers are used.
+
 ## 2026-08-30 — Shared late-organic torso-sheath pass
 
 The seven late organic authored shells now carry one dense, vertically folded
