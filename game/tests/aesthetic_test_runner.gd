@@ -1741,6 +1741,9 @@ func _run_all() -> void:
             var apex_crown_plate := _find_named(enemy_samples[index], "ApexCrownPlate") as MeshInstance3D
             var apex_jaw_latch_mesh := apex_jaw_latch as MeshInstance3D
             _expect(apex_crown_plate != null and _mesh_vertex_count(apex_crown_plate) >= 48 and apex_jaw_latch_mesh != null and _mesh_vertex_count(apex_jaw_latch_mesh) >= 48 and _mesh_vertex_count(apex_jaw_tooth) >= 48, "Cistern Apex crown plate, jaw latch and tooth edge must retain chamfered high-definition attack hardware.")
+            var apex_jaw_root_l := _find_named(enemy_samples[index], "ApexJawRootCollarL") as MeshInstance3D
+            var apex_jaw_root_r := _find_named(enemy_samples[index], "ApexJawRootCollarR") as MeshInstance3D
+            _expect(apex_jaw_root_l != null and apex_jaw_root_r != null and apex_jaw_root_l.get_parent().name == "ApexJawL" and apex_jaw_root_r.get_parent().name == "ApexJawR" and _mesh_vertex_count(apex_jaw_root_l) >= 700 and _mesh_vertex_count(apex_jaw_root_r) >= 700 and apex_jaw_root_l.mesh.get_aabb().size.y >= 0.24 and apex_jaw_root_r.mesh.get_aabb().size.y >= 0.24, "Cistern Apex jaws must retain dense paired root collars on their animated jaw sockets so the bite assembly reads as attached anatomy.")
         if species_names[index] == &"broodmass":
             var brood_maw := _find_named(enemy_samples[index], "BroodmassMaw") as Node3D
             var brood_plate := _find_named(enemy_samples[index], "BroodmassMawPlate") as Node3D

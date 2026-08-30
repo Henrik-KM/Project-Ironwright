@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Apex jaw-root attachment pass
+
+The authored Cistern Apex now carries paired dense folded collars at the roots
+of its existing animated jaws. The added anatomy closes the cheek-to-bite
+transition and keeps the final threat reading as one continuous living
+predator at close approach distance. It is presentation-only: animation
+ownership, collision, ecology, combat, saves and player workload are unchanged.
+Live review uses Godot Dummy audio with `--quiet-audio`; no physical speakers
+are used.
+
 ## 2026-08-30 — Carrion Bell resonator-attachment pass
 
 The Carrion Bell authored shell now carries a dense folded root collar under

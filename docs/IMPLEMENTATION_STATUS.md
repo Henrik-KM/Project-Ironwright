@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Apex jaw-root attachment pass — 2026-08-30
+
+The authored Cistern Apex now carries paired dense folded collars at the roots
+of its existing animated jaws. The collars close the transition from cheek to
+bite hardware so the final threat reads as one attached living predator at
+close approach distance. The addition is presentation-only and preserves
+animation ownership, collision, ecology, combat, saves and player workload.
+The asset manifest and aesthetic runner cover both stable nodes; live review
+uses Godot Dummy audio with `--quiet-audio`, with no physical speakers used.
+
 ## Focused Carrion Bell resonator-attachment pass — 2026-08-30
 
 The Carrion Bell authored shell now carries a dense folded root collar under

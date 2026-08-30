@@ -13,6 +13,8 @@ from typing import Sequence
 SOURCE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bulwark" / "source"))
 from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_box, add_cylinder, add_uv_sphere, quat  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "organic_families" / "source"))
+from build_authored_organic_assets import add_organic_lobe  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "apex.gltf"
@@ -108,6 +110,23 @@ def main() -> None:
         # Small tapered teeth give the final threat a readable bite edge at
         # approach distance without turning its jaw into a repeated bar.
         "JawTooth": mesh("JawTooth", add_tapered_cylinder(builder, 0.13, 0.018, 0.58, bone, 32)),
+        # The final threat's jaws need a continuous biological root rather
+        # than a separate bar emerging from the cheek. Keep the folded collar
+        # on the existing jaw socket so attack motion retains one owner.
+        "JawRootCollar": mesh(
+            "JawRootCollar",
+            add_organic_lobe(
+                builder,
+                (0.58, 0.34, 0.48),
+                flesh,
+                lobes=5,
+                rings=11,
+                sides=48,
+                scallop_amplitude=0.12,
+                leading_extension=0.24,
+                fold_strength=0.82,
+            ),
+        ),
     }
 
     nodes: list[dict] = [{
@@ -179,6 +198,15 @@ def main() -> None:
         add_node("ApexEye%s" % ("L" if side < 0 else "R"), mesh_ids["Eye"], (side * 0.34, 2.16, -1.62), extras={"socket_type": "threat_eye"})
         add_node("ApexCheek%s" % ("L" if side < 0 else "R"), mesh_ids["JawPlate"], (side * 0.64, 1.72, -1.15), rotation=(0.0, 0.0, side * 0.18))
         jaw = add_node("ApexJaw%s" % ("L" if side < 0 else "R"), mesh_ids["Jaw"], (side * 0.42, 1.15, -1.78), rotation=(0.82, 0.0, side * 0.12), extras={"socket_type": "jaw"})
+        add_node(
+            "ApexJawRootCollar%s" % ("L" if side < 0 else "R"),
+            mesh_ids["JawRootCollar"],
+            (0.0, 0.48, 0.08),
+            rotation=(0.12, 0.0, 0.0),
+            scale=(1.0, 0.92, 1.06),
+            parent=jaw,
+            extras={"surface": "jaw_root_attachment"},
+        )
         for tooth_index in range(3):
             add_node(
                 "ApexJawTooth%s%d" % ("L" if side < 0 else "R", tooth_index),
@@ -293,7 +321,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "apex.cistern.v1",
             "manufactured_surface_profile": "chamfered_high_definition",
-            "required_nodes": ["ApexModel", "Torso", "TorsoCore", "ApexCrown", "ApexJawL", "ApexMembraneL", "ApexFlankRootL", "ProductionAssetMarker"],
+            "required_nodes": ["ApexModel", "Torso", "TorsoCore", "ApexCrown", "ApexJawL", "ApexJawRootCollarL", "ApexJawRootCollarR", "ApexMembraneL", "ApexFlankRootL", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
         },
     }
