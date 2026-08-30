@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Rootweaver route-keel silhouette pass — 2026-08-30
+
+The Rootweaver route-controller face now carries a narrow vertical living keel
+through its existing focal mask. This interrupts the broad late-organic shell
+bands at close review distance without adding a socket, collision shape,
+animation owner, ecology rule, save field or player-managed work. The aesthetic
+test covers the stable presentation node; live review uses Godot Dummy audio
+with `--quiet-audio` and no physical speakers.
+The presentation-review root remains processable while the staged gallery is
+paused, keeping its exact screenshot callback deterministic.
+
 ## Focused outpost canopy silhouette pass — 2026-08-30
 
 The shared authored outpost shelter now has a compact raised canopy, ridge and

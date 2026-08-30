@@ -1,5 +1,17 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Rootweaver route-keel silhouette pass
+
+The authored Rootweaver focal mask now carries a narrow vertical route keel
+through its front plane. This breaks the close-gallery horizontal banding and
+gives the route-controller family a distinct living control landmark. The keel
+is presentation-only, stays inside the existing anatomy finish layer, and
+preserves collision, animation ownership, ecology, combat, saves and recurring
+machine workload. Live review uses Godot Dummy audio with `--quiet-audio`; no
+physical speakers are used.
+The review root remains processable while the staged gallery is intentionally
+paused, keeping the exact screenshot callback repeatable.
+
 ## 2026-08-30 — Outpost canopy silhouette pass
 
 The authored outpost shelter now carries a compact raised canopy, ridge and

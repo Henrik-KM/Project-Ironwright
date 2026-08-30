@@ -1359,6 +1359,19 @@ func _add_late_family_focal_anatomy(finish_root: Node3D, tissue: Material, rim: 
                 "RootweaverRouteMask",
                 true
             )
+            # A narrow living keel breaks the route mask's broad horizontal
+            # read at close distance. It remains presentation-only and sits in
+            # the same finish layer, so the imported actor hierarchy and
+            # existing animation/runtime ownership stay unchanged.
+            ModelKit3D.add_capsule(
+                finish_root,
+                0.052 * scale_factor,
+                0.66 * scale_factor,
+                Vector3(0.0, 1.24 * scale_factor, -0.60 * scale_factor),
+                rim,
+                Vector3(0.0, 0.0, 0.0),
+                "RootweaverRouteKeel"
+            )
             for side in [-1.0, 1.0]:
                 var side_sign := float(side)
                 ModelKit3D.add_capsule(

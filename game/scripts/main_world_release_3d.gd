@@ -1070,6 +1070,10 @@ func _start_run_variation_review() -> void:
 
 func _start_presentation_review() -> void:
 	presentation_review_active = true
+	# The gallery pauses the world after staging so the review fixture remains
+	# still, but the root must keep processing its camera and screenshot timer.
+	# This is review-only and does not change normal gameplay pause semantics.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	presentation_review_page = 0
 	presentation_review_capture_path = _presentation_review_capture_argument()
 	presentation_review_capture_frames = 0
