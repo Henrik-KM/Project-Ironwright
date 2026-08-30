@@ -324,11 +324,10 @@ def validate_release_packaging() -> None:
     if not any(
         command in workflow
         for command in [
-            "godot --headless --path game --export-release",
-            "godot --headless --audio-driver Dummy --path game --export-release",
+            "godot --headless --audio-driver Dummy --quiet-audio --path game --export-release",
         ]
     ):
-        raise legacy.ValidationError("Release workflow is missing a silent Godot export command")
+        raise legacy.ValidationError("Release workflow is missing a Godot export command with Dummy and quiet audio")
     windows_archive = "(cd windows && zip -9 -r ../ProjectIronwright-1.0.0-rc.1-Windows.zip .)"
     linux_archive = "(cd linux && tar -czf ../ProjectIronwright-1.0.0-rc.1-Linux.tar.gz .)"
     checksum_line = "sha256sum windows/ProjectIronwright.exe windows/ProjectIronwright.pck linux/ProjectIronwright.x86_64 linux/ProjectIronwright.pck ProjectIronwright-1.0.0-rc.1-Windows.zip ProjectIronwright-1.0.0-rc.1-Linux.tar.gz > SHA256SUMS.txt"

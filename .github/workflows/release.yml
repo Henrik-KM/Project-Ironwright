@@ -61,8 +61,8 @@ jobs:
       - name: Export Windows and Linux builds
         run: |
           mkdir -p dist/windows dist/linux
-          godot --headless --audio-driver Dummy --path game --export-release "Windows Desktop" ../dist/windows/ProjectIronwright.exe --quiet-audio
-          godot --headless --audio-driver Dummy --path game --export-release "Linux/X11" ../dist/linux/ProjectIronwright.x86_64 --quiet-audio
+          godot --headless --audio-driver Dummy --quiet-audio --path game --export-release "Windows Desktop" ../dist/windows/ProjectIronwright.exe
+          godot --headless --audio-driver Dummy --quiet-audio --path game --export-release "Linux/X11" ../dist/linux/ProjectIronwright.x86_64
           chmod +x dist/linux/ProjectIronwright.x86_64
 
       - name: Write checksums and package archives
