@@ -125,6 +125,11 @@ def main() -> None:
         # into a readable living delivery organ at review distance.
         "SacRim": mesh("SacRim", add_uv_sphere(builder, 0.15, bone, 20, 32)),
         "SacPore": mesh("SacPore", add_uv_sphere(builder, 0.065, eye, 16, 24)),
+        # The cowl's central spray aperture gives the infestation role one
+        # readable forward-facing focal organ instead of leaving the gills
+        # and sacs to carry the whole silhouette at tactical distance.
+        "SprayRim": mesh("SprayRim", add_uv_sphere(builder, 0.15, bone, 20, 32)),
+        "SprayAperture": mesh("SprayAperture", add_uv_sphere(builder, 0.075, eye, 16, 24)),
     }
 
     nodes: list[dict] = [{
@@ -175,6 +180,8 @@ def main() -> None:
         # local offsets rather than repeating the shell's world position.
         add_node("SporecasterOculus%s" % ("L" if side < 0 else "R"), mesh_ids["Eye"], (side * 0.23, 0.16, -0.39), parent=cowl, extras={"socket_type": "spore_eye"})
         add_node("SporecasterCowlPlate%s" % ("L" if side < 0 else "R"), mesh_ids["Rib"], (side * 0.32, 0.08, -0.09), rotation=(0.0, 0.0, side * 0.2), parent=cowl)
+    add_node("SporecasterSprayRim", mesh_ids["SprayRim"], (0.0, 0.2, -0.405), scale=(1.28, 0.52, 0.62), parent=cowl, extras={"surface": "spray_aperture_rim"})
+    add_node("SporecasterSprayAperture", mesh_ids["SprayAperture"], (0.0, 0.2, -0.455), scale=(1.0, 1.0, 0.55), parent=cowl, extras={"socket_type": "spore_spray_aperture"})
 
     for index in range(7):
         angle = math.pi * (-0.82 + index * 0.273)
@@ -245,6 +252,8 @@ def main() -> None:
             ("Torso", "rotation", [0.0, 0.22, 0.44], quat((0.04, 0.0, 0.0)) + quat((-0.08, 0.0, 0.0)) + quat((0.04, 0.0, 0.0))),
             ("SporecasterCowlPlateL", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, -0.2)) + quat((0.0, 0.0, -0.36)) + quat((0.0, 0.0, -0.2))),
             ("SporecasterCowlPlateR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, 0.2)) + quat((0.0, 0.0, 0.36)) + quat((0.0, 0.0, 0.2))),
+            ("SporecasterSprayRim", "scale", [0.0, 0.22, 0.44], [1.28, 0.52, 0.62, 1.48, 0.68, 0.82, 1.28, 0.52, 0.62]),
+            ("SporecasterSprayAperture", "scale", [0.0, 0.22, 0.44], [1.0, 1.0, 0.55, 1.36, 1.18, 0.76, 1.0, 1.0, 0.55]),
             ("SporecasterGillFan3", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, 0.3)) + quat((0.0, 0.0, 0.62)) + quat((0.0, 0.0, 0.3))),
             ("SporecasterGillRib3", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, 0.24)) + quat((0.0, 0.0, 0.54)) + quat((0.0, 0.0, 0.24))),
             ("SporecasterStem2", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, -0.08)) + quat((0.0, 0.0, -0.24)) + quat((0.0, 0.0, -0.08))),

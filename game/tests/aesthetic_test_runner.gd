@@ -1896,7 +1896,10 @@ func _run_all() -> void:
     _expect(razorhound_nostril != null and razorhound_nostril.get_parent().name == "RazorhoundSnout", "The Razorhound muzzle must retain paired parented nostril sensor details.")
     var spore_sac_rim := _find_named(sporecaster_asset, "SporecasterSacRim0") as MeshInstance3D
     var spore_sac_pore := _find_named(sporecaster_asset, "SporecasterSacPore0") as MeshInstance3D
+    var spore_spray_rim := _find_named(sporecaster_asset, "SporecasterSprayRim") as MeshInstance3D
+    var spore_spray_aperture := _find_named(sporecaster_asset, "SporecasterSprayAperture") as MeshInstance3D
     _expect(_mesh_vertex_count(_find_named(sporecaster_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(sporecaster_asset, "SporecasterGillFan0") as MeshInstance3D) >= 48 and _mesh_vertex_count(spore_sac_rim) >= 100 and _mesh_vertex_count(spore_sac_pore) >= 48, "The authored Sporecaster dorsal, gill and sac-aperture surfaces must retain beveled high-definition anatomy edges.")
+    _expect(spore_spray_rim != null and spore_spray_aperture != null and spore_spray_rim.get_parent().name == "SporecasterCowl" and spore_spray_aperture.get_parent().name == "SporecasterCowl" and _mesh_vertex_count(spore_spray_aperture) >= 48, "The authored Sporecaster must retain a dense parented forward spray aperture and rim for infestation-role readability.")
     var skitterling_fan := _find_named(skitterling_asset, "SkitterlingSensoryFan0") as MeshInstance3D
     var skitterling_head := _find_named(skitterling_asset, "SkitterlingHeadShield") as MeshInstance3D
     var skitterling_head_ridge := _find_named(skitterling_asset, "SkitterlingHeadRidge") as MeshInstance3D

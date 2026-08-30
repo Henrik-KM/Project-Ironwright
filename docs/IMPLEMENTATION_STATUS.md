@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Sporecaster spray-organ pass — 2026-08-30
+
+The authored Sporecaster now has a parented central spray rim and bright pore
+aperture on its sensory cowl, with a restrained Attack-clip expansion. This
+gives the infestation family a readable forward focal organ alongside its
+existing gill fans and suspended sacs at tactical review distance. The new
+nodes are presentation-only and preserve animation ownership, sockets,
+collision, ecology, combat, saves and player workload. The manifest and
+aesthetic gate cover the contract; live review uses Godot Dummy audio with
+`--quiet-audio` and no physical speakers.
+
 ## Expanded authored physical operation breadth — 2026-08-30
 
 The strategic catalogue now carries thirty authored physical objectives, up

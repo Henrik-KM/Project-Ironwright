@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Sporecaster spray-organ focal pass
+
+The authored Sporecaster now carries a nested central spray rim and luminous
+aperture on its sensory cowl. The small articulated focal organ makes the
+infestation role read forward at the compact early-organic review distance,
+while existing gills, sacs, sockets and animation clips remain intact. The
+geometry is presentation-only and does not change collision, ecology, combat,
+saves or recurring machine workload. Live review uses Godot Dummy audio with
+`--quiet-audio`; no physical speakers are used.
+
 ## 2026-08-30 — Late-organic focal-anatomy review
 
 The seven late-organic families now carry one restrained, family-specific
