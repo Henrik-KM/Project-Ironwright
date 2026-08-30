@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Cathedral Quarter roofline pass
+
+The Cathedral Quarter exact-export review now includes a restrained roofline
+layer: paired pitched eaves, a five-panel clerestory, a central spine and a
+small finial. This breaks the former dark rectangular roof read while keeping
+the nave, rose window, choir crown, tower and bell-yard witness legible. The
+layer is presentation-only and does not add collision, navigation, route,
+interaction or simulation state. Review and tests use the Dummy audio driver
+with `--quiet-audio`; physical speakers are not used.
+
 ## 2026-08-30 — Heartforge threshold-gate pass
 
 The opening sanctuary now has one deliberate entry assembly: paired

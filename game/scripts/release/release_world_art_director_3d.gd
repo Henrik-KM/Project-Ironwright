@@ -1662,6 +1662,101 @@ func _dress_nest(root: Node3D) -> void:
             0.12
         )
 
+    # The release camera still flattened the nave's upper edge into one dark
+    # plane. Give the roof a readable, broken silhouette: paired pitched
+    # eaves, a shallow clerestory and a small surviving finial. This is
+    # presentation dressing only; it adds no collision, navigation, route,
+    # interaction or encounter state.
+    var roofline := Node3D.new()
+    roofline.name = "CathedralReleaseRoofline"
+    cathedral_facade.add_child(roofline)
+    var roof_iron := _textured_material(&"metal", Color("553b37"), 0.42, 0.62)
+    var roof_edge := _textured_material(&"rust", Color("8a5140"), 0.3, 0.68)
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(
+            roofline,
+            Vector3(3.45, 0.16, 0.24),
+            Vector3(side * 1.52, 4.06, facade_z + 0.82),
+            roof_iron,
+            Vector3(0.0, 0.0, -side * 0.43),
+            "CathedralReleaseRoofEave%s" % ("L" if side < 0.0 else "R"),
+            0.06
+        )
+    ModelKit3D.add_beveled_box(
+        roofline,
+        Vector3(0.24, 1.18, 0.18),
+        Vector3(0.0, 4.30, facade_z + 0.91),
+        roof_edge,
+        Vector3.ZERO,
+        "CathedralReleaseClerestorySpine",
+        0.06
+    )
+    for window_index in range(5):
+        var window_x := -1.12 + float(window_index) * 0.56
+        ModelKit3D.add_surface_panel(
+            roofline,
+            Vector3(0.34, 0.62, 0.08),
+            Vector3(window_x, 4.16, facade_z + 0.94),
+            brick_dark,
+            stained_glass,
+            Vector3.ZERO,
+            "CathedralReleaseClerestory%02d" % window_index
+        )
+    ModelKit3D.add_beveled_box(
+        roofline,
+        Vector3(0.16, 0.76, 0.16),
+        Vector3(0.0, 5.12, facade_z + 0.9),
+        roof_edge,
+        Vector3.ZERO,
+        "CathedralReleaseRoofFinial",
+        0.05
+    )
+    ModelKit3D.add_beveled_box(
+        roofline,
+        Vector3(0.62, 0.12, 0.16),
+        Vector3(0.0, 5.32, facade_z + 0.9),
+        roof_edge,
+        Vector3.ZERO,
+        "CathedralReleaseRoofFinialArm",
+        0.04
+    )
+
+    # The authored nave roof is broad and low from the elevated review lens.
+    # A second, shallow ridge in the same civic language gives that roof a
+    # believable central volume without replacing its authored silhouette.
+    var nave_ridge := Node3D.new()
+    nave_ridge.name = "CathedralReleaseNaveRidge"
+    root.add_child(nave_ridge)
+    ModelKit3D.add_beveled_box(
+        nave_ridge,
+        Vector3(7.4, 0.34, 0.56),
+        Vector3(0.0, 4.02, 1.22),
+        brick_dark,
+        Vector3(0.0, 0.0, 0.012),
+        "CathedralReleaseNaveRidgeBeam",
+        0.1
+    )
+    for ridge_index in range(3):
+        var ridge_x := -2.35 + float(ridge_index) * 2.35
+        ModelKit3D.add_beveled_box(
+            nave_ridge,
+            Vector3(0.18, 1.18, 0.2),
+            Vector3(ridge_x, 4.65, 1.22),
+            roof_edge,
+            Vector3.ZERO,
+            "CathedralReleaseNaveRidgeFin%02d" % ridge_index,
+            0.05
+        )
+    ModelKit3D.add_surface_panel(
+        nave_ridge,
+        Vector3(3.9, 0.72, 0.08),
+        Vector3(0.0, 3.92, 0.90),
+        brick_dark,
+        stained_glass,
+        Vector3.ZERO,
+        "CathedralReleaseNaveRidgeClerestory"
+    )
+
     # The authored operation is the suppression of the Cathedral brood's
     # resonant reproductive organ. Give that history a physical witness in
     # the release frame: a small bell-yard rig sits beside the civic facade,

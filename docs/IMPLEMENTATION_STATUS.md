@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Cathedral Quarter roofline milestone — 2026-08-30
+
+- added a bounded release-only roofline with paired pitched eaves, a five-panel
+  clerestory, central spine and surviving finial so the Cathedral Quarter no
+  longer collapses into a flat upper silhouette at exact review distance;
+- kept the detail presentation-only: no collision, navigation, route,
+  interaction, ecology or player-managed work was introduced;
+- added native release and aesthetic coverage for the new named roofline parts;
+  exact-export review remains silent-safe through the Dummy audio driver.
+
 ## Focused Heartforge threshold-gate pass — 2026-08-30
 
 The opening sanctuary now has one deliberate entry assembly: paired chamfered
