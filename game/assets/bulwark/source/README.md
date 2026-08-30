@@ -19,6 +19,8 @@ autonomy or protection rules.
 
 Stable presentation nodes include `Chassis`, `ChassisCore`,
 `ChassisCornerCap`, `Sensor`, `OpticLens`, `WeaponMuzzle`,
-`BulwarkShieldEmitterSpine`, and `BulwarkShieldEmitter`. The asset exposes
+`BulwarkShieldEmitterSpine`, `BulwarkShieldEmitter`,
+`BulwarkEmitterCollar`, `BulwarkEmitterAperture`,
+`BulwarkEmitterLensInset`, and the projector fasteners. The asset exposes
 `Idle`, `Walk`, and `Fire` clips for tooling; the runtime procedural animator
 continues to provide deterministic gait, recoil and role motion.

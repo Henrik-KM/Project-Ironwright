@@ -18,6 +18,9 @@
     "BulwarkShieldEmitter",
     "BulwarkEmitterGuardL",
     "BulwarkEmitterGuardR",
+    "BulwarkEmitterCollar",
+    "BulwarkEmitterAperture",
+    "BulwarkEmitterLensInset",
     "BulwarkServiceFace",
     "BulwarkServiceWindow",
     "ProductionAssetMarker"

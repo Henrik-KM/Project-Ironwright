@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Bulwark projector-instrument pass — 2026-08-30
+
+The indispensable Bulwark protection emitter now has a nested authored
+projector assembly: a dense protective collar, front aperture, inset cyan lens
+and three service fasteners. The collar and aperture retain subtle authored
+motion across idle, travel, combat, impact, retreat and collapse clips, so the
+companion's protection role reads as a maintained instrument rather than a
+bare glowing sphere. The new geometry remains inside the existing authored
+model shell and does not change the protection socket, collision, health,
+combat, autonomy or player workload. The focused live review and validation use
+Godot Dummy audio with `--quiet-audio`; no physical speakers are used.
+
 ## Focused regional story-evidence pass — 2026-08-30
 
 Each of the eleven non-sanctuary regional Town Archive witnesses now carries a

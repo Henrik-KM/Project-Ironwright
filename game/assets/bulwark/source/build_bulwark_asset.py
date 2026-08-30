@@ -307,6 +307,53 @@ def add_ellipsoid(
     return _geometry(builder, positions, normals, indices, material)
 
 
+def add_torus(
+    builder: BufferBuilder,
+    major_radius: float,
+    minor_radius: float,
+    material: int,
+    major_sides: int = 40,
+    minor_sides: int = 12,
+) -> tuple[int, int, int, int]:
+    """Build a smooth protective collar or aperture ring for hero hardware."""
+    major_sides = max(32, major_sides)
+    minor_sides = max(10, minor_sides)
+    major_radius = max(0.001, major_radius)
+    minor_radius = max(0.001, minor_radius)
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+    for major in range(major_sides):
+        major_angle = math.tau * major / major_sides
+        major_cos = math.cos(major_angle)
+        major_sin = math.sin(major_angle)
+        for minor in range(minor_sides):
+            minor_angle = math.tau * minor / minor_sides
+            minor_cos = math.cos(minor_angle)
+            minor_sin = math.sin(minor_angle)
+            ring_radius = major_radius + minor_radius * minor_cos
+            positions.extend([
+                ring_radius * major_cos,
+                minor_radius * minor_sin,
+                ring_radius * major_sin,
+            ])
+            normals.extend([
+                minor_cos * major_cos,
+                minor_sin,
+                minor_cos * major_sin,
+            ])
+    for major in range(major_sides):
+        next_major = (major + 1) % major_sides
+        for minor in range(minor_sides):
+            next_minor = (minor + 1) % minor_sides
+            a = major * minor_sides + minor
+            b = next_major * minor_sides + minor
+            c = next_major * minor_sides + next_minor
+            d = major * minor_sides + next_minor
+            indices.extend([a, b, c, a, c, d])
+    return _geometry(builder, positions, normals, indices, material)
+
+
 def main() -> None:
     builder = BufferBuilder()
     materials = [
@@ -356,6 +403,10 @@ def main() -> None:
         "EmitterGuardRail": mesh("EmitterGuardRail", add_cylinder(builder, 0.045, 0.74, steel, 18)),
         "EmitterGuardBrace": mesh("EmitterGuardBrace", add_beveled_box(builder, (0.12, 0.12, 0.46), oxide, 0.025)),
         "EmitterLensCap": mesh("EmitterLensCap", add_uv_sphere(builder, 0.17, cyan)),
+        "EmitterCollar": mesh("EmitterCollar", add_torus(builder, 0.22, 0.036, steel, 40, 12)),
+        "EmitterAperture": mesh("EmitterAperture", add_torus(builder, 0.135, 0.022, oxide, 36, 10)),
+        "EmitterLensInset": mesh("EmitterLensInset", add_ellipsoid(builder, (0.105, 0.105, 0.034), cyan, 18, 36)),
+        "EmitterFastener": mesh("EmitterFastener", add_uv_sphere(builder, 0.035, warm, 16, 32)),
         "ServiceFace": mesh("ServiceFace", add_beveled_box(builder, (0.56, 0.14, 0.38), chassis, 0.03)),
         "ServiceWindow": mesh("ServiceWindow", add_beveled_box(builder, (0.34, 0.035, 0.13), cyan, 0.012)),
         "ServiceFastener": mesh("ServiceFastener", add_cylinder(builder, 0.028, 0.035, warm, 20)),
@@ -435,6 +486,14 @@ def main() -> None:
     add_node("BulwarkEmitterGuardBraceL", mesh_ids["EmitterGuardBrace"], (-0.32, 2.03, 0.5), rotation=(0.0, 0.0, 0.18))
     add_node("BulwarkEmitterGuardBraceR", mesh_ids["EmitterGuardBrace"], (0.32, 2.03, 0.5), rotation=(0.0, 0.0, -0.24))
     add_node("BulwarkEmitterLensCap", mesh_ids["EmitterLensCap"], (0.0, 2.48, 0.5), extras={"presentation": "protected_emitter_lens"})
+    # The protection instrument is a real manufactured projector: a nested
+    # collar, front aperture and inset lens give the companion's signature
+    # hardware a readable focal assembly instead of a bare glowing sphere.
+    add_node("BulwarkEmitterCollar", mesh_ids["EmitterCollar"], (0.0, 2.3, 0.5), extras={"surface": "projector_collar"})
+    add_node("BulwarkEmitterAperture", mesh_ids["EmitterAperture"], (0.0, 2.3, 0.29), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "projector_aperture"})
+    add_node("BulwarkEmitterLensInset", mesh_ids["EmitterLensInset"], (0.0, 2.3, 0.265), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"socket_type": "protection_emitter"})
+    for index, (x, y) in enumerate(((-0.17, 2.42), (0.17, 2.42), (0.0, 2.17))):
+        add_node("BulwarkEmitterFastener%02d" % index, mesh_ids["EmitterFastener"], (x, y, 0.285), extras={"surface": "projector_fastener"})
     add_node("BulwarkServiceFace", mesh_ids["ServiceFace"], (0.0, 1.03, -1.08), rotation=(0.0, 0.0, -0.04), extras={"surface": "front_service_face"})
     add_node("BulwarkServiceWindow", mesh_ids["ServiceWindow"], (0.0, 1.06, -1.16), rotation=(0.0, 0.0, -0.04))
     for side in (-1.0, 1.0):
@@ -468,6 +527,8 @@ def main() -> None:
             ("BulwarkShieldEmitter", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.0, -0.025)) + quat((0.0, 0.0, 0.035)) + quat((0.0, 0.0, -0.025))),
             ("BulwarkEmitterGuardL", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.08, -0.22)) + quat((0.04, -0.12, -0.28)) + quat((0.0, -0.08, -0.22))),
             ("BulwarkEmitterGuardR", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.08, 0.28)) + quat((-0.04, 0.12, 0.34)) + quat((0.0, 0.08, 0.28))),
+            ("BulwarkEmitterCollar", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.0, -0.018)) + quat((0.0, 0.04, 0.018)) + quat((0.0, 0.0, -0.018))),
+            ("BulwarkEmitterAperture", "rotation", [0.0, 0.8, 1.6], quat((math.pi * 0.5, 0.0, -0.025)) + quat((math.pi * 0.5, 0.0, 0.035)) + quat((math.pi * 0.5, 0.0, -0.025))),
         ]),
         animation("Walk", [
             ("Leg", "rotation", [0.0, 0.22, 0.44], quat((0.22, 0.0, 0.0)) + quat((-0.22, 0.0, 0.0)) + quat((0.22, 0.0, 0.0))),
@@ -477,6 +538,8 @@ def main() -> None:
             ("BulwarkShieldEmitter", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, -0.025)) + quat((0.12, 0.0, -0.08)) + quat((0.0, 0.0, -0.025))),
             ("BulwarkEmitterGuardL", "rotation", [0.0, 0.22, 0.44], quat((0.0, -0.08, -0.22)) + quat((0.14, -0.16, -0.32)) + quat((0.0, -0.08, -0.22))),
             ("BulwarkEmitterGuardR", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.08, 0.28)) + quat((-0.14, 0.16, 0.38)) + quat((0.0, 0.08, 0.28))),
+            ("BulwarkEmitterCollar", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, -0.018)) + quat((0.0, 0.12, 0.02)) + quat((0.0, 0.0, -0.018))),
+            ("BulwarkEmitterAperture", "rotation", [0.0, 0.22, 0.44], quat((math.pi * 0.5, 0.0, -0.025)) + quat((math.pi * 0.5, 0.0, 0.08)) + quat((math.pi * 0.5, 0.0, -0.025))),
         ]),
         animation("Fire", [
             ("BulwarkGun", "translation", [0.0, 0.08, 0.18], [0.0, 0.0, -0.82, 0.0, 0.0, -0.9, 0.0, 0.0, -0.82]),
@@ -485,6 +548,8 @@ def main() -> None:
             ("BulwarkShieldEmitter", "rotation", [0.0, 0.08, 0.18], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.16, 0.0)) + quat((0.0, 0.0, 0.0))),
             ("BulwarkEmitterGuardL", "rotation", [0.0, 0.08, 0.18], quat((0.0, -0.08, -0.22)) + quat((-0.12, -0.16, -0.34)) + quat((0.0, -0.08, -0.22))),
             ("BulwarkEmitterGuardR", "rotation", [0.0, 0.08, 0.18], quat((0.0, 0.08, 0.28)) + quat((0.12, 0.16, 0.4)) + quat((0.0, 0.08, 0.28))),
+            ("BulwarkEmitterCollar", "rotation", [0.0, 0.08, 0.18], quat((0.0, 0.0, -0.018)) + quat((0.0, 0.18, 0.018)) + quat((0.0, 0.0, -0.018))),
+            ("BulwarkEmitterAperture", "rotation", [0.0, 0.08, 0.18], quat((math.pi * 0.5, 0.0, -0.025)) + quat((math.pi * 0.5, 0.0, 0.16)) + quat((math.pi * 0.5, 0.0, -0.025))),
             ("BulwarkRadiator", "rotation", [0.0, 0.08, 0.18], quat((0.0, 0.0, 0.0)) + quat((-0.1, 0.0, 0.0)) + quat((0.0, 0.0, 0.0))),
         ]),
         animation("Hit", [
@@ -493,6 +558,8 @@ def main() -> None:
             ("BulwarkShieldEmitter", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.0)) + quat((0.0, -0.16, 0.0)) + quat((0.0, 0.0, 0.0))),
             ("BulwarkEmitterGuardL", "rotation", [0.0, 0.10, 0.24], quat((0.0, -0.08, -0.22)) + quat((0.14, -0.14, -0.3)) + quat((0.0, -0.08, -0.22))),
             ("BulwarkEmitterGuardR", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.08, 0.28)) + quat((-0.14, 0.14, 0.36)) + quat((0.0, 0.08, 0.28))),
+            ("BulwarkEmitterCollar", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, -0.018)) + quat((0.0, -0.14, 0.018)) + quat((0.0, 0.0, -0.018))),
+            ("BulwarkEmitterAperture", "rotation", [0.0, 0.10, 0.24], quat((math.pi * 0.5, 0.0, -0.025)) + quat((math.pi * 0.5, 0.0, -0.12)) + quat((math.pi * 0.5, 0.0, -0.025))),
         ]),
         animation("Retreat", [
             ("BulwarkModel", "rotation", [0.0, 0.28, 0.56], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, 0.12)) + quat((0.0, 0.0, 0.0))),
@@ -500,6 +567,8 @@ def main() -> None:
             ("BulwarkShieldEmitter", "rotation", [0.0, 0.28, 0.56], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.2, 0.0)) + quat((0.0, 0.0, 0.0))),
             ("BulwarkEmitterGuardL", "rotation", [0.0, 0.28, 0.56], quat((0.0, -0.08, -0.22)) + quat((-0.2, -0.18, -0.34)) + quat((0.0, -0.08, -0.22))),
             ("BulwarkEmitterGuardR", "rotation", [0.0, 0.28, 0.56], quat((0.0, 0.08, 0.28)) + quat((0.2, 0.18, 0.4)) + quat((0.0, 0.08, 0.28))),
+            ("BulwarkEmitterCollar", "rotation", [0.0, 0.28, 0.56], quat((0.0, 0.0, -0.018)) + quat((0.0, 0.20, 0.02)) + quat((0.0, 0.0, -0.018))),
+            ("BulwarkEmitterAperture", "rotation", [0.0, 0.28, 0.56], quat((math.pi * 0.5, 0.0, -0.025)) + quat((math.pi * 0.5, 0.0, 0.20)) + quat((math.pi * 0.5, 0.0, -0.025))),
             ("CompanionCrownMast", "rotation", [0.0, 0.28, 0.56], quat((0.0, 0.0, 0.0)) + quat((0.14, 0.0, 0.0)) + quat((0.0, 0.0, 0.0))),
         ]),
         animation("Death", [
@@ -507,6 +576,8 @@ def main() -> None:
             ("BulwarkModel", "rotation", [0.0, 0.18, 0.42], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.16, 0.22)) + quat((0.0, 0.22, 0.32))),
             ("BulwarkShieldEmitter", "rotation", [0.0, 0.18, 0.42], quat((0.0, 0.0, 0.0)) + quat((0.18, 0.0, 0.0)) + quat((0.28, 0.0, 0.0))),
             ("BulwarkRadiator", "rotation", [0.0, 0.18, 0.42], quat((0.0, 0.0, 0.0)) + quat((-0.16, 0.0, 0.0)) + quat((-0.26, 0.0, 0.0))),
+            ("BulwarkEmitterCollar", "rotation", [0.0, 0.18, 0.42], quat((0.0, 0.0, -0.018)) + quat((0.18, 0.0, 0.02)) + quat((0.28, 0.0, 0.02))),
+            ("BulwarkEmitterAperture", "rotation", [0.0, 0.18, 0.42], quat((math.pi * 0.5, 0.0, -0.025)) + quat((math.pi * 0.5, 0.18, 0.04)) + quat((math.pi * 0.5, 0.28, 0.06))),
         ]),
     ]
 
@@ -523,7 +594,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "bulwark.companion.v1",
-            "required_nodes": ["BulwarkModel", "Sensor", "OpticLens", "WeaponMuzzle", "BulwarkShieldEmitter", "BulwarkEmitterGuardL", "BulwarkEmitterGuardR", "BulwarkServiceFace", "BulwarkServiceWindow", "ProductionAssetMarker"],
+            "required_nodes": ["BulwarkModel", "Sensor", "OpticLens", "WeaponMuzzle", "BulwarkShieldEmitter", "BulwarkEmitterGuardL", "BulwarkEmitterGuardR", "BulwarkEmitterCollar", "BulwarkEmitterAperture", "BulwarkEmitterLensInset", "BulwarkServiceFace", "BulwarkServiceWindow", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Fire", "Hit", "Retreat", "Death"],
         },
     }

@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Bulwark projector-instrument review
+
+The indispensable Bulwark protection emitter now reads as a finished
+maintained instrument: a dense outer collar, front aperture, inset cyan lens
+and three service fasteners sit inside the existing paired guard cage. The
+collar and aperture carry restrained authored motion across the companion's
+runtime clips. The asset remains presentation-only and preserves protection,
+collision, health, combat, autonomy and save contracts. Live review uses Godot
+Dummy audio with `--quiet-audio`; no physical speakers are used.
+
 ## 2026-08-30 — Regional story-evidence review
 
 The eleven non-sanctuary regional witnesses now expose distinct physical
