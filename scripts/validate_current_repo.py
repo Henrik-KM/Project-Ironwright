@@ -38,6 +38,11 @@ NEW_REQUIRED_PATHS = [
     "game/scripts/systems/strategic_ecology_director_3d.gd",
     "game/scripts/systems/endgame_director_3d.gd",
     "game/scripts/systems/adaptive_defense_director_3d.gd",
+    "game/scripts/systems/enemy_tier_progression_bootstrap_3d.gd",
+    "game/scripts/systems/enemy_tier_progression_director_3d.gd",
+    "game/scripts/world/enemy_tier_nest_3d.gd",
+    "game/scripts/enemies/enemy_tier_brain_3d.gd",
+    "game/scripts/ui/enemy_tier_intel_hud_3d.gd",
     "game/scripts/world/outpost_site_3d.gd",
     "game/scripts/world/outpost_3d.gd",
     "game/scripts/world/region_landmark_3d.gd",
@@ -52,6 +57,8 @@ NEW_REQUIRED_PATHS = [
     "game/tests/complete_game_test_runner.gd",
     "game/tests/presentation_and_salvage_escort_test_runner.gd",
     "game/tests/persistence_test_runner.gd",
+    "game/tests/enemy_tier_progression_test_runner.gd",
+    "game/tests/ecology_runtime_integration_test_runner.gd",
     "game/assets/mechromancer/mechromancer.gltf",
     "game/assets/mechromancer/mechromancer.bin",
     "game/assets/mechromancer/source/mechromancer.blend",
@@ -256,9 +263,96 @@ def validate_native_godot_entrypoint() -> None:
 
     if "res://scripts/main_world_tiered_3d.gd" in scene_text:
         tiered = (ROOT / "game/scripts/main_world_tiered_3d.gd").read_text(encoding="utf-8")
-        for token in ["extends IronwrightReleaseWorld3D", "EnemyTierDirector3D", "EnemyTierEventBridge3D", "EnemyTierHUD3D"]:
+        bootstrap_path = "res://scripts/systems/enemy_tier_progression_bootstrap_3d.gd"
+        if scene_text.count(bootstrap_path) != 1:
+            raise legacy.ValidationError("Tiered entrypoint must install exactly one canonical enemy-tier bootstrap")
+        if scene_text.count('[node name="EnemyTierProgressionBootstrap"') != 1:
+            raise legacy.ValidationError("Tiered entrypoint must contain exactly one canonical bootstrap node")
+        for token in ["EnemyTierDirector3D", "EnemyTierEventBridge3D", "EnemyTierHUD3D"]:
+            if token in scene_text:
+                raise legacy.ValidationError(f"Native scene must not install legacy enemy-tier runtime {token!r}")
+        for token in [
+            "extends IronwrightReleaseWorld3D",
+            "EnemyTierProgressionDirector3D",
+            "_canonical_enemy_tier_director",
+            "_spawn_capped_operation_threat",
+            "canonical_tier_director.request_causal_threat",
+            'release["enemy_tier_progression"]',
+            'release.get("enemy_tier_progression", {})',
+            "canonical_tier_director.restore_from_dictionary",
+            'set_meta(&"enemy_tier_progression_restored_from_unified", true)',
+        ]:
             if token not in tiered:
                 raise legacy.ValidationError(f"Tiered entrypoint integration is missing {token!r}")
+        for token in [
+            "EnemyTierDirector3D",
+            "EnemyTierEventBridge3D",
+            "EnemyTierHUD3D",
+            "res://scripts/systems/enemy_tier_director_3d.gd",
+            "res://scripts/systems/enemy_tier_event_bridge_3d.gd",
+            "res://scripts/ui/enemy_tier_hud_3d.gd",
+            'release["enemy_tiers"]',
+            'release["enemy_tier_events"]',
+            'release.get("enemy_tiers"',
+            'release.get("enemy_tier_events"',
+        ]:
+            if token in tiered:
+                raise legacy.ValidationError(f"Tiered entrypoint still integrates retired enemy-tier runtime {token!r}")
+        if tiered.count('release["enemy_tier_progression"]') != 1:
+            raise legacy.ValidationError("Tiered release snapshots must write one unified enemy_tier_progression payload")
+        if tiered.count('release.get("enemy_tier_progression", {})') != 1:
+            raise legacy.ValidationError("Tiered release restore must read the unified enemy_tier_progression payload once")
+        if "return _spawn_enemy(position, species)" in tiered:
+            raise legacy.ValidationError("Causal operation threats must materialize at a living nest or redirect an existing actor")
+
+        bootstrap = (ROOT / "game/scripts/systems/enemy_tier_progression_bootstrap_3d.gd").read_text(encoding="utf-8")
+        for token in [
+            "class_name EnemyTierProgressionBootstrap3D",
+            "director = EnemyTierProgressionDirector3D.new()",
+            "intel_hud = EnemyTierIntelHUD3D.new()",
+            'node.call(&"set_external_population_control", true)',
+            'node.set("spawn_enemy_callable", Callable())',
+            'node.set("spawn_enemy_callback", Callable())',
+            'if not bool(world.get_meta(&"enemy_tier_progression_restored_from_unified", false))',
+            'world.set_meta(&"enemy_tier_progression_migrated_from_sidecar", true)',
+        ]:
+            if token not in bootstrap:
+                raise legacy.ValidationError(f"Canonical enemy-tier bootstrap is missing {token!r}")
+        if bootstrap.count("EnemyTierProgressionDirector3D.new()") != 1:
+            raise legacy.ValidationError("Canonical bootstrap must create exactly one enemy-tier director")
+        if bootstrap.count("EnemyTierIntelHUD3D.new()") != 1:
+            raise legacy.ValidationError("Canonical bootstrap must create exactly one enemy-tier intelligence HUD")
+        if "func _save_sidecar" in bootstrap or "_save_sidecar()" in bootstrap:
+            raise legacy.ValidationError("Canonical saves must not create a second enemy-tier sidecar generation")
+        for token in [
+            "node.set_process(false)",
+            "node.set_physics_process(false)",
+            'node.set("active_enemy_cap", 0)',
+            'node.set("spawn_interval", 999999.0)',
+        ]:
+            if token in bootstrap:
+                raise legacy.ValidationError(f"Population handoff must not freeze the living ecology with {token!r}")
+        for token in ["EnemyTierDirector3D", "EnemyTierEventBridge3D", "EnemyTierHUD3D"]:
+            if token in bootstrap:
+                raise legacy.ValidationError(f"Canonical bootstrap must not reference legacy runtime {token!r}")
+
+        canonical_director = (ROOT / "game/scripts/systems/enemy_tier_progression_director_3d.gd").read_text(encoding="utf-8")
+        for token in [
+            'add_to_group(&"enemy_tier_progression")',
+            "EVENT_MODIFIERS_PATH",
+            "_load_detailed_event_effects",
+            "_process_saturation_high_to_low",
+            "_enforce_population_caps",
+            "_select_spawn_nest",
+            "_materialize_from_nest",
+            "request_causal_threat",
+            "_materialize_from_nest(tier, nest, species)",
+            "_redirect_causal_actor",
+            "to_dictionary",
+            "restore_from_dictionary",
+        ]:
+            if token not in canonical_director:
+                raise legacy.ValidationError(f"Canonical enemy-tier director is missing {token!r}")
 
     prealpha = (ROOT / "game/scripts/main_world_prealpha_3d.gd").read_text(encoding="utf-8")
     for token in ["extends IronwrightProductionWorld3D", "_resolve_camera_occlusion", "set_map_emphasis", "pre-alpha production prototype"]:

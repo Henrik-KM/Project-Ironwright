@@ -16,12 +16,22 @@ var run_variation_pressure_multiplier: float = 1.0
 var reports_cooldown: float = 0.0
 var population_states: Dictionary = {}
 var run_state: RunState3D
+var external_population_control: bool = false
 
 
 func configure(next_region_director: WorldRegionDirector3D, next_spawn_enemy_callback: Callable, next_run_state: RunState3D = null) -> void:
     region_director = next_region_director
     spawn_enemy_callback = next_spawn_enemy_callback
     run_state = next_run_state
+
+
+func set_external_population_control(value: bool) -> void:
+    external_population_control = value
+    if value:
+        # The canonical tier director is the only birth authority. Regional
+        # state remains live so pressure, hunger, memory, and migrations keep
+        # evolving instead of becoming a frozen backdrop.
+        spawn_enemy_callback = Callable()
 
 
 func _process(delta: float) -> void:
@@ -55,8 +65,6 @@ func effective_pressure_multiplier() -> float:
 func _update_regions() -> void:
     _ensure_population_states()
     var active_total := get_tree().get_nodes_in_group(&"organic_enemies").size()
-    if active_total >= active_enemy_cap:
-        return
     for raw_region_id in region_director.region_data:
         var region_id := raw_region_id as StringName
         var data := region_director.get_region_data(region_id)
@@ -71,7 +79,12 @@ func _update_regions() -> void:
         var target_count := int(round(float(state.get("population", 4.0)) * 0.42 * minf(endgame_escalation, 2.4)))
         target_count += int(round(pressure * 1.5))
         target_count = clampi(target_count, 1, 28)
-        if local_count < target_count and active_total < active_enemy_cap:
+        if (
+            not external_population_control
+            and spawn_enemy_callback.is_valid()
+            and local_count < target_count
+            and active_total < active_enemy_cap
+        ):
             _spawn_regional_organism(region_id, local_count)
             active_total += 1
 
@@ -135,7 +148,7 @@ func set_endgame_escalation(value: float) -> void:
 
 
 func _attempt_migration() -> void:
-    if get_tree().get_nodes_in_group(&"organic_enemies").size() >= active_enemy_cap - 4:
+    if not external_population_control and get_tree().get_nodes_in_group(&"organic_enemies").size() >= active_enemy_cap - 4:
         return
     _ensure_population_states()
     var source_id: StringName = &""
@@ -161,18 +174,58 @@ func _attempt_migration() -> void:
     if source_point.size() < 3:
         return
     var origin := Vector3(float(source_point[0]), float(source_point[1]), float(source_point[2]))
+    var destination := origin
+    var destination_point: Variant = raw_route[0]
+    if destination_point is Array and (destination_point as Array).size() >= 3:
+        destination = Vector3(float(destination_point[0]), float(destination_point[1]), float(destination_point[2]))
     var pack_size := clampi(1 + int(floor(source_pressure)), 2, 5)
-    for index in range(pack_size):
-        var offset := Vector3(float(index - pack_size / 2) * 1.8, 0.0, float(index % 2) * 1.4)
-        _spawn_species(origin + offset, _species_for_region(source_id, index + spawn_serial), source_id, &"hunt")
+    var migrated_count := 0
+    if external_population_control:
+        migrated_count = _redirect_existing_migration(source_id, destination, pack_size)
+    else:
+        for index in range(pack_size):
+            var offset := Vector3(float(index - pack_size / 2) * 1.8, 0.0, float(index % 2) * 1.4)
+            if _spawn_species(origin + offset, _species_for_region(source_id, index + spawn_serial), source_id, &"hunt") != null:
+                migrated_count += 1
+    if migrated_count <= 0:
+        return
     var source_state: Dictionary = population_states[source_id]
-    source_state["population"] = maxf(0.5, float(source_state.get("population", 4.0)) - float(pack_size) * 0.8)
+    source_state["population"] = maxf(0.5, float(source_state.get("population", 4.0)) - float(migrated_count) * 0.8)
     source_state["migration_tendency"] = clampf(float(source_state.get("migration_tendency", 0.0)) - 0.22, 0.0, 1.0)
     source_state["disturbance"] = clampf(float(source_state.get("disturbance", 0.0)) - 0.08, 0.0, 1.0)
     region_director.add_pressure(source_id, -0.035)
     var landmark := region_director.get_landmark(source_id)
     if landmark != null:
         ecology_report.emit("A hunting migration has left %s and entered the connecting streets." % landmark.display_name)
+
+
+func _redirect_existing_migration(source_id: StringName, destination: Vector3, pack_size: int) -> int:
+    var candidates: Array[Node3D] = []
+    for node in get_tree().get_nodes_in_group(&"organic_enemies"):
+        if not (node is Node3D) or not is_instance_valid(node):
+            continue
+        var enemy := node as Node3D
+        if enemy.is_in_group(&"enemy_tier_nests"):
+            continue
+        if enemy.has_method(&"is_alive") and not bool(enemy.call(&"is_alive")):
+            continue
+        if StringName(str(enemy.get_meta(&"ecology_region", ""))) != source_id:
+            continue
+        candidates.append(enemy)
+    candidates.sort_custom(func(a: Node3D, b: Node3D) -> bool:
+        return a.global_position.distance_squared_to(destination) < b.global_position.distance_squared_to(destination)
+    )
+    var redirected := mini(pack_size, candidates.size())
+    for index in range(redirected):
+        var enemy := candidates[index]
+        var offset := Vector3(float(index - redirected / 2) * 1.8, 0.0, float(index % 2) * 1.4)
+        var brain := enemy.get_node_or_null("EnemyTierBrain")
+        if brain != null and brain.has_method(&"receive_migration_goal"):
+            brain.call(&"receive_migration_goal", destination + offset, source_id)
+        elif enemy.has_method(&"hear_noise"):
+            enemy.call(&"hear_noise", destination + offset, 1000.0, 1.0, &"regional_migration")
+        enemy.set_meta(&"ecology_origin", "regional_migration")
+    return redirected
 
 
 func _spawn_regional_organism(region_id: StringName, local_count: int) -> void:
@@ -365,6 +418,7 @@ func to_dictionary() -> Dictionary:
         "migration_clock": migration_clock,
         "active_enemy_cap": active_enemy_cap,
         "pressure_multiplier": pressure_multiplier,
+        "external_population_control": external_population_control,
         "population_states": serialized_populations,
     }
 
@@ -376,6 +430,7 @@ func restore_from_dictionary(data: Dictionary) -> void:
     migration_clock = maxf(0.0, float(data.get("migration_clock", 0.0)))
     active_enemy_cap = clampi(int(data.get("active_enemy_cap", active_enemy_cap)), 32, 180)
     pressure_multiplier = clampf(float(data.get("pressure_multiplier", pressure_multiplier)), 0.5, 1.8)
+    set_external_population_control(bool(data.get("external_population_control", external_population_control)))
     for raw_state in data.get("population_states", []):
         if not raw_state is Dictionary:
             continue

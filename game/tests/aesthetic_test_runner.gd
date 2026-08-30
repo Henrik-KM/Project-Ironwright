@@ -31,10 +31,26 @@ func _initialize() -> void:
 
 func _run_all() -> void:
     var world := MAIN_SCENE.instantiate()
+    # The presentation fixture starts multiple threaded authored-package loads.
+    # On the Dummy renderer, constructing the canonical procedural nest network
+    # in that same deferred startup slice can interleave unrelated mesh RID
+    # allocation with imported-resource attachment. Stage the existing scene
+    # child only for this fixture, then attach it after the authored packages
+    # have crossed an explicit quiescence boundary.
+    var delayed_tier_bootstrap := world.get_node_or_null("EnemyTierProgressionBootstrap") as EnemyTierProgressionBootstrap3D
+    if delayed_tier_bootstrap != null:
+        delayed_tier_bootstrap.owner = null
+        world.remove_child(delayed_tier_bootstrap)
     root.add_child(world)
     await process_frame
     await physics_frame
     await process_frame
+    await _await_renderer_quiescence(world)
+    if delayed_tier_bootstrap != null:
+        world.add_child(delayed_tier_bootstrap)
+        delayed_tier_bootstrap.owner = world
+        await _await_enemy_tier_bootstrap(delayed_tier_bootstrap)
+        await _await_renderer_quiescence(world)
 
     _expect(world is IronwrightBeautifulWorld3D, "The main scene must boot the aesthetic-overhaul world.")
     _expect(world.get_node_or_null("AestheticDirector") is AestheticDirector3D, "The aesthetic director must exist at runtime.")
@@ -133,27 +149,59 @@ func _run_all() -> void:
     nest_sample.configure({"id": "aesthetic.high_definition_nest", "position": [72.0, 0.0, 72.0], "maturity": 1.0, "supported_tiers": [3]})
     root.add_child(nest_sample)
     await process_frame
+    var tier_destroyed_presentation := nest_sample.find_child("DestroyedTierNestPresentation", true, false) as Node3D
+    var tier_destroyed_presentation_id := tier_destroyed_presentation.get_instance_id() if tier_destroyed_presentation != null else 0
+    var tier_destroyed_child_count := tier_destroyed_presentation.get_child_count() if tier_destroyed_presentation != null else -1
+    var tier_model := nest_sample.get_node_or_null("TierNestModel") as Node3D
+    var tier_model_child_count := tier_model.get_child_count() if tier_model != null else -1
+    _expect(tier_destroyed_presentation != null and not tier_destroyed_presentation.visible and tier_destroyed_child_count > 0, "A living tiered nest must prebuild one populated hidden destroyed presentation before any damage transition.")
     _expect(nest_sample.find_child("NestHighDefinitionDetail", true, false) != null, "Tiered organic nests must carry a bounded high-definition anatomy layer.")
     _expect(nest_sample.find_child("NestDorsalCarapace", true, false) != null and nest_sample.find_child("NestRootCollar", true, false) != null, "Tiered organic nests must expose layered carapace and root-collar detail.")
     _expect(nest_sample.find_child("NestMembranePlate00", true, false) != null and nest_sample.find_child("NestVeinChannel00", true, false) != null and nest_sample.find_child("NestFineSpine00", true, false) != null, "Tiered organic nests must expose membrane, vascular and fine-spine sockets.")
+
+    # Reproduce the failure boundary that exposed the Dummy-renderer crash:
+    # reverse a real authored-region stream while the nest changes state. The
+    # nest must only reveal its already-owned failure tree during that handoff.
+    var renderer_handoff_art := world.get_node_or_null("ReleaseWorldArtDirector") as ReleaseWorldArtDirector3D
+    var renderer_handoff_regions := world.get_node_or_null("WorldRegionDirector") as WorldRegionDirector3D
+    var renderer_handoff_landmark := renderer_handoff_regions.get_landmark(&"region.north_ruins") as RegionLandmark3D if renderer_handoff_regions != null else null
+    _expect(startup_lod != null and renderer_handoff_landmark != null and renderer_handoff_art != null, "The nest renderer regression fixture requires the production stream director, landmark and release-art idle contract.")
+    if startup_lod != null and renderer_handoff_landmark != null and renderer_handoff_art != null:
+        if not startup_lod.is_region_streamed(renderer_handoff_landmark.region_id):
+            startup_lod.set_region_streamed(renderer_handoff_landmark.region_id, true)
+            await _await_renderer_quiescence(world)
+        startup_lod.set_region_streamed(renderer_handoff_landmark.region_id, false)
+        startup_lod.set_region_streamed(renderer_handoff_landmark.region_id, true)
+        _expect(renderer_handoff_landmark.authored_model_presentation_pending() or not renderer_handoff_art.is_presentation_idle(), "The renderer regression fixture must hold an active authored-package or release-dressing handoff while the tiered nest fails.")
     nest_sample.apply_damage(9999.0)
-    await process_frame
     _expect(not nest_sample.is_alive() and nest_sample.visible, "Destroyed tiered nests must remain visible as persistent ecological landmarks.")
-    _expect(nest_sample.find_child("DestroyedTierNestPresentation", true, false) != null, "Destroyed tiered nests must expose a dedicated failure presentation root.")
+    var tier_destroyed_after_damage := nest_sample.find_child("DestroyedTierNestPresentation", true, false) as Node3D
+    _expect(tier_destroyed_after_damage != null and tier_destroyed_after_damage.get_instance_id() == tier_destroyed_presentation_id and tier_destroyed_after_damage.get_child_count() == tier_destroyed_child_count and tier_destroyed_after_damage.visible and not tier_destroyed_after_damage.is_queued_for_deletion(), "Destroying a tiered nest must reveal its populated prebuilt failure root without allocating or retiring a mesh tree in the transition frame.")
+    _expect(tier_model != null and tier_model.get_child_count() == tier_model_child_count, "Tiered nest destruction must leave the stable presentation-tree allocation unchanged during an active renderer handoff.")
     _expect(nest_sample.find_child("DestroyedNestCarapace", true, false) != null and nest_sample.find_child("DestroyedNestRootCollar", true, false) != null, "Destroyed tiered nests must expose fractured carapace and an exposed root collar.")
     _expect(nest_sample.find_child("DestroyedNestShard00", true, false) != null and nest_sample.find_child("DestroyedNestVein00", true, false) != null and nest_sample.find_child("DestroyedNestSignal", true, false) != null, "Destroyed tiered nests must expose shell fragments, dead vascular channels and a spent signal core.")
+    await _await_renderer_quiescence(world)
     nest_sample.queue_free()
     var ordinary_nest_sample := OrganicNest3D.new()
     ordinary_nest_sample.configure({"id": "aesthetic.ordinary_high_definition_nest", "maturity": 0.7, "supported_tiers": [1]})
     root.add_child(ordinary_nest_sample)
     await process_frame
+    var living_nest_presentation := ordinary_nest_sample.find_child("LivingNestPresentation", true, false) as Node3D
+    var destroyed_nest_presentation := ordinary_nest_sample.find_child("DestroyedNestPresentation", true, false) as Node3D
+    _expect(living_nest_presentation != null and living_nest_presentation.visible, "An ordinary living nest must expose one stable living presentation root.")
+    _expect(destroyed_nest_presentation != null and not destroyed_nest_presentation.visible, "An ordinary living nest must retain one hidden destroyed presentation root for a renderer-safe state transition.")
+    var living_nest_presentation_id := living_nest_presentation.get_instance_id() if living_nest_presentation != null else 0
+    var destroyed_nest_presentation_id := destroyed_nest_presentation.get_instance_id() if destroyed_nest_presentation != null else 0
     _expect(ordinary_nest_sample.find_child("NestHighDefinitionDetail", true, false) != null, "Ordinary organic nests must carry the same bounded close-range anatomy quality bar as tiered nests.")
     _expect(ordinary_nest_sample.find_child("NestDorsalCarapace", true, false) != null and ordinary_nest_sample.find_child("NestRootCollar", true, false) != null, "Ordinary organic nests must expose layered carapace and root-collar detail.")
     _expect(ordinary_nest_sample.find_child("NestMembranePlate00", true, false) != null and ordinary_nest_sample.find_child("NestVeinChannel00", true, false) != null and ordinary_nest_sample.find_child("NestFineSpine00", true, false) != null, "Ordinary organic nests must expose membrane, vascular and fine-spine sockets.")
     ordinary_nest_sample.apply_damage(9999.0)
     await process_frame
     _expect(not ordinary_nest_sample.is_alive(), "Destroying an ordinary organic nest must preserve its hostile-structure state transition.")
-    _expect(ordinary_nest_sample.find_child("DestroyedNestPresentation", true, false) != null, "Destroyed ordinary nests must expose a dedicated failure presentation root.")
+    var living_nest_after_damage := ordinary_nest_sample.find_child("LivingNestPresentation", true, false) as Node3D
+    var destroyed_nest_after_damage := ordinary_nest_sample.find_child("DestroyedNestPresentation", true, false) as Node3D
+    _expect(living_nest_after_damage != null and living_nest_after_damage.get_instance_id() == living_nest_presentation_id and not living_nest_after_damage.visible and not living_nest_after_damage.is_queued_for_deletion(), "Destroying an ordinary nest must hide its original living presentation without replacing or retiring its renderer resources.")
+    _expect(destroyed_nest_after_damage != null and destroyed_nest_after_damage.get_instance_id() == destroyed_nest_presentation_id and destroyed_nest_after_damage.visible and not destroyed_nest_after_damage.is_queued_for_deletion(), "Destroying an ordinary nest must reveal its prebuilt failure presentation without constructing a replacement mesh tree.")
     _expect(ordinary_nest_sample.find_child("DestroyedNestCarapace", true, false) != null and ordinary_nest_sample.find_child("DestroyedNestRootCollar", true, false) != null, "Destroyed ordinary nests must expose fractured carapace and an exposed root collar.")
     _expect(ordinary_nest_sample.find_child("DestroyedNestShard00", true, false) != null and ordinary_nest_sample.find_child("DestroyedNestVein00", true, false) != null and ordinary_nest_sample.find_child("DestroyedNestSignal", true, false) != null, "Destroyed ordinary nests must expose shell fragments, dead vascular channels and a spent signal core.")
     ordinary_nest_sample.queue_free()
@@ -972,6 +1020,7 @@ func _run_all() -> void:
         region_lod.refresh_now()
         for _frame in range(8):
             await process_frame
+        await _await_renderer_quiescence(world)
         _expect(region_lod.detail_mode_for(&"region.west_grid") == 0, "The player’s current region must retain full landmark detail.")
         _expect(region_lod.detail_mode_for(&"region.root_cistern") == 2, "Distant endgame landmarks must reduce to beacon detail without leaving the world state.")
         var distant_root := region_director.get_landmark(&"region.root_cistern")
@@ -2142,8 +2191,13 @@ func _run_all() -> void:
     var release_world := world as IronwrightReleaseWorld3D
     _expect(release_world != null, "The aesthetic review fixture must expose the release presentation world.")
     if release_world != null:
-        release_world._start_presentation_review()
-        release_world._show_presentation_review_page(1)
+        # The catalogue section above deliberately streams authored packages
+        # out and back in. Give its real-time cleanup guards and threaded loads
+        # a deterministic completion boundary before the gallery promotes
+        # those same renderer resources into review fixtures.
+        await _await_renderer_quiescence(world)
+        await release_world._start_presentation_review()
+        await release_world._show_presentation_review_page(1)
         _expect(release_world.presentation_review_camera_desired.z <= 8.9 and release_world.presentation_review_camera_target.y >= 1.1, "The early organic gallery must use a tightened detail frame so its fitted broad silhouettes use the compact review area.")
         _expect(release_world.camera != null and release_world.camera.fov >= 53.0, "The early organic gallery must use a wider review lens so the broad outer silhouettes remain fully inside the compact frame.")
         var skitterling_review_actor: Node3D
@@ -2154,7 +2208,7 @@ func _run_all() -> void:
                 break
         var skitterling_review_root := skitterling_review_actor.get_node_or_null("OrganicModel") as Node3D if skitterling_review_actor != null else null
         _expect(skitterling_review_root != null and skitterling_review_root.scale.x >= 1.2, "The small Skitterling must receive a bounded gallery-only scale compensation so its authored anatomy is judgeable beside the early predators.")
-        release_world._show_presentation_review_page(12)
+        await release_world._show_presentation_review_page(12)
         var buried_labs_review_actor: Node3D
         for review_actor in release_world.presentation_review_pages[12]:
             var candidate := review_actor as Node3D
@@ -2164,15 +2218,95 @@ func _run_all() -> void:
         var buried_vessel := _find_named(buried_labs_review_actor, "BuriedLabsVesselBody0") as MeshInstance3D if buried_labs_review_actor != null else null
         var buried_vessel_material := buried_vessel.material_override as StandardMaterial3D if buried_vessel != null else null
         _expect(buried_vessel_material != null and buried_vessel_material.emission_energy_multiplier <= 0.50 and buried_vessel_material.albedo_color.get_luminance() <= 0.30, "Buried Laboratories review vessels must retain glass/metal separation instead of clipping into flat cyan bodies.")
+        await _await_renderer_quiescence(world)
 
+    await _teardown_world(world)
+    var exit_code := 0
     if failures.is_empty():
         print("Project Ironwright aesthetic overhaul tests passed.")
-        quit(0)
+    else:
+        exit_code = 1
+        for failure in failures:
+            push_error(failure)
+        print("Project Ironwright aesthetic overhaul tests failed: %d" % failures.size())
+    quit(exit_code)
+
+
+func _await_renderer_quiescence(world: Node) -> void:
+    if world == null or not is_instance_valid(world) or world.is_queued_for_deletion():
         return
-    for failure in failures:
-        push_error(failure)
-    print("Project Ironwright aesthetic overhaul tests failed: %d" % failures.size())
-    quit(1)
+    # Frame-count waits are effectively zero-time in an uncapped headless run.
+    # The release dressing guard intentionally uses real time, so honor that
+    # contract before polling any remaining threaded package handoffs.
+    await create_timer(0.25, true, false, true).timeout
+    var settled := false
+    for _attempt in range(100):
+        var pending := false
+        for raw_landmark in world.find_children("*", "RegionLandmark3D", true, false):
+            var landmark := raw_landmark as RegionLandmark3D
+            if landmark == null or not landmark.authored_model_presentation_pending():
+                continue
+            pending = true
+            landmark.advance_authored_model_presentation()
+        var release_art := world.get_node_or_null("ReleaseWorldArtDirector") as ReleaseWorldArtDirector3D
+        if release_art != null and not release_art.is_presentation_idle():
+            pending = true
+        if not pending:
+            settled = true
+            break
+        await create_timer(0.05, true, false, true).timeout
+        await process_frame
+    _expect(settled, "The aesthetic fixture must settle every threaded package, material batch and stream cleanup before reusing renderer resources.")
+    for _frame in range(4):
+        await process_frame
+
+
+func _await_enemy_tier_bootstrap(bootstrap: EnemyTierProgressionBootstrap3D) -> void:
+    for _attempt in range(600):
+        if bootstrap != null and bootstrap.initialized:
+            return
+        await create_timer(0.025, true, false, true).timeout
+        await process_frame
+    _expect(false, "The aesthetic fixture must initialize the canonical ecology only after release presentation work settles.")
+
+
+func _teardown_world(world: Node) -> void:
+    # Presentation review pauses the SceneTree. Unpause first, stop every
+    # world-owned producer, release the complete scene, then keep the tree alive
+    # long enough for queued objects and renderer RIDs to drain deterministically.
+    paused = false
+    if world == null or not is_instance_valid(world):
+        return
+    await _await_renderer_quiescence(world)
+    var release_art := world.get_node_or_null("ReleaseWorldArtDirector") as ReleaseWorldArtDirector3D
+    _expect(release_art == null or release_art.is_presentation_idle(), "Aesthetic teardown must not retire the world while production presentation work is still active.")
+    for raw_landmark in world.find_children("*", "RegionLandmark3D", true, false):
+        var landmark := raw_landmark as RegionLandmark3D
+        _expect(landmark == null or not landmark.authored_model_presentation_pending(), "Aesthetic teardown must drain authored-model attach and cleanup handoffs before releasing renderer resources.")
+    var region_lod := world.get_node_or_null("RegionPresentationLodDirector")
+    if region_lod != null:
+        region_lod.set_process(false)
+    var spatial_audio := world.get_node_or_null("AudioFeedbackDirector") as AudioFeedbackDirector3D
+    if spatial_audio != null:
+        spatial_audio.stop_all()
+    var release_audio := world.get_node_or_null("ReleaseAudioDirector") as ReleaseAudioDirector3D
+    if release_audio != null:
+        release_audio.clear_transient_feedback()
+        release_audio.set_process(false)
+    var release_world := world as IronwrightReleaseWorld3D
+    if release_world != null:
+        release_world.presentation_review_active = false
+        release_world.presentation_review_capture_path = ""
+        release_world.stream_ring_review_active = false
+        release_world.stream_ring_review_capture_path = ""
+    world.propagate_call(&"set_process", [false], true)
+    world.propagate_call(&"set_physics_process", [false], true)
+    world.queue_free()
+    for _frame in range(6):
+        await process_frame
+    await create_timer(0.25, true, false, true).timeout
+    for _frame in range(4):
+        await process_frame
 
 
 func _expect(condition: bool, message: String) -> void:

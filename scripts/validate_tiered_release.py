@@ -14,14 +14,30 @@ ROOT = Path(__file__).resolve().parents[1]
 REQUIRED_TIER_PATHS = [
     "game/data/enemy_tier_progression.json",
     "game/data/enemy_tier_event_modifiers.json",
-    "game/scripts/systems/enemy_tier_director_3d.gd",
-    "game/scripts/systems/enemy_tier_event_bridge_3d.gd",
+    "game/scripts/systems/enemy_tier_progression_bootstrap_3d.gd",
+    "game/scripts/systems/enemy_tier_progression_director_3d.gd",
     "game/scripts/world/organic_nest_3d.gd",
+    "game/scripts/world/enemy_tier_nest_3d.gd",
     "game/scripts/enemies/organic_enemy_tiered_3d.gd",
-    "game/scripts/ui/enemy_tier_hud_3d.gd",
+    "game/scripts/enemies/enemy_tier_brain_3d.gd",
+    "game/scripts/ui/enemy_tier_intel_hud_3d.gd",
     "game/scripts/main_world_tiered_3d.gd",
     "game/tests/enemy_tier_progression_test_runner.gd",
+    "game/tests/ecology_runtime_integration_test_runner.gd",
     "docs/ENEMY_TIER_PROGRESSION.md",
+]
+
+LEGACY_RUNTIME_TOKENS = [
+    "EnemyTierDirector3D",
+    "EnemyTierEventBridge3D",
+    "EnemyTierHUD3D",
+    "res://scripts/systems/enemy_tier_director_3d.gd",
+    "res://scripts/systems/enemy_tier_event_bridge_3d.gd",
+    "res://scripts/ui/enemy_tier_hud_3d.gd",
+    'release["enemy_tiers"]',
+    'release["enemy_tier_events"]',
+    'release.get("enemy_tiers"',
+    'release.get("enemy_tier_events"',
 ]
 
 
@@ -46,19 +62,78 @@ def validate_tiered_entrypoint() -> None:
     scene = (ROOT / "game/scenes/main_3d.tscn").read_text(encoding="utf-8")
     if "res://scripts/main_world_tiered_3d.gd" not in scene:
         raise legacy.ValidationError("The native entrypoint must boot the tiered ecological world")
+    bootstrap_path = "res://scripts/systems/enemy_tier_progression_bootstrap_3d.gd"
+    if scene.count(bootstrap_path) != 1:
+        raise legacy.ValidationError("The native entrypoint must install exactly one canonical enemy-tier bootstrap")
+    if scene.count('[node name="EnemyTierProgressionBootstrap"') != 1:
+        raise legacy.ValidationError("The native entrypoint must contain exactly one EnemyTierProgressionBootstrap node")
+    for token in LEGACY_RUNTIME_TOKENS[:6]:
+        if token in scene:
+            raise legacy.ValidationError(f"Native scene must not install legacy enemy-tier runtime {token!r}")
+
     world = (ROOT / "game/scripts/main_world_tiered_3d.gd").read_text(encoding="utf-8")
     for token in [
         "extends IronwrightReleaseWorld3D",
-        "EnemyTierDirector3D",
-        "EnemyTierEventBridge3D",
-        "EnemyTierHUD3D",
+        "EnemyTierProgressionDirector3D",
+        "_canonical_enemy_tier_director",
         "_spawn_capped_operation_threat",
-        'release["enemy_tiers"]',
-        'release["enemy_tier_events"]',
-        "enemy_tier_director.restore_from_dictionary",
+        "canonical_tier_director.request_causal_threat",
+        'release["enemy_tier_progression"]',
+        'release.get("enemy_tier_progression", {})',
+        "canonical_tier_director.restore_from_dictionary",
+        "canonical_tier_director.assign_enemy_tier",
+        'set_meta(&"enemy_tier_progression_restored_from_unified", false)',
+        'set_meta(&"enemy_tier_progression_restored_from_unified", true)',
+        'long_operation_director.spawn_enemy_callback = Callable(self, "_spawn_capped_operation_threat")',
+        'endgame_director.spawn_enemy_callback = Callable(self, "_spawn_capped_operation_threat")',
     ]:
         if token not in world:
             raise legacy.ValidationError(f"Tiered world is missing integration token {token!r}")
+    for token in LEGACY_RUNTIME_TOKENS:
+        if token in world:
+            raise legacy.ValidationError(
+                f"Tiered world must not integrate the retired parallel enemy-tier runtime token {token!r}"
+            )
+    if world.count('release["enemy_tier_progression"]') != 1:
+        raise legacy.ValidationError("Tiered release snapshots must write one unified enemy_tier_progression payload")
+    if world.count('release.get("enemy_tier_progression", {})') != 1:
+        raise legacy.ValidationError("Tiered release restore must read the unified enemy_tier_progression payload once")
+    if "return _spawn_enemy(position, species)" in world:
+        raise legacy.ValidationError("Causal operation threats must not bypass physical nests with a direct world spawn")
+
+    bootstrap = (ROOT / "game/scripts/systems/enemy_tier_progression_bootstrap_3d.gd").read_text(encoding="utf-8")
+    for token in [
+        "class_name EnemyTierProgressionBootstrap3D",
+        "director = EnemyTierProgressionDirector3D.new()",
+        "suppression = AutonomousEnemySuppression3D.new()",
+        "intel_hud = EnemyTierIntelHUD3D.new()",
+        "_disable_legacy_population_generators",
+        'node.call(&"set_external_population_control", true)',
+        'node.set("spawn_enemy_callable", Callable())',
+        'node.set("spawn_enemy_callback", Callable())',
+        'if not bool(world.get_meta(&"enemy_tier_progression_restored_from_unified", false))',
+        'world.set_meta(&"enemy_tier_progression_migrated_from_sidecar", true)',
+    ]:
+        if token not in bootstrap:
+            raise legacy.ValidationError(f"Canonical enemy-tier bootstrap is missing {token!r}")
+    if bootstrap.count("EnemyTierProgressionDirector3D.new()") != 1:
+        raise legacy.ValidationError("The canonical bootstrap must create exactly one population director")
+    if bootstrap.count("EnemyTierIntelHUD3D.new()") != 1:
+        raise legacy.ValidationError("The canonical bootstrap must create exactly one ecology-intelligence HUD")
+    if "func _save_sidecar" in bootstrap or "_save_sidecar()" in bootstrap:
+        raise legacy.ValidationError("Canonical saves must not create a second enemy-tier sidecar generation")
+    for token in [
+        "node.set_process(false)",
+        "node.set_physics_process(false)",
+        'node.set("active_enemy_cap", 0)',
+        'node.set("spawn_interval", 999999.0)',
+    ]:
+        if token in bootstrap:
+            raise legacy.ValidationError(f"Population handoff must not freeze the living ecology with {token!r}")
+    for token in LEGACY_RUNTIME_TOKENS[:6]:
+        if token in bootstrap:
+            raise legacy.ValidationError(f"Canonical bootstrap must not construct or reference legacy runtime {token!r}")
+
     actor_scene = (ROOT / "game/scenes/actors/organic_enemy_3d.tscn").read_text(encoding="utf-8")
     if "organic_enemy_tiered_3d.gd" not in actor_scene:
         raise legacy.ValidationError("Organic enemy scene must use tier-aware intelligence")
@@ -66,55 +141,32 @@ def validate_tiered_entrypoint() -> None:
 
 def validate_tier_configuration() -> None:
     data = load_json("game/data/enemy_tier_progression.json")
-    simulation = data.get("simulation")
     tiers = data.get("tiers")
-    nests = data.get("nest_profiles")
-    if isinstance(tiers, list) and isinstance(data.get("nest_archetypes"), list):
-        if [entry.get("tier") for entry in tiers if isinstance(entry, dict)] != [1, 2, 3, 4, 5]:
-            raise legacy.ValidationError("Enemy escalation must contain exactly tiers 1–5 in order")
-        if abs(float(data.get("transfer_factor", 0.0)) - 0.1) > 1e-9:
-            raise legacy.ValidationError("Saturation transfer factor must remain exactly 0.1")
-        if abs(float(data.get("tier_1_rate_growth_per_minute_per_minute", 0.0)) - 1.0) > 1e-9:
-            raise legacy.ValidationError("Prototype Tier-1 rate growth must remain 1 unit/min per minute")
-        if float(data.get("spawn_credit_cap", 99.0)) > 3.0:
-            raise legacy.ValidationError("Spawn credit may not become a hidden army backlog")
-        expected_caps = [100, 40, 16, 6, 2]
-        actual_caps = [int(entry.get("unit_cap", 0)) for entry in tiers]
-        if actual_caps != expected_caps:
-            raise legacy.ValidationError(f"Enemy tier caps must be {expected_caps}, got {actual_caps}")
-        if tiers[0].get("behaviours") != ["roam", "chase_visible_target", "attack"]:
-            raise legacy.ValidationError("Tier 1 must remain behaviorally primitive")
-        supported = set()
-        for profile in data["nest_archetypes"]:
-            if isinstance(profile, dict):
-                supported.update(int(value) for value in profile.get("supported_tiers", []))
-        if supported != {1, 2, 3, 4, 5}:
-            raise legacy.ValidationError("Physical nest archetypes must collectively support every tier")
-        return
-    if not isinstance(simulation, dict) or not isinstance(tiers, dict) or not isinstance(nests, dict):
-        raise legacy.ValidationError("Tier progression data needs simulation, tiers and nest_profiles objects")
-    if set(tiers) != {"1", "2", "3", "4", "5"}:
-        raise legacy.ValidationError("Enemy escalation must contain exactly tiers 1–5")
-    if float(simulation.get("saturation_transfer_factor", 0.0)) != 0.1:
+    nests = data.get("nest_archetypes")
+    if not isinstance(tiers, list) or not isinstance(nests, list):
+        raise legacy.ValidationError("Canonical tier progression needs ordered tiers and physical nest_archetypes arrays")
+    if data.get("system_id") != "population_driven_organic_escalation":
+        raise legacy.ValidationError("Enemy tier configuration must identify the canonical population-driven system")
+    if [entry.get("tier") for entry in tiers if isinstance(entry, dict)] != [1, 2, 3, 4, 5]:
+        raise legacy.ValidationError("Enemy escalation must contain exactly tiers 1–5 in order")
+    if abs(float(data.get("transfer_factor", 0.0)) - 0.1) > 1e-9:
         raise legacy.ValidationError("Saturation transfer factor must remain exactly 0.1")
-    if float(simulation.get("tier_1_rate_growth_per_minute_per_minute", 0.0)) != 1.0:
+    if abs(float(data.get("tier_1_rate_growth_per_minute_per_minute", 0.0)) - 1.0) > 1e-9:
         raise legacy.ValidationError("Prototype Tier-1 rate growth must remain 1 unit/min per minute")
-    if float(simulation.get("spawn_credit_cap", 99.0)) > 3.0:
+    if float(data.get("spawn_credit_cap", 99.0)) > 3.0:
         raise legacy.ValidationError("Spawn credit may not become a hidden army backlog")
     expected_caps = [100, 40, 16, 6, 2]
-    actual_caps = [int(tiers[str(index)].get("unit_cap", 0)) for index in range(1, 6)]
+    actual_caps = [int(entry.get("unit_cap", 0)) for entry in tiers]
     if actual_caps != expected_caps:
         raise legacy.ValidationError(f"Enemy tier caps must be {expected_caps}, got {actual_caps}")
-    if tiers["1"].get("behaviour_profile") != "feral":
+    if tiers[0].get("behaviours") != ["roam", "chase_visible_target", "attack"]:
         raise legacy.ValidationError("Tier 1 must remain behaviorally primitive")
-    if set(tiers["1"].get("species_weights", {})) != {"skitterling"}:
-        raise legacy.ValidationError("Tier 1 must currently contain only the slow numerous Skitterling")
     supported = set()
-    for profile in nests.values():
+    for profile in nests:
         if isinstance(profile, dict):
             supported.update(int(value) for value in profile.get("supported_tiers", []))
     if supported != {1, 2, 3, 4, 5}:
-        raise legacy.ValidationError("Physical nest profiles must collectively support every tier")
+        raise legacy.ValidationError("Physical nest archetypes must collectively support every tier")
 
 
 def validate_species_mapping() -> None:
@@ -135,43 +187,74 @@ def validate_species_mapping() -> None:
 
 
 def validate_runtime_contracts() -> None:
-    director = (ROOT / "game/scripts/systems/enemy_tier_director_3d.gd").read_text(encoding="utf-8")
+    director = (ROOT / "game/scripts/systems/enemy_tier_progression_director_3d.gd").read_text(encoding="utf-8")
     for token in [
-        "_process_saturation_transfers",
-        "rate * saturation_transfer_factor",
-        'state["replenishment_per_minute"] = 0.0',
-        "range(tiers.size() - 2, -1, -1)",
+        'add_to_group(&"enemy_tier_progression")',
+        "EVENT_MODIFIERS_PATH",
+        "_load_detailed_event_effects",
+        'endgame_node.connect(&"endgame_started"',
+        "_apply_detailed_event_effect",
+        "_process_saturation_high_to_low",
+        "descending.reverse()",
+        "anonymous_rates[tier] = 0.0",
+        'source["current_rate"] = float(source.get("current_rate", 0.0)) * transfer_factor',
         "spawn_credit_cap",
-        "_choose_nest_for_tier",
-        "nest.spawn_position",
-        "apply_replenishment_delta",
-        "apply_tier_one_growth_delta",
+        "_enforce_population_caps",
+        "_select_spawn_nest",
+        "_materialize_from_nest",
+        'nest.call(&"next_spawn_position"',
+        "request_causal_threat",
+        "_materialize_from_nest(tier, nest, species)",
+        "_redirect_causal_actor",
+        "assign_enemy_tier",
+        "to_dictionary",
         "restore_from_dictionary",
     ]:
         if token not in director:
-            raise legacy.ValidationError(f"Enemy-tier director is missing {token!r}")
-    nest = (ROOT / "game/scripts/world/organic_nest_3d.gd").read_text(encoding="utf-8")
-    for token in ["extends StaticBody3D", "nest_destroyed", "can_spawn_tier", "apply_damage", "destroy_replenishment_delta_per_minute"]:
-        if token not in nest:
-            raise legacy.ValidationError(f"Physical nest runtime is missing {token!r}")
-    enemy = (ROOT / "game/scripts/enemies/organic_enemy_tiered_3d.gd").read_text(encoding="utf-8")
+            raise legacy.ValidationError(f"Canonical enemy-tier director is missing {token!r}")
+
+    nest = (ROOT / "game/scripts/world/enemy_tier_nest_3d.gd").read_text(encoding="utf-8")
     for token in [
-        "enemy_tier: int = 1",
-        "configure_tier",
-        "Tier 1 organisms wander without a strategic objective",
-        "Tier 2 organisms patrol and defend",
-        "Tier 3 organisms scout",
-        "Tier 4 organisms intercept machine routes",
-        "Tier 5 organisms act as regional apex threats",
-        "_has_line_of_sight",
-        "_strategic_interest_target",
+        "class_name EnemyTierNest3D",
+        "extends StaticBody3D",
+        'add_to_group(&"enemy_tier_nests")',
+        "can_spawn_tier",
+        "effective_replenishment",
+        "next_spawn_position",
+        "apply_damage",
+        "to_dictionary",
+        "restore_from_dictionary",
+    ]:
+        if token not in nest:
+            raise legacy.ValidationError(f"Canonical physical nest runtime is missing {token!r}")
+
+    enemy = (ROOT / "game/scripts/enemies/enemy_tier_brain_3d.gd").read_text(encoding="utf-8")
+    for token in [
+        "class_name EnemyTierBrain3D",
+        "func configure(",
+        "_decide_tier_one",
+        "_decide_tier_two",
+        "_decide_tier_three",
+        "_decide_tier_four",
+        "_decide_tier_five",
+        "receive_migration_goal",
+        "receive_causal_threat_goal",
     ]:
         if token not in enemy:
-            raise legacy.ValidationError(f"Tier-aware enemy intelligence is missing {token!r}")
+            raise legacy.ValidationError(f"Canonical tier-aware enemy intelligence is missing {token!r}")
 
 
 def validate_dynamic_modifiers() -> None:
+    progression = load_json("game/data/enemy_tier_progression.json")
+    if "event_modifiers" in progression:
+        raise legacy.ValidationError(
+            "enemy_tier_progression.json must not duplicate the canonical ecological event table"
+        )
     data = load_json("game/data/enemy_tier_event_modifiers.json")
+    if data.get("schema_version") != 2:
+        raise legacy.ValidationError("Canonical ecological event modifiers must use schema version 2")
+    if data.get("authority") != "canonical_ecological_event_modifiers":
+        raise legacy.ValidationError("Ecological event modifiers must declare one canonical authority")
     operations = data.get("operations", {})
     technologies = data.get("technologies", {})
     endgame = data.get("endgame", {})
@@ -196,8 +279,9 @@ def validate_dynamic_modifiers() -> None:
 
 def validate_no_wave_loop() -> None:
     paths = [
-        "game/scripts/systems/enemy_tier_director_3d.gd",
-        "game/scripts/systems/enemy_tier_event_bridge_3d.gd",
+        "game/scripts/systems/enemy_tier_progression_bootstrap_3d.gd",
+        "game/scripts/systems/enemy_tier_progression_director_3d.gd",
+        "game/scripts/enemies/enemy_tier_brain_3d.gd",
         "game/scripts/main_world_tiered_3d.gd",
     ]
     combined = "\n".join((ROOT / path).read_text(encoding="utf-8").lower() for path in paths)
@@ -236,6 +320,34 @@ def validate_documents_and_tests() -> None:
     for alternatives in test_groups:
         if not any(token in tests for token in alternatives):
             raise legacy.ValidationError(f"Enemy tier test suite is missing one of {alternatives!r}")
+
+    integration_tests = (ROOT / "game/tests/ecology_runtime_integration_test_runner.gd").read_text(encoding="utf-8")
+    for token in [
+        "_test_single_population_authority",
+        "_test_single_command_map_hud",
+        "_test_birth_handoff",
+        "_test_local_attention_process",
+        "_test_strategic_state_process",
+        "_test_physical_migration_without_birth",
+        "_test_canonical_caps",
+    ]:
+        if token not in integration_tests:
+            raise legacy.ValidationError(f"Live ecology integration test suite is missing {token!r}")
+
+    release_tests = (ROOT / "game/tests/release_test_runner.gd").read_text(encoding="utf-8")
+    for token in [
+        "_test_enemy_tier_unified_persistence",
+        'release_data.has(key)',
+        '"enemy_tier_progression"',
+        "A stale RC1 sidecar must never overwrite canonical tier state",
+        "New saves must not write or rotate the legacy enemy-tier sidecar",
+    ]:
+        if token not in release_tests:
+            raise legacy.ValidationError(f"Unified enemy-tier persistence coverage is missing {token!r}")
+
+    soak_tests = (ROOT / "game/tests/long_run_soak_test_runner.gd").read_text(encoding="utf-8")
+    if "not FileAccess.file_exists(TEST_SIDECAR_PATH)" not in soak_tests:
+        raise legacy.ValidationError("Long-run save coverage must reject creation of a second enemy-tier sidecar generation")
 
 
 def main() -> int:

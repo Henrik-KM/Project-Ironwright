@@ -323,6 +323,11 @@ func _build_visuals() -> void:
             "NestFineSpine%02d" % index
         )
     _pulse_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.8, 0.0), Color("d84b69"), 1.3, 7.5)
+    # The failure state owns renderer resources for the same lifetime as the
+    # living nest. Destruction can coincide with an authored-region attach or
+    # cleanup handoff, so that transition must only toggle stable nodes rather
+    # than allocate a second procedural mesh tree in the failure frame.
+    _ensure_destroyed_presentation()
     _refresh_visual_state()
 
 
@@ -335,6 +340,7 @@ func _ensure_destroyed_presentation() -> void:
 func _build_destroyed_presentation() -> void:
     _destroyed_root = Node3D.new()
     _destroyed_root.name = "DestroyedTierNestPresentation"
+    _destroyed_root.visible = false
     _model_root.add_child(_destroyed_root)
 
     var dead_chitin := ModelKit3D.material(Color("21181f"), 0.08, 0.82)
@@ -434,13 +440,6 @@ func _animate_visuals() -> void:
 func _refresh_visual_state() -> void:
     if _model_root == null:
         return
-    if not alive:
-        # Destroyed scars are authored on demand. Living nests are common
-        # world landmarks, so keeping their failure geometry allocated from
-        # boot needlessly multiplies renderer resources and destabilizes
-        # headless/reduced-detail startup without changing the visible result
-        # once a nest actually fails.
-        _ensure_destroyed_presentation()
     var state_scale := maxf(0.08, maturity)
     var active_shell_visible := alive or (state_name == &"regrowing" and regrowth_progress >= 0.72)
     if alive:

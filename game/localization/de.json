@@ -743,6 +743,7 @@
     "notification.tier.ecological_cost": "ÖKOLOGISCHE KOSTEN · {0}\nDie Operation oder Technologie erhöhte die künftige organische Erneuerung.",
     "notification.tier.ecological_suppression": "ÖKOLOGISCHE DÄMPFUNG · {0}\nDie abgeschlossene Aktion verringerte die langfristige organische Erneuerung.",
     "notification.tier.autonomous_suppression": "AUTONOME DÄMPFUNG · {0} WÄCHTER{1}\n{2}",
+    "notification.tier.autonomous_suppression_stood_down": "AUTONOME DÄMPFUNG BEENDET\n{0}",
     "objective.complete.survey.title": "DAS WESTRASTER VERMESSEN",
     "objective.complete.survey.detail": "Drücke P und genehmige die erste Fernoperation. Die Gruppe reist durch echte Strassen, arbeitet unter Druck und liefert erst nach der Rückkehr.",
     "objective.complete.survey.prompt": "P DRÜCKEN · VERFÜGBARE FERNOPERATIONEN PRÜFEN",

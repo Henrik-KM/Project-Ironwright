@@ -31,6 +31,12 @@ var remote_update_interval: float = 0.45
 var active_distance: float = 115.0
 var simulation_lod: int = 0
 var initialized: bool = false
+var forced_goal_kind: StringName = &""
+var forced_goal_source: StringName = &""
+var forced_goal_elapsed: float = 0.0
+var forced_goal_timeout: float = 0.0
+var forced_goal_stalled: float = 0.0
+var forced_goal_last_distance: float = INF
 
 
 func configure(
@@ -39,11 +45,15 @@ func configure(
         next_tier: int,
         next_home_nest_id: StringName
     ) -> void:
+    var previous_tier := enemy_tier
     enemy = next_enemy as CharacterBody3D
     director = next_director
     enemy_tier = clampi(next_tier, 1, 5)
     home_nest_id = next_home_nest_id
-    if is_inside_tree():
+    if initialized:
+        _apply_tier_context(previous_tier)
+        _choose_next_behaviour(true)
+    elif is_inside_tree():
         _initialize()
 
 
@@ -87,6 +97,14 @@ func _initialize() -> void:
     world = get_tree().current_scene
     spatial_index = get_tree().get_first_node_in_group(&"spatial_index_service")
     player_reference = get_tree().get_first_node_in_group(&"player_character") as Node3D
+    _apply_tier_context(0)
+    _choose_next_behaviour(true)
+    set_process(false)
+
+
+func _apply_tier_context(previous_tier: int) -> void:
+    if enemy == null or not is_instance_valid(enemy):
+        return
     home_nest = null
     if director != null:
         var raw_home_nest: Variant = director.nests.get(home_nest_id, null)
@@ -95,14 +113,14 @@ func _initialize() -> void:
     territory_center = home_nest.global_position if home_nest != null else enemy.global_position
     territory_radius = [28.0, 24.0, 42.0, 58.0, 92.0][enemy_tier - 1]
     pack_id = StringName("pack.%s.tier_%d" % [String(home_nest_id) if home_nest_id != &"" else "feral", enemy_tier])
+    if previous_tier > 0 and previous_tier != enemy_tier:
+        enemy.remove_from_group(StringName("enemy_tier_%d" % previous_tier))
     enemy.add_to_group(StringName("enemy_tier_%d" % enemy_tier))
     enemy.add_to_group(&"enemy_tier_brained")
     enemy.set_meta(&"enemy_behaviour", String(behaviour))
     enemy.set_meta(&"enemy_behaviour_reason", behaviour_reason)
     enemy.set_meta(&"enemy_pack_id", String(pack_id))
     enemy.set_physics_process(false)
-    _choose_next_behaviour(true)
-    set_process(false)
 
 
 func _physics_process(delta: float) -> void:
@@ -130,10 +148,52 @@ func _simulation_tick(delta: float) -> void:
         remote_clock = 0.0
     else:
         remote_clock = 0.0
-    if decision_clock >= _decision_interval():
+    var forced_goal_active := _update_forced_goal(delta)
+    if decision_clock >= _decision_interval() and not forced_goal_active:
         decision_clock = 0.0
         _choose_next_behaviour(false)
     _execute_behaviour(delta, remote)
+
+
+func _update_forced_goal(delta: float) -> bool:
+    if forced_goal_kind == &"" or not has_goal:
+        return false
+    var distance := enemy.global_position.distance_to(goal_position)
+    forced_goal_elapsed += delta
+    if distance <= 1.5:
+        _finish_forced_goal("arrived at the causal destination")
+        _choose_next_behaviour(true)
+        return false
+
+    var visible := _best_visible_target()
+    if visible != null:
+        current_target = visible
+        last_known_target_position = visible.global_position
+        last_known_target_seconds = 8.0 + float(enemy_tier) * 5.0
+        _finish_forced_goal("engaged a living target on the causal route")
+        _choose_next_behaviour(true)
+        return false
+
+    if forced_goal_last_distance - distance >= 0.15:
+        forced_goal_stalled = 0.0
+        forced_goal_last_distance = distance
+    else:
+        forced_goal_stalled += delta
+    if forced_goal_elapsed >= forced_goal_timeout or forced_goal_stalled >= 24.0:
+        _finish_forced_goal("abandoned the causal route after a bounded pathing failure")
+        _choose_next_behaviour(true)
+        return false
+    return true
+
+
+func _finish_forced_goal(outcome: String) -> void:
+    forced_goal_kind = &""
+    forced_goal_source = &""
+    forced_goal_elapsed = 0.0
+    forced_goal_timeout = 0.0
+    forced_goal_stalled = 0.0
+    forced_goal_last_distance = INF
+    enemy.set_meta(&"enemy_forced_goal_outcome", outcome)
 
 
 func _decision_interval() -> float:
@@ -624,6 +684,100 @@ func receive_shared_detection(target: Variant, position: Vector3, source_enemy: 
         goal_position = position
         has_goal = true
         _set_behaviour(&"respond_to_shared_detection", "Responding to prey information shared by another advanced organism.")
+
+
+func receive_migration_goal(destination: Vector3, source_region: StringName) -> void:
+    if not initialized or enemy == null or not is_instance_valid(enemy):
+        return
+    _begin_forced_goal(&"regional_migration", source_region, destination)
+    territory_center = destination
+    enemy.set_meta(&"ecology_region_previous", String(source_region))
+    enemy.set_meta(&"ecology_region", "migration.route")
+    _set_behaviour(&"regional_migration", "Physically migrating from %s toward the connecting streets as regional pressure changes." % String(source_region).replace("region.", "").replace("_", " "))
+
+
+func receive_causal_threat_goal(destination: Vector3, source_kind: StringName) -> void:
+    if not initialized or enemy == null or not is_instance_valid(enemy):
+        return
+    _begin_forced_goal(&"causal_response", source_kind, destination)
+    _set_behaviour(&"causal_response", "Moving from a living nest toward a %s disturbance; no organism was created at the incident point." % String(source_kind).replace("_", " "))
+
+
+func _begin_forced_goal(kind: StringName, source: StringName, destination: Vector3) -> void:
+    current_target = null
+    goal_position = destination
+    has_goal = true
+    forced_goal_kind = kind
+    forced_goal_source = source
+    forced_goal_elapsed = 0.0
+    forced_goal_stalled = 0.0
+    forced_goal_last_distance = enemy.global_position.distance_to(destination)
+    var travel_seconds := forced_goal_last_distance / maxf(0.5, float(enemy.get("move_speed")))
+    forced_goal_timeout = clampf(travel_seconds * 3.0 + 12.0, 30.0, 240.0)
+    decision_clock = 0.0
+    state_elapsed = 0.0
+
+
+func serialize_runtime_intent() -> Dictionary:
+    return {
+        "behaviour": String(behaviour),
+        "behaviour_reason": behaviour_reason,
+        "goal_position": [goal_position.x, goal_position.y, goal_position.z],
+        "has_goal": has_goal,
+        "last_known_target_position": [last_known_target_position.x, last_known_target_position.y, last_known_target_position.z],
+        "last_known_target_seconds": last_known_target_seconds,
+        "territory_center": [territory_center.x, territory_center.y, territory_center.z],
+        "territory_radius": territory_radius,
+        "decision_clock": decision_clock,
+        "remote_clock": remote_clock,
+        "state_elapsed": state_elapsed,
+        "roam_serial": roam_serial,
+        "scout_serial": scout_serial,
+        "forced_goal_kind": String(forced_goal_kind),
+        "forced_goal_source": String(forced_goal_source),
+        "forced_goal_elapsed": forced_goal_elapsed,
+        "forced_goal_timeout": forced_goal_timeout,
+        "forced_goal_stalled": forced_goal_stalled,
+        "forced_goal_last_distance": forced_goal_last_distance if is_finite(forced_goal_last_distance) else -1.0,
+    }
+
+
+func restore_runtime_intent(data: Dictionary) -> void:
+    if not initialized or data.is_empty():
+        return
+    current_target = null
+    behaviour = StringName(str(data.get("behaviour", String(behaviour))))
+    behaviour_reason = str(data.get("behaviour_reason", behaviour_reason))
+    goal_position = _runtime_vector(data.get("goal_position", []), goal_position)
+    has_goal = bool(data.get("has_goal", has_goal))
+    last_known_target_position = _runtime_vector(data.get("last_known_target_position", []), last_known_target_position)
+    last_known_target_seconds = maxf(0.0, float(data.get("last_known_target_seconds", last_known_target_seconds)))
+    territory_center = _runtime_vector(data.get("territory_center", []), territory_center)
+    territory_radius = maxf(1.0, float(data.get("territory_radius", territory_radius)))
+    # Older runtime-intent payloads omitted the decision phase and deterministic
+    # goal serials. Their migration default is zero, never whatever happened to
+    # accrue while the replacement actor was being reconstructed.
+    decision_clock = clampf(float(data.get("decision_clock", 0.0)), 0.0, _decision_interval())
+    remote_clock = clampf(float(data.get("remote_clock", 0.0)), 0.0, remote_update_interval)
+    state_elapsed = maxf(0.0, float(data.get("state_elapsed", 0.0)))
+    roam_serial = maxi(0, int(data.get("roam_serial", 0)))
+    scout_serial = maxi(0, int(data.get("scout_serial", 0)))
+    forced_goal_kind = StringName(str(data.get("forced_goal_kind", "")))
+    forced_goal_source = StringName(str(data.get("forced_goal_source", "")))
+    forced_goal_elapsed = maxf(0.0, float(data.get("forced_goal_elapsed", 0.0)))
+    forced_goal_timeout = maxf(0.0, float(data.get("forced_goal_timeout", 0.0)))
+    forced_goal_stalled = maxf(0.0, float(data.get("forced_goal_stalled", 0.0)))
+    var restored_last_distance := float(data.get("forced_goal_last_distance", -1.0))
+    forced_goal_last_distance = restored_last_distance if restored_last_distance >= 0.0 else enemy.global_position.distance_to(goal_position)
+    enemy.set_meta(&"enemy_behaviour", String(behaviour))
+    enemy.set_meta(&"enemy_behaviour_reason", behaviour_reason)
+    enemy.set_meta(&"enemy_pack_id", String(pack_id))
+
+
+func _runtime_vector(raw: Variant, fallback: Vector3) -> Vector3:
+    if raw is Array and (raw as Array).size() >= 3:
+        return Vector3(float(raw[0]), float(raw[1]), float(raw[2]))
+    return fallback
 
 
 func _target_is_alive(target: Variant) -> bool:

@@ -743,6 +743,7 @@
     "notification.tier.ecological_cost": "ECOLOGICAL COST · {0}\nThe operation or technology increased future organic replenishment.",
     "notification.tier.ecological_suppression": "ECOLOGICAL SUPPRESSION · {0}\nThe completed action reduced long-term organic replenishment.",
     "notification.tier.autonomous_suppression": "AUTONOMOUS SUPPRESSION · {0} WARDEN{1}\n{2}",
+    "notification.tier.autonomous_suppression_stood_down": "AUTONOMOUS SUPPRESSION STOOD DOWN\n{0}",
     "objective.complete.survey.title": "SURVEY THE WEST GRID",
     "objective.complete.survey.detail": "Press P and authorize the first long-range operation. The group travels through real streets, works under pressure, and delivers only after returning.",
     "objective.complete.survey.prompt": "PRESS P · REVIEW AVAILABLE LONG-RANGE OPERATIONS",

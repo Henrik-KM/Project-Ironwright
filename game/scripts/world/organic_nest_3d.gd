@@ -23,6 +23,8 @@ var discovered: bool = true
 var spawn_serial: int = 0
 
 var _model_root: Node3D
+var _living_visual_root: Node3D
+var _destroyed_visual_root: Node3D
 var _status_light: OmniLight3D
 var _visual_clock: float = 0.0
 
@@ -144,28 +146,42 @@ func _build_visuals() -> void:
     _model_root.name = "NestModel"
     add_child(_model_root)
 
+    # Both states own stable renderer resources for the lifetime of the nest.
+    # Destruction only changes visibility; it never retires one mesh tree while
+    # constructing the other in the same frame on the compatibility renderer.
+    _living_visual_root = Node3D.new()
+    _living_visual_root.name = "LivingNestPresentation"
+    _model_root.add_child(_living_visual_root)
+    _destroyed_visual_root = Node3D.new()
+    _destroyed_visual_root.name = "DestroyedNestPresentation"
+    _model_root.add_child(_destroyed_visual_root)
+    _build_visual_state(_destroyed_visual_root, false)
+    _build_visual_state(_living_visual_root, true)
+
 
 func _refresh_visuals() -> void:
-    if _model_root == null:
+    if _living_visual_root == null or _destroyed_visual_root == null:
         return
-    for child in _model_root.get_children():
-        child.queue_free()
-    _status_light = null
+    _living_visual_root.visible = active
+    _destroyed_visual_root.visible = not active
+
+
+func _build_visual_state(visual_root: Node3D, visual_active: bool) -> void:
+    if visual_root == null:
+        return
 
     var chitin := ModelKit3D.material(Color("2b1d24"), 0.08, 0.68)
     var flesh := ModelKit3D.material(Color("4e192e"), 0.0, 0.72)
     var bone := ModelKit3D.material(Color("786d5d"), 0.0, 0.84)
-    var signal_color := Color("da4267") if active else Color("4f2a31")
-    var signal_material := ModelKit3D.material(signal_color.darkened(0.62), 0.0, 0.55, signal_color, 2.8 if active else 0.15)
+    var signal_color := Color("da4267") if visual_active else Color("4f2a31")
+    var signal_material := ModelKit3D.material(signal_color.darkened(0.62), 0.0, 0.55, signal_color, 2.8 if visual_active else 0.15)
 
-    if not active:
+    if not visual_active:
         # Destruction is a persistent world event, so the nest needs a
         # readable biological failure state rather than a scaled-down copy of
         # its healthy shell. This assembly is presentation-only and stays
         # inside the existing collision footprint.
-        var destroyed_root := Node3D.new()
-        destroyed_root.name = "DestroyedNestPresentation"
-        _model_root.add_child(destroyed_root)
+        var destroyed_root := visual_root
         var dead_chitin := ModelKit3D.material(Color("21181f"), 0.08, 0.82)
         var dead_flesh := ModelKit3D.material(Color("351320"), 0.0, 0.88)
         var dead_bone := ModelKit3D.material(Color("665d51"), 0.0, 0.9)
@@ -236,14 +252,14 @@ func _refresh_visuals() -> void:
         return
 
     var scale_factor := 0.82 + maturity * 0.52
-    ModelKit3D.add_sphere(_model_root, 1.35, Vector3(0.0, 0.82, 0.0), chitin, Vector3(1.9, 0.86, 1.72) * scale_factor, "NestCore")
-    ModelKit3D.add_sphere(_model_root, 0.62, Vector3(-0.8, 0.66, 0.55), flesh, Vector3(1.25, 1.0, 1.35) * scale_factor, "BroodSacA")
-    ModelKit3D.add_sphere(_model_root, 0.55, Vector3(0.85, 0.58, 0.35), flesh, Vector3(1.15, 0.95, 1.3) * scale_factor, "BroodSacB")
+    ModelKit3D.add_sphere(visual_root, 1.35, Vector3(0.0, 0.82, 0.0), chitin, Vector3(1.9, 0.86, 1.72) * scale_factor, "NestCore")
+    ModelKit3D.add_sphere(visual_root, 0.62, Vector3(-0.8, 0.66, 0.55), flesh, Vector3(1.25, 1.0, 1.35) * scale_factor, "BroodSacA")
+    ModelKit3D.add_sphere(visual_root, 0.55, Vector3(0.85, 0.58, 0.35), flesh, Vector3(1.15, 0.95, 1.3) * scale_factor, "BroodSacB")
     for index in range(9):
         var angle := TAU * float(index) / 9.0
         var radius := 1.35 + float(index % 3) * 0.24
         ModelKit3D.add_capsule(
-            _model_root,
+            visual_root,
             0.09 + maturity * 0.035,
             2.1 + maturity * 1.2,
             Vector3(cos(angle) * radius, 1.0 + maturity * 0.35, sin(angle) * radius),
@@ -253,8 +269,8 @@ func _refresh_visuals() -> void:
         )
     for index in range(5):
         var angle := TAU * float(index) / 5.0 + 0.35
-        ModelKit3D.add_sphere(_model_root, 0.12, Vector3(cos(angle) * 0.85, 1.42 + maturity * 0.4, sin(angle) * 0.85), signal_material, Vector3.ONE, "NestSignal_%02d" % index)
-    _status_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.6, 0.0), signal_color, 0.65 + maturity * 0.75, 5.5 + maturity * 4.0)
+        ModelKit3D.add_sphere(visual_root, 0.12, Vector3(cos(angle) * 0.85, 1.42 + maturity * 0.4, sin(angle) * 0.85), signal_material, Vector3.ONE, "NestSignal_%02d" % index)
+    _status_light = ModelKit3D.add_glow_light(visual_root, Vector3(0.0, 1.6, 0.0), signal_color, 0.65 + maturity * 0.75, 5.5 + maturity * 4.0)
 
     # The ordinary nest is an early encounter landmark, so its close-range
     # silhouette needs authored biological construction rather than a smooth
@@ -264,7 +280,7 @@ func _refresh_visuals() -> void:
     var root_dark := ModelKit3D.material(Color("1b151c"), 0.0, 0.88)
     var detail_root := Node3D.new()
     detail_root.name = "NestHighDefinitionDetail"
-    _model_root.add_child(detail_root)
+    visual_root.add_child(detail_root)
     var anatomy_scale := scale_factor
     ModelKit3D.add_segmented_carapace(
         detail_root,
@@ -313,10 +329,10 @@ func _refresh_visuals() -> void:
 
 
 func _animate_visuals() -> void:
-    if _model_root == null or not active:
+    if _living_visual_root == null or not active:
         return
     var pulse := 1.0 + sin(_visual_clock * (1.8 + maturity * 1.2)) * 0.045 * maturity
-    var pulse_node := _model_root.get_node_or_null("NestSignal_00") as Node3D
+    var pulse_node := _living_visual_root.get_node_or_null("NestSignal_00") as Node3D
     if pulse_node != null:
         pulse_node.scale = Vector3.ONE * pulse
     if _status_light != null:

@@ -23,6 +23,7 @@ func _run_all() -> void:
     for _index in range(8):
         await process_frame
     await physics_frame
+    await _await_enemy_tier_bootstrap(world)
 
     _expect(world != null, "The long-run soak must boot the complete release world.")
     if world == null:
@@ -61,7 +62,7 @@ func _run_all() -> void:
             print("SOAK_SAVE_FAILED checkpoint=%d channeling=%s reason=%s" % [checkpoint + 1, str(world.player.is_channeling()), world.transactional_save_service.last_error])
         _expect(save_succeeded, "Transactional save must succeed at simulated %.1f hours." % (expected_seconds / 3600.0))
         _expect(FileAccess.file_exists(TEST_SAVE_PATH), "The current verified save must exist at checkpoint %d." % (checkpoint + 1))
-        _expect(FileAccess.file_exists(TEST_SIDECAR_PATH), "The enemy-tier sidecar must exist at checkpoint %d." % (checkpoint + 1))
+        _expect(not FileAccess.file_exists(TEST_SIDECAR_PATH), "New unified saves must not create a second enemy-tier generation at checkpoint %d." % (checkpoint + 1))
         var save_bytes := FileAccess.get_file_as_bytes(TEST_SAVE_PATH).size()
         maximum_save_bytes = maxi(maximum_save_bytes, save_bytes)
         if first_save_bytes == 0:
@@ -79,7 +80,7 @@ func _run_all() -> void:
             _expect(world._load_release_game(), "The complete release load path must restore at checkpoint %d." % (checkpoint + 1))
             bootstrap._process(0.0)
             _expect(is_equal_approx(world.run_state.elapsed_seconds, expected_seconds), "The loaded run clock must preserve the simulated time at checkpoint %d." % (checkpoint + 1))
-            _expect(int(tier_director.get("elapsed_seconds")) >= int(expected_seconds), "The enemy-tier sidecar must restore the simulated time at checkpoint %d." % (checkpoint + 1))
+            _expect(int(tier_director.get("elapsed_seconds")) >= int(expected_seconds), "The unified enemy-tier snapshot must restore the simulated time at checkpoint %d." % (checkpoint + 1))
             _prepare_deterministic_simulation(world, bootstrap, tier_director, false)
 
     _expect(is_equal_approx(world.run_state.elapsed_seconds, EXPECTED_SIMULATED_SECONDS), "The soak must advance the release run by exactly one hundred simulated hours.")
@@ -89,6 +90,15 @@ func _run_all() -> void:
     world.queue_free()
     await process_frame
     _finish()
+
+
+func _await_enemy_tier_bootstrap(world: Node) -> void:
+    for _attempt in range(600):
+        var bootstrap := world.get_node_or_null("EnemyTierProgressionBootstrap") as EnemyTierProgressionBootstrap3D if world != null else null
+        if bootstrap != null and bootstrap.initialized:
+            return
+        await create_timer(0.025, true, false, true).timeout
+        await process_frame
 
 
 func _prepare_deterministic_simulation(world: IronwrightReleaseWorld3D, bootstrap: EnemyTierProgressionBootstrap3D, tier_director: EnemyTierProgressionDirector3D, reset_clock: bool = true) -> void:

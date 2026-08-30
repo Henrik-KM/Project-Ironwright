@@ -26,6 +26,11 @@ REQUIRED = [
     "game/scripts/ui/ironwright_beautiful_hud_3d.gd",
     "game/scripts/ui/ironwright_prealpha_hud_3d.gd",
     "game/scripts/ui/operations_command_hud_3d.gd",
+    "game/scripts/systems/enemy_tier_progression_bootstrap_3d.gd",
+    "game/scripts/systems/enemy_tier_progression_director_3d.gd",
+    "game/scripts/world/enemy_tier_nest_3d.gd",
+    "game/scripts/enemies/enemy_tier_brain_3d.gd",
+    "game/scripts/ui/enemy_tier_intel_hud_3d.gd",
     "game/tests/aesthetic_test_runner.gd",
     "game/tests/presentation_and_salvage_escort_test_runner.gd",
     "game/tests/intelligence_and_vertical_slice_test_runner.gd",
@@ -1060,9 +1065,96 @@ def main() -> int:
                 if token not in release:
                     fail(f"Presentation review gallery is missing material-inspection behaviour: {token}")
         if "main_world_tiered_3d.gd" in main_scene:
-            for token in ["extends IronwrightReleaseWorld3D", "EnemyTierDirector3D", "EnemyTierEventBridge3D", "EnemyTierHUD3D"]:
+            bootstrap_path = "res://scripts/systems/enemy_tier_progression_bootstrap_3d.gd"
+            if main_scene.count(bootstrap_path) != 1:
+                fail("Tiered entrypoint must install exactly one canonical enemy-tier bootstrap.")
+            if main_scene.count('[node name="EnemyTierProgressionBootstrap"') != 1:
+                fail("Tiered entrypoint must contain exactly one canonical enemy-tier bootstrap node.")
+            for token in ["EnemyTierDirector3D", "EnemyTierEventBridge3D", "EnemyTierHUD3D"]:
+                if token in main_scene:
+                    fail(f"Native scene must not install legacy enemy-tier runtime: {token}")
+            for token in [
+                "extends IronwrightReleaseWorld3D",
+                "EnemyTierProgressionDirector3D",
+                "_canonical_enemy_tier_director",
+                "_spawn_capped_operation_threat",
+                "canonical_tier_director.request_causal_threat",
+                'release["enemy_tier_progression"]',
+                'release.get("enemy_tier_progression", {})',
+                "canonical_tier_director.restore_from_dictionary",
+                'set_meta(&"enemy_tier_progression_restored_from_unified", true)',
+            ]:
                 if token not in tiered:
                     fail(f"Tiered entrypoint is missing merged release/ecology behaviour: {token}")
+            for token in [
+                "EnemyTierDirector3D",
+                "EnemyTierEventBridge3D",
+                "EnemyTierHUD3D",
+                "res://scripts/systems/enemy_tier_director_3d.gd",
+                "res://scripts/systems/enemy_tier_event_bridge_3d.gd",
+                "res://scripts/ui/enemy_tier_hud_3d.gd",
+                'release["enemy_tiers"]',
+                'release["enemy_tier_events"]',
+                'release.get("enemy_tiers"',
+                'release.get("enemy_tier_events"',
+            ]:
+                if token in tiered:
+                    fail(f"Tiered entrypoint still integrates retired parallel ecology runtime: {token}")
+            if tiered.count('release["enemy_tier_progression"]') != 1:
+                fail("Tiered snapshots must write one unified enemy_tier_progression payload.")
+            if tiered.count('release.get("enemy_tier_progression", {})') != 1:
+                fail("Tiered restore must read the unified enemy_tier_progression payload once.")
+            if "return _spawn_enemy(position, species)" in tiered:
+                fail("Causal operation threats must materialize at a living nest or redirect an existing actor.")
+
+            bootstrap = (ROOT / "game/scripts/systems/enemy_tier_progression_bootstrap_3d.gd").read_text(encoding="utf-8")
+            for token in [
+                "class_name EnemyTierProgressionBootstrap3D",
+                "director = EnemyTierProgressionDirector3D.new()",
+                "intel_hud = EnemyTierIntelHUD3D.new()",
+                'node.call(&"set_external_population_control", true)',
+                'node.set("spawn_enemy_callable", Callable())',
+                'node.set("spawn_enemy_callback", Callable())',
+                'if not bool(world.get_meta(&"enemy_tier_progression_restored_from_unified", false))',
+                'world.set_meta(&"enemy_tier_progression_migrated_from_sidecar", true)',
+            ]:
+                if token not in bootstrap:
+                    fail(f"Canonical enemy-tier bootstrap is missing integration behaviour: {token}")
+            if bootstrap.count("EnemyTierProgressionDirector3D.new()") != 1:
+                fail("Canonical bootstrap must create exactly one enemy-tier population director.")
+            if bootstrap.count("EnemyTierIntelHUD3D.new()") != 1:
+                fail("Canonical bootstrap must create exactly one ecology-intelligence HUD.")
+            if "func _save_sidecar" in bootstrap or "_save_sidecar()" in bootstrap:
+                fail("Canonical saves must not create a second enemy-tier sidecar generation.")
+            for token in [
+                "node.set_process(false)",
+                "node.set_physics_process(false)",
+                'node.set("active_enemy_cap", 0)',
+                'node.set("spawn_interval", 999999.0)',
+            ]:
+                if token in bootstrap:
+                    fail(f"Population handoff must not freeze the living ecology with: {token}")
+            for token in ["EnemyTierDirector3D", "EnemyTierEventBridge3D", "EnemyTierHUD3D"]:
+                if token in bootstrap:
+                    fail(f"Canonical bootstrap must not reference legacy enemy-tier runtime: {token}")
+
+            canonical_director = (ROOT / "game/scripts/systems/enemy_tier_progression_director_3d.gd").read_text(encoding="utf-8")
+            for token in [
+                'add_to_group(&"enemy_tier_progression")',
+                "EVENT_MODIFIERS_PATH",
+                "_load_detailed_event_effects",
+                "_process_saturation_high_to_low",
+                "_enforce_population_caps",
+                "_select_spawn_nest",
+                "_materialize_from_nest",
+                "request_causal_threat",
+                "_materialize_from_nest(tier, nest, species)",
+                "_redirect_causal_actor",
+                "to_dictionary",
+                "restore_from_dictionary",
+            ]:
+                if token not in canonical_director:
+                    fail(f"Canonical enemy-tier director is missing causal ecology behaviour: {token}")
 
         hud_scene = (ROOT / "game/scenes/ui/ironwright_hud_3d.tscn").read_text(encoding="utf-8")
         if "ironwright_prealpha_hud_3d.gd" not in hud_scene:

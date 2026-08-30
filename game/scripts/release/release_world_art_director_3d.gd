@@ -66,6 +66,8 @@ const ORGANIC_MEMBRANE_TOKENS: Array[String] = [
 ]
 const TEXTURE_BATCH_SIZE := 96
 const REGION_DRESSING_CLEANUP_DELAY := 0.1
+const RENDERER_HANDOFF_RETRY_DELAY := 0.025
+const RENDERER_HANDOFF_STABLE_SAMPLES := 3
 const AUTHORED_ORGANIC_TINTS: Dictionary = {
     "veilstalker": Color("8b9aa3"),
     "razorhound": Color("a27d68"),
@@ -109,7 +111,10 @@ var texture_flush_scheduled: bool = false
 var texture_queue: Array[MeshInstance3D] = []
 var texture_queue_index: int = 0
 var texture_queue_active: bool = false
+var texture_flush_retry_pending: bool = false
 var region_stream_cleanup_pending: Dictionary = {}
+var region_stream_rebuild_pending: Dictionary = {}
+var initial_art_pass_complete: bool = false
 
 
 func configure(next_world: Node3D, next_regions: WorldRegionDirector3D, next_settings: ReleaseSettingsService3D) -> void:
@@ -119,6 +124,9 @@ func configure(next_world: Node3D, next_regions: WorldRegionDirector3D, next_set
 
 
 func _ready() -> void:
+    # Presentation material queues and stream handoffs must finish while title
+    # screens or review fixtures pause ordinary gameplay.
+    process_mode = Node.PROCESS_MODE_ALWAYS
     add_to_group(&"release_world_art_director")
     get_tree().node_added.connect(_on_node_added)
     _load_textures()
@@ -133,6 +141,8 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
     if not texture_queue_active:
+        return
+    if _renderer_handoff_pending():
         return
     var chunk_end := mini(texture_queue_index + TEXTURE_BATCH_SIZE, texture_queue.size())
     while texture_queue_index < chunk_end:
@@ -161,11 +171,29 @@ func _on_node_added(node: Node) -> void:
 
 
 func _flush_pending_mesh_textures() -> void:
+    if texture_queue_active or _renderer_handoff_pending():
+        _schedule_texture_flush_retry()
+        return
     texture_flush_scheduled = false
     var pending_ids := pending_mesh_instance_ids.keys()
     pending_mesh_instance_ids.clear()
     for raw_id in pending_ids:
         _texture_subtree_id(int(raw_id))
+
+
+func _schedule_texture_flush_retry() -> void:
+    if texture_flush_retry_pending or not is_inside_tree() or is_queued_for_deletion():
+        return
+    texture_flush_retry_pending = true
+    var retry_timer := get_tree().create_timer(RENDERER_HANDOFF_RETRY_DELAY, true, false, true)
+    retry_timer.timeout.connect(_retry_pending_mesh_textures, CONNECT_ONE_SHOT)
+
+
+func _retry_pending_mesh_textures() -> void:
+    texture_flush_retry_pending = false
+    if not is_inside_tree() or is_queued_for_deletion():
+        return
+    call_deferred("_flush_pending_mesh_textures")
 
 
 func _load_textures() -> void:
@@ -195,6 +223,7 @@ func _load_textures() -> void:
 func _apply_release_art() -> void:
     if world == null or dressing_root == null or not is_instance_valid(world) or world.is_queued_for_deletion() or is_queued_for_deletion():
         return
+    initial_art_pass_complete = false
     meshes_textured = 0
     regions_dressed = 0
     region_dressing_roots.clear()
@@ -208,6 +237,7 @@ func _apply_release_art() -> void:
         for raw_region_id in region_director.region_data:
             _dress_region(raw_region_id as StringName)
     _connect_region_lod()
+    initial_art_pass_complete = true
     art_pass_completed.emit(meshes_textured, regions_dressed)
 
 
@@ -302,7 +332,7 @@ func _on_region_stream_changed(region_id: StringName, streamed_in: bool) -> void
         if bool(region_stream_cleanup_pending.get(region_id, false)):
             return
         if not _has_region_dressing_content(root):
-            _rebuild_region_dressing(region_id, root)
+            _schedule_region_stream_rebuild(region_id)
         return
     # The landmark keeps its gameplay state and coarse proxy. Only the
     # release-only close dressing is removed from the active scene tree.
@@ -323,6 +353,42 @@ func _on_region_stream_changed(region_id: StringName, streamed_in: bool) -> void
     # affects presentation dressing; the persistent landmark remains active.
     var cleanup_timer := get_tree().create_timer(REGION_DRESSING_CLEANUP_DELAY)
     cleanup_timer.timeout.connect(Callable(self, "_finish_region_stream_cleanup").bind(region_id), CONNECT_ONE_SHOT)
+
+
+func _schedule_region_stream_rebuild(region_id: StringName) -> void:
+    if bool(region_stream_rebuild_pending.get(region_id, false)) or not is_inside_tree() or is_queued_for_deletion():
+        return
+    region_stream_rebuild_pending[region_id] = true
+    call_deferred("_finish_region_stream_rebuild", region_id)
+
+
+func _finish_region_stream_rebuild(region_id: StringName) -> void:
+    var stable_samples := 0
+    for _attempt in range(320):
+        if not _is_region_renderer_handoff_pending(region_id) and not bool(region_stream_cleanup_pending.get(region_id, false)):
+            stable_samples += 1
+            if stable_samples >= RENDERER_HANDOFF_STABLE_SAMPLES:
+                break
+        else:
+            stable_samples = 0
+        await get_tree().create_timer(RENDERER_HANDOFF_RETRY_DELAY, true, false, true).timeout
+        await get_tree().process_frame
+    var settled := stable_samples >= RENDERER_HANDOFF_STABLE_SAMPLES
+    region_stream_rebuild_pending.erase(region_id)
+    if world == null or not is_instance_valid(world) or world.is_queued_for_deletion() or is_queued_for_deletion():
+        return
+    var region_lod := world.get_node_or_null("RegionPresentationLodDirector")
+    var should_stream_in := region_lod != null and region_lod.has_method(&"is_region_streamed") and bool(region_lod.call(&"is_region_streamed", region_id))
+    if not should_stream_in:
+        return
+    if not settled:
+        # A slow import remains bounded and observable; retry instead of racing
+        # procedural mesh construction against the renderer handoff.
+        _schedule_region_stream_rebuild(region_id)
+        return
+    var root := region_dressing_roots.get(region_id) as Node3D
+    if root != null and is_instance_valid(root) and not root.is_queued_for_deletion() and not _has_region_dressing_content(root):
+        _rebuild_region_dressing(region_id, root)
 
 
 func _finish_region_stream_cleanup(region_id: StringName) -> void:
@@ -355,7 +421,7 @@ func _finish_region_stream_cleanup(region_id: StringName) -> void:
     if region_lod != null and region_lod.has_method(&"is_region_streamed"):
         should_stream_in = bool(region_lod.call(&"is_region_streamed", region_id))
     if should_stream_in and not _has_region_dressing_content(root):
-        call_deferred("_rebuild_region_dressing", region_id, root)
+        _schedule_region_stream_rebuild(region_id)
 
 
 func _rebuild_region_dressing(region_id: StringName, root: Node3D) -> void:
@@ -373,7 +439,10 @@ func ensure_region_dressing(region_id: StringName) -> Node3D:
     if root == null or not is_instance_valid(root) or root.is_queued_for_deletion():
         return null
     if not _has_region_dressing_content(root):
-        _rebuild_region_dressing(region_id, root)
+        if _is_region_renderer_handoff_pending(region_id):
+            _schedule_region_stream_rebuild(region_id)
+        else:
+            _rebuild_region_dressing(region_id, root)
     return root
 
 
@@ -386,6 +455,36 @@ func _has_region_dressing_content(root: Node3D) -> bool:
 
 func region_dressing_root(region_id: StringName) -> Node3D:
     return region_dressing_roots.get(region_id) as Node3D
+
+
+func is_presentation_idle() -> bool:
+    return (
+        initial_art_pass_complete
+        and not texture_queue_active
+        and not texture_flush_scheduled
+        and not texture_flush_retry_pending
+        and pending_mesh_instance_ids.is_empty()
+        and region_stream_cleanup_pending.is_empty()
+        and region_stream_rebuild_pending.is_empty()
+        and not _renderer_handoff_pending()
+    )
+
+
+func _renderer_handoff_pending() -> bool:
+    if region_director == null:
+        return false
+    for raw_landmark in region_director.landmarks.values():
+        var landmark := raw_landmark as RegionLandmark3D
+        if landmark != null and landmark.authored_model_presentation_pending():
+            return true
+    return false
+
+
+func _is_region_renderer_handoff_pending(region_id: StringName) -> bool:
+    if region_director == null:
+        return false
+    var landmark := region_director.get_landmark(region_id)
+    return landmark != null and landmark.authored_model_presentation_pending()
 
 
 func _texture_recursive(node: Node) -> void:

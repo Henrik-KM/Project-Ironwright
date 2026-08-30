@@ -85,6 +85,15 @@ class FakeWorld:
         return enemy
 
 
+class FakeNotificationHUD:
+    extends Node
+
+    var notifications: Array[String] = []
+
+    func push_notification(message: String) -> void:
+        notifications.append(message)
+
+
 var failures: Array[String] = []
 var world
 var director: EnemyTierProgressionDirector3D
@@ -110,9 +119,12 @@ func _run_all() -> void:
     _test_casualty_headroom_and_growth()
     _test_bounded_spawn_credit()
     await _test_physical_nest_spawning_and_cap()
+    await _test_causal_threat_nest_and_cap()
     await _test_nest_source_removal_after_evolution()
     _test_dynamic_event_modifiers()
+    _test_suppression_notification_cadence()
     await _test_tier_behaviour_progression()
+    _test_brain_runtime_intent_round_trip()
     await _test_ordinary_nest_is_not_combat_actor()
     _test_serialization_round_trip()
 
@@ -246,17 +258,133 @@ func _test_nest_source_removal_after_evolution() -> void:
     _expect(director.replenishment_rate(2) < 0.001, "Clearing a nest must remove its contribution from the tier it evolved into.")
 
 
+func _test_causal_threat_nest_and_cap() -> void:
+    _clear_fake_actors()
+    await process_frame
+    _reset_rates_and_population()
+    _remove_all_nests()
+    var nest := EnemyTierNest3D.new()
+    nest.configure({
+        "id": "nest.test_causal",
+        "display_name": "Causal Response Nest",
+        "position": [18.0, 0.0, -4.0],
+        "maturity": 1.0,
+        "maximum_health": 100.0,
+        "supported_tiers": [1],
+        "replenishment_per_minute": {"1": 0.1},
+        "regrowth_seconds": 1000.0,
+    })
+    world.add_child(nest)
+    director.register_nest(nest)
+    var near_nest := EnemyTierNest3D.new()
+    near_nest.configure({
+        "id": "nest.test_causal_near",
+        "display_name": "Nearest Causal Response Nest",
+        "position": [75.0, 0.0, 42.0],
+        "maturity": 1.0,
+        "maximum_health": 100.0,
+        "supported_tiers": [1],
+        "replenishment_per_minute": {"1": 0.1},
+        "regrowth_seconds": 1000.0,
+    })
+    world.add_child(near_nest)
+    director.register_nest(near_nest)
+    await process_frame
+    var incident := Vector3(120.0, 0.0, 80.0)
+    director.spawn_credit[1] = 1.0
+    var first := director.request_causal_threat(incident, &"skitterling", &"operation_disturbance")
+    await process_frame
+    await process_frame
+    _expect(first != null, "An under-cap causal threat must materialize from a compatible living nest.")
+    if first == null:
+        return
+    _expect(is_zero_approx(float(director.spawn_credit.get(1, -1.0))), "A causal birth must consume exactly one earned canonical spawn credit.")
+    _expect(StringName(str(first.get_meta(&"home_nest_id", ""))) == &"nest.test_causal_near", "A causal threat must retain the nearest compatible physical nest that materialized it.")
+    _expect(first.global_position.distance_to(near_nest.global_position) < 12.0 and first.global_position.distance_to(incident) > 35.0, "A causal threat must enter at its nearest compatible nest, never pop into existence at the incident point.")
+    var brain := first.get_node_or_null("EnemyTierBrain") as EnemyTierBrain3D
+    _expect(brain != null and brain.behaviour == &"causal_response", "A nest-origin threat must receive an inspectable causal-response movement reason.")
+    _expect(brain != null and brain.home_nest == near_nest and brain.pack_id == &"pack.nest.test_causal_near.tier_1", "A nest-born brain must rebind its physical home, territory, and pack after canonical assignment.")
+    if brain != null:
+        var distance_before := first.global_position.distance_to(incident)
+        brain.set_simulation_lod(2)
+        for _step in range(4):
+            brain.reduced_detail_tick(1.0)
+        _expect(first.global_position.distance_to(incident) < distance_before, "A causal responder must physically advance toward the incident instead of timing out in place.")
+        _expect(brain.forced_goal_kind == &"causal_response", "A distant causal route must remain durable until arrival, engagement, or bounded path failure.")
+
+    var tier_one_data := director.tiers[1] as Dictionary
+    var original_cap := int(tier_one_data.get("unit_cap", 100))
+    var spawn_serial_before := director.spawn_serial
+    var redirected_without_credit := director.request_causal_threat(incident + Vector3(2.0, 0.0, 0.0), &"skitterling", &"operation_disturbance")
+    _expect(redirected_without_credit == first and director.spawn_serial == spawn_serial_before, "An under-cap incident with no spawn credit must redirect a living organism instead of minting a birth.")
+
+    tier_one_data["unit_cap"] = 1
+    director.tiers[1] = tier_one_data
+    var redirected := director.request_causal_threat(incident + Vector3(5.0, 0.0, 0.0), &"skitterling", &"endgame_disturbance")
+    _expect(redirected == first and director.spawn_serial == spawn_serial_before, "A full tier must redirect its nearest living organism without creating another actor.")
+    tier_one_data["unit_cap"] = original_cap
+    director.tiers[1] = tier_one_data
+
+    _remove_all_nests()
+    var spawned_before: int = int(world.spawned.size())
+    director.spawn_credit[5] = 1.0
+    var refused := director.request_causal_threat(Vector3.ZERO, &"apex", &"endgame_disturbance")
+    _expect(refused == null and world.spawned.size() == spawned_before, "A causal threat with no compatible living nest must refuse materialization.")
+
+
 func _test_dynamic_event_modifiers() -> void:
     _reset_rates_and_population()
     director.applied_events.clear()
+    _expect(not director.config.has("event_modifiers"), "Base population tuning must not duplicate the canonical ecological event table.")
+    _expect(director.detailed_event_effects.has(&"operation.buried_lab_excavation"), "The canonical event table must load operation effects.")
+    _expect(director.detailed_event_effects.has(&"heartforge_tier_2"), "Technology event IDs must normalize into the canonical progression ledger.")
+    var excavation_effect: Dictionary = director.detailed_event_effects.get(&"operation.buried_lab_excavation", {})
+    _expect(not String(excavation_effect.get("reason", "")).is_empty(), "Every canonical ecological event needs a causal audit reason.")
+    var excavation_reason := director.event_causal_reason(&"operation.buried_lab_excavation")
+    _expect(excavation_reason == str(excavation_effect.get("reason", "")), "Runtime ecology diagnostics must expose the configured causal reason without a second event table.")
     _expect(director.apply_event(&"operation.buried_lab_excavation"), "Configured technology expedition must apply an ecological modifier once.")
-    _expect(director.replenishment_rate(1) >= 1.399, "Disruptive technology expedition must increase future Tier-I replenishment.")
+    _expect(is_equal_approx(director.replenishment_rate(1), 2.8), "The authoritative excavation effect must apply exactly once from the canonical event table.")
     _expect(not director.apply_event(&"operation.buried_lab_excavation"), "The same completed operation must not apply its permanent ecological cost twice.")
     var before := director.replenishment_rate(1)
     _expect(director.apply_event(&"operation.cathedral_brood_suppression"), "Major brood suppression must apply its configured reduction.")
     _expect(director.replenishment_rate(1) < before, "Brood suppression must decrease future replenishment.")
     director._refresh_nest_sources()
     _expect(director.replenishment_rate(1) < before, "Permanent suppression must remain after physical nest-source refresh.")
+
+    var bootstrap := EnemyTierProgressionBootstrap3D.new()
+    var notification_hud := FakeNotificationHUD.new()
+    bootstrap.initialized = true
+    root.add_child(bootstrap)
+    bootstrap.director = director
+    bootstrap.main_hud = notification_hud
+    bootstrap._on_escalation_event(&"operation.buried_lab_excavation", excavation_effect.get("replenishment_delta_per_minute", {}))
+    _expect(notification_hud.notifications.size() == 1 and notification_hud.notifications[0].contains(excavation_reason), "Ecological consequence presentation must state the configured causal reason, not only its numeric direction.")
+    notification_hud.free()
+    bootstrap.free()
+
+
+func _test_suppression_notification_cadence() -> void:
+    var bootstrap := EnemyTierProgressionBootstrap3D.new()
+    var notification_hud := FakeNotificationHUD.new()
+    bootstrap.initialized = true
+    root.add_child(bootstrap)
+    bootstrap.main_hud = notification_hud
+    bootstrap.intel_hud = EnemyTierIntelHUD3D.new()
+    bootstrap.suppression = AutonomousEnemySuppression3D.new()
+    bootstrap.add_child(bootstrap.intel_hud)
+    bootstrap.add_child(bootstrap.suppression)
+
+    bootstrap._on_suppression_changed(2, 1, "Wardens are thinning a dense feral population.")
+    bootstrap._on_suppression_changed(2, 1, "Wardens are thinning a dense feral population.")
+    _expect(notification_hud.notifications.is_empty(), "Routine autonomous Tier-I thinning must remain ambient command-map status without repeated notifications.")
+
+    bootstrap._on_suppression_changed(0, 0, "All Wardens are committed to higher-priority protection.")
+    _expect(notification_hud.notifications.size() == 1, "A suppression patrol standing down must produce one legible transition notification.")
+    bootstrap._on_suppression_changed(0, 0, "All Wardens are committed to higher-priority protection.")
+    _expect(notification_hud.notifications.size() == 1, "An inactive suppression state must not repeat its transition notification.")
+
+    notification_hud.free()
+    bootstrap.free()
 
 
 func _test_tier_behaviour_progression() -> void:
@@ -328,19 +456,81 @@ func _make_brained_enemy(tier: int, position: Vector3, nest_id: StringName = &""
     return enemy
 
 
+func _test_brain_runtime_intent_round_trip() -> void:
+    var actor: FakeEnemy = _make_brained_enemy(3, Vector3(64.0, 0.0, -12.0), &"nest.behaviour")
+    var brain := actor.get_node("EnemyTierBrain") as EnemyTierBrain3D
+    _expect(brain != null and brain.initialized, "Runtime-intent persistence requires one initialized canonical enemy brain.")
+    if brain == null or not brain.initialized:
+        return
+    var original_lod := brain.simulation_lod
+    var original_intent := brain.serialize_runtime_intent()
+    brain.set_simulation_lod(2)
+    brain.decision_clock = 0.73
+    brain.remote_clock = 0.21
+    brain.state_elapsed = 8.5
+    brain.roam_serial = 17
+    brain.scout_serial = 9
+    var saved := brain.serialize_runtime_intent()
+
+    brain.decision_clock = 0.0
+    brain.remote_clock = 0.0
+    brain.state_elapsed = 0.0
+    brain.roam_serial = 0
+    brain.scout_serial = 0
+    brain.restore_runtime_intent(saved)
+    _expect(is_equal_approx(brain.decision_clock, 0.73), "Enemy decision phase must resume at the same point after save and restore.")
+    _expect(is_equal_approx(brain.remote_clock, 0.21), "Enemy reduced-detail accumulation must survive save and restore.")
+    _expect(is_equal_approx(brain.state_elapsed, 8.5), "Enemy behaviour-state elapsed time must survive save and restore.")
+    _expect(brain.roam_serial == 17 and brain.scout_serial == 9, "Deterministic roam and scout goal serials must survive save and restore.")
+
+    var legacy := saved.duplicate(true)
+    for key in ["decision_clock", "remote_clock", "state_elapsed", "roam_serial", "scout_serial"]:
+        legacy.erase(key)
+    brain.decision_clock = 0.5
+    brain.remote_clock = 0.4
+    brain.state_elapsed = 33.0
+    brain.roam_serial = 80
+    brain.scout_serial = 70
+    brain.restore_runtime_intent(legacy)
+    _expect(is_zero_approx(brain.decision_clock) and is_zero_approx(brain.remote_clock) and is_zero_approx(brain.state_elapsed), "Legacy enemy intent must deterministically reset omitted timing phases instead of inheriting construction time.")
+    _expect(brain.roam_serial == 0 and brain.scout_serial == 0, "Legacy enemy intent must deterministically reset omitted goal serials.")
+
+    brain.restore_runtime_intent(original_intent)
+    brain.set_simulation_lod(original_lod)
+
+
 func _test_serialization_round_trip() -> void:
     director.applied_events[&"test.event"] = true
     director.debug_set_anonymous_rate(1, 3.25)
     director.spawn_credit[1] = 1.75
+    director.simulation_clock = 0.37
+    director.reconcile_clock = 1.41
+    director.intel_clock = 0.92
     var saved := director.to_dictionary()
     director.debug_set_anonymous_rate(1, 0.0)
     director.spawn_credit[1] = 0.0
+    director.simulation_clock = 0.0
+    director.reconcile_clock = 0.0
+    director.intel_clock = 0.0
     director.applied_events.clear()
     director.restore_from_dictionary(saved)
+    _expect(int(saved.get("schema_version", 0)) == 2, "Canonical ecology persistence must version its deterministic clock-complete schema.")
     _expect(director.replenishment_rate(1) >= 3.249, "Tier replenishment must survive save and restore.")
     _expect(is_equal_approx(float(director.spawn_credit.get(1, 0.0)), 1.75), "Fractional spawn credit must survive save and restore.")
     _expect(bool(director.applied_events.get(&"test.event", false)), "Applied ecological events must survive save and restore.")
     _expect(director.suppression_offsets.has(1), "Persistent ecological suppression offsets must survive the release save domain.")
+    _expect(is_equal_approx(director.simulation_clock, 0.37), "The canonical ecology simulation phase must survive save and restore.")
+    _expect(is_equal_approx(director.reconcile_clock, 1.41), "The canonical ecology population-reconcile phase must survive save and restore.")
+    _expect(is_equal_approx(director.intel_clock, 0.92), "The canonical ecology intelligence phase must survive save and restore.")
+
+    var legacy := saved.duplicate(true)
+    for key in ["simulation_clock", "reconcile_clock", "intel_clock"]:
+        legacy.erase(key)
+    director.simulation_clock = 0.8
+    director.reconcile_clock = 1.8
+    director.intel_clock = 1.8
+    director.restore_from_dictionary(legacy)
+    _expect(is_zero_approx(director.simulation_clock) and is_zero_approx(director.reconcile_clock) and is_zero_approx(director.intel_clock), "Schema-1 ecology saves must deterministically reset omitted phase clocks.")
 
 
 func _remove_all_nests() -> void:

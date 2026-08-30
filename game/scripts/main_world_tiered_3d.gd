@@ -1,28 +1,13 @@
 class_name IronwrightTieredWorld3D
 extends IronwrightReleaseWorld3D
 
-var enemy_tier_director: EnemyTierDirector3D
-var enemy_tier_event_bridge: EnemyTierEventBridge3D
-var enemy_tier_hud: EnemyTierHUD3D
 var _pending_restore_enemy_data: Array[Dictionary] = []
-var _last_tier_map_mode: bool = false
 
 
 func _ready() -> void:
 	super._ready()
 	_disable_legacy_population_materialization()
-	_setup_enemy_tier_progression()
-	_connect_enemy_tier_progression()
-	_last_tier_map_mode = map_mode
-	enemy_tier_hud.set_map_visible(map_mode)
 	run_state.log_event("Enemy escalation is population-driven. Saturated lower tiers convert reproductive capacity into rarer, more intelligent organisms.")
-
-
-func _process(delta: float) -> void:
-	super._process(delta)
-	if enemy_tier_hud != null and map_mode != _last_tier_map_mode:
-		_last_tier_map_mode = map_mode
-		enemy_tier_hud.set_map_visible(map_mode)
 
 
 func _disable_legacy_population_materialization() -> void:
@@ -33,65 +18,65 @@ func _disable_legacy_population_materialization() -> void:
 		ecology_director.set_external_population_control(true)
 		ecology_director.spawn_enemy_callable = Callable()
 	if strategic_ecology_director != null:
+		strategic_ecology_director.set_external_population_control(true)
 		strategic_ecology_director.spawn_enemy_callback = Callable()
 	if long_operation_director != null:
-		long_operation_director.spawn_enemy_callback = Callable(self, "_spawn_capped_operation_threat")
+		long_operation_director.spawn_enemy_callback = Callable(self, "_spawn_capped_operation_threat").bind(&"operation_disturbance")
 	if endgame_director != null:
-		endgame_director.spawn_enemy_callback = Callable(self, "_spawn_capped_operation_threat")
+		endgame_director.spawn_enemy_callback = Callable(self, "_spawn_capped_operation_threat").bind(&"endgame_disturbance")
 
 
-func _setup_enemy_tier_progression() -> void:
-	enemy_tier_director = EnemyTierDirector3D.new()
-	enemy_tier_director.name = "EnemyTierDirector"
-	enemy_tier_director.process_mode = Node.PROCESS_MODE_PAUSABLE
-	enemy_tier_director.configure(
-		run_state,
-		ecology_director,
-		strategic_ecology_director,
-		region_director,
-		long_operation_director,
-		progression,
-		Callable(self, "_spawn_enemy"),
-		self
-	)
-	add_child(enemy_tier_director)
-
-	enemy_tier_event_bridge = EnemyTierEventBridge3D.new()
-	enemy_tier_event_bridge.name = "EnemyTierEventBridge"
-	enemy_tier_event_bridge.process_mode = Node.PROCESS_MODE_PAUSABLE
-	enemy_tier_event_bridge.configure(enemy_tier_director, long_operation_director, progression, endgame_director)
-	add_child(enemy_tier_event_bridge)
-
-	enemy_tier_hud = EnemyTierHUD3D.new()
-	enemy_tier_hud.name = "EnemyTierHUD"
-	add_child(enemy_tier_hud)
-	enemy_tier_hud.set_snapshot(enemy_tier_director.snapshot())
+func _canonical_enemy_tier_director() -> EnemyTierProgressionDirector3D:
+	return get_tree().get_first_node_in_group(&"enemy_tier_progression") as EnemyTierProgressionDirector3D
 
 
-func _connect_enemy_tier_progression() -> void:
-	enemy_tier_director.snapshot_changed.connect(enemy_tier_hud.set_snapshot)
-	enemy_tier_director.ecology_report.connect(_on_tier_ecology_report)
-	enemy_tier_director.tier_first_observed.connect(_on_tier_first_observed)
-	enemy_tier_director.saturation_transferred.connect(_on_tier_saturation_transferred)
-	enemy_tier_director.nest_cleared.connect(_on_tier_nest_cleared)
-
-
-func _on_tier_ecology_report(message: String) -> void:
-	run_state.log_event(message)
-
-
-func _on_tier_first_observed(tier: int, display_name: String) -> void:
-	hud.push_notification(_localized_text("notification.tier.first_observed", "NEW ENEMY TIER CONFIRMED · TIER {0} {1}\nMACHINE INTELLIGENCE REPORTS INCREASINGLY PURPOSEFUL BEHAVIOR.", [tier, display_name.to_upper()]))
-	if release_audio != null and tier >= 3:
-		release_audio.notify_danger()
-
-
-func _on_tier_saturation_transferred(from_tier: int, to_tier: int, transferred_rate: float) -> void:
-	hud.push_notification(_localized_text("notification.tier.saturated", "ECOLOGICAL ESCALATION · TIER {0} SATURATED\nFUTURE REPRODUCTIVE CAPACITY IS SHIFTING TOWARD TIER {1} ORGANISMS.", [from_tier, to_tier]))
-
-
-func _on_tier_nest_cleared(nest_id: StringName, display_name: String) -> void:
-	hud.push_notification(_localized_text("notification.tier.nest_cleared", "BROOD SITE CLEARED · {0}\nLONG-TERM REPLENISHMENT HAS FALLEN.", [display_name.to_upper()]))
+func _start_ecology_runtime_review() -> void:
+	print("ECOLOGY_RUNTIME_REVIEW requested")
+	if not await _await_enemy_tier_bootstrap_initialized():
+		print("ECOLOGY_RUNTIME_REVIEW failed: canonical startup timeout")
+		hud.push_notification("ECOLOGY REVIEW FAILED · CANONICAL ECOLOGY STARTUP DID NOT COMPLETE")
+		return
+	var canonical := _canonical_enemy_tier_director()
+	if canonical == null or canonical.nests.is_empty():
+		print("ECOLOGY_RUNTIME_REVIEW failed: canonical nest network unavailable")
+		hud.push_notification("ECOLOGY REVIEW FAILED · CANONICAL NEST NETWORK IS UNAVAILABLE")
+		return
+	var review_nest: Node3D
+	var review_nest_distance := INF
+	for raw_nest in canonical.nests.values():
+		if not (raw_nest is Node3D) or not is_instance_valid(raw_nest):
+			continue
+		var candidate := raw_nest as Node3D
+		if not candidate.has_method(&"can_spawn_tier") or not bool(candidate.call(&"can_spawn_tier", 2)):
+			continue
+		var distance_to_home := candidate.global_position.distance_squared_to(heartforge.global_position)
+		if review_nest == null or distance_to_home < review_nest_distance:
+			review_nest = candidate
+			review_nest_distance = distance_to_home
+	if review_nest == null:
+		review_nest = canonical.nests.values()[0] as Node3D
+	var approach_direction := heartforge.global_position - review_nest.global_position
+	approach_direction.y = 0.0
+	if approach_direction.length_squared() <= 0.001:
+		approach_direction = Vector3.FORWARD
+	player.global_position = review_nest.global_position + approach_direction.normalized() * 15.0
+	player.velocity = Vector3.ZERO
+	_snap_release_camera_to_subject()
+	if region_atmosphere_director != null:
+		region_atmosphere_director.refresh_now()
+	if region_lod_director != null:
+		region_lod_director.refresh_now()
+	# Review-only staging earns one Tier-II reproduction credit so this explicit
+	# visual fixture proves a physical nest birth without weakening the runtime
+	# rule that operations and endgame incidents must spend canonical credit.
+	canonical.spawn_credit[2] = maxf(float(canonical.spawn_credit.get(2, 0.0)), 1.0)
+	var review_enemy := canonical.request_causal_threat(player.global_position, &"burrower", &"ecology_review_disturbance", 2)
+	if review_enemy == null:
+		print("ECOLOGY_RUNTIME_REVIEW failed: no compatible living nest response")
+		hud.push_notification("ECOLOGY REVIEW FAILED · NO LIVING COMPATIBLE NEST COULD RESPOND")
+		return
+	print("ECOLOGY_RUNTIME_REVIEW ready: nest=%s enemy=%s tier=%d" % [String(review_nest.get("nest_id")), String(review_enemy.name), int(review_enemy.get_meta(&"enemy_tier", 0))])
+	hud.push_notification("ECOLOGY RUNTIME REVIEW · A CAPPED ORGANISM EMERGED AT A LIVING NEST AND IS MOVING TOWARD THE DISTURBANCE · PRESS M FOR THE SINGLE ECOLOGY INTELLIGENCE PANEL")
 
 
 func _spawn_enemy(position: Vector3, species: StringName) -> OrganicEnemy3D:
@@ -102,19 +87,15 @@ func _spawn_enemy(position: Vector3, species: StringName) -> OrganicEnemy3D:
 	var restored: Dictionary = {}
 	if not _pending_restore_enemy_data.is_empty():
 		restored = _pending_restore_enemy_data.pop_front()
-	var tier := int(restored.get("enemy_tier", 0))
-	if tier <= 0 and enemy_tier_director != null:
-		tier = int(enemy_tier_director.species_to_tier.get(species, 1))
-	tier = clampi(tier if tier > 0 else 1, 1, 5)
-	var config := enemy_tier_director.tier_config(tier) if enemy_tier_director != null else {}
-	tiered.configure_tier(tier, config)
 	if not restored.is_empty() and not str(restored.get("name", "")).is_empty():
 		tiered.name = str(restored.get("name"))
-	var canonical_tier_director := get_tree().get_first_node_in_group(&"enemy_tier_progression")
-	if canonical_tier_director != null and canonical_tier_director.has_method(&"assign_enemy_tier"):
-		var canonical_tier := int(restored.get("canonical_enemy_tier", restored.get("enemy_tier", tier)))
+	var canonical_tier_director := _canonical_enemy_tier_director()
+	if canonical_tier_director != null:
+		var canonical_tier := int(restored.get("canonical_enemy_tier", restored.get("enemy_tier", 0)))
+		if canonical_tier <= 0:
+			canonical_tier = canonical_tier_director.infer_tier_for_species(species)
 		var home_nest_id := StringName(str(restored.get("home_nest_id", "")))
-		canonical_tier_director.call(&"assign_enemy_tier", tiered, canonical_tier, home_nest_id)
+		canonical_tier_director.assign_enemy_tier(tiered, canonical_tier, home_nest_id)
 	if not restored.is_empty():
 		var territory := _array_to_vector(restored.get("territory_origin", _vector_to_array(position)))
 		var radius := float(restored.get("territory_radius", tiered.territory_radius))
@@ -127,52 +108,39 @@ func _spawn_enemy(position: Vector3, species: StringName) -> OrganicEnemy3D:
 	return tiered
 
 
-func _spawn_capped_operation_threat(position: Vector3, species: StringName) -> Node:
-	if enemy_tier_director == null:
-		return _spawn_enemy(position, species)
-	var tier := clampi(int(enemy_tier_director.species_to_tier.get(species, 1)), 1, 5)
-	var state := enemy_tier_director.tier_state(tier)
-	var living := _living_enemies_of_tier(tier)
-	if living.size() >= int(state.get("cap", 1)):
-		# An operation may redirect a real organism already in the world, but
-		# it may never create an entity above the tier's population cap.
-		if living.is_empty():
-			return null
-		var existing := _nearest_enemy_to_position(living, position)
-		existing.hear_noise(position, 1000.0, 1.0, &"operation_disturbance")
-		return existing
-	return _spawn_enemy(position, species)
+func _spawn_canonical_enemy_from_nest(position: Vector3, species: StringName, tier: int, home_nest_id: StringName) -> OrganicEnemy3D:
+	# Canonical births already know their tier and physical origin. Bypass the
+	# generic restore-aware wrapper so the brain is configured once with its real
+	# home instead of briefly receiving an empty-home fallback assignment.
+	var enemy := super._spawn_enemy(position, species)
+	if enemy is OrganicEnemyTiered3D:
+		var canonical_tier_director := _canonical_enemy_tier_director()
+		if canonical_tier_director != null:
+			canonical_tier_director.assign_enemy_tier(enemy, tier, home_nest_id)
+		if release_world_art != null:
+			release_world_art.apply_to_node(enemy)
+	return enemy
 
 
-func _living_enemies_of_tier(tier: int) -> Array[OrganicEnemyTiered3D]:
-	var result: Array[OrganicEnemyTiered3D] = []
-	for node in get_tree().get_nodes_in_group(&"organic_enemies"):
-		if node is OrganicEnemyTiered3D and is_instance_valid(node):
-			var enemy := node as OrganicEnemyTiered3D
-			if enemy.is_alive() and enemy.enemy_tier == tier:
-				result.append(enemy)
-	return result
-
-
-func _nearest_enemy_to_position(candidates: Array[OrganicEnemyTiered3D], position: Vector3) -> OrganicEnemyTiered3D:
-	var best := candidates[0]
-	var best_distance := best.global_position.distance_to(position)
-	for enemy in candidates:
-		var distance := enemy.global_position.distance_to(position)
-		if distance < best_distance:
-			best = enemy
-			best_distance = distance
-	return best
+func _spawn_capped_operation_threat(position: Vector3, species: StringName, source_kind: StringName = &"operation_disturbance") -> Node:
+	var canonical_tier_director := _canonical_enemy_tier_director()
+	if canonical_tier_director == null:
+		return null
+	var requested_tier := canonical_tier_director.infer_tier_for_species(species)
+	match species:
+		&"razorhound", &"burrower":
+			requested_tier = 2
+		&"sporecaster":
+			requested_tier = 3
+		&"broodmass":
+			requested_tier = 4
+		&"apex":
+			requested_tier = 5
+	return canonical_tier_director.request_causal_threat(position, species, source_kind, requested_tier)
 
 
 func _apply_balance_to_existing_world() -> void:
 	super._apply_balance_to_existing_world()
-	if enemy_tier_director == null:
-		return
-	for node in get_tree().get_nodes_in_group(&"organic_enemies"):
-		if node is OrganicEnemyTiered3D and is_instance_valid(node):
-			var enemy := node as OrganicEnemyTiered3D
-			enemy.configure_tier(enemy.enemy_tier, enemy_tier_director.tier_config(enemy.enemy_tier), true)
 
 
 func _collect_release_snapshot() -> Dictionary:
@@ -185,7 +153,17 @@ func _collect_release_snapshot() -> Dictionary:
 		var enemy := node as OrganicEnemy3D
 		if not enemy.is_alive():
 			continue
-		var tier := enemy_tier_director.enemy_tier_for(enemy) if enemy_tier_director != null else 1
+		var tier := int(enemy.get_meta(&"enemy_tier", enemy.get("enemy_tier") if enemy.get("enemy_tier") != null else 1))
+		var runtime_intent: Dictionary = {}
+		var causal_destination: Array = []
+		var brain := enemy.get_node_or_null("EnemyTierBrain")
+		if brain != null and brain.has_method(&"serialize_runtime_intent"):
+			var raw_runtime_intent: Variant = brain.call(&"serialize_runtime_intent")
+			if raw_runtime_intent is Dictionary:
+				runtime_intent = (raw_runtime_intent as Dictionary).duplicate(true)
+		var raw_causal_destination: Variant = enemy.get_meta(&"causal_destination", [])
+		if raw_causal_destination is Array:
+			causal_destination = (raw_causal_destination as Array).duplicate(true)
 		enemies.append({
 			"name": String(enemy.name),
 			"species": String(enemy.species),
@@ -200,51 +178,168 @@ func _collect_release_snapshot() -> Dictionary:
 			"ecology_directive": String(enemy.ecology_directive),
 			"last_known_prey_position": _vector_to_array(enemy.last_known_prey_position),
 			"has_last_known_prey": enemy.has_last_known_prey,
+			"ecology_region": str(enemy.get_meta(&"ecology_region", "")),
+			"ecology_region_previous": str(enemy.get_meta(&"ecology_region_previous", "")),
+			"ecology_origin": str(enemy.get_meta(&"ecology_origin", "")),
+			"causal_source_kind": str(enemy.get_meta(&"causal_source_kind", "")),
+			"causal_destination": causal_destination,
+			"enemy_pack_id": str(enemy.get_meta(&"enemy_pack_id", "")),
+			"enemy_behaviour": str(enemy.get_meta(&"enemy_behaviour", "")),
+			"enemy_behaviour_reason": str(enemy.get_meta(&"enemy_behaviour_reason", "")),
+			"brain_runtime_intent": runtime_intent,
 		})
 	base["enemies"] = enemies
 	snapshot["base"] = base
 
 	var release: Dictionary = snapshot.get("release", {})
-	release["enemy_tiers"] = enemy_tier_director.to_dictionary() if enemy_tier_director != null else {}
-	release["enemy_tier_events"] = enemy_tier_event_bridge.to_dictionary() if enemy_tier_event_bridge != null else {}
+	var canonical_tier_director := _canonical_enemy_tier_director()
+	release["enemy_tier_progression"] = canonical_tier_director.to_dictionary() if canonical_tier_director != null else {}
 	snapshot["release"] = release
 	return snapshot
 
 
 func _restore_release_snapshot(snapshot: Dictionary) -> void:
+	set_meta(&"enemy_tier_progression_restored_from_unified", false)
+	set_meta(&"enemy_tier_progression_migrated_from_sidecar", false)
+	set_meta(&"enemy_tier_progression_reconstructed_from_world", false)
 	_pending_restore_enemy_data.clear()
 	var base: Dictionary = snapshot.get("base", {})
 	for raw_enemy in base.get("enemies", []):
 		if raw_enemy is Dictionary:
 			_pending_restore_enemy_data.append((raw_enemy as Dictionary).duplicate(true))
-	if enemy_tier_director != null:
-		enemy_tier_director.simulation_enabled = false
+	var canonical_tier_director := _canonical_enemy_tier_director()
+	var release: Dictionary = snapshot.get("release", {})
+	var canonical_state: Variant = release.get("enemy_tier_progression", {})
+	var has_unified_canonical_state := canonical_state is Dictionary and not (canonical_state as Dictionary).is_empty()
+	if canonical_tier_director != null:
+		canonical_tier_director.enabled = false
+		if not has_unified_canonical_state:
+			_reset_canonical_enemy_tier_state(canonical_tier_director)
 	super._restore_release_snapshot(snapshot)
 	_pending_restore_enemy_data.clear()
-	var release: Dictionary = snapshot.get("release", {})
-	if enemy_tier_director != null:
-		enemy_tier_director.restore_from_dictionary(release.get("enemy_tiers", {}))
-		enemy_tier_director.simulation_enabled = true
-	var canonical_tier_director := get_tree().get_first_node_in_group(&"enemy_tier_progression")
-	if canonical_tier_director != null and canonical_tier_director.has_method(&"assign_enemy_tier"):
-		for raw_enemy in base.get("enemies", []):
-			if not (raw_enemy is Dictionary):
-				continue
-			var saved_enemy := raw_enemy as Dictionary
-			var saved_name := str(saved_enemy.get("name", ""))
-			if saved_name.is_empty():
-				continue
-			var restored_enemy := get_node_or_null(NodePath(saved_name))
-			if restored_enemy == null or not (restored_enemy is OrganicEnemy3D):
-				continue
-			var restored_tier := int(saved_enemy.get("canonical_enemy_tier", saved_enemy.get("enemy_tier", 1)))
-			var restored_home := StringName(str(saved_enemy.get("home_nest_id", "")))
-			canonical_tier_director.call(&"assign_enemy_tier", restored_enemy, restored_tier, restored_home)
-	if enemy_tier_event_bridge != null:
-		enemy_tier_event_bridge.restore_from_dictionary(release.get("enemy_tier_events", {}))
-		enemy_tier_event_bridge.reconcile_existing_state()
-	if enemy_tier_hud != null and enemy_tier_director != null:
-		enemy_tier_hud.set_snapshot(enemy_tier_director.snapshot())
+	if canonical_tier_director != null:
+		if has_unified_canonical_state:
+			canonical_tier_director.restore_from_dictionary(canonical_state as Dictionary)
+			set_meta(&"enemy_tier_progression_restored_from_unified", true)
+		_restore_canonical_enemy_continuity(canonical_tier_director, base.get("enemies", []))
+		if not has_unified_canonical_state:
+			_reconstruct_canonical_enemy_tier_state(canonical_tier_director)
+			set_meta(&"enemy_tier_progression_reconstructed_from_world", true)
+		canonical_tier_director.enabled = true
+		canonical_tier_director._reconcile_population()
+		canonical_tier_director._refresh_nest_sources()
+		canonical_tier_director._emit_intel_if_changed(true)
+
+
+func _reset_canonical_enemy_tier_state(director: EnemyTierProgressionDirector3D) -> void:
+	# A legacy snapshot has no canonical tier generation. Start from authored
+	# defaults before loading its actors so a missing or corrupt RC1 sidecar can
+	# never inherit rates, credits, events, or damaged nests from the prior run.
+	director._spawn_configured_nests()
+	director._initialize_state()
+	director.applied_events.clear()
+	director.connected_enemies.clear()
+	director.elapsed_seconds = 0.0
+	director.spawn_serial = 0
+	director.simulation_clock = 0.0
+	director.reconcile_clock = 0.0
+	director.intel_clock = 0.0
+	director.last_heartforge_tier = 1
+	director.last_intel_signature = ""
+	director.tier_1_growth_per_second = maxf(0.0, float(director.config.get("tier_1_rate_growth_per_minute_per_minute", 1.0)) / 60.0)
+
+	var authored_nest_ids: Dictionary = {}
+	for raw_entry in director.config.get("nest_archetypes", []):
+		if not (raw_entry is Dictionary):
+			continue
+		var entry := raw_entry as Dictionary
+		var nest_id := StringName(str(entry.get("id", "")))
+		if nest_id == &"":
+			continue
+		authored_nest_ids[nest_id] = true
+		var raw_nest: Variant = director.nests.get(nest_id, null)
+		if raw_nest == null or not is_instance_valid(raw_nest):
+			continue
+		var nest := raw_nest as Node
+		if nest.has_method(&"configure"):
+			nest.call(&"configure", entry)
+		if nest.has_method(&"restore_from_dictionary"):
+			nest.call(&"restore_from_dictionary", {
+				"alive": true,
+				"maturity": float(entry.get("maturity", 0.5)),
+				"current_health": float(entry.get("maximum_health", 250.0)),
+				"destroyed_elapsed": 0.0,
+				"regrowth_progress": 0.0,
+				"state_name": "active",
+				"spawn_serial": 0,
+			})
+	for raw_nest_id in director.nests.keys():
+		if not authored_nest_ids.has(StringName(str(raw_nest_id))):
+			director.nests.erase(raw_nest_id)
+	director._refresh_nest_sources()
+
+
+func _reconstruct_canonical_enemy_tier_state(director: EnemyTierProgressionDirector3D) -> void:
+	# Exact RC1 values come from a verified sidecar in the following process
+	# frame. If none verifies, derive the safest deterministic generation from
+	# the loaded actors and completed world progression instead of stale memory.
+	director._reconcile_population()
+	director._refresh_nest_sources()
+	director._poll_world_progression()
+	if progression != null:
+		for technology_id in progression.unlocked_technologies:
+			director.apply_event(StringName(str(technology_id)))
+	if endgame_director != null:
+		var protocol_id := endgame_director.completed_protocol
+		if protocol_id == &"" and not endgame_director.active_protocol.is_empty():
+			protocol_id = StringName(str(endgame_director.active_protocol.get("id", "")))
+		if protocol_id != &"":
+			director.apply_event(protocol_id)
+	director.elapsed_seconds = maxf(0.0, run_state.elapsed_seconds)
+
+
+func _restore_canonical_enemy_continuity(director: EnemyTierProgressionDirector3D, saved_enemies: Variant) -> void:
+	if not (saved_enemies is Array):
+		return
+	for raw_enemy in saved_enemies:
+		if not (raw_enemy is Dictionary):
+			continue
+		var saved_enemy := raw_enemy as Dictionary
+		var saved_name := str(saved_enemy.get("name", ""))
+		if saved_name.is_empty():
+			continue
+		var restored_enemy := _restored_enemy_by_name(saved_name)
+		if restored_enemy == null:
+			continue
+		var restored_tier := int(saved_enemy.get("canonical_enemy_tier", saved_enemy.get("enemy_tier", 1)))
+		var restored_home := StringName(str(saved_enemy.get("home_nest_id", "")))
+		director.assign_enemy_tier(restored_enemy, restored_tier, restored_home)
+		for metadata_key in [&"ecology_region", &"ecology_region_previous", &"ecology_origin", &"causal_source_kind", &"causal_destination", &"enemy_pack_id", &"enemy_behaviour", &"enemy_behaviour_reason"]:
+			var storage_key := String(metadata_key)
+			if saved_enemy.has(storage_key):
+				var metadata_value: Variant = saved_enemy.get(storage_key)
+				if metadata_value is Array:
+					metadata_value = (metadata_value as Array).duplicate(true)
+				elif metadata_value is Dictionary:
+					metadata_value = (metadata_value as Dictionary).duplicate(true)
+				restored_enemy.set_meta(metadata_key, metadata_value)
+		var runtime_intent: Variant = saved_enemy.get("brain_runtime_intent", {})
+		var brain := restored_enemy.get_node_or_null("EnemyTierBrain")
+		if brain != null and runtime_intent is Dictionary and not (runtime_intent as Dictionary).is_empty() and brain.has_method(&"restore_runtime_intent"):
+			var saved_pack_id := StringName(str(saved_enemy.get("enemy_pack_id", "")))
+			if saved_pack_id != &"":
+				brain.set("pack_id", saved_pack_id)
+			brain.call(&"restore_runtime_intent", runtime_intent)
+
+
+func _restored_enemy_by_name(saved_name: String) -> OrganicEnemy3D:
+	var direct := get_node_or_null(NodePath(saved_name))
+	if direct is OrganicEnemy3D:
+		return direct as OrganicEnemy3D
+	for raw_enemy in get_tree().get_nodes_in_group(&"organic_enemies"):
+		if raw_enemy is OrganicEnemy3D and is_instance_valid(raw_enemy) and String(raw_enemy.name) == saved_name:
+			return raw_enemy as OrganicEnemy3D
+	return null
 
 
 func _clear_runtime_entities() -> void:

@@ -16,6 +16,7 @@ func _initialize() -> void:
 
 func _run_all() -> void:
     var world := MAIN_SCENE.instantiate() as IronwrightReleaseWorld3D
+    world.pending_launch_mode = &"new"
     root.add_child(world)
     for _index in range(8):
         await process_frame
@@ -25,11 +26,16 @@ func _run_all() -> void:
     if world == null or world.performance_director == null:
         _finish()
         return
+    _expect(await world._await_enemy_tier_bootstrap_initialized(), "The stress scenario must initialize canonical ecology before spawning its tier-brained population.")
 
     var actors: Array[Node] = []
     for index in range(96):
         var band := index % 4
-        var distance := 18.0 if band == 0 else (86.0 if band == 1 else (140.0 if band == 2 else 260.0))
+        # Keep the first inspected pair unambiguously inside the nearest active
+        # slots even if the production budget has adapted during renderer/ecology
+        # startup. The remaining near-band population still exercises the real
+        # active-budget overflow at eighteen metres.
+        var distance := 6.0 if index == 0 else (18.0 if band == 0 else (86.0 if band == 1 else (140.0 if band == 2 else 260.0)))
         var angle := float(index) * 0.67
         var anchor := world.player.global_position + Vector3(cos(angle) * distance, 0.0, sin(angle) * distance)
         var enemy := world._spawn_enemy(anchor, ORGANIC_SPECIES[index % ORGANIC_SPECIES.size()]) as OrganicEnemyRelease3D

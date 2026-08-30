@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-08-30 — Canonical ecology contracts
+
+- made `enemy_tier_event_modifiers.json` the sole authority for operation,
+  technology and endgame ecology effects, with validation against a duplicate
+  table in base population tuning;
+- documented unified transactional enemy-tier persistence and retained the old
+  RC1 sidecar only as a read-only migration fallback;
+- made canonical ecology startup report ready only after its authored physical
+  nest network is bound, so fresh review, Continue and manual load cannot
+  observe a half-initialized world;
+- moved routine autonomous Tier-I suppression updates into command-map status
+  while preserving a one-time notification when an active patrol stands down.
+
 ## 2026-08-30 — Continue/load presentation recovery
 
 - Continue now rebuilds the full playable scene before restoring a persistent

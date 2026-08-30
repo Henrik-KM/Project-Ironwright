@@ -59,6 +59,8 @@ var camera_target_velocity: Vector3 = Vector3.ZERO
 var camera_heading: Vector3 = Vector3(0.0, 0.0, 1.0)
 var release_camera_departure_clock: float = 0.0
 var presentation_review_active: bool = false
+var presentation_review_starting: bool = false
+var presentation_review_transition_serial: int = 0
 var presentation_review_page: int = 0
 var presentation_review_pages: Array = []
 var presentation_review_label: Label
@@ -754,6 +756,10 @@ func _finish_release_boot() -> void:
 	elif _has_mechromancer_evolution_review_flag():
 		_start_release_world()
 		call_deferred("_start_mechromancer_evolution_review")
+	elif _has_ecology_runtime_review_flag():
+		_start_release_world()
+		if has_method(&"_start_ecology_runtime_review"):
+			call_deferred("_start_ecology_runtime_review")
 	elif _has_presentation_review_flag():
 		_start_release_world()
 		call_deferred("_start_presentation_review")
@@ -790,9 +796,39 @@ func _finish_release_boot() -> void:
 		_start_release_world()
 	elif mode == &"continue":
 		_start_release_world()
-		_load_release_game()
+		call_deferred("_load_release_game_after_ecology_ready")
 	else:
 		_show_title_screen()
+
+
+func _await_enemy_tier_bootstrap_initialized() -> bool:
+	var bootstrap := get_node_or_null("EnemyTierProgressionBootstrap") as EnemyTierProgressionBootstrap3D
+	if bootstrap == null:
+		return true
+	if bootstrap.initialized:
+		return true
+	# The canonical ecology waits for authored presentation imports to settle.
+	# A Continue request must stay behind that handoff so the bootstrap has
+	# connected to transactional-load events before unified state or an RC1
+	# sidecar fallback is restored.
+	for _attempt in range(800):
+		if not is_instance_valid(bootstrap) or bootstrap.is_queued_for_deletion():
+			return false
+		if bootstrap.initialized:
+			return true
+		await get_tree().create_timer(0.025, true, false, true).timeout
+		await get_tree().process_frame
+	return bootstrap != null and is_instance_valid(bootstrap) and bootstrap.initialized
+
+
+func _load_release_game_after_ecology_ready() -> bool:
+	if not await _await_enemy_tier_bootstrap_initialized():
+		if session_diagnostics != null:
+			session_diagnostics.record_event(&"load_deferred", "Canonical ecology startup did not complete before the save-load safety deadline.")
+		if hud != null:
+			hud.push_notification(localization_service.text("save.deferred"))
+		return false
+	return _load_release_game()
 
 
 func _has_new_world_flag() -> bool:
@@ -801,6 +837,16 @@ func _has_new_world_flag() -> bool:
 			return true
 	for argument in OS.get_cmdline_user_args():
 		if str(argument) in ["--new", "--new-world"]:
+			return true
+	return false
+
+
+func _has_ecology_runtime_review_flag() -> bool:
+	for argument in OS.get_cmdline_args():
+		if str(argument) == "--ecology-runtime-review":
+			return true
+	for argument in OS.get_cmdline_user_args():
+		if str(argument) == "--ecology-runtime-review":
 			return true
 	return false
 
@@ -1091,12 +1137,45 @@ func _start_run_variation_review() -> void:
 	run_state.log_event("Run variation review started: %s. No save or player input is enabled." % String(variant_id))
 
 
+func _await_release_presentation_idle() -> bool:
+	var stable_samples := 0
+	for _attempt in range(480):
+		_advance_release_presentation_handoffs()
+		var bootstrap := get_node_or_null("EnemyTierProgressionBootstrap") as EnemyTierProgressionBootstrap3D
+		var bootstrap_ready := bootstrap == null or bootstrap.initialized
+		var art_ready := release_world_art == null or release_world_art.is_presentation_idle()
+		if bootstrap_ready and art_ready:
+			stable_samples += 1
+			if stable_samples >= 3:
+				return true
+		else:
+			stable_samples = 0
+		await get_tree().create_timer(0.025, true, false, true).timeout
+		await get_tree().process_frame
+	return false
+
+
+func _advance_release_presentation_handoffs() -> void:
+	if region_director == null:
+		return
+	for raw_landmark in region_director.landmarks.values():
+		var landmark := raw_landmark as RegionLandmark3D
+		if landmark != null and landmark.authored_model_presentation_pending():
+			landmark.advance_authored_model_presentation()
+
+
 func _start_presentation_review() -> void:
-	presentation_review_active = true
+	if presentation_review_active or presentation_review_starting:
+		return
+	presentation_review_starting = true
 	# The gallery pauses the world after staging so the review fixture remains
 	# still, but the root must keep processing its camera and screenshot timer.
 	# This is review-only and does not change normal gameplay pause semantics.
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	if not await _await_release_presentation_idle():
+		presentation_review_starting = false
+		push_warning("Presentation review did not reach a safe renderer handoff boundary and was not opened.")
+		return
 	presentation_review_page = 0
 	presentation_review_capture_path = _presentation_review_capture_argument()
 	presentation_review_capture_frames = 0
@@ -1167,14 +1246,13 @@ func _start_presentation_review() -> void:
 			enemy.set_physics_process(false)
 			enemy.set_process(false)
 			presentation_review_pages[2].append(enemy)
-	if _is_headless_release():
-		for index in PRESENTATION_REVIEW_REGIONS.size():
-			_populate_presentation_review_region(index)
-	var outpost_review_page: Array = presentation_review_pages[3 + PRESENTATION_REVIEW_REGIONS.size()]
-	if _is_headless_release():
-		_populate_presentation_review_outposts(outpost_review_page)
+	# Region and outpost pages remain lazy in both live and headless review.
+	# Bulk construction used to race imported resources on the Dummy renderer
+	# and also did work for pages the reviewer never opened.
 	_create_presentation_review_stage()
-	_show_presentation_review_page(_presentation_review_start_page())
+	await _show_presentation_review_page(_presentation_review_start_page())
+	presentation_review_active = true
+	presentation_review_starting = false
 	get_tree().paused = true
 	run_state.log_event("Presentation review mode: 1 friendly roster, 2 early organics, 3 late organics, 4-14 all remote regions, 15 autonomous outpost roles. Arrow keys browse; Escape exits review.")
 
@@ -1325,7 +1403,7 @@ func _start_mechromancer_evolution_review() -> void:
 		]:
 			progression.unlocked_effects[effect_id] = true
 		progression.progression_changed.emit()
-	_start_presentation_review()
+	await _start_presentation_review()
 	if presentation_review_label != null:
 		presentation_review_label.text = "MECHROMANCER EVOLUTION REVIEW  ·  HEARTFORGE TIER V\nTIER II FIELD RIG  ·  TIER III COGNITION LATTICE  ·  TIER IV BIO-SENSOR  ·  TIER V PROTOCOL HARDWARE"
 
@@ -1614,6 +1692,16 @@ func _add_presentation_review_box(node_name: String, size: Vector3, position: Ve
 func _show_presentation_review_page(page: int) -> void:
 	if presentation_review_pages.size() != 4 + PRESENTATION_REVIEW_REGIONS.size():
 		return
+	presentation_review_transition_serial += 1
+	var transition_serial := presentation_review_transition_serial
+	if not await _await_release_presentation_idle():
+		push_warning("Presentation review page change was cancelled because renderer work did not settle.")
+		return
+	# If several navigation inputs arrive during one import handoff, only the
+	# newest request constructs a page. This makes rapid key presses deterministic
+	# and prevents two gallery builders from resuming on the same idle boundary.
+	if transition_serial != presentation_review_transition_serial:
+		return
 	presentation_review_page = clampi(page, 0, presentation_review_pages.size() - 1)
 	_ensure_presentation_review_page_loaded(presentation_review_page)
 	for page_actors in presentation_review_pages:
@@ -1778,6 +1866,8 @@ func _show_presentation_review_page(page: int) -> void:
 			presentation_review_camera_desired = Vector3(0.0, 6.15, 15.8) if outpost_page else (Vector3(0.0, 4.45, 12.8) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5))
 	_set_presentation_review_stage_for_page(is_region_page)
 	_update_presentation_review_camera(1.0)
+	if not await _await_release_presentation_idle():
+		push_warning("Presentation review page opened before all material handoffs settled.")
 
 
 func _set_presentation_review_actor_lighting(actor: Node3D, friendly_roster: bool) -> void:
@@ -2554,6 +2644,7 @@ func _should_build_city_on_boot() -> bool:
 		var raw_argument := str(argument)
 		if raw_argument in [
 			"--new", "--new-world", "--presentation-review", "--title-review",
+			"--ecology-runtime-review",
 			"--stream-ring-review", "--route-memory-review", "--route-recovery-marker-review",
 			"--dynamic-operation-review", "--authored-operation-review", "--casualty-recovery-review",
 			"--concurrent-operation-review",
@@ -2952,7 +3043,11 @@ func _save_game() -> void:
 
 
 func _load_game() -> void:
-	_load_release_game()
+	var bootstrap := get_node_or_null("EnemyTierProgressionBootstrap") as EnemyTierProgressionBootstrap3D
+	if bootstrap == null or bootstrap.initialized:
+		_load_release_game()
+	else:
+		call_deferred("_load_release_game_after_ecology_ready")
 
 
 func _save_release_game() -> bool:

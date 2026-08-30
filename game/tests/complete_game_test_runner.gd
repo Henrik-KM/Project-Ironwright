@@ -28,6 +28,12 @@ func _run_all() -> void:
     if world == null:
         _finish()
         return
+    # Production Continue and the in-world load shortcut deliberately wait for
+    # the canonical ecology bootstrap before restoring a unified generation.
+    # Establish that same readiness boundary once for this complete-run fixture
+    # so every subsequent save/load assertion observes the completed load, not
+    # a deferred coroutine that is still waiting on renderer handoff.
+    _expect(await world._await_enemy_tier_bootstrap_initialized(), "The complete-run fixture must initialize canonical ecology before exercising unified save/load.")
     # The release export persists the player's language outside the save
     # envelope. Keep this integration run deterministic after a live locale
     # review and exercise the English authored-content contracts explicitly.

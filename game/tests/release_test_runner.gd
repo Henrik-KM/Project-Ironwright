@@ -18,6 +18,8 @@ func _run_all() -> void:
     for index in range(8):
         await process_frame
     await physics_frame
+    await _await_enemy_tier_bootstrap(world)
+    await _await_renderer_quiescence(world)
 
     _expect(world != null, "The native scene must instantiate the commercial release world.")
     if world == null:
@@ -28,6 +30,7 @@ func _run_all() -> void:
     world.settings_service.set_value(&"language", "en", false)
     world.localization_service.set_locale(&"en")
 
+    await _test_continue_bootstrap_gate(world)
     _test_release_services(world)
     _test_audio_mixer_settings(world)
     _test_run_variation(world)
@@ -39,15 +42,100 @@ func _run_all() -> void:
     await _test_runtime_material_continuity(world)
     await _test_spatial_and_performance(world)
     _test_transactional_save_service()
-    _test_enemy_tier_sidecar_isolation(world)
+    _test_enemy_tier_unified_persistence(world)
     _test_unified_snapshot(world)
     _test_front_end(world)
     await _test_complete_objective_review_fixture(world)
 
+    await _teardown_world(world)
+    _finish()
+
+
+func _await_enemy_tier_bootstrap(world: Node) -> void:
+    for _attempt in range(600):
+        var bootstrap := world.get_node_or_null("EnemyTierProgressionBootstrap") as EnemyTierProgressionBootstrap3D if world != null else null
+        if bootstrap != null and bootstrap.initialized:
+            return
+        await create_timer(0.025, true, false, true).timeout
+        await process_frame
+
+
+func _await_renderer_quiescence(world: Node) -> void:
+    if world == null or not is_instance_valid(world) or world.is_queued_for_deletion():
+        return
+    var settled := false
+    for _attempt in range(320):
+        var pending := false
+        for raw_landmark in world.find_children("*", "RegionLandmark3D", true, false):
+            var landmark := raw_landmark as RegionLandmark3D
+            if landmark == null or not landmark.authored_model_presentation_pending():
+                continue
+            pending = true
+            landmark.advance_authored_model_presentation()
+        var release_art := world.get_node_or_null("ReleaseWorldArtDirector") as ReleaseWorldArtDirector3D
+        if release_art != null and not release_art.is_presentation_idle():
+            pending = true
+        if not pending:
+            settled = true
+            break
+        await create_timer(0.025, true, false, true).timeout
+        await process_frame
+    _expect(settled, "Release validation must drain the production presentation queue and every authored-model handoff before continuing.")
+
+
+func _teardown_world(world: Node) -> void:
+    paused = false
+    if world == null or not is_instance_valid(world):
+        return
+    await _await_renderer_quiescence(world)
+    var release_art := world.get_node_or_null("ReleaseWorldArtDirector") as ReleaseWorldArtDirector3D
+    _expect(release_art == null or release_art.is_presentation_idle(), "Release teardown must not retire the world while production presentation work is still active.")
+    for raw_landmark in world.find_children("*", "RegionLandmark3D", true, false):
+        var landmark := raw_landmark as RegionLandmark3D
+        _expect(landmark == null or not landmark.authored_model_presentation_pending(), "Release teardown must drain authored-model attach and cleanup handoffs before releasing renderer resources.")
+    var region_lod := world.get_node_or_null("RegionPresentationLodDirector")
+    if region_lod != null:
+        region_lod.set_process(false)
+    var spatial_audio := world.get_node_or_null("AudioFeedbackDirector") as AudioFeedbackDirector3D
+    if spatial_audio != null:
+        spatial_audio.stop_all()
+    var release_audio := world.get_node_or_null("ReleaseAudioDirector") as ReleaseAudioDirector3D
+    if release_audio != null:
+        release_audio.clear_transient_feedback()
+        release_audio.set_process(false)
+    world.propagate_call(&"set_process", [false], true)
+    world.propagate_call(&"set_physics_process", [false], true)
     world.queue_free()
     for _cleanup_frame in range(8):
         await process_frame
-    _finish()
+    await create_timer(0.25, true, false, true).timeout
+    for _cleanup_frame in range(4):
+        await process_frame
+
+
+func _test_continue_bootstrap_gate(world: IronwrightReleaseWorld3D) -> void:
+    var bootstrap := world.get_node_or_null("EnemyTierProgressionBootstrap") as EnemyTierProgressionBootstrap3D
+    _expect(bootstrap != null and bootstrap.initialized, "Continue ordering requires an initialized production enemy-tier bootstrap fixture.")
+    if bootstrap == null:
+        return
+    var gate_results: Array[bool] = []
+    bootstrap.initialized = false
+    call_deferred("_capture_continue_bootstrap_gate", world, gate_results)
+    await process_frame
+    await create_timer(0.075, true, false, true).timeout
+    await process_frame
+    _expect(gate_results.is_empty(), "Continue restoration must remain blocked while canonical ecology initialization is incomplete.")
+    bootstrap.initialized = true
+    for _attempt in range(20):
+        if not gate_results.is_empty():
+            break
+        await create_timer(0.025, true, false, true).timeout
+        await process_frame
+    _expect(gate_results == [true], "Continue restoration must resume only after the production enemy-tier bootstrap reports readiness.")
+
+
+func _capture_continue_bootstrap_gate(world: IronwrightReleaseWorld3D, gate_results: Array[bool]) -> void:
+    gate_results.append(await world._await_enemy_tier_bootstrap_initialized())
 
 
 func _test_release_services(world: IronwrightReleaseWorld3D) -> void:
@@ -580,23 +668,41 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
         service.set_locale(&"de")
     _expect(world.localization_service.text("notification.complete.route_recovery_marker_review") != "notification.complete.route_recovery_marker_review", "Route recovery marker review notifications must resolve to readable localized copy.")
 
-    var tier_hud := world.get_node_or_null("EnemyTierHUD") as EnemyTierHUD3D
-    _expect(tier_hud != null, "Release runtime must expose the population-tier command-map panel.")
-    if tier_hud != null:
-        tier_hud.set_snapshot({
-            "highest_observed_tier": 3,
-            "active_nests": 2,
-            "total_nests": 4,
-            "trend": "WORSENING",
-            "tiers": [
-                {"tier": 1, "display_name": "Feral", "intelligence_label": "primitive roaming", "density": "LOW", "replenishment_per_minute": 0.4, "saturated": false},
-                {"tier": 2, "display_name": "Territorial", "intelligence_label": "nest defence and patrol", "density": "DENSE", "replenishment_per_minute": 3.0, "saturated": false},
-                {"tier": 3, "display_name": "Predatory", "intelligence_label": "scouting, hunting and pack memory", "density": "PRESENT", "replenishment_per_minute": 0.8, "saturated": false},
-            ],
-        })
-        tier_hud.refresh_localized_text()
-        _expect(tier_hud.title_label.text == "ÖKOLOGISCHE INTELLIGENZ" and "Höchste bestätigte Stufe" in tier_hud.summary_label.text, "German locale must localize the population-tier panel heading and summary.")
-        _expect("STUFE 3" in tier_hud.tier_rows[2].text and "Spähen, Jagd" in tier_hud.tier_rows[2].text and "langsame Erneuerung" in tier_hud.tier_rows[2].text, "German locale must localize tier names, intelligence and replenishment labels.")
+    var tier_bootstrap := world.get_node_or_null("EnemyTierProgressionBootstrap") as EnemyTierProgressionBootstrap3D
+    _expect(tier_bootstrap != null and tier_bootstrap.director != null, "Release runtime must expose one canonical population-tier director.")
+    _expect(get_nodes_in_group(&"enemy_tier_progression").size() == 1, "Release runtime must contain exactly one active population-tier controller.")
+    _expect(world.get_node_or_null("EnemyTierDirector") == null and world.get_node_or_null("EnemyTierHUD") == null, "The disabled legacy population controller and duplicate HUD must not exist in the release world.")
+    _expect(world.ecology_director.is_processing() and world.strategic_ecology_director.is_processing(), "Birth handoff must keep local attention and strategic regional ecology processing alive.")
+    _expect(world.ecology_director.external_population_control and world.strategic_ecology_director.external_population_control, "Both legacy ecology contexts must explicitly delegate births to the canonical tier director.")
+    _expect(not world.ecology_director.spawn_enemy_callable.is_valid() and not world.strategic_ecology_director.spawn_enemy_callback.is_valid(), "Delegated ecology contexts must not retain an uncapped birth callback.")
+    if tier_bootstrap != null and tier_bootstrap.director != null:
+        var canonical := tier_bootstrap.director
+        var event_state := canonical.to_dictionary()
+        var tier_one_before := canonical.replenishment_rate(1)
+        _expect(canonical.apply_event(&"tech.machine.forge_assistance"), "A representative technology must apply its canonical ecological consequence.")
+        var tier_one_after := canonical.replenishment_rate(1)
+        _expect(tier_one_after > tier_one_before, "The representative technology must visibly increase its configured replenishment pressure.")
+        _expect(not canonical.apply_event(&"tech.machine.forge_assistance") and is_equal_approx(canonical.replenishment_rate(1), tier_one_after), "A repeated technology signal must be idempotent.")
+        _expect(canonical.apply_event(&"operation.cathedral_brood_suppression"), "A representative suppression operation must reach the canonical ecological ledger.")
+        _expect(canonical.replenishment_rate(1) < tier_one_after, "A suppression operation must reduce long-term replenishment instead of merely changing copy.")
+        for protocol_id in [&"protocol.severance", &"protocol.containment", &"protocol.transformation"]:
+            _expect(canonical.apply_event(protocol_id), "Endgame %s must apply one canonical ecological response." % String(protocol_id))
+        var event_roundtrip := canonical.to_dictionary()
+        canonical.restore_from_dictionary(event_roundtrip)
+        _expect(canonical.applied_events.has(&"tech.machine.forge_assistance") and canonical.applied_events.has(&"protocol.transformation"), "The one canonical applied-event ledger must survive save/load.")
+        canonical.restore_from_dictionary(event_state)
+
+        var balance_actor: OrganicEnemyTiered3D
+        for candidate in get_nodes_in_group(&"organic_enemies"):
+            if candidate is OrganicEnemyTiered3D and is_instance_valid(candidate) and not candidate.is_in_group(&"enemy_tier_nests"):
+                balance_actor = candidate as OrganicEnemyTiered3D
+                break
+        if balance_actor != null:
+            world._apply_balance_to_existing_world()
+            var first_balance := Vector3(balance_actor.maximum_health, balance_actor.attack_damage, balance_actor.move_speed)
+            world._apply_balance_to_existing_world()
+            var second_balance := Vector3(balance_actor.maximum_health, balance_actor.attack_damage, balance_actor.move_speed)
+            _expect(first_balance.is_equal_approx(second_balance), "Applying the same release balance twice must not compound canonical tier stats.")
 
     var intel_hud := world.get_node_or_null("EnemyTierProgressionBootstrap/EnemyTierIntelHUD") as EnemyTierIntelHUD3D
     _expect(intel_hud != null, "Release runtime must expose the ecological intelligence summary panel.")
@@ -1031,12 +1137,13 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
 
 
 func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
-    world._start_presentation_review()
+    await world._start_presentation_review()
     await process_frame
     _expect(world.presentation_review_pages.size() == 15, "Presentation review must expose the three core pages, all eleven remote regions and the autonomous outpost role page.")
     _expect(world.presentation_review_label != null and "1-9, 0 DIRECT PAGE" in world.presentation_review_label.text, "Presentation review navigation must describe the digit-key page controls clearly.")
     _expect(world.release_world_art != null and world.release_world_art.dressing_root != null, "Presentation review must retain the release dressing root alongside its controller.")
-    world._show_presentation_review_page(0)
+    _expect((world.presentation_review_pages[3] as Array).is_empty(), "Presentation review must keep unvisited remote pages lazy instead of constructing the whole gallery at startup.")
+    await world._show_presentation_review_page(0)
     await process_frame
     _expect(world.presentation_review_camera_desired.z - world.presentation_review_camera_target.z <= 13.3, "Core presentation pages must use a closer roster framing for authored detail review.")
     _expect(absf(world.player.rotation.y) <= 0.05, "The friendly roster review must show the Mechromancer's authored field-engineer front rather than the rear tactical camera angle.")
@@ -1065,7 +1172,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.player.find_child("MechromancerProgressionVisuals", true, false) != null, "The Mechromancer must expose a derived progression visual layer.")
     _expect(world.player.find_child("MechromancerTierIIShoulderBrace", true, false) != null and world.player.find_child("MechromancerTierIIICognitionRail", true, false) != null, "Heartforge and machine-society progression must add protected field and cognition hardware to the player model.")
     _expect(world.player.find_child("MechromancerTierIVBioSensorLens", true, false) != null and world.player.find_child("MechromancerTierVProtocolClasp", true, false) != null, "Late progression must add adaptive sensing and protocol hardware without replacing the field-engineer silhouette.")
-    world._show_presentation_review_page(1)
+    await world._show_presentation_review_page(1)
     await process_frame
     _expect(world.presentation_review_camera_desired.z - world.presentation_review_camera_target.z <= 14.0, "Organic presentation pages must use a dedicated close detail frame for authored anatomy review.")
     var early_review_page: Array = world.presentation_review_pages[1]
@@ -1077,14 +1184,14 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         var fourth_early_actor := early_review_page[3] as Node3D
         _expect(third_early_actor != null and fourth_early_actor != null and third_early_actor.position.z > fourth_early_actor.position.z + 3.0, "Early organic presentation must separate its broad near row from the rear row so wing and limb silhouettes remain judgeable.")
         _expect(is_equal_approx(first_early_actor.position.x, -4.0) and is_equal_approx(third_early_actor.position.x, 4.0), "Early organic presentation must use the fitted triangular near-row composition.")
-    world._show_presentation_review_page(2)
+    await world._show_presentation_review_page(2)
     await process_frame
     var late_review_page: Array = world.presentation_review_pages[2]
     if late_review_page.size() >= 1:
         var first_late_actor := late_review_page[0] as Node3D
         _expect(first_late_actor != null and first_late_actor.find_child("OrganicSurfaceSeam", true, false) != null, "Active organic families must retain a smooth continuous shell seam for close-camera material separation.")
     for page_index in range(3, 3 + world.PRESENTATION_REVIEW_REGIONS.size()):
-        world._show_presentation_review_page(page_index)
+        await world._show_presentation_review_page(page_index)
         await process_frame
         var region_page: Array = world.presentation_review_pages[page_index]
         _expect(region_page.size() == 1, "Every remote presentation-review page must expose one landmark actor.")
@@ -1099,7 +1206,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     _expect(west_grid_review_offset.z <= 16.4 and west_grid_review_offset.y <= 8.6 and west_grid_review_offset.x <= -7.0, "West Grid presentation review must use a bounded diagonal frame for its industrial focal and reroute witness.")
     var tram_review_offset := world._presentation_review_region_camera_offset(&"region.tram_graveyard")
     _expect(tram_review_offset.z <= 16.6 and tram_review_offset.y <= 10.3 and is_zero_approx(tram_review_offset.x), "Tram Graveyard presentation review must use a centered rail-yard frame for its carriage hardware.")
-    world._show_presentation_review_page(9)
+    await world._show_presentation_review_page(9)
     await process_frame
     var tram_review_page: Array = world.presentation_review_pages[9] if world.presentation_review_pages.size() > 9 else []
     if tram_review_page.size() == 1:
@@ -1114,7 +1221,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     _expect(cathedral_review_offset.z <= 19.6 and cathedral_review_offset.y <= 8.8 and cathedral_review_offset.x >= 6.2, "Cathedral Quarter presentation review must use a bounded diagonal frame for its nave, tower and choir hardware.")
     var observatory_review_offset := world._presentation_review_region_camera_offset(&"region.observatory_ridge")
     _expect(observatory_review_offset.z <= 16.8 and observatory_review_offset.y <= 5.0 and observatory_review_offset.x >= 5.6, "Observatory Ridge presentation review must use a bounded low diagonal survey-station frame for its dish and instrument hardware.")
-    world._show_presentation_review_page(10)
+    await world._show_presentation_review_page(10)
     await process_frame
     var cathedral_dressing := world.release_world_art.region_dressing_root(&"region.cathedral_quarter") if world.release_world_art != null else null
     _expect(world.release_world_art != null and world.release_world_art.dressing_root.visible, "Remote presentation review must keep the sibling release dressing root visible.")
@@ -1124,7 +1231,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         _expect(cathedral_dressing.find_child("CathedralReleaseRoofline", true, false) != null and cathedral_dressing.find_child("CathedralReleaseRoofEaveL", true, false) != null and cathedral_dressing.find_child("CathedralReleaseClerestory02", true, false) != null and cathedral_dressing.find_child("CathedralReleaseRoofFinial", true, false) != null, "Cathedral Quarter presentation review must retain a broken roofline, clerestory and finial silhouette.")
         var bell_yard := cathedral_dressing.find_child("CathedralBellYardWitness", true, false)
         _expect(bell_yard != null and bell_yard.find_child("CathedralBellYardBell", true, false) != null and bell_yard.find_child("CathedralBellYardSilenceCollar", true, false) != null, "Cathedral Quarter presentation review must retain a physical bell-yard witness for the brood-suppression history.")
-    world._show_presentation_review_page(13)
+    await world._show_presentation_review_page(13)
     await process_frame
     var page: Array = world.presentation_review_pages[13] if world.presentation_review_pages.size() > 13 else []
     _expect(page.size() == 1, "Root Cistern presentation review must expose one dedicated review actor.")
@@ -1141,7 +1248,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         var review_water := actor.find_child("RootCisternBasinWater", true, false) as MeshInstance3D
         var review_water_material := review_water.material_override as StandardMaterial3D if review_water != null else null
         _expect(review_water_material != null and not review_water_material.emission_enabled and review_water_material.albedo_color.r < 0.12 and review_water_material.albedo_color.g < 0.25, "Root Cistern presentation review must retain a dark water treatment around the core.")
-    world._show_presentation_review_page(11)
+    await world._show_presentation_review_page(11)
     await process_frame
     var observatory_page: Array = world.presentation_review_pages[11] if world.presentation_review_pages.size() > 11 else []
     _expect(observatory_page.size() == 1, "Observatory Ridge presentation review must expose one dedicated review actor.")
@@ -1149,7 +1256,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         var observatory_actor := observatory_page[0] as Node3D
         _expect(observatory_actor != null and observatory_actor.visible, "Observatory Ridge presentation review actor must be visible on its remote page.")
         _expect(observatory_actor != null and observatory_actor.find_children("*", "MeshInstance3D", true, false).size() > 20, "Observatory Ridge presentation review actor must retain its authored mesh hierarchy.")
-    world._show_presentation_review_page(12)
+    await world._show_presentation_review_page(12)
     await process_frame
     var buried_labs_page: Array = world.presentation_review_pages[12] if world.presentation_review_pages.size() > 12 else []
     _expect(buried_labs_page.size() == 1, "Buried Laboratories presentation review must expose one dedicated review actor.")
@@ -1160,7 +1267,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         _expect(buried_labs_actor != null and buried_labs_actor.find_child("BuriedLabsGenomePrism", true, false) != null and buried_labs_actor.find_child("BuriedLabsExtractionBeam", true, false) != null, "Buried Laboratories presentation review actor must retain its genome-prism extraction focal assembly.")
         var buried_labs_review_offset := world._presentation_review_region_camera_offset(&"region.buried_labs")
         _expect(buried_labs_review_offset.z <= 15.1 and buried_labs_review_offset.y <= 10.3, "Buried Laboratories presentation review must use a closer vertical frame for its authored extraction gantry.")
-    world._show_presentation_review_page(14)
+    await world._show_presentation_review_page(14)
     await process_frame
     var outpost_page: Array = world.presentation_review_pages[14] if world.presentation_review_pages.size() > 14 else []
     _expect(outpost_page.size() == 4, "Autonomous outpost presentation review must expose all four role silhouettes.")
@@ -1183,7 +1290,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
             elif index == 3:
                 _expect(outpost_actor.find_child("RepairFieldRing", true, false) != null, "Repair outpost review must retain the high-definition field ring.")
     for core_page in range(3):
-        world._show_presentation_review_page(core_page)
+        await world._show_presentation_review_page(core_page)
         await process_frame
         var core_actors: Array = world.presentation_review_pages[core_page]
         _expect(core_actors.size() >= 3, "Each core presentation page must expose enough actors for a readable staged composition.")
@@ -1211,7 +1318,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
             _expect(organic_cool_light != null and organic_cool_light.light_energy >= 3.2, "Organic presentation pages must retain a cool rim lift for readable anatomy edges.")
             _expect(organic_detail_fill != null and organic_detail_fill.visible and organic_detail_fill.light_energy >= 1.5, "Organic presentation pages must receive a restrained low front fill for secondary anatomy readability.")
         _expect(world.presentation_review_camera_desired.z < 18.0, "Core presentation pages must use the closer review camera framing.")
-    world._show_presentation_review_page(14)
+    await world._show_presentation_review_page(14)
     world.presentation_review_active = false
     world.get_tree().paused = false
     world._set_tactical_hud_visible(true)
@@ -1454,6 +1561,13 @@ func _find_mesh_named(node: Node, node_name: String) -> MeshInstance3D:
 
 
 func _test_spatial_and_performance(world: IronwrightReleaseWorld3D) -> void:
+    # This assertion audits the three LOD bands, not the adaptive-FPS response.
+    # Reset the bounded defaults so a heavily loaded CI host cannot shrink the
+    # medium radius below the fixture's 80 m actors before the forced sample.
+    world.performance_director.active_radius = 58.0
+    world.performance_director.medium_radius = 118.0
+    world.performance_director.active_entity_budget = 24
+    world.performance_director.medium_entity_budget = 40
     var near_enemy := world._spawn_enemy(world.player.global_position + Vector3(6.0, 0.0, 0.0), &"roofleaper") as OrganicEnemyRelease3D
     var medium_enemy := world._spawn_enemy(world.player.global_position + Vector3(80.0, 0.0, 0.0), &"glassmoth") as OrganicEnemyRelease3D
     var medium_robot := world._spawn_robot(&"scout", world.player.global_position + Vector3(82.0, 0.0, 0.0), 1) as RobotUnitRelease3D
@@ -1516,6 +1630,19 @@ func _test_transactional_save_service() -> void:
     var recovery_report := service.get_last_load_report()
     _expect(str(recovery_report.get("outcome", "")) == "recovered_backup", "Backup recovery must expose a recovered-backup report outcome.")
     _expect(int((recovery_report.get("attempts", []) as Array).size()) >= 2 and str(recovery_report.get("selected_source", "")) == "backup_1", "Backup recovery reports must retain the attempted current path and selected backup source.")
+    var precision_slot: StringName = &"release_fractional_precision"
+    service.delete_slot(precision_slot)
+    var precision_payload := {
+        "elapsed_seconds": 28800.125000000004,
+        "goal_position": [31.1234567890123, 0.0, -17.9876543210987],
+        "spawn_credit": 0.6300000000000001,
+        "population_state": {1: {"territory": 0.5200000405311584, "food": 0.6699999570846558}},
+    }
+    _expect(service.save_snapshot(precision_slot, precision_payload), "Transactional checksums must survive JSON round-tripping of long-run fractional state: %s" % service.last_error)
+    var precision_loaded := service.load_snapshot(precision_slot)
+    _expect(is_equal_approx(float(precision_loaded.get("elapsed_seconds", 0.0)), 28800.125), "Fractional long-run state must remain readable after checksum verification.")
+    _expect((precision_loaded.get("population_state", {}) as Dictionary).has("1"), "Transactional normalization must preserve integer-keyed simulation dictionaries as JSON string keys.")
+    service.delete_slot(precision_slot)
     var migration_events: Array[String] = []
     service.schema_migrated.connect(func(slot_id: StringName, from_version: int, to_version: int, fields: Array[String]) -> void:
         migration_events.append("%d>%d:%d" % [from_version, to_version, fields.size()])
@@ -1554,36 +1681,206 @@ func _test_transactional_save_service() -> void:
     service.queue_free()
 
 
-func _test_enemy_tier_sidecar_isolation(world: IronwrightReleaseWorld3D) -> void:
-    var bootstrap := world.get_node_or_null("EnemyTierProgressionBootstrap")
-    _expect(bootstrap != null, "Release runtime must include the enemy-tier sidecar bootstrap.")
-    if bootstrap == null:
+func _test_enemy_tier_unified_persistence(world: IronwrightReleaseWorld3D) -> void:
+    var bootstrap := world.get_node_or_null("EnemyTierProgressionBootstrap") as EnemyTierProgressionBootstrap3D
+    _expect(bootstrap != null and bootstrap.director != null, "Release runtime must include the canonical enemy-tier persistence bootstrap.")
+    var tiered_world := world as IronwrightTieredWorld3D
+    _expect(tiered_world != null, "Canonical enemy-tier persistence requires the tiered production world.")
+    if bootstrap == null or bootstrap.director == null or tiered_world == null:
         return
 
     var isolated_root := "user://release_enemy_tier_sidecar_test"
     var isolated_slot: StringName = &"isolated_slot"
     var isolated_save_path := "%s/%s.json" % [isolated_root, isolated_slot]
-    bootstrap.call("_configure_sidecar_paths", isolated_root, isolated_slot)
+    bootstrap._configure_sidecar_paths(isolated_root, isolated_slot)
     var expected_path := "%s/%s.enemy_tiers.json" % [isolated_root, isolated_slot]
-    _expect(str(bootstrap.get("sidecar_path")) == expected_path, "Enemy-tier sidecars must follow the configured save root and slot.")
-    _expect(not str(bootstrap.get("sidecar_path")).contains("user://saves/world_0"), "Enemy-tier sidecars must not fall back to the shared default path after isolation.")
-
-    _expect(bool(bootstrap.call("_on_world_save_completed", isolated_slot, isolated_save_path)), "An isolated enemy-tier sidecar save must complete successfully.")
-    _expect(FileAccess.file_exists(expected_path), "A completed isolated save must write its enemy-tier sidecar beside that save.")
-
-    var second_root := "user://release_enemy_tier_sidecar_test_second"
-    var second_slot: StringName = &"second_slot"
-    bootstrap.call("_configure_sidecar_from_save_path", second_slot, "%s/%s.json" % [second_root, second_slot])
-    _expect(str(bootstrap.get("sidecar_path")) == "%s/%s.enemy_tiers.json" % [second_root, second_slot], "Loading a save from another root must retarget the enemy-tier sidecar.")
-
-    for path in [
+    var director := bootstrap.director
+    var sidecar_paths := [
         expected_path,
         expected_path.replace(".json", ".tmp"),
         expected_path.replace(".json", ".backup.json"),
-    ]:
+    ]
+    for path in sidecar_paths:
         if FileAccess.file_exists(path):
             DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
-    bootstrap.call("_configure_sidecar_paths", "user://saves", "world_0")
+
+    var original_director_state := director.to_dictionary()
+    _test_enemy_runtime_intent_persistence(tiered_world, director)
+    director.debug_set_anonymous_rate(2, 0.37)
+    director.spawn_credit[2] = 0.63
+    director.simulation_clock = 0.43
+    director.reconcile_clock = 1.27
+    director.intel_clock = 0.81
+    var unified_state := director.to_dictionary()
+    director.debug_set_anonymous_rate(2, 4.0)
+    director.spawn_credit[2] = 0.0
+    director.simulation_clock = 0.0
+    director.reconcile_clock = 0.0
+    director.intel_clock = 0.0
+    director.restore_from_dictionary(unified_state)
+    _expect(is_equal_approx(float(director.anonymous_rates.get(2, 0.0)), 0.37) and is_equal_approx(float(director.spawn_credit.get(2, 0.0)), 0.63), "Canonical tier rates and spawn credit must round-trip inside one unified state payload.")
+    _expect(is_equal_approx(director.simulation_clock, 0.43) and is_equal_approx(director.reconcile_clock, 1.27) and is_equal_approx(director.intel_clock, 0.81), "Unified saves must resume every canonical ecology phase clock without a timing jump.")
+
+    var stale_sidecar := unified_state.duplicate(true)
+    (stale_sidecar["anonymous_rates"] as Dictionary)["2"] = 8.75
+    var stale_payload_json := bootstrap._canonical_json(stale_sidecar)
+    var stale_envelope := {"schema_version": 1, "saved_at_unix": 1, "checksum_sha256": bootstrap._sha256(stale_payload_json), "payload": stale_sidecar}
+    DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(isolated_root))
+    var stale_file := FileAccess.open(expected_path, FileAccess.WRITE)
+    stale_file.store_string(JSON.stringify(stale_envelope))
+    stale_file.close()
+
+    world.set_meta(&"enemy_tier_progression_restored_from_unified", true)
+    bootstrap.pending_restore = true
+    bootstrap._process(0.0)
+    _expect(is_equal_approx(float(director.anonymous_rates.get(2, 0.0)), 0.37), "A stale RC1 sidecar must never overwrite canonical tier state restored from the transactional world generation.")
+    var stale_before_save := FileAccess.get_file_as_string(expected_path)
+    _expect(bootstrap._on_world_save_completed(isolated_slot, isolated_save_path), "Unified tier persistence must acknowledge a completed transactional world save.")
+    _expect(FileAccess.get_file_as_string(expected_path) == stale_before_save, "New saves must not write or rotate the legacy enemy-tier sidecar.")
+
+    director.debug_set_anonymous_rate(2, 71.0)
+    director.spawn_credit[2] = director.spawn_credit_cap
+    director.applied_events[&"stale.pre_load.event"] = true
+    var reset_nest: EnemyTierNest3D
+    for raw_nest in director.nests.values():
+        if raw_nest is EnemyTierNest3D:
+            reset_nest = raw_nest as EnemyTierNest3D
+            break
+    if reset_nest != null:
+        reset_nest.apply_damage(reset_nest.maximum_health + 1.0)
+    tiered_world._reset_canonical_enemy_tier_state(director)
+    _expect(not director.applied_events.has(&"stale.pre_load.event") and is_zero_approx(float(director.anonymous_rates.get(2, 0.0))), "A legacy load must discard the prior world's canonical event ledger and rates before considering its RC1 sidecar.")
+    _expect(is_zero_approx(float(director.spawn_credit.get(2, 0.0))), "A legacy load must discard the prior world's queued spawn credit before reconstruction.")
+    if reset_nest != null:
+        _expect(reset_nest.is_alive() and is_equal_approx(reset_nest.current_health, reset_nest.maximum_health), "Legacy reconstruction must reset authored nests instead of retaining destruction from the prior world.")
+    tiered_world._reconstruct_canonical_enemy_tier_state(director)
+
+    world.set_meta(&"enemy_tier_progression_restored_from_unified", false)
+    world.set_meta(&"enemy_tier_progression_migrated_from_sidecar", false)
+    bootstrap.pending_restore = true
+    bootstrap._process(0.0)
+    _expect(is_equal_approx(float(director.anonymous_rates.get(2, 0.0)), 8.75) and bool(world.get_meta(&"enemy_tier_progression_migrated_from_sidecar", false)), "An older save without unified tier state must receive one read-only RC1 sidecar migration.")
+
+    for path in sidecar_paths:
+        if FileAccess.file_exists(path):
+            DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+    director.debug_set_anonymous_rate(2, 89.0)
+    director.applied_events[&"stale.missing_fallback.event"] = true
+    tiered_world._reset_canonical_enemy_tier_state(director)
+    tiered_world._reconstruct_canonical_enemy_tier_state(director)
+    var missing_rate := float(director.anonymous_rates.get(2, 0.0))
+    var missing_population := int(director.population.get(2, 0))
+    world.set_meta(&"enemy_tier_progression_restored_from_unified", false)
+    world.set_meta(&"enemy_tier_progression_migrated_from_sidecar", false)
+    bootstrap.pending_restore = true
+    bootstrap._process(0.0)
+    _expect(not bool(world.get_meta(&"enemy_tier_progression_migrated_from_sidecar", false)) and is_equal_approx(float(director.anonymous_rates.get(2, 0.0)), missing_rate) and int(director.population.get(2, 0)) == missing_population, "A missing RC1 sidecar must preserve the deterministic loaded-world reconstruction.")
+    _expect(not director.applied_events.has(&"stale.missing_fallback.event"), "A missing fallback must never retain the previous world's event ledger.")
+
+    var corrupt_file := FileAccess.open(expected_path, FileAccess.WRITE)
+    corrupt_file.store_string(JSON.stringify({"schema_version": 1, "checksum_sha256": "invalid", "payload": {"anonymous_rates": {"2": 999.0}}}))
+    corrupt_file.close()
+    director.debug_set_anonymous_rate(2, 91.0)
+    director.spawn_credit[2] = director.spawn_credit_cap
+    director.applied_events[&"stale.corrupt_fallback.event"] = true
+    tiered_world._reset_canonical_enemy_tier_state(director)
+    tiered_world._reconstruct_canonical_enemy_tier_state(director)
+    var reconstructed_rate := float(director.anonymous_rates.get(2, 0.0))
+    var reconstructed_credit := float(director.spawn_credit.get(2, 0.0))
+    var reconstructed_population := int(director.population.get(2, 0))
+    world.set_meta(&"enemy_tier_progression_restored_from_unified", false)
+    world.set_meta(&"enemy_tier_progression_migrated_from_sidecar", false)
+    bootstrap.pending_restore = true
+    bootstrap._process(0.0)
+    _expect(not bool(world.get_meta(&"enemy_tier_progression_migrated_from_sidecar", false)), "A corrupt RC1 sidecar must fail closed instead of claiming a migration.")
+    _expect(is_equal_approx(float(director.anonymous_rates.get(2, 0.0)), reconstructed_rate) and is_equal_approx(float(director.spawn_credit.get(2, 0.0)), reconstructed_credit) and int(director.population.get(2, 0)) == reconstructed_population, "A missing or corrupt RC1 sidecar must leave the deterministic loaded-world reconstruction intact.")
+    _expect(not director.applied_events.has(&"stale.corrupt_fallback.event"), "A corrupt fallback must never resurrect the previous world's event ledger.")
+
+    director.restore_from_dictionary(original_director_state)
+    for path in sidecar_paths:
+        if FileAccess.file_exists(path):
+            DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+    world.set_meta(&"enemy_tier_progression_restored_from_unified", false)
+    world.set_meta(&"enemy_tier_progression_migrated_from_sidecar", false)
+    bootstrap._configure_sidecar_paths("user://saves", &"world_0")
+
+
+func _test_enemy_runtime_intent_persistence(world: IronwrightTieredWorld3D, director: EnemyTierProgressionDirector3D) -> void:
+    var actor: OrganicEnemyTiered3D
+    for raw_enemy in get_nodes_in_group(&"organic_enemies"):
+        if raw_enemy is OrganicEnemyTiered3D and is_instance_valid(raw_enemy) and not raw_enemy.is_in_group(&"enemy_tier_nests"):
+            var candidate := raw_enemy as OrganicEnemyTiered3D
+            if candidate.is_alive() and candidate.get_node_or_null("EnemyTierBrain") != null:
+                actor = candidate
+                break
+    _expect(actor != null, "Enemy intent persistence requires one living canonical organic actor.")
+    if actor == null:
+        return
+    var brain := actor.get_node("EnemyTierBrain")
+    _expect(brain.has_method(&"serialize_runtime_intent") and brain.has_method(&"restore_runtime_intent"), "Canonical enemy brains must expose bounded runtime-intent persistence helpers.")
+    if not brain.has_method(&"serialize_runtime_intent") or not brain.has_method(&"restore_runtime_intent"):
+        return
+
+    var original_intent: Dictionary = brain.call(&"serialize_runtime_intent")
+    var metadata_keys: Array[StringName] = [&"ecology_region", &"ecology_region_previous", &"ecology_origin", &"causal_source_kind", &"causal_destination", &"enemy_pack_id", &"enemy_behaviour", &"enemy_behaviour_reason"]
+    var original_metadata: Dictionary = {}
+    var original_metadata_presence: Dictionary = {}
+    for metadata_key in metadata_keys:
+        original_metadata_presence[metadata_key] = actor.has_meta(metadata_key)
+        if actor.has_meta(metadata_key):
+            var original_value: Variant = actor.get_meta(metadata_key)
+            if original_value is Array:
+                original_metadata[metadata_key] = (original_value as Array).duplicate(true)
+            elif original_value is Dictionary:
+                original_metadata[metadata_key] = (original_value as Dictionary).duplicate(true)
+            else:
+                original_metadata[metadata_key] = original_value
+
+    var destination := actor.global_position + Vector3(31.0, 0.0, -17.0)
+    actor.set_meta(&"ecology_region", "migration.route")
+    actor.set_meta(&"ecology_region_previous", "region.west_grid")
+    actor.set_meta(&"ecology_origin", "tier_replenishment")
+    actor.set_meta(&"causal_source_kind", "persistence_fixture")
+    actor.set_meta(&"causal_destination", [destination.x, destination.y, destination.z])
+    brain.call(&"receive_causal_threat_goal", destination, &"persistence_fixture")
+    brain.set("decision_clock", 0.41)
+    brain.set("remote_clock", 0.19)
+    brain.set("state_elapsed", 6.25)
+    brain.set("roam_serial", 23)
+    brain.set("scout_serial", 11)
+    var snapshot := world._collect_release_snapshot()
+    var saved_enemy: Dictionary = {}
+    for raw_saved_enemy in (snapshot.get("base", {}) as Dictionary).get("enemies", []):
+        if raw_saved_enemy is Dictionary and str((raw_saved_enemy as Dictionary).get("name", "")) == String(actor.name):
+            saved_enemy = (raw_saved_enemy as Dictionary).duplicate(true)
+            break
+    _expect(not saved_enemy.is_empty(), "Unified saves must include the selected canonical enemy actor.")
+    if not saved_enemy.is_empty():
+        var saved_intent: Dictionary = saved_enemy.get("brain_runtime_intent", {})
+        _expect(str(saved_intent.get("forced_goal_kind", "")) == "causal_response" and str(saved_intent.get("forced_goal_source", "")) == "persistence_fixture", "Unified saves must retain an enemy's causal-response intent and diagnostic source.")
+        _expect(is_equal_approx(float(saved_intent.get("decision_clock", -1.0)), 0.41) and is_equal_approx(float(saved_intent.get("remote_clock", -1.0)), 0.19) and is_equal_approx(float(saved_intent.get("state_elapsed", -1.0)), 6.25), "Unified saves must retain an enemy's exact decision, reduced-detail, and behaviour-state timing phases.")
+        _expect(int(saved_intent.get("roam_serial", -1)) == 23 and int(saved_intent.get("scout_serial", -1)) == 11, "Unified saves must retain deterministic roam and scout goal serials.")
+        _expect(str(saved_enemy.get("ecology_region_previous", "")) == "region.west_grid" and str(saved_enemy.get("ecology_origin", "")) == "tier_replenishment", "Unified saves must retain enemy region, origin, and migration continuity.")
+        _expect(str(saved_enemy.get("causal_source_kind", "")) == "persistence_fixture" and (saved_enemy.get("causal_destination", []) as Array).size() == 3, "Unified saves must retain the causal source and destination that explain an enemy's movement.")
+
+        brain.call(&"receive_migration_goal", actor.global_position + Vector3(-44.0, 0.0, 12.0), &"region.flood_market")
+        actor.set_meta(&"ecology_origin", "mutated_after_save")
+        world._restore_canonical_enemy_continuity(director, [saved_enemy])
+        var restored_intent: Dictionary = brain.call(&"serialize_runtime_intent")
+        var restored_goal: Array = restored_intent.get("goal_position", [])
+        _expect(str(restored_intent.get("forced_goal_kind", "")) == "causal_response" and str(restored_intent.get("forced_goal_source", "")) == "persistence_fixture", "Enemy save restoration must resume the saved causal intent instead of choosing an unrelated fresh behavior.")
+        _expect(restored_goal.size() == 3 and Vector3(float(restored_goal[0]), float(restored_goal[1]), float(restored_goal[2])).is_equal_approx(destination), "Enemy save restoration must retain the physical causal destination.")
+        _expect(is_equal_approx(float(restored_intent.get("decision_clock", -1.0)), 0.41) and is_equal_approx(float(restored_intent.get("remote_clock", -1.0)), 0.19) and is_equal_approx(float(restored_intent.get("state_elapsed", -1.0)), 6.25), "Enemy save restoration must resume the saved timing phases instead of making an early or delayed decision.")
+        _expect(int(restored_intent.get("roam_serial", -1)) == 23 and int(restored_intent.get("scout_serial", -1)) == 11, "Enemy save restoration must resume deterministic future goal selection.")
+        _expect(str(actor.get_meta(&"ecology_region_previous", "")) == "region.west_grid" and str(actor.get_meta(&"ecology_origin", "")) == "tier_replenishment", "Enemy save restoration must retain region and origin diagnostics.")
+        _expect(str(actor.get_meta(&"enemy_pack_id", "")) == str(saved_enemy.get("enemy_pack_id", "")), "Enemy save restoration must retain pack continuity.")
+
+    brain.call(&"restore_runtime_intent", original_intent)
+    for metadata_key in metadata_keys:
+        if bool(original_metadata_presence.get(metadata_key, false)):
+            actor.set_meta(metadata_key, original_metadata.get(metadata_key))
+        else:
+            actor.remove_meta(metadata_key)
 
 
 func _test_unified_snapshot(world: IronwrightReleaseWorld3D) -> void:
@@ -1592,7 +1889,7 @@ func _test_unified_snapshot(world: IronwrightReleaseWorld3D) -> void:
     for domain in ["base", "foundation", "complete", "release"]:
         _expect(snapshot.has(domain), "Unified save snapshot must include the %s domain." % domain)
     var release_data: Dictionary = snapshot.get("release", {})
-    for key in ["balance", "performance", "audio"]:
+    for key in ["balance", "performance", "audio", "enemy_tier_progression"]:
         _expect(release_data.has(key), "Release save domain must preserve %s state." % key)
 
 

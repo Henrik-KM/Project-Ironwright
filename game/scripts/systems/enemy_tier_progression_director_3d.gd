@@ -10,6 +10,7 @@ signal ecology_intel_changed(summary: Dictionary)
 signal escalation_event_applied(event_id: StringName, deltas: Dictionary)
 
 const CONFIG_PATH := "res://data/enemy_tier_progression.json"
+const EVENT_MODIFIERS_PATH := "res://data/enemy_tier_event_modifiers.json"
 const ENEMY_BRAIN_SCRIPT := preload("res://scripts/enemies/enemy_tier_brain_3d.gd")
 const NEST_SCRIPT := preload("res://scripts/world/enemy_tier_nest_3d.gd")
 
@@ -39,10 +40,13 @@ var tier_1_growth_per_second: float = 1.0 / 60.0
 var maximum_tier: int = 5
 var progression_node: Node
 var operation_node: Node
+var endgame_node: Node
 var region_node: Node
+var detailed_event_effects: Dictionary = {}
 var last_heartforge_tier: int = 1
 var last_intel_signature: String = ""
 var enabled: bool = true
+var world_bound: bool = false
 var load_errors: Array[String] = []
 
 
@@ -95,6 +99,30 @@ func _load_config() -> void:
     simulation_tick_seconds = maxf(0.1, float(config.get("simulation_tick_seconds", 1.0)))
     population_reconcile_seconds = maxf(0.25, float(config.get("population_reconcile_seconds", 2.0)))
     tier_1_growth_per_second = maxf(0.0, float(config.get("tier_1_rate_growth_per_minute_per_minute", 1.0)) / 60.0)
+    _load_detailed_event_effects()
+
+
+func _load_detailed_event_effects() -> void:
+    detailed_event_effects.clear()
+    var file := FileAccess.open(EVENT_MODIFIERS_PATH, FileAccess.READ)
+    if file == null:
+        load_errors.append("Missing enemy tier event modifiers")
+        return
+    var parsed: Variant = JSON.parse_string(file.get_as_text())
+    if not (parsed is Dictionary):
+        load_errors.append("Enemy tier event modifiers are invalid")
+        return
+    var sections := parsed as Dictionary
+    for section_name in ["operations", "technologies", "endgame"]:
+        var raw_section: Variant = sections.get(section_name, {})
+        if not (raw_section is Dictionary):
+            continue
+        for raw_event_id in (raw_section as Dictionary).keys():
+            var raw_effect: Variant = (raw_section as Dictionary)[raw_event_id]
+            if not (raw_effect is Dictionary):
+                continue
+            var event_id := _normalize_event_id(StringName(str(raw_event_id)))
+            detailed_event_effects[event_id] = (raw_effect as Dictionary).duplicate(true)
 
 
 func _initialize_state() -> void:
@@ -128,20 +156,60 @@ func _initialize_state() -> void:
 
 
 func _bind_world() -> void:
+    if world_bound:
+        return
     if world == null:
         world = get_tree().current_scene
     if world == null:
         return
     progression_node = _find_node_with_method(world, &"current_phase_data")
     operation_node = _find_node_with_method(world, &"available_operations")
+    endgame_node = _find_node_with_method(world, &"available_protocols")
     region_node = _find_node_with_method(world, &"region_for_position")
     _spawn_configured_nests()
     for enemy in get_tree().get_nodes_in_group(&"organic_enemies"):
         _register_enemy(enemy)
-    get_tree().node_added.connect(_on_tree_node_added)
+    if not get_tree().node_added.is_connected(_on_tree_node_added):
+        get_tree().node_added.connect(_on_tree_node_added)
     _reconcile_population()
     _refresh_nest_sources()
+    _connect_ecological_events()
     _emit_all_rates()
+    world_bound = true
+
+
+func _connect_ecological_events() -> void:
+    if operation_node != null and operation_node.has_signal(&"operation_returned"):
+        var operation_callback := Callable(self, "_on_operation_returned")
+        if not operation_node.is_connected(&"operation_returned", operation_callback):
+            operation_node.connect(&"operation_returned", operation_callback)
+    if progression_node != null and progression_node.has_signal(&"technology_unlocked"):
+        var technology_callback := Callable(self, "_on_technology_unlocked")
+        if not progression_node.is_connected(&"technology_unlocked", technology_callback):
+            progression_node.connect(&"technology_unlocked", technology_callback)
+    if endgame_node != null and endgame_node.has_signal(&"endgame_started"):
+        var endgame_callback := Callable(self, "_on_endgame_started")
+        if not endgame_node.is_connected(&"endgame_started", endgame_callback):
+            endgame_node.connect(&"endgame_started", endgame_callback)
+
+
+func _on_operation_returned(operation_id: StringName, display_name: String, rewards: Dictionary) -> void:
+    apply_event(operation_id)
+
+
+func _on_technology_unlocked(technology_id: StringName, display_name: String, effects: Array) -> void:
+    apply_event(_normalize_event_id(technology_id))
+
+
+func _on_endgame_started(protocol_id: StringName, display_name: String) -> void:
+    apply_event(protocol_id)
+
+
+func _normalize_event_id(event_id: StringName) -> StringName:
+    var text := String(event_id)
+    if text.begins_with("tech.heartforge.tier_"):
+        return StringName("heartforge_tier_%s" % text.trim_prefix("tech.heartforge.tier_"))
+    return event_id
 
 
 func _find_node_with_method(root: Node, method_name: StringName) -> Node:
@@ -320,7 +388,11 @@ func _register_enemy(enemy: Node) -> void:
     var tier := int(enemy.get_meta(&"enemy_tier", 0))
     if tier <= 0:
         tier = infer_tier_for_species(StringName(str(enemy.get("species"))))
-        assign_enemy_tier(enemy, tier, &"")
+    var home_nest_id := StringName(str(enemy.get_meta(&"home_nest_id", "")))
+    # Tiered release actors configure a species fallback before the canonical
+    # director exists. Adopt every actor once so property, presentation, stats,
+    # metadata, and the sole movement brain all agree with canonical state.
+    assign_enemy_tier(enemy, tier, home_nest_id)
     connected_enemies[instance_id] = weakref(enemy)
     if enemy.has_signal(&"killed"):
         var callback := Callable(self, "_on_enemy_killed")
@@ -336,29 +408,77 @@ func assign_enemy_tier(enemy: Node, tier: int, home_nest_id: StringName) -> void
     if enemy == null or not is_instance_valid(enemy) or not _has_tierable_combat_stats(enemy):
         return
     tier = clampi(tier, 1, maximum_tier)
+    var assignment_signature := "%d:%s" % [tier, String(home_nest_id)]
+    if str(enemy.get_meta(&"canonical_enemy_tier_assignment", "")) == assignment_signature:
+        return
+    var tier_data := get_tier_data(tier)
+    if enemy.has_method(&"configure_tier"):
+        # OrganicEnemyTiered3D owns its unscaled species baseline and restores
+        # it before applying this data, preventing fallback + canonical double
+        # scaling while keeping the actor's visible tier property in sync.
+        var health_ratio := float(enemy.get("current_health")) / maxf(1.0, float(enemy.get("maximum_health")))
+        var release_health_multiplier := 1.0
+        var release_damage_multiplier := 1.0
+        var release_speed_multiplier := 1.0
+        var has_release_balance := enemy.has_meta(&"release_base_health")
+        if has_release_balance:
+            release_health_multiplier = float(enemy.get("maximum_health")) / maxf(0.001, float(enemy.get_meta(&"release_base_health")))
+            release_damage_multiplier = float(enemy.get("attack_damage")) / maxf(0.001, float(enemy.get_meta(&"release_base_damage")))
+            release_speed_multiplier = float(enemy.get("move_speed")) / maxf(0.001, float(enemy.get_meta(&"release_base_speed")))
+        enemy.call(&"configure_tier", tier, _actor_tier_data(tier))
+        if has_release_balance:
+            # Release difficulty stores an unbalanced base on each actor. Move
+            # that stable base to the canonical tier result, then reapply the
+            # already-selected profile exactly once.
+            enemy.set_meta(&"release_base_health", float(enemy.get("maximum_health")))
+            enemy.set_meta(&"release_base_damage", float(enemy.get("attack_damage")))
+            enemy.set_meta(&"release_base_speed", float(enemy.get("move_speed")))
+            enemy.set("maximum_health", float(enemy.get("maximum_health")) * release_health_multiplier)
+            enemy.set("attack_damage", float(enemy.get("attack_damage")) * release_damage_multiplier)
+            enemy.set("move_speed", float(enemy.get("move_speed")) * release_speed_multiplier)
+            enemy.set("current_health", maxf(1.0, float(enemy.get("maximum_health")) * health_ratio))
+    else:
+        if not enemy.has_meta(&"enemy_tier_base_stats"):
+            enemy.set_meta(&"enemy_tier_base_stats", {
+                "maximum_health": float(enemy.get("maximum_health")),
+                "attack_damage": float(enemy.get("attack_damage")),
+                "move_speed": float(enemy.get("move_speed")),
+            })
+        var base_stats: Dictionary = enemy.get_meta(&"enemy_tier_base_stats")
+        var old_maximum := maxf(1.0, float(enemy.get("maximum_health")))
+        var health_ratio := float(enemy.get("current_health")) / old_maximum
+        var maximum_health := float(base_stats.get("maximum_health", old_maximum)) * float(tier_data.get("health_multiplier", 1.0))
+        enemy.set("maximum_health", maximum_health)
+        enemy.set("current_health", maxf(1.0, maximum_health * health_ratio))
+        enemy.set("attack_damage", float(base_stats.get("attack_damage", enemy.get("attack_damage"))) * float(tier_data.get("damage_multiplier", 1.0)))
+        enemy.set("move_speed", float(base_stats.get("move_speed", enemy.get("move_speed"))) * float(tier_data.get("speed_multiplier", 1.0)))
     enemy.set_meta(&"enemy_tier", tier)
     enemy.set_meta(&"home_nest_id", String(home_nest_id))
-    var tier_data := get_tier_data(tier)
-    if not enemy.has_meta(&"enemy_tier_base_stats"):
-        enemy.set_meta(&"enemy_tier_base_stats", {
-            "maximum_health": float(enemy.get("maximum_health")),
-            "attack_damage": float(enemy.get("attack_damage")),
-            "move_speed": float(enemy.get("move_speed")),
-        })
-    var base_stats: Dictionary = enemy.get_meta(&"enemy_tier_base_stats")
-    var old_maximum := maxf(1.0, float(enemy.get("maximum_health")))
-    var health_ratio := float(enemy.get("current_health")) / old_maximum
-    var maximum_health := float(base_stats.get("maximum_health", old_maximum)) * float(tier_data.get("health_multiplier", 1.0))
-    enemy.set("maximum_health", maximum_health)
-    enemy.set("current_health", maxf(1.0, maximum_health * health_ratio))
-    enemy.set("attack_damage", float(base_stats.get("attack_damage", enemy.get("attack_damage"))) * float(tier_data.get("damage_multiplier", 1.0)))
-    enemy.set("move_speed", float(base_stats.get("move_speed", enemy.get("move_speed"))) * float(tier_data.get("speed_multiplier", 1.0)))
     var brain := enemy.get_node_or_null("EnemyTierBrain")
     if brain == null:
         brain = ENEMY_BRAIN_SCRIPT.new()
         brain.name = "EnemyTierBrain"
         enemy.add_child(brain)
     brain.call(&"configure", enemy, self, tier, home_nest_id)
+    enemy.set_meta(&"canonical_enemy_tier_assignment", assignment_signature)
+
+
+func _actor_tier_data(tier: int) -> Dictionary:
+    var data := get_tier_data(tier)
+    var profiles := [&"feral", &"territorial", &"predatory", &"strategic", &"apex"]
+    var intelligence_labels := [
+        "primitive roaming",
+        "nest defence and patrol",
+        "scouting, hunting and pack memory",
+        "route interception and priority targeting",
+        "regional strategic predator",
+    ]
+    var detection_multipliers := [0.78, 0.96, 1.08, 1.18, 1.28]
+    var index := clampi(tier, 1, 5) - 1
+    data["behaviour_profile"] = String(profiles[index])
+    data["intelligence_label"] = intelligence_labels[index]
+    data["detection_multiplier"] = detection_multipliers[index]
+    return data
 
 
 func _has_tierable_combat_stats(enemy: Node) -> bool:
@@ -566,7 +686,7 @@ func _accumulate_and_spawn(tier: int, delta: float) -> void:
         spawn_credit[tier] = credit
 
 
-func _select_spawn_nest(tier: int) -> Node:
+func _compatible_spawn_nests(tier: int) -> Array[Node]:
     var candidates: Array[Node] = []
     for raw_nest_id in nests.keys():
         var raw_nest: Variant = nests.get(raw_nest_id, null)
@@ -575,6 +695,11 @@ func _select_spawn_nest(tier: int) -> Node:
         var nest := raw_nest as Node
         if nest.has_method(&"can_spawn_tier") and bool(nest.call(&"can_spawn_tier", tier)):
             candidates.append(nest)
+    return candidates
+
+
+func _select_spawn_nest(tier: int) -> Node:
+    var candidates := _compatible_spawn_nests(tier)
     if candidates.is_empty():
         return null
     candidates.sort_custom(func(a: Node, b: Node) -> bool:
@@ -587,26 +712,119 @@ func _select_spawn_nest(tier: int) -> Node:
     return candidates[0]
 
 
+func _select_spawn_nest_near(tier: int, target_position: Vector3) -> Node:
+    var candidates := _compatible_spawn_nests(tier)
+    if candidates.is_empty():
+        return null
+    if region_node != null and region_node.has_method(&"region_for_position"):
+        var target_region := StringName(str(region_node.call(&"region_for_position", target_position)))
+        var regional: Array[Node] = []
+        for candidate in candidates:
+            if StringName(str(candidate.get("region_id"))) == target_region:
+                regional.append(candidate)
+        if not regional.is_empty():
+            candidates = regional
+    candidates.sort_custom(func(a: Node, b: Node) -> bool:
+        var a_distance := (a as Node3D).global_position.distance_squared_to(target_position)
+        var b_distance := (b as Node3D).global_position.distance_squared_to(target_position)
+        if not is_equal_approx(a_distance, b_distance):
+            return a_distance < b_distance
+        var a_score := _stable_hash("%s:%d:%d" % [str(a.get("nest_id")), tier, spawn_serial])
+        var b_score := _stable_hash("%s:%d:%d" % [str(b.get("nest_id")), tier, spawn_serial])
+        return a_score < b_score
+    )
+    return candidates[0]
+
+
 func _spawn_from_nest(tier: int, nest: Node) -> bool:
+    return _materialize_from_nest(tier, nest) != null
+
+
+func _materialize_from_nest(tier: int, nest: Node, requested_species: StringName = &"") -> Node3D:
     if world == null or not world.has_method(&"_spawn_enemy"):
-        return false
+        return null
     spawn_serial += 1
     var tier_data := get_tier_data(tier)
     var raw_species: Array = tier_data.get("species", [])
     if raw_species.is_empty():
-        return false
-    var species := StringName(str(raw_species[spawn_serial % raw_species.size()]))
+        return null
+    var species := requested_species if requested_species != &"" else StringName(str(raw_species[spawn_serial % raw_species.size()]))
     var position: Vector3 = nest.call(&"next_spawn_position", tier, spawn_serial) if nest.has_method(&"next_spawn_position") else (nest as Node3D).global_position
-    var enemy: Variant = world.call(&"_spawn_enemy", position, species)
-    if not (enemy is Node3D):
-        return false
+    var enemy: Variant
     var nest_id := StringName(str(nest.get("nest_id")))
+    if world.has_method(&"_spawn_canonical_enemy_from_nest"):
+        enemy = world.call(&"_spawn_canonical_enemy_from_nest", position, species, tier, nest_id)
+    else:
+        enemy = world.call(&"_spawn_enemy", position, species)
+    if not (enemy is Node3D):
+        return null
     assign_enemy_tier(enemy as Node, tier, nest_id)
+    enemy.set_meta(&"ecology_region", str(nest.get("region_id")))
+    enemy.set_meta(&"ecology_origin", "tier_replenishment")
     _register_enemy(enemy as Node)
     population[tier] = int(population.get(tier, 0)) + 1
     tier_population_changed.emit(tier, int(population[tier]), unit_cap(tier))
     enemy_tier_spawned.emit(enemy as Node3D, tier, nest_id)
-    return true
+    return enemy as Node3D
+
+
+func request_causal_threat(target_position: Vector3, species: StringName, source_kind: StringName, requested_tier: int = 0) -> Node3D:
+    var tier := clampi(requested_tier, 1, maximum_tier) if requested_tier > 0 else infer_tier_for_species(species)
+    _reconcile_population()
+    var living := _living_enemies_of_tier(tier)
+    if living.size() >= unit_cap(tier):
+        return _redirect_causal_actor(living, target_position, source_kind)
+    var available_credit := float(spawn_credit.get(tier, 0.0))
+    if available_credit < 1.0:
+        # Operations and endgame incidents may redirect existing organisms, but
+        # they cannot mint births outside the same bounded replenishment budget
+        # used by ordinary ecology simulation.
+        return _redirect_causal_actor(living, target_position, source_kind)
+    var nest := _select_spawn_nest_near(tier, target_position)
+    if nest == null:
+        return null
+    var enemy := _materialize_from_nest(tier, nest, species)
+    if enemy == null:
+        return null
+    spawn_credit[tier] = available_credit - 1.0
+    _direct_actor_toward(enemy, target_position, source_kind)
+    return enemy
+
+
+func _living_enemies_of_tier(tier: int) -> Array[Node3D]:
+    var result: Array[Node3D] = []
+    for node in get_tree().get_nodes_in_group(&"organic_enemies"):
+        if not (node is Node3D) or not is_instance_valid(node) or node.is_in_group(&"enemy_tier_nests"):
+            continue
+        if node.has_method(&"is_alive") and not bool(node.call(&"is_alive")):
+            continue
+        if int(node.get_meta(&"enemy_tier", infer_tier_for_species(StringName(str(node.get("species")))))) == tier:
+            result.append(node as Node3D)
+    return result
+
+
+func _redirect_causal_actor(candidates: Array[Node3D], target_position: Vector3, source_kind: StringName) -> Node3D:
+    if candidates.is_empty():
+        return null
+    candidates.sort_custom(func(a: Node3D, b: Node3D) -> bool:
+        return a.global_position.distance_squared_to(target_position) < b.global_position.distance_squared_to(target_position)
+    )
+    var enemy := candidates[0]
+    _direct_actor_toward(enemy, target_position, source_kind)
+    return enemy
+
+
+func _direct_actor_toward(enemy: Node3D, target_position: Vector3, source_kind: StringName) -> void:
+    enemy.set_meta(&"causal_source_kind", String(source_kind))
+    enemy.set_meta(&"causal_destination", [target_position.x, target_position.y, target_position.z])
+    var brain := enemy.get_node_or_null("EnemyTierBrain")
+    if brain != null and brain.has_method(&"receive_causal_threat_goal"):
+        if bool(brain.get("initialized")):
+            brain.call(&"receive_causal_threat_goal", target_position, source_kind)
+        else:
+            brain.call_deferred(&"receive_causal_threat_goal", target_position, source_kind)
+    elif enemy.has_method(&"hear_noise"):
+        enemy.call(&"hear_noise", target_position, 1000.0, 1.0, source_kind)
 
 
 func _stable_hash(value: String) -> int:
@@ -631,8 +849,17 @@ func _poll_world_progression() -> void:
 
 
 func apply_event(event_id: StringName) -> bool:
+    event_id = _normalize_event_id(event_id)
     if event_id == &"" or applied_events.has(event_id):
         return false
+    var detailed: Variant = detailed_event_effects.get(event_id, null)
+    if detailed is Dictionary:
+        _apply_detailed_event_effect(detailed as Dictionary)
+        applied_events[event_id] = true
+        var detailed_deltas: Dictionary = (detailed as Dictionary).get("replenishment_delta_per_minute", {})
+        escalation_event_applied.emit(event_id, detailed_deltas.duplicate(true))
+        _emit_intel_if_changed(true)
+        return true
     var modifiers: Dictionary = config.get("event_modifiers", {})
     var raw: Variant = modifiers.get(String(event_id), modifiers.get(event_id, null))
     if not (raw is Dictionary):
@@ -646,6 +873,26 @@ func apply_event(event_id: StringName) -> bool:
     escalation_event_applied.emit(event_id, deltas.duplicate(true))
     _emit_intel_if_changed(true)
     return true
+
+
+func event_causal_reason(event_id: StringName) -> String:
+    event_id = _normalize_event_id(event_id)
+    var raw_effect: Variant = detailed_event_effects.get(event_id, null)
+    if raw_effect is Dictionary:
+        return str((raw_effect as Dictionary).get("reason", "")).strip_edges()
+    return ""
+
+
+func _apply_detailed_event_effect(effect: Dictionary) -> void:
+    var deltas: Dictionary = effect.get("replenishment_delta_per_minute", {})
+    for raw_tier in deltas.keys():
+        _add_anonymous_rate(int(str(raw_tier)), float(deltas[raw_tier]))
+    if effect.has("tier_1_growth_delta"):
+        tier_1_growth_per_second = maxf(0.0, tier_1_growth_per_second + float(effect.get("tier_1_growth_delta", 0.0)) / 60.0)
+    var credit_deltas: Dictionary = effect.get("spawn_credit_delta", {})
+    for raw_tier in credit_deltas.keys():
+        var tier := clampi(int(str(raw_tier)), 1, maximum_tier)
+        spawn_credit[tier] = clampf(float(spawn_credit.get(tier, 0.0)) + float(credit_deltas[raw_tier]), 0.0, spawn_credit_cap)
 
 
 func infer_tier_for_species(species: StringName) -> int:
@@ -789,8 +1036,12 @@ func to_dictionary() -> Dictionary:
         if nest.has_method(&"to_dictionary"):
             serialized_nests[String(nest_id)] = nest.call(&"to_dictionary")
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "elapsed_seconds": elapsed_seconds,
+        "simulation_clock": simulation_clock,
+        "reconcile_clock": reconcile_clock,
+        "intel_clock": intel_clock,
+        "tier_1_growth_per_second": tier_1_growth_per_second,
         "spawn_serial": spawn_serial,
         "population": _stringify_numeric_dictionary(population),
         "anonymous_rates": _stringify_numeric_dictionary(anonymous_rates),
@@ -807,6 +1058,13 @@ func to_dictionary() -> Dictionary:
 func restore_from_dictionary(data: Dictionary) -> void:
     _spawn_configured_nests()
     elapsed_seconds = maxf(0.0, float(data.get("elapsed_seconds", 0.0)))
+    # Schema 1 omitted these phase clocks. Resetting a legacy save to the
+    # beginning of each bounded phase is deterministic and avoids inheriting
+    # incidental time accumulated while the restored world was constructed.
+    simulation_clock = clampf(float(data.get("simulation_clock", 0.0)), 0.0, simulation_tick_seconds)
+    reconcile_clock = clampf(float(data.get("reconcile_clock", 0.0)), 0.0, population_reconcile_seconds)
+    intel_clock = clampf(float(data.get("intel_clock", 0.0)), 0.0, 2.0)
+    tier_1_growth_per_second = maxf(0.0, float(data.get("tier_1_growth_per_second", tier_1_growth_per_second)))
     spawn_serial = maxi(0, int(data.get("spawn_serial", 0)))
     _restore_numeric_dictionary(population, data.get("population", {}), true)
     _restore_numeric_dictionary(anonymous_rates, data.get("anonymous_rates", {}), false)

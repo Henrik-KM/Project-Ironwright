@@ -198,6 +198,17 @@ func authored_model_package_loading() -> bool:
     return _authored_model_load_requested
 
 
+func authored_model_presentation_pending() -> bool:
+    return _authored_model_load_requested or _authored_model_attach_requested or _authored_model_cleanup_pending
+
+
+func advance_authored_model_presentation() -> void:
+    # Review and save fixtures can pause the ordinary world. Keep the bounded
+    # import handoff moving without enabling the landmark's ambient animation.
+    _poll_authored_model_package()
+    _finish_authored_model_cleanup()
+
+
 func _refresh_presentation_visibility() -> void:
     if _visual_root != null:
         _visual_root.visible = streamed_in and presentation_detail_level < 2
@@ -252,6 +263,13 @@ func _refresh_authored_model_package() -> void:
 func _request_authored_model_package(allow_sync_fallback: bool) -> bool:
     if _authored_model_path.is_empty() or _authored_model_load_requested or _authored_model_scene != null:
         return false
+    # Godot's headless DisplayServer uses Dummy mesh RIDs. Importing a glTF on a
+    # worker while procedural review or ecology meshes are created on the main
+    # thread can make that backend recycle an RID before either side is done.
+    # Headless runs are validation fixtures, so load their already-imported
+    # PackedScenes synchronously and retain threaded streaming for real displays.
+    if DisplayServer.get_name() == "headless" or OS.has_feature("server"):
+        return _load_authored_model_package_synchronously(not streamed_in)
     var request_error := ResourceLoader.load_threaded_request(
         _authored_model_path,
         "PackedScene",
@@ -281,6 +299,28 @@ func _request_authored_model_package(allow_sync_fallback: bool) -> bool:
     return false
 
 
+func _load_authored_model_package_synchronously(prefetch: bool) -> bool:
+    var loaded_scene := ResourceLoader.load(
+        _authored_model_path,
+        "PackedScene",
+        ResourceLoader.CACHE_MODE_REUSE
+    ) as PackedScene
+    if loaded_scene == null:
+        if prefetch:
+            _authored_model_prefetch_failed = true
+        else:
+            _authored_model_load_failed = true
+        push_error("Could not load authored region package: %s" % _authored_model_path)
+        return false
+    _authored_model_scene = loaded_scene
+    _authored_model_prefetch_requested = prefetch
+    _authored_model_prefetch_failed = false
+    if streamed_in:
+        _authored_model_prefetch_requested = false
+        _schedule_authored_model_attachment()
+    return true
+
+
 func _finish_authored_model_cleanup() -> void:
     if not _authored_model_cleanup_pending or _authored_model_root == null or not is_inside_tree() or is_queued_for_deletion():
         return
@@ -289,6 +329,7 @@ func _finish_authored_model_cleanup() -> void:
     _authored_model_cleanup_pending = false
     if streamed_in and _authored_model_scene != null:
         _schedule_authored_model_attachment()
+    _sync_process_state()
 
 
 func _poll_authored_model_package() -> void:
@@ -308,12 +349,14 @@ func _poll_authored_model_package() -> void:
             else:
                 _authored_model_load_failed = true
             push_error("Threaded authored region package was not a PackedScene: %s" % _authored_model_path)
+            _sync_process_state()
             return
         if _release_prefetched_when_ready and was_prefetch and not streamed_in:
             _authored_model_scene = null
             _release_prefetched_when_ready = false
         elif streamed_in:
             _schedule_authored_model_attachment()
+        _sync_process_state()
         return
     var was_prefetch := _authored_model_prefetch_requested
     if was_prefetch:
@@ -322,12 +365,14 @@ func _poll_authored_model_package() -> void:
         _authored_model_load_failed = true
     _authored_model_prefetch_requested = false
     push_error("Could not asynchronously load authored region package: %s (status %d)" % [_authored_model_path, load_status])
+    _sync_process_state()
 
 
 func _schedule_authored_model_attachment() -> void:
     if _authored_model_attach_requested or _authored_model_scene == null:
         return
     _authored_model_attach_requested = true
+    _sync_process_state()
     # ResourceLoader.load_threaded_get() has completed the PackedScene load,
     # but the compatibility renderer may still be finalizing imported mesh
     # resources. Attach on the next idle frame so promotion does not race that
@@ -338,6 +383,7 @@ func _schedule_authored_model_attachment() -> void:
 func _attach_authored_model_scene() -> void:
     _authored_model_attach_requested = false
     if _authored_model_scene == null or _authored_model_root == null or not is_inside_tree() or is_queued_for_deletion() or not streamed_in or _authored_model_root.get_child_count() > 0:
+        _sync_process_state()
         return
     var authored_instance := _authored_model_scene.instantiate()
     if _authored_imported_root_name != &"":
@@ -351,12 +397,14 @@ func _attach_authored_model_scene() -> void:
         _authored_model_root.add_child(authored_instance)
         _apply_authored_model_tuning()
         _capture_region_motion_nodes()
+        _sync_process_state()
         return
     else:
         authored_instance.name = "ImportedAuthoredModel"
         _authored_model_root.add_child(authored_instance)
     _apply_authored_model_tuning()
     _capture_region_motion_nodes()
+    _sync_process_state()
 
 
 func _apply_authored_model_tuning() -> void:
@@ -1578,7 +1626,11 @@ func _sync_process_state() -> void:
     # A pending authored package request is also a bounded process obligation,
     # even before discovery, so a physically approaching district can finish
     # loading without a synchronous frame hitch.
-    set_process(_authored_model_load_requested or (discovered and streamed_in and presentation_detail_level < 2))
+    var handoff_pending := authored_model_presentation_pending()
+    # Imported package handoffs must finish even when a title or presentation
+    # fixture pauses gameplay. This mode lasts only for the bounded handoff.
+    process_mode = Node.PROCESS_MODE_ALWAYS if handoff_pending else Node.PROCESS_MODE_INHERIT
+    set_process(handoff_pending or (discovered and streamed_in and presentation_detail_level < 2))
 
 
 func _region_color() -> Color:

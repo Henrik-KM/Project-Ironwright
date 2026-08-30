@@ -1,5 +1,7 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
+  "system_id": "population_driven_organic_escalation_events",
+  "authority": "canonical_ecological_event_modifiers",
   "operations": {
     "operation.west_grid_survey": {
       "replenishment_delta_per_minute": {"1": 1.25, "2": 0.08},

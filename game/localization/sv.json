@@ -743,6 +743,7 @@
     "notification.tier.ecological_cost": "EKOLOGISK KOSTNAD · {0}\nOperationen eller teknologin ökade framtida organisk återväxt.",
     "notification.tier.ecological_suppression": "EKOLOGISK DÄMPNING · {0}\nDen slutförda åtgärden minskade långsiktig organisk återväxt.",
     "notification.tier.autonomous_suppression": "AUTONOM DÄMPNING · {0} VÄKTARE{1}\n{2}",
+    "notification.tier.autonomous_suppression_stood_down": "AUTONOM DÄMPNING AVSLUTAD\n{0}",
     "objective.complete.survey.title": "UNDERSÖK WEST GRID",
     "objective.complete.survey.detail": "Tryck P och godkänn den första långdistansoperationen. Gruppen färdas genom riktiga gator, arbetar under press och levererar först efter hemkomst.",
     "objective.complete.survey.prompt": "TRYCK P · GRANSKA TILLGÄNGLIGA LÅNGDISTANSOPERATIONER",

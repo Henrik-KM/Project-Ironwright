@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -12,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = [
     "docs/ENEMY_TIER_PROGRESSION.md",
     "game/data/enemy_tier_progression.json",
+    "game/data/enemy_tier_event_modifiers.json",
     "game/scripts/systems/enemy_tier_progression_director_3d.gd",
     "game/scripts/systems/enemy_tier_progression_bootstrap_3d.gd",
     "game/scripts/systems/autonomous_enemy_suppression_3d.gd",
@@ -75,12 +77,88 @@ def validate_config() -> None:
         nest_ids.add(identifier)
         if not nest.get("supported_tiers") or not nest.get("replenishment_per_minute"):
             raise ValidationError(f"Nest {identifier} needs supported tiers and replenishment contributions")
-    modifiers = data.get("event_modifiers")
-    if not isinstance(modifiers, dict) or len(modifiers) < 10:
-        raise ValidationError("Progression and operation ecological modifiers are incomplete")
-    if not any(any(float(value) < 0 for value in event.values()) for event in modifiers.values()):
+    if "event_modifiers" in data:
+        raise ValidationError(
+            "enemy_tier_progression.json must not duplicate the canonical ecological event table"
+        )
+
+
+def validate_event_modifiers() -> None:
+    data = load_json("game/data/enemy_tier_event_modifiers.json")
+    if data.get("schema_version") != 2:
+        raise ValidationError("Canonical ecological event modifiers must use schema version 2")
+    if data.get("system_id") != "population_driven_organic_escalation_events":
+        raise ValidationError("Ecological event modifier system ID is wrong")
+    if data.get("authority") != "canonical_ecological_event_modifiers":
+        raise ValidationError("Ecological event modifiers must declare their canonical authority")
+
+    sections = {
+        "operations": data.get("operations"),
+        "technologies": data.get("technologies"),
+        "endgame": data.get("endgame"),
+    }
+    if not all(isinstance(section, dict) and section for section in sections.values()):
+        raise ValidationError("Operations, technologies and endgame all need ecological effects")
+
+    seen_ids: set[str] = set()
+    signed_deltas: list[float] = []
+    allowed_fields = {
+        "replenishment_delta_per_minute",
+        "tier_1_growth_delta",
+        "spawn_credit_delta",
+        "reason",
+    }
+    for section_name, section in sections.items():
+        for event_id, effect in section.items():
+            if event_id in seen_ids:
+                raise ValidationError(f"Ecological event ID appears in more than one section: {event_id}")
+            seen_ids.add(event_id)
+            if not isinstance(effect, dict) or not effect:
+                raise ValidationError(f"Ecological event effect must be an object: {event_id}")
+            unexpected = set(effect) - allowed_fields
+            if unexpected:
+                raise ValidationError(f"Ecological event {event_id} has unsupported fields: {sorted(unexpected)}")
+            if not isinstance(effect.get("reason"), str) or not effect["reason"].strip():
+                raise ValidationError(f"Ecological event {event_id} needs a causal audit reason")
+            has_numeric_effect = False
+            for field in ["replenishment_delta_per_minute", "spawn_credit_delta"]:
+                values = effect.get(field, {})
+                if not isinstance(values, dict):
+                    raise ValidationError(f"Ecological event {event_id} field {field} must be a tier map")
+                for raw_tier, raw_value in values.items():
+                    if str(raw_tier) not in {"1", "2", "3", "4", "5"}:
+                        raise ValidationError(f"Ecological event {event_id} targets invalid tier {raw_tier}")
+                    value = float(raw_value)
+                    if not math.isfinite(value):
+                        raise ValidationError(f"Ecological event {event_id} contains a non-finite value")
+                    has_numeric_effect = has_numeric_effect or not math.isclose(value, 0.0)
+                    if field == "replenishment_delta_per_minute":
+                        signed_deltas.append(value)
+            if "tier_1_growth_delta" in effect:
+                growth_delta = float(effect["tier_1_growth_delta"])
+                if not math.isfinite(growth_delta):
+                    raise ValidationError(f"Ecological event {event_id} has a non-finite growth delta")
+                has_numeric_effect = has_numeric_effect or not math.isclose(growth_delta, 0.0)
+            if not has_numeric_effect:
+                raise ValidationError(f"Ecological event {event_id} has no material ecological effect")
+
+    required_ids = {
+        "operation.cathedral_brood_suppression",
+        "operation.root_cistern_mapping",
+        "tech.heartforge.tier_2",
+        "tech.heartforge.tier_3",
+        "tech.heartforge.tier_4",
+        "tech.heartforge.tier_5",
+        "protocol.severance",
+        "protocol.containment",
+        "protocol.transformation",
+    }
+    missing = sorted(required_ids - seen_ids)
+    if missing:
+        raise ValidationError("Canonical ecological event table is missing: " + ", ".join(missing))
+    if not any(value < 0.0 for value in signed_deltas):
         raise ValidationError("At least one world action must reduce long-term replenishment")
-    if not any(any(float(value) > 0 for value in event.values()) for event in modifiers.values()):
+    if not any(value > 0.0 for value in signed_deltas):
         raise ValidationError("At least one progression action must carry an ecological cost")
 
 
@@ -99,6 +177,10 @@ def validate_runtime() -> None:
         "intelligence_summary",
         "to_dictionary",
         "restore_from_dictionary",
+        '"simulation_clock": simulation_clock',
+        '"reconcile_clock": reconcile_clock',
+        '"intel_clock": intel_clock',
+        "event_causal_reason",
     ]:
         if token not in director:
             raise ValidationError(f"Enemy-tier director is missing {token!r}")
@@ -117,6 +199,11 @@ def validate_runtime() -> None:
         "route_ambush",
         "regional_predation",
         "_share_detection",
+        '"decision_clock": decision_clock',
+        '"remote_clock": remote_clock',
+        '"state_elapsed": state_elapsed',
+        '"roam_serial": roam_serial',
+        '"scout_serial": scout_serial',
     ]:
         if token not in brain:
             raise ValidationError(f"Tier intelligence is missing {token!r}")
@@ -130,6 +217,17 @@ def validate_runtime() -> None:
     for token in ["tier_1_density_threshold", "enemy_suppression_assignment", "living_robots", "guardian"]:
         if token not in suppression:
             raise ValidationError(f"Autonomous suppression is missing {token!r}")
+
+    bootstrap = (ROOT / "game/scripts/systems/enemy_tier_progression_bootstrap_3d.gd").read_text(encoding="utf-8")
+    for token in [
+        "last_suppression_active_wardens",
+        "last_suppression_active_wardens > 0 and active_wardens == 0",
+        "notification.tier.autonomous_suppression_stood_down",
+    ]:
+        if token not in bootstrap:
+            raise ValidationError(f"Ambient suppression reporting is missing {token!r}")
+    if 'if active_wardens > 0:\n        _notify(' in bootstrap:
+        raise ValidationError("Routine suppression reevaluation must not emit an active-patrol notification")
 
 
 def validate_integration() -> None:
@@ -162,7 +260,9 @@ def validate_tests() -> None:
         "_test_physical_nest_spawning_and_cap",
         "_test_nest_source_removal_after_evolution",
         "_test_dynamic_event_modifiers",
+        "_test_suppression_notification_cadence",
         "_test_tier_behaviour_progression",
+        "_test_brain_runtime_intent_round_trip",
         "_test_serialization_round_trip",
     ]:
         if token not in tests:
@@ -173,6 +273,7 @@ def main() -> int:
     try:
         validate_required()
         validate_config()
+        validate_event_modifiers()
         validate_runtime()
         validate_integration()
         validate_tests()

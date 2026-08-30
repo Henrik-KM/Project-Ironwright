@@ -174,6 +174,13 @@ Every enemy stores its tier, home nest, territory, behavior, goal, awareness, pa
 
 Heartforge evolution and long-range operations can add or remove replenishment through data-configured effects.
 
+`game/data/enemy_tier_event_modifiers.json` is the single authoritative table
+for these permanent ecological effects. It owns operation, technology and
+endgame replenishment deltas, Tier-I growth changes, bounded immediate spawn
+credit, and the causal reason available to presentation and diagnostics. The base population file
+`game/data/enemy_tier_progression.json` must not carry a second modifier table;
+otherwise balancing changes could silently depend on which loader won.
+
 Examples:
 
 - loud technology recovery may increase Tier-I and Tier-II replenishment;
@@ -195,6 +202,12 @@ After Heartforge Tier III, the machine society can identify dense Tier-I cluster
 - Wardens are not needed for salvage, construction, expedition, or escort work.
 
 They divide across separate population cells and return to reserve when pressure falls. The player chooses broader priorities and risky nest-clearing operations; the machines perform routine thinning.
+
+Routine patrol reevaluation is ambient. Its current coverage remains visible
+in command-map ecology intelligence, but an unchanged patrol does not create a
+notification every eight seconds. A patrol standing down remains a legible
+one-time transition because it can indicate either successful thinning or that
+Wardens were reclaimed for a higher-priority commitment.
 
 ## 9. Player-facing intelligence
 
@@ -222,8 +235,20 @@ Enemy-tier state includes:
 - Heartforge progression already accounted for;
 - nest health, maturity, destruction, and regrowth state;
 - deterministic spawn serial.
+- the in-progress simulation, population-reconciliation, and intelligence phase clocks;
+- each living organism's decision, reduced-detail, and behaviour-state clocks plus deterministic roam and scout serials.
 
-The system writes a checksummed transactional sidecar when the main verified world save succeeds and restores it when the world save loads. A backup is retained if the current sidecar is invalid.
+Current saves store this state once, inside the checksummed transactional world
+snapshot under the unified `enemy_tier_progression` release payload. Tier
+state, physical actors, nests and the world therefore come from the same save
+generation and recover through the same rotating world backup.
+
+Release-candidate 1 saves may have a separate `*.enemy_tiers.json` sidecar. It
+is a read-only migration source only when the loaded world has no unified tier
+payload. A valid unified payload always wins, including when an older sidecar
+still exists beside it. New saves never create, overwrite or rotate the legacy
+sidecar; after migration, the next transactional world save carries the state
+in the unified payload.
 
 ## 11. Acceptance criteria
 
@@ -247,6 +272,7 @@ The implementation must prove that:
 16. remote organisms remain causal physical entities;
 17. no recurring wave timer is introduced;
 18. mature machine society suppresses routine low-tier concentrations without per-unit commands.
+19. unchanged autonomous suppression patrols remain ambient command-map status, while a patrol standing down is reported once.
 
 ## 12. Design result
 

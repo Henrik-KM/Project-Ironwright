@@ -166,23 +166,6 @@
       "regrowth_seconds": 6000.0
     }
   ],
-  "event_modifiers": {
-    "heartforge_tier_2": {"1": 0.75},
-    "heartforge_tier_3": {"1": 1.25, "2": 0.08},
-    "heartforge_tier_4": {"1": 1.75, "2": 0.12, "3": 0.015},
-    "heartforge_tier_5": {"1": 2.5, "2": 0.2, "3": 0.025, "4": 0.003},
-    "operation.west_grid_survey": {"1": 0.45},
-    "operation.east_tenement_roofline": {"1": 0.35},
-    "operation.tram_graveyard_recovery": {"1": 0.75, "2": 0.05},
-    "operation.glasshouse_spore_harvest": {"1": 0.9, "2": 0.06},
-    "operation.flood_market_recovery": {"1": 1.0, "2": 0.08},
-    "operation.riverworks_pump_recovery": {"1": -0.6, "2": -0.04},
-    "operation.cathedral_brood_suppression": {"1": -1.2, "2": -0.12, "3": -0.015},
-    "operation.observatory_migration_map": {"1": 0.5, "2": 0.04},
-    "operation.buried_lab_excavation": {"1": 1.4, "2": 0.12, "3": 0.018},
-    "operation.root_cistern_mapping": {"1": 1.8, "2": 0.18, "3": 0.025},
-    "operation.apex_lure": {"4": -0.006, "5": -0.001}
-  },
   "autonomous_suppression": {
     "unlock_heartforge_tier": 3,
     "tier_1_density_threshold": 18,

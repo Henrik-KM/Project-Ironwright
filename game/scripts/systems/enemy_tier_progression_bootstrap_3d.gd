@@ -16,8 +16,10 @@ var transactional_save_service: Node
 var main_hud: Node
 var map_mode_last: bool = false
 var initialized: bool = false
+var initialization_started: bool = false
 var pending_restore: bool = false
 var prefer_backup_restore: bool = false
+var last_suppression_active_wardens: int = 0
 
 
 func _ready() -> void:
@@ -34,22 +36,35 @@ func _process(delta: float) -> void:
         intel_hud.set_command_map_visible(map_mode)
     if pending_restore:
         pending_restore = false
-        _restore_sidecar(prefer_backup_restore)
+        # RC1 stored tier state in a second file whose generation could drift
+        # from the transactional world save. Unified snapshots always win;
+        # the sidecar is now a read-only migration fallback for older saves.
+        if not bool(world.get_meta(&"enemy_tier_progression_restored_from_unified", false)):
+            if _restore_sidecar(prefer_backup_restore):
+                world.set_meta(&"enemy_tier_progression_migrated_from_sidecar", true)
         prefer_backup_restore = false
 
 
 func _initialize() -> void:
-    if initialized:
+    if initialized or initialization_started:
         return
     world = get_parent()
     if world == null:
         return
-    initialized = true
+    initialization_started = true
+    await _await_initial_presentation_idle()
+    if world == null or not is_instance_valid(world) or world.is_queued_for_deletion():
+        initialization_started = false
+        return
 
     director = EnemyTierProgressionDirector3D.new()
     director.name = "EnemyTierProgressionDirector"
     director.configure(world)
     add_child(director)
+    if not await _await_director_world_binding():
+        initialization_started = false
+        push_warning("Enemy-tier director did not finish binding its physical nest network; canonical ecology remains unavailable.")
+        return
 
     suppression = AutonomousEnemySuppression3D.new()
     suppression.name = "AutonomousEnemySuppression"
@@ -77,6 +92,49 @@ func _initialize() -> void:
             transactional_save_service.connect(&"load_completed", Callable(self, "_on_world_load_completed"))
     _disable_legacy_population_generators()
     director.call_deferred("_emit_intel_if_changed", true)
+    initialized = true
+    initialization_started = false
+
+
+func _await_initial_presentation_idle() -> void:
+    var release_art := world.get_node_or_null("ReleaseWorldArtDirector") if world != null else null
+    if release_art == null or not release_art.has_method(&"is_presentation_idle"):
+        return
+    var stable_samples := 0
+    for _attempt in range(480):
+        _advance_authored_model_handoffs()
+        if bool(release_art.call(&"is_presentation_idle")):
+            stable_samples += 1
+            if stable_samples >= 3:
+                return
+        else:
+            stable_samples = 0
+        await get_tree().create_timer(0.025, true, false, true).timeout
+        await get_tree().process_frame
+    push_warning("Enemy-tier presentation startup exceeded its renderer handoff guard; continuing after the bounded wait.")
+
+
+func _await_director_world_binding() -> bool:
+    # Director readiness includes its physical nest network, not merely the
+    # existence of the node. Continue/load and live review may proceed only
+    # after this boundary so they cannot observe a half-bound ecology.
+    for _attempt in range(600):
+        if director != null and is_instance_valid(director) and director.world_bound and not director.nests.is_empty():
+            return true
+        if world == null or not is_instance_valid(world) or world.is_queued_for_deletion():
+            return false
+        await get_tree().create_timer(0.025, true, false, true).timeout
+        await get_tree().process_frame
+    return false
+
+
+func _advance_authored_model_handoffs() -> void:
+    if world == null or not is_instance_valid(world):
+        return
+    for raw_landmark in world.find_children("*", "RegionLandmark3D", true, false):
+        var landmark := raw_landmark as RegionLandmark3D
+        if landmark != null and landmark.authored_model_presentation_pending():
+            landmark.advance_authored_model_presentation()
 
 
 func _disable_legacy_population_generators() -> void:
@@ -96,12 +154,15 @@ func _disable_generator_recursive(node: Node) -> void:
         or node.has_method(&"_spawn_regional_organism")
     ):
         node.set_meta(&"population_controlled_by_enemy_tiers", true)
-        node.set_process(false)
-        node.set_physics_process(false)
-        if _has_property(node, &"active_enemy_cap"):
-            node.set("active_enemy_cap", 0)
-        if _has_property(node, &"spawn_interval"):
-            node.set("spawn_interval", 999999.0)
+        # These directors still own attention, nest posture, regional pressure,
+        # and physical migration. Hand off births without freezing the living
+        # ecology that makes the population model visible in play.
+        if node.has_method(&"set_external_population_control"):
+            node.call(&"set_external_population_control", true)
+        if _has_property(node, &"spawn_enemy_callable"):
+            node.set("spawn_enemy_callable", Callable())
+        if _has_property(node, &"spawn_enemy_callback"):
+            node.set("spawn_enemy_callback", Callable())
     for child in node.get_children():
         _disable_generator_recursive(child)
 
@@ -148,16 +209,27 @@ func _on_escalation_event(event_id: StringName, deltas: Dictionary) -> void:
             positive += amount
         else:
             negative += -amount
+    var causal_reason := director.event_causal_reason(event_id) if director != null else ""
+    var notification := ""
     if positive > negative:
-        _notify(_text("notification.tier.ecological_cost", "ECOLOGICAL COST · {0}\nThe operation or technology increased future organic replenishment.", [String(event_id).replace("operation.", "").replace("_", " ").capitalize()]))
+        notification = _text("notification.tier.ecological_cost", "ECOLOGICAL COST · {0}\nThe operation or technology increased future organic replenishment.", [String(event_id).replace("operation.", "").replace("_", " ").capitalize()])
     elif negative > 0.0:
-        _notify(_text("notification.tier.ecological_suppression", "ECOLOGICAL SUPPRESSION · {0}\nThe completed action reduced long-term organic replenishment.", [String(event_id).replace("operation.", "").replace("_", " ").capitalize()]))
+        notification = _text("notification.tier.ecological_suppression", "ECOLOGICAL SUPPRESSION · {0}\nThe completed action reduced long-term organic replenishment.", [String(event_id).replace("operation.", "").replace("_", " ").capitalize()])
+    if notification.is_empty():
+        return
+    if not causal_reason.is_empty():
+        notification += "\n%s" % causal_reason
+    _notify(notification)
 
 
 func _on_suppression_changed(active_wardens: int, target_cells: int, reason: String) -> void:
     intel_hud.update_suppression(suppression.status_summary())
-    if active_wardens > 0:
-        _notify(_text("notification.tier.autonomous_suppression", "AUTONOMOUS SUPPRESSION · {0} WARDEN{1}\n{2}", [active_wardens, "" if active_wardens == 1 else "S", reason]))
+    # Routine Tier-I thinning belongs in the command-map status, not in an
+    # eight-second notification loop. Surface only the transition where an
+    # existing patrol stands down so a lost or completed assignment is legible.
+    if last_suppression_active_wardens > 0 and active_wardens == 0:
+        _notify(_text("notification.tier.autonomous_suppression_stood_down", "AUTONOMOUS SUPPRESSION STOOD DOWN\n{0}", [reason]))
+    last_suppression_active_wardens = active_wardens
 
 
 func _notify(message: String) -> void:
@@ -177,39 +249,16 @@ func _text(key: String, fallback: String, replacements: Array = []) -> String:
 
 func _on_world_save_completed(slot_id: StringName, path: String) -> bool:
     _configure_sidecar_from_save_path(slot_id, path)
-    return _save_sidecar()
+    # Canonical tier state now lives inside the same checksummed transactional
+    # snapshot as the actors it describes. Keep legacy sidecars untouched so an
+    # RC1 save can be migrated, but never create a new mismatched generation.
+    return true
 
 
 func _on_world_load_completed(slot_id: StringName, source_path: String, recovered_backup: bool) -> void:
     _configure_sidecar_from_save_path(slot_id, source_path)
     prefer_backup_restore = recovered_backup
     pending_restore = true
-
-
-func _save_sidecar() -> bool:
-    DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(sidecar_path.get_base_dir()))
-    var payload := director.to_dictionary()
-    var payload_json := _canonical_json(payload)
-    var envelope := {
-        "schema_version": 1,
-        "saved_at_unix": int(Time.get_unix_time_from_system()),
-        "checksum_sha256": _sha256(payload_json),
-        "payload": payload,
-    }
-    var file := FileAccess.open(sidecar_temp_path, FileAccess.WRITE)
-    if file == null:
-        return false
-    file.store_string(JSON.stringify(envelope))
-    file.flush()
-    file.close()
-    if _read_verified(sidecar_temp_path).is_empty():
-        DirAccess.remove_absolute(ProjectSettings.globalize_path(sidecar_temp_path))
-        return false
-    if FileAccess.file_exists(sidecar_backup_path):
-        DirAccess.remove_absolute(ProjectSettings.globalize_path(sidecar_backup_path))
-    if FileAccess.file_exists(sidecar_path):
-        DirAccess.rename_absolute(ProjectSettings.globalize_path(sidecar_path), ProjectSettings.globalize_path(sidecar_backup_path))
-    return DirAccess.rename_absolute(ProjectSettings.globalize_path(sidecar_temp_path), ProjectSettings.globalize_path(sidecar_path)) == OK
 
 
 func _restore_sidecar(prefer_backup: bool = false) -> bool:
@@ -246,13 +295,17 @@ func _configure_sidecar_from_save_path(slot_id: StringName, save_path: String) -
 func _canonical_json(value: Variant) -> String:
     if value is Dictionary:
         var source := value as Dictionary
-        var keys: Array[String] = []
-        for key in source.keys():
-            keys.append(str(key))
-        keys.sort()
+        var keys: Array = source.keys()
+        keys.sort_custom(func(left: Variant, right: Variant) -> bool:
+            var left_text := str(left)
+            var right_text := str(right)
+            if left_text == right_text:
+                return typeof(left) < typeof(right)
+            return left_text < right_text
+        )
         var pairs: Array[String] = []
-        for key in keys:
-            pairs.append("%s:%s" % [JSON.stringify(key), _canonical_json(source.get(key))])
+        for raw_key in keys:
+            pairs.append("%s:%s" % [JSON.stringify(str(raw_key)), _canonical_json(source.get(raw_key))])
         return "{%s}" % ",".join(pairs)
     if value is Array:
         var items: Array[String] = []
@@ -266,9 +319,9 @@ func _canonical_json(value: Variant) -> String:
         if is_equal_approx(number, round(number)):
             return str(int(number))
         # JSON round-tripping can perturb the last binary-float digits. A
-        # stable 12-decimal representation keeps the checksum deterministic
+        # stable eight-decimal representation keeps the checksum deterministic
         # without erasing meaningful ecological rates.
-        return String.num(number, 12)
+        return String.num(number, 8)
     return JSON.stringify(value)
 
 
@@ -278,7 +331,13 @@ func _read_verified(path: String) -> Dictionary:
     var file := FileAccess.open(path, FileAccess.READ)
     if file == null:
         return {}
-    var parsed: Variant = JSON.parse_string(file.get_as_text())
+    # JSON.parse_string() emits an engine error for malformed legacy files.
+    # The sidecar is an optional read-only migration source, so reject corrupt
+    # input quietly and let the canonical world reconstruction remain active.
+    var parser := JSON.new()
+    if parser.parse(file.get_as_text()) != OK:
+        return {}
+    var parsed: Variant = parser.data
     if not (parsed is Dictionary):
         return {}
     var envelope := parsed as Dictionary

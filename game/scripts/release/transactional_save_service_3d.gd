@@ -33,7 +33,15 @@ func configure(next_save_root: String = DEFAULT_SAVE_ROOT, next_backup_count: in
 func save_snapshot(slot_id: StringName, payload: Dictionary, metadata: Dictionary = {}) -> bool:
     last_error = ""
     _ensure_directory()
-    var payload_copy := payload.duplicate(true)
+    # Checksums must describe the representation that is actually committed to
+    # disk. Godot Variants (notably float32 values and non-String dictionary
+    # keys) can change representation during JSON serialization. Normalize the
+    # payload through the same JSON boundary first, then hash and write that one
+    # stable tree.
+    var payload_parser := JSON.new()
+    if payload_parser.parse(JSON.stringify(payload.duplicate(true))) != OK or not (payload_parser.data is Dictionary):
+        return _fail_save(slot_id, "Save payload could not be normalized to a JSON dictionary")
+    var payload_copy := (payload_parser.data as Dictionary).duplicate(true)
     var payload_json := _canonical_json(payload_copy)
     var envelope := {
         "schema_version": CURRENT_SCHEMA_VERSION,
@@ -55,8 +63,9 @@ func save_snapshot(slot_id: StringName, payload: Dictionary, metadata: Dictionar
 
     var verification := _read_and_validate(temp_path)
     if verification.is_empty():
+        var mismatch_path := _roundtrip_mismatch_path(serialized, payload_copy)
         DirAccess.remove_absolute(ProjectSettings.globalize_path(temp_path))
-        return _fail_save(slot_id, "Temporary save failed checksum validation")
+        return _fail_save(slot_id, "Temporary save failed checksum validation%s" % (" at %s" % mismatch_path if not mismatch_path.is_empty() else ""))
 
     _rotate_backups(slot_id)
     var current_path := _current_path(slot_id)
@@ -255,6 +264,53 @@ func _read_and_validate(path: String) -> Dictionary:
     return envelope.duplicate(true)
 
 
+func _roundtrip_mismatch_path(serialized_envelope: String, original_payload: Dictionary) -> String:
+    var parser := JSON.new()
+    if parser.parse(serialized_envelope) != OK or not (parser.data is Dictionary):
+        return "$"
+    var parsed_payload: Variant = (parser.data as Dictionary).get("payload", null)
+    if not (parsed_payload is Dictionary):
+        return "$.payload"
+    return _first_canonical_mismatch(original_payload, parsed_payload, "$.payload")
+
+
+func _first_canonical_mismatch(original: Variant, parsed: Variant, path: String) -> String:
+    if _canonical_json(original) == _canonical_json(parsed):
+        return ""
+    if original is Dictionary and parsed is Dictionary:
+        var original_values: Dictionary = {}
+        var parsed_values: Dictionary = {}
+        for raw_key in (original as Dictionary).keys():
+            original_values[str(raw_key)] = (original as Dictionary).get(raw_key)
+        for raw_key in (parsed as Dictionary).keys():
+            parsed_values[str(raw_key)] = (parsed as Dictionary).get(raw_key)
+        var keys: Array[String] = []
+        for key in original_values.keys():
+            keys.append(str(key))
+        for key in parsed_values.keys():
+            if not original_values.has(key):
+                keys.append(str(key))
+        keys.sort()
+        for key in keys:
+            if not original_values.has(key) or not parsed_values.has(key):
+                return "%s.%s" % [path, key]
+            var child_path := _first_canonical_mismatch(original_values.get(key), parsed_values.get(key), "%s.%s" % [path, key])
+            if not child_path.is_empty():
+                return child_path
+        return path
+    if original is Array and parsed is Array:
+        var original_array := original as Array
+        var parsed_array := parsed as Array
+        if original_array.size() != parsed_array.size():
+            return "%s.length" % path
+        for index in original_array.size():
+            var child_path := _first_canonical_mismatch(original_array[index], parsed_array[index], "%s[%d]" % [path, index])
+            if not child_path.is_empty():
+                return child_path
+        return path
+    return "%s[type:%d->%d]" % [path, typeof(original), typeof(parsed)]
+
+
 func _append_load_attempt(report: Dictionary, attempt: Dictionary) -> void:
     var attempts: Array = report.get("attempts", [])
     attempts.append(attempt.duplicate(true))
@@ -306,13 +362,17 @@ func _extract_legacy_base(payload: Dictionary) -> Dictionary:
 func _canonical_json(value: Variant) -> String:
     if value is Dictionary:
         var source := value as Dictionary
-        var keys: Array[String] = []
-        for key in source.keys():
-            keys.append(str(key))
-        keys.sort()
+        var keys: Array = source.keys()
+        keys.sort_custom(func(left: Variant, right: Variant) -> bool:
+            var left_text := str(left)
+            var right_text := str(right)
+            if left_text == right_text:
+                return typeof(left) < typeof(right)
+            return left_text < right_text
+        )
         var pairs: Array[String] = []
-        for key in keys:
-            pairs.append("%s:%s" % [JSON.stringify(key), _canonical_json(source.get(key))])
+        for raw_key in keys:
+            pairs.append("%s:%s" % [JSON.stringify(str(raw_key)), _canonical_json(source.get(raw_key))])
         return "{%s}" % ",".join(pairs)
     if value is Array:
         var items: Array[String] = []
@@ -321,8 +381,15 @@ func _canonical_json(value: Variant) -> String:
         return "[%s]" % ",".join(items)
     if value is float:
         var number := float(value)
-        if is_finite(number) and is_equal_approx(number, round(number)):
+        if not is_finite(number):
+            return "null"
+        if is_equal_approx(number, round(number)):
             return str(int(number))
+        # JSON's text round-trip can perturb the final binary digits of long-run
+        # clocks, positions and behavior diagnostics. Hash a stable decimal
+        # representation so the just-written payload validates identically when
+        # parsed back from disk.
+        return String.num(number, 8)
     return JSON.stringify(value)
 
 

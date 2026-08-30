@@ -25,6 +25,7 @@ func _initialize() -> void:
 
 func _run_benchmark() -> void:
     var world := MAIN_SCENE.instantiate() as IronwrightReleaseWorld3D
+    world.pending_launch_mode = &"new"
     root.add_child(world)
     for _index in range(8):
         await process_frame
@@ -34,6 +35,7 @@ func _run_benchmark() -> void:
     if world == null or world.performance_director == null:
         _finish()
         return
+    _expect(await world._await_enemy_tier_bootstrap_initialized(), "Benchmark must initialize canonical ecology before spawning its tier-brained population.")
 
     for index in range(ACTOR_PAIRS):
         var band := index % 4
