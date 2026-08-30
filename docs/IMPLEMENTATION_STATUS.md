@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Bulwark protection-posture pass — 2026-08-30
+
+When the Mechromancer is occupied with a salvage or fabrication channel, the
+indispensable Bulwark now visibly tightens its existing shield sweep, scan
+blade and emitter-collar motion. The cue is presentation-only: it adds no
+orders, alerts, resource work or recurring player task. A native aesthetic
+regression covers the occupied-versus-idle posture, and all review remains
+silent through Godot Dummy audio with `--quiet-audio`.
+
 ## Focused parallel-operation status localization pass — 2026-08-30
 
 - localized the active multi-formation summary shown in the real operations

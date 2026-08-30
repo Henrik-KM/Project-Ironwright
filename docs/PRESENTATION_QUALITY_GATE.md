@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Bulwark protection-posture pass
+
+When the Mechromancer is committed to a salvage or fabrication channel, the
+Bulwark's existing shield sweep, scan blade and emitter collar adopt a visibly
+more attentive posture. This clarifies the companion's protective role during
+the opening vulnerability window without adding a command, alert, simulation
+state or recurring chore. The regression and exact-export review use Godot's
+Dummy audio driver with `--quiet-audio`; physical speakers are not used.
+
 ## 2026-08-30 — Cathedral Quarter roofline pass
 
 The Cathedral Quarter exact-export review now includes a restrained roofline

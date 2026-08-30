@@ -1277,6 +1277,24 @@ func _run_all() -> void:
             var arc_rotation_before := protection_arc.rotation.y if protection_arc != null else 0.0
             companion_protection.call("_process", 0.5)
             _expect(protection_arc != null and absf(protection_arc.rotation.y - arc_rotation_before) > 0.02, "The Bulwark protection sweep must visibly move its existing shield hardware.")
+            if robot.get(&"archetype") == &"companion" and player is Mechromancer3D and protection_arc != null:
+                var companion := robot as RobotUnit3D
+                var player_actor := player as Mechromancer3D
+                companion.player_reference = player_actor
+                companion.current_target = null
+                companion.state_name = &"idle"
+                companion.set_physics_process(false)
+                var idle_arc_before := protection_arc.rotation.y
+                companion_protection.call("_process", 0.5)
+                var idle_arc_delta := absf(protection_arc.rotation.y - idle_arc_before)
+                player_actor.cancel_channel()
+                _expect(player_actor.begin_channel(&"manual_salvage", null, 3.0, "TEST PROTECTION", {}, false, 0.0, 0.0), "The companion protection test must be able to start a quiet player channel.")
+                var channel_arc_before := protection_arc.rotation.y
+                companion_protection.call("_process", 0.5)
+                var channel_arc_delta := absf(protection_arc.rotation.y - channel_arc_before)
+                _expect(channel_arc_delta > idle_arc_delta + 0.1, "Bulwark protection must visibly tighten its shield sweep while the Mechromancer is occupied.")
+                player_actor.cancel_channel()
+                companion.set_physics_process(true)
         var shield_arc := _find_named(robot, "BulwarkShieldArc") as MeshInstance3D
         if shield_arc != null:
             var shield_mesh := shield_arc.mesh as TorusMesh

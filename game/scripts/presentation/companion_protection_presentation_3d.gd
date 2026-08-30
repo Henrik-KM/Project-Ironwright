@@ -17,6 +17,7 @@ var scan_blade: Node3D
 var _has_archetype: bool = false
 var _has_state_name: bool = false
 var _has_current_target: bool = false
+var _has_player_reference: bool = false
 
 
 func configure(next_subject: Node3D) -> void:
@@ -32,6 +33,7 @@ func _ready() -> void:
     _has_archetype = _property_exists(subject, &"archetype")
     _has_state_name = _property_exists(subject, &"state_name")
     _has_current_target = _property_exists(subject, &"current_target")
+    _has_player_reference = _property_exists(subject, &"player_reference")
     _resolve_hardware()
     if not _is_companion():
         set_process(false)
@@ -52,17 +54,25 @@ func _process(delta: float) -> void:
         return
     elapsed += delta
     var engaged := _is_engaged()
-    var sweep_speed := 0.34 if not engaged else 1.18
+    var player_channeling := _is_player_channeling()
+    var heightened := engaged or player_channeling
+    var sweep_speed := 0.34 if not heightened else (0.82 if player_channeling and not engaged else 1.18)
     shield_arc.rotation.y = fmod(elapsed * sweep_speed, TAU)
     if scan_blade != null and is_instance_valid(scan_blade):
         scan_blade.visible = true
-        scan_blade.scale.y = 0.82 + sin(elapsed * (1.7 if not engaged else 3.4)) * 0.12
+        var scan_speed := 1.7 if not heightened else (2.7 if player_channeling and not engaged else 3.4)
+        var scan_amplitude := 0.12 if not heightened else (0.16 if player_channeling and not engaged else 0.12)
+        var scan_base := 0.82 if not heightened else (0.88 if player_channeling and not engaged else 0.82)
+        scan_blade.scale.y = scan_base + sin(elapsed * scan_speed) * scan_amplitude
     if shield_emitter != null and is_instance_valid(shield_emitter):
-        var pulse_speed := 1.8 if not engaged else 3.2
-        var pulse := 1.0 + sin(elapsed * pulse_speed + 0.45) * (0.035 if not engaged else 0.09)
+        var pulse_speed := 1.8 if not heightened else (2.6 if player_channeling and not engaged else 3.2)
+        var pulse_amount := 0.035 if not heightened else (0.065 if player_channeling and not engaged else 0.09)
+        var pulse := 1.0 + sin(elapsed * pulse_speed + 0.45) * pulse_amount
         shield_emitter.scale = Vector3(1.0, 0.7, 1.0) * pulse
     if emitter_collar != null and is_instance_valid(emitter_collar):
-        emitter_collar.rotation.z = sin(elapsed * (0.9 if not engaged else 1.6)) * 0.035
+        var collar_speed := 0.9 if not heightened else (1.3 if player_channeling and not engaged else 1.6)
+        var collar_amount := 0.035 if not heightened else (0.05 if player_channeling and not engaged else 0.035)
+        emitter_collar.rotation.z = sin(elapsed * collar_speed) * collar_amount
 
 
 func _resolve_hardware() -> void:
@@ -84,6 +94,15 @@ func _is_engaged() -> bool:
     if _has_state_name and StringName(str(subject.get(&"state_name"))) in [&"engaging", &"intercepting"]:
         return true
     return false
+
+
+func _is_player_channeling() -> bool:
+    if not _has_player_reference:
+        return false
+    var player := subject.get(&"player_reference") as Node
+    if player == null or not is_instance_valid(player) or not player.has_method(&"is_channeling"):
+        return false
+    return bool(player.call(&"is_channeling"))
 
 
 func _property_exists(object: Object, property_name: StringName) -> bool:
