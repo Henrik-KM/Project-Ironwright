@@ -1067,6 +1067,8 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         var fourth_early_actor := early_review_page[3] as Node3D
         _expect(third_early_actor != null and fourth_early_actor != null and third_early_actor.position.z > fourth_early_actor.position.z + 3.0, "Early organic presentation must separate its broad near row from the rear row so wing and limb silhouettes remain judgeable.")
         _expect(is_equal_approx(first_early_actor.position.x, -4.4) and is_equal_approx(third_early_actor.position.x, 4.4), "Early organic presentation must use the widened triangular near-row composition.")
+    world._show_presentation_review_page(2)
+    await process_frame
     var late_review_page: Array = world.presentation_review_pages[2]
     if late_review_page.size() >= 1:
         var first_late_actor := late_review_page[0] as Node3D
@@ -1313,6 +1315,8 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.player.find_child("FieldPackBackplate", true, false) != null and world.player.find_child("FieldPackTopRoll", true, false) != null and world.player.find_child("FieldPackServiceCable", true, false) != null, "The release Mechromancer must retain the framed pack and service cable hero surface pass.")
     _expect(opening_robot != null and opening_robot.find_child("BulwarkActuatorRingLeft", true, false) != null and opening_robot.find_child("BulwarkActuatorRingRight", true, false) != null and opening_robot.find_child("BulwarkSideHeatPanelLeft", true, false) != null and opening_robot.find_child("BulwarkServiceWindowFrame", true, false) != null, "The release Bulwark must retain paired actuator, heat-panel and diagnostic-window depth.")
     var relay := world._spawn_robot(&"relay", world.player.global_position + Vector3(5.0, 0.0, -2.0), 1)
+    if relay != null:
+        relay.call(&"ensure_authored_visuals")
     await process_frame
     var relay_authored_mesh := _find_first_mesh(relay.get_node_or_null("RobotModel/RelayAuthoredModel") if relay != null else null)
     _expect(relay_authored_mesh != null and relay_authored_mesh.get_meta(&"release_material_family", &"") == &"metal", "The authored Signal Relay shell must receive the release metal material pass.")
@@ -1334,6 +1338,13 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     for index in range(6):
         var later_species := [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"thornback", &"ashmantle"][index] as StringName
         later_families.append(world._spawn_enemy(world.player.global_position + Vector3(-8.0 + float(index) * 3.0, 0.0, -6.0), later_species) as OrganicEnemyRelease3D)
+    # The runtime release director intentionally defers authored shells beyond
+    # its nearest-subject visual budget. This continuity fixture is explicitly
+    # inspecting each family, so materialize those test subjects before the
+    # assertions without changing the production budget.
+    for fixture_actor in [relay, late_robot, late_enemy, late_authored_family] + later_families:
+        if fixture_actor != null and fixture_actor.has_method(&"ensure_authored_visuals"):
+            fixture_actor.call(&"ensure_authored_visuals")
     await process_frame
     await process_frame
 

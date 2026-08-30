@@ -191,11 +191,15 @@ func _refresh_witness_relay() -> void:
 
 
 func _add_camp_lights(camp: Node3D) -> void:
+    # The moon remains the sanctuary's authored shadow source. Local camp
+    # lights stay warm and readable, but do not each allocate a shadow atlas;
+    # two overlapping point-light shadow maps multiply the cost of every
+    # nearby mesh and make the inhabited refuge disproportionately expensive.
     var definitions := [
-        [Vector3(-4.7, 2.8, 2.8), Color("ffb35e"), 2.2, 11.0, true],
+        [Vector3(-4.7, 2.8, 2.8), Color("ffb35e"), 2.2, 11.0, false],
         [Vector3(4.7, 2.4, 3.8), Color("ffc16a"), 1.65, 8.5, false],
         [Vector3(-2.0, 1.4, -4.0), Color("ff9651"), 1.05, 6.5, false],
-        [Vector3(0.0, 3.9, 0.0), Color("ff7c32"), 2.7, 17.0, true],
+        [Vector3(0.0, 3.9, 0.0), Color("ff7c32"), 2.7, 17.0, false],
     ]
     for item in definitions:
         var light := _add_light(camp, item[0], item[1], float(item[2]), float(item[3]), bool(item[4]))

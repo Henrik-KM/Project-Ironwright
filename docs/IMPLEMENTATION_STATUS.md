@@ -1,5 +1,28 @@
 # Implementation status
 
+## Bounded active authored-visual budget pass — 2026-08-30
+
+The real release renderer now keeps the nearest eight actors in authored
+high-definition presentation while preserving the larger active simulation
+budget for combat, targeting and autonomy. Active actors beyond that visual
+budget remain fully simulated and use the shared lightweight silhouette until
+they become the nearest subjects; spawn-time queries also prevent a population
+burst from constructing hidden high-definition shells before the first LOD
+evaluation. The native stress and population benchmarks cover both budgets,
+and the graphical benchmark is used to compare the result on this workstation.
+Audio remains silent through Godot Dummy audio with `--quiet-audio`; no
+physical speakers are used.
+
+## Sanctuary local-light shadow budget pass — 2026-08-30
+
+The inhabited camp keeps its warm local bulbs and emissive readability while
+leaving dynamic shadow ownership to the global moon light. Its two overlapping
+point-light shadow maps had made the sanctuary disproportionately expensive in
+the compatibility renderer; removing only those local shadow maps preserves
+the authored refuge silhouette and raises the 192-actor workstation benchmark
+from roughly 20 FPS to roughly 50 FPS. Target-hardware profiling remains an
+external release gate.
+
 ## Bounded authored-region prefetch pass — 2026-08-30
 
 The region focus service now asynchronously prefetches the nearest upcoming

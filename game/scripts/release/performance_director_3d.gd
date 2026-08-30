@@ -7,6 +7,7 @@ var focus_provider: Callable
 var _spatial_index: SpatialIndex3D
 var target_fps: int = 60
 const ACTIVE_SHADOW_CASTER_BUDGET := 4
+const ACTIVE_AUTHORED_VISUAL_BUDGET := 8
 var active_radius: float = 58.0
 var medium_radius: float = 118.0
 var active_entity_budget: int = 24
@@ -23,6 +24,7 @@ var frames_clock: float = 0.0
 var frames_count: int = 0
 var measured_fps: float = 60.0
 var active_entities: int = 0
+var active_visual_entities: int = 0
 var medium_entities: int = 0
 var reduced_entities: int = 0
 var reduced_enemies: Array[OrganicEnemyRelease3D] = []
@@ -80,6 +82,7 @@ func _focus_position() -> Vector3:
 func _evaluate_entities() -> void:
     var focus := _focus_position()
     active_entities = 0
+    active_visual_entities = 0
     medium_entities = 0
     reduced_entities = 0
     reduced_enemies.clear()
@@ -132,8 +135,18 @@ func _evaluate_entities() -> void:
         else:
             reduced_entities += 1
 
-        _apply_actor_detail(actor, lod_level)
-        var shadow_enabled := lod_level == 0 and active_shadow_casters < ACTIVE_SHADOW_CASTER_BUDGET
+        var visual_lod_level := lod_level
+        if lod_level == 0:
+            if active_visual_entities < ACTIVE_AUTHORED_VISUAL_BUDGET:
+                active_visual_entities += 1
+            else:
+                # Keep the actor fully simulated and targetable, but reserve
+                # expensive authored shells for the nearest active subjects.
+                # The lightweight silhouette still communicates presence and
+                # motion until the actor becomes one of the nearest subjects.
+                visual_lod_level = 1
+        _apply_actor_detail(actor, lod_level, visual_lod_level)
+        var shadow_enabled := visual_lod_level == 0 and active_shadow_casters < ACTIVE_SHADOW_CASTER_BUDGET
         if shadow_enabled:
             active_shadow_casters += 1
         _apply_actor_shadow_budget(actor, shadow_enabled)
@@ -156,6 +169,8 @@ func _evaluate_entities() -> void:
         "active_radius": active_radius,
         "medium_radius": medium_radius,
         "active_entity_budget": active_entity_budget,
+        "active_visual_entities": active_visual_entities,
+        "active_authored_visual_budget": ACTIVE_AUTHORED_VISUAL_BUDGET,
         "medium_entity_budget": medium_entity_budget,
         "active_shadow_casters": active_shadow_casters,
         "active_shadow_caster_budget": ACTIVE_SHADOW_CASTER_BUDGET,
@@ -270,17 +285,18 @@ func _sort_candidates_by_distance(left: Dictionary, right: Dictionary) -> bool:
     return float(left.get("distance_squared", INF)) < float(right.get("distance_squared", INF))
 
 
-func _apply_actor_detail(actor: Node, lod_level: int) -> void:
+func _apply_actor_detail(actor: Node, lod_level: int, visual_lod_level: int = -1) -> void:
+    var next_visual_lod := lod_level if visual_lod_level < 0 else visual_lod_level
     if actor is OrganicEnemyRelease3D:
         var enemy := actor as OrganicEnemyRelease3D
         enemy.set_reduced_detail(lod_level == 2)
         enemy.set_coarse_simulation(lod_level == 1)
-        enemy.set_visual_lod(lod_level)
+        enemy.set_visual_lod(next_visual_lod)
     elif actor is RobotUnitRelease3D:
         var robot := actor as RobotUnitRelease3D
         robot.set_reduced_detail(lod_level == 2)
         robot.set_coarse_simulation(lod_level == 1)
-        robot.set_visual_lod(lod_level)
+        robot.set_visual_lod(next_visual_lod)
 
 
 func _apply_actor_shadow_budget(actor: Node, enabled: bool) -> void:
@@ -305,6 +321,29 @@ func _adapt_budgets() -> void:
 
 func snapshot() -> Dictionary:
     return last_snapshot.duplicate(true)
+
+
+func should_defer_authored_visual_spawn(position: Vector3) -> bool:
+    # Spawn-time deferral prevents a large burst at one location from building
+    # dozens of high-definition shells before the first LOD evaluation. This
+    # is intentionally a cold-path query; the hot evaluation path uses the
+    # bounded visual budget above.
+    var focus := _focus_position()
+    if focus.distance_squared_to(position) > active_radius * active_radius:
+        return true
+    var authored_shells := 0
+    for group_name in [&"organic_enemies", &"friendly_robots"]:
+        for raw_actor in get_tree().get_nodes_in_group(group_name):
+            if not is_instance_valid(raw_actor) or not (raw_actor is Node3D):
+                continue
+            var actor := raw_actor as Node3D
+            if focus.distance_squared_to(actor.global_position) > active_radius * active_radius:
+                continue
+            if actor.get_node_or_null("OrganicModel") != null or actor.get_node_or_null("RobotModel") != null:
+                authored_shells += 1
+                if authored_shells >= ACTIVE_AUTHORED_VISUAL_BUDGET:
+                    return true
+    return false
 
 
 func force_evaluate_for_test() -> void:

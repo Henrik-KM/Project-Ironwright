@@ -43,6 +43,8 @@ func _run_all() -> void:
     world.performance_director.force_evaluate_for_test()
     var snapshot := world.performance_director.snapshot()
     _expect(int(snapshot.get("active_entities", 0)) <= world.performance_director.active_entity_budget, "Large populations must respect the active actor budget.")
+    _expect(int(snapshot.get("active_visual_entities", 0)) <= int(snapshot.get("active_authored_visual_budget", 0)), "Large populations must respect the active authored-visual budget.")
+    _expect(int(snapshot.get("active_visual_entities", 0)) == int(snapshot.get("active_authored_visual_budget", 0)), "The stress population must fill, but not exceed, the bounded authored-visual budget.")
     _expect(int(snapshot.get("medium_entities", 0)) <= world.performance_director.medium_entity_budget, "Large populations must respect the medium actor budget.")
     _expect(int(snapshot.get("reduced_entities", 0)) >= 64, "Large populations must place distant actors into reduced-detail simulation.")
     _expect(int(snapshot.get("candidate_count", 0)) >= 192, "The stress population must register every spawned actor with the detail director.")
