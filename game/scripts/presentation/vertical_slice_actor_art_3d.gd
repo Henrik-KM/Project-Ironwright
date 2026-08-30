@@ -579,6 +579,16 @@ func _build_bulwark_detail(parent: Node3D) -> void:
     shield_ring.material_override = shield_material
     shield_ring.position = Vector3(0.0, 0.34, 0.08)
     parent.add_child(shield_ring)
+    var scan_material := ModelKit3D.material(Color("255f65"), 0.34, 0.24, Color("79e3e8"), 1.9)
+    ModelKit3D.add_beveled_box(
+        shield_ring,
+        Vector3(0.055, 0.16, 0.18),
+        Vector3(0.0, 0.0, -0.785),
+        scan_material,
+        Vector3.ZERO,
+        "BulwarkShieldScanBlade",
+        0.025
+    )
     ModelKit3D.add_tapered_cylinder(parent, 0.12, 0.18, 0.62, Vector3(0.0, 1.94, 0.46), dark_steel, Vector3.ZERO, "BulwarkShieldEmitterSpine")
     ModelKit3D.add_sphere(parent, 0.13, Vector3(0.0, 2.28, 0.46), shield_material, Vector3(1.2, 0.7, 1.2), "BulwarkShieldEmitter")
     for side in [-1.0, 1.0]:

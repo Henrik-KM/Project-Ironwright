@@ -4,6 +4,7 @@ extends Node
 
 const MECHROMANCER_PRESENTATION := preload("res://scripts/presentation/mechromancer_presentation_3d.gd")
 const HEARTFORGE_PRESENTATION := preload("res://scripts/presentation/heartforge_presentation_3d.gd")
+const COMPANION_PROTECTION_PRESENTATION := preload("res://scripts/presentation/companion_protection_presentation_3d.gd")
 
 var world: Node3D
 var player: Node3D
@@ -157,9 +158,20 @@ func _polish_actor(node: Node) -> void:
             authored_animation.name = "AuthoredActorAnimation3D"
             authored_animation.configure(actor)
             actor.add_child(authored_animation)
+        if _is_companion(actor) and actor.get_node_or_null("CompanionProtectionPresentation3D") == null:
+            var companion_presentation := COMPANION_PROTECTION_PRESENTATION.new()
+            companion_presentation.name = "CompanionProtectionPresentation3D"
+            companion_presentation.configure(actor)
+            actor.add_child(companion_presentation)
     if actor.get_node_or_null("AestheticDetails") == null:
         _add_actor_details(actor)
     _connect_actor_feedback(actor)
+
+
+func _is_companion(actor: Node) -> bool:
+    if not _property_exists(actor, &"archetype"):
+        return false
+    return StringName(str(actor.get(&"archetype"))) == &"companion"
 
 
 func _add_actor_details(actor: Node3D) -> void:

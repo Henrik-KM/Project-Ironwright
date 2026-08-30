@@ -3024,3 +3024,14 @@ the exact page-9 review distance. The added geometry is presentation-only and
 retains the existing pump socket, deterministic rotor motion, collision, route,
 ecology and operation contracts. Exact live review uses Godot Dummy audio with
 `--quiet-audio`; no physical speakers were used.
+
+# Focused Bulwark protection-sweep pass — 2026-08-30
+
+The indispensable Bulwark now gives its existing shield arc a small cyan scan
+blade and a restrained presentation bridge. The sweep crawls while the machine
+holds beside the Mechromancer and accelerates when the existing combat target
+is active, making protection read as an ongoing machine decision without
+changing the protection envelope, combat, collision, sockets, LOD, autonomy or
+save state. The close-range cue is bounded and presentation-only. Native and
+live review use Godot's Dummy audio driver with `--quiet-audio`; no physical
+speakers are used. Broader human production-art acceptance remains open.

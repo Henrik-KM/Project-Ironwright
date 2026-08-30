@@ -1267,6 +1267,14 @@ func _run_all() -> void:
         _expect(_find_named(robot, "CompanionCrown") != null, "The companion must expose a distinct crown silhouette.")
         _expect(_find_named(robot, "BulwarkShieldArc") != null, "The Bulwark must expose a readable protection field signature.")
         _expect(_find_named(robot, "BulwarkShieldEmitter") != null, "The Bulwark must expose a dedicated shield emitter.")
+        var companion_protection := robot.get_node_or_null("CompanionProtectionPresentation3D")
+        _expect(companion_protection != null, "The Bulwark must expose a presentation bridge for its protection sweep.")
+        _expect(_find_named(robot, "BulwarkShieldScanBlade") != null, "The Bulwark shield must expose a bounded scan blade for readable protection motion.")
+        if companion_protection != null:
+            var protection_arc := _find_named(robot, "BulwarkShieldArc") as Node3D
+            var arc_rotation_before := protection_arc.rotation.y if protection_arc != null else 0.0
+            companion_protection.call("_process", 0.5)
+            _expect(protection_arc != null and absf(protection_arc.rotation.y - arc_rotation_before) > 0.02, "The Bulwark protection sweep must visibly move its existing shield hardware.")
         var shield_arc := _find_named(robot, "BulwarkShieldArc") as MeshInstance3D
         if shield_arc != null:
             var shield_mesh := shield_arc.mesh as TorusMesh

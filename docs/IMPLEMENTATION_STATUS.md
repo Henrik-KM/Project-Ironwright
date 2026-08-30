@@ -6802,3 +6802,16 @@ roster checks and requires silent late-organic live review before merge.
 - extended the asset manifest, static validation and native aesthetic coverage
   for the new stable pump-face socket; silent exact-export review remains part
   of the release gate.
+
+## Focused Bulwark protection-sweep pass — 2026-08-30
+
+- added a presentation-only protection bridge to the indispensable Bulwark;
+- the existing shield arc now carries a small cyan scan blade and a restrained
+  idle-to-engaged sweep, with a slightly stronger emitter pulse when the
+  companion has an active target;
+- the cue is close-range and LOD-aware, does not alter the protection envelope,
+  combat timing, sockets, collision, autonomy or save state, and does not add a
+  player task or maintenance surface;
+- native aesthetic coverage verifies the hardware and motion, and live review
+  uses Godot's Dummy audio driver with `--quiet-audio`; no physical speakers are
+  used.

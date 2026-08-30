@@ -168,7 +168,7 @@ func _set_model_shadow_casting(node: Node, cast_mode: int) -> void:
 
 
 func _sync_presentation_lod() -> void:
-    for child_name in [&"ProceduralAnimator3D", &"AuthoredActorAnimation3D", &"ReleaseSecondaryMotion3D"]:
+    for child_name in [&"ProceduralAnimator3D", &"AuthoredActorAnimation3D", &"CompanionProtectionPresentation3D", &"ReleaseSecondaryMotion3D"]:
         var controller := get_node_or_null(NodePath(String(child_name)))
         if controller != null and controller.has_method(&"set_presentation_lod"):
             controller.call(&"set_presentation_lod", visual_lod_level)
