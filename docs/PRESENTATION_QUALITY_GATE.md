@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Outpost role load-path pass
+
+Tier III autonomous outposts now expose small role-specific support struts,
+mount rails, collars and service lines between the authored role hardware and
+the evolved frame. Resource, defence, scout and repair assemblies each keep a
+distinct attachment read without changing the outpost footprint, collision,
+autonomy, persistence or player workload. The gallery was live-reviewed with
+Godot Dummy audio and `--quiet-audio`; no physical speakers were used.
+
 ## 2026-08-30 — Exact maximum text-scale regression gate
 
 The release accessibility regression now exercises the supported 1.40x text

@@ -741,6 +741,9 @@ func _refresh_visuals() -> void:
             for side in [-1.0, 1.0]:
                 ModelKit3D.add_beveled_box(role_signature, Vector3(0.12, 0.78, 0.16), Vector3(-1.2 + side * 0.66, 1.23, -2.45), panel_accent, Vector3(0.0, 0.0, side * 0.06), "ResourceHopperRib%s" % ("Left" if side < 0.0 else "Right"), 0.18)
             ModelKit3D.add_torus(role_signature, 0.22, 0.055, Vector3(1.3, 2.47, -1.45), panel_accent, Vector3(PI * 0.5, 0.0, 0.0), "ResourceIntakeCollar", 32, 8)
+            _add_strut(role_signature, Vector3(-1.62, 0.72, -1.86), Vector3(-1.42, 1.06, -1.98), tier_signal, "ResourceHopperSupportLeft", 0.06)
+            _add_strut(role_signature, Vector3(-0.78, 0.72, -1.86), Vector3(-0.98, 1.06, -1.98), tier_signal, "ResourceHopperSupportRight", 0.06)
+            ModelKit3D.add_beveled_box(role_signature, Vector3(0.92, 0.1, 0.18), Vector3(-1.2, 0.7, -1.84), iron, Vector3.ZERO, "ResourceHopperMountRail", 0.05)
         &"defence":
             ModelKit3D.add_beveled_box(role_signature, Vector3(1.7, 0.7, 1.5), Vector3(0.0, 3.02, 0.0), panel, Vector3.ZERO, "DefenceTurretHousing", 0.2)
             ModelKit3D.add_cylinder(role_signature, 0.18, 2.7, Vector3(0.0, 3.55, 0.0), iron, Vector3.ZERO, "DefenceTurretMast")
@@ -750,6 +753,9 @@ func _refresh_visuals() -> void:
             ModelKit3D.add_torus(role_signature, 0.31, 0.07, Vector3(0.0, 3.52, 0.0), panel_accent, Vector3.ZERO, "DefenceTurretCollar", 36, 8)
             ModelKit3D.add_beveled_box(role_signature, Vector3(0.36, 0.2, 0.42), Vector3(-0.82, 3.36, -0.55), panel_accent, Vector3(0.0, 0.0, -0.18), "DefenceRecoilGuardLeft", 0.22)
             ModelKit3D.add_beveled_box(role_signature, Vector3(0.36, 0.2, 0.42), Vector3(0.82, 3.36, -0.55), panel_accent, Vector3(0.0, 0.0, 0.18), "DefenceRecoilGuardRight", 0.22)
+            _add_strut(role_signature, Vector3(-0.62, 2.72, -0.34), Vector3(-0.48, 3.0, -0.08), tier_signal, "DefenceTurretSupportLeft", 0.06)
+            _add_strut(role_signature, Vector3(0.62, 2.72, -0.34), Vector3(0.48, 3.0, -0.08), tier_signal, "DefenceTurretSupportRight", 0.06)
+            ModelKit3D.add_torus(role_signature, 0.2, 0.045, Vector3(0.0, 2.72, 0.36), panel_accent, Vector3.ZERO, "DefenceServiceCollar", 28, 8)
         &"scout":
             ModelKit3D.add_beveled_box(role_signature, Vector3(1.0, 0.6, 1.0), Vector3(0.0, 3.08, 0.0), panel, Vector3.ZERO, "ScoutSensorHousing", 0.22)
             ModelKit3D.add_cylinder(role_signature, 0.11, 4.2, Vector3(0.0, 4.0, 0.0), iron, Vector3.ZERO, "ScoutSensorMast")
@@ -764,6 +770,9 @@ func _refresh_visuals() -> void:
                 var brace := ModelKit3D.add_cylinder(role_signature, 0.045, brace_direction.length(), (brace_start + brace_end) * 0.5, panel_accent, Vector3.ZERO, "ScoutMastBrace%s" % ("Left" if side < 0.0 else "Right"))
                 brace.quaternion = Quaternion(Vector3.UP, brace_direction.normalized())
             ModelKit3D.add_torus(role_signature, 0.24, 0.05, Vector3(0.0, 6.15, 0.0), panel_accent, Vector3.ZERO, "ScoutDishHubRing", 32, 8)
+            ModelKit3D.add_torus(role_signature, 0.28, 0.05, Vector3(0.0, 3.36, 0.0), tier_signal, Vector3.ZERO, "ScoutMastBaseCollar", 32, 8)
+            _add_strut(role_signature, Vector3(-0.32, 3.12, -0.36), Vector3(-0.48, 2.12, 0.34), tier_signal, "ScoutSensorServiceLineLeft", 0.05)
+            _add_strut(role_signature, Vector3(0.32, 3.12, -0.36), Vector3(0.48, 2.12, 0.34), tier_signal, "ScoutSensorServiceLineRight", 0.05)
         &"repair":
             ModelKit3D.add_beveled_box(role_signature, Vector3(3.0, 0.18, 2.2), Vector3(0.0, 0.58, -2.15), glow, Vector3.ZERO, "RepairPad", 0.3)
             ModelKit3D.add_surface_panel(role_signature, Vector3(1.7, 0.24, 0.12), Vector3(0.0, 0.72, -2.15), panel, panel_accent, Vector3.ZERO, "RepairPadPanel")
@@ -773,6 +782,9 @@ func _refresh_visuals() -> void:
             ModelKit3D.add_torus(role_signature, 0.92, 0.065, Vector3(0.0, 1.03, -2.15), panel_accent, Vector3.ZERO, "RepairFieldRing", 40, 8)
             ModelKit3D.add_beveled_box(role_signature, Vector3(0.18, 1.12, 0.18), Vector3(-1.45, 1.72, -1.65), panel_accent, Vector3(0.0, 0.0, 0.75), "RepairArmCollarLeft", 0.2)
             ModelKit3D.add_beveled_box(role_signature, Vector3(0.18, 1.12, 0.18), Vector3(1.45, 1.72, -1.65), panel_accent, Vector3(0.0, 0.0, -0.75), "RepairArmCollarRight", 0.2)
+            _add_strut(role_signature, Vector3(-1.02, 0.72, -1.4), Vector3(-0.78, 1.22, 0.34), tier_signal, "RepairPadServiceLineLeft", 0.05)
+            _add_strut(role_signature, Vector3(1.02, 0.72, -1.4), Vector3(0.78, 1.22, 0.34), tier_signal, "RepairPadServiceLineRight", 0.05)
+            ModelKit3D.add_beveled_box(role_signature, Vector3(2.16, 0.08, 0.12), Vector3(0.0, 0.72, -1.38), iron, Vector3.ZERO, "RepairPadMountRail", 0.05)
 
     _status_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 2.9, -1.0), role_color, 0.9 + float(tier) * 0.35, 6.0 + float(tier) * 2.0)
     _build_damage_presentation()

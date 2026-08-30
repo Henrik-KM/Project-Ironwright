@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused autonomous outpost load-path pass — 2026-08-30
+
+Tier III outpost role assemblies now expose bounded presentation-only support
+struts, mount rails, collars and service lines that visibly connect resource,
+defence, scout and repair hardware into the shared evolved frame. The focused
+aesthetic, full-game, release and 1.40x accessibility suites passed with
+Godot Dummy audio and `--quiet-audio`; the live gallery review used no physical
+speakers.
+
 ## Focused maximum text-scale regression pass — 2026-08-30
 
 The release accessibility regression now checks the actual supported 1.40x

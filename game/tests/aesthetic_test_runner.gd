@@ -1536,6 +1536,14 @@ func _run_all() -> void:
         _expect(_find_named(sample, "TierFrame1RolePlate") != null and _find_named(sample, "TierFrame2RolePlate") != null and _find_named(sample, "TierFrame3RolePlate") != null, "Tier 3 outposts must expose role-coded articulation plates on every structural frame.")
         _expect(_find_named(sample, "TierFrame1RoleNode") != null and _find_named(sample, "TierFrame3RoleNode") != null and _find_named(sample, "TierFrame3RoleBraceLeft") != null, "Tier 3 outposts must expose bounded role signal nodes and frame braces.")
         _expect(_outpost_model_has_details(sample, outpost_roles[index]), "The %s outpost must expose a role-readable high-detail silhouette." % outpost_roles[index])
+        if outpost_roles[index] == &"resource":
+            _expect(_find_named(sample, "ResourceHopperSupportLeft") != null and _find_named(sample, "ResourceHopperMountRail") != null, "Resource outposts must visibly anchor the hopper to a load rail instead of floating role hardware.")
+        elif outpost_roles[index] == &"defence":
+            _expect(_find_named(sample, "DefenceTurretSupportLeft") != null and _find_named(sample, "DefenceServiceCollar") != null, "Defence outposts must visibly carry the turret load into the evolved frame.")
+        elif outpost_roles[index] == &"scout":
+            _expect(_find_named(sample, "ScoutMastBaseCollar") != null and _find_named(sample, "ScoutSensorServiceLineLeft") != null, "Scout outposts must visibly route mast service into the evolved frame.")
+        elif outpost_roles[index] == &"repair":
+            _expect(_find_named(sample, "RepairPadServiceLineLeft") != null and _find_named(sample, "RepairPadMountRail") != null, "Repair outposts must visibly anchor the field pad and route its service lines.")
         _expect(not bool(_find_named(sample, "OutpostDamagePresentation").visible), "Healthy outposts must keep damage-memory presentation hidden.")
         _expect(sample.presentation_status == &"idle" and is_zero_approx(sample.presentation_activity), "Healthy outposts must begin with a quiet presentation state.")
         sample._set_presentation_activity(StringName(outpost_roles[index]), 1.0, 0.6)
