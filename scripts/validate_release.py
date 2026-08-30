@@ -77,6 +77,7 @@ AUDIO_NAMES = [
     "ambience_city.wav",
     "ambience_sanctuary.wav",
     "ambience_cistern.wav",
+    "music_sanctuary.wav",
     "music_embers.wav",
     "music_pressure.wav",
     "music_sovereignty.wav",
@@ -298,7 +299,7 @@ def validate_release_services() -> None:
             raise legacy.ValidationError(f"Performance director is missing {token!r}")
 
     audio = (ROOT / "game/scripts/release/release_audio_director_3d.gd").read_text(encoding="utf-8")
-    for token in ["ambience_city", "music_embers", "music_pressure", "music_sovereignty", "show_caption"]:
+    for token in ["ambience_city", "music_sanctuary", "music_embers", "music_pressure", "music_sovereignty", "show_caption"]:
         if token not in audio:
             raise legacy.ValidationError(f"Release audio director is missing {token!r}")
 

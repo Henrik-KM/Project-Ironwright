@@ -21,6 +21,7 @@ const STREAM_PATHS: Dictionary = {
     &"ambience_nest": AUDIO_ROOT + "/ambience_nest.wav",
     &"ambience_cistern": AUDIO_ROOT + "/ambience_cistern.wav",
     &"music_title": AUDIO_ROOT + "/music_title.wav",
+    &"music_sanctuary": AUDIO_ROOT + "/music_sanctuary.wav",
     &"music_embers": AUDIO_ROOT + "/music_embers.wav",
     &"music_pressure": AUDIO_ROOT + "/music_pressure.wav",
     &"music_sovereignty": AUDIO_ROOT + "/music_sovereignty.wav",
@@ -40,7 +41,7 @@ const STREAM_PATHS: Dictionary = {
     &"ui_confirm": AUDIO_ROOT + "/sfx_ui_confirm.wav",
 }
 ## Every non-sanctuary region receives an intentional ambient bed. The release
-## package currently has five authored loops, so adjacent region families share
+## package currently has six authored loops, so adjacent region families share
 ## a compatible source while retaining their own atmosphere palette and
 ## transition cue. Only the current region bed is raised by _update_ambience.
 const REGIONAL_AMBIENCE_SOURCES: Dictionary = {
@@ -56,6 +57,7 @@ const REGIONAL_AMBIENCE_SOURCES: Dictionary = {
     &"endgame": &"ambience_cistern",
     &"archive": &"ambience_city",
 }
+const SANCTUARY_MUSIC_RADIUS := 14.0
 
 var player: Mechromancer3D
 var heartforge: Heartforge3D
@@ -661,6 +663,9 @@ func _evaluate_music_mood() -> void:
         next_mood = &"pressure"
     elif progression != null and progression.heartforge_tier >= 4:
         next_mood = &"sovereignty"
+    elif player != null and heartforge != null and is_instance_valid(player) and is_instance_valid(heartforge):
+        if player.global_position.distance_to(heartforge.global_position) <= SANCTUARY_MUSIC_RADIUS:
+            next_mood = &"sanctuary"
     if strategic_ecology != null:
         var summary := strategic_ecology.pressure_summary()
         var parts := summary.split("pressure ")

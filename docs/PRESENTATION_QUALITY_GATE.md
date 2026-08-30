@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Heartforge sanctuary music review
+
+The release soundtrack now transitions to a distinct warm sanctuary loop while
+the player is close to the Heartforge, then returns to embers after leaving its
+bounded radius. Pressure, final-protocol and mature-machine states retain
+priority. The exact runtime context transition is covered by release tests;
+live review uses Godot Dummy audio with `--quiet-audio`, so no physical speakers
+are used.
+
 ## Focused late-organic gallery framing pass — 2026-08-29
 
 The exact late-organic review page now lowers and brings in its development-only

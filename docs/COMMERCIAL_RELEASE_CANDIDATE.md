@@ -66,9 +66,10 @@ The release candidate contains an original audio library rather than silent plac
 
 Ambient sound is layered continuously. Near the Heartforge, a warm mechanical sanctuary bed dominates. As the Mechromancer moves into the town, wind, distant structures and organic environmental sound become more prominent. The transition is spatial and continuous rather than tied to a loading screen.
 
-Music uses three adaptive states:
+Music uses four adaptive states:
 
 - **Embers:** restrained opening music for vulnerability and small-scale survival;
+- **Sanctuary:** a warm machine-family motif heard while the player is close to the Heartforge;
 - **Pressure:** a more urgent layer used during dangerous ecological concentration and final-protocol escalation;
 - **Sovereignty:** broader late-game music used as the machine society matures and after victory.
 

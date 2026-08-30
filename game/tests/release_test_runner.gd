@@ -858,6 +858,7 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
         "res://assets/release/audio/ambience_nest.wav",
         "res://assets/release/audio/ambience_cistern.wav",
         "res://assets/release/audio/music_title.wav",
+        "res://assets/release/audio/music_sanctuary.wav",
         "res://assets/release/audio/music_embers.wav",
         "res://assets/release/audio/music_pressure.wav",
         "res://assets/release/audio/music_sovereignty.wav",
@@ -880,6 +881,7 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.release_world_art.regions_dressed >= 12, "Every persistent region must receive release dressing.")
     _expect(world.release_world_art.meshes_textured > 30, "The existing world must receive a broad textured material pass.")
     _expect(world.release_audio.stream_library.size() >= 20, "Release audio director must load title music, regional ambience, adaptive music, family calls and species variants.")
+    _expect(world.release_audio.stream_library.has(&"music_sanctuary"), "Release audio must load the warm Heartforge sanctuary music state.")
     _expect(world.release_audio.regional_ambience.size() == ReleaseAudioDirector3D.REGIONAL_AMBIENCE_SOURCES.size(), "Release audio director must prepare a bounded ambience bed for every non-sanctuary region family.")
     for raw_kind in ReleaseAudioDirector3D.REGIONAL_AMBIENCE_SOURCES:
         var region_kind := raw_kind as StringName
@@ -891,6 +893,23 @@ func _test_release_assets_and_art(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.release_audio.current_mood == &"title", "Release audio must select the restrained title theme while the title screen is active.")
     world.release_audio.set_title_screen_active(false)
     _expect(world.release_audio.current_mood == &"embers", "Release audio must return to the embers theme when gameplay begins.")
+    var saved_audio_player_position := world.player.global_position
+    var saved_audio_progression := world.release_audio.progression
+    var saved_audio_ecology := world.release_audio.strategic_ecology
+    var saved_audio_endgame := world.release_audio.endgame
+    world.release_audio.progression = null
+    world.release_audio.strategic_ecology = null
+    world.release_audio.endgame = null
+    world.player.global_position = world.heartforge.global_position
+    world.release_audio._evaluate_music_mood()
+    _expect(world.release_audio.current_mood == &"sanctuary", "Gameplay near the Heartforge must select the warm sanctuary music state.")
+    world.player.global_position = world.heartforge.global_position + Vector3(0.0, 0.0, ReleaseAudioDirector3D.SANCTUARY_MUSIC_RADIUS + 4.0)
+    world.release_audio._evaluate_music_mood()
+    _expect(world.release_audio.current_mood == &"embers", "Leaving the Heartforge sanctuary radius must return to the embers music state.")
+    world.player.global_position = saved_audio_player_position
+    world.release_audio.progression = saved_audio_progression
+    world.release_audio.strategic_ecology = saved_audio_ecology
+    world.release_audio.endgame = saved_audio_endgame
     _expect(not world.release_animation.attached_subjects.is_empty(), "Release secondary animation must attach to world subjects.")
     var rail_dressing := world.release_world_art.dressing_root.find_child("HighDefinitionRailDressing", true, false) if world.release_world_art.dressing_root != null else null
     _expect(rail_dressing != null, "Release rail dressing must expose a bounded high-definition carriage layer.")

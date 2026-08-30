@@ -335,6 +335,23 @@ def music_title(t: float, duration: float) -> float:
     return pad + motif + answer + shimmer
 
 
+def music_sanctuary(t: float, duration: float) -> float:
+    """A warm machine-family theme heard while the Heartforge is close."""
+    chord = [73.416, 110.0, 146.832, 220.0]
+    pad = sum(tone(t, duration, note, index * 0.38) for index, note in enumerate(chord)) * 0.06
+    phrase = [293.665, 329.628, 440.0, 493.883, 440.0, 329.628, 261.626, 220.0]
+    step_duration = duration / len(phrase)
+    step = int(t / step_duration) % len(phrase)
+    local = (t % step_duration) / step_duration
+    envelope = math.sin(math.pi * local) ** 1.7
+    melody = tone(t, duration, phrase[step], 0.35) * envelope * 0.085
+    answer = tone(t, duration, phrase[(step + 3) % len(phrase)] * 0.5, -0.25) * (0.35 + 0.65 * envelope) * 0.04
+    heartbeat = (0.55 + 0.45 * tone(t, duration, 0.25, 0.4)) * tone(t, duration, 36.75) * 0.055
+    glint_gate = max(0.0, tone(t, duration, 0.125, 1.7)) ** 22
+    glint = glint_gate * (tone(t, duration, 587.33) + tone(t, duration, 880.0, 0.4)) * 0.025
+    return pad + melody + answer + heartbeat + glint
+
+
 def music_pressure(t: float, duration: float) -> float:
     beat = (t * 2.0) % 1.0
     kick = math.exp(-beat * 14.0) * tone(t, duration, 48.0) * 0.28
@@ -461,6 +478,7 @@ AUDIO: dict[str, tuple[float, Callable[[float, float], float]]] = {
     "ambience_nest.wav": (18.0, ambience_nest),
     "ambience_cistern.wav": (18.0, ambience_cistern),
     "music_title.wav": (24.0, music_title),
+    "music_sanctuary.wav": (24.0, music_sanctuary),
     "music_embers.wav": (24.0, music_embers),
     "music_pressure.wav": (24.0, music_pressure),
     "music_sovereignty.wav": (24.0, music_sovereignty),

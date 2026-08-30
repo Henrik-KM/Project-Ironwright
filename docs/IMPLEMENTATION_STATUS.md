@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Heartforge sanctuary music pass — 2026-08-30
+
+The release soundtrack now has a distinct warm sanctuary state near the
+Heartforge, with a measured family-oriented motif and low mechanical heartbeat.
+The release audio director selects it inside a bounded proximity radius while
+preserving pressure, active final-protocol and late-tier precedence; leaving the
+sanctuary returns to the embers state. The new authored loop is covered by
+release asset and context-selection tests. Audio review remains under Godot
+Dummy audio and `--quiet-audio`; no physical speakers are used.
+
 ## Focused endgame transient-boundary pass — 2026-08-30
 
 The first-victory surface now owns the complete handoff frame. It clears stale
