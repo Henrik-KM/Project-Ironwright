@@ -819,6 +819,24 @@ def build_family(name: str, spec: dict) -> None:
     # those existing sockets a closed folded shell so they read as living
     # crown petals rather than two broad horizontal service plates.
     if name == "rootweaver":
+        # The route-controller face needs a living collar where the front
+        # mask meets the segmented thorax. Keep this transition torso-owned so
+        # it follows the existing body breath and never becomes a detached
+        # plate in the close gallery. It remains presentation-only.
+        mesh_ids["RootweaverThoraxCollar"] = mesh(
+            "RootweaverThoraxCollar",
+            add_organic_lobe(
+                builder,
+                (0.82, 0.28, 0.52),
+                shell,
+                lobes=5,
+                rings=11,
+                sides=48,
+                scallop_amplitude=0.13,
+                leading_extension=0.28,
+                fold_strength=0.86,
+            ),
+        )
         mesh_ids["RootweaverCrownLobe"] = mesh(
             "RootweaverCrownLobe",
             add_organic_lobe(
@@ -1013,6 +1031,15 @@ def build_family(name: str, spec: dict) -> None:
         walk_node = "CarrionbellMantle"
         attack_node = "CarrionbellResonator"
     elif name == "rootweaver":
+        add_node(
+            "RootweaverThoraxCollar",
+            mesh_ids["RootweaverThoraxCollar"],
+            (0.0, 1.34, -0.42),
+            rotation=(0.12, 0.0, 0.0),
+            scale=(0.94, 1.0, 0.86),
+            extras={"surface": "route_controller_thorax_collar"},
+            parent=torso,
+        )
         add_node("RootweaverCrown", mesh_ids["Soft"], (0.0, 1.55, -0.42), scale=(1.28, 1.2, 1.18), extras={"socket_type": "crown_oculi"})
         add_node("RootweaverCrownPlate0", mesh_ids["RootweaverCrownLobe"], (-0.36, 1.92, -0.44), rotation=(0.0, -0.22, -0.08), scale=(0.72, 1.0, 0.84), extras={"surface": "crown_plate"})
         add_node("RootweaverCrownPlate1", mesh_ids["RootweaverCrownLobe"], (0.36, 1.92, -0.44), rotation=(0.0, 0.22, 0.08), scale=(0.72, 1.0, 0.84), extras={"surface": "crown_plate"})

@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Rootweaver thorax-attachment pass
+
+The authored Rootweaver shell now carries a dense torso-parented route-controller
+collar where the focal mask meets the segmented thorax. The added folded volume
+closes the visible transition at close review distance without changing the
+existing route mask, animation clips, collision, ecology, combat, save state or
+player workload. The asset manifest and aesthetic runner cover the stable node;
+live review uses Godot Dummy audio with `--quiet-audio`, with no physical
+speakers used.
+
 ## 2026-08-30 — Outpost role load-path pass
 
 Tier III autonomous outposts now expose small role-specific support struts,

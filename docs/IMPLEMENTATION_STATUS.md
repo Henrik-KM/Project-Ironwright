@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Rootweaver thorax-attachment pass — 2026-08-30
+
+The Rootweaver authored shell now carries a dense torso-parented route-controller
+collar between its segmented body and focal mask. This closes the close-camera
+anatomical transition without changing the imported animation hierarchy,
+collision, ecology, combat, saves or player workload. The manifest and aesthetic
+runner cover the stable node; validation and live review use Godot Dummy audio
+with `--quiet-audio`, with no physical speakers used.
+
 ## Focused autonomous outpost load-path pass — 2026-08-30
 
 Tier III outpost role assemblies now expose bounded presentation-only support

@@ -1708,6 +1708,8 @@ func _run_all() -> void:
                 _expect(_find_named(enemy_samples[index], "RootweaverKnuckleL") != null and _find_named(enemy_samples[index], "RootweaverKnuckleR") != null, "The Rootweaver must expose joint detail where its route arms meet the body.")
                 _expect(_find_named(enemy_samples[index], "RootweaverCrownPlate0") != null and _find_named(enemy_samples[index], "RootweaverRootSpineR") != null, "The Rootweaver must expose crown plating and layered route spines.")
                 _expect(_find_named(enemy_samples[index], "RootweaverJawPlateL") != null and _find_named(enemy_samples[index], "RootweaverJawPlateR") != null, "The Rootweaver must expose paired folded jaw plates beneath its route-controller oculi.")
+                var rootweaver_thorax_collar := _find_named(enemy_samples[index], "RootweaverThoraxCollar") as MeshInstance3D
+                _expect(rootweaver_thorax_collar != null and rootweaver_thorax_collar.get_parent().name == "Torso" and _mesh_vertex_count(rootweaver_thorax_collar) >= 700, "The Rootweaver must carry a dense torso-parented route-controller collar so its focal face reads as attached anatomy.")
                 var rootweaver_route_keel := _find_named(enemy_samples[index], "RootweaverRouteKeel") as MeshInstance3D
                 _expect(rootweaver_route_keel != null and _mesh_vertex_count(rootweaver_route_keel) >= 96 and rootweaver_route_keel.get_parent().name == "OrganicFamilyAnatomyFinish", "The Rootweaver must expose a dense vertical route keel through its focal mask so the controller face does not collapse into horizontal bands.")
                 var rootweaver_fan := _find_named(enemy_samples[index], "RootweaverSporeFan") as Node3D
