@@ -1685,7 +1685,7 @@ func _show_presentation_review_page(page: int) -> void:
 				# The early families carry wide wings, fans and limb spans. Use a
 				# triangular near row and a wider rear row so every shell keeps a
 				# readable outline while remaining inside the bounded review frame.
-				var early_positions := [-4.4, 0.0, 4.4] if row_index == 0 else [-4.8, -1.6, 1.6, 4.8]
+				var early_positions := [-4.0, 0.0, 4.0] if row_index == 0 else [-4.3, -1.45, 1.45, 4.3]
 				centered_x = early_positions[row_position]
 			var row_z := 1.45 if row_index == 0 else -3.35
 			if presentation_review_page == 0:
@@ -2342,7 +2342,11 @@ func _update_presentation_review_camera(delta: float) -> void:
 	# Early flight families need a little more horizontal breathing room than
 	# the late folded silhouettes. Keep the models at their authored review
 	# scale and widen only this gallery lens instead of shrinking the cast.
-	var core_review_fov := 46.0 if presentation_review_page >= 1 else 43.0
+	# The early roster has the widest combined wings, fans and leg spans. Give
+	# that page a slightly wider gallery lens so the outer families keep their
+	# full silhouette at the compact review window without shrinking the
+	# authored models or changing their gameplay scale.
+	var core_review_fov := 54.0 if presentation_review_page == 1 else (46.0 if presentation_review_page >= 1 else 43.0)
 	var outpost_page := presentation_review_page == 3 + PRESENTATION_REVIEW_REGIONS.size()
 	camera.fov = 42.0 if outpost_page else (44.0 if presentation_review_page == 13 else (46.0 if presentation_review_page == 12 else (48.0 if presentation_review_page == 11 else (52.0 if presentation_review_page >= 3 else core_review_fov))))
 	camera.look_at(target, Vector3.UP)

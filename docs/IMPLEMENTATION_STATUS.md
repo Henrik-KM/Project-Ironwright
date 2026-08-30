@@ -6836,3 +6836,15 @@ roster checks and requires silent late-organic live review before merge.
 - added an aesthetic regression bound for the compact crown and beacon;
   exact late-run live review uses Godot Dummy audio with `--quiet-audio`, and
   no physical speakers are used.
+
+## Focused early-organic gallery lens pass — 2026-08-30
+
+- fitted the early-organic presentation-review lens and bounded row positions
+  so the broad outer wing, fan and limb silhouettes remain fully inside the
+  compact review frame;
+- kept the authored model scale, gameplay spacing, collision, animation and
+  tactical camera unchanged, preserving close detail without shrinking the
+  production roster;
+- added a native regression bound for the review-only lens; exact live review
+  continues through Godot Dummy audio with `--quiet-audio` and no physical
+  speakers.

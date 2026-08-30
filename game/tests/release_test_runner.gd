@@ -1069,7 +1069,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         var third_early_actor := early_review_page[2] as Node3D
         var fourth_early_actor := early_review_page[3] as Node3D
         _expect(third_early_actor != null and fourth_early_actor != null and third_early_actor.position.z > fourth_early_actor.position.z + 3.0, "Early organic presentation must separate its broad near row from the rear row so wing and limb silhouettes remain judgeable.")
-        _expect(is_equal_approx(first_early_actor.position.x, -4.4) and is_equal_approx(third_early_actor.position.x, 4.4), "Early organic presentation must use the widened triangular near-row composition.")
+        _expect(is_equal_approx(first_early_actor.position.x, -4.0) and is_equal_approx(third_early_actor.position.x, 4.0), "Early organic presentation must use the fitted triangular near-row composition.")
     world._show_presentation_review_page(2)
     await process_frame
     var late_review_page: Array = world.presentation_review_pages[2]
@@ -1193,7 +1193,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
                 _expect(staged_actor != null and absf(staged_actor.position.x) <= x_limit, "Organic presentation pages must keep every staged family fully inside the bounded two-row review frame.")
             if core_page == 2:
                 _expect(absf((core_actors[3] as Node3D).position.z - (core_actors[0] as Node3D).position.z) > 4.0, "Late-organic presentation must give its broadest shells a deeper second row so layered silhouettes do not merge.")
-            _expect(world.camera.fov <= 46.5, "Organic presentation pages must use a close camera frame for anatomy review.")
+            _expect(world.camera.fov <= 54.5, "Organic presentation pages must use a bounded close camera frame for anatomy review.")
         if core_page >= 1:
             var organic_front_fill := world.presentation_review_stage.get_node_or_null("ReviewFrontFill") as OmniLight3D
             var organic_cool_light := world.presentation_review_stage.get_node_or_null("ReviewCoolLight") as OmniLight3D

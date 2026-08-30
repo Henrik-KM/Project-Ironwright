@@ -3057,3 +3057,13 @@ state or the separate post-victory sanctuary crown. The exact
 `--complete-objective-review` frame must be checked with Godot Dummy audio and
 `--quiet-audio`; no physical speakers are used. Broader human production-art
 acceptance remains open.
+
+# Focused early-organic gallery lens pass — 2026-08-30
+
+The early-organic gallery now uses a wider review-only lens and fitted row
+positions. This keeps the broad outer family silhouettes fully inside the
+compact frame while retaining their authored scale and close anatomy detail.
+Gameplay camera, collision, animation, tactical spacing and model resources are
+unchanged. The exact live review uses Godot Dummy audio with `--quiet-audio`;
+no physical speakers are used. Broader human production-art acceptance remains
+open.

@@ -2125,6 +2125,7 @@ func _run_all() -> void:
         release_world._start_presentation_review()
         release_world._show_presentation_review_page(1)
         _expect(release_world.presentation_review_camera_desired.z <= 9.5 and release_world.presentation_review_camera_target.y >= 1.1, "The early and late organic galleries must use a closer detail frame so authored creature anatomy remains judgeable at review distance.")
+        _expect(release_world.camera != null and release_world.camera.fov >= 53.0, "The early organic gallery must use a wider review lens so the broad outer silhouettes remain fully inside the compact frame.")
         var skitterling_review_actor: Node3D
         for review_actor in release_world.presentation_review_pages[1]:
             var candidate := review_actor as Node3D
