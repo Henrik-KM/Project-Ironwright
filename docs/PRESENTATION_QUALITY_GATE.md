@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Autonomous outpost activity pass
+
+Tiered outposts now carry a bounded role-coloured service rotor on the
+existing crown. The rotor runs at a quiet idle speed and visibly accelerates
+for harvesting, defence, scouting, repair, and rebuilding, giving autonomous
+work a readable machine-life signal without changing collision, scheduling,
+queues, resources, or player workload. Live review uses Godot Dummy audio with
+`--quiet-audio`; no physical speakers are used.
+
 ## 2026-08-30 — Outpost service-riser silhouette pass
 
 The autonomous outpost now carries a bounded presentation-only vertical

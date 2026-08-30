@@ -1522,6 +1522,7 @@ func _run_all() -> void:
         _expect(_find_named(sample, "CoreShelterCore") != null and _find_named(sample, "CoreVent") != null, "Outposts must use the high-definition shelter and service-surface treatment.")
         _expect(_find_named(sample, "OutpostServiceSpine") != null and _find_named(sample, "ServiceSpineHousing") != null and _find_named(sample, "ServiceSpinePanel") != null, "Tiered outposts must expose a coherent high-definition service spine behind their role hardware.")
         _expect(_find_named(sample, "OutpostServiceRiser") != null and _find_named(sample, "ServiceRiserHousing") != null and _find_named(sample, "ServiceRiserFrontPanel") != null and _find_named(sample, "ServiceRiserAccessCollar3") != null, "Tiered outposts must expose a bounded vertical service riser and tier access collars so stacked decks read as one grounded shelter.")
+        _expect(_find_named(sample, "ServiceActivityRotor") != null and _find_named(sample, "ServiceActivityHub") != null and _find_named(sample, "ServiceActivityBlade02") != null, "Tiered outposts must expose a bounded role-coloured service rotor so autonomous work reads as visible machine activity rather than a static prop.")
         _expect(_find_named(sample, "OutpostLoadPylonLF") != null and _find_named(sample, "OutpostLoadPylonRB") != null and _find_named(sample, "OutpostLoadPylonCollar3LF") != null, "Tiered outposts must expose continuous load pylons and tier collars so stacked frames read as one grounded machine structure.")
         _expect(_find_named(sample, "ServiceSpineLouver") != null and _find_named(sample, "ServiceSpineRoleBadge") != null and _find_named(sample, "ServiceSpineBeacon") != null, "Tiered outposts must expose bounded service ventilation, role identity and status hardware.")
         var shell_core := _find_named(sample, "CoreShelterCore") as MeshInstance3D
@@ -1549,7 +1550,10 @@ func _run_all() -> void:
         _expect(sample.presentation_status == &"idle" and is_zero_approx(sample.presentation_activity), "Healthy outposts must begin with a quiet presentation state.")
         sample._set_presentation_activity(StringName(outpost_roles[index]), 1.0, 0.6)
         _expect(sample.presentation_status == StringName(outpost_roles[index]) and sample.presentation_activity > 0.9, "Outpost presentation activity must expose the autonomous role action without changing simulation state.")
+        var rotor := _find_named(sample, "ServiceActivityRotor") as Node3D
+        var rotor_rotation_before := rotor.rotation.y if rotor != null else 0.0
         sample._process(0.5)
+        _expect(rotor != null and absf(rotor.rotation.y - rotor_rotation_before) > 0.02, "Outpost autonomous activity must visibly animate the service rotor while the role action is active.")
         _expect(sample.presentation_activity < 1.0 and sample.presentation_activity > 0.0, "Outpost presentation activity must decay after a bounded work pulse.")
         sample.apply_damage(sample.maximum_health * 0.68)
         _expect(bool(_find_named(sample, "OutpostDamagePresentation").visible) and bool(_find_named(sample, "OutpostDamageLeak00").visible), "Damaged outposts must reveal scar and leak presentation at meaningful integrity loss.")

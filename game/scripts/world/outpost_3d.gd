@@ -28,6 +28,8 @@ var _damage_root: Node3D
 var _damage_scar: Node3D
 var _damage_leak: Node3D
 var _critical_light: OmniLight3D
+var _activity_motion_root: Node3D
+var _presentation_clock: float = 0.0
 var _repair_clock: float = 0.0
 var _role_clock: float = 0.0
 var _weapon_cooldown: float = 0.0
@@ -72,6 +74,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+    _presentation_clock += delta
     presentation_activity = move_toward(presentation_activity, 0.0, delta * 0.72)
     _presentation_status_clock = maxf(0.0, _presentation_status_clock - delta)
     if _presentation_status_clock <= 0.0 and presentation_activity <= 0.01:
@@ -80,6 +83,7 @@ func _process(delta: float) -> void:
         presentation_activity = 0.0
         presentation_status = &"destroyed"
         return
+    _animate_activity(delta)
     _repair_clock += delta
     _role_clock += delta
     _weapon_cooldown = maxf(0.0, _weapon_cooldown - delta)
@@ -286,12 +290,28 @@ func _set_presentation_activity(status: StringName, strength: float, seconds: fl
         activity_changed.emit(self, status)
 
 
+func _animate_activity(_delta: float) -> void:
+    if _activity_motion_root == null:
+        return
+    # The rotor is a single bounded presentation cue. Its speed rises while
+    # an autonomous action is active and settles to a quiet maintenance crawl
+    # at idle, so the outpost visibly works without simulating another task.
+    var activity := clampf(presentation_activity, 0.0, 1.0)
+    var speed := lerpf(0.12, 0.72, activity)
+    _activity_motion_root.rotation.y = fmod(_presentation_clock * speed, TAU)
+
+
 func set_presentation_review_mode() -> void:
     # The neutral gallery has a stronger shared key than a tactical scene. Use
     # private material copies so role signals retain their colour without
     # turning the small shelter and repair pad into clipped white highlights.
     if _model_root == null:
         return
+    # The release review pauses the world so the reviewer can inspect each
+    # page. Keep only this presentation fixture processing so its bounded
+    # service rotor remains visibly alive without advancing simulation.
+    process_mode = Node.PROCESS_MODE_ALWAYS
+    set_process(true)
     for node in _model_root.find_children("*", "MeshInstance3D", true, false):
         var mesh_instance := node as MeshInstance3D
         if mesh_instance == null:
@@ -360,6 +380,7 @@ func _add_strut(
 func _refresh_visuals() -> void:
     if _model_root == null:
         return
+    _activity_motion_root = null
     for child in _model_root.get_children():
         child.free()
 
@@ -777,6 +798,28 @@ func _refresh_visuals() -> void:
             "ServiceCrownBrace%s" % ("Left" if side < 0.0 else "Right"),
             0.045
         )
+
+    # A role-coloured service rotor makes autonomous work readable in motion:
+    # three compact blades orbit the crown's hub while the outpost harvests,
+    # defends, scouts, repairs or rebuilds. It is presentation-only and adds
+    # no collision, navigation, scheduling or player-managed maintenance.
+    var activity_motion := Node3D.new()
+    activity_motion.name = "ServiceActivityRotor"
+    activity_motion.position = Vector3(0.0, crown_y + 0.18, 0.12)
+    crown.add_child(activity_motion)
+    ModelKit3D.add_sphere(activity_motion, 0.1, Vector3.ZERO, glow, Vector3(1.0, 0.7, 1.0), "ServiceActivityHub")
+    for blade_index in range(3):
+        var blade_angle := TAU * float(blade_index) / 3.0
+        ModelKit3D.add_beveled_box(
+            activity_motion,
+            Vector3(0.09, 0.08, 0.42),
+            Vector3(cos(blade_angle) * 0.3, 0.0, sin(blade_angle) * 0.3),
+            tier_signal,
+            Vector3(0.0, -blade_angle, 0.0),
+            "ServiceActivityBlade%02d" % blade_index,
+            0.12
+        )
+    _activity_motion_root = activity_motion
 
     var role_signature := Node3D.new()
     role_signature.name = "OutpostRoleSignature"

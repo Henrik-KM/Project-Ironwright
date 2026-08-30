@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused autonomous outpost activity pass — 2026-08-30
+
+Tiered outposts now carry a bounded role-coloured service rotor on the
+existing crown. It turns at a quiet maintenance crawl and accelerates while
+harvesting, defending, scouting, repairing, or rebuilding, making autonomous
+work visibly present without adding collision, scheduling, queues, resources,
+or player-managed maintenance. Aesthetic regression coverage verifies the
+rotor hierarchy and active motion.
+
 ## Focused outpost silhouette pass — 2026-08-30
 
 The autonomous outpost now carries a bounded presentation-only service riser
