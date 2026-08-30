@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Buried Laboratories viewport-detail review
+
+The three authored containment vessels now carry front-facing violet
+observation viewports nested inside dense oxidized service rings. The added
+assembly gives the laboratory apparatus a readable specimen-facing focal
+surface at the exact remote review distance while remaining presentation-only
+and parented to the existing vessel sockets. Live review uses Godot Dummy audio
+with `--quiet-audio`; no physical speakers are used.
+
 ## 2026-08-30 — Heartforge sanctuary music review
 
 The release soundtrack now transitions to a distinct warm sanctuary loop while

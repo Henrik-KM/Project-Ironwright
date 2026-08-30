@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Buried Laboratories viewport-detail pass — 2026-08-30
+
+Each authored containment vessel now carries a shallow violet observation
+viewport inside a dense oxidized service ring. The assembly is parented to the
+existing vessel socket, strengthening the laboratory focal read at compact
+review distance without changing collision, route, ecology, extraction state,
+operation timing or player workload. The asset manifest and aesthetic gate
+cover the new nodes; live review remains under Godot Dummy audio and
+`--quiet-audio`, with no physical speakers used.
+
 ## Focused Heartforge sanctuary music pass — 2026-08-30
 
 The release soundtrack now has a distinct warm sanctuary state near the

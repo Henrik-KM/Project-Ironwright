@@ -97,6 +97,11 @@ def main() -> None:
         "Seep": mesh("OrganicSeep", add_uv_sphere(builder, 0.52, organic, 18, 28)),
         "Brace": mesh("ContainmentBrace", add_beveled_box(builder, (0.16, 3.8, 0.16), frame, 0.025)),
         "VesselPort": mesh("ContainmentVesselPort", add_cylinder(builder, 0.18, 0.16, warning, 18)),
+        # A front observation viewport gives each containment vessel a clear
+        # laboratory-facing focal surface. Keep it shallow and parent it to
+        # the existing vessel assembly so it remains presentation-only.
+        "VesselViewport": mesh("ContainmentVesselViewport", add_ellipsoid(builder, (0.42, 0.56, 0.075), core, 20, 32)),
+        "VesselViewportRing": mesh("ContainmentVesselViewportRing", add_torus(builder, 0.52, 0.065, warning, 48, 10)),
         "VesselClamp": mesh("ContainmentVesselClamp", add_beveled_box(builder, (0.12, 0.28, 1.7), frame, 0.025)),
         "TransferCarriage": mesh("TransferCarriage", add_beveled_box(builder, (1.45, 0.16, 1.18), warning, 0.035)),
         "RailStop": mesh("TransferRailStop", add_cylinder(builder, 0.15, 0.16, warning, 18)),
@@ -170,6 +175,8 @@ def main() -> None:
         add_node("BuriedLabsVesselBaseRing%d" % index, mesh_ids["VesselBaseRing"], (0.0, 0.22, 0.0), extras={"surface": "containment_base_ring"}, parent=vessel)
         add_node("BuriedLabsVesselNeck%d" % index, mesh_ids["VesselNeck"], (0.0, 4.58, 0.0), extras={"surface": "containment_service_neck"}, parent=vessel)
         add_node("BuriedLabsVesselCore%d" % index, mesh_ids["Core"], (0.0, 2.28, 0.0), extras={"socket_type": "containment_core"}, parent=vessel)
+        add_node("BuriedLabsVesselViewport%d" % index, mesh_ids["VesselViewport"], (0.0, 2.30, 1.18), extras={"surface": "containment_observation_viewport"}, parent=vessel)
+        add_node("BuriedLabsVesselViewportRing%d" % index, mesh_ids["VesselViewportRing"], (0.0, 2.30, 1.27), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "containment_observation_service_ring"}, parent=vessel)
         add_node("BuriedLabsVesselLight%d" % index, mesh_ids["Light"], (0.0, 4.72, 0.0), extras={"socket_type": "containment_light"}, parent=vessel)
         add_node("BuriedLabsVesselPort%d" % index, mesh_ids["VesselPort"], (0.0, 4.84, 0.0), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "containment_service_port"}, parent=vessel)
         add_node("BuriedLabsVesselClampL%d" % index, mesh_ids["VesselClamp"], (-1.22, 2.1, 0.0), rotation=(0.0, 0.0, -0.14), extras={"surface": "containment_clamp"}, parent=vessel)
@@ -239,7 +246,7 @@ def main() -> None:
             "ironwright_asset_id": "buried.labs.v1",
             "asset_quality": "authored_high_definition",
             "manufactured_surface_profile": "chamfered_high_definition",
-            "required_nodes": ["BuriedLabsModel", "BuriedLabsContainmentHall", "BuriedLabsVessel0", "BuriedLabsVesselCore0", "BuriedLabsVesselCollarTop0", "BuriedLabsVesselCollarBottom0", "BuriedLabsVesselBaseRing0", "BuriedLabsVesselNeck0", "BuriedLabsVesselPort0", "BuriedLabsVesselClampL0", "BuriedLabsTransferRail", "BuriedLabsTransferCarriage", "BuriedLabsTransferRailStopL", "BuriedLabsContainmentDoor", "BuriedLabsContainmentDoorJambL", "BuriedLabsContainmentDoorLintel", "BuriedLabsWarningPanelFrame", "BuriedLabsCableClamp0", "BuriedLabsOrganicSeep0", "BuriedLabsOrganicTendril0_0", "BuriedLabsExtractionPylonL", "BuriedLabsExtractionBeam", "BuriedLabsExtractionCradle", "BuriedLabsGenomePrism", "BuriedLabsGenomePrismRing", "BuriedLabsExtractionServicePanelFrame", "ProductionAssetMarker"],
+            "required_nodes": ["BuriedLabsModel", "BuriedLabsContainmentHall", "BuriedLabsVessel0", "BuriedLabsVesselCore0", "BuriedLabsVesselViewport0", "BuriedLabsVesselViewportRing0", "BuriedLabsVesselCollarTop0", "BuriedLabsVesselCollarBottom0", "BuriedLabsVesselBaseRing0", "BuriedLabsVesselNeck0", "BuriedLabsVesselPort0", "BuriedLabsVesselClampL0", "BuriedLabsTransferRail", "BuriedLabsTransferCarriage", "BuriedLabsTransferRailStopL", "BuriedLabsContainmentDoor", "BuriedLabsContainmentDoorJambL", "BuriedLabsContainmentDoorLintel", "BuriedLabsWarningPanelFrame", "BuriedLabsCableClamp0", "BuriedLabsOrganicSeep0", "BuriedLabsOrganicTendril0_0", "BuriedLabsExtractionPylonL", "BuriedLabsExtractionBeam", "BuriedLabsExtractionCradle", "BuriedLabsGenomePrism", "BuriedLabsGenomePrismRing", "BuriedLabsExtractionServicePanelFrame", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
