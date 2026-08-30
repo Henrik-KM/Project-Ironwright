@@ -49,7 +49,7 @@ func _process(delta: float) -> void:
         return
     operations_hud.update_operations(
         long_operation_director.available_operations(),
-        long_operation_director.operation_summary(),
+        _localized_long_operations_summary(),
         long_operation_director.has_active_operations(),
         long_operation_director.active_operation_count(),
         long_operation_director.active_operation_limit()
@@ -987,6 +987,25 @@ func _localized_long_operation_summary() -> String:
     var state := String(long_operation_director.active_operation.get("state", "unknown"))
     var localized_state := _localized_text("operation.state.%s" % state, state.capitalize())
     return _localized_text("hud.operation.summary", "%s · %s", [operation_name, localized_state])
+
+
+func _localized_long_operations_summary() -> String:
+    if long_operation_director == null:
+        return _localized_text("hud.operation.none", "No long-range operation")
+    var active_operations: Array[Dictionary] = long_operation_director.active_operations
+    if active_operations.is_empty():
+        return _localized_text("hud.operation.none", "No long-range operation")
+    var summaries: Array[String] = []
+    for operation in active_operations:
+        var operation_id := StringName(str(operation.get("id", "operation")))
+        var entry: Dictionary = operation.get("data", {})
+        var operation_name := _localized_operation_name(operation_id, str(entry.get("display_name", "Operation")))
+        var state := String(str(operation.get("state", "unknown")))
+        var localized_state := _localized_text("operation.state.%s" % state, state.capitalize())
+        summaries.append(_localized_text("hud.operation.summary", "{0} · {1}", [operation_name, localized_state]))
+    if summaries.size() == 1:
+        return summaries[0]
+    return _localized_text("command.operations.active_summary", "{0} long-range groups active · {1}", [summaries.size(), " · ".join(summaries)])
 
 
 func _localized_long_operation_report(operation_id: StringName, state: StringName, detail: String) -> String:

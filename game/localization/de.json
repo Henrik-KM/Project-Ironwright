@@ -628,6 +628,7 @@
     "command.endgame.status": "Die finale Krise wird vom Spieler ausgelöst und hat eine erkennbare Ursache. Es gibt keinen wiederkehrenden Wellenplan.",
     "command.archive.status": "{0} Erzählstrang{1} · {2} Aufzeichnung{3} aus physischen Entdeckungen geborgen.\nDie Stränge entstehen aus dem, was die Maschinen tatsächlich fanden; diese Geschichte ist optional und erzeugt nie eine Wartungsaufgabe.",
     "command.operations.status": "Jede Gruppe reist durch dieselbe beständige Welt und liefert Belohnungen erst nach der Rückkehr.",
+    "command.operations.active_summary": "{0} Langstreckengruppen aktiv · {1}",
     "command.archive.empty_requirements": "Erkunde die Welt und schließe echte Entdeckungen ab, um die verbliebenen Aufzeichnungen der Stadt zu bergen.",
     "command.empty_requirements": "Setze das aktuelle strategische Ziel fort. Die Oberfläche wird erst bei einer echten Wahl aktiv.",
     "command.archive.story_thread": "ERZÄHLSTRANG",

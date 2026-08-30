@@ -628,6 +628,7 @@
     "command.endgame.status": "The final crisis is player-triggered and causal. No recurring wave schedule exists.",
     "command.archive.status": "{0} story thread{1} · {2} record{3} recovered from physical discoveries.\nThreads assemble from what the machines actually found; this history is optional and never creates another maintenance task.",
     "command.operations.status": "Every group travels through the same persistent world and delivers rewards only after returning.",
+    "command.operations.active_summary": "{0} long-range groups active · {1}",
     "command.archive.empty_requirements": "Explore and complete real discoveries to recover the town's remaining records.",
     "command.empty_requirements": "Continue the current strategic objective. The screen becomes actionable only when a real choice exists.",
     "command.archive.story_thread": "STORY THREAD",

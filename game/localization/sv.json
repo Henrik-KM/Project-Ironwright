@@ -628,6 +628,7 @@
     "command.endgame.status": "Den slutliga krisen utlöses av spelaren och har en orsak. Inget återkommande vågschema finns.",
     "command.archive.status": "{0} berättelsetråd{1} · {2} fynd{3} hämtade från fysiska upptäckter.\nTrådarna sätts samman av det maskinerna faktiskt hittade; historien är frivillig och skapar aldrig en underhållsuppgift.",
     "command.operations.status": "Varje grupp färdas genom samma bestående värld och levererar belöningar först efter återkomsten.",
+    "command.operations.active_summary": "{0} långdistansgrupper aktiva · {1}",
     "command.archive.empty_requirements": "Utforska och slutför verkliga upptäckter för att hitta stadens återstående arkiv.",
     "command.empty_requirements": "Fortsätt det aktuella strategiska målet. Skärmen blir aktiv först när ett verkligt val finns.",
     "command.archive.story_thread": "BERÄTTELSETRÅD",

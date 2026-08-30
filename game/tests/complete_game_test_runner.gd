@@ -687,6 +687,11 @@ func _run_all() -> void:
     _expect(world.long_operation_director.active_operation_count() == 2, "Parallel long-range save/load must restore both independent formations.")
     _expect(world.long_operation_director.follow_operation_id() == StringName(str(world.long_operation_director.active_operations[0].get("id", ""))), "Save/load must return the follow camera to the stable primary formation.")
     _expect(world.autonomy_director.external_operation_member_count() == first_parallel_members.size() + second_parallel_members.size(), "Parallel long-range save/load must restore both team reservations.")
+    if world.localization_service != null:
+        world.localization_service.set_locale(&"de")
+        var localized_parallel_summary := world._localized_long_operations_summary()
+        _expect("Langstreckengruppen" in localized_parallel_summary and "long-range" not in localized_parallel_summary, "The active parallel-operation summary must use the selected release locale.")
+        world.localization_service.set_locale(&"en")
     var first_parallel_id := StringName(str(world.long_operation_director.active_operations[0].get("id", "")))
     var second_parallel_id := StringName(str(world.long_operation_director.active_operations[1].get("id", "")))
     _expect(_finish_active_operation(world, first_parallel_id), "The first parallel long-range formation must complete through its physical return path.")

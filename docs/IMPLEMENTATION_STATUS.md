@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused parallel-operation status localization pass — 2026-08-30
+
+- localized the active multi-formation summary shown in the real operations
+  surface, so concurrent Signal Lattice status no longer leaks the English
+  phrase `long-range groups active` into German or Swedish runs;
+- kept operation identity and state resolution tied to stable operation IDs,
+  with the selected release locale applied to both the group names and state;
+- added complete-run coverage for the actual two-formation summary while
+  preserving the bounded operations panel and all existing autonomy rules.
+
 ## Focused remote follow-focus pass — 2026-08-30
 
 - added a bounded follow-focus cycle for the late Signal Lattice state: `G`
