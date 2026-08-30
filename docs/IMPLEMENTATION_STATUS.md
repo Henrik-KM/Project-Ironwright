@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused authored salvage landmark pass — 2026-08-30
+
+The opening salvage target now uses an original authored high-definition glTF
+shell with a rounded load-bearing chassis, four wheel assemblies, service
+access, pipework, hazard hardware, broken glass and a readable status lens.
+The existing collision, scrap extraction, noise, channel lockout, depletion
+and scale-down rules remain authoritative; the previous layered procedural
+model remains an explicit fallback if the imported package cannot load. The
+asset manifest, deterministic source builder, import gate and aesthetic
+runner cover the new presentation contract. Runtime review remains silent
+through Godot Dummy audio with `--quiet-audio`; no physical speakers are used.
+
 ## Focused complete-objective review interaction pass — 2026-08-30
 
 The non-saving late-run objective fixture now keeps its functioning outpost

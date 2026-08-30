@@ -1,5 +1,17 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Authored salvage landmark pass
+
+The opening salvage wreck now uses an original imported high-definition glTF
+package rather than relying on runtime primitives for its primary silhouette.
+Its close-range read is carried by a rounded chassis, wheel and rim hardware,
+service panel, pipework, hazard markings, broken glass and a cyan status lens.
+The existing collision and interaction contract is unchanged, and a bounded
+procedural fallback is retained with an explicit engine error if the authored
+package cannot load. The source builder, manifest, importer and aesthetic
+regression all pass. Live review uses Godot Dummy audio with `--quiet-audio`;
+no physical speakers are used.
+
 ## 2026-08-30 — Complete-objective review interaction pass
 
 The non-saving complete-objective review now keeps its three functioning

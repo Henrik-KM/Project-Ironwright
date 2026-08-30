@@ -1,6 +1,8 @@
 class_name SalvagePile3D
 extends StaticBody3D
 
+const AUTHORED_MODEL_SCENE := "res://assets/salvage/salvage.gltf"
+
 signal depleted(pile: SalvagePile3D)
 signal amount_changed(pile: SalvagePile3D, remaining: int)
 
@@ -73,6 +75,28 @@ func _build_visuals() -> void:
     _model_root = Node3D.new()
     _model_root.name = "SalvageModel"
     add_child(_model_root)
+
+    if _attach_authored_visuals():
+        return
+
+    push_error("Opening salvage authored scene unavailable; using the bounded procedural fallback: %s" % AUTHORED_MODEL_SCENE)
+    _build_procedural_visuals()
+
+
+func _attach_authored_visuals() -> bool:
+    var resource := ResourceLoader.load(AUTHORED_MODEL_SCENE, "PackedScene", ResourceLoader.CACHE_MODE_REUSE)
+    if not (resource is PackedScene):
+        return false
+    var authored_model := (resource as PackedScene).instantiate() as Node3D
+    if authored_model == null:
+        return false
+    authored_model.name = "SalvageAuthoredModel"
+    _model_root.add_child(authored_model)
+    _status_light = ModelKit3D.add_glow_light(_model_root, Vector3(-0.74, 1.05, -0.64), Color("5dc5cf"), 0.28, 2.4)
+    return true
+
+
+func _build_procedural_visuals() -> void:
 
     var iron := ModelKit3D.material(Color("3d4240"), 0.68, 0.48)
     var rust := ModelKit3D.material(Color("77472c"), 0.35, 0.8)

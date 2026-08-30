@@ -1,0 +1,11 @@
+{
+  "asset_id": "salvage.opening_wreck.v1",
+  "asset_quality": "authored_high_definition",
+  "runtime_scene": "res://assets/salvage/salvage.gltf",
+  "source_builder": "game/assets/salvage/source/build_salvage_asset.py",
+  "source_type": "original_project_ironwright_shared_mesh_builder",
+  "third_party_assets": [],
+  "presentation_only": true,
+  "stable_nodes": ["SalvageModel", "WreckChassis", "WreckCore", "WreckCabin", "WreckServicePanel", "WreckServiceWindow", "WreckPipeLeft", "WreckStatusLens", "BrokenGlassShard00", "ProductionAssetMarker"],
+  "socket_contract": ["salvage_target", "status_lens", "manual_salvage_access"]
+}

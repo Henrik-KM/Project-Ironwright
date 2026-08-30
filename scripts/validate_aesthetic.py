@@ -45,6 +45,9 @@ REQUIRED = [
     "game/assets/mechromancer/mechromancer_skin_normal.png",
     "game/assets/mechromancer/source/build_mechromancer_blend.py",
     "game/assets/mechromancer/source/build_mechromancer_asset.py",
+    "game/assets/salvage/source/build_salvage_asset.py",
+    "game/assets/salvage/salvage.gltf",
+    "game/data/salvage_asset_manifest.json",
     "game/data/mechromancer_asset_manifest.json",
     "game/assets/organic_families/source/build_authored_organic_assets.py",
     "game/assets/thornback/thornback.gltf",
@@ -774,6 +777,41 @@ def validate_heartforge_asset() -> None:
             fail(f"Heartforge {mesh_name} must retain at least {minimum_vertices} authored vertices.")
 
 
+def validate_salvage_asset() -> None:
+    manifest_path = ROOT / "game/data/salvage_asset_manifest.json"
+    gltf_path = ROOT / "game/assets/salvage/salvage.gltf"
+    source_path = ROOT / "game/assets/salvage/source/build_salvage_asset.py"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    gltf = json.loads(gltf_path.read_text(encoding="utf-8"))
+    source = source_path.read_text(encoding="utf-8")
+    if manifest.get("asset_id") != "salvage.opening_wreck.v1":
+        fail("Salvage asset manifest has an unexpected stable asset ID.")
+    if manifest.get("runtime_scene") != "res://assets/salvage/salvage.gltf":
+        fail("Salvage asset manifest points at an unexpected runtime model.")
+    if "add_ellipsoid" not in source or "add_torus" not in source:
+        fail("Salvage source must retain smooth chassis and wheel-rim geometry.")
+    root_node_extras = next(
+        (node.get("extras", {}) for node in gltf.get("nodes", []) if node.get("name") == "SalvageModel"),
+        {},
+    )
+    gltf_asset_id = gltf.get("extras", {}).get("ironwright_asset_id") or root_node_extras.get("ironwright_asset_id")
+    if gltf_asset_id != manifest["asset_id"]:
+        fail("Salvage glTF and manifest asset IDs must match.")
+    node_names = {str(node.get("name")) for node in gltf.get("nodes", [])}
+    for required in manifest.get("stable_nodes", []):
+        if required not in node_names:
+            fail(f"Salvage glTF is missing required node: {required}")
+    mesh_by_name = {str(mesh.get("name")): mesh for mesh in gltf.get("meshes", [])}
+    for mesh_name, minimum_vertices in {"Chassis": 900, "Wheel": 50}.items():
+        mesh = mesh_by_name.get(mesh_name)
+        if not mesh or not mesh.get("primitives"):
+            fail(f"Salvage glTF is missing the {mesh_name} mesh required for close-camera review.")
+        position_accessor_index = mesh["primitives"][0].get("attributes", {}).get("POSITION")
+        vertex_count = gltf.get("accessors", [])[position_accessor_index].get("count", 0) if position_accessor_index is not None else 0
+        if vertex_count < minimum_vertices:
+            fail(f"Salvage {mesh_name} mesh must retain at least {minimum_vertices} authored vertices.")
+
+
 def validate_authored_organic_assets() -> None:
     for family, expected in AUTHORED_ORGANIC_ASSETS.items():
         manifest_path = ROOT / f"game/data/{family}_asset_manifest.json"
@@ -938,6 +976,7 @@ def main() -> int:
 
         validate_mechromancer_asset()
         validate_heartforge_asset()
+        validate_salvage_asset()
         validate_legacy_organic_source_tessellation()
         validate_shared_organic_source_tessellation()
         validate_mechromancer_source_tessellation()
