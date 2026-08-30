@@ -182,11 +182,11 @@ otherwise create an unsafe partial action.
 
 The release candidate supports keyboard and mouse plus a standard gamepad input map.
 
-Controller bindings cover movement, interaction, cancellation, pause, follow camera, command map, evolution, outposts, long-range operations, final protocols and the three macro machine focuses. Controller input is registered at runtime and protected against early-scene initialization order.
+Controller bindings cover movement, interaction, cancellation, pause, follow camera, follow-focus cycling, command map, evolution, outposts, long-range operations, final protocols and the three macro machine focuses. Controller input is registered at runtime and protected against early-scene initialization order. When Signal Lattice is active, the right-stick click cycles the camera between the two autonomous long-range formations; the player still follows one formation at a time.
 
 Keyboard and mouse command access remains available in the same release shell:
 `T` opens Heartforge evolution and `O` opens autonomous outpost projects, while
-the existing `P` operations and `V` final-protocol paths remain intact.
+the existing `P` operations, `V` final-protocol and `G` follow-focus paths remain intact.
 
 Damage can produce optional controller vibration. The response scales with the proportion of health lost and can be disabled.
 

@@ -121,6 +121,9 @@ func _unhandled_input(event: InputEvent) -> void:
             if key == KEY_L:
                 _open_story_archive()
                 return
+            if key == KEY_G:
+                _cycle_follow_operation()
+                return
 
     super._unhandled_input(event)
 
@@ -523,10 +526,30 @@ func _authorize_long_operation(operation_id: StringName) -> void:
         return
     if long_operation_director.authorize(operation_id):
         _close_operations_hud()
+        long_operation_director.set_follow_operation(operation_id)
         follow_operation = true
         hud.push_notification(_localized_text("notification.long_operation.authorized", "LONG-RANGE OPERATION AUTHORIZED · FOLLOWS REAL STREETS · F TO TOGGLE FOLLOW"))
     else:
         hud.push_notification(_localized_text("notification.long_operation.unavailable", "OPERATION UNAVAILABLE · CHECK HEARTFORGE TIER, OUTPOSTS, SCRAP, TEAM COMPOSITION AND ACTIVE OPERATIONS"))
+
+
+func _cycle_follow_operation() -> void:
+    if long_operation_director == null:
+        return
+    var snapshot := long_operation_director.cycle_follow_operation()
+    if snapshot.is_empty():
+        hud.push_notification(_localized_text("notification.follow.none", "NO ACTIVE MACHINE GROUP TO FOLLOW"))
+        return
+    follow_operation = true
+    var operation_id := StringName(str(snapshot.get("id", "operation")))
+    var operation_name := _localized_operation_name(operation_id, str(snapshot.get("display_name", "Operation")))
+    var group_index := int(snapshot.get("index", 0)) + 1
+    var group_count := int(snapshot.get("count", 1))
+    hud.push_notification(_localized_text(
+        "notification.follow.cycled",
+        "FOLLOWING {0} · GROUP {1}/{2} · G NEXT GROUP · F RETURN TO MECHROMANCER",
+        [operation_name.to_upper(), group_index, group_count]
+    ))
 
 
 func _authorize_adaptation(adaptation_id: StringName) -> void:

@@ -633,6 +633,7 @@ func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void
         &"iw_interact",
         &"iw_cancel",
         &"iw_follow",
+        &"iw_follow_next",
         &"iw_map",
         &"iw_pause",
         &"iw_evolution",
@@ -661,6 +662,7 @@ func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void
     var strategic_keyboard_bindings := {
         &"iw_evolution": KEY_T,
         &"iw_outposts": KEY_O,
+        &"iw_follow_next": KEY_G,
     }
     for action in strategic_keyboard_bindings:
         var expected_key: Key = strategic_keyboard_bindings[action]

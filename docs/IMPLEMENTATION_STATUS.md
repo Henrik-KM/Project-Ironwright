@@ -1,5 +1,19 @@
 # Implementation status
 
+## Focused remote follow-focus pass — 2026-08-30
+
+- added a bounded follow-focus cycle for the late Signal Lattice state: `G`
+  (or the controller right-stick click) moves the camera between the two active
+  long-range formations, while `F` still returns the view to the Mechromancer;
+- the selected formation's living midpoint, spread and physical route remain
+  the camera subject, with no individual movement orders or second management
+  dashboard introduced;
+- added save-safe focus normalization, English/German/Swedish release copy and
+  integration coverage proving the second formation is observable after
+  concurrent authorization and remains bounded after save/load;
+- live exact-export review remains silent-safe through Godot Dummy audio with
+  `--quiet-audio`.
+
 ## Focused Cathedral Quarter roofline milestone — 2026-08-30
 
 - added a bounded release-only roofline with paired pitched eaves, a five-panel

@@ -374,7 +374,7 @@ func _refresh() -> void:
         authorize_button.text = _text("command.operations.active", "OPERATION CAPACITY FULL · FOLLOW WITH F")
         if operation_count < operation_limit:
             authorize_button.text = _text("command.operations.authorize", "AUTHORIZE PHYSICAL OPERATION")
-        var operation_prefix := _text("command.operations.active_prefix", "ACTIVE GROUPS {0}/{1} · F TO FOLLOW\n", [operation_count, operation_limit]) if operation_active else ""
+        var operation_prefix := _text("command.operations.active_prefix", "ACTIVE GROUPS {0}/{1} · F FOLLOW · G NEXT GROUP\n", [operation_count, operation_limit]) if operation_active else ""
         var localized_roles := _localized_team_roles(item.get("team_roles", []))
         requirements_label.text = "%s%s\n%s" % [
             operation_prefix,

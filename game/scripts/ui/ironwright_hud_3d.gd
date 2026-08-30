@@ -166,7 +166,7 @@ func _build_ui() -> void:
 
     var focus_panel := _panel(Vector2(-520, -102), Vector2(498, 78), true, true)
     focus_panel.name = "CommandHelpPanel"
-    focus_help_label = _label(focus_panel, "1 DEFEND    2 SALVAGE    3 EXPEDITION    T EVOLVE    O OUTPOSTS    M MAP    F FOLLOW", 14, Color("b8c5c2"))
+    focus_help_label = _label(focus_panel, "1 DEFEND    2 SALVAGE    3 EXPEDITION    T EVOLVE    O OUTPOSTS    M MAP    F FOLLOW    G NEXT GROUP", 14, Color("b8c5c2"))
     focus_help_label.position = Vector2(16, 13)
     focus_help_label.size = Vector2(466, 50)
     focus_help_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -182,7 +182,7 @@ func _build_ui() -> void:
     forge_label.size = Vector2(468, 24)
     forge_bar = _progress(channel_panel, Vector2(16, 38), Vector2(468, 18), Color("d4a267"))
 
-    map_banner = _label(root_control, "COMMAND MAP · LIVE PHYSICAL POSITIONS · F TO FOLLOW ACTIVE GROUP", 17, Color("79d8dc"))
+    map_banner = _label(root_control, "COMMAND MAP · LIVE PHYSICAL POSITIONS · F TO FOLLOW ACTIVE GROUP · G NEXT GROUP", 17, Color("79d8dc"))
     map_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     map_banner.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     map_banner.set_anchors_preset(Control.PRESET_TOP_WIDE)
@@ -597,7 +597,7 @@ func refresh_localized_text() -> void:
     notification_heading.text = _text("hud.machine_reports", "MACHINE REPORTS")
     player_status_label.text = _text("hud.mechromancer_status", "MECHROMANCER · WEAK PISTOL")
     companion_status_label.text = _text("hud.bulwark_status", "BULWARK · PRIMARY PROTECTION")
-    focus_help_label.text = _text("hud.command_help", "1 DEFEND    2 SALVAGE    3 EXPEDITION    T EVOLVE    O OUTPOSTS    M MAP    F FOLLOW")
+    focus_help_label.text = _text("hud.command_help", "1 DEFEND    2 SALVAGE    3 EXPEDITION    T EVOLVE    O OUTPOSTS    M MAP    F FOLLOW    G NEXT GROUP")
     _refresh_resource_text()
     forge_title.text = _text("forge.title", "HEARTFORGE · MANUAL FABRICATION")
     forge_copy.text = _text("forge.description", "The Mechromancer must build every early machine personally. Fabrication takes time, emits noise, and disables the pistol. Automation is a later evolution.")

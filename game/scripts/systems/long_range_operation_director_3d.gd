@@ -37,6 +37,7 @@ var completed_operations: Array[StringName] = []
 var recovered_components: Array[StringName] = []
 var active_operation: Dictionary = {}
 var active_operations: Array[Dictionary] = []
+var _follow_operation_id: StringName = &""
 var route_memory: Dictionary = {}
 var casualty_records: Array[Dictionary] = []
 var load_errors: Array[String] = []
@@ -77,8 +78,10 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
     _prune_active_operations()
+    _normalize_follow_operation()
     if active_operations.is_empty():
         active_operation.clear()
+        _follow_operation_id = &""
         if operation_detail_director != null:
             operation_detail_director.clear_route_recovery()
         _sync_casualty_recovery_marker()
@@ -92,6 +95,7 @@ func _process(delta: float) -> void:
         active_operation = operation
         _update_active_operation(delta)
     _prune_active_operations()
+    _normalize_follow_operation()
     active_operation = active_operations[0] if not active_operations.is_empty() else {}
     _sync_route_recovery_marker()
     _sync_casualty_recovery_marker()
@@ -446,6 +450,8 @@ func authorize(operation_id: StringName) -> bool:
     }
     active_operations.append(new_operation)
     active_operation = new_operation
+    if _follow_operation_id == &"":
+        _follow_operation_id = operation_id
     autonomy_director.reserve_external_operation_members(team)
     _hold_nonmembers_at_home(team)
     var route_detail := "%s has departed as a cohesive physical group." % str(entry.get("display_name", String(operation_id)))
@@ -478,6 +484,19 @@ func _prune_active_operations() -> void:
     for index in range(active_operations.size() - 1, -1, -1):
         if active_operations[index].is_empty():
             active_operations.remove_at(index)
+
+
+func _normalize_follow_operation() -> void:
+    if active_operations.is_empty():
+        _follow_operation_id = &""
+        return
+    if _follow_operation_id == &"":
+        _follow_operation_id = StringName(str(active_operations[0].get("id", "")))
+        return
+    for operation in active_operations:
+        if StringName(str(operation.get("id", ""))) == _follow_operation_id:
+            return
+    _follow_operation_id = StringName(str(active_operations[0].get("id", "")))
 
 
 func _update_active_operation(delta: float) -> void:
@@ -920,13 +939,17 @@ func _hold_nonmembers_at_home(members: Array[RobotUnit3D]) -> void:
 
 
 func _living_members() -> Array[RobotUnit3D]:
+    return _living_members_for_operation(active_operation)
+
+
+func _living_members_for_operation(operation: Dictionary) -> Array[RobotUnit3D]:
     var result: Array[RobotUnit3D] = []
-    if active_operation.is_empty():
+    if operation.is_empty():
         return result
-    for raw_member in active_operation.get("members", []):
+    for raw_member in operation.get("members", []):
         if is_instance_valid(raw_member) and raw_member is RobotUnit3D and raw_member.is_alive():
             result.append(raw_member)
-    active_operation["members"] = result
+    operation["members"] = result
     return result
 
 
@@ -1027,7 +1050,8 @@ func _other_operation_active() -> bool:
 
 
 func get_follow_target() -> Node3D:
-    var members := _living_members()
+    var operation := _follow_operation()
+    var members := _living_members_for_operation(operation)
     return members[0] if not members.is_empty() else null
 
 
@@ -1035,7 +1059,8 @@ func get_follow_focus() -> Dictionary:
     ## The camera follows the formation's living center, not an arbitrary slot.
     ## Spread lets the release camera give a broad formation enough breathing
     ## room without turning every follow shot into a distant map view.
-    var members := _living_members()
+    var operation := _follow_operation()
+    var members := _living_members_for_operation(operation)
     if members.is_empty():
         return {}
     var center := Vector3.ZERO
@@ -1048,8 +1073,72 @@ func get_follow_focus() -> Dictionary:
     return {
         "center": center,
         "spread": spread,
-        "forward": active_operation.get("last_forward", Vector3.FORWARD),
+        "forward": operation.get("last_forward", Vector3.FORWARD),
         "member_count": members.size(),
+        "operation_id": StringName(str(operation.get("id", ""))),
+    }
+
+
+func _follow_operation() -> Dictionary:
+    _prune_active_operations()
+    _normalize_follow_operation()
+    for operation in active_operations:
+        if StringName(str(operation.get("id", ""))) == _follow_operation_id:
+            return operation
+    return {}
+
+
+func follow_operation_id() -> StringName:
+    _prune_active_operations()
+    _normalize_follow_operation()
+    return _follow_operation_id
+
+
+func set_follow_operation(operation_id: StringName) -> bool:
+    _prune_active_operations()
+    for operation in active_operations:
+        if StringName(str(operation.get("id", ""))) != operation_id:
+            continue
+        _follow_operation_id = operation_id
+        return true
+    _normalize_follow_operation()
+    return false
+
+
+func cycle_follow_operation() -> Dictionary:
+    _prune_active_operations()
+    if active_operations.is_empty():
+        _follow_operation_id = &""
+        return {}
+    _normalize_follow_operation()
+    var current_index := 0
+    for index in range(active_operations.size()):
+        if StringName(str(active_operations[index].get("id", ""))) == _follow_operation_id:
+            current_index = index
+            break
+    var next_index := posmod(current_index + 1, active_operations.size())
+    _follow_operation_id = StringName(str(active_operations[next_index].get("id", "")))
+    return follow_operation_snapshot()
+
+
+func follow_operation_snapshot() -> Dictionary:
+    _prune_active_operations()
+    var operation := _follow_operation()
+    if operation.is_empty():
+        return {}
+    var entry: Dictionary = operation.get("data", {})
+    var operation_id := StringName(str(operation.get("id", "")))
+    var index := 0
+    for candidate_index in range(active_operations.size()):
+        if StringName(str(active_operations[candidate_index].get("id", ""))) == operation_id:
+            index = candidate_index
+            break
+    return {
+        "id": operation_id,
+        "display_name": str(entry.get("display_name", "Operation")),
+        "state": StringName(str(operation.get("state", "unknown"))),
+        "index": index,
+        "count": active_operations.size(),
     }
 
 
@@ -1113,6 +1202,7 @@ func restore_from_dictionary(data: Dictionary) -> void:
     recovered_components.clear()
     active_operations.clear()
     active_operation.clear()
+    _follow_operation_id = &""
     casualty_records.clear()
     for raw_operation in data.get("completed_operations", []):
         var operation_id := StringName(str(raw_operation))
@@ -1160,6 +1250,7 @@ func restore_from_dictionary(data: Dictionary) -> void:
     else:
         _restore_active_operation(data.get("active_operation", {}))
     _prune_active_operations()
+    _normalize_follow_operation()
     active_operation = active_operations[0] if not active_operations.is_empty() else {}
 
 

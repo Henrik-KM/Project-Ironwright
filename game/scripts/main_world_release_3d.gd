@@ -2831,6 +2831,8 @@ func _handle_controller_actions() -> void:
 		return
 	if Input.is_action_just_pressed(&"iw_interact"):
 		_handle_context_interaction()
+	elif Input.is_action_just_pressed(&"iw_follow_next"):
+		_cycle_follow_operation()
 	elif Input.is_action_just_pressed(&"iw_follow"):
 		follow_operation = not follow_operation
 		hud.push_notification(_localized_runtime_text("notification.follow.active" if follow_operation else "notification.follow.returned", "FOLLOWING ACTIVE MACHINE GROUP" if follow_operation else "CAMERA RETURNED TO THE MECHROMANCER"))
