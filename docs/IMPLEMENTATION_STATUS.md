@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused shared late-organic torso-sheath pass — 2026-08-30
+
+The seven late organic authored shells now carry one dense, vertically folded
+ventral sheath behind their existing torso ribs. This closes the remaining
+stacked-plate read at close review distance and gives each family a continuous
+living body surface while keeping the family-specific focal organs visible.
+The addition is presentation-only: sockets, authored animation, collision,
+ecology, combat, saves and player workload are unchanged. The asset manifests
+and aesthetic runner cover the stable node; live review remains silent through
+Godot Dummy audio with `--quiet-audio`, with no physical speakers used.
+
 ## Focused Apex jaw-root attachment pass — 2026-08-30
 
 The authored Cistern Apex now carries paired dense folded collars at the roots

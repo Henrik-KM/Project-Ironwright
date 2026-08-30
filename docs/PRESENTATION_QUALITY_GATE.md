@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Shared late-organic torso-sheath pass
+
+The seven late organic authored shells now carry one dense, vertically folded
+ventral sheath behind their existing torso ribs. The continuous surface closes
+the remaining stacked-plate read at close review distance while preserving the
+family-specific focal organs and all existing gameplay-owned contracts. This
+is presentation-only geometry; live review uses Godot Dummy audio with
+`--quiet-audio`, and no physical speakers are used.
+
 ## 2026-08-30 — Apex jaw-root attachment pass
 
 The authored Cistern Apex now carries paired dense folded collars at the roots

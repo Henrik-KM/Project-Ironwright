@@ -5,6 +5,6 @@
   "runtime_path": "res://assets/miremaw/miremaw.gltf",
   "quality": "authored_high_definition",
   "license": "Original Project Ironwright asset",
-  "required_nodes": ["MiremawModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "MiremawHead", "MiremawJawLower", "MiremawGillFan", "MiremawGillSternum", "MiremawGillCollarL", "MiremawJawHookL", "MiremawGillRidgeL", "MiremawGillRidgeR", "MiremawJawPlateL", "MiremawJawHingeL", "MiremawGillSpineR", "ProductionAssetMarker"],
+  "required_nodes": ["MiremawModel", "Torso", "TorsoCore", "VentralSheath", "OrganicDorsalPlate", "MiremawHead", "MiremawJawLower", "MiremawGillFan", "MiremawGillSternum", "MiremawGillCollarL", "MiremawJawHookL", "MiremawGillRidgeL", "MiremawGillRidgeR", "MiremawJawPlateL", "MiremawJawHingeL", "MiremawGillSpineR", "ProductionAssetMarker"],
   "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]
 }

@@ -1582,6 +1582,10 @@ func _run_all() -> void:
         _expect(_find_named(enemy_samples[index], "OrganicDorsalPlate") != null, "The %s organic family must expose a layered shell material break." % species_names[index])
         _expect(_find_named(enemy_samples[index], "TorsoCore") != null and _find_named(enemy_samples[index], "TorsoSegment0") != null, "The %s organic family must expose segmented high-definition torso anatomy." % species_names[index])
         if species_names[index] in [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle"]:
+            var ventral_sheath := _find_named(enemy_samples[index], "VentralSheath") as MeshInstance3D
+            _expect(ventral_sheath != null and ventral_sheath.get_parent().name == "Torso" and _mesh_vertex_count(ventral_sheath) >= 1200, "The %s late-organic torso must carry a dense torso-parented ventral sheath so its rib layers read as one continuous living body." % species_names[index])
+            if ventral_sheath != null and ventral_sheath.mesh != null:
+                _expect(ventral_sheath.mesh.get_aabb().size.z * ventral_sheath.scale.z >= 1.20 and absf(ventral_sheath.rotation.x) >= 1.40, "The %s ventral sheath must retain vertical folded coverage between the torso ribs after its upright presentation rotation." % species_names[index])
             _expect(_find_named(enemy_samples[index], "OrganicFamilyAnatomyFinish") != null and _find_named(enemy_samples[index], "OrganicPulseRim") != null and _find_named(enemy_samples[index], "OrganicGrowthPlate") != null, "The %s authored family must expose a bounded living anatomy finish rather than a static shell." % species_names[index])
             var dorsal_plate := _find_named(enemy_samples[index], "OrganicDorsalPlate") as Node3D
             var dorsal_mesh := _find_first_mesh(dorsal_plate)

@@ -621,6 +621,25 @@ def build_family(name: str, spec: dict) -> None:
         # Keep the new late-family profile at the end of the shared mesh table
         # so existing mesh indices remain stable in generated assets.
         "DeepMembrane": mesh("DeepMembrane", add_organic_lobe(builder, (1.18, 0.62, 1.02), membrane, lobes=5, rings=16, sides=64, scallop_amplitude=0.18, leading_extension=0.42, fold_strength=1.68)),
+        # The shared torso ribs are individually detailed, but their gaps can
+        # still read as a stack of floating plates at close review distance.
+        # This vertical folded sheath gives every late family one continuous
+        # ventral body surface while keeping the existing rib and socket
+        # hardware visible above it. It is presentation-only geometry.
+        "VentralSheath": mesh(
+            "VentralSheath",
+            add_organic_lobe(
+                builder,
+                (1.34, 0.28, 1.62),
+                shell,
+                lobes=5,
+                rings=12,
+                sides=56,
+                scallop_amplitude=0.16,
+                leading_extension=0.28,
+                fold_strength=0.94,
+            ),
+        ),
     }
     if name == "glassmoth":
         mesh_ids["GlassmothWingVein"] = mesh(
@@ -935,6 +954,15 @@ def build_family(name: str, spec: dict) -> None:
         for side in (-1.0, 1.0):
             suffix = "L" if side < 0.0 else "R"
             add_node(f"{name.capitalize()}TorsoSurfaceVein{index}{suffix}", mesh_ids["SurfaceVein"], (side * 0.31, 1.19, z - 0.54), rotation=(0.0, 0.0, side * 0.08), scale=(1.0, 1.0, 0.72), parent=torso, extras={"surface": "vascular_surface_detail"})
+    add_node(
+        "VentralSheath",
+        mesh_ids["VentralSheath"],
+        (0.0, 1.02, -0.04),
+        rotation=(math.pi * 0.5, 0.0, 0.0),
+        scale=(1.0, 1.0, 0.84),
+        parent=torso,
+        extras={"surface": "continuous_ventral_shell"},
+    )
     dorsal = add_node("OrganicDorsalPlate", mesh_ids["ShellPlate"], (-0.12, 1.54, 0.18), rotation=(0.0, 0.0, -0.04), scale=(1.08, 1.0, 1.4), extras={"surface": "beveled_layered_shell_break"})
 
     if name == "roofleaper":

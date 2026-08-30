@@ -5,6 +5,6 @@
   "runtime_path": "res://assets/carrionbell/carrionbell.gltf",
   "quality": "authored_high_definition",
   "license": "Original Project Ironwright asset",
-  "required_nodes": ["CarrionbellModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "CarrionbellMantle", "CarrionbellResonator", "CarrionbellSignalTendril0", "CarrionbellResonatorRing", "CarrionbellResonatorCore", "CarrionbellResonatorBellLip", "CarrionbellResonatorClapper", "CarrionbellResonatorClapperTip", "CarrionbellBellRib0", "ProductionAssetMarker"],
+  "required_nodes": ["CarrionbellModel", "Torso", "TorsoCore", "VentralSheath", "OrganicDorsalPlate", "CarrionbellMantle", "CarrionbellResonator", "CarrionbellSignalTendril0", "CarrionbellResonatorRing", "CarrionbellResonatorCore", "CarrionbellResonatorBellLip", "CarrionbellResonatorClapper", "CarrionbellResonatorClapperTip", "CarrionbellBellRib0", "ProductionAssetMarker"],
   "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]
 }
