@@ -93,13 +93,18 @@ arrives. Imported authored package nodes and release-only encounter dressing
 are now instantiated on focus and released when the district leaves the ring;
 authored actor, review and region scenes load on demand through the shared
 resource cache, with region packages requested on a worker and instantiated
-only after the resource is ready. The normal title boot defers full procedural
-city construction until a run starts, while headless and explicit review
-fixtures retain the complete world. Resource-cache/package-budget profiling is
-covered by the native `resource_streaming_benchmark_runner.gd` gate. The
-release runtime
+only after the resource is ready. The focus service prefetches the nearest
+upcoming authored packages in a bounded two-package window, keeps prefetched
+geometry detached until promotion, and releases stale owner references as the
+player changes direction. Prefetch activation waits until the playable release
+world is fully assembled, avoiding overlap with initial HUD/actor construction.
+The normal title boot defers full procedural city
+construction until a run starts, while headless and explicit review fixtures
+retain the complete world. Detached prefetch, promotion latency, cleanup and
+package residency are covered by the native
+`resource_streaming_benchmark_runner.gd` gate. The release runtime
 also applies bounded active,
 medium and reduced-detail simulation budgets to actors, while region dressing
 uses persistent landmark proxies outside the focus ring.
 
-The district is authored and compact. Navigation uses street-aware waypoints, collision-aware recovery steering and deterministic route state rather than a baked citywide navigation mesh. Long-range groups hold briefly for organic blockages, take a bounded deterministic side route when needed, and retreat through the persistent streets after repeated failure; the player receives the reason without drawing or editing a route. The persistent town now also shifts atmosphere, emits a restrained spatial transition cue by authored region kind, and reduces distant landmark rendering to persistent beacons while the player moves through it. The current slice now has compact spatial sound feedback for core survival events, three authored original organic warning-call families plus Rootweaver, Carrion Bell and Glassmoth signature variants, organic attack wind-up telegraphs and dedicated organic attack landing impacts, adaptive title, embers, sanctuary, pressure and sovereignty music states, plus a staged Heartforge protocol lattice that resolves into a sanctuary crown at first victory. Complete-game long-range groups, full-game outpost convoys and local autonomy groups checkpoint their route or assignment state, physical anchor and member identities; distant groups also transition through deterministic reduced detail while preserving that same state; manual channels still finish before saving. The next production pass should profile asynchronous resource loading and cache/package budgets under representative target-world loads, then continue external hardware and human presentation acceptance.
+The district is authored and compact. Navigation uses street-aware waypoints, collision-aware recovery steering and deterministic route state rather than a baked citywide navigation mesh. Long-range groups hold briefly for organic blockages, take a bounded deterministic side route when needed, and retreat through the persistent streets after repeated failure; the player receives the reason without drawing or editing a route. The persistent town now also shifts atmosphere, emits a restrained spatial transition cue by authored region kind, and reduces distant landmark rendering to persistent beacons while the player moves through it. The current slice now has compact spatial sound feedback for core survival events, three authored original organic warning-call families plus Rootweaver, Carrion Bell and Glassmoth signature variants, organic attack wind-up telegraphs and dedicated organic attack landing impacts, adaptive title, embers, sanctuary, pressure and sovereignty music states, plus a staged Heartforge protocol lattice that resolves into a sanctuary crown at first victory. Complete-game long-range groups, full-game outpost convoys and local autonomy groups checkpoint their route or assignment state, physical anchor and member identities; distant groups also transition through deterministic reduced detail while preserving that same state; manual channels still finish before saving. The repository-owned asynchronous resource-loading and cache/package-budget pass is now covered by the bounded prefetch benchmark; the remaining gate is external hardware and human presentation acceptance.

@@ -127,6 +127,13 @@ A performance director divides the physical world into three presentation and si
 - **medium:** active behaviour with reduced visual cost;
 - **reduced detail:** coarse deterministic movement and combat updates at a slower interval.
 
+Authored district packages are requested on a worker and instantiated only
+after the resource is ready. The focus service keeps a bounded two-package
+prefetch window for the next physical districts, leaves prefetched geometry
+detached until promotion, and releases stale owner references when the player
+changes direction. The native streaming benchmark measures promotion latency,
+detached-prefetch behaviour, cleanup and package residency.
+
 Reduced detail is not an abstract mission timer. Distant organisms retain positions, targets, health, aggression and physical movement. Returning to the area restores full simulation around the same state. Detail evaluation registers every actor but sorts only the active/medium neighborhood; actors beyond the medium radius are assigned the reduced state immediately, keeping distant population growth from expanding the per-evaluation sort workload.
 
 The director also enforces bounded active and medium actor budgets, assigning the nearest actors first. Medium actors retain their targets and state but advance on a coarse cadence; reduced actors use deterministic coarse movement and combat ticks. Release actors outside the active visual tier use a shared lightweight silhouette proxy resource, and may defer construction of their authored high-definition shell until active promotion, so duplicate proxy and high-definition geometry do not multiply routine spawn or rendering cost. Physical collision and simulation state remain present while the authored presentation shell is deferred.

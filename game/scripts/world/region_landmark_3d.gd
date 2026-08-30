@@ -70,6 +70,9 @@ var _authored_imported_root_name: StringName = &""
 var _authored_model_scene: PackedScene
 var _authored_model_load_requested: bool = false
 var _authored_model_load_failed: bool = false
+var _authored_model_prefetch_requested: bool = false
+var _authored_model_prefetch_failed: bool = false
+var _release_prefetched_when_ready: bool = false
 var _authored_model_attach_requested: bool = false
 var _authored_model_cleanup_pending: bool = false
 var _pressure_read_root: Node3D
@@ -160,6 +163,41 @@ func set_streamed_in(value: bool) -> void:
     streaming_changed.emit(region_id, streamed_in)
 
 
+func prefetch_authored_model() -> bool:
+    if _authored_model_root == null or _authored_model_path.is_empty() or streamed_in:
+        return false
+    if _authored_model_scene != null or _authored_model_load_requested or _authored_model_load_failed:
+        return false
+    _authored_model_prefetch_failed = false
+    return _request_authored_model_package(false)
+
+
+func release_prefetched_authored_model() -> void:
+    # A PackedScene reference is retained only while it is useful to the next
+    # promotion. The imported resource loader may still share its underlying
+    # cache, but releasing this owner reference prevents a growing landmark
+    # list from retaining every previously visited package.
+    if streamed_in or _authored_model_attach_requested:
+        return
+    if _authored_model_load_requested:
+        _release_prefetched_when_ready = true
+        return
+    if _authored_model_root != null and _authored_model_root.get_child_count() > 0:
+        return
+    _authored_model_scene = null
+    _authored_model_prefetch_requested = false
+    _authored_model_prefetch_failed = false
+    _release_prefetched_when_ready = false
+
+
+func authored_model_package_ready() -> bool:
+    return _authored_model_scene != null
+
+
+func authored_model_package_loading() -> bool:
+    return _authored_model_load_requested
+
+
 func _refresh_presentation_visibility() -> void:
     if _visual_root != null:
         _visual_root.visible = streamed_in and presentation_detail_level < 2
@@ -185,6 +223,9 @@ func _prepare_authored_model_package(path: String, package_name: StringName, imp
     _authored_model_scene = null
     _authored_model_load_requested = false
     _authored_model_load_failed = false
+    _authored_model_prefetch_requested = false
+    _authored_model_prefetch_failed = false
+    _release_prefetched_when_ready = false
     _authored_model_attach_requested = false
     _authored_model_root = Node3D.new()
     _authored_model_root.name = package_name
@@ -200,34 +241,44 @@ func _refresh_authored_model_package() -> void:
             if _authored_model_scene != null:
                 _schedule_authored_model_attachment()
             elif not _authored_model_load_requested and not _authored_model_load_failed:
-                var request_error := ResourceLoader.load_threaded_request(
-                    _authored_model_path,
-                    "PackedScene",
-                    false,
-                    ResourceLoader.CACHE_MODE_REUSE
-                )
-                if request_error == OK:
-                    _authored_model_load_requested = true
-                    _sync_process_state()
-                else:
-                    # A threaded request can fail before a worker is created
-                    # (for example after an import error). Keep the failure
-                    # explicit and use the same cached loader as a bounded
-                    # compatibility fallback rather than leaving a blank
-                    # district that looks like successful streaming.
-                    push_error("Could not request authored region package: %s" % _authored_model_path)
-                    _authored_model_load_failed = true
-                    var fallback_scene := ResourceLoader.load(_authored_model_path, "PackedScene", ResourceLoader.CACHE_MODE_REUSE) as PackedScene
-                    if fallback_scene != null:
-                        _authored_model_scene = fallback_scene
-                        _schedule_authored_model_attachment()
-                    else:
-                        push_error("Could not load authored region package: %s" % _authored_model_path)
+                _request_authored_model_package(true)
     elif _authored_model_root.get_child_count() > 0:
         for child in _authored_model_root.get_children():
             child.queue_free()
         _authored_model_cleanup_pending = true
         _capture_region_motion_nodes()
+
+
+func _request_authored_model_package(allow_sync_fallback: bool) -> bool:
+    if _authored_model_path.is_empty() or _authored_model_load_requested or _authored_model_scene != null:
+        return false
+    var request_error := ResourceLoader.load_threaded_request(
+        _authored_model_path,
+        "PackedScene",
+        false,
+        ResourceLoader.CACHE_MODE_REUSE
+    )
+    if request_error == OK:
+        _authored_model_load_requested = true
+        _authored_model_prefetch_requested = not streamed_in
+        _sync_process_state()
+        return true
+    # A threaded request can fail before a worker is created (for example
+    # after an import error). Prefetching stays non-blocking and leaves the
+    # failure recoverable; an actual visible promotion gets the bounded
+    # compatibility fallback so it cannot silently become a blank district.
+    push_error("Could not request authored region package: %s" % _authored_model_path)
+    if not allow_sync_fallback:
+        _authored_model_prefetch_failed = true
+        return false
+    _authored_model_load_failed = true
+    var fallback_scene := ResourceLoader.load(_authored_model_path, "PackedScene", ResourceLoader.CACHE_MODE_REUSE) as PackedScene
+    if fallback_scene != null:
+        _authored_model_scene = fallback_scene
+        _schedule_authored_model_attachment()
+        return true
+    push_error("Could not load authored region package: %s" % _authored_model_path)
+    return false
 
 
 func _finish_authored_model_cleanup() -> void:
@@ -248,14 +299,28 @@ func _poll_authored_model_package() -> void:
         return
     _authored_model_load_requested = false
     if load_status == ResourceLoader.THREAD_LOAD_LOADED:
+        var was_prefetch := _authored_model_prefetch_requested
         _authored_model_scene = ResourceLoader.load_threaded_get(_authored_model_path) as PackedScene
+        _authored_model_prefetch_requested = false
         if _authored_model_scene == null:
-            _authored_model_load_failed = true
+            if was_prefetch:
+                _authored_model_prefetch_failed = true
+            else:
+                _authored_model_load_failed = true
             push_error("Threaded authored region package was not a PackedScene: %s" % _authored_model_path)
             return
-        _schedule_authored_model_attachment()
+        if _release_prefetched_when_ready and was_prefetch and not streamed_in:
+            _authored_model_scene = null
+            _release_prefetched_when_ready = false
+        elif streamed_in:
+            _schedule_authored_model_attachment()
         return
-    _authored_model_load_failed = true
+    var was_prefetch := _authored_model_prefetch_requested
+    if was_prefetch:
+        _authored_model_prefetch_failed = true
+    else:
+        _authored_model_load_failed = true
+    _authored_model_prefetch_requested = false
     push_error("Could not asynchronously load authored region package: %s (status %d)" % [_authored_model_path, load_status])
 
 

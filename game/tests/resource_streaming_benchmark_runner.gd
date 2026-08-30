@@ -17,6 +17,7 @@ const REGION_IDS: Array[StringName] = [
 ]
 const MAX_PROMOTION_WAIT_FRAMES := 180
 const MAX_RESIDENT_AUTHORED_PACKAGES := 3
+const MAX_PREFETCHED_PACKAGES := 2
 
 var failures: Array[String] = []
 
@@ -65,6 +66,34 @@ func _run_benchmark() -> void:
         if world.region_lod_director.is_connected(&"region_stream_changed", dressing_callback):
             world.region_lod_director.disconnect(&"region_stream_changed", dressing_callback)
 
+    # Prefetching must load only the reusable package resource. It must not
+    # attach hidden geometry before the region actually enters the focus ring.
+    var prefetch_landmark := world.region_director.get_landmark(&"region.root_cistern") as RegionLandmark3D
+    _expect(prefetch_landmark != null, "Prefetch coverage needs the Root Cistern landmark.")
+    world.region_lod_director.set_region_streamed(&"region.root_cistern", false)
+    var prefetch_started := world.region_lod_director.prefetch_region(&"region.root_cistern")
+    _expect(prefetch_started, "A remote authored region must accept a bounded asynchronous prefetch request.")
+    if prefetch_landmark != null:
+        _expect(prefetch_landmark._authored_model_root.get_child_count() == 0, "Prefetching must not instantiate authored geometry outside the focus ring.")
+    var prefetch_wait_frames := 0
+    while prefetch_wait_frames < MAX_PROMOTION_WAIT_FRAMES:
+        await process_frame
+        prefetch_wait_frames += 1
+        if prefetch_landmark != null and prefetch_landmark.authored_model_package_ready():
+            break
+    _expect(prefetch_landmark != null and prefetch_landmark.authored_model_package_ready(), "Prefetched authored package must become reusable within the bounded wait.")
+    _expect(world.region_lod_director.prefetched_region_count() <= MAX_PREFETCHED_PACKAGES, "Prefetched package references must remain within the bounded cache budget.")
+    if prefetch_landmark != null:
+        _expect(prefetch_landmark._authored_model_root.get_child_count() == 0, "A completed prefetch must still leave geometry detached until promotion.")
+    world.region_lod_director.set_region_streamed(&"region.root_cistern", true)
+    for _prefetch_attach_frame in range(8):
+        await process_frame
+    _expect(prefetch_landmark != null and _authored_package_ready(prefetch_landmark), "Streaming in a prefetched region must attach the already-loaded authored package.")
+    world.region_lod_director.set_region_streamed(&"region.root_cistern", false)
+    for _prefetch_cleanup_frame in range(8):
+        await process_frame
+    _expect(prefetch_landmark == null or not _authored_package_ready(prefetch_landmark), "Streaming out a prefetched region must release its instantiated geometry.")
+
     var promotion_wait_frames: Array[int] = []
     var resident_package_counts: Array[int] = []
     var maximum_streamed_regions := world.region_lod_director.streamed_region_count()
@@ -108,6 +137,8 @@ func _run_benchmark() -> void:
         "schema_version": 1,
         "region_count": REGION_IDS.size(),
         "max_promotion_wait_frames": MAX_PROMOTION_WAIT_FRAMES,
+        "prefetch_wait_frames": prefetch_wait_frames,
+        "prefetched_region_count": world.region_lod_director.prefetched_region_count(),
         "promotion_wait_frames": promotion_wait_frames,
         "resident_package_counts": resident_package_counts,
         "maximum_streamed_regions": maximum_streamed_regions,

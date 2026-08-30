@@ -83,6 +83,8 @@ var title_review_capture_frames: int = 0
 var stream_ring_review_active: bool = false
 var stream_ring_review_clock: float = 0.0
 var stream_ring_review_phase: int = 0
+var stream_ring_review_capture_path: String = ""
+var stream_ring_review_capture_frames: int = 0
 var title_pause_timer: Timer
 
 
@@ -112,6 +114,16 @@ func _process(delta: float) -> void:
 		return
 	if stream_ring_review_active:
 		_update_stream_ring_review(delta)
+		if stream_ring_review_phase == 1 and not stream_ring_review_capture_path.is_empty():
+			stream_ring_review_capture_frames += 1
+			if stream_ring_review_capture_frames == 45:
+				var review_image := get_viewport().get_texture().get_image()
+				var capture_error := review_image.save_png(stream_ring_review_capture_path)
+				if capture_error == OK:
+					print("Stream-ring review screenshot written to %s" % stream_ring_review_capture_path)
+				else:
+					push_error("Stream-ring review screenshot failed: %s" % capture_error)
+				stream_ring_review_capture_path = ""
 	super._process(delta)
 	if not title_review_capture_path.is_empty():
 		title_review_capture_frames += 1
@@ -1237,6 +1249,8 @@ func _start_stream_ring_review() -> void:
 	stream_ring_review_active = true
 	stream_ring_review_clock = 0.0
 	stream_ring_review_phase = 0
+	stream_ring_review_capture_path = _stream_ring_review_capture_argument()
+	stream_ring_review_capture_frames = 0
 	if region_director != null:
 		region_director.discover_region(&"region.west_grid")
 		region_director.discover_region(&"region.root_cistern")
@@ -1262,6 +1276,7 @@ func _update_stream_ring_review(delta: float) -> void:
 			region_atmosphere_director.refresh_now()
 		if region_lod_director != null:
 			region_lod_director.refresh_now()
+		stream_ring_review_capture_frames = 0
 		if hud != null:
 			hud.push_notification("STREAM RING REVIEW · ROOT CISTERN FOCUS · AUTHORED REGION RESTORED")
 	elif stream_ring_review_phase == 1 and stream_ring_review_clock >= 20.0:
@@ -1274,6 +1289,18 @@ func _update_stream_ring_review(delta: float) -> void:
 			region_lod_director.refresh_now()
 		if hud != null:
 			hud.push_notification("STREAM RING REVIEW · WEST GRID RETURN · ROOT CISTERN PROXY RETAINED")
+
+
+func _stream_ring_review_capture_argument() -> String:
+	for argument in OS.get_cmdline_args():
+		var raw_argument := str(argument)
+		if raw_argument.begins_with("--stream-ring-review-screenshot="):
+			return raw_argument.get_slice("=", 1)
+	for argument in OS.get_cmdline_user_args():
+		var raw_argument := str(argument)
+		if raw_argument.begins_with("--stream-ring-review-screenshot="):
+			return raw_argument.get_slice("=", 1)
+	return ""
 
 
 func _start_mechromancer_evolution_review() -> void:
@@ -2473,6 +2500,11 @@ func _start_release_world() -> void:
 		var variant_name := localization_service.text("world.condition.%s.name" % variant_key)
 		hud.push_notification(localization_service.text("notification.world_condition", [variant_name]))
 	hud.push_notification(localization_service.text("notification.survival_profile"))
+	if region_lod_director != null:
+		# Do not start worker-backed package imports while the release world is
+		# still constructing its HUD and actor hierarchy. The handoff above is
+		# the first point at which the playable scene is fully assembled.
+		region_lod_director.set_prefetch_enabled(true)
 
 
 func _should_build_city_on_boot() -> bool:

@@ -15,12 +15,16 @@ const REDUCED_RADIUS := 120.0
 # can draw. The hysteresis gap prevents thrashing at a district boundary.
 const STREAM_IN_RADIUS := 68.0
 const STREAM_OUT_RADIUS := 84.0
+const PREFETCH_RADIUS := 190.0
+const MAX_PREFETCHED_PACKAGES := 2
 
 var region_director: WorldRegionDirector3D
 var player: Node3D
 var focus_provider: Callable
 var detail_modes: Dictionary = {}
 var stream_states: Dictionary = {}
+var prefetch_order: Array[StringName] = []
+var prefetch_enabled: bool = false
 var _refresh_clock: float = 0.0
 
 
@@ -71,10 +75,20 @@ func refresh_now() -> void:
         detail_modes[landmark.region_id] = next_level
         landmark.set_presentation_detail_level(next_level)
         detail_changed.emit(landmark.region_id, next_level)
+    if prefetch_enabled:
+        _refresh_prefetch(focus)
 
 
 func detail_mode_for(region_id: StringName) -> int:
     return int(detail_modes.get(region_id, 0))
+
+
+func set_prefetch_enabled(value: bool) -> void:
+    if prefetch_enabled == value:
+        return
+    prefetch_enabled = value
+    if prefetch_enabled:
+        refresh_now()
 
 
 func is_region_streamed(region_id: StringName) -> bool:
@@ -90,6 +104,69 @@ func set_region_streamed(region_id: StringName, streamed_in: bool) -> void:
     landmark.set_streamed_in(streamed_in)
     if previous_streamed != streamed_in:
         region_stream_changed.emit(region_id, streamed_in)
+    if streamed_in:
+        prefetch_order.erase(region_id)
+
+
+func prefetch_region(region_id: StringName) -> bool:
+    if region_director == null:
+        return false
+    var landmark := region_director.get_landmark(region_id) as RegionLandmark3D
+    if landmark == null or bool(stream_states.get(region_id, false)):
+        return false
+    if landmark.prefetch_authored_model() or landmark.authored_model_package_ready() or landmark.authored_model_package_loading():
+        prefetch_order.erase(region_id)
+        prefetch_order.push_front(region_id)
+        _trim_prefetches()
+        return true
+    return false
+
+
+func prefetched_region_count() -> int:
+    var count := 0
+    for region_id in prefetch_order:
+        var landmark := region_director.get_landmark(region_id) as RegionLandmark3D if region_director != null else null
+        if landmark != null and (landmark.authored_model_package_ready() or landmark.authored_model_package_loading()):
+            count += 1
+    return count
+
+
+func _refresh_prefetch(focus: Vector3) -> void:
+    var candidates: Array[Dictionary] = []
+    for raw_landmark in region_director.landmarks.values():
+        var landmark := raw_landmark as RegionLandmark3D
+        if landmark == null or landmark.region_kind == &"sanctuary":
+            continue
+        if bool(stream_states.get(landmark.region_id, false)):
+            continue
+        var distance := focus.distance_to(landmark.global_position)
+        if distance <= PREFETCH_RADIUS:
+            candidates.append({"region_id": landmark.region_id, "distance": distance})
+    candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+        return float(a.get("distance", INF)) < float(b.get("distance", INF))
+    )
+    var desired: Array[StringName] = []
+    for candidate in candidates:
+        if desired.size() >= MAX_PREFETCHED_PACKAGES:
+            break
+        var region_id := candidate.get("region_id", &"") as StringName
+        if prefetch_region(region_id):
+            desired.append(region_id)
+    for region_id in prefetch_order.duplicate():
+        if region_id in desired:
+            continue
+        var stale_landmark := region_director.get_landmark(region_id) as RegionLandmark3D
+        if stale_landmark != null:
+            stale_landmark.release_prefetched_authored_model()
+        prefetch_order.erase(region_id)
+
+
+func _trim_prefetches() -> void:
+    while prefetch_order.size() > MAX_PREFETCHED_PACKAGES:
+        var stale_id: StringName = prefetch_order.pop_back()
+        var stale_landmark := region_director.get_landmark(stale_id) as RegionLandmark3D if region_director != null else null
+        if stale_landmark != null:
+            stale_landmark.release_prefetched_authored_model()
 
 
 func streamed_region_count() -> int:

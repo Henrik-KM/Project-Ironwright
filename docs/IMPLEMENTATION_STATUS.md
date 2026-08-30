@@ -1,5 +1,18 @@
 # Implementation status
 
+## Bounded authored-region prefetch pass — 2026-08-30
+
+The region focus service now asynchronously prefetches the nearest upcoming
+authored districts before they enter the visible stream ring. Prefetching holds
+at most two package references, never instantiates hidden geometry, releases
+stale owner references, and reuses the loaded package when the district is
+promoted. The native streaming benchmark covers the detached-prefetch,
+promotion, cleanup and residency-budget contracts. Prefetch activation is
+deferred until the completed release-world handoff so worker-backed imports do
+not overlap initial HUD/actor construction. Audio remains silent in the
+benchmark through Godot Dummy audio with `--quiet-audio`; no physical speakers
+are used.
+
 ## Focused Rootweaver route-keel silhouette pass — 2026-08-30
 
 The Rootweaver route-controller face now carries a narrow vertical living keel
