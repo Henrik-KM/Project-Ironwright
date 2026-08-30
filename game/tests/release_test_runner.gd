@@ -42,6 +42,7 @@ func _run_all() -> void:
     _test_enemy_tier_sidecar_isolation(world)
     _test_unified_snapshot(world)
     _test_front_end(world)
+    await _test_complete_objective_review_fixture(world)
 
     world.queue_free()
     for _cleanup_frame in range(8):
@@ -1634,6 +1635,15 @@ func _test_front_end(world: IronwrightReleaseWorld3D) -> void:
     var ending_text := "\n%s\n" % String(ending_label.text) if ending_label != null else ""
     _expect("\nThe\n" not in ending_text, "The Containment victory narrative must not strand its final paragraph opener on a line by itself.")
     world.hud.dismiss_ending()
+
+
+func _test_complete_objective_review_fixture(world: IronwrightReleaseWorld3D) -> void:
+    world._start_complete_objective_review()
+    await process_frame
+    _expect(world.outpost_director != null and world.outpost_director.operation.is_empty(), "The idle complete-objective review must not start a competing autonomous outpost haul.")
+    _expect(world.endgame_director != null and world.endgame_director.can_initiate(&"protocol.severance"), "The complete-objective review must leave its visible final protocol genuinely initiable.")
+    if world.endgame_director != null:
+        _expect(world.endgame_director.initiate(&"protocol.severance"), "The complete-objective review protocol action must enter the ordinary active final-protocol path.")
 
 
 func _expect(condition: bool, message: String) -> void:

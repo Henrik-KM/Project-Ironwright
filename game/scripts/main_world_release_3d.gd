@@ -1462,6 +1462,12 @@ func _start_complete_objective_review() -> void:
 			site.set_discovered(true)
 			if not site.has_outpost():
 				outpost_director._spawn_outpost(site, site.recommended_role, 1)
+		# This fixture exists to review the idle final-protocol objective. Keep
+		# the real outpost presentation visible, but prevent its normal resource
+		# production from starting a competing haul while a reviewer is reading
+		# and interacting with the protocol modal.
+		outpost_director.maintenance_clock = 0.0
+		outpost_director.set_process(false)
 	if region_director != null:
 		region_director.discover_region(&"region.root_cistern")
 	if hud != null:

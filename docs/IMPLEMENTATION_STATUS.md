@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused complete-objective review interaction pass — 2026-08-30
+
+The non-saving late-run objective fixture now keeps its functioning outpost
+presentation visible without allowing the review-only resource production
+clock to launch a competing haul while the final-protocol modal is open. This
+preserves the ordinary game rule that real remote operations cannot overlap,
+while ensuring the visible review action is genuinely initiable. The release
+regression suite now enters the fixture and starts Severance through the
+ordinary endgame director path.
+
 ## Focused autonomous outpost activity pass — 2026-08-30
 
 Tiered outposts now carry a bounded role-coloured service rotor on the

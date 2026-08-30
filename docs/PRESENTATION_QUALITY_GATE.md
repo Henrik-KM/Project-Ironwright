@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Complete-objective review interaction pass
+
+The non-saving complete-objective review now keeps its three functioning
+outposts visible while suppressing only their automatic resource-production
+clock. This prevents a reviewer from entering the final-protocol modal after
+an incidental haul has started, while the real run's no-overlapping-operation
+rule remains unchanged. The release regression now starts Severance through
+the ordinary endgame path from this exact fixture. Live review remains on
+Godot Dummy audio with `--quiet-audio`; no physical speakers are used.
+
 ## 2026-08-30 — Autonomous outpost activity pass
 
 Tiered outposts now carry a bounded role-coloured service rotor on the
