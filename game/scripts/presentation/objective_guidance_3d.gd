@@ -110,8 +110,8 @@ func direction_to_target() -> String:
         return ""
     var offset := target.global_position - player.global_position
     if absf(offset.x) > absf(offset.z):
-        return "EAST" if offset.x > 0.0 else "WEST"
-    return "SOUTH" if offset.z > 0.0 else "NORTH"
+        return _text("guidance.direction.east", "EAST") if offset.x > 0.0 else _text("guidance.direction.west", "WEST")
+    return _text("guidance.direction.south", "SOUTH") if offset.z > 0.0 else _text("guidance.direction.north", "NORTH")
 
 
 func route_summary() -> String:
@@ -178,7 +178,7 @@ func _build_visuals() -> void:
 
     marker_label = Label3D.new()
     marker_label.name = "ObjectiveLabel"
-    marker_label.text = "OBJECTIVE"
+    marker_label.text = _text("guidance.marker", "OBJECTIVE")
     marker_label.position = Vector3(0.0, BEACON_LABEL_HEIGHT, 0.0)
     marker_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
     # Screen-fixed Label3D text was the source of the enormous prototype-like
@@ -213,3 +213,10 @@ func _apply_color() -> void:
         guide_material.emission = active_color
     if guide_light != null:
         guide_light.light_color = active_color
+
+
+func _text(key: String, fallback: String) -> String:
+    var service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if service != null:
+        return service.text(key)
+    return fallback
