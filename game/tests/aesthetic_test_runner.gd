@@ -1657,6 +1657,12 @@ func _run_all() -> void:
             &"roofleaper":
                 _expect(_find_named(enemy_samples[index], "RoofleaperFineVeinL") != null and _find_named(enemy_samples[index], "RoofleaperFineVeinR") != null, "The Roofleaper must expose fine vascular wing detail on both membranes.")
                 _expect(_find_named(enemy_samples[index], "RoofleaperWingFrameL") != null and _find_named(enemy_samples[index], "RoofleaperWingFastenerR") != null, "The Roofleaper must expose structural wing spars and socket fasteners.")
+                var roofleaper_keel := _find_named(enemy_samples[index], "RoofleaperCrownKeel") as MeshInstance3D
+                _expect(roofleaper_keel != null and roofleaper_keel.get_parent().name == "RoofleaperCrown" and _mesh_vertex_count(roofleaper_keel) >= 200, "The Roofleaper must carry a dense central crown keel under its animated crown so the layered ambush shell has a visible organic spine.")
+                var roofleaper_root_l := _find_named(enemy_samples[index], "RoofleaperWingRootCollarL") as MeshInstance3D
+                var roofleaper_root_r := _find_named(enemy_samples[index], "RoofleaperWingRootCollarR") as MeshInstance3D
+                _expect(roofleaper_root_l != null and roofleaper_root_r != null and roofleaper_root_l.get_parent().name == "RoofleaperWingL" and roofleaper_root_r.get_parent().name == "RoofleaperWingR", "The Roofleaper must carry paired folded wing-root collars parented to the animated wing sockets so its ambush membranes read as attached anatomy.")
+                _expect(roofleaper_root_l != null and roofleaper_root_r != null and _mesh_vertex_count(roofleaper_root_l) >= 200 and _mesh_vertex_count(roofleaper_root_r) >= 200, "The Roofleaper wing-root collars must retain dense folded high-definition geometry.")
                 var roofleaper_wing_l := _find_named(enemy_samples[index], "RoofleaperWingL") as Node3D
                 var roofleaper_wing_r := _find_named(enemy_samples[index], "RoofleaperWingR") as Node3D
                 _expect(roofleaper_wing_l != null and roofleaper_wing_r != null and absf(roofleaper_wing_l.basis.y.z) >= 0.10 and absf(roofleaper_wing_r.basis.y.z) >= 0.10 and roofleaper_wing_l.basis.y.z * roofleaper_wing_r.basis.y.z < 0.0, "The Roofleaper wing pair must carry opposing pitch so its ambush membranes read as a lifted V-shaped silhouette rather than coplanar discs.")

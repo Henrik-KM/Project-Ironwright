@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Roofleaper wing-root collar pass
+
+The Roofleaper's ambush membranes now grow from paired folded shoulder
+collars, with a dense central keel beneath the animated crown. Together they
+add a compact load-bearing transition between the thorax, wing surfaces and
+crown so the family keeps one coherent motion owner while gaining a more
+convincing close-camera silhouette. This is presentation-only geometry:
+collision, ecology, combat, saves and player workload are unchanged. The exact
+late-organic gallery review uses Godot Dummy audio and `--quiet-audio`; no
+physical speakers are used.
+
 ## 2026-08-30 — Glassmoth wing-root collar pass
 
 The Glassmoth's first wing pair now grows from paired folded root collars,

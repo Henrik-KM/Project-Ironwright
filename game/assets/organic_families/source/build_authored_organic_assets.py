@@ -646,6 +646,38 @@ def build_family(name: str, spec: dict) -> None:
                 fold_strength=0.76,
             ),
         )
+    if name == "roofleaper":
+        # The ambusher membranes need a living shoulder transition into the
+        # broad thorax. A paired folded collar closes that root silhouette
+        # without changing the existing wing socket or animation ownership.
+        mesh_ids["RoofleaperWingRootCollar"] = mesh(
+            "RoofleaperWingRootCollar",
+            add_organic_lobe(
+                builder,
+                (0.56, 0.24, 0.46),
+                shell,
+                lobes=4,
+                rings=9,
+                sides=40,
+                scallop_amplitude=0.15,
+                leading_extension=0.24,
+                fold_strength=0.82,
+            ),
+        )
+        mesh_ids["RoofleaperCrownKeel"] = mesh(
+            "RoofleaperCrownKeel",
+            add_organic_lobe(
+                builder,
+                (0.70, 0.36, 0.62),
+                shell,
+                lobes=5,
+                rings=10,
+                sides=48,
+                scallop_amplitude=0.16,
+                leading_extension=0.26,
+                fold_strength=0.92,
+            ),
+        )
     # Thornback's crown is a broad territorial shield. Build its thicker
     # folded lobe only for that family so the other six assets remain stable
     # when this focused pass changes.
@@ -857,19 +889,29 @@ def build_family(name: str, spec: dict) -> None:
     dorsal = add_node("OrganicDorsalPlate", mesh_ids["ShellPlate"], (-0.12, 1.54, 0.18), rotation=(0.0, 0.0, -0.04), scale=(1.08, 1.0, 1.4), extras={"surface": "beveled_layered_shell_break"})
 
     if name == "roofleaper":
-        add_node("RoofleaperCrown", mesh_ids["Soft"], (0.0, 1.3, -1.02), scale=(1.15, 0.82, 1.05), extras={"socket_type": "crown"})
+        crown_node = add_node("RoofleaperCrown", mesh_ids["Soft"], (0.0, 1.3, -1.02), scale=(1.15, 0.82, 1.05), extras={"socket_type": "crown"})
+        add_node("RoofleaperCrownKeel", mesh_ids["RoofleaperCrownKeel"], (0.0, -0.26, -0.40), scale=(0.94, 1.08, 0.96), extras={"surface": "crown_sternum"}, parent=crown_node)
         for index, side in enumerate((-1.0, 1.0)):
             add_node(f"RoofleaperCrownRidge{index}", mesh_ids["Ridge"], (side * 0.22, 1.58, -1.06), rotation=(0.0, side * 0.16, side * 0.14), scale=(0.42, 1.0, 0.72), extras={"surface": "crown_ridge"})
         for side in (-1.0, 1.0):
             suffix = "L" if side < 0 else "R"
             wing_pitch = 0.16
-            add_node(f"RoofleaperWing{suffix}", mesh_ids["WingMembrane"], (side * 0.92, 1.18, 0.05), rotation=(side * wing_pitch, side * 0.18, side * 0.1), scale=(1.15, 1.0, 1.1), extras={"socket_type": "wing_membrane"})
+            wing_node = add_node(f"RoofleaperWing{suffix}", mesh_ids["WingMembrane"], (side * 0.92, 1.18, 0.05), rotation=(side * wing_pitch, side * 0.18, side * 0.1), scale=(1.15, 1.0, 1.1), extras={"socket_type": "wing_membrane"})
             add_node(f"RoofleaperWingFrame{suffix}", mesh_ids["WingFrame"], (side * 1.18, 1.2, 0.05), rotation=(side * (wing_pitch + 0.04), side * 0.35, side * 0.72), scale=(0.72, 1.0, 1.0), extras={"surface": "wing_spar"})
             add_node(f"RoofleaperWingVein{suffix}", mesh_ids["Bone"], (side * 1.12, 1.2, 0.05), rotation=(side * (wing_pitch + 0.04), side * 0.35, side * 0.72), scale=(0.6, 1.0, 1.0))
             add_node(f"RoofleaperFineVein{suffix}", mesh_ids["FineVein"], (side * 0.92, 1.2, 0.04), rotation=(side * (wing_pitch + 0.02), side * 0.32, side * 0.28), scale=(0.72, 1.0, 0.88), extras={"surface": "membrane_vascular_detail"})
             add_node(f"RoofleaperWingFastener{suffix}", mesh_ids["CrownFastener"], (side * 0.58, 1.28, -0.02), extras={"surface": "wing_socket"})
             add_node(f"RoofleaperTalons{suffix}", mesh_ids["LongBone"], (side * 0.54, 0.3, -0.72), rotation=(side * 0.76, 0.0, side * 0.18), extras={"socket_type": "talon"})
             add_node(f"RoofleaperEye{suffix}", mesh_ids["Eye"], (side * 0.22, 1.5, -1.45), extras={"socket_type": "threat_eye"})
+            add_node(
+                f"RoofleaperWingRootCollar{suffix}",
+                mesh_ids["RoofleaperWingRootCollar"],
+                (-side * 0.30, 0.04, -0.03),
+                rotation=(0.0, -side * 0.10, side * 0.08),
+                scale=(0.92, 0.86, 0.82),
+                extras={"surface": "folded_wing_root"},
+                parent=wing_node,
+            )
         walk_node = "RoofleaperTalonsL"
         attack_node = "RoofleaperWingL"
     elif name == "glassmoth":

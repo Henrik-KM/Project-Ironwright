@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Roofleaper wing-root collar pass — 2026-08-30
+
+The Roofleaper authored shell now carries paired folded shoulder collars at
+the base of its ambush membranes plus a dense central keel beneath the
+animated crown. The added volume closes the transition between the broad
+thorax, wing sockets and crown so the late-organic family reads as attached
+living anatomy rather than stacked plates. The additions are parented to the
+existing animated nodes and preserve collision, ecology, combat, saves and
+player workload. The asset manifest and aesthetic gate cover the stable nodes;
+the exact late-organic gallery was live-reviewed with Godot Dummy audio and
+`--quiet-audio`, with no physical speakers used.
+
 ## Focused Glassmoth wing-root collar pass — 2026-08-30
 
 The Glassmoth authored shell now carries paired folded wing-root collars at
