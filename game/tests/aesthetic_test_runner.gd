@@ -309,12 +309,29 @@ func _run_all() -> void:
                 "region.buried_labs": &"story.buried_labs.protocol",
                 "region.root_cistern": &"story.root_cistern.signal",
             }
+            var expected_story_evidence_kinds := {
+                "region.north_ruins": "ledger",
+                "region.west_grid": "reroute",
+                "region.east_tenements": "bridge",
+                "region.glasshouse": "cultivation",
+                "region.flood_market": "inventory",
+                "region.riverworks": "pumpwatch",
+                "region.tram_graveyard": "route",
+                "region.cathedral_quarter": "choir",
+                "region.observatory_ridge": "migration",
+                "region.buried_labs": "protocol",
+                "region.root_cistern": "signal",
+            }
+
             for raw_region_id in expected_regional_records:
                 var expected_record: StringName = expected_regional_records[raw_region_id]
                 _expect(story_archive.has_record(expected_record), "Discovering %s must unlock its persistent Town Archive record." % raw_region_id)
                 var discovered_landmark := region_director.get_landmark(StringName(raw_region_id))
                 var discovered_witness_lens := discovered_landmark.find_child("RegionalStoryWitnessLens", true, false) as Node3D if discovered_landmark != null else null
                 _expect(discovered_witness_lens != null and discovered_witness_lens.visible, "The physical witness at %s must light when its Town Archive record is recovered." % raw_region_id)
+                var evidence_kind := str(expected_story_evidence_kinds.get(raw_region_id, ""))
+                var discovered_story_evidence := discovered_landmark.find_child("RegionalStoryEvidence_%s" % evidence_kind, true, false) as Node3D if discovered_landmark != null else null
+                _expect(evidence_kind != "" and discovered_story_evidence != null and discovered_story_evidence.get_child_count() >= 2, "The physical witness at %s must carry a distinct high-definition evidence object rather than a generic reused panel." % raw_region_id)
             var witness_lens_02 := camp.find_child("WitnessSignalLens02", true, false) as Node3D
             _expect(witness_lens_02 != null and witness_lens_02.visible, "A sustained discovery run must progressively light the sanctuary's later memory relay lens.")
         var authored_package_name_by_kind := {

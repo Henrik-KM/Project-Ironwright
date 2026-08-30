@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Regional story-evidence review
+
+The eleven non-sanctuary regional witnesses now expose distinct physical
+evidence assemblies rather than one reused glowing panel: civic ledger, power
+reroute, roof bridge, cultivation tray, flood inventory, pump watch, tram
+route, buried choir, migration optic, containment protocol and root signal.
+The assemblies are staged in front of the existing persistent witness plates,
+remain presentation-only, and preserve discovery, archive, route, collision,
+operation and save contracts. Live review uses Godot Dummy audio with
+`--quiet-audio`; no physical speakers are used.
+
 ## 2026-08-30 — Buried Laboratories viewport-detail review
 
 The three authored containment vessels now carry front-facing violet

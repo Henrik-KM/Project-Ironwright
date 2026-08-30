@@ -27,6 +27,20 @@ const STORY_RECORD_BY_REGION: Dictionary = {
     &"region.root_cistern": &"story.root_cistern.signal",
 }
 
+const STORY_EVIDENCE_KIND_BY_REGION: Dictionary = {
+    &"region.north_ruins": &"ledger",
+    &"region.west_grid": &"reroute",
+    &"region.east_tenements": &"bridge",
+    &"region.glasshouse": &"cultivation",
+    &"region.flood_market": &"inventory",
+    &"region.riverworks": &"pumpwatch",
+    &"region.tram_graveyard": &"route",
+    &"region.cathedral_quarter": &"choir",
+    &"region.observatory_ridge": &"migration",
+    &"region.buried_labs": &"protocol",
+    &"region.root_cistern": &"signal",
+}
+
 signal landmark_changed(landmark: RegionLandmark3D)
 signal streaming_changed(region_id: StringName, streamed_in: bool)
 
@@ -827,6 +841,7 @@ func _build_story_witness() -> void:
             "RegionalStoryWitnessTrace%02d" % index,
             0.22
         )
+    _build_story_evidence()
     _story_witness_lens = ModelKit3D.add_sphere(
         _story_witness_root,
         0.22,
@@ -844,6 +859,100 @@ func _build_story_witness() -> void:
     )
     _story_witness_light.name = "RegionalStoryWitnessLight"
     _refresh_story_witness()
+
+
+func _build_story_evidence() -> void:
+    var evidence_kind := StringName(str(STORY_EVIDENCE_KIND_BY_REGION.get(region_id, &"generic")))
+    var evidence := Node3D.new()
+    evidence.name = "RegionalStoryEvidence_%s" % String(evidence_kind)
+    evidence.position = Vector3(0.0, 0.0, 0.16)
+    evidence.scale = Vector3.ONE * 1.22
+    _story_witness_root.add_child(evidence)
+
+    var dark := ModelKit3D.material(Color("121b21"), 0.64, 0.42)
+    var metal := ModelKit3D.material(Color("39474a"), 0.68, 0.46)
+    var warm := ModelKit3D.material(Color("8a542f"), 0.22, 0.58, Color("e9a35a"), 0.68)
+    var cool := ModelKit3D.material(Color("24505a"), 0.32, 0.32, Color("70dce4"), 1.25)
+    var organic := ModelKit3D.material(Color("321c2a"), 0.08, 0.76, Color("a33e61"), 0.82)
+    var accent := cool
+    match evidence_kind:
+        &"ledger":
+            ModelKit3D.add_beveled_box(evidence, Vector3(1.9, 0.16, 0.88), Vector3(0.0, 1.52, 0.14), dark, Vector3(-0.08, 0.0, 0.0), "RegionalStoryEvidenceLedger", 0.16)
+            ModelKit3D.add_beveled_box(evidence, Vector3(1.72, 0.055, 0.76), Vector3(0.0, 1.64, 0.19), warm, Vector3(-0.08, 0.0, 0.0), "RegionalStoryEvidenceLedgerCover", 0.12)
+            ModelKit3D.add_beveled_box(evidence, Vector3(0.09, 0.52, 0.06), Vector3(-0.55, 1.67, 0.25), cool, Vector3(-0.08, 0.0, 0.0), "RegionalStoryEvidenceLedgerSpine", 0.04)
+            for index in range(3):
+                ModelKit3D.add_beveled_box(evidence, Vector3(0.72, 0.035, 0.035), Vector3(-0.12 + float(index) * 0.24, 1.62 - float(index) * 0.06, 0.27), dark, Vector3(-0.08, 0.0, 0.0), "RegionalStoryEvidenceLedgerLine%d" % index, 0.015)
+        &"reroute":
+            accent = warm
+            for index in range(3):
+                var x := -0.72 + float(index) * 0.72
+                ModelKit3D.add_cylinder(evidence, 0.24, 0.1, Vector3(x, 1.55, 0.18), metal, Vector3(PI * 0.5, 0.0, 0.0), "RegionalStoryEvidenceRerouteCoil%d" % index)
+                ModelKit3D.add_sphere(evidence, 0.075, Vector3(x, 1.55, 0.25), accent, Vector3.ONE, "RegionalStoryEvidenceRerouteSignal%d" % index)
+            _add_beam(evidence, Vector3(-0.72, 1.55, 0.27), Vector3(0.0, 1.95, 0.27), 0.032, accent, "RegionalStoryEvidenceRerouteCableA")
+            _add_beam(evidence, Vector3(0.0, 1.95, 0.27), Vector3(0.72, 1.55, 0.27), 0.032, accent, "RegionalStoryEvidenceRerouteCableB")
+        &"bridge":
+            accent = warm
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_beveled_box(evidence, Vector3(0.18, 0.95, 0.2), Vector3(side * 0.72, 1.15, 0.14), metal, Vector3.ZERO, "RegionalStoryEvidenceBridgePylon", 0.08)
+            _add_beam(evidence, Vector3(-0.7, 1.68, 0.25), Vector3(0.0, 1.32, 0.25), 0.038, accent, "RegionalStoryEvidenceBridgeCableA")
+            _add_beam(evidence, Vector3(0.0, 1.32, 0.25), Vector3(0.7, 1.68, 0.25), 0.038, accent, "RegionalStoryEvidenceBridgeCableB")
+            ModelKit3D.add_beveled_box(evidence, Vector3(1.55, 0.08, 0.32), Vector3(0.0, 1.02, 0.17), dark, Vector3.ZERO, "RegionalStoryEvidenceBridgeDeck", 0.06)
+        &"cultivation":
+            accent = organic
+            ModelKit3D.add_beveled_box(evidence, Vector3(1.82, 0.16, 0.82), Vector3(0.0, 0.86, 0.16), metal, Vector3.ZERO, "RegionalStoryEvidenceCultivationTray", 0.12)
+            for index in range(4):
+                var x := -0.62 + float(index) * 0.41
+                ModelKit3D.add_membrane_fan(evidence, 0.25, Vector3(x, 1.38 + float(index % 2) * 0.08, 0.2), accent, 4, "RegionalStoryEvidenceCultivationGrowth%d" % index)
+                _add_beam(evidence, Vector3(x, 0.98, 0.18), Vector3(x, 1.55, 0.2), 0.026, cool, "RegionalStoryEvidenceCultivationStem%d" % index)
+            _add_beam(evidence, Vector3(-0.82, 1.84, 0.2), Vector3(0.82, 1.84, 0.2), 0.032, warm, "RegionalStoryEvidenceCultivationTrellis")
+        &"inventory":
+            accent = warm
+            ModelKit3D.add_beveled_box(evidence, Vector3(1.72, 0.92, 0.72), Vector3(0.0, 1.15, 0.16), dark, Vector3(0.0, 0.0, -0.04), "RegionalStoryEvidenceInventoryCrate", 0.12)
+            for index in range(3):
+                var x := -0.52 + float(index) * 0.52
+                ModelKit3D.add_cylinder(evidence, 0.16, 0.48, Vector3(x, 1.7, 0.2), accent, Vector3.ZERO, "RegionalStoryEvidenceInventoryCanister%d" % index)
+                ModelKit3D.add_cylinder(evidence, 0.18, 0.055, Vector3(x, 1.96, 0.2), cool, Vector3.ZERO, "RegionalStoryEvidenceInventoryCap%d" % index)
+        &"pumpwatch":
+            accent = cool
+            ModelKit3D.add_torus(evidence, 0.55, 0.07, Vector3(0.0, 1.48, 0.2), metal, Vector3(PI * 0.5, 0.0, 0.0), "RegionalStoryEvidencePumpWheel", 40, 8)
+            ModelKit3D.add_cylinder(evidence, 0.1, 0.7, Vector3(0.0, 1.48, 0.28), accent, Vector3(PI * 0.5, 0.0, 0.0), "RegionalStoryEvidencePumpAxle")
+            for side in [-1.0, 1.0]:
+                _add_beam(evidence, Vector3(side * 0.72, 1.05, 0.2), Vector3(side * 0.72, 1.92, 0.2), 0.05, warm, "RegionalStoryEvidencePumpWatchPost")
+        &"route":
+            accent = warm
+            for side in [-1.0, 1.0]:
+                _add_beam(evidence, Vector3(side * 0.48, 0.82, 0.16), Vector3(side * 0.48, 2.0, 0.16), 0.045, metal, "RegionalStoryEvidenceRouteRail")
+            for index in range(3):
+                var x := -0.72 + float(index) * 0.72
+                ModelKit3D.add_beveled_box(evidence, Vector3(0.36, 0.1, 0.42), Vector3(x, 0.84, 0.16), dark, Vector3.ZERO, "RegionalStoryEvidenceRouteSleeper%d" % index, 0.05)
+            ModelKit3D.add_cylinder(evidence, 0.18, 0.42, Vector3(0.0, 1.84, 0.24), accent, Vector3.ZERO, "RegionalStoryEvidenceRouteLamp")
+        &"choir":
+            accent = organic
+            ModelKit3D.add_torus(evidence, 0.68, 0.06, Vector3(0.0, 1.5, 0.2), metal, Vector3(PI * 0.5, 0.0, 0.0), "RegionalStoryEvidenceChoirRingOuter", 48, 8)
+            ModelKit3D.add_torus(evidence, 0.42, 0.045, Vector3(0.0, 1.5, 0.25), accent, Vector3(PI * 0.5, 0.0, 0.0), "RegionalStoryEvidenceChoirRingInner", 40, 8)
+            ModelKit3D.add_tapered_cylinder(evidence, 0.22, 0.34, 0.72, Vector3(0.0, 1.5, 0.18), accent, Vector3.ZERO, "RegionalStoryEvidenceChoirBell")
+            ModelKit3D.add_sphere(evidence, 0.08, Vector3(0.0, 1.2, 0.3), warm, Vector3.ONE, "RegionalStoryEvidenceChoirClapper")
+        &"migration":
+            accent = cool
+            ModelKit3D.add_sphere(evidence, 0.36, Vector3(0.0, 1.5, 0.25), accent, Vector3(1.0, 0.72, 0.42), "RegionalStoryEvidenceMigrationLens")
+            ModelKit3D.add_torus(evidence, 0.62, 0.045, Vector3(0.0, 1.5, 0.2), metal, Vector3(PI * 0.5, 0.0, 0.0), "RegionalStoryEvidenceMigrationOrbit", 48, 8)
+            _add_beam(evidence, Vector3(-0.78, 1.1, 0.18), Vector3(-0.28, 1.88, 0.18), 0.034, warm, "RegionalStoryEvidenceMigrationTraceA")
+            _add_beam(evidence, Vector3(0.78, 1.1, 0.18), Vector3(0.28, 1.88, 0.18), 0.034, warm, "RegionalStoryEvidenceMigrationTraceB")
+        &"protocol":
+            accent = organic
+            ModelKit3D.add_capsule(evidence, 0.28, 1.1, Vector3(0.0, 1.48, 0.18), accent, Vector3(PI * 0.5, 0.0, 0.0), "RegionalStoryEvidenceProtocolCapsule")
+            ModelKit3D.add_torus(evidence, 0.34, 0.05, Vector3(0.0, 1.48, 0.34), warm, Vector3(PI * 0.5, 0.0, 0.0), "RegionalStoryEvidenceProtocolRing", 36, 8)
+            for side in [-1.0, 1.0]:
+                ModelKit3D.add_beveled_box(evidence, Vector3(0.14, 0.92, 0.16), Vector3(side * 0.54, 1.48, 0.16), metal, Vector3.ZERO, "RegionalStoryEvidenceProtocolClamp", 0.05)
+        &"signal":
+            accent = organic
+            _add_beam(evidence, Vector3(-0.82, 0.82, 0.16), Vector3(-0.32, 1.48, 0.22), 0.1, accent, "RegionalStoryEvidenceSignalRootA")
+            _add_beam(evidence, Vector3(-0.32, 1.48, 0.22), Vector3(0.22, 1.1, 0.2), 0.08, accent, "RegionalStoryEvidenceSignalRootB")
+            _add_beam(evidence, Vector3(0.22, 1.1, 0.2), Vector3(0.82, 1.84, 0.2), 0.065, accent, "RegionalStoryEvidenceSignalRootC")
+            ModelKit3D.add_organic_plate(evidence, 0.3, Vector3(0.18, 1.62, 0.24), accent, warm, Vector3(1.15, 0.58, 0.72), "RegionalStoryEvidenceSignalNode", true)
+            ModelKit3D.add_sphere(evidence, 0.09, Vector3(0.18, 1.62, 0.4), cool, Vector3.ONE, "RegionalStoryEvidenceSignalPulse")
+        _:
+            ModelKit3D.add_surface_panel(evidence, Vector3(1.3, 0.72, 0.08), Vector3(0.0, 1.42, 0.18), dark, accent, Vector3.ZERO, "RegionalStoryEvidenceGeneric")
 
 
 func _on_story_record_unlocked(record_id: StringName, _display_name: String, _description: String) -> void:

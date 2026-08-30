@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused regional story-evidence pass — 2026-08-30
+
+Each of the eleven non-sanctuary regional Town Archive witnesses now carries a
+distinct, high-definition physical evidence object: ledger, power reroute,
+bridge cable, cultivation tray, inventory canisters, pump watch, rail route,
+choir resonance, migration optic, containment capsule or root-signal branch.
+The objects are enlarged and staged just in front of the existing witness
+plates so the environmental history reads at remote review distance. They are
+presentation-only children of the persistent landmark witness and do not add
+collision, interaction, routes, resources, save state or recurring player work.
+Focused live review and validation use Godot Dummy audio with
+`--quiet-audio`; no physical speakers are used.
+
 ## Focused Buried Laboratories viewport-detail pass — 2026-08-30
 
 Each authored containment vessel now carries a shallow violet observation
