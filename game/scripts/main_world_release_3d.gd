@@ -267,8 +267,6 @@ func _update_camera(delta: float) -> void:
 	if _is_endgame_focus_context():
 		_update_endgame_establishing_camera(delta)
 		return
-	camera.fov = lerpf(camera.fov, 43.8, 1.0 - exp(-delta * 3.0))
-
 	var target := player.global_position
 	var home_focus := false
 	var formation_spread := 0.0
@@ -300,6 +298,14 @@ func _update_camera(delta: float) -> void:
 	var threat_bias := _nearby_threat_camera_bias(target)
 	var dynamic_height := camera_height + threat_bias.y
 	var dynamic_distance := camera_distance + threat_bias.z
+	var tier_five_home_focus := heartforge != null and heartforge.progression_tier >= 5 and target.distance_to(heartforge.global_position) <= 20.0
+	if tier_five_home_focus:
+		# The sovereignty crown extends above the ordinary Heartforge shell.
+		# Give the late-run home frame a little breathing room only while the
+		# player is near that focal machine; travel and combat framing remain
+		# unchanged elsewhere.
+		dynamic_height += 1.35
+		dynamic_distance += 1.8
 	if _is_remote_camera_context(target):
 		# Remote landmarks need enough breadth to establish their identity, but
 		# the expedition cast must remain readable as the player enters them.
@@ -312,6 +318,7 @@ func _update_camera(delta: float) -> void:
 		var spread_excess := formation_spread - 2.5
 		dynamic_height += minf(4.0, spread_excess * 0.72)
 		dynamic_distance += minf(7.0, spread_excess * 1.15)
+	camera.fov = lerpf(camera.fov, 46.0 if tier_five_home_focus else 43.8, 1.0 - exp(-delta * 3.0))
 	var desired := target + Vector3(0.0, dynamic_height, 0.0) + _camera_horizontal_offset(dynamic_distance)
 	var resolved := desired if home_focus else _resolve_camera_occlusion(target, desired, dynamic_height, dynamic_distance)
 	if camera.global_position.distance_to(resolved) > 20.0:

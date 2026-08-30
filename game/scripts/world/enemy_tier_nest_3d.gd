@@ -323,8 +323,13 @@ func _build_visuals() -> void:
             "NestFineSpine%02d" % index
         )
     _pulse_light = ModelKit3D.add_glow_light(_model_root, Vector3(0.0, 1.8, 0.0), Color("d84b69"), 1.3, 7.5)
-    _build_destroyed_presentation()
     _refresh_visual_state()
+
+
+func _ensure_destroyed_presentation() -> void:
+    if _destroyed_root != null or _model_root == null:
+        return
+    _build_destroyed_presentation()
 
 
 func _build_destroyed_presentation() -> void:
@@ -429,6 +434,13 @@ func _animate_visuals() -> void:
 func _refresh_visual_state() -> void:
     if _model_root == null:
         return
+    if not alive:
+        # Destroyed scars are authored on demand. Living nests are common
+        # world landmarks, so keeping their failure geometry allocated from
+        # boot needlessly multiplies renderer resources and destabilizes
+        # headless/reduced-detail startup without changing the visible result
+        # once a nest actually fails.
+        _ensure_destroyed_presentation()
     var state_scale := maxf(0.08, maturity)
     var active_shell_visible := alive or (state_name == &"regrowing" and regrowth_progress >= 0.72)
     if alive:

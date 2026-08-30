@@ -3035,3 +3035,25 @@ changing the protection envelope, combat, collision, sockets, LOD, autonomy or
 save state. The close-range cue is bounded and presentation-only. Native and
 live review use Godot's Dummy audio driver with `--quiet-audio`; no physical
 speakers are used. Broader human production-art acceptance remains open.
+
+# Focused Tier V home-camera breathing-room pass — 2026-08-30
+
+When the player is close to a Tier V Heartforge, the normal tactical camera
+now makes a restrained height, distance and field-of-view adjustment so the
+sovereignty crown, service face and player remain readable in one frame. The
+adjustment is limited to that late-run home context; travel, remote-operation,
+combat and map framing are unchanged. The exact `--complete-objective-review`
+capture must be checked with Godot Dummy audio and `--quiet-audio`; no physical
+speakers are used. Broader human production-art acceptance remains open.
+
+# Focused Tier V crown framing pass — 2026-08-30
+
+The Tier V sovereignty crown now uses a tighter ring, lower centre and
+shorter beacon so the ordinary late-run tactical camera can hold the full
+upper silhouette without clipping the viewport edge or crowding the HUD. The
+open-ring identity and warm/cyan progression hierarchy remain intact; the
+change is presentation-only and does not alter progression, collision, save
+state or the separate post-victory sanctuary crown. The exact
+`--complete-objective-review` frame must be checked with Godot Dummy audio and
+`--quiet-audio`; no physical speakers are used. Broader human production-art
+acceptance remains open.

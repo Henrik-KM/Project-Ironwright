@@ -1063,7 +1063,7 @@ func _run_all() -> void:
         _expect(crown != null and crown.mesh is TorusMesh, "Tier 5 Heartforge geometry must culminate in a readable open crown ring rather than a filled plate.")
         var crown_material := crown.material_override as StandardMaterial3D if crown != null else null
         var crown_mesh := crown.mesh as TorusMesh if crown != null else null
-        _expect(crown_mesh != null and crown_mesh.outer_radius <= 2.75, "The Tier 5 crown ring must leave the reactor and service face visible instead of spanning the opening frame.")
+        _expect(crown_mesh != null and crown_mesh.outer_radius <= 2.6 and crown.position.y <= 4.2, "The Tier 5 crown ring must leave the reactor, service face and upper tactical frame visible instead of spanning the opening frame.")
         _expect(crown_material != null and crown_material.emission_energy_multiplier <= 0.4, "The Tier 5 crown ring must retain a restrained warm accent instead of becoming the brightest surface in the tactical frame.")
         var crown_fin := heartforge.find_child("Tier5CrownFinCore", true, false) as MeshInstance3D
         var crown_fin_material := crown_fin.material_override as StandardMaterial3D if crown_fin != null else null
@@ -1076,7 +1076,7 @@ func _run_all() -> void:
             var beacon := heartforge.find_child("Tier5CrownBeacon", true, false) as Node3D
             var beacon_mesh := beacon as MeshInstance3D
             var beacon_material := beacon_mesh.material_override as StandardMaterial3D if beacon_mesh != null else null
-            _expect(beacon_material != null and beacon_material.emission_energy_multiplier <= 0.56, "The Tier 5 crown beacon must retain a restrained warm accent instead of clipping the opening frame.")
+            _expect(beacon_material != null and beacon_material.emission_energy_multiplier <= 0.56 and beacon.get_aabb().size.y <= 0.7, "The Tier 5 crown beacon must retain a restrained warm accent and compact vertical framing instead of clipping the opening frame.")
             var beacon_scale_before := beacon.scale if beacon != null else Vector3.ONE
             heartforge_presentation.progression_time = 0.0
             heartforge_presentation._process(0.0)

@@ -6815,3 +6815,24 @@ roster checks and requires silent late-organic live review before merge.
 - native aesthetic coverage verifies the hardware and motion, and live review
   uses Godot's Dummy audio driver with `--quiet-audio`; no physical speakers are
   used.
+
+## Focused Tier V home-camera breathing-room pass — 2026-08-30
+
+- added a bounded late-run camera pullback and modest field-of-view increase
+  while the player is within the Heartforge home radius, keeping the Tier V
+  sovereignty crown, service face and player readable together;
+- left travel, remote operations, combat framing, movement, collision and map
+  camera behaviour unchanged outside that Tier V home context;
+- the exact late-run objective review remains the acceptance capture, using
+  Godot Dummy audio with `--quiet-audio` and no physical speakers.
+
+## Focused Tier V crown framing pass — 2026-08-30
+
+- tightened and lowered the runtime Tier V sovereignty crown and beacon so the
+  late-run tactical camera retains the upper silhouette without clipping into
+  the viewport edge or crowding the HUD;
+- preserved the open-ring identity, progression tier, focal-light hierarchy,
+  collision, save state and post-victory sanctuary crown contracts;
+- added an aesthetic regression bound for the compact crown and beacon;
+  exact late-run live review uses Godot Dummy audio with `--quiet-audio`, and
+  no physical speakers are used.

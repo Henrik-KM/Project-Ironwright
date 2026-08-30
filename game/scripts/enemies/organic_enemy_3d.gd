@@ -94,7 +94,15 @@ func configure(next_species: StringName, player: Node3D, heartforge: Node3D) -> 
     _apply_species_stats()
     if is_inside_tree():
         _refresh_visuals()
-        _build_death_presentation()
+        # Failure overlays are rebuilt only when a configured actor already
+        # owns one. Newly spawned healthy creatures should not allocate scar
+        # and death geometry until the corresponding state is actually seen.
+        if _damage_visual_root != null and is_instance_valid(_damage_visual_root):
+            _build_damage_presentation()
+        elif not defer_authored_visuals:
+            _build_damage_presentation()
+        if _death_visual_root != null and is_instance_valid(_death_visual_root):
+            _build_death_presentation()
         _refresh_damage_presentation()
         _refresh_death_presentation()
         _choose_next_ecological_behaviour(true)
@@ -530,6 +538,7 @@ func apply_damage(amount: float, source: Node = null) -> void:
         return
     current_health = maxf(0.0, current_health - amount)
     health_changed.emit(self, current_health, maximum_health)
+    _ensure_damage_presentation()
     _refresh_damage_presentation()
     aggression = 1.0
     if source is Node3D:
@@ -548,6 +557,7 @@ func apply_damage(amount: float, source: Node = null) -> void:
     collision_layer = 0
     collision_mask = 0
     death_presentation_remaining = DEATH_PRESENTATION_SECONDS
+    _ensure_death_presentation()
     _refresh_death_presentation()
     killed.emit(self, source)
 
@@ -647,7 +657,14 @@ func _build_visuals() -> void:
     _model_root.name = "OrganicModel"
     add_child(_model_root)
     _refresh_visuals()
-    _build_damage_presentation()
+    if not defer_authored_visuals:
+        # Keep the normal active-band damage read resident for immediate
+        # integrity feedback. Deferred/reduced-detail actors materialize it
+        # together with their authored shell when promoted.
+        _build_damage_presentation()
+    # Keep the short-lived death silhouette resident so a lethal hit can
+    # reveal it in the same frame; the much more common damage overlay remains
+    # lazy and is allocated only after the first meaningful hit.
     _build_death_presentation()
 
 
@@ -657,7 +674,10 @@ func ensure_authored_visuals() -> void:
     if _deferred_proxy_root != null and is_instance_valid(_deferred_proxy_root):
         _deferred_proxy_root.free()
     _deferred_proxy_root = null
+    var was_deferred := defer_authored_visuals
+    defer_authored_visuals = false
     _build_visuals()
+    defer_authored_visuals = was_deferred
 
 
 func _instantiate_authored_scene(path: String, label: String) -> Node3D:
@@ -673,7 +693,15 @@ func _instantiate_authored_scene(path: String, label: String) -> Node3D:
 
 func set_damage_presentation_enabled(value: bool) -> void:
     _damage_presentation_enabled = value
+    if value and alive and current_health < maximum_health * 0.92:
+        _ensure_damage_presentation()
     _refresh_damage_presentation()
+
+
+func _ensure_damage_presentation() -> void:
+    if _damage_visual_root != null and is_instance_valid(_damage_visual_root):
+        return
+    _build_damage_presentation()
 
 
 func _build_damage_presentation() -> void:
@@ -753,6 +781,12 @@ func _refresh_damage_presentation() -> void:
             scar.scale = Vector3(1.0, 0.7 + visibility * 0.3, 1.0)
         if leak != null:
             leak.visible = active and visibility > 0.25
+
+
+func _ensure_death_presentation() -> void:
+    if _death_visual_root != null and is_instance_valid(_death_visual_root):
+        return
+    _build_death_presentation()
 
 
 func _build_death_presentation() -> void:
