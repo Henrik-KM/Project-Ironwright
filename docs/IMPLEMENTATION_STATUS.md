@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused silent-validation documentation pass — 2026-08-30
+
+Every Godot validation example in the README now selects Dummy audio and
+`--quiet-audio`, matching the repository workflows and live-review safety
+contract. This changes no gameplay or audio content; it prevents copied
+validation commands from addressing physical speakers. Live review during this
+pass used the same silent path.
+
 ## Focused Rootweaver thorax-attachment pass — 2026-08-30
 
 The Rootweaver authored shell now carries a dense torso-parented route-controller

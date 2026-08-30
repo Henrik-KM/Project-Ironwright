@@ -212,12 +212,16 @@ Native Godot suites:
 ```bash
 godot --headless --audio-driver Dummy --quiet-audio --path game --editor --quit
 godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/test_runner.gd
-godot --headless --path game --script res://tests/aesthetic_test_runner.gd
-godot --headless --path game --script res://tests/full_game_test_runner.gd
-godot --headless --path game --script res://tests/first_session_ux_test_runner.gd
-godot --headless --path game --script res://tests/complete_game_test_runner.gd
-godot --headless --path game --script res://tests/persistence_test_runner.gd
+godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/aesthetic_test_runner.gd
+godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/full_game_test_runner.gd
+godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/first_session_ux_test_runner.gd
+godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/complete_game_test_runner.gd
+godot --headless --audio-driver Dummy --quiet-audio --path game --script res://tests/persistence_test_runner.gd
 ```
+
+For any Godot validation or live review, keep `--audio-driver Dummy --quiet-audio`
+enabled. This keeps development audio off physical speakers; the in-game audio
+mix can still be reviewed separately at a deliberately low volume when needed.
 
 The final suite executes an accelerated but real start-to-victory systemic path, including Heartforge tiers II–V, physical operations, components, autonomous replacement, region suppression, Root Cistern discovery, final-protocol initiation, victory, and save-state restoration.
 
