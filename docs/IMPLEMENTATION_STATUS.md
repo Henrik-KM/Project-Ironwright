@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Glassmoth wing-root collar pass — 2026-08-30
+
+The Glassmoth authored shell now carries paired folded wing-root collars at
+the base of its animated first wing pair. The added volume closes the visual
+transition between thorax and luminous membranes so the family reads as a
+living organism rather than a body with detached sheets. The collars are
+parented to the existing wing sockets and preserve animation ownership,
+collision, ecology, combat, saves and player workload. The asset manifest and
+aesthetic gate cover the stable nodes; the exact early-organic gallery was
+live-reviewed with Godot Dummy audio and `--quiet-audio`, with no physical
+speakers used.
+
 ## Bounded active authored-visual budget pass — 2026-08-30
 
 The real release renderer now keeps the nearest eight actors in authored

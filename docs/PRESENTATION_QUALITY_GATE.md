@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Glassmoth wing-root collar pass
+
+The Glassmoth's first wing pair now grows from paired folded root collars,
+adding a compact load-bearing transition between the thorax and the broad
+luminous membranes. The collars follow the existing animated wing sockets,
+so the family keeps one coherent motion owner while gaining a more convincing
+close-camera silhouette. This is presentation-only geometry: collision,
+ecology, combat, saves and player workload are unchanged. The exact
+early-organic gallery review passed with Godot Dummy audio and
+`--quiet-audio`; no physical speakers were used.
+
 ## 2026-08-30 — Rootweaver route-keel silhouette pass
 
 The authored Rootweaver focal mask now carries a narrow vertical route keel

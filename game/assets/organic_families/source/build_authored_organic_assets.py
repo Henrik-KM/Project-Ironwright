@@ -627,6 +627,25 @@ def build_family(name: str, spec: dict) -> None:
             "GlassmothWingVein",
             add_capsule(builder, 0.024, 0.92, len(materials) - 1, 24),
         )
+        # The broad luminous membranes need a living transition into the
+        # thorax. A small folded root collar gives the wing socket a readable
+        # load-bearing break instead of leaving the membrane to meet the body
+        # as a thin sheet. It is parented to each existing wing node below so
+        # the imported wing motion remains its sole animation owner.
+        mesh_ids["GlassmothWingRootCollar"] = mesh(
+            "GlassmothWingRootCollar",
+            add_organic_lobe(
+                builder,
+                (0.56, 0.24, 0.42),
+                shell,
+                lobes=4,
+                rings=9,
+                sides=40,
+                scallop_amplitude=0.14,
+                leading_extension=0.22,
+                fold_strength=0.76,
+            ),
+        )
     # Thornback's crown is a broad territorial shield. Build its thicker
     # folded lobe only for that family so the other six assets remain stable
     # when this focused pass changes.
@@ -876,6 +895,16 @@ def build_family(name: str, spec: dict) -> None:
                 add_node(f"GlassmothWingFrame{suffix}{level}", mesh_ids["WingFrame"], (side * (1.10 + level * 0.16), 1.22 + level * 0.16, 0.12 + level * 0.18), rotation=(side * (wing_pitch + 0.04), side * (0.28 + level * 0.08), side * 0.64), scale=(0.62, 1.0, 0.82), extras={"surface": "glasswing_spar"})
                 add_node(f"GlassmothWingFastener{suffix}{level}", mesh_ids["CrownFastener"], (side * (0.58 + level * 0.12), 1.22 + level * 0.14, 0.08 + level * 0.16), extras={"surface": "wing_socket"})
                 add_node(f"GlassmothFineVein{suffix}{level}", mesh_ids["FineVein"], (side * (0.9 + level * 0.15), 1.2 + level * 0.15, 0.14 + level * 0.17), rotation=(side * (wing_pitch + 0.02), side * (0.26 + level * 0.06), side * 0.24), scale=(0.65, 1.0, 0.76), extras={"surface": "luminous_wing_vein"})
+                if level == 0:
+                    add_node(
+                        f"GlassmothWingRootCollar{suffix}",
+                        mesh_ids["GlassmothWingRootCollar"],
+                        (-side * 0.34, 0.02, -0.02),
+                        rotation=(0.0, -side * 0.10, side * 0.08),
+                        scale=(0.92, 0.86, 0.82),
+                        extras={"surface": "folded_wing_root"},
+                        parent=wing_node,
+                    )
             add_node(f"GlassmothAntenna{suffix}", mesh_ids["Tendon"], (side * 0.2, 1.45, -0.98), rotation=(0.48, 0.0, side * 0.22), extras={"socket_type": "antenna"})
             add_node(f"GlassmothOculus{suffix}", mesh_ids["Eye"], (side * 0.2, 1.3, -1.12), extras={"socket_type": "luminous_eye"})
         walk_node = "GlassmothWingL0"

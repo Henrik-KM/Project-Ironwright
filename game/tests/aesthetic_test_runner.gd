@@ -1663,6 +1663,10 @@ func _run_all() -> void:
             &"glassmoth":
                 _expect(_find_named(enemy_samples[index], "GlassmothFineVeinL0") != null and _find_named(enemy_samples[index], "GlassmothFineVeinR0") != null, "The Glassmoth must expose fine luminous wing-vein detail on both wing pairs.")
                 _expect(_find_named(enemy_samples[index], "GlassmothWingFrameL0") != null and _find_named(enemy_samples[index], "GlassmothWingFastenerR1") != null, "The Glassmoth must expose structural spars and socket fasteners on its luminous wings.")
+                var glassmoth_root_l := _find_named(enemy_samples[index], "GlassmothWingRootCollarL") as MeshInstance3D
+                var glassmoth_root_r := _find_named(enemy_samples[index], "GlassmothWingRootCollarR") as MeshInstance3D
+                _expect(glassmoth_root_l != null and glassmoth_root_r != null and glassmoth_root_l.get_parent().name == "GlassmothWingL0" and glassmoth_root_r.get_parent().name == "GlassmothWingR0", "The Glassmoth must carry paired folded wing-root collars parented to the animated wing sockets so its membranes read as attached living anatomy.")
+                _expect(glassmoth_root_l != null and glassmoth_root_r != null and _mesh_vertex_count(glassmoth_root_l) >= 200 and _mesh_vertex_count(glassmoth_root_r) >= 200, "The Glassmoth wing-root collars must retain dense folded high-definition geometry.")
                 var glassmoth_wing_l := _find_named(enemy_samples[index], "GlassmothWingL0") as Node3D
                 var glassmoth_wing_r := _find_named(enemy_samples[index], "GlassmothWingR0") as Node3D
                 _expect(glassmoth_wing_l != null and glassmoth_wing_r != null and absf(glassmoth_wing_l.basis.y.z) >= 0.12 and absf(glassmoth_wing_r.basis.y.z) >= 0.12 and glassmoth_wing_l.basis.y.z * glassmoth_wing_r.basis.y.z < 0.0, "The Glassmoth wing pair must carry opposing pitch so its luminous membranes read as a living V-shaped silhouette rather than coplanar discs.")
