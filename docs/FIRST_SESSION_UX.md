@@ -88,7 +88,7 @@ Scrap remains the only ordinary stockpiled construction resource. Improving read
 
 Automated native tests cover the 800×520 constrained floor, the 1024×576
 release capture size and the 1280×720 review size. Each case also exercises
-1.35× text scale. The forge and strategic command panels must fit inside the
+1.40× text scale. The forge and strategic command panels must fit inside the
 viewport using scrollable content with fixed close footers; the operations
 surface is held to the same rule. The runner uses Godot Dummy audio and
 `--quiet-audio` only.

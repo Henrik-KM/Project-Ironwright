@@ -714,7 +714,10 @@ func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void
     var original_camera_shake := float(settings.get_value(&"camera_shake", 0.65))
     var original_reduced_motion := bool(settings.get_value(&"reduced_motion", false))
     var original_reduced_flashes := bool(settings.get_value(&"reduced_flashes", false))
-    settings.set_value(&"text_scale", 1.35, false)
+    # Exercise the actual supported ceiling, not a lower proxy. The release
+    # protocol promises 140% text scaling at 1280x720, so this gate must prove
+    # the real maximum survives the live accessibility tree pass.
+    settings.set_value(&"text_scale", 1.4, false)
     settings.set_value(&"high_contrast_ui", true, false)
     settings.apply_accessibility_to_tree(world.hud)
     _expect(world.hud.resource_label.get_theme_font_size("font_size") >= 27, "Text scaling must enlarge the resource HUD.")

@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Exact maximum text-scale regression gate
+
+The release accessibility regression now exercises the supported 1.40x text
+scale ceiling instead of the earlier 1.35x proxy. This keeps the automated
+proof aligned with the external playtest requirement for 140% text at
+1280x720; no gameplay, audio, layout contract or player-facing default was
+changed. The focused gate passed with Godot Dummy audio and
+`--quiet-audio`; no physical speakers were used.
+
 ## 2026-08-30 — Late-organic gallery separation pass
 
 The late-organic presentation fixture now uses wider lateral spacing for its

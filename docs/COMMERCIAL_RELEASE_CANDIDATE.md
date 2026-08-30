@@ -208,7 +208,7 @@ Accessibility settings include:
 The settings screen is controller-focusable and accessible from title and pause menus. Settings are persisted transactionally in a separate verified settings file with a backup.
 
 The native accessibility regression now checks the compact 800×520 floor, the
-1024×576 release size and the 1280×720 review size at 1.35× text scale. The
+1024×576 release size and the 1280×720 review size at 1.40× text scale. The
 opening HUD, forge, strategic command and operations surfaces keep their fixed
 close actions inside the real viewport and keep scrollable content above those
 footers. This is automated layout protection; professional accessibility and

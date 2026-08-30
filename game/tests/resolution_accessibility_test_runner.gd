@@ -6,7 +6,10 @@ const CASES: Array[Dictionary] = [
     {"label": "release", "size": Vector2i(1024, 576)},
     {"label": "wide", "size": Vector2i(1280, 720)},
 ]
-const ACCESSIBLE_TEXT_SCALE := 1.35
+# The external release protocol promises the supported 140% ceiling. Keep the
+# viewport/layout gate at that exact value so smaller proxies cannot hide
+# clipping or footer overlap.
+const ACCESSIBLE_TEXT_SCALE := 1.4
 
 var failures: Array[String] = []
 

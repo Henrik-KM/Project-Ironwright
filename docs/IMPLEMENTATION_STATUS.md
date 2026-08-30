@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused maximum text-scale regression pass — 2026-08-30
+
+The release accessibility regression now checks the actual supported 1.40x
+text-scale ceiling rather than a 1.35x proxy, matching the 140% at 1280x720
+requirement in the external playtest protocol. The focused commercial release
+suite passed with Godot Dummy audio and `--quiet-audio`; no physical speakers
+were used.
+
 ## Focused Broodmass throat-attachment pass — 2026-08-30
 
 The Broodmass authored shell now carries a dense folded throat collar inside
