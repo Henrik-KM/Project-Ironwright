@@ -52,7 +52,7 @@ func _run_all() -> void:
     _clear_enemies()
 
     _expect(world.region_director.region_data.size() >= 12, "The complete alpha must load all twelve persistent regions.")
-    _expect(world.long_operation_director.operations.size() >= 23, "The long-run operation catalogue must retain the expanded authored physical objective breadth.")
+    _expect(world.long_operation_director.operations.size() >= 30, "The long-run operation catalogue must retain the roadmap's minimum authored physical objective breadth.")
     for authored_operation_id in [
         &"operation.north_civic_roofline",
         &"operation.west_canal_works_repair",
@@ -61,6 +61,13 @@ func _run_all() -> void:
         &"operation.flood_market_crane_lift",
         &"operation.observatory_lower_courtyard",
         &"operation.buried_lab_airlock",
+        &"operation.north_transit_signal",
+        &"operation.north_canal_gate_hold",
+        &"operation.west_cooling_station_reclaim",
+        &"operation.east_residential_arc_relay",
+        &"operation.cathedral_bell_yard_silence",
+        &"operation.observatory_service_ring",
+        &"operation.root_signal_ledge_watch",
     ]:
         _expect(world.long_operation_director.operations.has(authored_operation_id), "The authored catalogue must load %s." % authored_operation_id)
     _expect(world.region_director.is_discovered(&"region.heartforge_district"), "The Heartforge district must begin discovered.")
@@ -347,6 +354,10 @@ func _run_all() -> void:
 
     _expect(world.progression.purchase(&"tech.heartforge.tier_4"), "Two components and two outposts must permit Heartforge tier 4.")
     _expect(world.progression.heartforge_tier == 4, "The run must reach Heartforge tier 4.")
+    var cathedral_bell_yard_operation := world.long_operation_director.operation(&"operation.cathedral_bell_yard_silence")
+    _expect(world.long_operation_director.requirements_met(cathedral_bell_yard_operation), "The expanded Cathedral Bell Yard operation must become actionable after the brood suppression and tier 4 transition.")
+    _expect(_complete_operation(world, &"operation.cathedral_bell_yard_silence"), "The expanded Cathedral Bell Yard operation must travel, work and return through the existing physical operation path.")
+    _expect(world.region_director.get_landmark(&"region.cathedral_quarter").suppression > 0.20, "The Cathedral Bell Yard operation must apply its authored regional suppression reward.")
     _expect(world.adaptive_defense_director != null, "Heartforge tier 4 must install the adaptive defence director.")
     _expect(world.progression.purchase(&"tech.machine.signal_relay"), "Tier 4 and two recovered components must permit Signal Relay research.")
     for _attempt in range(10):

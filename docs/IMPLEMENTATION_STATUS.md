@@ -2,16 +2,18 @@
 
 ## Expanded authored physical operation breadth — 2026-08-30
 
-The strategic catalogue now carries twenty-three authored physical objectives,
-up from sixteen. Seven bounded optional expeditions reuse existing regions and
-fixed discovered sites: the North Civic Roof, West Canal Works, East Roof
-Bridge, Glasshouse Service Bay, Flood Market Crane, Observatory Lower Court
-and Buried Lab Airlock. Each preserves the existing group formation, real-route
-travel, work-site noise, physical return and persistence path while adding a
-single high-level choice about route safety, suppression or future regrouping.
-No per-robot queue, route editing, teleported reward or recurring maintenance
-task was introduced. English, Swedish and German operation copy is present and
-the complete-run test asserts that the expanded stable IDs load.
+The strategic catalogue now carries thirty authored physical objectives, up
+from twenty-three. Seven bounded optional expeditions reuse existing regions
+and fixed discovered sites or established regional pressure: the North Transit
+Yard, North Canal Gate, West Cooling Station, East Residential Arc, Cathedral
+Bell Yard, Observatory Service Ring and Root Signal Ledge. Each preserves the
+existing group formation, real-route travel, work-site noise, physical return
+and persistence path while adding a single high-level choice about route
+safety, suppression or future regrouping. No per-robot queue, route editing,
+teleported reward or recurring maintenance task was introduced. English,
+Swedish and German operation copy is present, and the complete-run test now
+asserts the thirty-objective catalogue and physically completes the Bell Yard
+expedition.
 
 ## Focused Bulwark projector-instrument pass — 2026-08-30
 

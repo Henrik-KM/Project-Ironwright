@@ -98,7 +98,7 @@ The persistent town expands from seven to twelve authored regions:
 11. Buried Laboratories;
 12. Root Cistern.
 
-The operation catalogue now contains twenty-three authored physical objectives. The required start-to-victory chain remains intact, while optional operations add route knowledge, rare components, regional suppression, additional outpost foundations, civic archive recovery, residential rescue, transformer repair, secondary fixed-site approaches and the Root Signal purge. These include tracing the East Roofline, recovering the Tram Servo Bank, harvesting luminous Glasshouse mycelium, restarting a Riverworks pump, calibrating the Observatory array, reopening the West Canal Works, raising the Flood Market Crane, clearing the Buried Lab Airlock and a post-victory archive recovery.
+The operation catalogue now contains thirty authored physical objectives. The required start-to-victory chain remains intact, while optional operations add route knowledge, rare components, regional suppression, additional outpost foundations, civic archive recovery, residential rescue, transformer repair, secondary fixed-site approaches, bell-yard suppression, cooling-station recovery and the Root Signal purge. These include tracing the East Roofline, recovering the Tram Servo Bank, harvesting luminous Glasshouse mycelium, restarting a Riverworks pump, calibrating the Observatory array, reopening the West Canal Works, raising the Flood Market Crane, clearing the Buried Lab Airlock, stabilizing the North Transit Yard, securing the Cathedral Bell Yard, and a post-victory archive recovery.
 
 The organic roster now contains fourteen families. Seven release families join the existing seven:
 
