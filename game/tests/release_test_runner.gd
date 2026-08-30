@@ -538,6 +538,7 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     casualty_operation["localization_machine_name"] = "Siebzehn"
     _expect(world.operations_hud._localized_operation_field(casualty_operation, "description", "Siebzehn went dark in West Grid.").begins_with("Siebzehn ist in der Region Westliches Netz"), "German casualty recovery briefings must localize both the machine and region replacements.")
     _expect(world.operations_hud._localized_operation_field({"id": "operation.west_grid_survey"}, "name", "Survey the West Grid") == "Westliches Netz erkunden", "German authored operation names must resolve stable operation catalog keys.")
+    _expect(world.operations_hud._localized_operation_field({"id": "operation.buried_lab_airlock"}, "name", "Clear the Buried Lab Airlock") == "Luftschleuse des vergrabenen Labors räumen", "German expanded authored operation names must resolve stable catalog keys.")
     world.operations_hud.open_endgame()
     _expect(world.operations_hud.title_label.text == "ENDPROTOKOLLE", "German locale must refresh final-protocol command chrome.")
     world.operations_hud.close()

@@ -1004,10 +1004,10 @@ func _has_dynamic_operation_review_flag() -> bool:
 
 func _has_authored_operation_review_flag() -> bool:
 	for argument in OS.get_cmdline_args():
-		if str(argument) == "--authored-operation-review":
+		if str(argument) == "--authored-operation-review" or str(argument).begins_with("--authored-operation-review="):
 			return true
 	for argument in OS.get_cmdline_user_args():
-		if str(argument) == "--authored-operation-review":
+		if str(argument) == "--authored-operation-review" or str(argument).begins_with("--authored-operation-review="):
 			return true
 	return false
 
@@ -2491,6 +2491,8 @@ func _should_build_city_on_boot() -> bool:
 			"--run-variation-review", "--heartforge-progression-review", "--adaptive-defense-review",
 			"--complete-objective-review", "--endgame-protocol-review", "--mechromancer-evolution-review",
 		]:
+			return true
+		if raw_argument.begins_with("--authored-operation-review=") or raw_argument.begins_with("--authored-operation-review-screenshot="):
 			return true
 		if raw_argument.begins_with("--endgame-protocol-review="):
 			return true

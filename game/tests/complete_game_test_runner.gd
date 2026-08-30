@@ -52,6 +52,17 @@ func _run_all() -> void:
     _clear_enemies()
 
     _expect(world.region_director.region_data.size() >= 12, "The complete alpha must load all twelve persistent regions.")
+    _expect(world.long_operation_director.operations.size() >= 23, "The long-run operation catalogue must retain the expanded authored physical objective breadth.")
+    for authored_operation_id in [
+        &"operation.north_civic_roofline",
+        &"operation.west_canal_works_repair",
+        &"operation.east_roof_bridge_reinforcement",
+        &"operation.glasshouse_service_bay",
+        &"operation.flood_market_crane_lift",
+        &"operation.observatory_lower_courtyard",
+        &"operation.buried_lab_airlock",
+    ]:
+        _expect(world.long_operation_director.operations.has(authored_operation_id), "The authored catalogue must load %s." % authored_operation_id)
     _expect(world.region_director.is_discovered(&"region.heartforge_district"), "The Heartforge district must begin discovered.")
     _expect(not world.region_director.is_discovered(&"region.root_cistern"), "The Root Cistern must remain hidden during the opening.")
     _expect(world.long_operation_director.available_operations().is_empty(), "Long-range operations must be gated during the weak opening.")
@@ -311,6 +322,12 @@ func _run_all() -> void:
     _expect(world.progression.heartforge_tier == 3, "The run must reach Heartforge tier 3.")
     _expect(world.progression.purchase(&"tech.machine.forge_assistance"), "Tier 3 must permit autonomous ordinary replacement.")
     _expect(world.progression.purchase(&"tech.doctrine.deep_operations"), "Tier 3 must permit deep-operation doctrine.")
+
+    var west_canal_operation := world.long_operation_director.operation(&"operation.west_canal_works_repair")
+    _expect(world.long_operation_director.requirements_met(west_canal_operation), "The expanded West Canal Works operation must become actionable after the West Grid survey and tier 3 transition.")
+    _expect(_complete_operation(world, &"operation.west_canal_works_repair"), "The expanded West Canal Works operation must travel, work and return through the existing physical operation path.")
+    _expect(world.outpost_director.get_site(&"site.west_canal_works").discovered, "The West Canal Works operation must reveal its fixed discovered support site on physical return.")
+    _expect(world.region_director.get_landmark(&"region.west_grid").suppression > 0.0, "The West Canal Works operation must apply its authored regional suppression reward.")
 
     var robots_before_replacement := world.run_state.robots_built
     # Tier 3 expects at least three Scrappers; the prepared team contains two.

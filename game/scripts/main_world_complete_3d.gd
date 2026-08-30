@@ -352,23 +352,61 @@ func _adaptive_defense_review_capture_argument() -> String:
     return ""
 
 
+func _authored_operation_review_id() -> StringName:
+    var arguments: Array = OS.get_cmdline_args()
+    arguments.append_array(OS.get_cmdline_user_args())
+    for argument in arguments:
+        var argument_text := str(argument)
+        if argument_text.begins_with("--authored-operation-review="):
+            return StringName(argument_text.get_slice("=", 1))
+    return &"operation.west_grid_survey"
+
+
 func _start_authored_operation_review() -> void:
     if long_operation_director == null or operations_hud == null:
         return
-    var authored_operation := long_operation_director.operation(&"operation.west_grid_survey")
+    var authored_operation_id := _authored_operation_review_id()
+    var authored_operation := long_operation_director.operation(authored_operation_id)
     if authored_operation.is_empty():
+        push_error("Authored operation review requested an unknown operation: %s" % authored_operation_id)
         return
     authored_operation = long_operation_director._with_route_preview(authored_operation)
     var locale_service := get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
     var ready_status: String = locale_service.text("command.operations.ready") if locale_service != null else "A physical authored operation is ready to authorize."
     operations_hud.update_operations([authored_operation], ready_status, false)
     operations_hud.open_operations()
+    var capture_path := _authored_operation_review_capture_argument()
+    if not capture_path.is_empty():
+        call_deferred("_capture_authored_operation_review", capture_path)
     # Freeze the ordinary world refresh so this non-saving presentation fixture
     # keeps the authored entry visible instead of replacing it with the normal
     # progression-gated offer list on the next frame.
     set_process(false)
     player.input_enabled = false
-    hud.push_notification(_localized_text("notification.complete.operation_review", "AUTHORED OPERATION REVIEW · THE WEST GRID BRIEFING IS READY"))
+    hud.push_notification(_localized_text("notification.complete.operation_review_generic", "AUTHORED OPERATION REVIEW · THE SELECTED BRIEFING IS READY"))
+
+
+func _authored_operation_review_capture_argument() -> String:
+    var arguments: Array = OS.get_cmdline_args()
+    arguments.append_array(OS.get_cmdline_user_args())
+    for index in arguments.size():
+        var argument := str(arguments[index])
+        if argument.begins_with("--authored-operation-review-screenshot="):
+            return argument.get_slice("=", 1)
+        if argument == "--authored-operation-review-screenshot" and index + 1 < arguments.size():
+            return str(arguments[index + 1])
+    return ""
+
+
+func _capture_authored_operation_review(capture_path: String) -> void:
+    await get_tree().process_frame
+    await get_tree().process_frame
+    var review_image := get_viewport().get_texture().get_image()
+    var capture_error := review_image.save_png(capture_path)
+    if capture_error == OK:
+        print("Authored operation review screenshot written to %s" % capture_path)
+    else:
+        push_error("Authored operation review screenshot failed: %s" % capture_error)
 
 
 func _start_route_memory_review() -> void:
