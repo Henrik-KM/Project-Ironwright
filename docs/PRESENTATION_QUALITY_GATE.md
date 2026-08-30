@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Heartforge threshold-gate pass
+
+The opening sanctuary now has one deliberate entry assembly: paired
+chamfered pillars, grounded feet, a warm lintel, service panel and three
+restrained entry lamps. It clarifies the inhabited warm-to-dangerous boundary
+without adding collision, route, power-grid or player-managed gate state.
+Live review uses Godot Dummy audio with `--quiet-audio`; no physical speakers
+are used.
+
 ## 2026-08-30 — Tram Graveyard catenary pass
 
 The sparse background rail dressing now reads as a former electrified civic

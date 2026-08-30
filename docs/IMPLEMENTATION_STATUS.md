@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused Heartforge threshold-gate pass — 2026-08-30
+
+The opening sanctuary now has one deliberate entry assembly: paired chamfered
+pillars, grounded feet, a warm lintel, service panel and three restrained
+entry lamps. The threshold is presentation-only and introduces no collision,
+route blocker, power network, gate state or recurring player task. Release
+regression coverage protects the named hardware, and live checks remain
+silent through Godot Dummy audio with `--quiet-audio`.
+
 ## Focused Tram Graveyard catenary pass — 2026-08-30
 
 The sparse background rail dressing now communicates a complete former power

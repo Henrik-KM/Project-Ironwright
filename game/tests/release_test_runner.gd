@@ -1233,6 +1233,9 @@ func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.outpost_sites.size() >= 8, "Commercial release must contain at least eight bounded outpost sites.")
     var heartforge_detail := world.release_world_art.dressing_root.find_child("HighDefinitionHeartforgeDressing", true, false) if world.release_world_art.dressing_root != null else null
     _expect(heartforge_detail != null and heartforge_detail.find_child("HeartforgeBarrier00", true, false) != null and heartforge_detail.find_child("HeartforgeBarrierService00", true, false) != null, "The opening Heartforge perimeter must retain its authored barrier and service-detail dressing.")
+    var threshold_gate := heartforge_detail.find_child("HeartforgeThresholdGate", true, false) if heartforge_detail != null else null
+    _expect(threshold_gate != null and threshold_gate.find_child("ThresholdPillarL", true, false) != null and threshold_gate.find_child("ThresholdPillarR", true, false) != null and threshold_gate.find_child("ThresholdLintel", true, false) != null, "The opening Heartforge perimeter must retain one readable presentation-only threshold gate.")
+    _expect(threshold_gate != null and threshold_gate.find_child("ThresholdServicePanel", true, false) != null and threshold_gate.find_child("ThresholdLamp01", true, false) != null, "The Heartforge threshold must retain its service panel and warm entry lamps.")
     var heartforge_release := world.release_world_art.dressing_root.find_child("HeartforgeReleaseDressing", true, false) if world.release_world_art.dressing_root != null else null
     var string_light := heartforge_release.find_child("SanctuaryStringLight", true, false) as MeshInstance3D if heartforge_release != null else null
     var string_light_material := string_light.get_active_material(0) as StandardMaterial3D if string_light != null and string_light.mesh != null and string_light.mesh.get_surface_count() > 0 else null

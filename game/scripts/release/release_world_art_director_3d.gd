@@ -688,6 +688,32 @@ func _dress_heartforge_district() -> void:
             )
         ModelKit3D.add_cylinder(heartforge_detail, 0.08, 2.6, position + Vector3.UP * 1.3, dark_metal, Vector3.ZERO, "CablePost")
         ModelKit3D.add_cylinder(heartforge_detail, 0.11, 0.18, position + Vector3.UP * 2.58, plate_metal, Vector3.ZERO, "CablePostCap")
+    # A single threshold gives the sanctuary a readable civic entry rather
+    # than leaving the perimeter as disconnected barriers. It is deliberately
+    # presentation-only: no collision, route blocker, power network or new
+    # player-managed gate state is introduced.
+    var threshold := Node3D.new()
+    threshold.name = "HeartforgeThresholdGate"
+    threshold.position = Vector3(0.0, 0.0, -5.8)
+    heartforge_detail.add_child(threshold)
+    for side in [-1.0, 1.0]:
+        var pillar_x: float = side * 3.9
+        ModelKit3D.add_beveled_box(threshold, Vector3(0.42, 3.18, 0.58), Vector3(pillar_x, 1.59, 0.0), plate_metal, Vector3(0.0, 0.0, side * 0.03), "ThresholdPillar%s" % ("L" if side < 0.0 else "R"), 0.12)
+        ModelKit3D.add_beveled_box(threshold, Vector3(1.18, 0.18, 1.08), Vector3(pillar_x, 0.14, 0.0), dark_metal, Vector3.ZERO, "ThresholdFoot%s" % ("L" if side < 0.0 else "R"), 0.08)
+    ModelKit3D.add_beveled_box(threshold, Vector3(8.12, 0.30, 0.62), Vector3(0.0, 3.18, 0.0), warm_metal, Vector3.ZERO, "ThresholdLintel", 0.1)
+    ModelKit3D.add_surface_panel(
+        threshold,
+        Vector3(2.08, 0.56, 0.12),
+        Vector3(0.0, 2.40, -0.34),
+        dark_metal,
+        plate_metal,
+        Vector3.ZERO,
+        "ThresholdServicePanel"
+    )
+    for light_index in range(3):
+        var light_x := -3.0 + float(light_index) * 3.0
+        ModelKit3D.add_cylinder(threshold, 0.07, 0.20, Vector3(light_x, 3.02, -0.34), dark_metal, Vector3.ZERO, "ThresholdLampHousing%02d" % light_index)
+        ModelKit3D.add_sphere(threshold, 0.086, Vector3(light_x, 2.90, -0.34), beacon_material, Vector3.ONE, "ThresholdLamp%02d" % light_index)
     var string_light_material := _emissive_material(Color("ff8a3b"), 0.78)
     for index in range(16):
         var angle := TAU * float(index) / 16.0
