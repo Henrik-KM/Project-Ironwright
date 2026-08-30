@@ -1672,7 +1672,7 @@ func _show_presentation_review_page(page: int) -> void:
 			# that page a little more lateral and depth separation while keeping the
 			# review fixture bounded; runtime scale, collision and gameplay spacing
 			# remain untouched.
-			var spacing := 5.4 if outpost_page else (3.35 if late_organic_roster else (3.0 if presentation_review_page == 1 else (4.1 if presentation_review_page >= 1 else 4.2)))
+			var spacing := 5.4 if outpost_page else (4.15 if late_organic_roster else (3.0 if presentation_review_page == 1 else (4.1 if presentation_review_page >= 1 else 4.2)))
 			var centered_x := (float(row_position) - float(row_count - 1) * 0.5) * spacing
 			if presentation_review_page == 1:
 				# The early families carry wide wings, fans and limb spans. Use a

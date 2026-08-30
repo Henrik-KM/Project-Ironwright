@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Late-organic gallery separation pass
+
+The late-organic presentation fixture now uses wider lateral spacing for its
+three-across near row and four-across rear row. The exact silent 1280x720 live
+review keeps all seven authored families inside the frame while separating the
+broad folded silhouettes enough to judge their focal anatomy individually.
+This is review-only composition: actor scale, collision, AI, ecology,
+animation, tactical spacing and player workload are unchanged. Review used
+Godot Dummy audio with `--quiet-audio`; no physical speakers were used.
+
 ## 2026-08-30 — Miremaw gill-sternum attachment pass
 
 Miremaw now carries a dense folded throat sternum at the center of its
