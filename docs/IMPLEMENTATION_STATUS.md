@@ -6947,3 +6947,14 @@ roster checks and requires silent late-organic live review before merge.
   collision, animation and tactical camera;
 - tightened the aesthetic regression bound and live-reviewed the exact export
   with Godot Dummy audio and `--quiet-audio`, with no physical speakers.
+
+## Focused Tier III outpost gallery spacing pass — 2026-08-30
+
+- widened and elevated the presentation-only Tier III outpost review plate so
+  the four authored shelters no longer merge across their broad foundations or
+  let the scout mast collide with neighbouring role silhouettes;
+- preserved the outpost model, role hardware, runtime footprint, collision,
+  operation, persistence, rebuild and no-player-queue contracts;
+- strengthened commercial-release coverage for the widened lens and adjacent
+  shelter separation; exact exported review remains silent through Godot Dummy
+  audio with `--quiet-audio`.

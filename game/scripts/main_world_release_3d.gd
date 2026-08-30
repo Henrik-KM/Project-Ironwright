@@ -1720,10 +1720,13 @@ func _show_presentation_review_page(page: int) -> void:
 			actor.position = Vector3(centered_x, 0.0, row_z)
 			if outpost_page:
 				# Break the four role shelters out of a rigid two-by-two grid while
-				# preserving the authored front-facing presentation basis.
+				# preserving the authored front-facing presentation basis. The shelter
+				# footprint is wider than its role plate, and the scout mast rises above
+				# the other roles; give both dimensions enough air that the gallery judges
+				# the authored hardware instead of reading one stacked silhouette.
 				var outpost_positions: Array[Vector3] = [
-					Vector3(-3.0, 0.0, 1.1), Vector3(3.0, 0.0, 0.9),
-					Vector3(-2.35, 0.0, -2.85), Vector3(2.35, 0.0, -3.1),
+					Vector3(-4.6, 0.0, 1.45), Vector3(4.6, 0.0, 1.15),
+					Vector3(-4.05, 0.0, -3.75), Vector3(4.05, 0.0, -4.05),
 				]
 				if index < outpost_positions.size():
 					actor.position = outpost_positions[index]
@@ -1750,7 +1753,7 @@ func _show_presentation_review_page(page: int) -> void:
 		# tableau. Give the authored shells enough screen area for their crown,
 		# membrane and locomotion details to be judged without changing actor
 		# scale, gameplay spacing, collision or tactical camera behaviour.
-		var core_target_height := 2.1 if outpost_page else (1.5 if organic_roster_detail else (1.08 if presentation_review_page >= 1 else 1.45))
+		var core_target_height := 2.45 if outpost_page else (1.5 if organic_roster_detail else (1.08 if presentation_review_page >= 1 else 1.45))
 		var core_target_depth := -0.38 if presentation_review_page >= 1 else -0.7
 		if organic_roster_detail:
 			# The two organic roster pages are the close-camera art gate. Lower the
@@ -1768,7 +1771,7 @@ func _show_presentation_review_page(page: int) -> void:
 			presentation_review_camera_desired = Vector3(0.0, 3.65 if late_organic_roster else 4.05, 10.8 if late_organic_roster else 8.75)
 		else:
 			presentation_review_camera_target = Vector3(0.0, core_target_height, core_target_depth)
-			presentation_review_camera_desired = Vector3(0.0, 5.25, 12.4) if outpost_page else (Vector3(0.0, 4.45, 12.8) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5))
+			presentation_review_camera_desired = Vector3(0.0, 6.15, 15.8) if outpost_page else (Vector3(0.0, 4.45, 12.8) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5))
 	_set_presentation_review_stage_for_page(is_region_page)
 	_update_presentation_review_camera(1.0)
 
@@ -2363,7 +2366,7 @@ func _update_presentation_review_camera(delta: float) -> void:
 	# authored models or changing their gameplay scale.
 	var core_review_fov := 54.0 if presentation_review_page == 1 else (46.0 if presentation_review_page >= 1 else 43.0)
 	var outpost_page := presentation_review_page == 3 + PRESENTATION_REVIEW_REGIONS.size()
-	camera.fov = 42.0 if outpost_page else (44.0 if presentation_review_page == 13 else (46.0 if presentation_review_page == 12 else (48.0 if presentation_review_page == 11 else (52.0 if presentation_review_page >= 3 else core_review_fov))))
+	camera.fov = 48.0 if outpost_page else (44.0 if presentation_review_page == 13 else (46.0 if presentation_review_page == 12 else (48.0 if presentation_review_page == 11 else (52.0 if presentation_review_page >= 3 else core_review_fov))))
 	camera.look_at(target, Vector3.UP)
 
 

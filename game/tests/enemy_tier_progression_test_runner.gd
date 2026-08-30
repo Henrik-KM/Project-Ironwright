@@ -287,6 +287,13 @@ func _test_tier_behaviour_progression() -> void:
     tier_one_brain.set_simulation_lod(0)
     _expect(tier_one_brain.is_physics_processing(), "Active tier intelligence must restore its live physics callback.")
 
+    var stale_target := FakeFriendly.new()
+    world.add_child(stale_target)
+    tier_one_brain.set("current_target", stale_target)
+    stale_target.queue_free()
+    await process_frame
+    _expect(tier_one_brain.call(&"_validate_target", stale_target) == null, "Tier intelligence must clear a stale freed target without a typed-object runtime error.")
+
     var nest := EnemyTierNest3D.new()
     nest.configure({"id": "nest.behaviour", "position": [20.0, 0.0, 0.0], "supported_tiers": [1, 2, 3, 4, 5], "replenishment_per_minute": {"1": 0.1}, "maximum_health": 100.0})
     world.add_child(nest)

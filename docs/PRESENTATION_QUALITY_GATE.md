@@ -340,6 +340,17 @@ operation, persistence and player-control boundaries are unchanged. Exact
 1280x720 review uses Godot Dummy audio with `--quiet-audio`; no physical speakers
 are used. Broader human outpost and production-art acceptance remains open.
 
+## Focused Tier III outpost gallery spacing pass — 2026-08-30
+
+The Tier III review plate now uses a wider, higher presentation-only lens and
+greater separation between adjacent shelter footprints. This keeps the tall
+scout mast, broad authored shelters and role-coded foreground hardware
+judgeable as four distinct autonomous roles instead of one overlapping block.
+Runtime outpost geometry, footprint, collision, navigation, operation,
+persistence and player-control boundaries are unchanged. Exact silent export
+review uses Godot Dummy audio with `--quiet-audio`; no physical speakers are
+used. Broader human outpost and production-art acceptance remains open.
+
 ## Focused Root Cistern control-silhouette pass — 2026-08-29
 
 The Root Cistern release dressing now keeps its service deck, protocol panel

@@ -595,10 +595,11 @@ func _influence_lower_tiers() -> void:
         other_enemy.set("aggression", maxf(float(other_enemy.get("aggression")), 0.82))
 
 
-func _share_detection(target: Node3D) -> void:
-    if target == null:
+func _share_detection(target: Variant) -> void:
+    if not _target_is_alive(target):
         return
-    last_known_target_position = target.global_position
+    var target_node := target as Node3D
+    last_known_target_position = target_node.global_position
     for other in get_tree().get_nodes_in_group(&"enemy_tier_brained"):
         if other == enemy or not (other is Node3D):
             continue
@@ -609,11 +610,11 @@ func _share_detection(target: Node3D) -> void:
             continue
         var brain := other_enemy.get_node_or_null("EnemyTierBrain")
         if brain != null and brain.has_method(&"receive_shared_detection"):
-            brain.call(&"receive_shared_detection", target, target.global_position, enemy)
-    detection_shared.emit(enemy, target, target.global_position)
+            brain.call(&"receive_shared_detection", target_node, target_node.global_position, enemy)
+    detection_shared.emit(enemy, target_node, target_node.global_position)
 
 
-func receive_shared_detection(target: Node3D, position: Vector3, source_enemy: Node3D) -> void:
+func receive_shared_detection(target: Variant, position: Vector3, source_enemy: Node3D) -> void:
     if enemy_tier < 3:
         return
     current_target = target if _target_is_alive(target) else null
@@ -625,16 +626,17 @@ func receive_shared_detection(target: Node3D, position: Vector3, source_enemy: N
         _set_behaviour(&"respond_to_shared_detection", "Responding to prey information shared by another advanced organism.")
 
 
-func _target_is_alive(target: Node3D) -> bool:
-    if target == null or not is_instance_valid(target):
+func _target_is_alive(target: Variant) -> bool:
+    if target == null or not is_instance_valid(target) or not target is Node3D:
         return false
-    if target.has_method(&"is_alive"):
-        return bool(target.call(&"is_alive"))
+    var target_node := target as Node3D
+    if target_node.has_method(&"is_alive"):
+        return bool(target_node.call(&"is_alive"))
     return true
 
 
-func _validate_target(target: Node3D) -> Node3D:
-    return target if _target_is_alive(target) else null
+func _validate_target(target: Variant) -> Node3D:
+    return target as Node3D if _target_is_alive(target) else null
 
 
 func _find_heartforge() -> Node3D:
