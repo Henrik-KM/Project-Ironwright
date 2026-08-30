@@ -1481,6 +1481,7 @@ func _start_concurrent_operation_review() -> void:
 	progression.set_heartforge_tier(2)
 	if not progression.has_technology(&"tech.machine.group_coordination"):
 		progression.unlocked_technologies.append(&"tech.machine.group_coordination")
+	progression.unlocked_effects[&"machine_signal_lattice"] = true
 	run_state.scrap = 900
 	run_state.robots_built = maxi(run_state.robots_built, 8)
 	run_state.scrap_changed.emit(run_state.scrap)
@@ -1501,18 +1502,21 @@ func _start_concurrent_operation_review() -> void:
 	if not long_operation_director.authorize(&"operation.west_grid_survey"):
 		push_error("Concurrent operation review could not authorize its long-range fixture.")
 		return
+	if not long_operation_director.authorize(&"operation.east_tenement_roofline"):
+		push_error("Concurrent operation review could not authorize its second long-range fixture.")
+		return
 	outpost_director.maintenance_clock = 2.0
 	outpost_director._process(1.1)
-	if long_operation_director.active_operation.is_empty() or outpost_director.operation.is_empty():
+	if long_operation_director.active_operation_count() < 2 or outpost_director.operation.is_empty():
 		push_error("Concurrent operation review did not create both remote fixtures.")
 		return
 	follow_operation = false
 	player.input_enabled = false
-	hud.push_notification("CONCURRENT REMOTE REVIEW · LONG-RANGE GROUP + OUTPOST HAUL ACTIVE")
+	hud.push_notification("CONCURRENT REMOTE REVIEW · TWO LONG-RANGE GROUPS + OUTPOST HAUL ACTIVE")
 	long_operation_director.operation_changed.emit(
 		&"concurrent_review",
 		&"active",
-		"Two autonomous remote groups are travelling at once; each keeps a separate formation and the Heartforge network remains online."
+		"Two autonomous long-range groups and one outpost convoy are travelling at once; each keeps a separate formation and the Heartforge network remains online."
 	)
 
 

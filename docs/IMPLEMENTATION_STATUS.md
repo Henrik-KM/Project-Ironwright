@@ -1130,6 +1130,10 @@ stable impeller nodes. Exact page-9 live review uses Godot Dummy audio and
 - an autonomous outpost convoy can now run concurrently with a long-range
   operation, selecting a disjoint team and retaining independent physical
   movement, work and return state;
+- late Signal Lattice research now raises the bounded long-range capacity to
+  two independent formations. The primary formation remains the single calm
+  follow focus while the second route, work clock, rewards and reservation
+  continue independently;
 - reservations from both remote operations are restored across save/load and
   released independently on completion or retreat; integration coverage
   verifies the persisted concurrent state.

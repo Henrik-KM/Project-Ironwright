@@ -19,6 +19,7 @@ const ROUTE_MEMORY_SUCCESS_DECAY := 0.22
 const ROUTE_MEMORY_MAX_ENTRIES := 24
 const DYNAMIC_OPERATION_MAX_OFFERS := 3
 const MAX_CASUALTY_RECORDS := 8
+const MAX_LONG_RANGE_OPERATIONS := 2
 
 var run_state: RunState3D
 var progression: ProgressionDirector3D
@@ -35,6 +36,7 @@ var dynamic_templates: Dictionary = {}
 var completed_operations: Array[StringName] = []
 var recovered_components: Array[StringName] = []
 var active_operation: Dictionary = {}
+var active_operations: Array[Dictionary] = []
 var route_memory: Dictionary = {}
 var casualty_records: Array[Dictionary] = []
 var load_errors: Array[String] = []
@@ -74,12 +76,23 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-    if active_operation.is_empty():
+    _prune_active_operations()
+    if active_operations.is_empty():
+        active_operation.clear()
         if operation_detail_director != null:
             operation_detail_director.clear_route_recovery()
         _sync_casualty_recovery_marker()
         return
-    _update_active_operation(delta)
+    # Keep the public active_operation reference as the primary formation for
+    # existing camera/UI callers, while each dictionary remains an independent
+    # physical operation with its own route, work clock and casualty policy.
+    for operation in active_operations.duplicate():
+        if operation.is_empty():
+            continue
+        active_operation = operation
+        _update_active_operation(delta)
+    _prune_active_operations()
+    active_operation = active_operations[0] if not active_operations.is_empty() else {}
     _sync_route_recovery_marker()
     _sync_casualty_recovery_marker()
 
@@ -381,7 +394,8 @@ func _context_flag(flag: StringName) -> bool:
 
 
 func can_authorize(operation_id: StringName) -> bool:
-    if not active_operation.is_empty() or _other_operation_active():
+    _prune_active_operations()
+    if active_operations.size() >= active_operation_limit() or _other_operation_active():
         return false
     if has_completed(operation_id):
         return false
@@ -410,7 +424,7 @@ func authorize(operation_id: StringName) -> bool:
     for index in range(team.size()):
         team[index].set_group(&"long_range_operation", index)
 
-    active_operation = {
+    var new_operation := {
         "id": operation_id,
         "data": entry,
         "state": &"outbound",
@@ -430,6 +444,8 @@ func authorize(operation_id: StringName) -> bool:
         "route_recovery_target": Vector3.ZERO,
         "pending_rewards": {},
     }
+    active_operations.append(new_operation)
+    active_operation = new_operation
     autonomy_director.reserve_external_operation_members(team)
     _hold_nonmembers_at_home(team)
     var route_detail := "%s has departed as a cohesive physical group." % str(entry.get("display_name", String(operation_id)))
@@ -437,8 +453,31 @@ func authorize(operation_id: StringName) -> bool:
         route_detail += " Signal Relay coverage is holding one bounded recovery margin for the deep route."
     if route_variant > 0:
         route_detail += " Route memory selected the %s after earlier disruption." % region_director.route_variant_label(region_id, route_variant)
+    if active_operations.size() > 1:
+        route_detail += " Signal Lattice is carrying a second long-range formation without merging its route or reserves."
     operation_changed.emit(operation_id, &"outbound", route_detail)
     return true
+
+
+func active_operation_count() -> int:
+    _prune_active_operations()
+    return active_operations.size()
+
+
+func active_operation_limit() -> int:
+    if progression != null and progression.has_effect(&"machine_signal_lattice"):
+        return MAX_LONG_RANGE_OPERATIONS
+    return 1
+
+
+func has_active_operations() -> bool:
+    return active_operation_count() > 0
+
+
+func _prune_active_operations() -> void:
+    for index in range(active_operations.size() - 1, -1, -1):
+        if active_operations[index].is_empty():
+            active_operations.remove_at(index)
 
 
 func _update_active_operation(delta: float) -> void:
@@ -1015,13 +1054,19 @@ func get_follow_focus() -> Dictionary:
 
 
 func operation_summary() -> String:
-    if active_operation.is_empty():
+    _prune_active_operations()
+    if active_operations.is_empty():
         return "No long-range operation"
-    var entry: Dictionary = active_operation.get("data", {})
-    return "%s · %s" % [
-        str(entry.get("display_name", "Operation")),
-        String(active_operation.get("state", &"unknown")).capitalize(),
-    ]
+    var summaries: Array[String] = []
+    for operation in active_operations:
+        var entry: Dictionary = operation.get("data", {})
+        summaries.append("%s · %s" % [
+            str(entry.get("display_name", "Operation")),
+            String(operation.get("state", &"unknown")).capitalize(),
+        ])
+    if summaries.size() == 1:
+        return summaries[0]
+    return "%d long-range groups active · %s" % [summaries.size(), " · ".join(summaries)]
 
 
 func context_dictionary() -> Dictionary:
@@ -1050,13 +1095,15 @@ func to_dictionary() -> Dictionary:
     for component_id in recovered_components:
         components.append(String(component_id))
     return {
-        "schema_version": 4,
+        "schema_version": 5,
         "completed_operations": completed,
         "recovered_components": components,
         "casualty_serial": casualty_serial,
         "casualty_records": _serialize_casualty_records(),
         "endgame_pressure_reduction": endgame_pressure_reduction,
         "route_memory": _serialize_route_memory(),
+        "active_operations": _serialize_active_operations(),
+        # Retain the singleton field for older tools and pre-v5 snapshots.
         "active_operation": _serialize_active_operation(),
     }
 
@@ -1064,6 +1111,7 @@ func to_dictionary() -> Dictionary:
 func restore_from_dictionary(data: Dictionary) -> void:
     completed_operations.clear()
     recovered_components.clear()
+    active_operations.clear()
     active_operation.clear()
     casualty_records.clear()
     for raw_operation in data.get("completed_operations", []):
@@ -1105,7 +1153,14 @@ func restore_from_dictionary(data: Dictionary) -> void:
             "has_block_position": bool(saved_memory.get("has_block_position", false)),
             "last_block_position": _array_to_vector(saved_memory.get("last_block_position", [])),
         }
-    _restore_active_operation(data.get("active_operation", {}))
+    var saved_operations: Variant = data.get("active_operations", [])
+    if saved_operations is Array and not (saved_operations as Array).is_empty():
+        for raw_operation in saved_operations as Array:
+            _restore_active_operation(raw_operation)
+    else:
+        _restore_active_operation(data.get("active_operation", {}))
+    _prune_active_operations()
+    active_operation = active_operations[0] if not active_operations.is_empty() else {}
 
 
 func _serialize_casualty_records() -> Array[Dictionary]:
@@ -1232,36 +1287,48 @@ func _route_clearance(route: PackedVector3Array, block_position: Vector3) -> flo
 
 
 func _serialize_active_operation() -> Dictionary:
-    if active_operation.is_empty():
+    return _serialize_operation(active_operation)
+
+
+func _serialize_active_operations() -> Array[Dictionary]:
+    _prune_active_operations()
+    var result: Array[Dictionary] = []
+    for operation in active_operations:
+        result.append(_serialize_operation(operation))
+    return result
+
+
+func _serialize_operation(operation: Dictionary) -> Dictionary:
+    if operation.is_empty():
         return {}
     var route_values: Array = []
-    var route: PackedVector3Array = active_operation.get("route", PackedVector3Array())
+    var route: PackedVector3Array = operation.get("route", PackedVector3Array())
     for point in route:
         route_values.append(_vector_to_array(point))
     var member_names: Array[String] = []
-    for member in active_operation.get("members", []):
+    for member in operation.get("members", []):
         if is_instance_valid(member) and member is RobotUnit3D:
             member_names.append(String((member as RobotUnit3D).name))
     return {
-        "id": String(active_operation.get("id", &"")),
-        "state": String(active_operation.get("state", &"outbound")),
+        "id": String(operation.get("id", &"")),
+        "state": String(operation.get("state", &"outbound")),
         "member_names": member_names,
-        "region_id": String(active_operation.get("region_id", &"region.heartforge_district")),
+        "region_id": String(operation.get("region_id", &"region.heartforge_district")),
         "route": route_values,
-        "route_variant": int(active_operation.get("route_variant", 0)),
-        "route_index": int(active_operation.get("route_index", 1)),
-        "anchor": _vector_to_array(active_operation.get("anchor", heartforge.global_position)),
-        "last_forward": _vector_to_array(active_operation.get("last_forward", Vector3.FORWARD)),
-        "work_clock": float(active_operation.get("work_clock", 0.0)),
-        "noise_clock": float(active_operation.get("noise_clock", 0.0)),
-        "threat_clock": float(active_operation.get("threat_clock", 0.0)),
-        "blocked_clock": float(active_operation.get("blocked_clock", 0.0)),
-        "route_recovery_count": int(active_operation.get("route_recovery_count", 0)),
-        "route_recovery_active": bool(active_operation.get("route_recovery_active", false)),
-        "route_recovery_target": _vector_to_array(active_operation.get("route_recovery_target", Vector3.ZERO)),
-        "route_recovery_side": int(active_operation.get("route_recovery_side", 0)),
-        "route_recovery_hazard_score": float(active_operation.get("route_recovery_hazard_score", 0.0)),
-        "pending_rewards": (active_operation.get("pending_rewards", {}) as Dictionary).duplicate(true),
+        "route_variant": int(operation.get("route_variant", 0)),
+        "route_index": int(operation.get("route_index", 1)),
+        "anchor": _vector_to_array(operation.get("anchor", heartforge.global_position)),
+        "last_forward": _vector_to_array(operation.get("last_forward", Vector3.FORWARD)),
+        "work_clock": float(operation.get("work_clock", 0.0)),
+        "noise_clock": float(operation.get("noise_clock", 0.0)),
+        "threat_clock": float(operation.get("threat_clock", 0.0)),
+        "blocked_clock": float(operation.get("blocked_clock", 0.0)),
+        "route_recovery_count": int(operation.get("route_recovery_count", 0)),
+        "route_recovery_active": bool(operation.get("route_recovery_active", false)),
+        "route_recovery_target": _vector_to_array(operation.get("route_recovery_target", Vector3.ZERO)),
+        "route_recovery_side": int(operation.get("route_recovery_side", 0)),
+        "route_recovery_hazard_score": float(operation.get("route_recovery_hazard_score", 0.0)),
+        "pending_rewards": (operation.get("pending_rewards", {}) as Dictionary).duplicate(true),
     }
 
 
@@ -1283,7 +1350,7 @@ func _restore_active_operation(raw_data: Variant) -> void:
     var route := PackedVector3Array()
     for raw_point in saved.get("route", []):
         route.append(_array_to_vector(raw_point))
-    active_operation = {
+    var restored_operation := {
         "id": operation_id,
         "data": entry,
         "state": StringName(str(saved.get("state", "outbound"))),
@@ -1305,6 +1372,8 @@ func _restore_active_operation(raw_data: Variant) -> void:
         "route_recovery_hazard_score": maxf(0.0, float(saved.get("route_recovery_hazard_score", 0.0))),
         "pending_rewards": (saved.get("pending_rewards", {}) as Dictionary).duplicate(true),
     }
+    active_operations.append(restored_operation)
+    active_operation = restored_operation
     for index in range(members.size()):
         members[index].set_group(&"long_range_operation", index)
     autonomy_director.reserve_external_operation_members(members)

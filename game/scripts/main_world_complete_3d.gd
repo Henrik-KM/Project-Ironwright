@@ -47,7 +47,13 @@ func _process(delta: float) -> void:
     super._process(delta)
     if operations_hud == null or long_operation_director == null or endgame_director == null:
         return
-    operations_hud.update_operations(long_operation_director.available_operations(), long_operation_director.operation_summary(), not long_operation_director.active_operation.is_empty())
+    operations_hud.update_operations(
+        long_operation_director.available_operations(),
+        long_operation_director.operation_summary(),
+        long_operation_director.has_active_operations(),
+        long_operation_director.active_operation_count(),
+        long_operation_director.active_operation_limit()
+    )
     operations_hud.update_protocols(endgame_director.available_protocols(), endgame_director.status_summary())
     if adaptive_defense_director != null:
         strategic_hud.update_adaptation(adaptive_defense_director.available_plans(), adaptive_defense_director.proposal_summary())

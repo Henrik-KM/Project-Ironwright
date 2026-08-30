@@ -322,7 +322,7 @@
       "id": "tech.machine.signal_lattice",
       "display_name": "Signal Lattice",
       "branch": "machines",
-      "description": "Give relay-capable frames a clearer shared signal so long operations retain intent across blocked streets and district transitions.",
+      "description": "Give relay-capable frames a clearer shared signal so two long-range formations can retain separate intent across blocked streets and district transitions.",
       "cost": {"scrap": 160, "rare_cores": 1},
       "requirements": {"heartforge_tier": 3, "technology": "tech.machine.group_coordination"},
       "effects": ["machine_signal_lattice"],

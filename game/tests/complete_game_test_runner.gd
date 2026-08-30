@@ -654,6 +654,40 @@ func _run_all() -> void:
             site.outpost.apply_damage(9999.0)
     _expect(not world.endgame_director.can_initiate(&"protocol.severance"), "A final protocol must remain unavailable when its autonomous remote relay support has been destroyed.")
 
+    # Signal Lattice is the late-game autonomy gate for parallel long-range
+    # work. Keep the player-facing model bounded: two independent formations,
+    # one primary follow focus, and no second management dashboard.
+    for relay_site in world.outpost_director.discovered_sites():
+        if relay_site.has_outpost() and relay_site.outpost != null and not relay_site.outpost.is_alive():
+            relay_site.outpost.rebuild()
+    if not world.progression.has_technology(&"tech.machine.signal_lattice"):
+        _expect(world.progression.purchase(&"tech.machine.signal_lattice"), "Signal Lattice must be researchable before parallel long-range autonomy is used.")
+    _expect(world.long_operation_director.active_operation_limit() == 2, "Signal Lattice must raise long-range capacity to exactly two formations.")
+    var parallel_operation_ids: Array[StringName] = [&"operation.east_tenement_roofline", &"operation.west_transformer_repair"]
+    for parallel_operation_id in parallel_operation_ids:
+        _expect(not world.long_operation_director.has_completed(parallel_operation_id), "The parallel-operation fixture must retain an unresolved authored objective: %s." % parallel_operation_id)
+    _expect(world.long_operation_director.authorize(parallel_operation_ids[0]), "The first late parallel long-range formation must authorize normally.")
+    _expect(world.long_operation_director.authorize(parallel_operation_ids[1]), "Signal Lattice must authorize a second disjoint long-range formation.")
+    _expect(world.long_operation_director.active_operation_count() == 2, "Two long-range formations must remain active as separate operation records.")
+    var first_parallel_members: Array[RobotUnit3D] = []
+    first_parallel_members.append_array(world.long_operation_director.active_operations[0].get("members", []))
+    var second_parallel_members: Array[RobotUnit3D] = []
+    second_parallel_members.append_array(world.long_operation_director.active_operations[1].get("members", []))
+    for first_member in first_parallel_members:
+        _expect(first_member not in second_parallel_members, "Parallel long-range formations must reserve disjoint machine teams.")
+    _expect(world.autonomy_director.external_operation_member_count() == first_parallel_members.size() + second_parallel_members.size(), "Parallel long-range reservations must remain the union of both physical teams.")
+    var parallel_snapshot := world.long_operation_director.to_dictionary()
+    _expect((parallel_snapshot.get("active_operations", []) as Array).size() == 2, "Parallel long-range save state must serialize both independent formations.")
+    world.long_operation_director.restore_from_dictionary(parallel_snapshot)
+    _expect(world.long_operation_director.active_operation_count() == 2, "Parallel long-range save/load must restore both independent formations.")
+    _expect(world.autonomy_director.external_operation_member_count() == first_parallel_members.size() + second_parallel_members.size(), "Parallel long-range save/load must restore both team reservations.")
+    var first_parallel_id := StringName(str(world.long_operation_director.active_operations[0].get("id", "")))
+    var second_parallel_id := StringName(str(world.long_operation_director.active_operations[1].get("id", "")))
+    _expect(_finish_active_operation(world, first_parallel_id), "The first parallel long-range formation must complete through its physical return path.")
+    world.long_operation_director.active_operation = world.long_operation_director.active_operations[1]
+    _expect(_finish_active_operation(world, second_parallel_id), "The second parallel long-range formation must complete independently through its physical return path.")
+    _expect(world.long_operation_director.active_operation_count() == 0, "Parallel long-range completion must release both operation records without leaving a stale active alias.")
+
     _finish()
 
 

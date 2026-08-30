@@ -345,6 +345,9 @@ Systems:
 
 - large coordinated machine groups;
 - multiple simultaneous remote operations handled by autonomy;
+- late Signal Lattice research now enables two independent long-range
+  formations with separate physical routes, work state, rewards and machine
+  reservations while the player retains one calm primary follow focus;
 - deep expeditions lasting substantial in-game time;
 - stronger remote repair and continuity systems;
 - distributed sensor knowledge without territory ownership;

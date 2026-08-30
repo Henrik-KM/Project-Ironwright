@@ -24,6 +24,8 @@ var archive_records: Array[Dictionary] = []
 var selected_index: int = 0
 var current_operation_status: String = "No long-range operation"
 var operation_active: bool = false
+var operation_count: int = 0
+var operation_limit: int = 1
 var endgame_status: String = "No final protocol active"
 
 
@@ -200,9 +202,11 @@ func is_open() -> bool:
     return panel != null and panel.visible
 
 
-func update_operations(next_operations: Array[Dictionary], status: String, active: bool = false) -> void:
+func update_operations(next_operations: Array[Dictionary], status: String, active: bool = false, active_count: int = -1, active_limit: int = 1) -> void:
     operations = next_operations
     operation_active = active
+    operation_count = maxi(0, active_count if active_count >= 0 else (1 if active else 0))
+    operation_limit = maxi(1, active_limit)
     if mode != &"recap":
         current_operation_status = status
     _clamp_selection()
@@ -357,7 +361,7 @@ func _refresh() -> void:
         requirements_label.text = "%s · %s %s\n%s %s · %s" % [kind_label, _text("command.archive.source", "SOURCE:"), localized_source.to_upper(), _text("command.archive.arc", "ARC:"), localized_arc.to_upper(), _text("command.archive.close_hint", "Press L or ESC to close.")]
         return
     authorize_button.visible = true
-    authorize_button.disabled = operation_active and mode == &"operations"
+    authorize_button.disabled = operation_count >= operation_limit and mode == &"operations"
     if mode == &"endgame":
         authorize_button.text = _text("command.endgame.authorize", "INITIATE IRREVERSIBLE PROTOCOL")
         requirements_label.text = _text("command.endgame.requirements", "Cost: {0} Scrap · {1} Cognition Core{2} · Duration: {3} s\nStarting this deliberately provokes the final ecological response.", [
@@ -367,10 +371,10 @@ func _refresh() -> void:
             int(round(float(item.get("duration_seconds", 0.0)))),
         ])
     else:
-        authorize_button.text = _text("command.operations.active", "OPERATION ACTIVE · FOLLOW WITH F")
-        if not operation_active:
+        authorize_button.text = _text("command.operations.active", "OPERATION CAPACITY FULL · FOLLOW WITH F")
+        if operation_count < operation_limit:
             authorize_button.text = _text("command.operations.authorize", "AUTHORIZE PHYSICAL OPERATION")
-        var operation_prefix := _text("command.operations.active_prefix", "ACTIVE GROUP · F TO FOLLOW\n") if operation_active else ""
+        var operation_prefix := _text("command.operations.active_prefix", "ACTIVE GROUPS {0}/{1} · F TO FOLLOW\n", [operation_count, operation_limit]) if operation_active else ""
         var localized_roles := _localized_team_roles(item.get("team_roles", []))
         requirements_label.text = "%s%s\n%s" % [
             operation_prefix,
