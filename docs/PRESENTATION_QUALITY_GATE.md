@@ -3067,3 +3067,12 @@ Gameplay camera, collision, animation, tactical spacing and model resources are
 unchanged. The exact live review uses Godot Dummy audio with `--quiet-audio`;
 no physical speakers are used. Broader human production-art acceptance remains
 open.
+
+# Focused early-organic gallery occupancy pass — 2026-08-30
+
+The early-organic review camera now moves slightly closer after the fitted
+wide-lens pass, allowing the broad authored shells to occupy more of the
+compact frame without changing their row positions, runtime scale, collision,
+animation or tactical camera. The exact live review continues with Godot Dummy
+audio and `--quiet-audio`; no physical speakers are used. Broader human
+production-art acceptance remains open.

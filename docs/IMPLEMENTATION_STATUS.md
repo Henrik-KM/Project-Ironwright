@@ -6848,3 +6848,12 @@ roster checks and requires silent late-organic live review before merge.
 - added a native regression bound for the review-only lens; exact live review
   continues through Godot Dummy audio with `--quiet-audio` and no physical
   speakers.
+
+## Focused early-organic gallery occupancy pass — 2026-08-30
+
+- moved the early-organic review-only camera slightly closer after the fitted
+  wide-lens pass, so the broad authored shells use more of the compact frame;
+- preserved the fitted row positions, authored model scale, gameplay spacing,
+  collision, animation and tactical camera;
+- tightened the aesthetic regression bound and live-reviewed the exact export
+  with Godot Dummy audio and `--quiet-audio`, with no physical speakers.
