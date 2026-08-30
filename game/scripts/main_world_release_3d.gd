@@ -380,11 +380,11 @@ func _snap_release_camera_to_subject() -> void:
 	camera_target_velocity = Vector3.ZERO
 
 
-func _restore_sanctuary_continuation_presentation() -> void:
-	# Dismissing the first-victory boundary returns to the living tactical world.
-	# Reassert the same resident presentation contract used by a fresh release
-	# start so the victory camera, atmosphere and stream ring cannot leave the
-	# player looking at an empty clear field.
+func _restore_live_world_presentation() -> void:
+	# Scene transitions, save restoration and the first-victory boundary all
+	# return to the same living tactical world. Reassert its resident
+	# presentation contract so a title/continue or load path cannot leave only
+	# actors visible over an unloaded clear field.
 	if get_tree().paused:
 		get_tree().paused = false
 	paused = false
@@ -409,6 +409,10 @@ func _restore_sanctuary_continuation_presentation() -> void:
 		var node := get_node_or_null(node_name) as Node3D
 		if node != null:
 			node.visible = true
+
+
+func _restore_sanctuary_continuation_presentation() -> void:
+	_restore_live_world_presentation()
 
 
 func _update_camera_heading(velocity: Vector3, delta: float) -> void:
@@ -2692,20 +2696,26 @@ func _resume_from_pause() -> void:
 
 func _on_new_world_requested() -> void:
 	transactional_save_service.delete_slot(RELEASE_SLOT)
-	pending_launch_mode = &"new"
-	get_tree().paused = false
-	get_tree().reload_current_scene()
+	_request_release_scene_reload(&"new")
 
 
 func _on_continue_requested() -> void:
-	_start_release_world()
-	_load_release_game()
+	# A normal title boot deliberately omits the costly playable city. Continue
+	# must therefore rebuild the scene with the continue launch mode before
+	# restoring the snapshot; loading directly into the title-only shell leaves
+	# the player and robots suspended over an empty world.
+	_request_release_scene_reload(&"continue")
 
 
 func _return_to_title() -> void:
-	pending_launch_mode = &"title"
+	_request_release_scene_reload(&"title")
+
+
+func _request_release_scene_reload(mode: StringName, reload_scene: bool = true) -> void:
+	pending_launch_mode = mode
 	get_tree().paused = false
-	get_tree().reload_current_scene()
+	if reload_scene:
+		get_tree().reload_current_scene()
 
 
 func _on_front_end_settings_applied(values: Dictionary) -> void:
@@ -2975,6 +2985,7 @@ func _load_release_game() -> bool:
 		return false
 	_restore_release_snapshot(snapshot)
 	_start_release_world()
+	_restore_live_world_presentation()
 	if has_method(&"_show_session_recap"):
 		call(&"_show_session_recap")
 	return true

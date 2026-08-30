@@ -1,5 +1,16 @@
 # Implementation status
 
+## Continue/load world-presentation recovery — 2026-08-30
+
+- changed Continue to rebuild the playable scene before restoring a save,
+  because the lightweight title shell intentionally does not instantiate the
+  full city and cannot safely receive a live snapshot in place;
+- centralized the live-world presentation recovery used after load and after
+  first-victory continuation, reasserting the city, Heartforge, authored
+  dressing, atmosphere, stream ring, tactical camera and HUD;
+- added native release regression coverage for both the Continue launch mode
+  and the previously visible actors-over-blank-world failure.
+
 ## Focused Bulwark protection-posture pass — 2026-08-30
 
 When the Mechromancer is occupied with a salvage or fabrication channel, the

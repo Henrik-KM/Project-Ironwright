@@ -1616,6 +1616,22 @@ func _test_front_end(world: IronwrightReleaseWorld3D) -> void:
     _expect(not world.hud.visible and not world.strategic_hud.visible and not world.operations_hud.visible, "The title screen must hide tactical HUD layers instead of leaving gameplay guidance behind the modal.")
     world._start_release_world()
     _expect(world.hud.visible and world.strategic_hud.visible and world.operations_hud.visible, "Entering the playable world must restore all tactical HUD layers.")
+    world.pending_launch_mode = &"title"
+    world._request_release_scene_reload(&"continue", false)
+    _expect(world.pending_launch_mode == &"continue" and world._should_build_city_on_boot(), "Continue from the lightweight title shell must request a full playable scene rebuild before loading the save.")
+    world.pending_launch_mode = &"title"
+    if world.release_world_art != null and world.release_world_art.dressing_root != null:
+        world.release_world_art.dressing_root.visible = false
+    for node_name in ["ProceduralUrbanDistrict", "Heartforge", "HeartforgeVerticalSlice", "CozyHeartforgeCamp", "UrbanAestheticPass"]:
+        var live_node := world.get_node_or_null(node_name) as Node3D
+        if live_node != null:
+            live_node.visible = false
+    world._restore_live_world_presentation()
+    _expect(world.release_world_art != null and world.release_world_art.dressing_root != null and world.release_world_art.dressing_root.visible, "Save restoration must reassert the release dressing instead of leaving actors over a blank world.")
+    for node_name in ["ProceduralUrbanDistrict", "Heartforge", "HeartforgeVerticalSlice", "CozyHeartforgeCamp", "UrbanAestheticPass"]:
+        var restored_node := world.get_node_or_null(node_name) as Node3D
+        if restored_node != null:
+            _expect(restored_node.visible, "Save restoration must keep %s visible." % node_name)
     front_end.show_settings_from_title()
     _expect(front_end.active_screen == &"settings", "Accessibility and audio settings screen must open from title.")
     _expect(front_end.settings_controls.size() >= 18, "Settings screen must expose release accessibility, audio, language, pacing and controller options.")

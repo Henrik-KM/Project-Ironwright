@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-08-30 — Continue/load presentation recovery
+
+- Continue now rebuilds the full playable scene before restoring a persistent
+  world instead of loading into the intentionally lightweight title shell.
+- Save restoration now reasserts the city, Heartforge, authored dressing,
+  streaming, atmosphere, camera and HUD so loading cannot leave only actors
+  visible over a blank world.
+
 ## 2026-08-29 — Organic structural material finish
 
 - lowered the structural chitin value and raised its roughness for imported
