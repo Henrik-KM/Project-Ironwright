@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-30 — Miremaw gill-sternum attachment pass
+
+Miremaw now carries a dense folded throat sternum at the center of its
+thorax, closing the visual transition into the animated gill fan. The new
+volume is parented to the existing torso animation and remains presentation-
+only: collision, ecology, combat, saves and player workload are unchanged.
+Exact live review uses Godot Dummy audio with `--quiet-audio`; no physical
+speakers are used. Broader hostile-family and production-art acceptance remains
+open.
+
 ## 2026-08-30 — Roofleaper wing-root collar pass
 
 The Roofleaper's ambush membranes now grow from paired folded shoulder

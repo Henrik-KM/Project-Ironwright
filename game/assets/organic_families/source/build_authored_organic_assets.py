@@ -708,6 +708,23 @@ def build_family(name: str, spec: dict) -> None:
                 fold_strength=0.86,
             ),
         )
+        # The gill fan needs a central living root where it meets the thorax.
+        # A dense folded sternum closes that transition without changing the
+        # fan socket, collision, ecology or runtime animation ownership.
+        mesh_ids["MiremawGillSternum"] = mesh(
+            "MiremawGillSternum",
+            add_organic_lobe(
+                builder,
+                (0.58, 0.24, 0.48),
+                membrane,
+                lobes=5,
+                rings=11,
+                sides=48,
+                scallop_amplitude=0.12,
+                leading_extension=0.22,
+                fold_strength=0.84,
+            ),
+        )
         # The amphibious maw is the closest-facing identity cue in the compact
         # release gallery. Give its lower jaw a closed folded shell so the head
         # reads as articulated living anatomy instead of two thin side plates.
@@ -956,6 +973,7 @@ def build_family(name: str, spec: dict) -> None:
         add_node("MiremawJawLower", mesh_ids["MiremawJawLobe"], (0.0, 0.56, -1.50), rotation=(0.18, 0.0, 0.0), scale=(1.12, 0.86, 0.74), extras={"surface": "lower_jaw_shell"})
         add_node("MiremawHeadRidge0", mesh_ids["Ridge"], (-0.42, 1.15, -1.5), rotation=(0.0, -0.2, -0.12), scale=(0.62, 1.0, 0.72), extras={"surface": "head_ridge"})
         add_node("MiremawHeadRidge1", mesh_ids["Ridge"], (0.42, 1.15, -1.5), rotation=(0.0, 0.2, 0.12), scale=(0.62, 1.0, 0.72), extras={"surface": "head_ridge"})
+        add_node("MiremawGillSternum", mesh_ids["MiremawGillSternum"], (0.0, 1.40, -0.40), rotation=(0.16, 0.0, 0.0), scale=(0.92, 1.0, 0.86), extras={"surface": "gill_sternum"}, parent=torso)
         add_node("MiremawGillFan", mesh_ids["DeepMembrane"], (0.0, 1.25, 0.35), rotation=(0.0, 0.0, 1.5708), scale=(0.72, 1.0, 0.78), extras={"socket_type": "gill_fan"})
         add_node("MiremawGillCollarL", mesh_ids["MiremawGillCollar"], (-0.46, 1.18, 0.48), rotation=(0.18, -0.28, -0.18), scale=(0.78, 1.0, 0.92), extras={"surface": "folded_gill_collar"})
         add_node("MiremawGillCollarR", mesh_ids["MiremawGillCollar"], (0.46, 1.18, 0.48), rotation=(-0.18, 0.28, 0.18), scale=(0.78, 1.0, 0.92), extras={"surface": "folded_gill_collar"})

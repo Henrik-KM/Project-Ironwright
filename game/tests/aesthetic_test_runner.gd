@@ -1680,6 +1680,8 @@ func _run_all() -> void:
                 _expect(_find_named(enemy_samples[index], "MiremawGillRidgeL") != null and _find_named(enemy_samples[index], "MiremawGillRidgeR") != null, "The Miremaw must expose layered gill-ridge surface detail.")
                 _expect(_find_named(enemy_samples[index], "MiremawJawPlateL") != null and _find_named(enemy_samples[index], "MiremawJawLower") != null and _find_named(enemy_samples[index], "MiremawGillSpineR") != null, "The Miremaw must expose a layered articulated jaw and gill spines for readable amphibious anatomy.")
                 _expect(_find_named(enemy_samples[index], "MiremawGillCollarL") != null and _find_named(enemy_samples[index], "MiremawGillCollarR") != null, "The Miremaw must expose paired folded gill collars so its breathing anatomy reads in layered profile.")
+                var miremaw_sternum := _find_named(enemy_samples[index], "MiremawGillSternum") as MeshInstance3D
+                _expect(miremaw_sternum != null and miremaw_sternum.get_parent().name == "Torso" and _mesh_vertex_count(miremaw_sternum) >= 700, "The Miremaw must carry a dense torso-parented gill sternum so its breathing fan reads as attached anatomy.")
                 _expect(_find_named(enemy_samples[index], "MiremawJawHingeL") != null and _find_named(enemy_samples[index], "MiremawJawHingeR") != null, "The Miremaw must expose paired jaw hinges so the amphibious maw reads as articulated anatomy.")
                 var miremaw_fin_l := _find_named(enemy_samples[index], "MiremawWaterFinL") as Node3D
                 var miremaw_fin_r := _find_named(enemy_samples[index], "MiremawWaterFinR") as Node3D

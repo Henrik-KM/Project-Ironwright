@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused Miremaw throat-attachment pass — 2026-08-30
+
+The Miremaw authored shell now carries a dense folded gill sternum at the
+center of the thorax. The torso-parented volume closes the transition into the
+animated gill fan so the amphibious family reads as attached living anatomy at
+close camera distance. The addition is presentation-only and preserves the
+existing sockets, animation, collision, ecology, combat, saves and player
+workload. The manifest and aesthetic runner cover the stable node; live review
+uses Godot Dummy audio with `--quiet-audio`, with no physical speakers used.
+
 ## Focused Roofleaper wing-root collar pass — 2026-08-30
 
 The Roofleaper authored shell now carries paired folded shoulder collars at
