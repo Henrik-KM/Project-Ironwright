@@ -16,6 +16,8 @@
     "menu.back": "ZURÜCK",
     "menu.apply": "ANWENDEN",
     "menu.no_save": "KEIN GÜLTIGER SPIELSTAND GEFUNDEN",
+    "menu.save_ready": "GESPEICHERTE WELT BEREIT · HERZSCHMIED TIER {0} · {1} REGIONEN ENTDECKT",
+    "menu.legacy_save_ready": "ALTE WELT BEREIT · FORTSETZEN ZUM IMPORTIEREN",
     "menu.world_paused": "DIE WELT IST PAUSIERT",
     "menu.release_candidate": "DAS LETZTE LICHT · 1.0.0 RC.1",
     "settings.title": "BARRIEREFREIHEIT, STEUERUNG UND AUDIO",

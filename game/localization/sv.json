@@ -16,6 +16,8 @@
     "menu.back": "TILLBAKA",
     "menu.apply": "TILLÄMPA",
     "menu.no_save": "INGEN GILTIG SPARFIL HITTADES",
+    "menu.save_ready": "SPARAD VÄRLD REDO · HJÄRNSMEDJA NIVÅ {0} · {1} REGIONER UPPTÄCKTA",
+    "menu.legacy_save_ready": "ÄLDRE VÄRLD REDO · FORTSÄTT FÖR ATT IMPORTERA",
     "menu.world_paused": "VÄRLDEN ÄR PAUSAD",
     "menu.release_candidate": "DET SISTA LJUSET · 1.0.0 RC.1",
     "settings.title": "TILLGÄNGLIGHET, KONTROLLER OCH LJUD",

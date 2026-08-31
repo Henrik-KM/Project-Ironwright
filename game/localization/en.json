@@ -16,6 +16,8 @@
     "menu.back": "BACK",
     "menu.apply": "APPLY",
     "menu.no_save": "NO VALID SAVE FOUND",
+    "menu.save_ready": "SAVED WORLD READY · HEARTFORGE TIER {0} · {1} REGIONS DISCOVERED",
+    "menu.legacy_save_ready": "LEGACY WORLD READY · CONTINUE TO IMPORT",
     "menu.world_paused": "THE WORLD IS PAUSED",
     "menu.release_candidate": "THE LAST LIGHT · 1.0.0 RC.1",
     "settings.title": "ACCESSIBILITY, CONTROLS & AUDIO",
