@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused opening salvage readability pass — 2026-08-31
+
+- added an authored cabin service grip and paired access latches to the first
+  salvage wreck, strengthening the readable physical relationship between the
+  opening objective and its manual service surface without changing salvage
+  timing, collision or resource rules;
+- regenerated the source-owned high-definition glTF and extended the stable
+  asset contract and aesthetic regression coverage;
+- verified the fresh opening world live with Godot Dummy audio and
+  `--quiet-audio`, with no physical speakers used.
+
 ## Focused endgame failure-report localization milestone — 2026-08-31
 
 - localized the two canonical causal final-protocol failure reasons for the

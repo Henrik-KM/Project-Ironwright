@@ -46,6 +46,7 @@ def main() -> None:
         "Core": mesh("Core", add_ellipsoid(builder, (0.97, 0.22, 0.62), oxide, 20, 32)),
         "Cabin": mesh("Cabin", add_beveled_box(builder, (1.28, 0.42, 0.88), steel, 0.10)),
         "CabinPanel": mesh("CabinPanel", add_beveled_box(builder, (0.82, 0.075, 0.52), oxide, 0.035)),
+        "CabinHandle": mesh("CabinHandle", add_beveled_box(builder, (0.42, 0.055, 0.08), warm, 0.018)),
         "Wheel": mesh("Wheel", add_cylinder(builder, 0.43, 0.28, rubber, 28)),
         "Hub": mesh("Hub", add_cylinder(builder, 0.18, 0.31, steel, 28)),
         "Rim": mesh("Rim", add_torus(builder, 0.31, 0.035, oxide, 40, 12)),
@@ -58,6 +59,7 @@ def main() -> None:
         "Hazard": mesh("Hazard", add_beveled_box(builder, (0.13, 0.06, 0.36), warm, 0.018)),
         "Glass": mesh("Glass", add_beveled_box(builder, (0.34, 0.035, 0.16), glass, 0.018)),
         "Fastener": mesh("Fastener", add_cylinder(builder, 0.035, 0.04, warm, 20)),
+        "Latch": mesh("Latch", add_cylinder(builder, 0.055, 0.045, steel, 20)),
     }
 
     nodes: list[dict] = [{"name": "SalvageModel", "children": [], "extras": {"ironwright_asset_id": "salvage.opening_wreck.v1", "asset_quality": "authored_high_definition", "socket_contract": "salvage_target, status_lens, service_panel"}}]
@@ -77,6 +79,7 @@ def main() -> None:
     add_node("WreckCore", mesh_ids["Core"], (0.0, 0.66, -0.03))
     add_node("WreckCabin", mesh_ids["Cabin"], (-0.18, 0.98, 0.12), rotation=(0.0, 0.0, -0.08))
     add_node("WreckCabinPanel", mesh_ids["CabinPanel"], (0.20, 1.05, -0.34), rotation=(0.10, 0.0, 0.04))
+    add_node("WreckCabinHandle", mesh_ids["CabinHandle"], (0.20, 1.10, -0.405), rotation=(0.10, 0.0, 0.04), extras={"surface": "cabin_service_grip"})
     for side in (-1.0, 1.0):
         for front in (-1.0, 1.0):
             suffix = ("L" if side < 0 else "R") + ("F" if front < 0 else "B")
@@ -90,6 +93,8 @@ def main() -> None:
     add_node("WreckServiceWindow", mesh_ids["ServiceWindow"], (-0.70, 0.72, -0.45), rotation=(0.0, math.pi * 0.5, 0.0))
     for index, x in enumerate((-0.44, 0.0, 0.44)):
         add_node("WreckServiceFastener%02d" % index, mesh_ids["Fastener"], (-0.71, 0.82, x), rotation=(0.0, math.pi * 0.5, 0.0))
+    for index, x in enumerate((-0.24, 0.24)):
+        add_node("WreckServiceLatch%02d" % index, mesh_ids["Latch"], (-0.715, 0.72, -0.45 + x), rotation=(0.0, math.pi * 0.5, 0.0), extras={"surface": "manual_salvage_latch"})
     add_node("WreckPipeLeft", mesh_ids["Pipe"], (-0.82, 0.94, 0.03), rotation=(0.0, 0.0, math.pi * 0.5))
     add_node("WreckPipeRight", mesh_ids["Pipe"], (0.82, 0.94, 0.12), rotation=(0.0, 0.0, math.pi * 0.5))
     add_node("WreckPipeJointLeft", mesh_ids["PipeJoint"], (-0.82, 0.94, -0.56))
@@ -111,7 +116,7 @@ def main() -> None:
         "accessors": builder.accessors,
         "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
-        "extras": {"ironwright_asset_id": "salvage.opening_wreck.v1", "required_nodes": ["SalvageModel", "WreckChassis", "WreckCore", "WreckCabin", "WreckServicePanel", "WreckStatusLens", "WreckPipeLeft", "BrokenGlassShard00", "ProductionAssetMarker"]},
+        "extras": {"ironwright_asset_id": "salvage.opening_wreck.v1", "required_nodes": ["SalvageModel", "WreckChassis", "WreckCore", "WreckCabin", "WreckCabinHandle", "WreckServicePanel", "WreckStatusLens", "WreckPipeLeft", "WreckServiceLatch00", "BrokenGlassShard00", "ProductionAssetMarker"]},
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")

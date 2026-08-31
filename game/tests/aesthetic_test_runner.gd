@@ -211,7 +211,7 @@ func _run_all() -> void:
     await process_frame
     _expect(salvage_sample.find_child("SalvageAuthoredModel", true, false) != null, "The first salvage target must use the authored high-definition wreck shell.")
     _expect(salvage_sample.find_child("WreckServicePanel", true, false) != null and salvage_sample.find_child("WreckPipeLeft", true, false) != null, "The salvage wreck must expose authored service and pipe anatomy.")
-    _expect(salvage_sample.find_child("BrokenGlassShard00", true, false) != null and salvage_sample.find_child("WreckStatusLens", true, false) != null, "The salvage wreck must expose damage and readable status detail.")
+    _expect(salvage_sample.find_child("BrokenGlassShard00", true, false) != null and salvage_sample.find_child("WreckStatusLens", true, false) != null and salvage_sample.find_child("WreckCabinHandle", true, false) != null and salvage_sample.find_child("WreckServiceLatch00", true, false) != null, "The salvage wreck must expose damage, readable status detail and authored service hardware.")
     salvage_sample.queue_free()
     var site_sample := OutpostSite3D.new()
     site_sample.configure({"id": "aesthetic.site_marker", "display_name": "Marker", "recommended_outpost_role": "scout", "position": [64.0, 0.0, 64.0]})

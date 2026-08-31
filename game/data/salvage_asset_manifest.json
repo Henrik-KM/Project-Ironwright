@@ -6,6 +6,6 @@
   "source_type": "original_project_ironwright_shared_mesh_builder",
   "third_party_assets": [],
   "presentation_only": true,
-  "stable_nodes": ["SalvageModel", "WreckChassis", "WreckCore", "WreckCabin", "WreckServicePanel", "WreckServiceWindow", "WreckPipeLeft", "WreckStatusLens", "BrokenGlassShard00", "ProductionAssetMarker"],
+  "stable_nodes": ["SalvageModel", "WreckChassis", "WreckCore", "WreckCabin", "WreckCabinHandle", "WreckServicePanel", "WreckServiceWindow", "WreckPipeLeft", "WreckStatusLens", "WreckServiceLatch00", "BrokenGlassShard00", "ProductionAssetMarker"],
   "socket_contract": ["salvage_target", "status_lens", "manual_salvage_access"]
 }

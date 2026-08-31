@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Opening salvage service-hardware pass
+
+The first salvage wreck now carries a warm cabin service grip and paired
+access latches around its existing manual-salvage panel. The added hardware
+makes the opening objective read as a maintained machine that can be worked on,
+not a generic resource marker, while preserving the established status lens,
+pipe anatomy, collision and salvage interaction contract. This is
+presentation-only. Fresh import, aesthetic coverage and the live opening
+review use Godot Dummy audio with `--quiet-audio`; no physical speakers are
+used.
+
 ## 2026-08-30 — Bulwark protection-posture pass
 
 When the Mechromancer is committed to a salvage or fabrication channel, the
