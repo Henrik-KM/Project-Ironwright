@@ -99,6 +99,12 @@ def main() -> None:
         "Cable": mesh("Cable", add_cylinder(builder, 0.055, 5.2, pulse, 14)),
         "CableClamp": mesh("CableClamp", add_cylinder(builder, 0.10, 0.14, alloy, 16)),
         "Basin": mesh("Basin", add_cylinder(builder, 5.8, 0.22, alloy, 40)),
+        # A shallow manufactured foundation gives the late basin a visible
+        # architectural footprint at the approach distance. It is part of
+        # the authored presentation asset only; the runtime landmark keeps
+        # ownership of collision and navigation separately.
+        "BasinFoundation": mesh("BasinFoundation", add_cylinder(builder, 6.35, 0.18, capstone, 48)),
+        "BasinFoundationRim": mesh("BasinFoundationRim", add_torus(builder, 6.08, 0.16, alloy, 64, 10)),
         "BasinWater": mesh("BasinWater", add_cylinder(builder, 4.9, 0.06, root, 40)),
         "BasinRim": mesh("BasinRim", add_beveled_box(builder, (2.45, 0.18, 0.24), bone, 0.06)),
         # These are radial root braces, not vertical stakes. Keeping them
@@ -150,6 +156,8 @@ def main() -> None:
         nodes[parent].setdefault("children", []).append(len(nodes) - 1)
         return len(nodes) - 1
 
+    add_node("RootCisternBasinFoundation", mesh_ids["BasinFoundation"], (0.0, 0.05, 0.0), extras={"surface": "basin_foundation"})
+    add_node("RootCisternBasinFoundationRim", mesh_ids["BasinFoundationRim"], (0.0, 0.18, 0.0), extras={"surface": "basin_foundation_rim"})
     add_node("RootCisternBasin", mesh_ids["Basin"], (0.0, 0.11, 0.0), extras={"socket_type": "basin_floor"})
     add_node("RootCisternBasinWater", mesh_ids["BasinWater"], (0.0, 0.27, 0.0), extras={"socket_type": "basin_water"})
     for index in range(8):
@@ -230,7 +238,7 @@ def main() -> None:
         "accessors": builder.accessors,
         "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
-        "extras": {"ironwright_asset_id": "root_cistern.landmark.v1", "required_nodes": ["RootCisternModel", "RootCisternBasin", "RootCisternBasinWater", "RootCisternBasinSpine0", "RootCisternBasinRootTendril0", "RootCisternBasinInlay00", "RootCisternBasinSocket00", "RootCisternCore", "RootCisternCoreCollar", "RootCisternCoreMass", "RootCisternCoreMantle0", "RootCisternCoreHalo", "RootCisternCoreCrownRing", "RootCisternCoreCapPlate", "RootCisternCoreCapCollar", "RootCisternCoreCapSocket", "RootCisternCoreCapRib00", "RootCisternCoreCapSocket00", "RootCisternCorePlate0", "RootCisternCoreClaw0", "RootCisternCoreVein0", "RootCisternCoreRoot0", "RootCisternCoreCrownPlate00", "RootCisternCoreCrownSocket00", "RootCisternLayer0", "RootCisternRib0", "RootCisternPylon0", "RootCisternPylonFoot0", "RootCisternPylonCollar0", "RootCisternPylonShoulder0", "RootCisternPylonBrace0", "RootCisternPylonCrown0", "RootCisternPylonRing0", "RootCisternSignal0", "RootCisternPulseCap0", "RootCisternCable0", "RootCisternCableClamp0", "ProductionAssetMarker"]},
+        "extras": {"ironwright_asset_id": "root_cistern.landmark.v1", "required_nodes": ["RootCisternModel", "RootCisternBasinFoundation", "RootCisternBasinFoundationRim", "RootCisternBasin", "RootCisternBasinWater", "RootCisternBasinSpine0", "RootCisternBasinRootTendril0", "RootCisternBasinInlay00", "RootCisternBasinSocket00", "RootCisternCore", "RootCisternCoreCollar", "RootCisternCoreMass", "RootCisternCoreMantle0", "RootCisternCoreHalo", "RootCisternCoreCrownRing", "RootCisternCoreCapPlate", "RootCisternCoreCapCollar", "RootCisternCoreCapSocket", "RootCisternCoreCapRib00", "RootCisternCoreCapSocket00", "RootCisternCorePlate0", "RootCisternCoreClaw0", "RootCisternCoreVein0", "RootCisternCoreRoot0", "RootCisternCoreCrownPlate00", "RootCisternCoreCrownSocket00", "RootCisternLayer0", "RootCisternRib0", "RootCisternPylon0", "RootCisternPylonFoot0", "RootCisternPylonCollar0", "RootCisternPylonShoulder0", "RootCisternPylonBrace0", "RootCisternPylonCrown0", "RootCisternPylonRing0", "RootCisternSignal0", "RootCisternPulseCap0", "RootCisternCable0", "RootCisternCableClamp0", "ProductionAssetMarker"]},
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
