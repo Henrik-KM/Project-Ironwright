@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused first-salvage archive witness — 2026-08-31
+
+- added a durable machine-witness record for the first autonomous salvage
+  return, tying the opening physical wreck to the machine society's first
+  shared load without creating a quest, dashboard or recurring task;
+- connected the complete-game Story Archive director to the autonomy event
+  source so the `salvage:complete` milestone is unlocked through the real
+  runtime signal and survives archive serialization;
+- verified repository, release, story-archive and complete-game gates under
+  Godot Dummy audio with `--quiet-audio`.
+
 ## Focused civic wreck front-face pass — 2026-08-31
 
 - added paired service lamps and a recessed twin-bar grille to the authored

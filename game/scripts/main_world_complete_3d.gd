@@ -149,6 +149,7 @@ func _setup_complete_game_services() -> void:
     var aesthetic := get_node_or_null("AestheticDirector") as AestheticDirector3D
     if aesthetic != null:
         aesthetic.connect_story_archive(story_archive_director)
+    story_archive_director.connect_event_source(autonomy_director)
     story_archive_director.connect_event_source(outpost_director)
 
     region_atmosphere_director = REGION_ATMOSPHERE_SCRIPT.new() as RegionAtmosphereDirector3D

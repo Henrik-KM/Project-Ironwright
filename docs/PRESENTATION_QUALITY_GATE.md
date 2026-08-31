@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — First salvage archive witness
+
+The first autonomous salvage return now leaves a durable Town Archive record:
+the opening municipal wreck is remembered as the first load the machine
+society carried together. The record is unlocked from the existing autonomy
+event and remains an on-demand archive entry, so it adds environmental meaning
+without a new quest or recurring management surface. Runtime verification uses
+Godot Dummy audio with `--quiet-audio`; no physical speakers are used.
+
 ## 2026-08-31 — Civic wreck front-face pass
 
 The authored civic vehicle wreck now has paired cyan service lamps and a
