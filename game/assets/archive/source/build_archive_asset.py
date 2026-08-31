@@ -63,6 +63,9 @@ def main() -> None:
         "Plaque": mesh("ArchivePlaque", add_beveled_box(builder, (3.0, 0.58, 0.08), amber, 0.018)),
         "FacadeCornice": mesh("ArchiveFacadeCornice", add_beveled_box(builder, (12.4, 0.24, 0.58), stone, 0.055)),
         "FacadePilaster": mesh("ArchiveFacadePilaster", add_beveled_box(builder, (0.34, 4.85, 0.54), stone, 0.045)),
+        "FacadeServiceBand": mesh("ArchiveFacadeServiceBand", add_beveled_box(builder, (11.0, 0.16, 0.12), iron, 0.022)),
+        "FacadeServiceRib": mesh("ArchiveFacadeServiceRib", add_beveled_box(builder, (0.14, 1.28, 0.12), iron, 0.018)),
+        "FacadeArchiveSeal": mesh("ArchiveFacadeArchiveSeal", add_beveled_box(builder, (1.55, 0.62, 0.08), amber, 0.024)),
         "VaultInset": mesh("ArchiveVaultInset", add_beveled_box(builder, (5.25, 4.02, 0.16), iron, 0.055)),
         "CreepTendril": mesh("ArchiveCreepTendril", add_cylinder(builder, 0.045, 0.78, organic, 14)),
     }
@@ -105,6 +108,10 @@ def main() -> None:
     add_node("ArchiveFacadeCornice", mesh_ids["FacadeCornice"], (0.0, 5.56, 2.0), extras={"surface": "civic_facade_cornice"})
     add_node("ArchiveFacadePilasterL", mesh_ids["FacadePilaster"], (-5.48, 2.82, 2.0), extras={"surface": "civic_facade_pilaster"})
     add_node("ArchiveFacadePilasterR", mesh_ids["FacadePilaster"], (5.48, 2.82, 2.0), extras={"surface": "civic_facade_pilaster"})
+    add_node("ArchiveFacadeServiceBand", mesh_ids["FacadeServiceBand"], (0.0, 4.45, 1.77), extras={"surface": "civic_facade_service_band"})
+    for index, x in enumerate((-4.55, -2.18, 2.18, 4.55)):
+        add_node("ArchiveFacadeServiceRib%d" % index, mesh_ids["FacadeServiceRib"], (x, 4.98, 1.77), extras={"surface": "civic_facade_service_rib"})
+    add_node("ArchiveFacadeArchiveSeal", mesh_ids["FacadeArchiveSeal"], (0.0, 4.82, 1.75), extras={"surface": "archive_identity_seal"})
     add_node("ArchiveBrickWingL", mesh_ids["BrickWing"], (-7.0, 2.1, -2.5))
     add_node("ArchiveBrickWingR", mesh_ids["BrickWing"], (7.0, 2.1, -2.5), rotation=(0.0, 0.04, 0.0))
     add_node("ArchiveFacadeWindowL", mesh_ids["Window"], (-3.2, 3.0, 2.0), extras={"socket_type": "civic_window"})
@@ -152,7 +159,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "archive.north_ruins.v1",
             "manufactured_surface_profile": "chamfered_high_definition",
-            "required_nodes": ["ArchiveModel", "ArchiveCivicFacade", "ArchiveFacadeCornice", "ArchiveFacadePilasterL", "ArchiveVaultInset", "ArchiveFacadeWindowL", "ArchiveWindowFrameL", "ArchiveWindowMullionL", "ArchiveVaultDoor", "ArchiveVaultDoorJambL", "ArchiveVaultDoorLintel", "ArchiveCivicPlaque", "ArchiveRoofBeacon", "ArchiveBeaconCollar", "ArchiveBeaconBraceL", "ArchiveStack0", "ArchiveShelfDivider0_0", "ArchiveShelfRail0", "ArchiveOrganicCreep0", "ArchiveOrganicTendril0_0", "ProductionAssetMarker"],
+            "required_nodes": ["ArchiveModel", "ArchiveCivicFacade", "ArchiveFacadeCornice", "ArchiveFacadePilasterL", "ArchiveFacadeServiceBand", "ArchiveFacadeServiceRib0", "ArchiveFacadeArchiveSeal", "ArchiveVaultInset", "ArchiveFacadeWindowL", "ArchiveWindowFrameL", "ArchiveWindowMullionL", "ArchiveVaultDoor", "ArchiveVaultDoorJambL", "ArchiveVaultDoorLintel", "ArchiveCivicPlaque", "ArchiveRoofBeacon", "ArchiveBeaconCollar", "ArchiveBeaconBraceL", "ArchiveStack0", "ArchiveShelfDivider0_0", "ArchiveShelfRail0", "ArchiveOrganicCreep0", "ArchiveOrganicTendril0_0", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

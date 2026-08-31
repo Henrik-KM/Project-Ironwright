@@ -3477,3 +3477,12 @@ late-landmark footprint. The change is presentation-only: authored ecology,
 collision, navigation and pylon placement remain intact. Native review was
 performed at 1280x720 with Godot Dummy audio and `--quiet-audio`; no physical
 speakers were used.
+
+## Focused North Ruins archive facade pass — 2026-08-31
+
+The North Ruins review now exposes a service band, vertical facade ribs and a
+central archive seal, giving the civic wall layered high-definition structure
+at approach distance instead of one broad blank plane. This is presentation
+geometry only; the vault entrance, story archive and region contracts are
+unchanged. Native review used Godot Dummy audio and `--quiet-audio`; no
+physical speakers were used.
