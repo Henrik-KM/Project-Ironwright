@@ -358,7 +358,7 @@ def main() -> None:
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_PATH.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    OUTPUT_PATH.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"Wrote {OUTPUT_PATH} with {len(nodes)} named nodes and {len(meshes)} meshes")
 
 
