@@ -3468,3 +3468,12 @@ confirmed the legacy-import state without clipping or overlap; no physical
 speakers were used.
 The status also refreshes when the player changes language without leaving the
 title screen.
+
+## Focused Root Cistern grounding pass — 2026-08-31
+
+The Root Cistern review now shows a shallow manufactured foundation and outer
+service rim under the basin, replacing the prior floating read with a grounded
+late-landmark footprint. The change is presentation-only: authored ecology,
+collision, navigation and pylon placement remain intact. Native review was
+performed at 1280x720 with Godot Dummy audio and `--quiet-audio`; no physical
+speakers were used.

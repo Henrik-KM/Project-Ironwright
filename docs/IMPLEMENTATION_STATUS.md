@@ -7298,3 +7298,12 @@ roster checks and requires silent late-organic live review before merge.
   that both the no-save and saved-world states remain readable at 1280x720.
 - changing language while the title remains open refreshes the saved-world line
   immediately, including the legacy-import state.
+
+## Focused Root Cistern grounding pass — 2026-08-31
+
+The authored Root Cistern now includes a shallow beveled foundation and outer
+service rim beneath the basin. This gives the late ecology landmark a clear
+architectural footprint at approach distance while leaving collision,
+navigation, simulation ownership and the suspended signal-pylon arrangement
+unchanged. The exact native presentation review was captured silently with
+Godot Dummy audio and `--quiet-audio`; no physical speakers were used.

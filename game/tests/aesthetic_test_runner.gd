@@ -559,6 +559,7 @@ func _run_all() -> void:
             if landmark.region_kind == &"endgame":
                 _expect(landmark.get_node_or_null("PersistentRegionGeometry/RootCisternAuthoredModel") != null, "The Root Cistern must expose its authored landmark shell.")
                 _expect(landmark.find_child("RootCisternBasin", true, false) != null, "The Root Cistern must expose an authored basin floor to anchor the capstone encounter.")
+                _expect(landmark.find_child("RootCisternBasinFoundation", true, false) != null and landmark.find_child("RootCisternBasinFoundationRim", true, false) != null, "The Root Cistern must expose a shallow manufactured foundation and service rim so the final basin reads grounded at approach distance.")
                 _expect(landmark.find_child("RootCisternCoreHalo", true, false) != null, "The Root Cistern must expose an authored luminous core halo.")
                 _expect(landmark.find_child("RootCisternCoreCollar", true, false) != null and landmark.find_child("RootCisternCoreRoot0", true, false) != null, "The Root Cistern must expose a grounded core collar and radial root braces.")
                 _expect(landmark.find_child("RootCisternCorePlate0", true, false) != null and landmark.find_child("RootCisternCoreClaw0", true, false) != null and landmark.find_child("RootCisternCoreVein0", true, false) != null, "The Root Cistern must expose layered core surface and vein hardware.")
@@ -2504,6 +2505,10 @@ func _run_all() -> void:
 func _await_renderer_quiescence(world: Node) -> void:
     if world == null or not is_instance_valid(world) or world.is_queued_for_deletion():
         return
+    # Presentation review pages pause ordinary world processing. The release
+    # art director is intentionally ALWAYS, but the fixture must also restore
+    # the tree before waiting for its bounded material queue to drain.
+    paused = false
     # Frame-count waits are effectively zero-time in an uncapped headless run.
     # The release dressing guard intentionally uses real time, so honor that
     # contract before polling any remaining threaded package handoffs.
