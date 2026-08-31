@@ -1474,7 +1474,7 @@ def validate_heartforge_asset() -> None:
         or len(declared_stable_nodes) != len(HEARTFORGE_STABLE_NODES)
         or set(map(str, declared_stable_nodes)) != set(HEARTFORGE_STABLE_NODES)
     ):
-        fail("Heartforge manifest must preserve exactly the 16 stable runtime nodes.")
+        fail("Heartforge manifest must preserve the complete stable runtime node contract.")
     if manifest.get("authored_detail_root") != HEARTFORGE_AUTHORED_DETAIL_ROOT:
         fail("Heartforge manifest must name VerticalSliceForgeArt as its imported authored-detail root.")
     declared_detail_nodes = manifest.get("authored_detail_nodes")

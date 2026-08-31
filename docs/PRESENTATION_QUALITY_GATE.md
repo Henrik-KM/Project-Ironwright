@@ -1,5 +1,17 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Persistent district-recovery witness
+
+Each non-sanctuary region now gains a small framed machine-recovery plate in
+its physical landmark. It is invisible before suppression, then appears and
+brightens only after a real operation or ending reduces the region's saved
+biological pressure. Four compact bars and a restrained cyan-green service
+light make the consequence readable without competing with the regional focal
+asset or adding a dashboard. The layer is presentation-only and preserves
+collision, navigation, ecology and player workload. Aesthetic coverage verifies
+the hidden-to-visible transition and suppression-driven material response; all
+validation used Godot Dummy audio with `--quiet-audio` and no physical speakers.
+
 ## 2026-08-31 — Integrated production-model and action-state review
 
 The latest isolated high-definition model overhaul is now integrated with the

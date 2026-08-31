@@ -1,5 +1,20 @@
 # Implementation status
 
+## Focused persistent district-recovery witness — 2026-08-31
+
+- added a bounded `MachineRecoveryRead` presentation layer to every discovered
+  non-sanctuary landmark; it remains hidden until real regional suppression is
+  recorded and then brightens from the saved suppression value;
+- gave the completed-operation state a physical framed service plate and four
+  compact progress bars, so the machine society's recovery is visible in the
+  same encounter space as the biological pressure signal;
+- kept the layer presentation-only: collision, navigation, ecology rates,
+  operation state and player workload are unchanged;
+- added aesthetic regression coverage for creation, hidden initial state,
+  suppression-driven visibility and deterministic material response; fresh
+  import, repository, release, aesthetic, complete-game and one-hundred-hour
+  silent soak gates passed.
+
 ## Integrated production-model and organic-action overhaul — 2026-08-31
 
 - integrated the latest isolated high-definition production pass across the

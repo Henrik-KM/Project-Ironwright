@@ -77,6 +77,9 @@ var _authored_model_attach_requested: bool = false
 var _authored_model_cleanup_pending: bool = false
 var _pressure_read_root: Node3D
 var _pressure_signal_material: StandardMaterial3D
+var _recovery_read_root: Node3D
+var _recovery_signal_material: StandardMaterial3D
+var _recovery_light: OmniLight3D
 var _reduced_proxy_root: Node3D
 var _story_witness_root: Node3D
 var _story_witness_lens: Node3D
@@ -488,6 +491,7 @@ func set_discovered(value: bool) -> void:
         return
     discovered = value
     _refresh_discovery()
+    _refresh_recovery_read()
     landmark_changed.emit(self)
 
 
@@ -514,6 +518,7 @@ func set_pressure(value: float) -> void:
 func add_suppression(amount: float) -> void:
     suppression = clampf(suppression + maxf(0.0, amount), 0.0, 0.85)
     _refresh_pressure_read()
+    _refresh_recovery_read()
     landmark_changed.emit(self)
 
 
@@ -537,6 +542,7 @@ func restore_from_dictionary(data: Dictionary) -> void:
     if is_inside_tree():
         _refresh_discovery()
         _refresh_pressure_read()
+        _refresh_recovery_read()
         landmark_changed.emit(self)
 
 
@@ -672,6 +678,7 @@ func _build_visuals() -> void:
     _add_region_surface_finish()
     _add_region_practical_lights()
     _build_pressure_read()
+    _build_recovery_read()
     _build_story_witness()
     _build_reduced_region_proxy()
     _capture_region_motion_nodes()
@@ -1099,6 +1106,77 @@ func _refresh_pressure_read() -> void:
         # material hierarchy at high ecological intensity.
         _pressure_signal_material.emission_energy_multiplier = lerpf(0.16, 0.62, intensity)
         _pressure_signal_material.albedo_color = _region_color().darkened(lerpf(0.78, 0.42, intensity))
+
+
+func _build_recovery_read() -> void:
+    if _visual_root == null or region_kind == &"sanctuary":
+        return
+    _recovery_read_root = Node3D.new()
+    _recovery_read_root.name = "MachineRecoveryRead"
+    _visual_root.add_child(_recovery_read_root)
+
+    var frame_material := ModelKit3D.material(Color("17262b"), 0.64, 0.42)
+    var plate_material := ModelKit3D.material(Color("243a3d"), 0.48, 0.46)
+    var signal_color := _region_color().lerp(Color("64d7c6"), 0.62)
+    _recovery_signal_material = ModelKit3D.material(
+        signal_color.darkened(0.54),
+        0.24,
+        0.32,
+        signal_color,
+        0.0
+    )
+    # This is an environmental witness, not a new command surface. Machines
+    # leave it behind when an operation has reduced local biological pressure.
+    ModelKit3D.add_beveled_box(
+        _recovery_read_root,
+        Vector3(3.8, 1.42, 0.16),
+        Vector3(-4.55, 0.92, 12.45),
+        frame_material,
+        Vector3(0.0, 0.0, -0.035),
+        "MachineRecoveryFrame",
+        0.14
+    )
+    ModelKit3D.add_surface_panel(
+        _recovery_read_root,
+        Vector3(3.1, 0.92, 0.10),
+        Vector3(-4.55, 0.92, 12.56),
+        plate_material,
+        _recovery_signal_material,
+        Vector3.ZERO,
+        "MachineRecoveryPlate"
+    )
+    for index in range(4):
+        ModelKit3D.add_beveled_box(
+            _recovery_read_root,
+            Vector3(0.34, 0.48 + float(index % 2) * 0.16, 0.07),
+            Vector3(-5.56 + float(index) * 0.68, 0.70 + float(index % 2) * 0.12, 12.65),
+            _recovery_signal_material,
+            Vector3(0.0, 0.0, 0.025 * float(index - 1)),
+            "MachineRecoveryBar%02d" % index,
+            0.08
+        )
+    _recovery_light = ModelKit3D.add_glow_light(
+        _recovery_read_root,
+        Vector3(-4.55, 1.65, 12.70),
+        signal_color,
+        0.0,
+        3.8
+    )
+    _recovery_light.name = "MachineRecoveryLight"
+    _refresh_recovery_read()
+
+
+func _refresh_recovery_read() -> void:
+    if _recovery_read_root == null:
+        return
+    var recovery := clampf(suppression / 0.85, 0.0, 1.0)
+    _recovery_read_root.visible = discovered and recovery > 0.02
+    if _recovery_signal_material != null:
+        _recovery_signal_material.emission_energy_multiplier = lerpf(0.22, 0.82, recovery)
+        _recovery_signal_material.albedo_color = _region_color().lerp(Color("64d7c6"), 0.62).darkened(lerpf(0.42, 0.12, recovery))
+    if _recovery_light != null:
+        _recovery_light.visible = _recovery_read_root.visible
+        _recovery_light.light_energy = lerpf(0.18, 0.68, recovery)
 
 
 func _build_reduced_region_proxy() -> void:

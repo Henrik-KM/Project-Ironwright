@@ -441,6 +441,17 @@ func _run_all() -> void:
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/RegionPracticalLight0") != null and landmark.get_node_or_null("PersistentRegionGeometry/RegionPracticalLight1") != null, "Each non-sanctuary region must receive two bounded palette-aware practical lights.")
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/RegionalPressureRead") != null, "Each discovered non-sanctuary region must expose a bounded pressure-growth presentation layer.")
             _expect(landmark.find_child("RegionalPressurePlate00", true, false) != null and landmark.find_child("RegionalPressureSignal00", true, false) != null, "Regional pressure growth must expose stable plate and signal anatomy sockets.")
+            var recovery_read := landmark.get_node_or_null("PersistentRegionGeometry/MachineRecoveryRead") as Node3D
+            _expect(recovery_read != null, "Each non-sanctuary region must expose a bounded machine-recovery witness layer.")
+            if recovery_read != null:
+                _expect(recovery_read.find_child("MachineRecoveryFrame", true, false) != null and recovery_read.find_child("MachineRecoveryPlate", true, false) != null, "The machine-recovery witness must carry a framed service plate rather than an abstract HUD-only state.")
+                _expect(recovery_read.find_child("MachineRecoveryBar00", true, false) != null and recovery_read.find_child("MachineRecoveryBar03", true, false) != null, "The machine-recovery witness must expose a compact progress-bar silhouette.")
+                _expect(not recovery_read.visible, "A region with no completed suppression must not show a false machine-recovery state.")
+                landmark.add_suppression(0.25)
+                _expect(recovery_read.visible, "Completed regional suppression must reveal the persistent machine-recovery witness in the world.")
+                var recovery_cap := recovery_read.find_child("MachineRecoveryPlateCap", true, false) as MeshInstance3D
+                var recovery_material := recovery_cap.get_active_material(0) as StandardMaterial3D if recovery_cap != null else null
+                _expect(recovery_material != null and recovery_material.emission_energy_multiplier > 0.22, "The machine-recovery witness must brighten deterministically with actual suppression.")
             _expect(landmark.find_child("RegionalStoryWitnessFrame", true, false) != null and landmark.find_child("RegionalStoryWitnessPlate", true, false) != null, "Each non-sanctuary region must expose a bounded physical Town Archive witness panel.")
             _expect(landmark.get_node_or_null("ReducedRegionProxy") != null, "Each non-sanctuary region must expose a bounded coarse proxy for distant presentation LOD.")
             var district_breadth := landmark.get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing/DistrictBreadthLayer") as Node3D

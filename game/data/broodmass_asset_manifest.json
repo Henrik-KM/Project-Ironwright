@@ -32,11 +32,11 @@
   "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
   "aggregate_bounds": {"min": [-1.6143088307393014, -0.24999824308081264, -2.314636484374713], "max": [1.6143088307393014, 2.604930241164394, 1.5495999999999999]},
   "runtime_visual_scale": 1.0,
-  "geometry_metrics": {"nodes": 74, "meshes": 19, "primitives": 19, "vertices": 9670, "triangles": 17828},
+  "geometry_metrics": {"nodes": 82, "meshes": 20, "primitives": 20, "vertices": 9736, "triangles": 17956},
   "skins": 0,
   "collision": false,
   "gameplay_state": "none",
   "presentation_only": true,
   "deterministic_build": true,
-  "artifact_hashes": {"source_builder_sha256": "E4CEEDD15DDF621074217B069C368B7AE4981A83CAA9A2CB454709D2DB64CACF", "runtime_model_sha256": "F06FBC41D833CAE0D9D2E7F90BF1943A06625128E5F412B1EF0814EA25F82035"}
+  "artifact_hashes": {"source_builder_sha256": "2B1F6DC3B64BE1F6BA6348E94F426B6D0CC9C311BE14BDC425D3961363347CE0", "runtime_model_sha256": "D4F03F4EDFD53A65621B2F6003A99CAF1B1F64625D2F38E46112ED3736751A50"}
 }
