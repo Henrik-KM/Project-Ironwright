@@ -7316,3 +7316,12 @@ up the broad approach-facing wall into readable manufactured layers while
 preserving the vault, story witness, collision and archive progression
 contracts. The exact native review was performed silently with Dummy audio;
 no physical speakers were used.
+
+## Focused autonomous outpost foundation pass — 2026-08-31
+
+The authored outpost shelter now carries a broader low-profile foundation
+apron and a captured service collar beneath the shelter shell. The added
+grounding layer makes the evolved tier frames read as one anchored autonomous
+structure at review distance while preserving role behavior, operation state,
+collision, navigation and fixed-site ownership. Native review used Dummy
+audio with `--quiet-audio`; no physical speakers were used.

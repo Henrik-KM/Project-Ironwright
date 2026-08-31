@@ -1763,6 +1763,7 @@ func _run_all() -> void:
         _expect(_find_named(sample, "ProductionAssetMarker") != null, "The authored outpost shelter must expose its production asset marker.")
         _expect(_find_named(sample, "ShelterWindowFrame00") != null and _find_named(sample, "ShelterWindowMullion00") != null, "The authored outpost shelter must expose layered window-frame and mullion hardware.")
         _expect(_find_named(sample, "ShelterServiceDoor") != null and _find_named(sample, "RoofServiceRib01") != null and _find_named(sample, "FoundationAnchor00") != null, "The authored outpost shelter must expose service-door, roof-rib and foundation-anchor detail.")
+        _expect(_find_named(sample, "FoundationApron") != null and _find_named(sample, "FoundationServiceCollar") != null, "The authored outpost shelter must expose a broad grounded apron and service collar beneath the evolved load path.")
         var shelter_canopy := _find_named(sample, "ShelterCanopy") as MeshInstance3D
         var shelter_canopy_lens := _find_named(sample, "ShelterCanopyLens") as MeshInstance3D
         var shelter_canopy_rear_lens := _find_named(sample, "ShelterCanopyRearLens") as MeshInstance3D

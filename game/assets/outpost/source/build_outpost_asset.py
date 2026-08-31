@@ -15,7 +15,7 @@ from pathlib import Path
 SOURCE_DIR = Path(__file__).resolve().parent
 ASSET_ROOT = SOURCE_DIR.parents[1]
 sys.path.insert(0, str(ASSET_ROOT / "bulwark" / "source"))
-from build_bulwark_asset import BufferBuilder, add_beveled_box, add_cylinder, add_uv_sphere  # noqa: E402
+from build_bulwark_asset import BufferBuilder, add_beveled_box, add_cylinder, add_torus, add_uv_sphere  # noqa: E402
 
 
 def build() -> None:
@@ -53,8 +53,10 @@ def build() -> None:
         return value
 
     mesh_ids = {
+        "foundation_apron": mesh("FoundationApron", add_cylinder(builder, 3.05, 0.16, dark, 36)),
         "foundation": mesh("Foundation", add_cylinder(builder, 2.65, 0.45, dark, 28)),
         "foundation_inset": mesh("FoundationInset", add_cylinder(builder, 2.38, 0.12, dark, 28)),
+        "foundation_collar": mesh("FoundationServiceCollar", add_torus(builder, 2.48, 0.095, maintenance, 48, 10)),
         "shelter_core": mesh("CoreShelterCore", add_beveled_box(builder, (3.7, 2.1, 3.4), shelter_body)),
         "shelter_band": mesh("ShelterMaintenanceBand", add_beveled_box(builder, (3.28, 0.12, 0.16), maintenance)),
         "window_frame": mesh("ShelterWindowFrame", add_beveled_box(builder, (0.1, 0.72, 1.28), panel)),
@@ -88,8 +90,10 @@ def build() -> None:
         nodes.append(value)
         return len(nodes) - 1
 
+    foundation_apron = add(node("FoundationApron", mesh_ids["foundation_apron"], (0.0, 0.08, 0.0), extras={"surface": "foundation_apron"}))
     foundation = add(node("Foundation", mesh_ids["foundation"], (0.0, 0.23, 0.0), extras={"socket_type": "fixed_site_anchor"}))
-    add(node("FoundationInset", mesh_ids["foundation_inset"], (0.0, 0.49, 0.0)))
+    foundation_inset = add(node("FoundationInset", mesh_ids["foundation_inset"], (0.0, 0.49, 0.0)))
+    foundation_collar = add(node("FoundationServiceCollar", mesh_ids["foundation_collar"], (0.0, 0.53, 0.0), extras={"surface": "foundation_service_collar"}))
 
     shelter_children = [add(node("CoreShelterCore", mesh_ids["shelter_core"]))]
     for index, position in enumerate(((-1.9, 0.52, -0.0), (1.9, 0.52, -0.0))):
@@ -142,7 +146,7 @@ def build() -> None:
         anchor_nodes.append(add(node("FoundationAnchor%02d" % index, mesh_ids["foundation_anchor"], position)))
         anchor_nodes.append(add(node("FoundationLatch%02d" % index, mesh_ids["foundation_latch"], (position[0], 0.65, position[2] - 0.28))))
     marker = add(node("ProductionAssetMarker", None, extras={"asset_id": "outpost.shelter.v1", "presentation_only": True}))
-    root = add(node("OutpostModel", None, children=[foundation, shelter, roof, vent, service, status, *anchor_nodes, marker], extras={"ironwright_asset_id": "outpost.shelter.v1", "asset_quality": "authored_high_definition", "socket_contract": "fixed_site_anchor, shared_shelter_shell, service_vent, status_beacon, maintenance_hardware"}))
+    root = add(node("OutpostModel", None, children=[foundation_apron, foundation, foundation_inset, foundation_collar, shelter, roof, vent, service, status, *anchor_nodes, marker], extras={"ironwright_asset_id": "outpost.shelter.v1", "asset_quality": "authored_high_definition", "socket_contract": "fixed_site_anchor, shared_shelter_shell, service_vent, status_beacon, maintenance_hardware"}))
 
     document = {
         "asset": {"version": "2.0", "generator": "Project Ironwright original Outpost shelter asset builder"},
@@ -154,7 +158,7 @@ def build() -> None:
         "accessors": builder.accessors,
         "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
-        "extras": {"ironwright_asset_id": "outpost.shelter.v1", "asset_quality": "authored_high_definition", "manufactured_surface_profile": "chamfered_high_definition", "required_nodes": ["OutpostModel", "Foundation", "CoreShelter", "CoreShelterCore", "RoofPlate", "ShelterCanopy", "ShelterCanopyRidge", "ShelterCanopyLens", "CoreVent", "CoreServicePanel", "StatusBeacon", "ProductionAssetMarker", "ShelterWindowFrame00", "ShelterWindowMullion00", "RoofServiceRib01", "FoundationAnchor00"]},
+        "extras": {"ironwright_asset_id": "outpost.shelter.v1", "asset_quality": "authored_high_definition", "manufactured_surface_profile": "chamfered_high_definition", "required_nodes": ["OutpostModel", "FoundationApron", "Foundation", "FoundationServiceCollar", "CoreShelter", "CoreShelterCore", "RoofPlate", "ShelterCanopy", "ShelterCanopyRidge", "ShelterCanopyLens", "CoreVent", "CoreServicePanel", "StatusBeacon", "ProductionAssetMarker", "ShelterWindowFrame00", "ShelterWindowMullion00", "RoofServiceRib01", "FoundationAnchor00"]},
     }
     output_path = ASSET_ROOT / "outpost" / "outpost.gltf"
     output_path.parent.mkdir(parents=True, exist_ok=True)
