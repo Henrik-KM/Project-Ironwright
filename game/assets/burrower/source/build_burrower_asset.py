@@ -155,6 +155,7 @@ def main() -> None:
         "SideFin": mesh("SideFin", add_convex_fin(builder, (0.18, 0.84, 0.68), shell)),
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.08, eye, 16, 24)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.08, 1.15, tendon, 24)),
+        "LegRoot": mesh("LegRoot", add_cylinder(builder, 0.14, 0.22, shell, 28)),
         "Talon": mesh("Talon", add_cylinder(builder, 0.05, 0.58, bone, 24)),
         "Spine": mesh("Spine", add_cylinder(builder, 0.09, 0.92, bone, 24)),
         "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 16, 24)),
@@ -236,6 +237,7 @@ def main() -> None:
         suffix = "L" if side < 0 else "R"
         for index in range(3):
             z = -0.48 + index * 0.54
+            add_node("BurrowerLegRoot%s%d" % (suffix, index), mesh_ids["LegRoot"], (side * (0.62 + index * 0.05), 0.68, z), scale=(1.0, 0.72, 1.0), parent=torso, extras={"surface": "leg_root_collar"})
             add_node("BurrowerLeg%s%d" % (suffix, index), mesh_ids["Leg"], (side * (0.62 + index * 0.05), 0.32, z), rotation=(0.0, 0.0, side * 0.72))
             add_node("BurrowerTalon%s%d" % (suffix, index), mesh_ids["Talon"], (side * 0.92, 0.1, z - 0.04), rotation=(0.0, 0.0, side * 0.36))
         add_node("BurrowerFin%s" % suffix, mesh_ids["SideFin"], (side * 1.0, 1.08, 0.2), rotation=(0.0, side * 0.18, side * 0.12), scale=(0.35, 1.1, 0.8), extras={"surface": "side_fan"})
@@ -348,7 +350,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "burrower.drill.v1",
-            "required_nodes": ["BurrowerModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BurrowerDrill", "BurrowerTip", "BurrowerDrillRing0", "BurrowerDrillFlute0", "BurrowerDrillCutter0", "BurrowerLampL", "BurrowerLampGuardL", "ProductionAssetMarker"],
+            "required_nodes": ["BurrowerModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BurrowerDrill", "BurrowerTip", "BurrowerDrillRing0", "BurrowerDrillFlute0", "BurrowerDrillCutter0", "BurrowerLampL", "BurrowerLampGuardL", "BurrowerLegRootL0", "BurrowerLegRootR0", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
             "material_contract": "shared_textured_metallic_roughness_pbr",
             "surface_profile": "shared_organic_pbr_v1",

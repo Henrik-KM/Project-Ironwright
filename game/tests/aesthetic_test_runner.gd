@@ -1920,6 +1920,7 @@ func _run_all() -> void:
             &"burrower":
                 _expect(_find_named(enemy_samples[index], "BurrowerDrillFlute0") != null and _find_named(enemy_samples[index], "BurrowerLampGuardL") != null, "The Burrower must expose drill flutes and protected bore lamps.")
                 _expect(_find_named(enemy_samples[index], "BurrowerDrillCutter0") != null, "The Burrower must expose a readable four-tooth drill cutting crown.")
+                _expect(_find_named(enemy_samples[index], "BurrowerLegRootL0") != null and _find_named(enemy_samples[index], "BurrowerLegRootR0") != null, "The Burrower must expose paired armored leg-root collars where its limbs meet the thorax.")
             &"sporecaster":
                 _expect(_find_named(enemy_samples[index], "SporecasterGillRib0") != null and _find_named(enemy_samples[index], "SporecasterSacCap0") != null, "The Sporecaster must expose layered gill ribs and capped spore sacs.")
                 _expect(_find_named(enemy_samples[index], "SporecasterSacRim0") != null and _find_named(enemy_samples[index], "SporecasterSacPore0") != null, "The Sporecaster must expose layered sac rims and visible pore apertures for ranged-infestation readability.")
@@ -2241,7 +2242,10 @@ func _run_all() -> void:
     var veilstalker_dorsal := _find_named(veilstalker_asset, "OrganicDorsalPlate") as MeshInstance3D
     _expect(veilstalker_dorsal != null and veilstalker_dorsal.mesh.get_aabb().size.y >= 0.28, "The Veilstalker dorsal plates must retain closed folded volume across the thorax rather than reading as rectangular bars.")
     _expect(_mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerMandibleL") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerCowlSpineL") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerCowlPlateL") as MeshInstance3D) >= 48, "The authored Veilstalker must retain dense mouth, cowl and layered brow silhouette hardware.")
+    var burrower_leg_root_l := _find_named(burrower_asset, "BurrowerLegRootL0") as MeshInstance3D
+    var burrower_leg_root_r := _find_named(burrower_asset, "BurrowerLegRootR0") as MeshInstance3D
     _expect(_mesh_vertex_count(_find_named(burrower_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(burrower_asset, "BurrowerLampGuardL") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(burrower_asset, "BurrowerDrillCutter0") as MeshInstance3D) >= 24, "The authored Burrower dorsal, lamp guards and drill cutters must retain beveled high-definition anatomy edges.")
+    _expect(burrower_leg_root_l != null and burrower_leg_root_r != null and _mesh_vertex_count(burrower_leg_root_l) >= 56 and _mesh_vertex_count(burrower_leg_root_r) >= 56 and burrower_leg_root_l.get_parent().name == "Torso" and burrower_leg_root_r.get_parent().name == "Torso", "The authored Burrower leg-root collars must retain dense paired geometry parented to the thorax so the limbs read as attached anatomy.")
     var broodmass_dorsal := _find_named(broodmass_asset, "OrganicDorsalPlate") as MeshInstance3D
     var broodmass_maw_plate := _find_named(broodmass_asset, "BroodmassMawPlate") as MeshInstance3D
     var broodmass_maw_collar := _find_named(broodmass_asset, "BroodmassMawCollar") as MeshInstance3D

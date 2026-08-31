@@ -3226,3 +3226,12 @@ anchored without changing the reactor socket, progression, collision or
 interaction footprint. The exact live review uses Godot Dummy audio and
 `--quiet-audio`; no physical speakers are used. Broader human production-art
 acceptance remains open.
+
+# Focused Burrower leg-root refinement — 2026-08-31
+
+The authored Burrower now carries paired armored root collars where each leg
+meets the thorax. The presentation-only geometry closes the visible anatomical
+load path while preserving the existing leg animation ownership, collision,
+tactical spacing and enemy behavior. The exact live review uses Godot Dummy
+audio with `--quiet-audio`; no physical speakers were used. Broader human
+production-art acceptance remains open.
