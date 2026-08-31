@@ -3176,3 +3176,13 @@ load-bearing read without changing the dish socket, animation ownership,
 collision or autonomous signal role. The exact live review uses Godot Dummy
 audio and `--quiet-audio`; no physical speakers are used. Broader human
 production-art acceptance remains open.
+
+# Focused Heartforge collar-fastener refinement — 2026-08-31
+
+The authored Heartforge focal layer now carries four captive fasteners around
+the upper reactor collar. The presentation-only hardware strengthens the
+close-camera manufactured read and makes the focal ring feel mechanically
+anchored without changing the reactor socket, progression, collision or
+interaction footprint. The exact live review uses Godot Dummy audio and
+`--quiet-audio`; no physical speakers are used. Broader human production-art
+acceptance remains open.
