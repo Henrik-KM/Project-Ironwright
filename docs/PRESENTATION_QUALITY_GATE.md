@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Core roster gallery acceptance review
+
+The current release build was visually inspected through the exact silent
+presentation-review entrypoint at 1026x607: the player and six-role friendly
+machine gallery, the seven early-organic families, and the seven late-organic
+families each held their authored silhouettes inside the frame. Role hardware,
+focal organs, layered anatomy, material separation and grounded contact read
+without a renderer error or physical speaker output. This is an internal
+visual review record; broader external human art acceptance remains separate.
+
 ## 2026-08-31 — First salvage archive witness
 
 The first autonomous salvage return now leaves a durable Town Archive record:

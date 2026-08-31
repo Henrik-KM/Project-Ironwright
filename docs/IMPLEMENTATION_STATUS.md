@@ -1,5 +1,14 @@
 # Implementation status
 
+## Core roster gallery acceptance review — 2026-08-31
+
+- visually inspected the current player/friendly, early-organic and
+  late-organic release galleries at the exact silent review scale; all three
+  retained distinct authored silhouettes, focal anatomy, role hardware and
+  material separation inside the frame;
+- retained the boundary that broader external human art acceptance remains
+  open, while recording the internal evidence for the completed roster pass.
+
 ## Focused release population benchmark isolation — 2026-08-31
 
 - made the high-population performance fixture inert after construction so
