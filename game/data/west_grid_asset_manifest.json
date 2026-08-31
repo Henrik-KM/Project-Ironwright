@@ -4,6 +4,7 @@
   "kind": "world_landmark",
   "source": "game/assets/west_grid/source/build_west_grid_asset.py",
   "runtime_model": "game/assets/west_grid/west_grid.gltf",
+  "material_workflow": "shared_uv_tangent_pbr_geometry",
   "required_nodes": [
     "WestGridModel",
     "WestGridTurbineHall",

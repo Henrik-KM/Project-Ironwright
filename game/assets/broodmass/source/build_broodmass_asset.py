@@ -18,6 +18,56 @@ from build_authored_organic_assets import add_capsule, add_convex_sheet, add_org
 
 
 OUTPUT_PATH = SOURCE_DIR / "broodmass.gltf"
+TEXTURE_SIZE = 1024
+TEXTURE_URIS = [
+    "../organic_families/textures/organic_shell_base_color.png",
+    "../organic_families/textures/organic_shell_normal.png",
+    "../organic_families/textures/organic_shell_orm.png",
+    "../organic_families/textures/organic_tissue_base_color.png",
+    "../organic_families/textures/organic_tissue_normal.png",
+    "../organic_families/textures/organic_tissue_orm.png",
+    "../organic_families/textures/organic_emissive.png",
+]
+
+
+def organic_material(
+    name: str,
+    color: Sequence[float],
+    metallic: float,
+    roughness: float,
+    lane: str,
+    normal_scale: float,
+    emissive: Sequence[float] | None = None,
+) -> dict:
+    """Bind one family tint to the frozen shared organic PBR surface set."""
+    if lane == "shell":
+        base_color_texture, normal_texture, orm_texture, maximum_normal_scale = 0, 1, 2, 0.35
+    elif lane == "tissue":
+        base_color_texture, normal_texture, orm_texture, maximum_normal_scale = 3, 4, 5, 0.22
+    elif lane == "signal":
+        base_color_texture, normal_texture, orm_texture, maximum_normal_scale = 3, 4, 5, 0.12
+    else:
+        raise ValueError(f"Unknown organic material lane: {lane}")
+    if normal_scale > maximum_normal_scale:
+        raise ValueError(f"{name} normal scale {normal_scale} exceeds {lane} ceiling {maximum_normal_scale}")
+    entry = {
+        "name": name,
+        "pbrMetallicRoughness": {
+            "baseColorFactor": list(color),
+            "baseColorTexture": {"index": base_color_texture},
+            "metallicFactor": metallic,
+            "roughnessFactor": roughness,
+            "metallicRoughnessTexture": {"index": orm_texture},
+        },
+        "normalTexture": {"index": normal_texture, "scale": normal_scale},
+        "occlusionTexture": {"index": orm_texture, "strength": 0.82},
+    }
+    if emissive is not None:
+        if lane != "signal":
+            raise ValueError(f"Only genuine signal materials may emit: {name}")
+        entry["emissiveFactor"] = list(emissive)
+        entry["emissiveTexture"] = {"index": 6}
+    return entry
 
 
 def add_tapered_cylinder(
@@ -27,7 +77,7 @@ def add_tapered_cylinder(
     height: float,
     material: int,
     sides: int = 24,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int, int]:
     """Build a smooth pointed spine without changing the node/socket contract."""
     sides = max(sides, 24)
     positions: list[float] = []
@@ -68,18 +118,18 @@ def add_tapered_cylinder(
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Broodmass wet flesh", "pbrMetallicRoughness": {"baseColorFactor": [0.08, 0.045, 0.05, 1.0], "metallicFactor": 0.08, "roughnessFactor": 0.58}},
-        {"name": "Broodmass shell", "pbrMetallicRoughness": {"baseColorFactor": [0.12, 0.16, 0.15, 1.0], "metallicFactor": 0.2, "roughnessFactor": 0.36}},
-        {"name": "Broodmass membrane", "pbrMetallicRoughness": {"baseColorFactor": [0.16, 0.025, 0.07, 0.86], "metallicFactor": 0.0, "roughnessFactor": 0.4}, "emissiveFactor": [0.045, 0.002, 0.014]},
-        {"name": "Broodmass bone", "pbrMetallicRoughness": {"baseColorFactor": [0.43, 0.35, 0.24, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.62}},
-        {"name": "Broodmass threat eye", "pbrMetallicRoughness": {"baseColorFactor": [0.36, 0.025, 0.008, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.24}, "emissiveFactor": [1.0, 0.06, 0.008]},
-        {"name": "Broodmass tendon", "pbrMetallicRoughness": {"baseColorFactor": [0.26, 0.055, 0.08, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.52}},
+        organic_material("Broodmass wet flesh", [0.08, 0.045, 0.05, 1.0], 0.08, 0.58, "tissue", 0.20),
+        organic_material("Broodmass shell", [0.12, 0.16, 0.15, 1.0], 0.2, 0.36, "shell", 0.34),
+        organic_material("Broodmass membrane", [0.16, 0.025, 0.07, 0.86], 0.0, 0.4, "tissue", 0.16),
+        organic_material("Broodmass bone", [0.43, 0.35, 0.24, 1.0], 0.0, 0.62, "shell", 0.25),
+        organic_material("Broodmass threat eye", [0.36, 0.025, 0.008, 1.0], 0.0, 0.24, "signal", 0.10, [1.0, 0.06, 0.008]),
+        organic_material("Broodmass tendon", [0.26, 0.055, 0.08, 1.0], 0.0, 0.52, "tissue", 0.18),
     ]
     meshes: list[dict] = []
 
-    def mesh(name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
-        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
+    def mesh(name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        position, normal, uv, tangent, indices, material = geometry
+        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
     flesh, shell, membrane, bone, eye, tendon = range(6)
@@ -109,6 +159,7 @@ def main() -> None:
         # reading as a row of identical manufactured bars at review distance.
         "Spine": mesh("Spine", add_tapered_cylinder(builder, 0.13, 0.026, 0.98, bone, 24)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.12, 1.72, tendon, 24)),
+        "LegRoot": mesh("LegRoot", add_cylinder(builder, 0.18, 0.26, shell, 32)),
         "Hook": mesh("Hook", add_cylinder(builder, 0.075, 0.78, bone, 24)),
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.105, eye, 20, 28)),
         "Tendon": mesh("Tendon", add_cylinder(builder, 0.065, 0.82, tendon, 28)),
@@ -209,6 +260,7 @@ def main() -> None:
         suffix = "L" if side < 0 else "R"
         for index in range(4):
             z = -0.74 + index * 0.5
+            add_node("BroodmassLegRoot%s%d" % (suffix, index), mesh_ids["LegRoot"], (side * (0.85 + index * 0.06), 1.12, z), scale=(1.0, 0.72, 1.0), parent=torso, extras={"surface": "leg_root_collar"})
             add_node("BroodmassLeg%s%d" % (suffix, index), mesh_ids["Leg"], (side * (0.85 + index * 0.06), 0.58, z), rotation=(0.0, 0.0, side * (0.76 - index * 0.06)))
             add_node("BroodmassHook%s%d" % (suffix, index), mesh_ids["Hook"], (side * (1.28 + index * 0.04), 0.14, z - 0.03), rotation=(0.0, 0.0, side * 0.38))
         add_node("BroodmassFan%s" % suffix, mesh_ids["Fan"], (side * 1.28, 1.62, 0.3), rotation=(0.0, side * 0.2, side * 0.08), scale=(0.22, 1.3, 0.44), extras={"surface": "dorsal_membrane"})
@@ -270,14 +322,35 @@ def main() -> None:
         "nodes": nodes,
         "meshes": meshes,
         "materials": materials,
+        "samplers": [{"name": "Shared organic repeating PBR sampler", "magFilter": 9729, "minFilter": 9987, "wrapS": 10497, "wrapT": 10497}],
+        "images": [
+            {"name": "Organic shell base color", "uri": TEXTURE_URIS[0]},
+            {"name": "Organic shell tangent-space normal", "uri": TEXTURE_URIS[1]},
+            {"name": "Organic shell occlusion roughness metallic", "uri": TEXTURE_URIS[2]},
+            {"name": "Organic tissue base color", "uri": TEXTURE_URIS[3]},
+            {"name": "Organic tissue tangent-space normal", "uri": TEXTURE_URIS[4]},
+            {"name": "Organic tissue occlusion roughness metallic", "uri": TEXTURE_URIS[5]},
+            {"name": "Organic signal emissive mask", "uri": TEXTURE_URIS[6]},
+        ],
+        "textures": [
+            {"name": image_name, "sampler": 0, "source": index}
+            for index, image_name in enumerate([
+                "Organic shell base color", "Organic shell tangent-space normal", "Organic shell occlusion roughness metallic",
+                "Organic tissue base color", "Organic tissue tangent-space normal", "Organic tissue occlusion roughness metallic",
+                "Organic signal emissive mask",
+            ])
+        ],
         "accessors": builder.accessors,
         "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "broodmass.nest.v1",
-            "required_nodes": ["BroodmassModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BroodmassLobeL", "BroodmassLobeRidgeL", "BroodmassMaw", "BroodmassMawCollar", "BroodmassMawRidge", "CrownSpine0", "CrownFastener0", "BroodmassCrownCap", "BroodmassCrownCapPlate", "BroodmassFanL", "ProductionAssetMarker"],
+            "required_nodes": ["BroodmassModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BroodmassLobeL", "BroodmassLobeRidgeL", "BroodmassMaw", "BroodmassMawCollar", "BroodmassMawRidge", "CrownSpine0", "CrownFastener0", "BroodmassCrownCap", "BroodmassCrownCapPlate", "BroodmassFanL", "BroodmassLegRootL0", "BroodmassLegRootR0", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
+            "material_contract": "shared_textured_metallic_roughness_pbr",
+            "surface_profile": "shared_organic_pbr_v1",
+            "texture_resolution": TEXTURE_SIZE,
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

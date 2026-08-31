@@ -25,7 +25,7 @@ def add_parabolic_dish(
     material: int,
     rings: int = 18,
     sides: int = 64,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int, int]:
     """Build a high-definition open reflector instead of a scaled sphere."""
     positions: list[float] = [0.0, depth, 0.0]
     normals: list[float] = [0.0, 1.0, 0.0]
@@ -66,7 +66,7 @@ def add_torus(
     material: int,
     major_segments: int = 64,
     minor_segments: int = 10,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int, int]:
     """Build a smooth service rim that makes the open dish silhouette legible."""
     positions: list[float] = []
     normals: list[float] = []
@@ -101,7 +101,7 @@ def add_tapered_cylinder(
     height: float,
     material: int,
     sides: int = 32,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int, int]:
     """Build a compact receiver horn with a smooth, high-definition profile."""
     sides = max(sides, 24)
     positions: list[float] = []
@@ -152,9 +152,9 @@ def main() -> None:
     ]
     meshes: list[dict] = []
 
-    def mesh(name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
-        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
+    def mesh(name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        position, normal, uv, tangent, indices, material = geometry
+        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
     concrete, alloy, rust, dish, cyan, warm, ridge_signal = range(7)

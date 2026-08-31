@@ -17,6 +17,7 @@ const ROUTE_RECOVERY_HAZARD_TIE_EPSILON := 0.08
 const ROUTE_MEMORY_SWITCH_THRESHOLD := 1.0
 const ROUTE_MEMORY_SUCCESS_DECAY := 0.22
 const ROUTE_MEMORY_MAX_ENTRIES := 24
+const ROUTE_MEMORY_MAX_BLOCK_POSITIONS := 3
 const DYNAMIC_OPERATION_MAX_OFFERS := 3
 const MAX_CASUALTY_RECORDS := 8
 const MAX_LONG_RANGE_OPERATIONS := 2
@@ -322,6 +323,8 @@ func _with_route_preview(entry: Dictionary) -> Dictionary:
     var region_id := StringName(str(preview.get("region_id", "region.heartforge_district")))
     var route_variant := _preferred_route_variant(region_id)
     var route := _route_for_entry(preview, route_variant)
+    var route_memory_value: Variant = route_memory.get(String(region_id), {})
+    var remembered_blockages := _route_block_positions(route_memory_value as Dictionary) if route_memory_value is Dictionary else []
     var route_distance := 0.0
     for index in range(1, route.size()):
         route_distance += route[index - 1].distance_to(route[index])
@@ -332,11 +335,14 @@ func _with_route_preview(entry: Dictionary) -> Dictionary:
     preview["route_waypoints"] = waypoint_count
     preview["route_distance"] = route_distance
     preview["route_confidence"] = _route_confidence(region_id)
-    preview["route_brief"] = "Route: %s · %d waypoint%s · %d m" % [
+    preview["route_memory_disruptions"] = remembered_blockages.size()
+    var memory_suffix := " · %d remembered blockage%s" % [remembered_blockages.size(), "" if remembered_blockages.size() == 1 else "s"] if not remembered_blockages.is_empty() else ""
+    preview["route_brief"] = "Route: %s · %d waypoint%s · %d m%s" % [
         route_label,
         waypoint_count,
         "" if waypoint_count == 1 else "s",
         int(round(route_distance)),
+        memory_suffix,
     ]
     return preview
 
@@ -1242,6 +1248,7 @@ func restore_from_dictionary(data: Dictionary) -> void:
             "recoveries": maxi(0, int(saved_memory.get("recoveries", 0))),
             "has_block_position": bool(saved_memory.get("has_block_position", false)),
             "last_block_position": _array_to_vector(saved_memory.get("last_block_position", [])),
+            "block_positions": _restore_route_block_positions(saved_memory),
         }
     var saved_operations: Variant = data.get("active_operations", [])
     if saved_operations is Array and not (saved_operations as Array).is_empty():
@@ -1278,15 +1285,17 @@ func _preferred_route_variant(region_id: StringName) -> int:
     var stored_variant := clampi(int(memory_value.get("preferred_variant", 1)), 1, variant_count)
     if not bool(memory_value.get("has_block_position", false)) or heartforge == null:
         return stored_variant
-    var block_position := memory_value.get("last_block_position", Vector3.ZERO) as Vector3
+    var block_positions := _route_block_positions(memory_value)
+    if block_positions.is_empty():
+        block_positions.append(memory_value.get("last_block_position", Vector3.ZERO) as Vector3)
     var best_variant := stored_variant
-    var best_clearance := _route_clearance(
+    var best_clearance := _route_memory_clearance(
         region_director.route_from_heartforge_variant(region_id, heartforge.global_position, stored_variant),
-        block_position
+        block_positions
     )
     for candidate_variant in range(1, variant_count + 1):
         var candidate_route := region_director.route_from_heartforge_variant(region_id, heartforge.global_position, candidate_variant)
-        var candidate_clearance := _route_clearance(candidate_route, block_position)
+        var candidate_clearance := _route_memory_clearance(candidate_route, block_positions)
         if candidate_clearance > best_clearance + 0.25:
             best_variant = candidate_variant
             best_clearance = candidate_clearance
@@ -1304,11 +1313,23 @@ func _record_route_disruption(region_id: StringName, current_variant: int, block
         "recoveries": 0,
         "has_block_position": false,
         "last_block_position": Vector3.ZERO,
+        "block_positions": [],
     })
     memory["risk"] = clampf(float(memory.get("risk", 0.0)) + 1.0, 0.0, 6.0)
     memory["recoveries"] = maxi(0, int(memory.get("recoveries", 0))) + 1
     memory["has_block_position"] = true
     memory["last_block_position"] = block_position
+    var block_positions := _route_block_positions(memory)
+    var already_remembered := false
+    for remembered_position in block_positions:
+        if (remembered_position as Vector3).distance_to(block_position) <= 1.0:
+            already_remembered = true
+            break
+    if not already_remembered:
+        block_positions.append(block_position)
+    if block_positions.size() > ROUTE_MEMORY_MAX_BLOCK_POSITIONS:
+        block_positions = block_positions.slice(block_positions.size() - ROUTE_MEMORY_MAX_BLOCK_POSITIONS)
+    memory["block_positions"] = block_positions
     var variant_count := region_director.route_variant_count(region_id) if region_director != null else 0
     if variant_count > 0:
         var recovery_number := int(memory.get("recoveries", 1))
@@ -1330,6 +1351,7 @@ func _record_route_success(region_id: StringName, route_variant: int, recovery_c
             memory["preferred_variant"] = 0
             memory["has_block_position"] = false
             memory["last_block_position"] = Vector3.ZERO
+            memory["block_positions"] = []
     else:
         memory["risk"] = minf(6.0, float(memory.get("risk", 0.0)) + 0.15)
     route_memory[key] = memory
@@ -1355,6 +1377,7 @@ func _serialize_route_memory() -> Array[Dictionary]:
             "recoveries": maxi(0, int(value.get("recoveries", 0))),
             "has_block_position": bool(value.get("has_block_position", false)),
             "last_block_position": _vector_to_array(value.get("last_block_position", Vector3.ZERO) as Vector3),
+            "block_positions": _serialize_route_block_positions(value),
         })
     return serialized
 
@@ -1375,6 +1398,48 @@ func _route_clearance(route: PackedVector3Array, block_position: Vector3) -> flo
     if route.size() == 1:
         closest = block_position.distance_to(route[0])
     return closest
+
+
+func _route_memory_clearance(route: PackedVector3Array, block_positions: Array[Vector3]) -> float:
+    if block_positions.is_empty():
+        return INF
+    var clearance := INF
+    for block_position in block_positions:
+        clearance = minf(clearance, _route_clearance(route, block_position))
+    return clearance
+
+
+func _route_block_positions(memory: Dictionary) -> Array[Vector3]:
+    var result: Array[Vector3] = []
+    var raw_positions: Variant = memory.get("block_positions", [])
+    if raw_positions is Array:
+        for raw_position in raw_positions as Array:
+            if raw_position is Vector3:
+                result.append(raw_position as Vector3)
+            if result.size() >= ROUTE_MEMORY_MAX_BLOCK_POSITIONS:
+                break
+    return result
+
+
+func _serialize_route_block_positions(memory: Dictionary) -> Array:
+    var result: Array = []
+    for position in _route_block_positions(memory):
+        result.append(_vector_to_array(position))
+    return result
+
+
+func _restore_route_block_positions(saved_memory: Dictionary) -> Array[Vector3]:
+    var result: Array[Vector3] = []
+    var raw_positions: Variant = saved_memory.get("block_positions", [])
+    if raw_positions is Array:
+        for raw_position in raw_positions as Array:
+            if raw_position is Array:
+                result.append(_array_to_vector(raw_position))
+            if result.size() >= ROUTE_MEMORY_MAX_BLOCK_POSITIONS:
+                break
+    if result.is_empty() and bool(saved_memory.get("has_block_position", false)):
+        result.append(_array_to_vector(saved_memory.get("last_block_position", [])))
+    return result
 
 
 func _serialize_active_operation() -> Dictionary:

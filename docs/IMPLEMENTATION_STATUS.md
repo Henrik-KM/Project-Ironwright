@@ -1,5 +1,292 @@
 # Implementation status
 
+## Focused compact machine-report readability pass — 2026-08-31
+
+- added a bounded content-aware font step for long localized machine reports,
+  preventing the compact release HUD from ellipsizing recovery-post messages;
+- preserved the two-report cap, ordinary short-report scale and viewport-safe
+  layout;
+- first-session, complete-game and release checks passed, and the exact
+  late-objective capture confirmed both recovery-post reports fully readable.
+
+## Focused stable-root animation registration pass — 2026-08-31
+
+- moved stable model-root registration from every active animation tick into
+  the existing model-capture boundary;
+- preserved transform restoration, dynamic imported-model capture and
+  reduced-detail handoffs, with performance and behavioral suites passing in
+  repeated silent benchmark runs.
+
+## Focused active-animation cache hot-path pass — 2026-08-31
+
+- removed redundant per-frame re-registration of already-cached presentation
+  node prefixes in `ProceduralAnimator3D`;
+- kept cache invalidation, imported-subtree promotion, animation timing and
+  reduced-detail behavior unchanged;
+- the 192-actor release benchmark measured 59.53 FPS in the verified pass,
+  while intelligence, complete-game and silent Dummy-audio gates remained
+  green.
+
+## Focused world-landmark PBR attribute pass — 2026-08-31
+
+- repaired the eleven authored world-landmark exporters that were discarding
+  UV and tangent channels from the shared mesh builder, including the custom
+  Flood Market canopy geometry;
+- refreshed every generated landmark glTF and declared the shared
+  high-definition material workflow in each asset manifest;
+- added imported-runtime channel coverage for the complete landmark set and
+  verified deterministic source regeneration plus fresh native import and
+  aesthetic gates with Dummy audio and `--quiet-audio`.
+- hardened the Python aesthetic validator so every authored landmark primitive
+  must declare valid POSITION, NORMAL, TEXCOORD_0 and TANGENT accessors.
+
+## Focused autonomous-outpost PBR attribute pass — 2026-08-31
+
+- repaired the authored outpost shelter exporter so the shared mesh builder's
+  UV and tangent channels survive across every fixed-site shelter mesh;
+- refreshed the generated outpost glTF and declared its shared high-definition
+  material workflow in the asset manifest;
+- added imported-channel aesthetic coverage and verified deterministic source
+  regeneration, fresh import, complete-game and commercial-release gates with
+  Dummy audio and `--quiet-audio`.
+
+## Focused civic-wreck PBR attribute pass — 2026-08-31
+
+- repaired the authored central vehicle-wreck exporter so the shared mesh
+  builder's UV and tangent channels survive across the chassis, cab, glass,
+  service and damage meshes;
+- refreshed the generated civic wreck glTF and declared its shared
+  high-definition material workflow in the asset manifest;
+- added imported-channel aesthetic coverage and verified deterministic source
+  regeneration, fresh import, complete-game and commercial-release gates with
+  Dummy audio and `--quiet-audio`.
+
+## Focused opening-wreck PBR attribute pass — 2026-08-31
+
+- repaired the authored salvage-wreck exporter so the shared mesh builder's
+  UV and tangent channels survive into every opening salvage mesh;
+- refreshed the generated wreck glTF and declared its shared high-definition
+  material workflow in the asset manifest;
+- added imported-channel aesthetic coverage and verified deterministic source
+  regeneration, fresh import, complete-game and commercial-release gates with
+  Dummy audio and `--quiet-audio`.
+
+## Focused Signal Relay PBR attribute pass — 2026-08-31
+
+- preserved UV and tangent channels for every authored Relay mesh, including
+  the custom parabolic signal dish generated outside the shared primitive
+  helpers;
+- refreshed the generated Relay glTF and declared its shared high-definition
+  material workflow in the asset manifest;
+- added imported-channel aesthetic coverage and verified deterministic source
+  regeneration, fresh import, repository, release, aesthetic and complete-game
+  gates with Dummy audio and `--quiet-audio`.
+
+## Focused support-frame PBR attribute pass — 2026-08-31
+
+- repaired the Scrapper and Pathfinder source exporters so the shared mesh
+  builder's UV and tangent channels survive into their authored glTF meshes;
+- refreshed both generated support-machine assets and declared the shared
+  high-definition material workflow in their manifests;
+- added imported-channel aesthetic coverage and verified deterministic source
+  regeneration, fresh import, repository, release, aesthetic and complete-game
+  gates with Dummy audio and `--quiet-audio`.
+
+## Focused Warden PBR attribute-preservation pass — 2026-08-31
+
+- repaired the Warden source exporter so the shared geometry builder's UV and
+  tangent channels are retained in every authored guardian mesh;
+- refreshed the generated Warden glTF and declared the material workflow in
+  its asset manifest, keeping the cannon-bearing frontline silhouette's
+  high-definition surface contract reproducible;
+- added native aesthetic coverage for imported UV/tangent channels; fresh
+  import, aesthetic, complete-game and commercial-release gates passed with
+  Dummy audio and `--quiet-audio`.
+
+## Focused causal collapse-preparation readout — 2026-08-31
+
+- extended the post-collapse report with the selected machine doctrine and
+  functioning remote-support state, so failure identifies strategic
+  preparation rather than only displaying generic pressure and resource data;
+- localized the new report structure in English, Swedish and German and added
+  complete-game regression coverage for the English and Swedish surfaces;
+- refreshed the repository manifest; import, aesthetic, repository and
+  commercial-release gates passed with Dummy audio and `--quiet-audio`.
+
+## Focused strategic-victory epilogue — 2026-08-31
+
+- extended the first-victory surface with a localized strategic legacy readout
+  covering the chosen machine doctrine, functioning remote support posts,
+  recovered unique components and constructed machine scale;
+- increased the normal ending panel's viewport-safe height so the additional
+  run-specific evidence remains readable rather than clipped;
+- added complete-game coverage for the real victory surface and refreshed the
+  repository manifest after the three locale catalogs changed.
+
+## Focused Engineer construction-silhouette pass — 2026-08-31
+
+- added paired articulated cradle braces and a cyan forge status strip to the
+  authored Engineer glTF, strengthening its construction role at roster and
+  Heartforge approach distance;
+- repaired the shared-geometry tuple contract in the Engineer source builder
+  so the regenerated asset preserves UVs and tangents and remains byte-stable;
+- added stable-node aesthetic coverage and included an Engineer in the exact
+  late-run review fixture for a real in-world visual check;
+- fresh import, aesthetic, complete-game, repository and commercial-release
+  gates passed with Dummy audio and `--quiet-audio`.
+
+## Focused persistent district-recovery witness — 2026-08-31
+
+- added a bounded `MachineRecoveryRead` presentation layer to every discovered
+  non-sanctuary landmark; it remains hidden until real regional suppression is
+  recorded and then brightens from the saved suppression value;
+- gave the completed-operation state a physical framed service plate and four
+  compact progress bars, so the machine society's recovery is visible in the
+  same encounter space as the biological pressure signal;
+- kept the layer presentation-only: collision, navigation, ecology rates,
+  operation state and player workload are unchanged;
+- added aesthetic regression coverage for creation, hidden initial state,
+  suppression-driven visibility and deterministic material response; fresh
+  import, repository, release, aesthetic, complete-game and one-hundred-hour
+  silent soak gates passed.
+
+## Integrated production-model and organic-action overhaul — 2026-08-31
+
+- integrated the latest isolated high-definition production pass across the
+  Mechromancer, Bulwark, Heartforge, Heartforge threshold and organic family
+  assets, including authored PBR surface sets and source rebuild scripts;
+- integrated the corresponding runtime attachment, damage/death presentation,
+  reduced-detail lifecycle and action-state coverage for the organic roster;
+- preserved the later route-memory, ecology-recap, salvage-witness, Relay and
+  gallery-acceptance changes on top of the coherent HD source tree;
+- verified fresh asset import, the Mechromancer and organic action-review
+  harnesses, aesthetic, commercial release, complete-game and one-hundred-hour
+  soak gates, followed by exact-build live roster review;
+- all runtime review used Godot Dummy audio with `--quiet-audio`; no physical
+  speakers were used.
+
+## Full remote-region gallery acceptance review — 2026-08-31
+
+- reviewed the exact fresh release build's complete 15-page presentation gallery
+  with the player/friendly roster, all remote-region encounter spaces, and the
+  Tier III autonomous-outpost page at the intended 1280×720 review scale;
+- confirmed distinct focal silhouettes and authored regional identity across
+  North Ruins, West Grid, East Tenements, Municipal Glasshouse, Flood Market,
+  Riverworks, Tram Graveyard, Cathedral Quarter, Observatory Ridge, Buried
+  Laboratories, Root Cistern and the Tier III outpost roles;
+- retained the boundary that this is internal rendered-build acceptance, not a
+  substitute for external human production-art, target-hardware, balance or
+  accessibility review;
+- completed the review in a fresh Godot process with Dummy audio and
+  `--quiet-audio` and no physical speaker output.
+
+## Focused Signal Relay compact-silhouette pass — 2026-08-31
+
+- added a restrained signal collar and paired mast supports to the existing
+  Relay presentation layer, making its communication role read at compact
+  tactical and roster-gallery scale without replacing the authored dish;
+- preserved the imported animation and socket hierarchy, with aesthetic
+  regression coverage for the new stable presentation nodes;
+- verified the exact player-and-friendly-machine gallery live after restart
+  with Godot Dummy audio and `--quiet-audio`, alongside repository and
+  aesthetic gates.
+
+## Focused persistent route-history pass — 2026-08-31
+
+- extended the existing bounded route-risk memory to retain the three most
+  recent physical blockage positions per region, so later formations can
+  choose an authored route that clears the accumulated disruption pattern;
+- localized the operations-panel explanation of that remembered disruption in
+  English, German and Swedish so autonomous route selection remains legible;
+- kept the latest blockage and existing route-preview contract for backward
+  compatibility, with older saves reconstructing a one-position history;
+- serialized and restored the bounded history through the unified save path,
+  with complete-game coverage for creation and restoration;
+- verified the change with repository, headless import, release, aesthetic,
+  performance and complete-game gates, plus a fresh live opening/forge pass
+  using Godot Dummy audio and `--quiet-audio`.
+
+## Focused presentation-review transient isolation — 2026-08-31
+
+- stopped delayed release-audio captions and cues from covering the non-saving
+  authored gallery, while leaving normal gameplay audio and accessibility
+  behavior unchanged;
+- added a release regression assertion and verified the exact Tier III
+  outpost page live in one fresh Dummy-audio/quiet-mode process with no alert
+  overlay.
+
+## Core roster gallery acceptance review — 2026-08-31
+
+- visually inspected the current player/friendly, early-organic and
+  late-organic release galleries at the exact silent review scale; all three
+  retained distinct authored silhouettes, focal anatomy, role hardware and
+  material separation inside the frame;
+- retained the boundary that broader external human art acceptance remains
+  open, while recording the internal evidence for the completed roster pass.
+
+## Focused release population benchmark isolation — 2026-08-31
+
+- made the high-population performance fixture inert after construction so
+  live ecology combat cannot remove actors from the population being measured;
+- suspended bootstrap tier brains during teardown to keep the benchmark free
+  of invalid physics-space calls while preserving the real release detail
+  director and spatial-index evaluation;
+- verified complete actor registration, resource streaming, repository,
+  release, aesthetic, complete-game and silent live fresh-world gates.
+
+## Focused first-salvage archive witness — 2026-08-31
+
+- added a durable machine-witness record for the first autonomous salvage
+  return, tying the opening physical wreck to the machine society's first
+  shared load without creating a quest, dashboard or recurring task;
+- connected the complete-game Story Archive director to the autonomy event
+  source so the `salvage:complete` milestone is unlocked through the real
+  runtime signal and survives archive serialization;
+- verified repository, release, story-archive and complete-game gates under
+  Godot Dummy audio with `--quiet-audio`.
+
+## Focused civic wreck front-face pass — 2026-08-31
+
+- added paired service lamps and a recessed twin-bar grille to the authored
+  civic vehicle wrecks, improving the readable front silhouette in the central
+  town without changing collision, navigation or simulation state;
+- regenerated the source-owned high-definition glTF and extended the stable
+  asset contract and aesthetic regression coverage;
+- verified fresh import, native aesthetic/complete-game gates and the exact
+  opening world through the silent Dummy-audio runtime.
+
+## Focused opening salvage readability pass — 2026-08-31
+
+- added an authored cabin service grip and paired access latches to the first
+  salvage wreck, strengthening the readable physical relationship between the
+  opening objective and its manual service surface without changing salvage
+  timing, collision or resource rules;
+- regenerated the source-owned high-definition glTF and extended the stable
+  asset contract and aesthetic regression coverage;
+- verified the fresh opening world live with Godot Dummy audio and
+  `--quiet-audio`, with no physical speakers used.
+
+## Focused endgame failure-report localization milestone — 2026-08-31
+
+- localized the two canonical causal final-protocol failure reasons for the
+  English, German and Swedish release shells instead of appending raw English
+  diagnostics to a translated failure notification;
+- retained the existing failure causes and protocol flow while adding release
+  coverage for German attribution;
+- verified the exact endgame review reaches first victory silently through
+  Godot Dummy audio with `--quiet-audio`.
+
+## Focused ecology recap readability milestone — 2026-08-31
+
+- extended the compact command recap's regional ecology summary to expose the
+  live migration tendency alongside pressure, making deterministic world
+  conditions' migration consequence legible without adding a persistent
+  dashboard or recurring player task;
+- localized the summary in English, German and Swedish and added release
+  coverage for the live field;
+- verified the exact release build through the silent Dummy-audio runtime and
+  command/operations interaction path with no physical speakers.
+
 ## Continue/load world-presentation recovery — 2026-08-30
 
 - changed Continue to rebuild the playable scene before restoring a save,
@@ -6988,3 +7275,13 @@ roster checks and requires silent late-organic live review before merge.
   wreck body, collision, salvage interaction and authored asset transform;
 - closed the opening vertical-slice presentation guard for layered vehicle
   wrecks, with no new gameplay task or persistent state.
+
+## Focused world-condition ecology identity milestone
+
+- connected each deterministic saved world condition to a bounded migration
+  multiplier in the canonical strategic ecology director, so storm, signal,
+  ash and frost conditions change how readily existing populations relocate;
+- kept the effect seedable and derived from the persisted world-condition ID,
+  with no new player-maintained meter, queue or management surface;
+- added release coverage for profile bounds, live application and variant
+  switching while preserving the existing pressure and weather contracts.

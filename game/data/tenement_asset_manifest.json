@@ -4,6 +4,7 @@
   "kind": "world_landmark",
   "source": "game/assets/tenement/source/build_tenement_asset.py",
   "runtime_model": "game/assets/tenement/tenement.gltf",
+  "material_workflow": "shared_uv_tangent_pbr_geometry",
   "required_nodes": [
     "TenementModel",
     "TenementBlockL",

@@ -35,11 +35,14 @@ def main() -> None:
     ]
     meshes: list[dict] = []
 
-    def mesh(name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
+    def mesh(name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        # Preserve the shared builder's UV and tangent channels so the
+        # guardian's authored PBR surface relief survives export and remains
+        # byte-stable when this source is regenerated.
+        position, normal, uv, tangent, indices, material = geometry
         meshes.append({
             "name": name,
-            "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}],
+            "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent}, "indices": indices, "material": material}],
         })
         return len(meshes) - 1
 

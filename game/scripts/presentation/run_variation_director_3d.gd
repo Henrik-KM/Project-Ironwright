@@ -71,6 +71,8 @@ func apply_current() -> void:
         region_atmosphere.apply_run_variation(normalized)
     if strategic_ecology != null and strategic_ecology.has_method("set_run_variation_pressure_multiplier"):
         strategic_ecology.set_run_variation_pressure_multiplier(float(profile.get("ecology_pressure_multiplier", 1.0)))
+    if strategic_ecology != null and strategic_ecology.has_method("set_run_variation_migration_multiplier"):
+        strategic_ecology.set_run_variation_migration_multiplier(float(profile.get("ecology_migration_multiplier", 1.0)))
     if _applied_variant_id != variant_id:
         _applied_variant_id = variant_id
         run_state.log_event("World condition: %s — %s" % [str(profile.get("display_name", String(variant_id))), str(profile.get("description", ""))])

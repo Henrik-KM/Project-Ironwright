@@ -149,6 +149,7 @@ func _setup_complete_game_services() -> void:
     var aesthetic := get_node_or_null("AestheticDirector") as AestheticDirector3D
     if aesthetic != null:
         aesthetic.connect_story_archive(story_archive_director)
+    story_archive_director.connect_event_source(autonomy_director)
     story_archive_director.connect_event_source(outpost_director)
 
     region_atmosphere_director = REGION_ATMOSPHERE_SCRIPT.new() as RegionAtmosphereDirector3D
@@ -669,6 +670,8 @@ func _build_collapse_report() -> String:
     var pressure_text := _localized_pressure_summary()
     var resource_text := _localized_text("hud.collapse.resource_totals", "SCRAP {0} · CORES {1} · MANUAL RECOVERED {2} · AUTONOMOUS RECOVERED {3}", [run_state.scrap, run_state.rare_cores, run_state.manual_scrap_recovered, run_state.autonomous_scrap_recovered])
     var resource_decline_text := run_state.resource_decline_report() if run_state != null else _localized_text("hud.collapse.resource_history_unavailable", "Resource history was unavailable.")
+    var remote_support_text := _localized_text("hud.collapse.remote_support", "{0} functioning remote support post{1}", [_functioning_outpost_count(), "" if _functioning_outpost_count() == 1 else "s"])
+    var doctrine_text := _localized_doctrine_display_name()
     var alternatives := _localized_text("hud.collapse.no_unspent_response", "No unspent response was recorded.")
     if progression != null:
         var available := progression.available_technologies()
@@ -679,8 +682,8 @@ func _build_collapse_report() -> String:
             alternatives = ", ".join(names)
     return _localized_text(
         "hud.collapse.report",
-        "WORLD DURATION · {0}\nMAJOR EVOLUTIONS · {1}\nECOLOGY OBSERVATIONS · {2}\nDECISIVE TIMELINE\n{3}\nRESOURCE POSITION · {4}\nFIRST SUSTAINED RESOURCE DECLINE · {5}\nMACHINE-LOSS PATTERN · {6}\nUNRESOLVED THREAT · {7}\nALTERNATIVE RESPONSES OBSERVED OR UNLOCKED · {8}",
-        [duration_text, evolution_text, species_text, events_text, resource_text, resource_decline_text, loss_text, pressure_text, alternatives]
+        "WORLD DURATION · {0}\nMAJOR EVOLUTIONS · {1}\nECOLOGY OBSERVATIONS · {2}\nDECISIVE TIMELINE\n{3}\nRESOURCE POSITION · {4}\nFIRST SUSTAINED RESOURCE DECLINE · {5}\nMACHINE-LOSS PATTERN · {6}\nUNRESOLVED THREAT · {7}\nALTERNATIVE RESPONSES OBSERVED OR UNLOCKED · {8}\nSTRATEGIC DOCTRINE · {9}\nREMOTE SUPPORT · {10}",
+        [duration_text, evolution_text, species_text, events_text, resource_text, resource_decline_text, loss_text, pressure_text, alternatives, doctrine_text, remote_support_text]
     )
 
 
@@ -930,7 +933,8 @@ func _localized_pressure_summary() -> String:
     var region_id := StringName(str(summary.get("region_id", "region.heartforge_district")))
     var region_name := _localized_region_name(region_id)
     var pressure := float(summary.get("pressure", 0.0))
-    return _localized_text("command.recap.pressure_summary", "{0} · pressure {1}", [region_name, "%.2f" % pressure])
+    var migration_tendency := float(summary.get("migration_tendency", 0.0))
+    return _localized_text("command.recap.pressure_summary", "{0} · pressure {1} · migration tendency {2}", [region_name, "%.2f" % pressure, "%.2f" % migration_tendency])
 
 
 func _set_complete_objective(title_key: String, title_fallback: String, detail_key: String, detail_fallback: String, replacements: Array = [], prompt_key: String = "", prompt_fallback: String = "") -> void:
@@ -1216,6 +1220,7 @@ func _on_endgame_completed(protocol_id: StringName, display_name: String, ending
     var localized_detail := "FIRST VICTORY · %s\n\n%s\n\nThe run reached a complete systemic conclusion without a recurring timed-wave loop." % [localized_name, localized_ending]
     if locale_service != null:
         localized_detail = locale_service.text("hud.ending.first_victory_detail", [localized_name, localized_ending])
+    localized_detail += "\n\n" + _build_victory_strategy_epilogue(locale_service)
     # Keep the live completion surface in the selected locale even though the
     # simulation director still owns canonical English data for saves/logs.
     _update_complete_game_objective()
@@ -1227,8 +1232,40 @@ func _on_endgame_completed(protocol_id: StringName, display_name: String, ending
     hud.show_ending(true, localized_detail, true)
 
 
+func _build_victory_strategy_epilogue(locale_service: LocalizationService3D) -> String:
+    var doctrine_name := _localized_doctrine_display_name(locale_service)
+    var component_count := long_operation_director.component_count() if long_operation_director != null else 0
+    var outpost_count := _functioning_outpost_count()
+    var built_count := run_state.robots_built if run_state != null else 0
+    return _localized_text(
+        "hud.ending.strategy_epilogue",
+        "STRATEGIC LEGACY\nDoctrine: {0} · Remote support posts: {1} · Unique components recovered: {2}\nThe machine society carried {3} constructed frames into the final response. Its choices now belong to the sanctuary's history.",
+        [doctrine_name, outpost_count, component_count, built_count]
+    )
+
+
+func _localized_doctrine_display_name(locale_service: LocalizationService3D = null) -> String:
+    var doctrine_name := progression.active_doctrine_display_name() if progression != null else "Uncommitted"
+    if locale_service == null:
+        locale_service = get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if locale_service != null and progression != null:
+        var doctrine_key := "technology.name.%s" % String(progression.active_doctrine_id()).replace(".", "_")
+        var localized_doctrine := locale_service.text(doctrine_key)
+        if localized_doctrine != doctrine_key:
+            doctrine_name = localized_doctrine
+    return doctrine_name
+
+
 func _on_endgame_failed(protocol_id: StringName, reason: String) -> void:
-    hud.push_notification(_localized_text("notification.final_protocol.failed", "FINAL PROTOCOL FAILED · {0}", [reason.to_upper()]))
+    hud.push_notification(_localized_text("notification.final_protocol.failed", "FINAL PROTOCOL FAILED · {0}", [_localized_endgame_failure_reason(reason).to_upper()]))
+
+
+func _localized_endgame_failure_reason(reason: String) -> String:
+    if reason == "The remote relay network lost too many functioning outposts before the final signal could be severed.":
+        return _localized_text("notification.final_protocol.failure.remote_support", "The remote relay network lost too many functioning outposts before the final signal could be severed.")
+    if reason == "The Heartforge could not hold the final convergence long enough to complete the protocol.":
+        return _localized_text("notification.final_protocol.failure.homefront", "The Heartforge could not hold the final convergence long enough to complete the protocol.")
+    return reason
 
 
 func _functioning_outpost_count() -> int:

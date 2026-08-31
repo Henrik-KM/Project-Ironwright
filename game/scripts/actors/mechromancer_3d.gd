@@ -39,6 +39,9 @@ var channel_noise_clock: float = 0.0
 var channel_noise_interval: float = 0.72
 
 var _body_root: Node3D
+var _body_rest_position: Vector3 = Vector3.ZERO
+var _body_rest_rotation: Vector3 = Vector3.ZERO
+var _body_rest_scale: Vector3 = Vector3.ONE
 var _pistol_muzzle: Node3D
 var _death_visual_root: Node3D
 var _death_signal_material: StandardMaterial3D
@@ -315,6 +318,10 @@ func _build_visuals() -> void:
         # isometric camera distance without changing collision or targeting.
         _body_root.scale = Vector3(1.28, 1.28, 1.28)
 
+    _body_rest_position = _body_root.position
+    _body_rest_rotation = _body_root.rotation
+    _body_rest_scale = _body_root.scale
+
     _pistol_muzzle = _find_visual_node(_body_root, &"PistolMuzzle")
     _build_death_presentation()
 
@@ -481,45 +488,45 @@ func _build_death_presentation() -> void:
 
     ModelKit3D.add_beveled_box(
         _death_visual_root,
-        Vector3(0.62, 0.14, 0.32),
-        Vector3(0.0, 0.9, -0.12),
+        Vector3(0.72, 0.12, 0.38),
+        Vector3(0.34, 0.13, 0.18),
         dead_coat,
-        Vector3(0.12, 0.0, -0.16),
+        Vector3(0.08, 0.0, -0.62),
         "MechromancerDeathCollapsedTorso",
         0.1
     )
     ModelKit3D.add_organic_plate(
         _death_visual_root,
         0.11,
-        Vector3(0.0, 1.08, -0.26),
+        Vector3(-0.24, 0.16, -0.2),
         dead_leather,
         dead_metal,
-        Vector3(0.42, 0.16, 0.18),
+        Vector3(0.5, 0.18, 0.2),
         "MechromancerDeathRespiratorCollar"
     )
     ModelKit3D.add_beveled_box(
         _death_visual_root,
         Vector3(0.42, 0.1, 0.24),
-        Vector3(-0.34, 0.66, 0.12),
+        Vector3(-0.5, 0.17, 0.24),
         dead_leather,
-        Vector3(0.08, 0.0, -0.3),
+        Vector3(0.05, 0.0, -0.5),
         "MechromancerDeathFieldPack",
         0.08
     )
     for side in [-1.0, 1.0]:
         ModelKit3D.add_capsule(
             _death_visual_root,
-            0.035,
-            0.52,
-            Vector3(side * 0.26, 0.52, -0.02),
+            0.045,
+            0.58,
+            Vector3(side * 0.5, 0.13, -0.18),
             dead_metal,
-            Vector3(0.32, 0.0, side * 0.24),
+            Vector3(0.08, 0.0, side * 1.34),
             "MechromancerDeathLeg%s" % ("Left" if side < 0.0 else "Right")
         )
     ModelKit3D.add_sphere(
         _death_visual_root,
         0.08,
-        Vector3(0.0, 1.08, -0.42),
+        Vector3(-0.12, 0.19, -0.46),
         spent_glow,
         Vector3(1.15, 0.72, 0.72),
         "MechromancerDeathSignal"
@@ -528,9 +535,9 @@ func _build_death_presentation() -> void:
         ModelKit3D.add_beveled_box(
             _death_visual_root,
             Vector3(0.1, 0.06, 0.24),
-            Vector3(-0.34 + float(index) * 0.68, 0.84, -0.34),
+            Vector3(-0.62 + float(index) * 1.18, 0.1, -0.38),
             dead_metal,
-            Vector3(0.0, 0.0, -0.32 + float(index) * 0.64),
+            Vector3(0.05, 0.0, -0.44 + float(index) * 0.88),
             "MechromancerDeathShard%02d" % index,
             0.03
         )
@@ -540,13 +547,21 @@ func _build_death_presentation() -> void:
 func _refresh_death_presentation() -> void:
     if _death_visual_root == null or not is_instance_valid(_death_visual_root):
         return
-    var active := current_health <= 0.0 and death_presentation_remaining > 0.0
+    var dead := current_health <= 0.0
+    var progress := clampf(death_presentation_remaining / DEATH_PRESENTATION_SECONDS, 0.0, 1.0) if dead else 1.0
+    var collapse := smoothstep(0.0, 1.0, 1.0 - progress) if dead else 0.0
+    if _body_root != null and is_instance_valid(_body_root):
+        _body_root.visible = true
+        _body_root.position = _body_rest_position + Vector3(0.28, 0.76, 0.04) * collapse
+        _body_root.rotation = _body_rest_rotation + Vector3(0.08, 0.0, -1.38) * collapse
+        _body_root.scale = _body_rest_scale * Vector3(1.0, 1.0 - collapse * 0.08, 1.0)
+    var active := dead and death_presentation_remaining > 0.0
     _death_visual_root.visible = active
     if not active:
         return
-    var progress := clampf(death_presentation_remaining / DEATH_PRESENTATION_SECONDS, 0.0, 1.0)
-    _death_visual_root.scale = Vector3(1.0, 0.68 + progress * 0.32, 1.0)
-    _death_visual_root.rotation.z = (1.0 - progress) * -0.2
+    _death_visual_root.scale = Vector3.ONE * (0.94 + collapse * 0.16)
+    _death_visual_root.position = Vector3(0.16, 0.0, 0.02) * collapse
+    _death_visual_root.rotation.z = collapse * -0.16
     if _death_signal_material != null:
         _death_signal_material.emission_energy_multiplier = lerpf(0.16, 1.8, progress)
     if _pistol_muzzle == null:

@@ -4,6 +4,7 @@
   "kind": "world_landmark",
   "source": "game/assets/cathedral/source/build_cathedral_asset.py",
   "runtime_model": "game/assets/cathedral/cathedral.gltf",
+  "material_workflow": "shared_uv_tangent_pbr_geometry",
   "required_nodes": [
     "CathedralModel",
     "CathedralNave",

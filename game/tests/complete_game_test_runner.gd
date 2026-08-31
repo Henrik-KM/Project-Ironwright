@@ -204,12 +204,14 @@ func _run_all() -> void:
     _expect(learned_west_route is Dictionary and float((learned_west_route as Dictionary).get("risk", 0.0)) >= 1.0, "A route disruption must become bounded persistent route-risk memory.")
     _expect(learned_west_route is Dictionary and bool((learned_west_route as Dictionary).get("has_block_position", false)), "A route disruption must remember the physical blockage position for future authored-route scoring.")
     _expect(learned_west_route is Dictionary and (learned_west_route as Dictionary).get("last_block_position", Vector3.ZERO).distance_to(route_blocker.global_position) < 0.1, "Route memory must record the actual obstruction position rather than only a region-wide risk value.")
+    _expect(learned_west_route is Dictionary and (learned_west_route as Dictionary).get("block_positions", []).size() == 1, "A route disruption must begin a bounded physical blockage history.")
     _expect(world.region_director.route_variant_count(&"region.west_grid") == 2, "The West Grid must expose two authored alternate street routes for segment-aware adaptive selection.")
     _expect(world.long_operation_director._preferred_route_variant(&"region.west_grid") == 2, "A blockage on the primary street must make the clearest authored alternate route the next autonomous preference.")
     var learned_route_preview := world.long_operation_director.route_preview(&"operation.west_grid_survey")
     _expect(int(learned_route_preview.get("route_variant", 0)) == 2, "An operation preview must surface the clearest route-memory alternate selected for the West Grid.")
     _expect(StringName(str(learned_route_preview.get("route_confidence", ""))) == &"guarded", "A route with one remembered disruption must expose a guarded confidence readout before authorization.")
     _expect(str(learned_route_preview.get("route_brief", "")).contains("rail-yard cut-through") and str(learned_route_preview.get("route_brief", "")).contains("waypoint"), "An operation preview must explain the remembered street route and bounded waypoint count.")
+    _expect(int(learned_route_preview.get("route_memory_disruptions", 0)) == 1 and str(learned_route_preview.get("route_brief", "")).contains("remembered blockage"), "An operation preview must explain the physical disruption history that shaped its autonomous route.")
     _expect(float(learned_route_preview.get("route_distance", 0.0)) > 0.0, "An operation preview must expose a non-zero physical travel distance.")
     var primary_west_route := world.region_director.route_from_heartforge(&"region.west_grid", world.heartforge.global_position)
     var alternate_west_route := world.region_director.route_from_heartforge_variant(&"region.west_grid", world.heartforge.global_position, 1)
@@ -253,6 +255,7 @@ func _run_all() -> void:
     _expect(restored_west_route_memory is Dictionary and float((restored_west_route_memory as Dictionary).get("risk", 0.0)) >= 1.0, "Learned route-risk memory must survive the unified save/load path.")
     _expect(restored_west_route_memory is Dictionary and bool((restored_west_route_memory as Dictionary).get("has_block_position", false)), "Remembered route blockage state must survive the unified save/load path.")
     _expect(restored_west_route_memory is Dictionary and (restored_west_route_memory as Dictionary).get("last_block_position", Vector3.ZERO).distance_to(recovery_anchor) < 0.1, "The saved route-memory blockage position must restore to the same physical location.")
+    _expect(restored_west_route_memory is Dictionary and (restored_west_route_memory as Dictionary).get("block_positions", []).size() == 1, "The bounded physical blockage history must survive the unified save/load path.")
     var recovered_operation_snapshot := world.long_operation_director.to_dictionary()
     var retreat_blocker := Node3D.new()
     retreat_blocker.name = "RouteRecoveryRetreatBlocker"
@@ -506,6 +509,8 @@ func _run_all() -> void:
     _expect(world.hud.operation_label.text.find("%") == -1 and (world.hud.operation_label.text.to_lower().find("victory") >= 0 or world.hud.operation_label.text.to_lower().find("sieg") >= 0), "First victory must replace the stale active-protocol percentage in the live resource panel.")
     _expect(world.hud.objective_label.text.to_lower().find("victory") >= 0 or world.hud.objective_label.text.to_lower().find("sieg") >= 0, "First victory must replace the active hold-the-Heartforge objective.")
     _expect(world.hud.ending_panel != null and world.hud.ending_panel.visible, "First victory must expose the continuing-sanctuary ending surface.")
+    var victory_detail_label := world.hud.ending_panel.get_node("PanelContent").get_child(0) as Label
+    _expect(victory_detail_label != null and victory_detail_label.text.contains("STRATEGIC LEGACY") and victory_detail_label.text.contains("Remote support posts"), "First victory must explain the doctrine, remote support and machine legacy that shaped the completed run.")
     _expect(world.hud.notifications.is_empty() and not world.hud.notification_panel.visible, "First victory must clear stale machine-report toasts before showing the ending surface.")
     _expect(not world.hud.prompt_panel.visible and world.hud.prompt_label.text.is_empty(), "First victory must clear stale interaction guidance so the ending surface owns the continuation prompt.")
     _expect(not world.long_operation_director.available_operations().any(func(entry: Dictionary) -> bool: return StringName(str(entry.get("id", ""))) == &"operation.post_victory_archive"), "The post-victory archive must remain unavailable behind the victory boundary until continuation is chosen.")
@@ -541,12 +546,13 @@ func _run_all() -> void:
     var collapse_panel := world.hud.ending_panel
     var collapse_label := collapse_panel.get_node("PanelContent").get_child(0) as Label
     _expect(collapse_label != null and collapse_label.text.contains("POST-COLLAPSE REPORT") and collapse_label.text.contains("UNRESOLVED THREAT"), "The defeat boundary must expose a readable causal post-collapse report.")
+    _expect(collapse_label != null and collapse_label.text.contains("STRATEGIC DOCTRINE") and collapse_label.text.contains("REMOTE SUPPORT"), "The defeat report must identify the doctrine and remote-support preparation that shaped the failed run.")
     _expect(bool(collapse_panel.get_meta("expanded_report", false)), "The causal report must use an expanded, viewport-safe reading surface rather than clipping the timeline.")
     world.hud.dismiss_ending()
     if world.localization_service != null:
         _expect(world.localization_service.set_locale(&"sv"), "The collapse-report localization check must be able to select Swedish.")
         var localized_collapse_report := world._build_collapse_report()
-        _expect(localized_collapse_report.contains("VÄRLDSDURATION") and localized_collapse_report.contains("OLÖST HOT") and localized_collapse_report.contains("RESURSSTATUS"), "The Swedish collapse report must localize its structural headings.")
+        _expect(localized_collapse_report.contains("VÄRLDSDURATION") and localized_collapse_report.contains("OLÖST HOT") and localized_collapse_report.contains("RESURSSTATUS") and localized_collapse_report.contains("STRATEGISK DOKTRIN") and localized_collapse_report.contains("FJÄRRSTÖD"), "The Swedish collapse report must localize its structural headings.")
         _expect(not localized_collapse_report.contains("WORLD DURATION") and not localized_collapse_report.contains("UNRESOLVED THREAT") and not localized_collapse_report.contains("RESOURCE POSITION"), "The Swedish collapse report must not leak English structural headings.")
         _expect(world.localization_service.set_locale(&"en"), "The collapse-report localization check must restore English.")
     world.run_state.scrap = report_scrap

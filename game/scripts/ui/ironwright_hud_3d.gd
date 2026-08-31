@@ -582,10 +582,18 @@ func _refresh_notifications() -> void:
     notification_panel.visible = not notifications.is_empty()
     if notifications.is_empty():
         notification_label.text = ""
+        notification_label.add_theme_font_size_override("font_size", 14)
         return
     var formatted: Array[String] = []
+    var longest_message_length := 0
     for message in notifications:
         formatted.append("• %s" % message)
+        longest_message_length = maxi(longest_message_length, message.length())
+    # Keep the bounded two-line report stack readable at the compact release
+    # viewport without shrinking ordinary short reports. Long localized
+    # technology and outpost messages get one restrained step of headroom
+    # before Label's ellipsis behavior is allowed to intervene.
+    notification_label.add_theme_font_size_override("font_size", 13 if longest_message_length > 32 else 14)
     notification_label.text = "\n\n".join(formatted)
 
 
@@ -711,7 +719,10 @@ func _layout_ending_panel(viewport_size: Vector2) -> void:
         return
     var panel_width := minf(820.0, maxf(420.0, viewport_size.x - 40.0))
     var expanded_report := bool(ending_panel.get_meta("expanded_report", false))
-    var panel_height := minf(620.0 if expanded_report else 420.0, maxf(260.0, viewport_size.y - 40.0))
+    # Victory now includes a compact strategic-legacy epilogue. Give the
+    # ordinary ending surface enough vertical room for that evidence while
+    # retaining the expanded report's separate reading budget.
+    var panel_height := minf(620.0 if expanded_report else 500.0, maxf(260.0, viewport_size.y - 40.0))
     ending_panel.set_anchors_preset(Control.PRESET_CENTER)
     ending_panel.offset_left = -panel_width * 0.5
     ending_panel.offset_right = panel_width * 0.5

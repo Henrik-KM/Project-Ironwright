@@ -509,6 +509,10 @@ func _localized_route_brief(item: Dictionary) -> String:
         String(confidence_id).replace("_", " ").capitalize()
     )
     var route_brief := _text("command.operations.route_brief", "Route: {0} · {1} waypoint{2} · {3} m", [route_label, waypoint_count, plural_suffix, distance])
+    var memory_count := int(item.get("route_memory_disruptions", 0))
+    if memory_count > 0:
+        var memory_key := "command.operations.route_memory_suffix" if memory_count == 1 else "command.operations.route_memory_suffix_plural"
+        route_brief += _text(memory_key, " · {0} remembered blockage" if memory_count == 1 else " · {0} remembered blockages", [memory_count])
     return "%s%s" % [route_brief, _text("command.operations.route_confidence_suffix", " · Route confidence: {0}", [confidence_label])]
 
 

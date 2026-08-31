@@ -36,9 +36,9 @@ def main() -> None:
     ]
     meshes: list[dict] = []
 
-    def mesh(name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
-        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
+    def mesh(name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        position, normal, uv, tangent, indices, material = geometry
+        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
     steel, dark, oxide, rubber, glass, amber, cyan = range(7)
@@ -54,6 +54,8 @@ def main() -> None:
         "Rim": mesh("Rim", add_torus(builder, 0.16, 0.025, oxide, 36, 12)),
         "Axle": mesh("Axle", add_cylinder(builder, 0.055, 1.90, oxide, 28)),
         "Bumper": mesh("Bumper", add_beveled_box(builder, (0.18, 0.20, 1.30), oxide, 0.07)),
+        "Headlamp": mesh("Headlamp", add_uv_sphere(builder, 0.11, cyan, 18, 32)),
+        "GrilleBar": mesh("GrilleBar", add_beveled_box(builder, (0.07, 0.12, 0.66), dark, 0.018)),
         "Panel": mesh("Panel", add_beveled_box(builder, (0.64, 0.08, 0.20), dark, 0.025)),
         "Warning": mesh("Warning", add_beveled_box(builder, (0.13, 0.045, 0.12), amber, 0.018)),
         "Lens": mesh("Lens", add_uv_sphere(builder, 0.09, amber, 18, 32)),
@@ -83,6 +85,10 @@ def main() -> None:
     add_node("VehicleWindshield", mesh_ids["Glass"], (-0.42, 1.14, -0.54), rotation=(0.0, 0.0, 0.08))
     add_node("VehicleRearWindow", mesh_ids["SideGlass"], (-0.42, 1.14, 0.54), rotation=(0.0, 0.0, -0.08))
     add_node("VehicleFrontBumper", mesh_ids["Bumper"], (1.30, 0.52, 0.0))
+    add_node("VehicleHeadlampL", mesh_ids["Headlamp"], (1.405, 0.74, -0.43), extras={"surface": "front_service_lamp"})
+    add_node("VehicleHeadlampR", mesh_ids["Headlamp"], (1.405, 0.74, 0.43), extras={"surface": "front_service_lamp"})
+    add_node("VehicleFrontGrilleUpper", mesh_ids["GrilleBar"], (1.405, 0.62, 0.0), extras={"surface": "front_grille"})
+    add_node("VehicleFrontGrilleLower", mesh_ids["GrilleBar"], (1.405, 0.48, 0.0), extras={"surface": "front_grille"})
     for wheel_index, (x, z) in enumerate(((-0.92, -0.68), (0.92, -0.68), (-0.92, 0.68), (0.92, 0.68))):
         wheel_position = (x, 0.31, z)
         add_node("VehicleWheel%02d" % wheel_index, mesh_ids["Wheel"], wheel_position, rotation=(math.pi * 0.5, 0.0, 0.0))
@@ -117,7 +123,7 @@ def main() -> None:
         "accessors": builder.accessors,
         "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
-        "extras": {"ironwright_asset_id": "vehicle_wreck.civic_shell.v1", "required_nodes": ["VehicleWreckModel", "VehicleChassis", "VehicleCab", "VehicleCabRoof", "VehicleWindshield", "VehicleServicePanel", "VehicleStatusLens", "VehicleAxle00", "VehicleCableBundle00", "VehicleGlassShard00", "ProductionAssetMarker"]},
+        "extras": {"ironwright_asset_id": "vehicle_wreck.civic_shell.v1", "required_nodes": ["VehicleWreckModel", "VehicleChassis", "VehicleCab", "VehicleCabRoof", "VehicleWindshield", "VehicleServicePanel", "VehicleStatusLens", "VehicleHeadlampL", "VehicleFrontGrilleUpper", "VehicleAxle00", "VehicleCableBundle00", "VehicleGlassShard00", "ProductionAssetMarker"]},
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")

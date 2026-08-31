@@ -4,6 +4,7 @@
   "source_builder": "game/assets/relay/source/build_relay_asset.py",
   "source_type": "original_project_ironwright_shared_mesh_builder",
   "asset_quality": "authored_high_definition",
+  "material_workflow": "shared_uv_tangent_pbr_geometry",
   "manufactured_surface_profile": "chamfered_high_definition",
   "third_party_assets": [],
   "presentation_only": true,

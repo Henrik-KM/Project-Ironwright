@@ -1,10 +1,42 @@
 {
   "asset_id": "skitterling.scavenger.v1",
-  "display_name": "Skitterling scavenger shell",
-  "source": "game/assets/skitterling/source/build_skitterling_asset.py",
-  "runtime_path": "res://assets/skitterling/skitterling.gltf",
+  "asset_quality": "authored_high_definition",
   "quality": "authored_high_definition",
+  "display_name": "Skitterling scavenger shell",
+  "runtime_path": "res://assets/skitterling/skitterling.gltf",
+  "source": "game/assets/skitterling/source/build_skitterling_asset.py",
+  "source_builder": "game/assets/skitterling/source/build_skitterling_asset.py",
+  "source_type": "original_project_ironwright_deterministic_mesh_builder",
+  "surface_profile": "shared_organic_pbr_v1",
+  "provenance": "Original Project Ironwright asset; deterministic source geometry with shared deterministic organic PBR textures; no third-party runtime art.",
   "license": "Original Project Ironwright asset",
-  "required_nodes": ["SkitterlingModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SkitterlingCarapace0", "SkitterlingCarapaceCap0", "SkitterlingHeadShield", "SkitterlingHeadRidge", "SkitterlingAntennaL", "SkitterlingAntennaJointL", "SkitterlingMandibleL", "SkitterlingMandiblePlateL", "SkitterlingSensoryFan0", "ProductionAssetMarker"],
-  "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]
+  "third_party_assets": [],
+  "textures": [
+    "res://assets/organic_families/textures/organic_shell_base_color.png", "res://assets/organic_families/textures/organic_shell_normal.png", "res://assets/organic_families/textures/organic_shell_orm.png",
+    "res://assets/organic_families/textures/organic_tissue_base_color.png", "res://assets/organic_families/textures/organic_tissue_normal.png", "res://assets/organic_families/textures/organic_tissue_orm.png",
+    "res://assets/organic_families/textures/organic_emissive.png"
+  ],
+  "texture_hashes": {
+    "organic_shell_base_color.png": "57FCB4D295FC5A33BF5D0F35E7435E8F2C2F071BE0F442915D593AB54A6C8A79", "organic_shell_normal.png": "56FC7F35010C295638D3A83F0DCD737260C2E85A7A2D5AB982D48261EFF588CF", "organic_shell_orm.png": "DFFD2622B90CBBE1570E2D9480D35D13B284D098C282A7601FCD2421204B521B",
+    "organic_tissue_base_color.png": "14D021B9C7D2D18C44289B7BDD818D434AE06C0CE5CE0733916E051177DB495B", "organic_tissue_normal.png": "6DF8B7DD3D9562D9AF52FAEA23ED46E3426A926F14C8238FFC82B43C25ED5CBE", "organic_tissue_orm.png": "26ADD3D37E41A6764EB65F3A48D4DA05F6399A64BD0D9EEEF0385B17AC57A0E9", "organic_emissive.png": "83E1DFB119F5E2647E885458AD9E8955A2B2D31F63FC28B6627A5F4F26617E07"
+  },
+  "texture_resolution": 1024,
+  "material_workflow": "metallic_roughness_pbr",
+  "material_names": ["Skitterling wet carapace", "Skitterling shell ridge", "Skitterling tendon", "Skitterling bone", "Skitterling scavenger eye", "Skitterling membrane"],
+  "emissive_materials": ["Skitterling scavenger eye"],
+  "required_accessors": ["POSITION", "NORMAL", "TEXCOORD_0", "TANGENT", "indices"],
+  "unique_node_names": true,
+  "required_nodes": ["SkitterlingModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SkitterlingCarapace0", "SkitterlingCarapaceCap0", "SkitterlingHeadShield", "SkitterlingHeadRidge", "SkitterlingAntennaL", "SkitterlingAntennaJointL", "SkitterlingMandibleL", "SkitterlingMandiblePlateL", "SkitterlingSensoryFan0", "SkitterlingSensoryFan3", "SkitterlingSensoryRib0", "SkitterlingSensoryRib3", "ProductionAssetMarker"],
+  "socket_contract": ["carapace", "antennae", "mandibles", "sensory_fan", "scavenger_eyes"],
+  "socket_nodes": {"SkitterlingEyeL": "scavenger_eye", "SkitterlingEyeR": "scavenger_eye", "SkitterlingAntennaL": "antenna", "SkitterlingAntennaR": "antenna", "SkitterlingMandibleL": "mandible", "SkitterlingMandibleR": "mandible"},
+  "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
+  "aggregate_bounds": {"min": [-0.7569337857688967, -0.13131796344658525, -1.2522115073724889], "max": [0.7569337857688967, 1.0646411567132212, 0.8480000000000001]},
+  "runtime_visual_scale": 0.58,
+  "geometry_metrics": {"nodes": 61, "meshes": 14, "primitives": 14, "vertices": 3900, "triangles": 6832},
+  "skins": 0,
+  "collision": false,
+  "gameplay_state": "none",
+  "presentation_only": true,
+  "deterministic_build": true,
+  "artifact_hashes": {"source_builder_sha256": "3B568AD37AE80F9DA4F1136BA0B88EEA23B1A8C7AB2CF4CC6FE68D9A25AA4D49", "runtime_model_sha256": "8FE47504E4C51422DABA19AEA3992F201A2BCB1DD9ADC33A58FEB77DAAFDB723"}
 }

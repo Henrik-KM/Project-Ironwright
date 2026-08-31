@@ -21,6 +21,20 @@ const CARRIONBELL_ASSET_SCENE := preload("res://assets/carrionbell/carrionbell.g
 const ROOTWEAVER_ASSET_SCENE := preload("res://assets/rootweaver/rootweaver.gltf")
 const THORNBACK_ASSET_SCENE := preload("res://assets/thornback/thornback.gltf")
 const ASHMANTLE_ASSET_SCENE := preload("res://assets/ashmantle/ashmantle.gltf")
+const LANDMARK_ASSET_SCENES := [
+    preload("res://assets/archive/archive.gltf"),
+    preload("res://assets/glasshouse/glasshouse.gltf"),
+    preload("res://assets/flood_market/flood_market.gltf"),
+    preload("res://assets/buried_labs/buried_labs.gltf"),
+    preload("res://assets/cathedral/cathedral.gltf"),
+    preload("res://assets/observatory/observatory.gltf"),
+    preload("res://assets/riverworks/riverworks.gltf"),
+    preload("res://assets/root_cistern/root_cistern.gltf"),
+    preload("res://assets/west_grid/west_grid.gltf"),
+    preload("res://assets/tenement/tenement.gltf"),
+    preload("res://assets/tram_graveyard/tram_graveyard.gltf"),
+]
+const LANDMARK_ASSET_NAMES := ["archive", "glasshouse", "flood_market", "buried_labs", "cathedral", "observatory", "riverworks", "root_cistern", "west_grid", "tenement", "tram_graveyard"]
 
 var failures: Array[String] = []
 
@@ -133,7 +147,11 @@ func _run_all() -> void:
         _expect(city.find_child("RubbleRebar00", true, false) != null and city.find_child("RubbleRebar01", true, false) != null, "Street debris must expose restrained reinforcement detail.")
         var authored_vehicle_wreck := city.get_node_or_null("VehicleWreck00/VehicleWreckAuthoredModel")
         _expect(authored_vehicle_wreck != null, "Central vehicle wrecks must instantiate the authored high-definition shell.")
-        _expect(authored_vehicle_wreck != null and authored_vehicle_wreck.find_child("VehicleServicePanel", true, false) != null and authored_vehicle_wreck.find_child("VehicleGlassShard00", true, false) != null, "The authored civic wreck shell must retain service access and damage anatomy.")
+        var vehicle_chassis := authored_vehicle_wreck.find_child("VehicleChassis", true, false) as MeshInstance3D if authored_vehicle_wreck != null else null
+        var vehicle_array_mesh := vehicle_chassis.mesh as ArrayMesh if vehicle_chassis != null else null
+        var vehicle_arrays := vehicle_array_mesh.surface_get_arrays(0) if vehicle_array_mesh != null and vehicle_array_mesh.get_surface_count() > 0 else []
+        _expect(vehicle_arrays is Array and vehicle_arrays.size() > Mesh.ARRAY_TANGENT and vehicle_arrays[Mesh.ARRAY_TEX_UV] != null and vehicle_arrays[Mesh.ARRAY_TANGENT] != null, "Central vehicle wrecks must retain UV and tangent channels for their high-definition PBR surface.")
+        _expect(authored_vehicle_wreck != null and authored_vehicle_wreck.find_child("VehicleServicePanel", true, false) != null and authored_vehicle_wreck.find_child("VehicleGlassShard00", true, false) != null and authored_vehicle_wreck.find_child("VehicleHeadlampL", true, false) != null and authored_vehicle_wreck.find_child("VehicleFrontGrilleUpper", true, false) != null, "The authored civic wreck shell must retain service access, damage anatomy and a readable front hardware face.")
         _expect(city.get_node_or_null("HighDefinitionFacadeDetails") != null, "The ordinary urban blocks must carry a shared high-definition facade layer beyond their collision shells.")
         _expect(city.find_child("FacadeDetail00", true, false) != null and city.find_child("FacadeWindowBay00_00", true, false) != null, "Facade detail must expose layered window bays and floor-scale structure.")
         _expect(city.find_child("FacadeServiceShutter", true, false) != null and city.find_child("FacadeRainDownpipe", true, false) != null, "Facade detail must expose readable service and weathering hardware.")
@@ -210,8 +228,12 @@ func _run_all() -> void:
     root.add_child(salvage_sample)
     await process_frame
     _expect(salvage_sample.find_child("SalvageAuthoredModel", true, false) != null, "The first salvage target must use the authored high-definition wreck shell.")
+    var salvage_chassis := salvage_sample.find_child("WreckChassis", true, false) as MeshInstance3D
+    var salvage_array_mesh := salvage_chassis.mesh as ArrayMesh if salvage_chassis != null else null
+    var salvage_arrays := salvage_array_mesh.surface_get_arrays(0) if salvage_array_mesh != null and salvage_array_mesh.get_surface_count() > 0 else []
+    _expect(salvage_arrays is Array and salvage_arrays.size() > Mesh.ARRAY_TANGENT and salvage_arrays[Mesh.ARRAY_TEX_UV] != null and salvage_arrays[Mesh.ARRAY_TANGENT] != null, "The opening salvage wreck must retain UV and tangent channels for its high-definition PBR surface.")
     _expect(salvage_sample.find_child("WreckServicePanel", true, false) != null and salvage_sample.find_child("WreckPipeLeft", true, false) != null, "The salvage wreck must expose authored service and pipe anatomy.")
-    _expect(salvage_sample.find_child("BrokenGlassShard00", true, false) != null and salvage_sample.find_child("WreckStatusLens", true, false) != null, "The salvage wreck must expose damage and readable status detail.")
+    _expect(salvage_sample.find_child("BrokenGlassShard00", true, false) != null and salvage_sample.find_child("WreckStatusLens", true, false) != null and salvage_sample.find_child("WreckCabinHandle", true, false) != null and salvage_sample.find_child("WreckServiceLatch00", true, false) != null, "The salvage wreck must expose damage, readable status detail and authored service hardware.")
     salvage_sample.queue_free()
     var site_sample := OutpostSite3D.new()
     site_sample.configure({"id": "aesthetic.site_marker", "display_name": "Marker", "recommended_outpost_role": "scout", "position": [64.0, 0.0, 64.0]})
@@ -249,9 +271,20 @@ func _run_all() -> void:
         identity_site.queue_free()
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgeMaintenanceDetail") != null, "The Heartforge must expose a dedicated presentation-only maintenance detail layer.")
     _expect(world.get_node_or_null("HeartforgeVerticalSlice/HeartforgePlazaDetail/HeartforgeServiceRing/ForgeRecessedServiceRing") != null, "The Heartforge plaza must expose a readable recessed service ring around its focal machine.")
-    _expect(_find_named(world, "RouteThresholdAmberBand") != null, "The opening service lane must expose a far amber threshold landmark for the first objective.")
+    var refuge_threshold_package := _find_named(world, "AuthoredHeartforgeThreshold") as Node3D
+    _expect(refuge_threshold_package != null and StringName(str(refuge_threshold_package.get_meta(&"ironwright_asset_id", &""))) == &"heartforge.threshold.v1", "The opening refuge boundary must expose exactly one stable authored threshold package.")
+    _expect(_count_named(world, "AuthoredHeartforgeThreshold") == 1, "The opening frame must contain one authored refuge threshold rather than overlapping gate assemblies.")
+    _expect(refuge_threshold_package != null and refuge_threshold_package.position.is_equal_approx(Vector3(0.0, 0.0, -5.8)), "The authored threshold must remain at the established refuge boundary.")
+    _expect(refuge_threshold_package != null and _find_named(refuge_threshold_package, "RouteThresholdAmberBand") != null, "The authored threshold lintel must carry the amber first-objective landmark.")
+    _expect(refuge_threshold_package != null and _find_named(refuge_threshold_package, "ThresholdServicePanel") != null and _find_named(refuge_threshold_package, "ThresholdLamp01") != null and _find_named(refuge_threshold_package, "ThresholdOrganicMachineLayer") != null, "The authored threshold must retain its service, signal and organic-machine detail layers.")
+    for removed_threshold_name in ["HeartforgeThresholdGate", "HeartforgeThresholdFallback", "AmberRouteThresholdArch", "RouteThresholdPost", "RouteThresholdHeader", "GatePost", "GateSensor"]:
+        _expect(_count_named(world, removed_threshold_name) == 0, "The authored refuge boundary must replace legacy threshold node %s." % removed_threshold_name)
+    _expect(refuge_threshold_package == null or refuge_threshold_package.find_children("*", "CollisionObject3D", true, false).is_empty(), "The authored refuge threshold must remain presentation-only and cannot block the opening route.")
+    _expect(refuge_threshold_package == null or refuge_threshold_package.find_children("*", "CollisionShape3D", true, false).is_empty(), "The authored refuge threshold must not add collision geometry.")
     _expect(_find_named(world, "AmberRouteChevron") != null, "The opening service lane must carry repeated amber route chevrons beyond the Heartforge.")
+    _expect(_find_named(world, "AmberRouteGuideBeacon") != null, "The opening service lane must retain its near guide beacons after threshold consolidation.")
     _expect(_find_named(world, "AmberRouteGuideLamp") != null, "The opening service lane must expose near amber guide lamps at the starting frame.")
+    _expect(_find_named(world, "ThresholdSlab") != null and _find_named(world, "WeldedBarricade") != null, "The authored threshold must preserve the lived-in refuge slabs and non-threshold sanctuary perimeter.")
     for facade_socket in ["PharmacySign", "OccupiedWindow", "WorkshopFascia", "MunicipalLintel", "FireEscape"]:
         _expect(_find_named(world, "%sCore" % facade_socket) != null and _find_named(world, "%sCornerCap" % facade_socket) != null, "The opening facade identity %s must use bounded manufactured depth." % facade_socket)
     var route_marker := _find_named(world, "ThresholdRouteMarkerCore") as MeshInstance3D
@@ -430,6 +463,17 @@ func _run_all() -> void:
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/RegionPracticalLight0") != null and landmark.get_node_or_null("PersistentRegionGeometry/RegionPracticalLight1") != null, "Each non-sanctuary region must receive two bounded palette-aware practical lights.")
             _expect(landmark.get_node_or_null("PersistentRegionGeometry/RegionalPressureRead") != null, "Each discovered non-sanctuary region must expose a bounded pressure-growth presentation layer.")
             _expect(landmark.find_child("RegionalPressurePlate00", true, false) != null and landmark.find_child("RegionalPressureSignal00", true, false) != null, "Regional pressure growth must expose stable plate and signal anatomy sockets.")
+            var recovery_read := landmark.get_node_or_null("PersistentRegionGeometry/MachineRecoveryRead") as Node3D
+            _expect(recovery_read != null, "Each non-sanctuary region must expose a bounded machine-recovery witness layer.")
+            if recovery_read != null:
+                _expect(recovery_read.find_child("MachineRecoveryFrame", true, false) != null and recovery_read.find_child("MachineRecoveryPlate", true, false) != null, "The machine-recovery witness must carry a framed service plate rather than an abstract HUD-only state.")
+                _expect(recovery_read.find_child("MachineRecoveryBar00", true, false) != null and recovery_read.find_child("MachineRecoveryBar03", true, false) != null, "The machine-recovery witness must expose a compact progress-bar silhouette.")
+                _expect(not recovery_read.visible, "A region with no completed suppression must not show a false machine-recovery state.")
+                landmark.add_suppression(0.25)
+                _expect(recovery_read.visible, "Completed regional suppression must reveal the persistent machine-recovery witness in the world.")
+                var recovery_cap := recovery_read.find_child("MachineRecoveryPlateCap", true, false) as MeshInstance3D
+                var recovery_material := recovery_cap.get_active_material(0) as StandardMaterial3D if recovery_cap != null else null
+                _expect(recovery_material != null and recovery_material.emission_energy_multiplier > 0.22, "The machine-recovery witness must brighten deterministically with actual suppression.")
             _expect(landmark.find_child("RegionalStoryWitnessFrame", true, false) != null and landmark.find_child("RegionalStoryWitnessPlate", true, false) != null, "Each non-sanctuary region must expose a bounded physical Town Archive witness panel.")
             _expect(landmark.get_node_or_null("ReducedRegionProxy") != null, "Each non-sanctuary region must expose a bounded coarse proxy for distant presentation LOD.")
             var district_breadth := landmark.get_node_or_null("PersistentRegionGeometry/AuthoredEncounterDressing/DistrictBreadthLayer") as Node3D
@@ -1066,24 +1110,65 @@ func _run_all() -> void:
     if heartforge != null:
         var heartforge_presentation := heartforge.get_node_or_null("HeartforgePresentation3D") as HeartforgePresentation3D
         _expect(heartforge_presentation != null, "The Heartforge must receive authored progression presentation.")
-        _expect(heartforge.find_child("HeartforgeAuthoredModel", true, false) != null, "The Heartforge must use the authored production shell.")
-        _expect(_find_named(heartforge, "ProductionAssetMarker") != null, "The authored Heartforge must expose its production asset marker.")
-        _expect(heartforge.find_child("CoreCladdingDetail", true, false) != null, "The Heartforge must expose a layered high-definition core cladding detail.")
-        _expect(heartforge.find_child("CoreServiceLouver", true, false) != null, "The Heartforge must expose a readable powered service louver.")
-        _expect(heartforge.find_child("CoreInspectionPort", true, false) != null, "The Heartforge must expose a readable inspection port.")
-        _expect(heartforge.find_child("HeartforgeFocalDetail", true, false) != null, "The Heartforge must expose a bounded focal reactor/control detail layer.")
-        _expect(heartforge.find_child("HeartforgeUpperCollar", true, false) != null and heartforge.find_child("HeartforgeFocalControlFace", true, false) != null, "The Heartforge focal layer must expose an upper reactor collar and player-facing control face.")
-        _expect(heartforge.find_child("HeartforgeFocalRadialFin00", true, false) != null and heartforge.find_child("HeartforgeFocalSignalLens01", true, false) != null, "The Heartforge focal layer must expose radial heat hardware and a readable tri-signal lens bank.")
-        _expect(heartforge.find_child("HeartforgeCoolantPipeLeft", true, false) != null and heartforge.find_child("HeartforgeServiceLatchLeft", true, false) != null and heartforge.find_child("HeartforgeConduitClipLeft", true, false) != null, "The authored Heartforge must expose layered coolant routing and service-latch hardware.")
-        _expect(heartforge.find_child("HeartforgeThermalShroud00", true, false) != null and heartforge.find_child("HeartforgeThermalShroudCap00", true, false) != null and heartforge.find_child("ForgeBenchBraceLeft", true, false) != null, "The Heartforge focal and fabrication surfaces must expose manufactured shrouds and bench bracing.")
-        _expect(_find_named(heartforge, "HeartforgeFoundationBolt00") != null, "The authored Heartforge must expose anchored foundation hardware.")
-        var authored_heartforge := heartforge.find_child("HeartforgeAuthoredModel", true, false) as Node3D
-        var authored_housing := heartforge.find_child("CoreHousingShell", true, false) as MeshInstance3D
-        var authored_furnace := heartforge.find_child("FurnaceCore", true, false) as MeshInstance3D
+        var heartforge_model := heartforge.get_node_or_null("HeartforgeModel") as Node3D
+        _expect(heartforge_model != null, "The Heartforge must preserve its stable runtime model root.")
+        _expect(heartforge_model != null and StringName(str(heartforge_model.get_meta(&"heartforge_visual_source", &""))) == &"authored", "The production Heartforge must report the authored package as its active visual source.")
+        _expect(_count_named(heartforge_model, "HeartforgeAuthoredModel") == 1, "The Heartforge must instantiate exactly one authored production shell.")
+        _expect(_count_named(heartforge_model, "LegacyProceduralHeartforgeShell") == 0, "A healthy authored Heartforge must not retain a hidden procedural shell.")
+        var authored_heartforge := heartforge_model.get_node_or_null("HeartforgeAuthoredModel") as Node3D if heartforge_model != null else null
+        _expect(authored_heartforge != null, "The authored Heartforge package must remain a direct runtime-model child.")
+        _expect(authored_heartforge != null and StringName(str(authored_heartforge.get_meta(&"ironwright_asset_id", &""))) == &"heartforge.core.v1", "The authored Heartforge root must expose its unambiguous package identifier.")
+        if authored_heartforge != null:
+            _expect(_node_names_are_unique(authored_heartforge), "Every node in the imported Heartforge package must retain a unique production-safe name.")
+        var authored_required_nodes := [
+            "ProductionAssetMarker",
+            "CoreHousingShell",
+            "FurnaceCore",
+            "CoreCladdingDetail",
+            "CoreServiceLouverCore",
+            "CoreServiceLouver00",
+            "CoreInspectionPort",
+            "HeartforgeFocalDetail",
+            "HeartforgeUpperCollar",
+            "HeartforgeFocalControlFace",
+            "HeartforgeFocalRadialFin00",
+            "HeartforgeFocalSignalLens01",
+            "HeartforgeCoolantPipeLeft",
+            "HeartforgeServiceLatchLeft",
+            "HeartforgeConduitClipLeft",
+            "HeartforgeThermalShroud00",
+            "HeartforgeThermalShroudCap00",
+            "ForgeBenchBraceLeft",
+            "HeartforgeFoundationBolt00",
+        ]
+        for node_name in authored_required_nodes:
+            _expect(_count_named(authored_heartforge, node_name) == 1, "The authored Heartforge package must contain exactly one %s node." % node_name)
+        var migrated_service_nodes := [
+            "VerticalSliceForgeArt",
+            "ForgeCoolantStackLeft",
+            "ForgeCoolantStackRight",
+            "ForgePressurePipeLeft",
+            "ForgePressurePipeRight",
+            "ForgePumpLeft",
+            "ForgePumpRight",
+            "ForgeTopClamp00",
+            "ForgeTopClamp01",
+            "ForgeTopClamp02",
+            "ForgeTopClamp03",
+            "ForgeTopClamp04",
+            "ForgeControlCabinet",
+            "ForgeDiagnosticPanel",
+        ]
+        for node_name in migrated_service_nodes:
+            _expect(_count_named(authored_heartforge, node_name) == 1, "Migrated Heartforge service detail %s must exist exactly once inside the authored package." % node_name)
+        _expect(heartforge_model == null or heartforge_model.get_node_or_null("VerticalSliceForgeArt") == null, "The actor-art pass must not recreate the authored Heartforge service layer as a runtime overlay.")
+        _expect(heartforge.get_node_or_null("HeartforgeCoreCollision") != null, "The authored shell must retain the runtime-owned Heartforge collision sibling.")
+        var authored_housing := _find_named(authored_heartforge, "CoreHousingShell") as MeshInstance3D
+        var authored_furnace := _find_named(authored_heartforge, "FurnaceCore") as MeshInstance3D
         _expect(authored_housing != null and _mesh_vertex_count(authored_housing) >= 900, "The Heartforge reactor housing must retain a dense smooth focal envelope.")
         _expect(authored_furnace != null and _mesh_vertex_count(authored_furnace) >= 900, "The Heartforge furnace must retain a dense smooth focal envelope.")
-        var authored_bench := heartforge.find_child("ForgeBench", true, false) as MeshInstance3D
-        var authored_plate := heartforge.find_child("AssemblyPlate", true, false) as MeshInstance3D
+        var authored_bench := _find_named(authored_heartforge, "ForgeBench") as MeshInstance3D
+        var authored_plate := _find_named(authored_heartforge, "AssemblyPlate") as MeshInstance3D
         _expect(authored_bench != null and _mesh_vertex_count(authored_bench) > 24, "The Heartforge fabrication bench must use chamfered high-definition geometry rather than a flat box.")
         _expect(authored_plate != null and _mesh_vertex_count(authored_plate) > 24, "The Heartforge assembly plate must use chamfered high-definition geometry rather than a flat box.")
         var authored_emission_peak := 0.0
@@ -1104,7 +1189,7 @@ func _run_all() -> void:
             strongest_heartforge_light = maxf(strongest_heartforge_light, (raw_light as OmniLight3D).light_energy)
         _expect(strongest_heartforge_light <= Heartforge3D.RESTING_CORE_LIGHT_ENERGY + 0.01, "The resting Heartforge light must preserve a warm focal key without flattening the district.")
         heartforge.set_progression_tier(5)
-        _expect(heartforge.find_child("AdaptiveHeartforgeGeometry", true, false) != null, "Heartforge progression must own a dedicated adaptive geometry layer.")
+        _expect(heartforge_model != null and heartforge_model.get_node_or_null("AdaptiveHeartforgeGeometry") != null, "Heartforge progression must remain a runtime sibling of the authored package.")
         _expect(heartforge.find_child("Tier2Buttress", true, false) != null, "Tier 2 Heartforge geometry must add structural buttresses.")
         _expect(heartforge.find_child("Tier3SignalConduit", true, false) != null, "Tier 3 Heartforge geometry must add signal conduits.")
         var heat_ring := heartforge.find_child("Tier3HeatRing", true, false) as MeshInstance3D
@@ -1164,7 +1249,7 @@ func _run_all() -> void:
         heartforge.set_adaptation_preview(&"adaptation.pending", 0.72)
         _expect(heartforge.adaptation_preview_progress > 0.7 and adaptation_preview != null and not adaptation_preview_scale.is_equal_approx(adaptation_preview.scale), "The adaptive proposal footprint must advance through a readable bounded reveal.")
         heartforge.set_adaptation_profile(&"adaptation.anchored_shell")
-        _expect(heartforge.find_child("HeartforgeAdaptationDetail", true, false) != null, "The adaptive Heartforge must expose a visible authored retrofit detail layer.")
+        _expect(heartforge_model != null and heartforge_model.get_node_or_null("HeartforgeAdaptationDetail") != null, "The adaptive Heartforge must expose a visible runtime-owned retrofit sibling.")
         _expect(heartforge.find_child("AnchorShellBrace", true, false) != null and heartforge.find_child("AnchorShellSignalRing", true, false) != null and heartforge.find_child("AnchorShellFooting", true, false) != null and heartforge.find_child("AnchorShellAnchorPin", true, false) != null, "The anchored-shell response must expose structural braces, anchored footings and a signal ring.")
         _expect(heartforge.adaptive_collision_shape_count() == 4 and heartforge.find_child("AnchorShellCollisionWest", false, false) != null and heartforge.find_child("AnchorShellCollisionSouth", false, false) != null, "The anchored-shell response must add four bounded physical perimeter braces after authorization.")
         heartforge.set_adaptation_profile(&"adaptation.anchored_shell")
@@ -1185,7 +1270,7 @@ func _run_all() -> void:
         _expect(heartforge.adaptive_collision_shape_count() == 0 and heartforge.find_child("HeartforgeCoreCollision", false, false) != null, "Clearing an adaptation must remove only its profile shell and retain the permanent Heartforge core collision.")
         if adaptation_settings_service != null:
             adaptation_settings_service.set_value(&"reduced_motion", adaptation_previous_reduced_motion, false)
-        _expect(heartforge.find_child("HeartforgeDamagePresentation", true, false) != null, "The Heartforge must expose a bounded damage-memory presentation layer.")
+        _expect(heartforge_model != null and heartforge_model.get_node_or_null("HeartforgeDamagePresentation") != null, "The Heartforge must retain its runtime-owned damage presentation sibling.")
         _expect(heartforge.find_child("HeartforgeDamageScar00", true, false) != null and heartforge.find_child("HeartforgeDamageLeak00", true, false) != null, "The Heartforge damage layer must expose stable scar and leak sockets.")
         heartforge.apply_damage(heartforge.maximum_health * 0.68)
         var damage_layer := heartforge.find_child("HeartforgeDamagePresentation", true, false) as Node3D
@@ -1213,11 +1298,20 @@ func _run_all() -> void:
         var player_presentation := player.get_node_or_null("MechromancerPresentation3D") as MechromancerPresentation3D
         _expect(player_presentation != null, "The Mechromancer must receive authored animation presentation.")
         _expect(_find_named(player, "ProductionAssetMarker") != null, "The Mechromancer must use the authored asset contract.")
-        _expect(_find_named(player, "PistolMuzzle") != null, "The authored Mechromancer must expose the pistol muzzle socket.")
+        var player_model := player.get_node_or_null("MechromancerModel") as Node3D
+        var authored_mechromancer := _find_asset_package(player_model, &"mechromancer.player.v1")
+        _expect(authored_mechromancer != null, "The Mechromancer must expose the exact authored package identity.")
+        _expect(_asset_package_count(player_model, &"mechromancer.player.v1") == 1, "The live player must contain exactly one authored Mechromancer package.")
+        _expect(player_model == null or player_model.get_node_or_null("VerticalSliceCharacterArt") == null, "The authored Mechromancer must not retain the legacy procedural character overlay.")
+        var pistol_muzzle := _find_named(player, "PistolMuzzle") as Node3D
+        _expect(pistol_muzzle != null and pistol_muzzle.get_parent() != null and pistol_muzzle.get_parent().name == &"WeakPistol", "The authored Mechromancer must retain its pistol muzzle beneath the weak sidearm assembly.")
+        var shoulder_socket := _find_named(player, "ShoulderLamp") as Node3D
+        var readability_light := _find_named(player, "MechromancerReadabilityLight") as OmniLight3D
+        _expect(readability_light != null and readability_light.get_parent() == shoulder_socket and readability_light.light_energy <= 0.25, "The authored shoulder socket must retain exactly one restrained runtime readability light.")
+        _expect(player.find_children("MechromancerReadabilityLight", "OmniLight3D", true, false).size() == 1, "The Mechromancer readability light must remain bounded instead of duplicating with presentation rescans.")
         _expect(_model_has_details(player), "The Mechromancer must receive additional authored silhouette detail.")
         _expect(_find_named(player, "FieldShoulderGuard") != null and _find_named(player, "FieldCommsPanel") != null and _find_named(player, "FieldCommsBeacon") != null, "The Mechromancer must carry the finished asymmetrical field-kit silhouette.")
         _expect(_find_named(player, "ChestHarness") != null and _find_named(player, "PistolGrip") != null and _find_named(player, "PistolMuzzleCollar") != null and _find_named(player, "PistolFrontSight") != null and _find_named(player, "HarnessFastener") != null, "The Mechromancer focal harness and weak-pistol assembly must retain layered high-definition hardware.")
-        var player_model := player.get_node_or_null("MechromancerModel") as Node3D
         _expect(player_model != null and player_model.scale.x >= 1.2, "The authored Mechromancer must be legible at tactical-camera distance.")
         _expect(_find_named(player, "RespiratorCollarCore") != null and _find_named(player, "FieldPackCornerCap") != null, "The Mechromancer must receive beveled authored equipment surfaces.")
         _expect(_find_named(player, "FieldShoulderLampLens") != null and _find_named(player, "FieldUtilityCanister") != null and _find_named(player, "FieldToolDeck") != null, "The Mechromancer must receive a second high-definition field-instrument detail layer.")
@@ -1246,6 +1340,8 @@ func _run_all() -> void:
                 var sensor_lens := player.get_node_or_null("MechromancerProgressionVisuals/MechromancerTierIVBioSensorLens") as Node3D
                 var shoulder_brace := player.get_node_or_null("MechromancerProgressionVisuals/MechromancerTierIIShoulderBrace") as Node3D
                 var protocol_clasp := player.get_node_or_null("MechromancerProgressionVisuals/MechromancerTierVProtocolClasp") as Node3D
+                var progression_root := player.get_node_or_null("MechromancerProgressionVisuals") as Node3D
+                _expect(progression_root != null and progression_root.get_parent() == player and (player_model == null or not player_model.is_ancestor_of(progression_root)), "Derived Mechromancer progression hardware must remain an actor-owned sibling of the authored package.")
                 _expect(cognition_node != null and sensor_lens != null, "The progression animation test must expose cognition and sensor hardware.")
                 _expect(shoulder_brace != null and protocol_clasp != null and shoulder_brace.position.y > 1.0 and protocol_clasp.position.y > 1.0 and shoulder_brace.position.z < 0.0 and protocol_clasp.position.z < 0.0, "Mechromancer progression hardware must attach to the body volume rather than falling below the presentation floor.")
                 if cognition_node != null and sensor_lens != null:
@@ -1257,6 +1353,12 @@ func _run_all() -> void:
                     player_presentation._animate_progression_hardware()
                     _expect(not initial_cognition_scale.is_equal_approx(cognition_node.scale), "The cognition node must carry a bounded progression pulse.")
                     _expect(not is_equal_approx(initial_sensor_rotation, sensor_lens.rotation.y), "The adaptive sensor must carry a readable sweep response.")
+                var mechromancer_actor := player as Mechromancer3D
+                if mechromancer_actor != null:
+                    player_presentation.last_health = mechromancer_actor.current_health
+                    mechromancer_actor.apply_damage(1.0)
+                    _expect(_animation_clip_matches(player_presentation.active_clip, &"Hit"), "Mechromancer damage must still select the authored Hit clip after static-overlay consolidation.")
+                    mechromancer_actor.heal_full()
         if audio_director != null:
             var event_count_before := audio_director.event_count
             audio_director.play_profile(&"pistol", player.global_position)
@@ -1271,7 +1373,8 @@ func _run_all() -> void:
     disabled_mechromancer.apply_damage(disabled_mechromancer.maximum_health * 2.0)
     _expect(disabled_mechromancer.current_health <= 0.0, "A lethal Mechromancer hit must preserve the game-over health state.")
     _expect(disabled_mechromancer.death_presentation_remaining > 0.0, "The Mechromancer must retain a bounded presentation window after death.")
-    _expect(_find_named(disabled_mechromancer, "MechromancerDeathPresentation") != null and bool(_find_named(disabled_mechromancer, "MechromancerDeathPresentation").visible), "The Mechromancer must expose a visible collapse presentation before the ending overlay resolves.")
+    var mechromancer_death_presentation := _find_named(disabled_mechromancer, "MechromancerDeathPresentation") as Node3D
+    _expect(mechromancer_death_presentation != null and mechromancer_death_presentation.get_parent() == disabled_mechromancer and mechromancer_death_presentation.visible, "The Mechromancer must expose an actor-owned visible collapse presentation before the ending overlay resolves.")
     _expect(_find_named(disabled_mechromancer, "MechromancerDeathCollapsedTorso") != null and _find_named(disabled_mechromancer, "MechromancerDeathRespiratorCollar") != null, "The Mechromancer death presentation must retain readable field-kit failure anatomy.")
     _expect(_find_named(disabled_mechromancer, "MechromancerDeathSignal") != null and _find_named(disabled_mechromancer, "MechromancerDeathShard00") != null, "The Mechromancer death presentation must expose a spent signal and fractured equipment fragments.")
     disabled_mechromancer.heal_full()
@@ -1350,7 +1453,36 @@ func _run_all() -> void:
             var shield_material := shield_arc.material_override as StandardMaterial3D
             _expect(shield_mesh != null and shield_mesh.outer_radius <= 0.8, "The Bulwark protection arc must stay compact at tactical distance.")
             _expect(shield_material != null and shield_material.emission_energy_multiplier <= 1.0, "The Bulwark protection arc must preserve the Heartforge focal hierarchy.")
-        _expect(_find_named(robot, "BulwarkAuthoredModel") != null, "The opening companion must use the authored Bulwark model shell.")
+        var authored_bulwark := _find_named(robot, "BulwarkAuthoredModel") as Node3D
+        _expect(authored_bulwark != null, "The opening companion must use the authored Bulwark model shell.")
+        if authored_bulwark != null:
+            _expect(_node_names_are_unique(authored_bulwark), "Every node in the imported Bulwark package must retain a unique animation-safe name.")
+        var bulwark_static_details := [
+            "BulwarkRadiatorLouver",
+            "BulwarkFrontSensorVisor",
+            "BulwarkServiceFace",
+            "BulwarkServiceLatchLeft",
+            "BulwarkServiceLatchRight",
+            "BulwarkShoulderRailLeft",
+            "BulwarkShoulderRailRight",
+            "BulwarkFootPlateLeft",
+            "BulwarkFootPlateRight",
+            "BulwarkActuatorRingLeft",
+            "BulwarkActuatorRingRight",
+            "BulwarkActuatorCapLeft",
+            "BulwarkActuatorCapRight",
+            "BulwarkSideHeatPanelLeft",
+            "BulwarkSideHeatPanelRight",
+            "BulwarkServiceWindowFrame",
+        ]
+        for detail_name in bulwark_static_details:
+            _expect(_count_named(robot, detail_name) == 1, "Bulwark source detail %s must exist exactly once at runtime, without a procedural duplicate." % detail_name)
+        for socket_name in ["Sensor", "OpticLens", "BulwarkGunLeft", "BulwarkGunRight", "WeaponMuzzle", "WeaponMuzzleRight", "BulwarkShieldEmitter"]:
+            _expect(_count_named(authored_bulwark, socket_name) == 1, "The authored Bulwark must preserve exactly one %s socket node." % socket_name)
+        var bulwark_collision_nodes := robot.find_children("*", "CollisionShape3D", true, false)
+        var bulwark_collision := bulwark_collision_nodes[0] as CollisionShape3D if not bulwark_collision_nodes.is_empty() else null
+        var bulwark_capsule := bulwark_collision.shape as CapsuleShape3D if bulwark_collision != null else null
+        _expect(bulwark_capsule != null and is_equal_approx(bulwark_capsule.radius, 0.48) and bulwark_capsule.height >= 0.98, "The Bulwark HD shell must preserve its gameplay collision capsule and dimensions.")
         _expect(_find_named(robot, "ProductionAssetMarker") != null, "The authored Bulwark model must expose its production asset marker.")
         _expect(_find_named(robot, "BulwarkRadiatorLouver") != null and _find_named(robot, "BulwarkFrontSensorVisor") != null and _find_named(robot, "BulwarkEmitterCollar") != null, "The Bulwark must receive a second high-definition protection hardware layer.")
         _expect(_find_named(robot, "BulwarkEmitterAperture") != null and _find_named(robot, "BulwarkEmitterLensInset") != null and _find_named(robot, "BulwarkEmitterFastener00") != null, "The Bulwark protection instrument must retain its nested aperture, inset lens and service fasteners.")
@@ -1360,6 +1492,9 @@ func _run_all() -> void:
         var bulwark_plate := _find_named(robot, "ArmorPlate") as MeshInstance3D
         _expect(bulwark_chassis != null and _mesh_vertex_count(bulwark_chassis) >= 600, "The Bulwark chassis must retain dense rounded high-definition geometry.")
         _expect(bulwark_plate != null and _mesh_vertex_count(bulwark_plate) >= 300, "The Bulwark armor plate must retain dense rounded high-definition geometry.")
+        if bulwark_chassis != null and bulwark_chassis.mesh != null:
+            var chassis_bounds := bulwark_chassis.mesh.get_aabb().size
+            _expect(chassis_bounds.x >= 1.4 and chassis_bounds.x <= 2.2 and chassis_bounds.y >= 0.7 and chassis_bounds.y <= 1.4 and chassis_bounds.z >= 1.4 and chassis_bounds.z <= 2.3, "The Bulwark HD pass must preserve the protected chassis silhouette bounds.")
         if robot_animation != null and robot_animation.animation_player != null and _find_named(robot, "BulwarkAuthoredModel") != null:
             _expect(_animation_player_track_count(robot_animation.animation_player, &"Idle") >= 6, "Bulwark Idle must carry shield-emitter and guard breathing channels.")
             _expect(_animation_player_track_count(robot_animation.animation_player, &"Walk") >= 7, "Bulwark Walk must carry shield-emitter and guard locomotion channels.")
@@ -1367,6 +1502,11 @@ func _run_all() -> void:
             _expect(_animation_player_track_count(robot_animation.animation_player, &"Hit") >= 5, "Bulwark Hit must carry emitter and guard impact channels.")
             _expect(_animation_player_track_count(robot_animation.animation_player, &"Retreat") >= 6, "Bulwark Retreat must carry shield withdrawal and crown response channels.")
             _expect(_animation_player_track_count(robot_animation.animation_player, &"Death") >= 4, "Bulwark Death must carry shield and radiator collapse channels.")
+            var walk_targets := _animation_player_target_names(robot_animation.animation_player, &"Walk")
+            for walk_target in [&"LegFrontLeft", &"FootFrontLeft", &"LegRearLeft", &"FootRearLeft", &"LegFrontRight", &"FootFrontRight", &"LegRearRight", &"FootRearRight"]:
+                _expect(walk_target in walk_targets, "Bulwark Walk must animate %s instead of leaving part of the gait static." % walk_target)
+            var fire_targets := _animation_player_target_names(robot_animation.animation_player, &"Fire")
+            _expect(&"BulwarkGunLeft" in fire_targets and &"BulwarkGunRight" in fire_targets, "Bulwark Fire must animate both complete gun assemblies.")
 
     var organic_actors := get_nodes_in_group("organic_enemies")
     if not organic_actors.is_empty():
@@ -1430,6 +1570,9 @@ func _run_all() -> void:
             _expect(_find_named(role_samples[index], "RelaySignalBeacon") != null and _find_named(role_samples[index], "RelayDirectionalDish") != null, "The Signal Relay must expose a distinct mast, dish and beacon silhouette.")
             var relay_dish := _find_named(role_samples[index], "RelayDirectionalDish") as MeshInstance3D
             _expect(relay_dish != null and _mesh_vertex_count(relay_dish) >= 200, "The Signal Relay directional dish must retain a dense parabolic bowl profile rather than a flat low-detail plate.")
+            var relay_array_mesh := relay_dish.mesh as ArrayMesh if relay_dish != null else null
+            var relay_arrays := relay_array_mesh.surface_get_arrays(0) if relay_array_mesh != null and relay_array_mesh.get_surface_count() > 0 else []
+            _expect(relay_arrays is Array and relay_arrays.size() > Mesh.ARRAY_TANGENT and relay_arrays[Mesh.ARRAY_TEX_UV] != null and relay_arrays[Mesh.ARRAY_TANGENT] != null, "The authored Signal Relay must retain UV and tangent channels across its standard and custom dish meshes.")
             var relay_face := _find_named(role_samples[index], "RelayServiceFace") as MeshInstance3D
             var relay_heat_sink := _find_named(role_samples[index], "RelayHeatSink") as MeshInstance3D
             var relay_panel := _find_named(role_samples[index], "RelaySignalPanelLeft") as MeshInstance3D
@@ -1450,6 +1593,14 @@ func _run_all() -> void:
                 _expect(_animation_player_has_clip(relay_animation.animation_player, &"Death"), "The authored Signal Relay must expose a Death clip.")
                 _expect(_animation_player_track_count(relay_animation.animation_player, &"Death") >= 4, "Signal Relay Death must carry dish and beacon-cap collapse channels.")
         if role_names[index] == &"guardian":
+            var warden_surface := preload("res://assets/warden/warden.gltf").instantiate()
+            root.add_child(warden_surface)
+            await process_frame
+            var warden_mesh := _find_named(warden_surface, "Chassis") as MeshInstance3D
+            var warden_material := warden_mesh.mesh as ArrayMesh if warden_mesh != null else null
+            var warden_arrays := warden_material.surface_get_arrays(0) if warden_material != null and warden_material.get_surface_count() > 0 else []
+            _expect(warden_arrays is Array and warden_arrays.size() > Mesh.ARRAY_TANGENT and warden_arrays[Mesh.ARRAY_TEX_UV] != null and warden_arrays[Mesh.ARRAY_TANGENT] != null, "The authored Warden must retain UV and tangent channels for its high-definition PBR surface.")
+            warden_surface.queue_free()
             _expect(_find_named(role_samples[index], "WardenTargetingFace") != null and _find_named(role_samples[index], "WardenRecoilCollarLeft") != null, "The Warden must expose its maintained targeting and recoil hardware.")
             _expect(_find_named(role_samples[index], "WardenThermalFinLeft") != null and _find_named(role_samples[index], "WardenOpticShroud") != null and _find_named(role_samples[index], "WardenBreechClamp") != null, "The Warden must expose its third-pass thermal, optic and breech hardware.")
             _expect(_find_named(role_samples[index], "WardenCounterweight") != null, "The Warden must retain a layered counterweight silhouette.")
@@ -1463,6 +1614,9 @@ func _run_all() -> void:
             var scrapper_chassis := _find_named(scrapper_asset, "Chassis") as MeshInstance3D
             var scrapper_cargo := _find_named(scrapper_asset, "CargoBin") as MeshInstance3D
             _expect(scrapper_chassis != null and scrapper_cargo != null and _mesh_vertex_count(scrapper_chassis) >= 600 and _mesh_vertex_count(scrapper_cargo) >= 48, "The authored Scrapper chassis and cargo bin must retain dense high-definition manufactured surfaces.")
+            var scrapper_array_mesh := scrapper_chassis.mesh as ArrayMesh if scrapper_chassis != null else null
+            var scrapper_arrays := scrapper_array_mesh.surface_get_arrays(0) if scrapper_array_mesh != null and scrapper_array_mesh.get_surface_count() > 0 else []
+            _expect(scrapper_arrays is Array and scrapper_arrays.size() > Mesh.ARRAY_TANGENT and scrapper_arrays[Mesh.ARRAY_TEX_UV] != null and scrapper_arrays[Mesh.ARRAY_TANGENT] != null, "The authored Scrapper must retain UV and tangent channels for its high-definition PBR surface.")
             var scrapper_hopper_rail := _find_named(scrapper_asset, "ScrapperHopperSideRail") as MeshInstance3D
             var scrapper_intake_deck := _find_named(scrapper_asset, "ScrapperIntakeDeck") as MeshInstance3D
             _expect(scrapper_hopper_rail != null and scrapper_intake_deck != null and _mesh_vertex_count(scrapper_hopper_rail) >= 48 and _mesh_vertex_count(scrapper_intake_deck) >= 48, "The Scrapper must retain raised hopper rails and a readable intake deck for its salvage role silhouette.")
@@ -1485,6 +1639,9 @@ func _run_all() -> void:
             var pathfinder_chassis := _find_named(pathfinder_asset, "Chassis") as MeshInstance3D
             var pathfinder_sensor_pod := _find_named(pathfinder_asset, "PathfinderSensorPod") as MeshInstance3D
             _expect(pathfinder_chassis != null and pathfinder_sensor_pod != null and _mesh_vertex_count(pathfinder_chassis) >= 600 and _mesh_vertex_count(pathfinder_sensor_pod) >= 48, "The authored Pathfinder chassis and sensor pod must retain dense high-definition manufactured surfaces.")
+            var pathfinder_array_mesh := pathfinder_chassis.mesh as ArrayMesh if pathfinder_chassis != null else null
+            var pathfinder_arrays := pathfinder_array_mesh.surface_get_arrays(0) if pathfinder_array_mesh != null and pathfinder_array_mesh.get_surface_count() > 0 else []
+            _expect(pathfinder_arrays is Array and pathfinder_arrays.size() > Mesh.ARRAY_TANGENT and pathfinder_arrays[Mesh.ARRAY_TEX_UV] != null and pathfinder_arrays[Mesh.ARRAY_TANGENT] != null, "The authored Pathfinder must retain UV and tangent channels for its high-definition PBR surface.")
             var pathfinder_console := _find_named(pathfinder_asset, "PathfinderSurveyConsole") as MeshInstance3D
             var pathfinder_dish_rim := _find_named(pathfinder_asset, "PathfinderDishRim") as MeshInstance3D
             _expect(pathfinder_console != null and pathfinder_dish_rim != null and _mesh_vertex_count(pathfinder_console) >= 48 and _mesh_vertex_count(pathfinder_dish_rim) >= 64, "The Pathfinder must retain a maintained survey console and dense dish rim for its scout role silhouette.")
@@ -1507,6 +1664,7 @@ func _run_all() -> void:
             var engineer_chassis := _find_named(engineer_asset, "Chassis") as MeshInstance3D
             var engineer_cradle := _find_named(engineer_asset, "MaterialCradle") as MeshInstance3D
             _expect(engineer_chassis != null and engineer_cradle != null and _mesh_vertex_count(engineer_chassis) >= 600 and _mesh_vertex_count(engineer_cradle) >= 48, "The authored Engineer chassis and material cradle must retain dense high-definition manufactured surfaces.")
+            _expect(_find_named(engineer_asset, "EngineerCradleBraceLeft") != null and _find_named(engineer_asset, "EngineerCradleBraceRight") != null and _find_named(engineer_asset, "EngineerStatusStrip") != null, "The Engineer must expose paired articulated cradle braces and a visible forge status strip.")
             var engineer_animation := role_samples[index].get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
             if engineer_animation != null and engineer_animation.animation_player != null:
                 _expect(_animation_player_track_count(engineer_animation.animation_player, &"Idle") >= 7, "Engineer Idle must carry cradle-latch, forge-coil and paired spool channels.")
@@ -1517,7 +1675,8 @@ func _run_all() -> void:
                 _expect(_animation_player_track_count(engineer_animation.animation_player, &"Death") >= 4, "Engineer Death must carry forge-coil and cradle collapse channels.")
             engineer_asset.queue_free()
         elif role_names[index] == &"relay":
-            _expect(_find_named(role_samples[index], "RelayMastCollar") != null and _find_named(role_samples[index], "RelayDishRibLeft") != null and _find_named(role_samples[index], "RelaySignalFace") != null, "The Signal Relay must expose maintained mast, dish-rib and signal-face hardware.")
+            _expect(_find_named(role_samples[index], "RelayMastCollar") != null and _find_named(role_samples[index], "RelayMastFoot") != null and _find_named(role_samples[index], "RelayMastFootFastenerLeft") != null and _find_named(role_samples[index], "RelayMastFootFastenerRight") != null and _find_named(role_samples[index], "RelayDishRibLeft") != null and _find_named(role_samples[index], "RelayDishRibRight") != null and _find_named(role_samples[index], "RelayDishRibFront") != null and _find_named(role_samples[index], "RelayDishRibRear") != null and _find_named(role_samples[index], "RelayServiceFace") != null, "The Signal Relay must expose a grounded mast root, maintained four-point dish cradle and service-face hardware.")
+            _expect(_find_named(role_samples[index], "RelaySignalCollar") != null and _find_named(role_samples[index], "RelaySignalCollarBraceLeft") != null and _find_named(role_samples[index], "RelaySignalCollarBraceRight") != null, "The Signal Relay must expose a compact signal collar and paired mast supports for a readable role silhouette.")
         role_samples[index].queue_free()
 
     var authored_warden := ROBOT_SCENE.instantiate() as RobotUnit3D
@@ -1575,6 +1734,17 @@ func _run_all() -> void:
     _expect(_find_named(evolved_robot, "Tier3CrownRing") != null and _find_named(evolved_robot, "Tier3CrownBeacon") != null, "Level 3 frames must culminate in a readable crown and status beacons.")
     evolved_robot.queue_free()
 
+    for index in LANDMARK_ASSET_SCENES.size():
+        var landmark_root: Node3D = LANDMARK_ASSET_SCENES[index].instantiate() as Node3D
+        root.add_child(landmark_root)
+    await process_frame
+    for index in LANDMARK_ASSET_SCENES.size():
+        var landmark_root := root.get_child(root.get_child_count() - LANDMARK_ASSET_SCENES.size() + index) as Node3D
+        var landmark_mesh := _find_first_mesh(landmark_root)
+        var landmark_arrays := landmark_mesh.mesh.surface_get_arrays(0) if landmark_mesh != null and landmark_mesh.mesh != null and landmark_mesh.mesh.get_surface_count() > 0 else []
+        _expect(landmark_arrays is Array and landmark_arrays.size() > Mesh.ARRAY_TANGENT and landmark_arrays[Mesh.ARRAY_TEX_UV] != null and landmark_arrays[Mesh.ARRAY_TANGENT] != null, "The authored %s landmark must retain UV and tangent channels for its high-definition PBR surfaces." % LANDMARK_ASSET_NAMES[index])
+        landmark_root.queue_free()
+
     var outpost_samples: Array[Outpost3D] = []
     var outpost_roles := [&"resource", &"defence", &"scout", &"repair"]
     for index in outpost_roles.size():
@@ -1608,6 +1778,7 @@ func _run_all() -> void:
             var shell_arrays := (shell_core.mesh as ArrayMesh).surface_get_arrays(0)
             if shell_arrays.size() > Mesh.ARRAY_VERTEX:
                 shell_vertices = shell_arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array
+            _expect(shell_arrays.size() > Mesh.ARRAY_TANGENT and shell_arrays[Mesh.ARRAY_TEX_UV] != null and shell_arrays[Mesh.ARRAY_TANGENT] != null, "The authored outpost shelter core must retain UV and tangent channels for its high-definition PBR surface.")
         _expect(shell_vertices.size() > 24, "The authored outpost shelter core must use chamfered high-definition geometry rather than a flat six-face box.")
         _expect(_find_named(sample, "TierFrame1") != null and _find_named(sample, "TierFrame2") != null and _find_named(sample, "TierFrame3") != null, "Tier 3 outposts must expose three stable structural frames.")
         _expect(_find_named(sample, "TierFrame1Deck") != null and _find_named(sample, "TierFrame3Deck") != null and _find_named(sample, "TierFrame2DeckInset") != null, "Tier 3 outposts must expose recessed structural decks rather than empty repeated frames.")
@@ -1644,6 +1815,22 @@ func _run_all() -> void:
 
     var enemy_samples: Array[OrganicEnemy3D] = []
     var species_names := [&"skitterling", &"razorhound", &"roofleaper", &"glassmoth", &"veilstalker", &"burrower", &"sporecaster", &"broodmass", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle", &"apex"]
+    var organic_asset_ids := [
+        &"skitterling.scavenger.v1",
+        &"razorhound.predator.v1",
+        &"roofleaper.ambusher.v1",
+        &"glassmoth.swarm.v1",
+        &"veilstalker.predator.v1",
+        &"burrower.drill.v1",
+        &"sporecaster.infestation.v1",
+        &"broodmass.nest.v1",
+        &"miremaw.amphibious.v1",
+        &"carrionbell.signal.v1",
+        &"rootweaver.route_controller.v1",
+        &"thornback.territorial.v1",
+        &"ashmantle.route_predator.v1",
+        &"apex.cistern.v1",
+    ]
     var sample_player := get_first_node_in_group("player_character") as Node3D
     var sample_forge := world.get_node_or_null("Heartforge") as Node3D
     for index in species_names.size():
@@ -1660,6 +1847,15 @@ func _run_all() -> void:
     for index in enemy_samples.size():
         _expect(_enemy_model_has_details(enemy_samples[index], species_names[index]), "The %s organic family must expose a role-readable silhouette." % species_names[index])
         var organic_model := enemy_samples[index].get_node_or_null("OrganicModel") as Node
+        var aesthetic_details := organic_model.get_node_or_null("AestheticDetails") as Node3D if organic_model != null else null
+        _expect(aesthetic_details != null, "The %s organic family must retain its stable AestheticDetails socket." % species_names[index])
+        _expect(aesthetic_details != null and str(aesthetic_details.get_meta(&"authored_anatomy_policy", "")) == "source_owned_organic_family", "The %s organic family must declare its authored anatomy as the sole visible source." % species_names[index])
+        _expect(aesthetic_details != null and aesthetic_details.find_children("*", "MeshInstance3D", true, false).is_empty(), "The %s AestheticDetails socket must stay meshless instead of adding generic spines, tails, membranes or tendrils." % species_names[index])
+        if presentation_feedback != null:
+            presentation_feedback.call("_polish_actor", enemy_samples[index])
+            _expect(_count_named(organic_model, "AestheticDetails") == 1, "Repeated presentation polish must retain exactly one stable %s AestheticDetails socket." % species_names[index])
+        var authored_package := _find_asset_package(organic_model, organic_asset_ids[index])
+        _expect(authored_package != null, "The %s organic family must retain its exact authored package identity %s." % [species_names[index], organic_asset_ids[index]])
         _expect(organic_model != null and organic_model.has_meta(&"ironwright_organic_family") and String(organic_model.get_meta(&"ironwright_organic_family")) == String(species_names[index]), "The %s organic presentation must retain species metadata for release palette application." % species_names[index])
         _expect(_find_named(enemy_samples[index], "OrganicDorsalPlate") != null, "The %s organic family must expose a layered shell material break." % species_names[index])
         _expect(_find_named(enemy_samples[index], "TorsoCore") != null and _find_named(enemy_samples[index], "TorsoSegment0") != null, "The %s organic family must expose segmented high-definition torso anatomy." % species_names[index])
@@ -1668,7 +1864,8 @@ func _run_all() -> void:
             _expect(ventral_sheath != null and ventral_sheath.get_parent().name == "Torso" and _mesh_vertex_count(ventral_sheath) >= 1200, "The %s late-organic torso must carry a dense torso-parented ventral sheath so its rib layers read as one continuous living body." % species_names[index])
             if ventral_sheath != null and ventral_sheath.mesh != null:
                 _expect(ventral_sheath.mesh.get_aabb().size.z * ventral_sheath.scale.z >= 1.20 and absf(ventral_sheath.rotation.x) >= 1.40, "The %s ventral sheath must retain vertical folded coverage between the torso ribs after its upright presentation rotation." % species_names[index])
-            _expect(_find_named(enemy_samples[index], "OrganicFamilyAnatomyFinish") != null and _find_named(enemy_samples[index], "OrganicPulseRim") != null and _find_named(enemy_samples[index], "OrganicGrowthPlate") != null, "The %s authored family must expose a bounded living anatomy finish rather than a static shell." % species_names[index])
+            _expect(_find_named(enemy_samples[index], "OrganicFamilyAnatomyFinish") == null, "The %s authored family must not duplicate source-owned anatomy with a runtime finish overlay." % species_names[index])
+            _expect(authored_package != null and _find_named(authored_package, "OrganicPulseRim") != null and _find_named(authored_package, "OrganicGrowthPlate") != null, "The %s imported package must directly own its bounded living pulse and growth anatomy." % species_names[index])
             var dorsal_plate := _find_named(enemy_samples[index], "OrganicDorsalPlate") as Node3D
             var dorsal_mesh := _find_first_mesh(dorsal_plate)
             _expect(dorsal_mesh != null and _mesh_vertex_count(dorsal_mesh) >= 48, "The %s authored dorsal plate must retain the beveled close-camera edge treatment." % species_names[index])
@@ -1690,8 +1887,8 @@ func _run_all() -> void:
                 &"rootweaver": focal_anatomy_name = &"RootweaverRouteMask"
                 &"thornback": focal_anatomy_name = &"ThornbackFaceShield"
                 &"ashmantle": focal_anatomy_name = &"AshmantleThermalCollar"
-            var focal_anatomy := _find_named(enemy_samples[index], focal_anatomy_name) as Node3D
-            _expect(focal_anatomy != null and _find_first_mesh(focal_anatomy) != null, "The %s late-family focal organ must remain present as readable presentation anatomy." % species_names[index])
+            var focal_anatomy := _find_named(authored_package, focal_anatomy_name) as Node3D if authored_package != null else null
+            _expect(focal_anatomy != null and _find_first_mesh(focal_anatomy) != null, "The %s late-family focal organ must remain directly source-owned readable anatomy." % species_names[index])
             if species_names[index] == &"thornback":
                 var thornback_crown_depth := convex_sheet.mesh.get_aabb().size.y if convex_sheet != null and convex_sheet.mesh != null else 0.0
                 _expect(thornback_crown_depth >= 0.30, "The Thornback crown shield must retain folded living depth rather than collapsing into a thin plate.")
@@ -1714,22 +1911,64 @@ func _run_all() -> void:
         if species_names[index] == &"sporecaster":
             var spore_gill_fan := _find_named(enemy_samples[index], "SporecasterGillFan0") as Node3D
             _expect(spore_gill_fan != null and spore_gill_fan.scale.z >= 0.45, "The Sporecaster gill fan must retain presentation depth rather than collapsing into a flat horizontal membrane.")
-        _expect(_find_named(enemy_samples[index], "OrganicDeathPresentation") != null, "The %s organic family must expose a dedicated high-definition death presentation root." % species_names[index])
-        _expect(_find_named(enemy_samples[index], "OrganicDeathCarapace") != null and _find_named(enemy_samples[index], "OrganicDeathRootCollar") != null, "The %s death presentation must expose fractured shell and exposed root anatomy." % species_names[index])
-        _expect(_find_named(enemy_samples[index], "OrganicDeathShard00") != null and _find_named(enemy_samples[index], "OrganicDeathVein00") != null and _find_named(enemy_samples[index], "OrganicDeathSignal") != null, "The %s death presentation must expose shell shards, dead vascular channels and a spent signal core." % species_names[index])
+        var authored_torso := authored_package.find_child("Torso", true, false) as Node3D if authored_package != null else null
+        var damage_presentation := enemy_samples[index].get_node_or_null("OrganicDamagePresentation") as Node3D
+        var death_presentation := enemy_samples[index].get_node_or_null("OrganicDeathPresentation") as Node3D
         var tiered_sample := enemy_samples[index] as OrganicEnemyTiered3D
-        _expect(tiered_sample != null and _find_named(enemy_samples[index], "TierHighDefinitionDetail") != null, "The %s must expose the shared high-definition tier anatomy layer." % species_names[index])
-        if tiered_sample != null:
-            _expect(_find_named(enemy_samples[index], "TierDorsalPlate00") != null and _find_named(enemy_samples[index], "TierVascularChannelL00") != null and _find_named(enemy_samples[index], "TierVascularChannelR00") != null, "The %s must expose paired tier dorsal and vascular anatomy." % species_names[index])
-            _expect(_find_named(enemy_samples[index], "TierCrownRing") != null and _find_named(enemy_samples[index], "TierCrownNode00") != null, "The %s must expose the stable tier crown ring presentation socket." % species_names[index])
+        var tier_presentation := organic_model.get_node_or_null("TierSilhouette") as Node3D if organic_model != null else null
+        var tier_attachment := authored_torso.get_node_or_null("OrganicTierAttachment") as RemoteTransform3D if authored_torso != null else null
+        var damage_attachment := authored_torso.get_node_or_null("OrganicDamageAttachment") as RemoteTransform3D if authored_torso != null else null
+        var death_attachment := authored_torso.get_node_or_null("OrganicDeathAttachment") as RemoteTransform3D if authored_torso != null else null
+        _expect(authored_torso != null, "The %s authored package must expose its animated Torso attachment owner." % species_names[index])
+        _expect(tier_presentation != null and tier_presentation.get_parent() == organic_model, "The %s tier presentation must remain a runtime sibling outside the imported-PBR package." % species_names[index])
+        _expect(tier_presentation != null and str(tier_presentation.get_meta(&"attachment_mode", "")) == "authored_torso_remote" and str(tier_presentation.get_meta(&"tier_attachment_mode", "")) == "authored_torso_remote", "The %s tier presentation must use the shared authored-Torso remote attachment mode." % species_names[index])
+        _expect(tier_presentation != null and str(tier_presentation.get_meta(&"presentation_profile", "")) == "compact_authored_focal_signal", "The %s tier presentation must remain a compact authored-focal signal." % species_names[index])
+        _expect(tier_attachment != null and tier_attachment.get_node_or_null(tier_attachment.remote_path) == tier_presentation, "The %s Torso must own one meshless OrganicTierAttachment driving its runtime tier sibling." % species_names[index])
+        _expect(damage_presentation != null and str(damage_presentation.get_meta(&"attachment_mode", "")) == "authored_torso_remote" and str(damage_presentation.get_meta(&"presentation_profile", "")) == "authored_torso_surface_wounds", "The %s damage presentation must use shallow authored-Torso surface lesions." % species_names[index])
+        _expect(damage_attachment != null and damage_attachment.get_node_or_null(damage_attachment.remote_path) == damage_presentation, "The %s Torso must own one meshless OrganicDamageAttachment driving its runtime wound sibling." % species_names[index])
+        var damage_lesion := damage_presentation.get_node_or_null("OrganicDamageScar00") as Node3D if damage_presentation != null else null
+        _expect(damage_lesion != null and str(damage_lesion.get_meta(&"damage_profile", "")) == "shallow_authored_torso_lesion" and damage_lesion.get_node_or_null("OrganicDamageLesion00Rim") != null and damage_lesion.get_node_or_null("OrganicDamageLesion00Core") != null and damage_lesion.get_node_or_null("OrganicDamageLesion00Crack00") != null, "The %s damage layer must expose one bounded shallow lesion with tangent-plane cracks." % species_names[index])
+        _expect(death_presentation != null and str(death_presentation.get_meta(&"attachment_mode", "")) == "authored_torso_remote" and str(death_presentation.get_meta(&"presentation_profile", "")) == "authored_body_death_clip", "The %s death presentation must augment its authored body and Death clip instead of constructing a second corpse." % species_names[index])
+        _expect(death_attachment != null and death_attachment.get_node_or_null(death_attachment.remote_path) == death_presentation, "The %s Torso must own one meshless OrganicDeathAttachment driving its runtime mortality signal." % species_names[index])
+        var death_lesion := death_presentation.get_node_or_null("OrganicDeathLesion00") as Node3D if death_presentation != null else null
+        _expect(death_lesion != null and str(death_lesion.get_meta(&"damage_profile", "")) == "shallow_authored_torso_lesion" and death_lesion.get_node_or_null("OrganicDeathFailure00Rim") != null and death_lesion.get_node_or_null("OrganicDeathFailure00Core") != null and death_presentation.get_node_or_null("OrganicDeathSignal") != null, "The %s death presentation must use surface-bound cooling lesions and one restrained death signal." % species_names[index])
+        for retired_death_node in ["OrganicDeathCarapace", "OrganicDeathRootCollar", "OrganicDeathShard00", "OrganicDeathVein00"]:
+            _expect(_find_named(enemy_samples[index], retired_death_node) == null, "The %s death presentation must not recreate retired generic corpse node %s." % [species_names[index], retired_death_node])
+        _expect(tiered_sample != null and tier_presentation != null and tier_presentation.get_node_or_null("TierHighDefinitionDetail") != null, "The %s must expose the shared compact tier anatomy layer." % species_names[index])
+        if tiered_sample != null and tier_presentation != null:
+            var tier_detail := tier_presentation.get_node_or_null("TierHighDefinitionDetail") as Node3D
+            var tier_dorsal := tier_detail.get_node_or_null("TierDorsalPlate00") as Node3D if tier_detail != null else null
+            var tier_channel_l := tier_detail.get_node_or_null("TierVascularChannelL00") as MeshInstance3D if tier_detail != null else null
+            var tier_channel_r := tier_detail.get_node_or_null("TierVascularChannelR00") as MeshInstance3D if tier_detail != null else null
+            var tier_crown := tier_detail.get_node_or_null("TierCrownRing") as Node3D if tier_detail != null else null
+            var tier_crest := tier_detail.get_node_or_null("TierCrest_00") as MeshInstance3D if tier_detail != null else null
+            _expect(tier_dorsal != null and tier_channel_l != null and tier_channel_r != null, "The %s compact tier signal must expose one dorsal scute and one paired vascular channel." % species_names[index])
+            _expect(tier_crown != null and not (tier_crown is MeshInstance3D) and str(tier_crown.get_meta(&"mesh_policy", "")) == "meshless_signal_socket", "The %s TierCrownRing must remain a meshless signal socket rather than a broad torus." % species_names[index])
+            var tier_bud_count := tier_crown.find_children("TierCrownNode*", "MeshInstance3D", true, false).size() if tier_crown != null else 0
+            _expect(tier_bud_count >= 1 and tier_bud_count <= 4, "The %s tier focal must use one to four embedded signal buds, found %d." % [species_names[index], tier_bud_count])
+            _expect(tier_presentation.find_child("OrganicSurfaceSeam", true, false) == null, "The %s tier signal must not restore the retired generic surface seam." % species_names[index])
+            var tier_has_torus := false
+            for raw_tier_mesh in tier_presentation.find_children("*", "MeshInstance3D", true, false):
+                var tier_mesh := raw_tier_mesh as MeshInstance3D
+                if tier_mesh != null and tier_mesh.mesh is TorusMesh:
+                    tier_has_torus = true
+                    break
+            _expect(not tier_has_torus, "The %s tier signal must not add a broad torus around the authored body." % species_names[index])
+            var tier_crests := tier_presentation.find_children("TierCrest_*", "MeshInstance3D", true, false)
+            _expect(tier_crests.size() == 1 and tier_crest != null and tier_crest.mesh is SphereMesh and tier_crest.scale.y <= minf(tier_crest.scale.x, tier_crest.scale.z) * 0.30, "The %s tier signal must retain one flattened focal scute instead of extra vertical crest rods." % species_names[index])
+            if authored_torso != null:
+                var authored_torso_bounds := _visible_mesh_bounds(authored_torso, null, false)
+                var compact_tier_bounds := _visible_mesh_bounds(tier_presentation, null, false)
+                _expect(tier_presentation.global_transform.is_equal_approx(authored_torso.global_transform), "The %s tier sibling must copy the authored Torso transform exactly." % species_names[index])
+                _expect(compact_tier_bounds.intersects(authored_torso_bounds), "The %s tier focal signal must overlap the authored Torso instead of floating away from it." % species_names[index])
+                _expect(maxf(compact_tier_bounds.size.x, compact_tier_bounds.size.z) <= maxf(authored_torso_bounds.size.x, authored_torso_bounds.size.z) * 0.82 and compact_tier_bounds.size.y <= authored_torso_bounds.size.y * 0.62 + 0.04, "The %s tier focal signal must remain compact relative to its authored Torso." % species_names[index])
             var tier_animator := enemy_samples[index].get_node_or_null("ProceduralAnimator3D") as ProceduralAnimator3D
-            var tier_channel := _find_named(enemy_samples[index], "TierVascularChannelL00") as Node3D
-            if tier_animator != null and tier_channel != null:
-                var tier_before := tier_channel.transform
+            if tier_animator != null and tier_channel_l != null:
+                var tier_before := tier_channel_l.transform
                 tier_animator.idle_phase = 0.73
                 tier_animator._restore_base_transforms()
                 tier_animator._animate_organic(0.0)
-                _expect(tier_channel.transform != tier_before, "%s tier vascular channels must carry a visible living pulse." % species_names[index])
+                _expect(tier_channel_l.transform != tier_before, "%s tier vascular channels must carry a visible living pulse." % species_names[index])
         if species_names[index] == &"razorhound":
             _expect(_find_named(enemy_samples[index], "RazorhoundAuthoredModel") != null and _find_named(enemy_samples[index], "ProductionAssetMarker") != null, "The Razorhound must expose its authored production asset contract.")
         if species_names[index] in [&"skitterling", &"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle"]:
@@ -1737,17 +1976,21 @@ func _run_all() -> void:
             _expect(_find_named(enemy_samples[index], authored_marker_name) != null and _find_named(enemy_samples[index], "ProductionAssetMarker") != null, "The %s must expose its authored production asset contract." % species_names[index])
         if species_names[index] == &"veilstalker":
             _expect(_find_named(enemy_samples[index], "VeilstalkerCowlPlateL") != null and _find_named(enemy_samples[index], "VeilstalkerCowlPlateR") != null, "The Veilstalker must expose paired layered cowl brow plates for readable sensory anatomy.")
+            _expect(organic_model == null or organic_model.get_node_or_null("Torso") == null, "The Veilstalker runtime must not add a second torso beside its imported authored package.")
+            _expect(authored_package != null and _find_named(authored_package, "TorsoCore") != null, "The Veilstalker imported package must directly own its single torso core.")
         match species_names[index]:
             &"skitterling":
                 _expect(_find_named(enemy_samples[index], "SkitterlingCarapaceCap0") != null and _find_named(enemy_samples[index], "SkitterlingMandiblePlateL") != null, "The Skitterling must expose shell caps and mandible plates for close-camera readability.")
             &"burrower":
                 _expect(_find_named(enemy_samples[index], "BurrowerDrillFlute0") != null and _find_named(enemy_samples[index], "BurrowerLampGuardL") != null, "The Burrower must expose drill flutes and protected bore lamps.")
                 _expect(_find_named(enemy_samples[index], "BurrowerDrillCutter0") != null, "The Burrower must expose a readable four-tooth drill cutting crown.")
+                _expect(_find_named(enemy_samples[index], "BurrowerLegRootL0") != null and _find_named(enemy_samples[index], "BurrowerLegRootR0") != null, "The Burrower must expose paired armored leg-root collars where its limbs meet the thorax.")
             &"sporecaster":
                 _expect(_find_named(enemy_samples[index], "SporecasterGillRib0") != null and _find_named(enemy_samples[index], "SporecasterSacCap0") != null, "The Sporecaster must expose layered gill ribs and capped spore sacs.")
                 _expect(_find_named(enemy_samples[index], "SporecasterSacRim0") != null and _find_named(enemy_samples[index], "SporecasterSacPore0") != null, "The Sporecaster must expose layered sac rims and visible pore apertures for ranged-infestation readability.")
             &"broodmass":
                 _expect(_find_named(enemy_samples[index], "BroodmassLobeRidgeL") != null and _find_named(enemy_samples[index], "BroodmassMawCollar") != null and _find_named(enemy_samples[index], "BroodmassMawRidge") != null and _find_named(enemy_samples[index], "BroodmassMawLower") != null and _find_named(enemy_samples[index], "CrownFastener0") != null, "The Broodmass must expose layered lobe, throat, maw and crown hardware.")
+                _expect(_find_named(enemy_samples[index], "BroodmassLegRootL0") != null and _find_named(enemy_samples[index], "BroodmassLegRootR0") != null, "The Broodmass must expose paired armored leg-root collars where its limbs meet the thorax.")
             &"roofleaper":
                 _expect(_find_named(enemy_samples[index], "RoofleaperFineVeinL") != null and _find_named(enemy_samples[index], "RoofleaperFineVeinR") != null, "The Roofleaper must expose fine vascular wing detail on both membranes.")
                 _expect(_find_named(enemy_samples[index], "RoofleaperWingFrameL") != null and _find_named(enemy_samples[index], "RoofleaperWingFastenerR") != null, "The Roofleaper must expose structural wing spars and socket fasteners.")
@@ -1798,8 +2041,8 @@ func _run_all() -> void:
                 _expect(_find_named(enemy_samples[index], "RootweaverJawPlateL") != null and _find_named(enemy_samples[index], "RootweaverJawPlateR") != null, "The Rootweaver must expose paired folded jaw plates beneath its route-controller oculi.")
                 var rootweaver_thorax_collar := _find_named(enemy_samples[index], "RootweaverThoraxCollar") as MeshInstance3D
                 _expect(rootweaver_thorax_collar != null and rootweaver_thorax_collar.get_parent().name == "Torso" and _mesh_vertex_count(rootweaver_thorax_collar) >= 700, "The Rootweaver must carry a dense torso-parented route-controller collar so its focal face reads as attached anatomy.")
-                var rootweaver_route_keel := _find_named(enemy_samples[index], "RootweaverRouteKeel") as MeshInstance3D
-                _expect(rootweaver_route_keel != null and _mesh_vertex_count(rootweaver_route_keel) >= 96 and rootweaver_route_keel.get_parent().name == "OrganicFamilyAnatomyFinish", "The Rootweaver must expose a dense vertical route keel through its focal mask so the controller face does not collapse into horizontal bands.")
+                var rootweaver_route_keel := _find_named(authored_package, "RootweaverRouteKeel") as MeshInstance3D if authored_package != null else null
+                _expect(rootweaver_route_keel != null and _mesh_vertex_count(rootweaver_route_keel) >= 96, "The imported Rootweaver package must own a dense vertical route keel through its focal mask so the controller face does not collapse into horizontal bands.")
                 var rootweaver_fan := _find_named(enemy_samples[index], "RootweaverSporeFan") as Node3D
                 _expect(rootweaver_fan != null and absf(rootweaver_fan.basis.y.z) >= 0.18, "The Rootweaver spore fan must carry a raised authored cant so its route-control membrane reads as an elevated fan rather than a horizontal disc.")
             &"thornback":
@@ -1990,11 +2233,11 @@ func _run_all() -> void:
             _expect(not enemy_samples[index].is_alive(), "%s death must mark gameplay state dead immediately." % species_names[index])
             _expect(enemy_samples[index].death_presentation_remaining > 0.0, "%s death must retain a short presentation window." % species_names[index])
             _expect(_animation_clip_matches(authored_animation.active_clip, &"Death"), "%s death must select the authored Death clip." % species_names[index])
-            var death_presentation := _find_named(enemy_samples[index], "OrganicDeathPresentation") as Node3D
-            _expect(death_presentation != null and death_presentation.visible, "%s death must reveal its bounded failure presentation before cleanup." % species_names[index])
+            var active_death_presentation := _find_named(enemy_samples[index], "OrganicDeathPresentation") as Node3D
+            _expect(active_death_presentation != null and active_death_presentation.visible, "%s death must reveal its bounded failure presentation before cleanup." % species_names[index])
             enemy_samples[index].death_presentation_remaining = 0.0
             enemy_samples[index]._refresh_death_presentation()
-            _expect(death_presentation != null and not death_presentation.visible, "%s death presentation must hide when its existing cleanup window expires." % species_names[index])
+            _expect(active_death_presentation != null and not active_death_presentation.visible, "%s death presentation must hide when its existing cleanup window expires." % species_names[index])
         enemy_samples[index].queue_free()
 
     var razorhound_asset := RAZORHOUND_ASSET_SCENE.instantiate()
@@ -2002,8 +2245,8 @@ func _run_all() -> void:
     var skitterling_asset := SKITTERLING_ASSET_SCENE.instantiate()
     var roofleaper_asset := ROOFLEAPER_ASSET_SCENE.instantiate()
     var glassmoth_asset := GLASSMOTH_ASSET_SCENE.instantiate()
-    var razorhound_cheek := _find_named(razorhound_asset, "RazorhoundCheekPlate") as MeshInstance3D
-    var razorhound_brow := _find_named(razorhound_asset, "RazorhoundBrowGuard") as MeshInstance3D
+    var razorhound_cheek := _find_named(razorhound_asset, "RazorhoundCheekPlateL") as MeshInstance3D
+    var razorhound_brow := _find_named(razorhound_asset, "RazorhoundBrowGuardL") as MeshInstance3D
     var razorhound_muzzle := _find_named(razorhound_asset, "RazorhoundMuzzleGuard") as MeshInstance3D
     var razorhound_throat := _find_named(razorhound_asset, "RazorhoundThroatLobe") as MeshInstance3D
     var razorhound_nostril := _find_named(razorhound_asset, "RazorhoundNostrilL") as MeshInstance3D
@@ -2019,12 +2262,32 @@ func _run_all() -> void:
     var spore_spray_aperture := _find_named(sporecaster_asset, "SporecasterSprayAperture") as MeshInstance3D
     _expect(_mesh_vertex_count(_find_named(sporecaster_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(sporecaster_asset, "SporecasterGillFan0") as MeshInstance3D) >= 48 and _mesh_vertex_count(spore_sac_rim) >= 100 and _mesh_vertex_count(spore_sac_pore) >= 48, "The authored Sporecaster dorsal, gill and sac-aperture surfaces must retain beveled high-definition anatomy edges.")
     _expect(spore_spray_rim != null and spore_spray_aperture != null and spore_spray_rim.get_parent().name == "SporecasterCowl" and spore_spray_aperture.get_parent().name == "SporecasterCowl" and _mesh_vertex_count(spore_spray_aperture) >= 48, "The authored Sporecaster must retain a dense parented forward spray aperture and rim for infestation-role readability.")
+    var skitterling_dorsal := _find_named(skitterling_asset, "OrganicDorsalPlate") as MeshInstance3D
     var skitterling_fan := _find_named(skitterling_asset, "SkitterlingSensoryFan0") as MeshInstance3D
     var skitterling_head := _find_named(skitterling_asset, "SkitterlingHeadShield") as MeshInstance3D
     var skitterling_head_ridge := _find_named(skitterling_asset, "SkitterlingHeadRidge") as MeshInstance3D
-    _expect(_mesh_vertex_count(_find_named(skitterling_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(skitterling_fan) >= 500, "The authored Skitterling dorsal and sensory membranes must retain dense high-definition anatomy edges.")
+    _expect(_mesh_vertex_count(skitterling_dorsal) >= 48 and _mesh_vertex_count(skitterling_fan) >= 500, "The authored Skitterling dorsal and sensory membranes must retain dense high-definition anatomy edges.")
     _expect(skitterling_head != null and _mesh_vertex_count(skitterling_head) >= 500 and skitterling_head_ridge != null, "The authored Skitterling must retain a smooth cephalic shield and raised ridge for tactical-distance head readability.")
-    _expect(skitterling_fan != null and skitterling_fan.mesh.get_aabb().size.x >= 0.16, "The Skitterling sensory fans must retain closed rounded membrane volume rather than reading as thin bars.")
+    var skitterling_dorsal_bounds := skitterling_dorsal.transform * skitterling_dorsal.get_aabb() if skitterling_dorsal != null else AABB()
+    for index in range(4):
+        var sensory_fan := _find_named(skitterling_asset, "SkitterlingSensoryFan%d" % index) as MeshInstance3D
+        var sensory_rib := _find_named(skitterling_asset, "SkitterlingSensoryRib%d" % index) as MeshInstance3D
+        _expect(sensory_fan != null and sensory_rib != null and sensory_fan.get_parent().name == "Torso" and sensory_rib.get_parent().name == "Torso", "Skitterling sensory pair %d must remain attached beneath the animated authored Torso." % index)
+        if sensory_fan != null and sensory_fan.mesh != null:
+            var fan_mesh_size := sensory_fan.mesh.get_aabb().size
+            var fan_bounds := sensory_fan.transform * sensory_fan.get_aabb()
+            var fan_center := fan_bounds.get_center()
+            _expect(fan_mesh_size.x >= 0.26 and fan_mesh_size.x <= 0.30 and fan_mesh_size.y <= 0.06 and fan_mesh_size.z >= 0.18 and fan_mesh_size.z <= 0.22, "Skitterling sensory fan %d must remain a small broad flank vane instead of an upright ellipsoid." % index)
+            _expect(fan_bounds.size.y <= 0.075 and fan_bounds.end.y <= skitterling_dorsal_bounds.end.y - 0.20, "Skitterling sensory fan %d must stay materially below the dorsal shell crown with no towering vertical extent." % index)
+            _expect(absf(fan_center.x) >= 0.34 and absf(fan_center.x) <= 0.44 and fan_center.y >= 0.56 and fan_center.y <= 0.66 and fan_center.z >= -0.34 and fan_center.z <= 0.02, "Skitterling sensory fan %d must stay centered on the front/mid torso flank." % index)
+            _expect(absf(sensory_fan.basis.x.y) <= 0.0001, "Skitterling sensory fan %d must retain zero roll so its broad axis cannot become a vertical screen bar." % index)
+        if sensory_rib != null and sensory_rib.mesh != null:
+            var rib_mesh_size := sensory_rib.mesh.get_aabb().size
+            var rib_bounds := sensory_rib.transform * sensory_rib.get_aabb()
+            var rib_center := rib_bounds.get_center()
+            _expect(rib_mesh_size.x >= 0.14 and rib_mesh_size.x <= 0.18 and rib_mesh_size.y <= 0.035 and rib_mesh_size.z >= 0.03 and rib_mesh_size.z <= 0.05 and rib_bounds.size.y <= 0.04, "Skitterling sensory rib %d must remain a shallow lateral shell tie instead of a vertical bar." % index)
+            _expect(absf(rib_center.x) >= 0.28 and absf(rib_center.x) <= 0.36 and rib_center.y >= 0.54 and rib_center.y <= 0.63 and rib_center.z >= -0.34 and rib_center.z <= 0.02, "Skitterling sensory rib %d must lie against the same front/mid torso flank as its vane." % index)
+    _expect(_find_named(skitterling_asset, "SkitterlingSensoryFan4") == null and _find_named(skitterling_asset, "SkitterlingSensoryRib4") == null, "The Skitterling rear sensory frill must remain exactly two paired rows.")
     _expect(_mesh_vertex_count(_find_named(roofleaper_asset, "RoofleaperWingL") as MeshInstance3D) >= 700, "The authored Roofleaper wing must retain a dense swept membrane silhouette rather than a low-detail disc.")
     _expect(_mesh_vertex_count(_find_named(glassmoth_asset, "GlassmothWingL0") as MeshInstance3D) >= 700, "The authored Glassmoth wing must retain a dense swept membrane silhouette rather than a low-detail disc.")
     var glassmoth_wing := _find_named(glassmoth_asset, "GlassmothWingL0") as Node3D
@@ -2040,11 +2303,14 @@ func _run_all() -> void:
     var veilstalker_asset := VEILSTALKER_ASSET_SCENE.instantiate()
     var burrower_asset := BURROWER_ASSET_SCENE.instantiate()
     var broodmass_asset := BROODMASSS_ASSET_SCENE.instantiate()
-    _expect(_mesh_vertex_count(_find_named(veilstalker_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerDorsalPlate") as MeshInstance3D) >= 48, "The authored Veilstalker dorsal plates must retain beveled high-definition anatomy edges.")
+    _expect(_mesh_vertex_count(_find_named(veilstalker_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerDorsalPlate0") as MeshInstance3D) >= 48, "The authored Veilstalker dorsal plates must retain beveled high-definition anatomy edges.")
     var veilstalker_dorsal := _find_named(veilstalker_asset, "OrganicDorsalPlate") as MeshInstance3D
     _expect(veilstalker_dorsal != null and veilstalker_dorsal.mesh.get_aabb().size.y >= 0.28, "The Veilstalker dorsal plates must retain closed folded volume across the thorax rather than reading as rectangular bars.")
     _expect(_mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerMandibleL") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerCowlSpineL") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(veilstalker_asset, "VeilstalkerCowlPlateL") as MeshInstance3D) >= 48, "The authored Veilstalker must retain dense mouth, cowl and layered brow silhouette hardware.")
+    var burrower_leg_root_l := _find_named(burrower_asset, "BurrowerLegRootL0") as MeshInstance3D
+    var burrower_leg_root_r := _find_named(burrower_asset, "BurrowerLegRootR0") as MeshInstance3D
     _expect(_mesh_vertex_count(_find_named(burrower_asset, "OrganicDorsalPlate") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(burrower_asset, "BurrowerLampGuardL") as MeshInstance3D) >= 48 and _mesh_vertex_count(_find_named(burrower_asset, "BurrowerDrillCutter0") as MeshInstance3D) >= 24, "The authored Burrower dorsal, lamp guards and drill cutters must retain beveled high-definition anatomy edges.")
+    _expect(burrower_leg_root_l != null and burrower_leg_root_r != null and _mesh_vertex_count(burrower_leg_root_l) >= 56 and _mesh_vertex_count(burrower_leg_root_r) >= 56 and burrower_leg_root_l.get_parent().name == "Torso" and burrower_leg_root_r.get_parent().name == "Torso", "The authored Burrower leg-root collars must retain dense paired geometry parented to the thorax so the limbs read as attached anatomy.")
     var broodmass_dorsal := _find_named(broodmass_asset, "OrganicDorsalPlate") as MeshInstance3D
     var broodmass_maw_plate := _find_named(broodmass_asset, "BroodmassMawPlate") as MeshInstance3D
     var broodmass_maw_collar := _find_named(broodmass_asset, "BroodmassMawCollar") as MeshInstance3D
@@ -2053,6 +2319,9 @@ func _run_all() -> void:
     _expect(broodmass_dorsal != null and broodmass_dorsal.mesh.get_aabb().size.y >= 0.30 and broodmass_maw_plate != null and broodmass_maw_plate.mesh.get_aabb().size.y >= 0.30, "The authored Broodmass dorsal and maw plates must retain closed folded volume rather than broad horizontal sheets.")
     _expect(broodmass_maw_collar != null and _mesh_vertex_count(broodmass_maw_collar) >= 500 and broodmass_maw_collar.mesh.get_aabb().size.y >= 0.24 and broodmass_maw_collar.get_parent().name == "BroodmassMaw", "Broodmass's maw must retain a dense folded throat collar parented to the animated maw socket.")
     _expect(broodmass_maw_lower != null and _mesh_vertex_count(broodmass_maw_lower) >= 500 and broodmass_maw_lower.mesh.get_aabb().size.y >= 0.20 and broodmass_maw_lower.get_parent().name == "BroodmassMaw", "Broodmass's lower maw must retain a dense folded shell with readable depth on the animated maw socket.")
+    var broodmass_leg_root_l := _find_named(broodmass_asset, "BroodmassLegRootL0") as MeshInstance3D
+    var broodmass_leg_root_r := _find_named(broodmass_asset, "BroodmassLegRootR0") as MeshInstance3D
+    _expect(broodmass_leg_root_l != null and broodmass_leg_root_r != null and _mesh_vertex_count(broodmass_leg_root_l) >= 64 and _mesh_vertex_count(broodmass_leg_root_r) >= 64 and broodmass_leg_root_l.get_parent().name == "Torso" and broodmass_leg_root_r.get_parent().name == "Torso", "The authored Broodmass leg-root collars must retain dense paired geometry parented to the thorax so its limbs read as attached anatomy.")
     var broodmass_rib := _find_named(broodmass_asset, "BroodmassThoraxRib0") as MeshInstance3D
     _expect(broodmass_rib != null and _mesh_vertex_count(broodmass_rib) >= 200 and absf(broodmass_rib.rotation.z) >= 1.4, "The authored Broodmass thorax ribs must retain dense rounded struts rather than horizontal flat bars.")
     veilstalker_asset.queue_free()
@@ -2111,9 +2380,9 @@ func _run_all() -> void:
         _expect(veilstalker.find_child("VeilstalkerCowl", true, false) != null, "The Veilstalker must expose a distinct sensory crown silhouette.")
         _expect(veilstalker.find_child("VeilstalkerMandibleL", true, false) != null and veilstalker.find_child("VeilstalkerMandibleR", true, false) != null, "The Veilstalker must expose paired attack mandibles.")
         _expect(veilstalker.find_child("VeilstalkerCowlSpineL", true, false) != null and veilstalker.find_child("VeilstalkerCowlSpineR", true, false) != null, "The Veilstalker must expose paired cowl spines.")
-        _expect(veilstalker.find_child("VeilstalkerVeil", true, false) != null, "The Veilstalker must expose layered membrane anatomy.")
-        _expect(veilstalker.find_child("VeilstalkerTendril", true, false) != null, "The Veilstalker must expose readable sensory tendrils.")
-        _expect(veilstalker.find_child("VeilstalkerThoraxDorsalRib", true, false) != null, "The Veilstalker must expose a ribbed high-detail thorax construction.")
+        _expect(veilstalker.find_child("VeilstalkerVeilL", true, false) != null and veilstalker.find_child("VeilstalkerVeilR", true, false) != null, "The Veilstalker must expose paired layered membrane anatomy.")
+        _expect(veilstalker.find_child("VeilstalkerTendril0", true, false) != null, "The Veilstalker must expose readable sensory tendrils.")
+        _expect(veilstalker.find_child("VeilstalkerThoraxDorsalRib0", true, false) != null, "The Veilstalker must expose a ribbed high-detail thorax construction.")
         _expect(veilstalker.find_child("VeilstalkerAuthoredModel", true, false) != null and _find_named(veilstalker, "ProductionAssetMarker") != null, "The Veilstalker must expose its authored production asset contract.")
 
     var beautiful_hud := get_first_node_in_group("beautiful_hud")
@@ -2374,6 +2643,83 @@ func _find_named(root: Node, node_name: String) -> Node:
     return root.find_child(node_name, true, false)
 
 
+func _visible_mesh_bounds(root_node: Node, excluded_subtree: Node = null, visible_only: bool = true) -> AABB:
+    var combined := AABB()
+    var has_bounds := false
+    if root_node == null:
+        return combined
+    for raw_mesh in root_node.find_children("*", "MeshInstance3D", true, false):
+        var mesh_instance := raw_mesh as MeshInstance3D
+        if mesh_instance == null or mesh_instance.mesh == null or (visible_only and not mesh_instance.is_visible_in_tree()):
+            continue
+        if excluded_subtree != null and (mesh_instance == excluded_subtree or excluded_subtree.is_ancestor_of(mesh_instance)):
+            continue
+        var transformed := mesh_instance.global_transform * mesh_instance.get_aabb()
+        combined = transformed if not has_bounds else combined.merge(transformed)
+        has_bounds = true
+    return combined
+
+
+func _find_asset_package(node: Node, asset_id: StringName) -> Node3D:
+    if node == null or not is_instance_valid(node):
+        return null
+    if node is Node3D and _node_asset_id(node) == asset_id:
+        return node as Node3D
+    for child in node.get_children():
+        var found := _find_asset_package(child as Node, asset_id)
+        if found != null:
+            return found
+    return null
+
+
+func _asset_package_count(node: Node, asset_id: StringName) -> int:
+    if node == null or not is_instance_valid(node):
+        return 0
+    var count := 1 if _node_asset_id(node) == asset_id else 0
+    for child in node.get_children():
+        count += _asset_package_count(child as Node, asset_id)
+    return count
+
+
+func _node_asset_id(node: Node) -> StringName:
+    var direct_id := StringName(str(node.get_meta(&"ironwright_asset_id", &"")))
+    if direct_id != &"":
+        return direct_id
+    for metadata_key in [&"extras.ironwright_asset_id", &"extras/ironwright_asset_id"]:
+        var imported_id := StringName(str(node.get_meta(metadata_key, &"")))
+        if imported_id != &"":
+            return imported_id
+    var extras := node.get_meta(&"extras", {}) as Dictionary
+    return StringName(str(extras.get("ironwright_asset_id", "")))
+
+
+func _count_named(root: Node, node_name: String) -> int:
+    if root == null or not is_instance_valid(root):
+        return 0
+    var count := 1 if String(root.name) == node_name else 0
+    for child in root.get_children():
+        count += _count_named(child as Node, node_name)
+    return count
+
+
+func _node_names_are_unique(root: Node) -> bool:
+    if root == null or not is_instance_valid(root):
+        return false
+    var seen := {}
+    return _collect_unique_node_names(root, seen)
+
+
+func _collect_unique_node_names(node: Node, seen: Dictionary) -> bool:
+    var node_name := String(node.name)
+    if node_name.is_empty() or seen.has(node_name):
+        return false
+    seen[node_name] = true
+    for child in node.get_children():
+        if not _collect_unique_node_names(child as Node, seen):
+            return false
+    return true
+
+
 func _animation_player_has_clip(player: AnimationPlayer, clip_name: StringName) -> bool:
     if player.has_animation(clip_name):
         return true
@@ -2399,6 +2745,44 @@ func _animation_player_track_count(player: AnimationPlayer, clip_name: StringNam
     return animation.get_track_count() if animation != null else 0
 
 
+func _resolve_animation_clip(player: AnimationPlayer, clip_name: StringName) -> StringName:
+    if player == null:
+        return &""
+    if player.has_animation(clip_name):
+        return clip_name
+    for candidate in player.get_animation_list():
+        var candidate_text := String(candidate)
+        if candidate_text.ends_with("/" + String(clip_name)) or candidate_text.ends_with(String(clip_name)):
+            return StringName(candidate_text)
+    return &""
+
+
+func _animation_player_target_names(player: AnimationPlayer, clip_name: StringName) -> Array[StringName]:
+    var targets: Array[StringName] = []
+    if player == null:
+        return targets
+    var resolved := clip_name
+    if not player.has_animation(resolved):
+        for candidate in player.get_animation_list():
+            var candidate_text := String(candidate)
+            if candidate_text.ends_with("/" + String(clip_name)) or candidate_text.ends_with(String(clip_name)):
+                resolved = StringName(candidate_text)
+                break
+    if not player.has_animation(resolved):
+        return targets
+    var animation := player.get_animation(resolved)
+    if animation == null:
+        return targets
+    for track_index in range(animation.get_track_count()):
+        var track_path := animation.track_get_path(track_index)
+        if track_path.get_name_count() <= 0:
+            continue
+        var target_name := track_path.get_name(track_path.get_name_count() - 1)
+        if target_name not in targets:
+            targets.append(target_name)
+    return targets
+
+
 func _animation_clip_matches(active_clip: StringName, clip_name: StringName) -> bool:
     return String(active_clip).ends_with("/" + String(clip_name)) or String(active_clip).ends_with(String(clip_name))
 
@@ -2409,7 +2793,7 @@ func _family_attack_signature_node(species: StringName) -> StringName:
         &"razorhound": return &"RazorhoundSnout"
         &"roofleaper": return &"RoofleaperWingL"
         &"glassmoth": return &"GlassmothWingL0"
-        &"veilstalker": return &"VeilstalkerVeil"
+        &"veilstalker": return &"VeilstalkerVeilL"
         &"burrower": return &"BurrowerDrill"
         &"sporecaster": return &"SporecasterSac0"
         &"broodmass": return &"BroodmassMaw"
@@ -2481,9 +2865,9 @@ func _enemy_model_has_details(enemy: OrganicEnemy3D, species: StringName) -> boo
         &"skitterling":
             return _find_named(enemy, "SkitterlingCarapace0") != null and _find_named(enemy, "SkitterlingAntennaL") != null and _find_named(enemy, "SkitterlingMandibleL") != null
         &"razorhound":
-            return _find_named(enemy, "RazorhoundSnout") != null and _find_named(enemy, "RazorhoundTail") != null and _find_named(enemy, "RazorhoundSpine") != null
+            return _find_named(enemy, "RazorhoundSnout") != null and _find_named(enemy, "RazorhoundTail") != null and _find_named(enemy, "RazorhoundSpine0") != null
         &"veilstalker":
-            return _find_named(enemy, "VeilstalkerCowl") != null and _find_named(enemy, "VeilstalkerVeil") != null and _find_named(enemy, "VeilstalkerTendril") != null
+            return _find_named(enemy, "VeilstalkerCowl") != null and _find_named(enemy, "VeilstalkerVeilL") != null and _find_named(enemy, "VeilstalkerTendril0") != null
         &"burrower":
             return _find_named(enemy, "BurrowerDrill") != null and _find_named(enemy, "BurrowerTip") != null and _find_named(enemy, "BurrowerLampL") != null
         &"sporecaster":

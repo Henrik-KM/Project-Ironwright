@@ -33,13 +33,14 @@
       "display_name": "The Machines Remember",
       "source_name": "Run-level machine thread",
       "sequence": 6,
-      "record_ids": [
-        "story.machine.bulwark",
-        "story.west_grid.reroute",
-        "story.east_tenements.bridge",
-        "story.tram_graveyard.last_route",
-        "story.outpost.first_relay",
-        "story.machine.first_return"
+        "record_ids": [
+          "story.machine.bulwark",
+          "story.machine.first_salvage",
+          "story.west_grid.reroute",
+          "story.east_tenements.bridge",
+          "story.tram_graveyard.last_route",
+          "story.outpost.first_relay",
+          "story.machine.first_return"
       ],
       "stages": [
         {
@@ -386,6 +387,16 @@
       "display_name": "The Signal That Came Home",
       "source_name": "Field casualty recovery",
       "description": "The disabled frame was not replaced from memory. A formation followed its last signal, carried the wounded machine through the town, and made room for it beside the Heartforge again."
+    },
+    {
+      "id": "story.machine.first_salvage",
+      "arc": "machine_witness",
+      "trigger": "operation_state",
+      "trigger_id": "salvage:complete",
+      "sequence": 87,
+      "display_name": "The First Shared Load",
+      "source_name": "Opening salvage network",
+      "description": "The first salvage group returned with a load no single frame could have carried alone. The wreck was still a place in the town, but its scrap had become the machine society's first shared responsibility."
     },
     {
       "id": "story.endgame.severance",

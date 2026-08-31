@@ -65,6 +65,9 @@ func _run_all() -> void:
     world.outpost_director.operation_changed.emit(&"outpost_rebuild", &"complete", "")
     _expect(archive.has_record(&"story.outpost.returned_signal"), "An automatic rebuild must unlock the returned-signal record.")
 
+    world.autonomy_director.operation_changed.emit(&"salvage", &"complete", "")
+    _expect(archive.has_record(&"story.machine.first_salvage"), "The first autonomous salvage return must unlock a durable machine-witness record.")
+
     _expect(world.region_director.discover_region(&"region.west_grid"), "The West Grid discovery must be available for machine-thread feedback coverage.")
     _expect(world.region_director.discover_region(&"region.east_tenements"), "The East Tenements discovery must be available for machine-thread feedback coverage.")
     _expect(thread_advances.any(func(thread_id: StringName) -> bool: return thread_id == &"machine_witness"), "Crossing a real machine-witness chapter must emit bounded live story feedback.")

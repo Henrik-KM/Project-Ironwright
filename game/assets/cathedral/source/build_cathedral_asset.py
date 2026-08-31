@@ -25,7 +25,7 @@ def add_torus(
     material: int,
     major_segments: int = 48,
     minor_segments: int = 8,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int, int]:
     """Build a dense circular iron rim for the front rose-window silhouette."""
     positions: list[float] = []
     normals: list[float] = []
@@ -59,7 +59,7 @@ def add_gable_prism(
     height: float,
     depth: float,
     material: int,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int, int]:
     """Build a compact triangular nave gable with a closed stone volume."""
     half_width = max(0.001, float(half_width))
     height = max(0.001, float(height))
@@ -105,9 +105,9 @@ def main() -> None:
     ]
     meshes: list[dict] = []
 
-    def mesh(name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
-        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
+    def mesh(name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        position, normal, uv, tangent, indices, material = geometry
+        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
     stone, brick, iron, blue_glass, rose_glass, membrane, warm = range(7)

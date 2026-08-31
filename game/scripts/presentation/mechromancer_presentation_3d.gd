@@ -27,6 +27,11 @@ func _ready() -> void:
     if subject == null:
         set_process(false)
         return
+    if subject is Mechromancer3D:
+        # Presentation may attach after the actor emitted its initial health
+        # signal. Seed the comparison baseline so the first real damage event
+        # selects Hit instead of being mistaken for initialization.
+        last_health = (subject as Mechromancer3D).current_health
     model_root = subject.get_node_or_null("MechromancerModel") as Node3D
     if model_root != null:
         animation_player = _find_animation_player(model_root)

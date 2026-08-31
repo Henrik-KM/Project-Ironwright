@@ -26,6 +26,23 @@ const FALLBACK_TIER_CONFIGS: Dictionary = {
     5: {"display_name": "Apex", "intelligence_label": "regional strategic predator", "behaviour_profile": "apex", "health_multiplier": 1.18, "damage_multiplier": 1.16, "speed_multiplier": 1.04, "detection_multiplier": 1.28},
 }
 
+const TIER_SIGNAL_PROFILES: Dictionary = {
+    &"skitterling": {"height": 0.82, "forward": -0.22, "spread": 0.13},
+    &"razorhound": {"height": 0.80, "forward": -0.28, "spread": 0.16},
+    &"roofleaper": {"height": 0.78, "forward": -0.16, "spread": 0.12},
+    &"glassmoth": {"height": 0.77, "forward": -0.12, "spread": 0.10},
+    &"veilstalker": {"height": 0.84, "forward": -0.27, "spread": 0.15},
+    &"burrower": {"height": 0.79, "forward": -0.30, "spread": 0.14},
+    &"sporecaster": {"height": 0.82, "forward": -0.03, "spread": 0.17},
+    &"broodmass": {"height": 0.83, "forward": -0.08, "spread": 0.18},
+    &"miremaw": {"height": 0.81, "forward": -0.25, "spread": 0.18},
+    &"carrionbell": {"height": 0.87, "forward": -0.04, "spread": 0.15},
+    &"rootweaver": {"height": 0.85, "forward": -0.16, "spread": 0.17},
+    &"thornback": {"height": 0.80, "forward": -0.20, "spread": 0.15},
+    &"ashmantle": {"height": 0.84, "forward": -0.10, "spread": 0.16},
+    &"apex": {"height": 0.86, "forward": -0.27, "spread": 0.20},
+}
+
 var enemy_tier: int = 1
 var tier_profile: StringName = &"feral"
 var tier_display_name: String = "Feral"
@@ -34,6 +51,7 @@ var tier_config_data: Dictionary = {}
 var _tier_base_species: StringName = &""
 var _tier_base_stats: Dictionary = {}
 var _tier_visual_root: Node3D
+var _tier_attachment_anchor: RemoteTransform3D
 var _requested_ecology_directive: StringName = &""
 
 
@@ -236,6 +254,9 @@ func _refresh_visuals() -> void:
 
 
 func _clear_tier_visuals() -> void:
+    if _tier_attachment_anchor != null and is_instance_valid(_tier_attachment_anchor):
+        _tier_attachment_anchor.free()
+    _tier_attachment_anchor = null
     if _tier_visual_root != null and is_instance_valid(_tier_visual_root):
         _tier_visual_root.free()
     _tier_visual_root = null
@@ -246,7 +267,26 @@ func _build_tier_visuals() -> void:
         return
     _tier_visual_root = Node3D.new()
     _tier_visual_root.name = "TierSilhouette"
+    _tier_visual_root.set_meta(&"release_material_family", &"chitin")
+    _tier_visual_root.set_meta(&"presentation_profile", "compact_authored_focal_signal")
     _model_root.add_child(_tier_visual_root)
+    var authored_torso := _resolve_authored_torso()
+    _tier_attachment_anchor = _attach_authored_runtime_presentation(
+        _tier_visual_root,
+        &"OrganicTierAttachment"
+    )
+    if authored_torso == null or _tier_attachment_anchor == null:
+        return
+    _tier_visual_root.set_meta(&"tier_attachment_mode", "authored_torso_remote")
+    var torso_bounds := _authored_torso_local_bounds(authored_torso)
+    if torso_bounds.size.length_squared() <= 0.000001:
+        _tier_visual_root.visible = false
+        _tier_visual_root.set_meta(&"presentation_profile", "missing_authored_torso_bounds")
+        push_error("Organic tier presentation cannot resolve authored bounds for %s." % String(species))
+        return
+    _tier_visual_root.set_meta(&"authored_torso_bounds_position", torso_bounds.position)
+    _tier_visual_root.set_meta(&"authored_torso_bounds_size", torso_bounds.size)
+
     var tier_colors := {
         1: Color("9e7046"),
         2: Color("d68a48"),
@@ -258,12 +298,6 @@ func _build_tier_visuals() -> void:
     var tier_detail := Node3D.new()
     tier_detail.name = "TierHighDefinitionDetail"
     _tier_visual_root.add_child(tier_detail)
-    # Keep the tier shell grounded in its surface shading. The previous pass
-    # made every crest and vascular channel emissive, which flattened the
-    # authored family forms in the close gallery and made late tiers read like
-    # glowing toy pieces. Reserve the signal treatment for the narrow living
-    # channels and crown nodes so the anatomy carries the silhouette while the
-    # tier remains legible at tactical distance.
     var crest_material := ModelKit3D.material(tier_color.darkened(0.52), 0.12, 0.68)
     var channel_material := ModelKit3D.material(
         tier_color.darkened(0.30),
@@ -281,99 +315,75 @@ func _build_tier_visuals() -> void:
     )
     var bone := ModelKit3D.material(Color("a69678"), 0.0, 0.76)
 
-    # The tier read is carried by anatomy rather than a floating icon: a
-    # compact dorsal series and paired vascular channels make population
-    # pressure legible at the tactical camera without changing the actor's
-    # collision or simulation state.
-    # Tier anatomy is a restrained biological accent, not a second skeleton.
-    # The previous dorsal plate series filled the close gallery with repeated
-    # bars that read as a cage over the authored shell. Keep one short spine,
-    # adding a paired cue only for strategic and apex tiers.
-    var dorsal_count := 1 + int(enemy_tier >= 4)
-    for index in range(dorsal_count):
-        var dorsal_z := 0.0 if dorsal_count == 1 else (-0.24 if index == 0 else 0.24)
-        var dorsal_y := 1.42 + float(enemy_tier) * 0.06
-        ModelKit3D.add_capsule(
-            tier_detail,
-            0.032 + float(enemy_tier) * 0.006,
-            0.30 + float(enemy_tier) * 0.05,
-            Vector3(0.0, dorsal_y, dorsal_z),
-            crest_material,
-            Vector3(0.18 + float(index) * 0.12, 0.0, 0.0),
-            "TierDorsalPlate%02d" % index
-        )
+    # Each family keeps its authored silhouette. Tier communication is a small
+    # living cluster placed from that family's actual Torso bounds: one shallow
+    # scute, two short surface veins and one-to-four embedded signal buds. No
+    # ring, cage or vertical rods are added, so tier readability never becomes
+    # a second generic skeleton over the source art.
+    var profile: Dictionary = TIER_SIGNAL_PROFILES.get(species, {"height": 0.82, "forward": -0.16, "spread": 0.15})
+    var center := torso_bounds.get_center()
+    var focal_y := torso_bounds.position.y + torso_bounds.size.y * float(profile.get("height", 0.82))
+    var focal_z := center.z + torso_bounds.size.z * float(profile.get("forward", -0.16))
+    var shortest_surface_extent := minf(torso_bounds.size.x, torso_bounds.size.z)
+    var plate_radius := clampf(shortest_surface_extent * 0.105, 0.075, 0.24)
+    var bud_radius := clampf(shortest_surface_extent * 0.034, 0.024, 0.10)
+    var side_spread := torso_bounds.size.x * float(profile.get("spread", 0.15))
 
-    # A restrained oval seam gives every active tiered shell one continuous
-    # biological edge treatment. It sits in the presentation layer only, so
-    # the imported family meshes, collision, LOD and simulation remain intact.
-    var surface_seam := ModelKit3D.add_torus(
+    ModelKit3D.add_organic_plate(
         tier_detail,
-        0.54 + float(enemy_tier) * 0.035,
-        0.018 + float(enemy_tier) * 0.003,
-        Vector3(0.0, 1.03 + float(enemy_tier) * 0.045, 0.04),
-        channel_material,
-        Vector3.ZERO,
-        "OrganicSurfaceSeam",
-        48,
-        8
+        plate_radius,
+        Vector3(center.x, focal_y, focal_z + torso_bounds.size.z * 0.10),
+        crest_material,
+        bone,
+        Vector3(1.42, 0.24, 1.06),
+        "TierDorsalPlate00",
+        false
     )
-    surface_seam.scale = Vector3(1.28, 0.62, 1.0)
-
-    var channel_count := 1 + mini(int(enemy_tier / 2), 2)
     for side in [-1.0, 1.0]:
         var side_label := "L" if side < 0.0 else "R"
-        for index in range(channel_count):
-            var fraction := float(index) / float(maxi(1, channel_count - 1))
-            var channel_z := lerpf(-0.58, 0.58, fraction)
-            var channel_y := 0.91 + float(enemy_tier) * 0.045 + sin(fraction * PI) * 0.08
-            ModelKit3D.add_capsule(
-                tier_detail,
-                0.014 + float(enemy_tier) * 0.003,
-                0.25 + float(enemy_tier) * 0.045,
-                Vector3(side * (0.28 + float(enemy_tier) * 0.045), channel_y, channel_z),
-                channel_material,
-                Vector3(PI * 0.5, 0.0, 0.0),
-                "TierVascularChannel%s%02d" % [side_label, index]
-            )
-
-    var crown_ring := Node3D.new()
-    crown_ring.name = "TierCrownRing"
-    crown_ring.position = Vector3(0.0, 1.52 + float(enemy_tier) * 0.1, 0.0)
-    tier_detail.add_child(crown_ring)
-    var crown_count := 4 + enemy_tier
-    for index in range(crown_count):
-        var angle := TAU * float(index) / float(crown_count)
-        ModelKit3D.add_sphere(
-            crown_ring,
-            0.034 + float(enemy_tier) * 0.007,
-            Vector3(cos(angle) * (0.22 + float(enemy_tier) * 0.035), 0.0, sin(angle) * (0.22 + float(enemy_tier) * 0.035)),
-            signal_material,
-            Vector3(1.0, 0.66, 1.0),
-            "TierCrownNode%02d" % index
-        )
-
-    # A few short crown spines give higher tiers a living silhouette cue. They
-    # are deliberately shorter and sparser than the old vertical rods.
-    var crest_count := 1 + mini(2, int((enemy_tier + 1) / 2))
-    for index in range(crest_count):
-        var z := -0.48 + float(index) * 0.48
         ModelKit3D.add_capsule(
             tier_detail,
-            0.032 + float(enemy_tier) * 0.006,
-            0.26 + float(enemy_tier) * 0.07,
-            Vector3(0.0, 1.30 + float(enemy_tier) * 0.08, z),
-            bone,
-            Vector3(0.42 + float(index % 2) * 0.12, 0.0, 0.0),
-            "TierCrest_%02d" % index
+            clampf(bud_radius * 0.24, 0.006, 0.022),
+            clampf(shortest_surface_extent * 0.22, 0.16, 0.52),
+            Vector3(center.x + side * side_spread, focal_y - torso_bounds.size.y * 0.035, focal_z + torso_bounds.size.z * 0.04),
+            channel_material,
+            Vector3(PI * 0.5, side * 0.18, 0.0),
+            "TierVascularChannel%s00" % side_label
         )
-    for index in range(enemy_tier - 1):
-        var angle := TAU * float(index) / float(maxi(1, enemy_tier - 1))
+
+    var crown_socket := Node3D.new()
+    crown_socket.name = "TierCrownRing"
+    crown_socket.position = Vector3(center.x, focal_y + torso_bounds.size.y * 0.015, focal_z - torso_bounds.size.z * 0.08)
+    crown_socket.set_meta(&"mesh_policy", "meshless_signal_socket")
+    tier_detail.add_child(crown_socket)
+    var crown_count := 1 + mini(enemy_tier - 1, 3)
+    for index in range(crown_count):
+        var offset := float(index) - float(crown_count - 1) * 0.5
+        ModelKit3D.add_sphere(
+            crown_socket,
+            bud_radius,
+            Vector3(offset * bud_radius * 2.35, -absf(offset) * bud_radius * 0.12, 0.0),
+            signal_material,
+            Vector3(1.0, 0.48, 1.16),
+            "TierCrownNode%02d" % index
+        )
+    ModelKit3D.add_sphere(
+        tier_detail,
+        plate_radius * 0.46,
+        Vector3(center.x, focal_y - torso_bounds.size.y * 0.012, focal_z + torso_bounds.size.z * 0.20),
+        crest_material,
+        Vector3(1.34, 0.24, 1.58),
+        "TierCrest_00"
+    )
+    var signal_count := mini(maxi(enemy_tier - 1, 0), 2)
+    for index in range(signal_count):
+        var side := -1.0 if index % 2 == 0 else 1.0
         ModelKit3D.add_sphere(
             tier_detail,
-            0.07 + float(enemy_tier) * 0.018,
-            Vector3(cos(angle) * 0.48, 1.05 + float(enemy_tier) * 0.09, sin(angle) * 0.48),
-            crest_material,
-            Vector3.ONE,
+            bud_radius * 0.82,
+            Vector3(center.x + side * side_spread * 0.72, focal_y - torso_bounds.size.y * 0.025, focal_z + torso_bounds.size.z * 0.17),
+            signal_material,
+            Vector3(1.0, 0.44, 1.12),
             "TierSignal_%02d" % index
         )
 

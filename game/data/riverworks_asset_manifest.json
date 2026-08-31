@@ -4,6 +4,7 @@
   "kind": "world_landmark",
   "source": "game/assets/riverworks/source/build_riverworks_asset.py",
   "runtime_model": "game/assets/riverworks/riverworks.gltf",
+  "material_workflow": "shared_uv_tangent_pbr_geometry",
   "required_nodes": [
     "RiverworksModel",
     "RiverworksPumpCore",

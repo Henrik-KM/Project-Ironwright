@@ -25,7 +25,7 @@ def add_parabolic_dish(
     material: int,
     sides: int = 36,
     rings: int = 6,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int, int]:
     """Build a shallow, smooth signal bowl with a readable concave profile."""
     sides = max(24, sides)
     rings = max(3, rings)
@@ -65,12 +65,21 @@ def add_parabolic_dish(
             ])
 
     position_min, position_max = vec_min_max(zip(*[iter(positions)] * 3))
+    # The dish is generated locally rather than through the shared primitive
+    # helpers, so provide the same stable UV/tangent contract explicitly.
+    uvs: list[float] = []
+    tangents: list[float] = []
+    for index in range(0, len(positions), 3):
+        uvs.extend([0.5 + positions[index] / max(radius * 2.0, 0.001), 0.5 + positions[index + 2] / max(radius * 2.0, 0.001)])
+        tangents.extend([1.0, 0.0, 0.0, 1.0])
     position_accessor = builder.accessor(
         positions, 5126, "VEC3", len(positions) // 3, 34962, position_min, position_max
     )
     normal_accessor = builder.accessor(normals, 5126, "VEC3", len(normals) // 3, 34962)
+    uv_accessor = builder.accessor(uvs, 5126, "VEC2", len(uvs) // 2, 34962)
+    tangent_accessor = builder.accessor(tangents, 5126, "VEC4", len(tangents) // 4, 34962)
     index_accessor = builder.accessor(indices, 5123, "SCALAR", len(indices), 34963)
-    return position_accessor, normal_accessor, index_accessor, material
+    return position_accessor, normal_accessor, uv_accessor, tangent_accessor, index_accessor, material
 
 
 def main() -> None:
@@ -84,11 +93,11 @@ def main() -> None:
     ]
     meshes: list[dict] = []
 
-    def mesh(name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
+    def mesh(name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        position, normal, uv, tangent, indices, material = geometry
         meshes.append({
             "name": name,
-            "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}],
+            "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent}, "indices": indices, "material": material}],
         })
         return len(meshes) - 1
 
@@ -107,6 +116,7 @@ def main() -> None:
         "Optic": mesh("Optic", add_uv_sphere(builder, 0.085, cyan)),
         "Mast": mesh("Mast", add_cylinder(builder, 0.07, 1.18, rubber, 20)),
         "Collar": mesh("Collar", add_cylinder(builder, 0.115, 0.08, amber, 20)),
+        "MastFoot": mesh("MastFoot", add_cylinder(builder, 0.22, 0.10, ceramic, 24)),
         "Dish": mesh("Dish", add_parabolic_dish(builder, 0.40, 0.18, ceramic)),
         "DishRim": mesh("DishRim", add_cylinder(builder, 0.39, 0.04, cyan, 24)),
         "Beacon": mesh("Beacon", add_uv_sphere(builder, 0.095, cyan)),
@@ -165,6 +175,12 @@ def main() -> None:
     add_node("Sensor", mesh_ids["Optic"], (0.0, 1.36, -0.93), extras={"socket_type": "sensor"})
     add_node("OpticLens", mesh_ids["Optic"], (0.0, 1.36, -0.98), extras={"socket_type": "optic"})
     add_node("RelayMast", mesh_ids["Mast"], (0.0, 1.68, 0.08), extras={"socket_type": "signal_mast"})
+    # A broad service foot closes the mast-to-chassis load path at close
+    # review distance. It is presentation-only; the existing mast socket and
+    # animation ownership remain unchanged.
+    add_node("RelayMastFoot", mesh_ids["MastFoot"], (0.0, 1.28, 0.08), extras={"surface": "mast_root_service_collar"})
+    for side in (-1.0, 1.0):
+        add_node("RelayMastFootFastener%s" % ("Left" if side < 0 else "Right"), mesh_ids["Fastener"], (side * 0.14, 1.34, -0.04), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "mast_root_fastener"})
     add_node("RelayMastCollar", mesh_ids["Collar"], (0.0, 1.58, 0.08))
     for side in (-1.0, 1.0):
         add_node("RelayMastBrace%s" % ("Left" if side < 0 else "Right"), mesh_ids["MastBraceDetail"], (side * 0.16, 1.75, 0.08), rotation=(0.0, 0.0, side * 0.34))
@@ -175,6 +191,11 @@ def main() -> None:
     add_node("RelayBeaconCap", mesh_ids["BeaconCap"], (0.0, 2.34, -0.04))
     for side in (-1.0, 1.0):
         add_node("RelayDishRib%s" % ("Left" if side < 0 else "Right"), mesh_ids["Brace"], (side * 0.18, 2.38, 0.0), rotation=(0.0, 0.0, side * 0.2))
+    # A four-point cradle gives the directional bowl a readable load-bearing
+    # aperture at close review distance. These are presentation-only braces;
+    # the dish remains owned by its existing animated node.
+    add_node("RelayDishRibFront", mesh_ids["Brace"], (0.0, 2.38, -0.18), rotation=(0.2, 0.0, 0.0))
+    add_node("RelayDishRibRear", mesh_ids["Brace"], (0.0, 2.38, 0.18), rotation=(-0.2, 0.0, 0.0))
     add_node("RelayFastenerLeft", mesh_ids["Fastener"], (-0.39, 1.19, -0.79), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("RelayFastenerRight", mesh_ids["Fastener"], (0.39, 1.19, -0.79), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("RelayServiceLatch", mesh_ids["ServiceLatch"], (0.0, 1.18, -0.8))
@@ -262,7 +283,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "relay.signal.v1",
             "manufactured_surface_profile": "chamfered_high_definition",
-            "required_nodes": ["RelayModel", "Sensor", "OpticLens", "RelayMast", "RelayDirectionalDish", "RelayBeacon", "ProductionAssetMarker"],
+            "required_nodes": ["RelayModel", "Sensor", "OpticLens", "RelayMast", "RelayMastFoot", "RelayDirectionalDish", "RelayBeacon", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Work", "Fire", "Hit", "Retreat", "Death"],
         },
     }

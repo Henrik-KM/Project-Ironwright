@@ -30,11 +30,14 @@ def main() -> None:
     ]
     meshes: list[dict] = []
 
-    def mesh(name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
+    def mesh(name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        # The shared Bulwark geometry helpers return UV/tangent handles plus
+        # bounds and vertex counts for their manifest tooling. Accept the full
+        # helper tuple so this source builder remains directly reproducible.
+        position, normal, uv, tangent, indices, material = geometry
         meshes.append({
             "name": name,
-            "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}],
+            "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent}, "indices": indices, "material": material}],
         })
         return len(meshes) - 1
 
@@ -66,6 +69,8 @@ def main() -> None:
         "ForgeGuard": mesh("ForgeGuard", add_beveled_box(builder, (0.4, 0.1, 0.12), steel, 0.022)),
         "ForgeStatusPanel": mesh("ForgeStatusPanel", add_beveled_box(builder, (0.42, 0.11, 0.07), steel, 0.018)),
         "ForgeStatusLens": mesh("ForgeStatusLens", add_uv_sphere(builder, 0.055, cyan, 12, 20)),
+        "CradleBrace": mesh("CradleBrace", add_beveled_box(builder, (0.10, 0.42, 0.16), steel, 0.022)),
+        "StatusStrip": mesh("StatusStrip", add_beveled_box(builder, (0.28, 0.035, 0.045), cyan, 0.012)),
         "ToolCollar": mesh("ToolCollar", add_cylinder(builder, 0.13, 0.08, cyan, 24)),
         "CableSpool": mesh("CableSpool", add_cylinder(builder, 0.13, 0.12, oxide, 24)),
         "WeldingShield": mesh("WeldingShield", add_beveled_box(builder, (0.3, 0.12, 0.16), steel, 0.025)),
@@ -127,6 +132,9 @@ def main() -> None:
     add_node("EngineerForgeGuard", mesh_ids["ForgeGuard"], (0.0, 1.48, 0.02))
     add_node("EngineerForgeStatusPanel", mesh_ids["ForgeStatusPanel"], (0.0, 1.18, -0.79), extras={"surface": "forge_status_face"})
     add_node("EngineerForgeStatusLens", mesh_ids["ForgeStatusLens"], (0.0, 1.18, -0.865), extras={"socket_type": "forge_status"})
+    add_node("EngineerCradleBraceLeft", mesh_ids["CradleBrace"], (-0.47, 1.56, 0.20), rotation=(0.0, 0.0, -0.28), extras={"surface": "articulated_cradle_brace"})
+    add_node("EngineerCradleBraceRight", mesh_ids["CradleBrace"], (0.47, 1.56, 0.20), rotation=(0.0, 0.0, 0.28), extras={"surface": "articulated_cradle_brace"})
+    add_node("EngineerStatusStrip", mesh_ids["StatusStrip"], (0.0, 1.34, -0.86), extras={"surface": "forge_status_strip"})
     for side in (-1.0, 1.0):
         add_node("PistonJoint", mesh_ids["Joint"], (side * 0.72, 1.05, -0.1))
         add_node("EngineerToolCollar%s" % ("Left" if side < 0.0 else "Right"), mesh_ids["ToolCollar"], (side * 0.72, 1.05, -0.1), extras={"socket_type": "construction_tool_collar"})

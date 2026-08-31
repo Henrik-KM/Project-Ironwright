@@ -245,12 +245,41 @@ func _test_vertical_slice_presentation() -> void:
             _expect(vehicle_detail.get_node_or_null("VehicleAxle00") != null and vehicle_detail.get_node_or_null("VehicleSuspension00") != null, "Vehicle wrecks must expose undercarriage axle and suspension anatomy.")
             _expect(vehicle_detail.get_node_or_null("VehicleServicePanel") != null and vehicle_detail.get_node_or_null("VehicleCableBundle00") != null, "Vehicle wrecks must expose service hardware and cable bundles.")
 
-    var player_art := world.player.get_node_or_null("MechromancerModel/VerticalSliceCharacterArt")
+    var player_model := world.player.get_node_or_null("MechromancerModel") as Node3D
+    var authored_mechromancer := _find_asset_package(player_model, &"mechromancer.player.v1")
     var companion_art := world.companion.get_node_or_null("RobotModel/VerticalSliceMachineArt")
-    var forge_art := world.heartforge.get_node_or_null("HeartforgeModel/VerticalSliceForgeArt")
-    _expect(player_art != null, "The Mechromancer needs a layered field-mechanic silhouette in the vertical slice.")
+    var heartforge_model := world.heartforge.get_node_or_null("HeartforgeModel") as Node3D
+    var authored_heartforge := heartforge_model.get_node_or_null("HeartforgeAuthoredModel") as Node3D if heartforge_model != null else null
+    var forge_art := authored_heartforge.find_child("VerticalSliceForgeArt", true, false) as Node3D if authored_heartforge != null else null
+    _expect(authored_mechromancer != null, "The vertical slice must present the exact authored Mechromancer package.")
+    _expect(_asset_package_count(player_model, &"mechromancer.player.v1") == 1, "The vertical slice must contain exactly one authored Mechromancer package.")
+    _expect(player_model == null or player_model.get_node_or_null("VerticalSliceCharacterArt") == null, "The actor-art pass must not duplicate the authored Mechromancer with a legacy static overlay.")
+    _expect(authored_mechromancer != null and authored_mechromancer.find_child("PistolMuzzle", true, false) != null and authored_mechromancer.find_child("ShoulderLamp", true, false) != null and authored_mechromancer.find_child("FieldPack", true, false) != null, "The authored Mechromancer package must retain its combat and field-kit sockets.")
     _expect(companion_art != null, "The Bulwark needs a heavier bespoke machine silhouette.")
-    _expect(forge_art != null, "The Heartforge needs service pipework and industrial detail beyond the base primitive model.")
+    _expect(heartforge_model != null and StringName(str(heartforge_model.get_meta(&"heartforge_visual_source", &""))) == &"authored", "The vertical slice must present the authored Heartforge package rather than its fallback shell.")
+    _expect(authored_heartforge != null and StringName(str(authored_heartforge.get_meta(&"ironwright_asset_id", &""))) == &"heartforge.core.v1", "The vertical-slice Heartforge must expose the exact authored package identity.")
+    _expect(heartforge_model == null or heartforge_model.get_node_or_null("VerticalSliceForgeArt") == null, "The actor-art pass must not duplicate authored Heartforge service hardware at the runtime-model root.")
+    _expect(forge_art != null, "The authored Heartforge package must contain its migrated service pipework and industrial detail.")
+    if forge_art != null:
+        for service_name in [
+            "ForgeCoolantStackLeft",
+            "ForgeCoolantStackRight",
+            "ForgePressurePipeLeft",
+            "ForgePressurePipeRight",
+            "ForgePumpLeft",
+            "ForgePumpRight",
+            "ForgeTopClamp00",
+            "ForgeTopClamp01",
+            "ForgeTopClamp02",
+            "ForgeTopClamp03",
+            "ForgeTopClamp04",
+            "ForgeControlCabinet",
+            "ForgeDiagnosticPanel",
+        ]:
+            _expect(forge_art.get_node_or_null(service_name) != null, "The authored Heartforge service layer must contain %s." % service_name)
+    if authored_heartforge != null:
+        for core_name in ["CoreHousingShell", "FurnaceCore", "CoreServiceLouverCore", "CoreInspectionPort", "HeartforgeFocalDetail", "HeartforgeFocalControlFace"]:
+            _expect(authored_heartforge.find_child(core_name, true, false) != null, "The authored Heartforge package must retain exact core node %s." % core_name)
 
     var hud := world.hud as IronwrightPreAlphaHUD3D
     _expect(hud != null and hud.objective_panel.size.x <= 405.0, "The objective UI should be a restrained desktop overlay rather than a large mobile card.")
@@ -324,6 +353,35 @@ func _find_city(node: Node) -> ProceduralCity3D:
         if found != null:
             return found
     return null
+
+
+func _find_asset_package(node: Node, asset_id: StringName) -> Node3D:
+    if node == null or not is_instance_valid(node):
+        return null
+    if node is Node3D and _node_asset_id(node) == asset_id:
+        return node as Node3D
+    for child in node.get_children():
+        var found := _find_asset_package(child as Node, asset_id)
+        if found != null:
+            return found
+    return null
+
+
+func _asset_package_count(node: Node, asset_id: StringName) -> int:
+    if node == null or not is_instance_valid(node):
+        return 0
+    var count := 1 if _node_asset_id(node) == asset_id else 0
+    for child in node.get_children():
+        count += _asset_package_count(child as Node, asset_id)
+    return count
+
+
+func _node_asset_id(node: Node) -> StringName:
+    var direct_id := StringName(str(node.get_meta(&"ironwright_asset_id", &"")))
+    if direct_id != &"":
+        return direct_id
+    var extras := node.get_meta(&"extras", {}) as Dictionary
+    return StringName(str(extras.get("ironwright_asset_id", "")))
 
 
 func _expect(condition: bool, message: String) -> void:

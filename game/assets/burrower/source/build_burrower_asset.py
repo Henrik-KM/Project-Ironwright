@@ -16,9 +16,59 @@ from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_b
 
 
 OUTPUT_PATH = SOURCE_DIR / "burrower.gltf"
+TEXTURE_SIZE = 1024
+TEXTURE_URIS = [
+    "../organic_families/textures/organic_shell_base_color.png",
+    "../organic_families/textures/organic_shell_normal.png",
+    "../organic_families/textures/organic_shell_orm.png",
+    "../organic_families/textures/organic_tissue_base_color.png",
+    "../organic_families/textures/organic_tissue_normal.png",
+    "../organic_families/textures/organic_tissue_orm.png",
+    "../organic_families/textures/organic_emissive.png",
+]
 
 
-def add_convex_fin(builder: BufferBuilder, size: Sequence[float], material: int, rings: int = 8, sides: int = 36) -> tuple[int, int, int, int]:
+def organic_material(
+    name: str,
+    color: Sequence[float],
+    metallic: float,
+    roughness: float,
+    lane: str,
+    normal_scale: float,
+    emissive: Sequence[float] | None = None,
+) -> dict:
+    """Bind one family tint to the frozen shared organic PBR surface set."""
+    if lane == "shell":
+        base_color_texture, normal_texture, orm_texture, maximum_normal_scale = 0, 1, 2, 0.35
+    elif lane == "tissue":
+        base_color_texture, normal_texture, orm_texture, maximum_normal_scale = 3, 4, 5, 0.22
+    elif lane == "signal":
+        base_color_texture, normal_texture, orm_texture, maximum_normal_scale = 3, 4, 5, 0.12
+    else:
+        raise ValueError(f"Unknown organic material lane: {lane}")
+    if normal_scale > maximum_normal_scale:
+        raise ValueError(f"{name} normal scale {normal_scale} exceeds {lane} ceiling {maximum_normal_scale}")
+    entry = {
+        "name": name,
+        "pbrMetallicRoughness": {
+            "baseColorFactor": list(color),
+            "baseColorTexture": {"index": base_color_texture},
+            "metallicFactor": metallic,
+            "roughnessFactor": roughness,
+            "metallicRoughnessTexture": {"index": orm_texture},
+        },
+        "normalTexture": {"index": normal_texture, "scale": normal_scale},
+        "occlusionTexture": {"index": orm_texture, "strength": 0.82},
+    }
+    if emissive is not None:
+        if lane != "signal":
+            raise ValueError(f"Only genuine signal materials may emit: {name}")
+        entry["emissiveFactor"] = list(emissive)
+        entry["emissiveTexture"] = {"index": 6}
+    return entry
+
+
+def add_convex_fin(builder: BufferBuilder, size: Sequence[float], material: int, rings: int = 8, sides: int = 36) -> tuple[int, int, int, int, int, int]:
     """Build a rounded side fin with a tapered upper edge."""
     thickness, height, depth = (max(0.001, float(value)) for value in size)
     half_thickness = thickness * 0.5
@@ -79,18 +129,18 @@ def add_convex_fin(builder: BufferBuilder, size: Sequence[float], material: int,
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Burrower wet shell", "pbrMetallicRoughness": {"baseColorFactor": [0.08, 0.11, 0.115, 1.0], "metallicFactor": 0.22, "roughnessFactor": 0.3}},
-        {"name": "Burrower layered plate", "pbrMetallicRoughness": {"baseColorFactor": [0.28, 0.3, 0.26, 1.0], "metallicFactor": 0.16, "roughnessFactor": 0.43}},
-        {"name": "Burrower flesh", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.045, 0.04, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.72}},
-        {"name": "Burrower bone", "pbrMetallicRoughness": {"baseColorFactor": [0.56, 0.45, 0.3, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.6}},
-        {"name": "Burrower bore lamp", "pbrMetallicRoughness": {"baseColorFactor": [0.56, 0.16, 0.025, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.2}, "emissiveFactor": [1.0, 0.12, 0.01]},
-        {"name": "Burrower tendon", "pbrMetallicRoughness": {"baseColorFactor": [0.3, 0.08, 0.075, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.53}},
+        organic_material("Burrower wet shell", [0.08, 0.11, 0.115, 1.0], 0.22, 0.3, "shell", 0.34),
+        organic_material("Burrower layered plate", [0.28, 0.3, 0.26, 1.0], 0.16, 0.43, "shell", 0.32),
+        organic_material("Burrower flesh", [0.18, 0.045, 0.04, 1.0], 0.0, 0.72, "tissue", 0.20),
+        organic_material("Burrower bone", [0.56, 0.45, 0.3, 1.0], 0.0, 0.6, "shell", 0.25),
+        organic_material("Burrower bore lamp", [0.56, 0.16, 0.025, 1.0], 0.0, 0.2, "signal", 0.10, [1.0, 0.12, 0.01]),
+        organic_material("Burrower tendon", [0.3, 0.08, 0.075, 1.0], 0.0, 0.53, "tissue", 0.18),
     ]
     meshes: list[dict] = []
 
-    def mesh(name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
-        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
+    def mesh(name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        position, normal, uv, tangent, indices, material = geometry
+        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
     wet, shell, flesh, bone, eye, tendon = range(6)
@@ -105,6 +155,7 @@ def main() -> None:
         "SideFin": mesh("SideFin", add_convex_fin(builder, (0.18, 0.84, 0.68), shell)),
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.08, eye, 16, 24)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.08, 1.15, tendon, 24)),
+        "LegRoot": mesh("LegRoot", add_cylinder(builder, 0.14, 0.22, shell, 28)),
         "Talon": mesh("Talon", add_cylinder(builder, 0.05, 0.58, bone, 24)),
         "Spine": mesh("Spine", add_cylinder(builder, 0.09, 0.92, bone, 24)),
         "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 16, 24)),
@@ -186,6 +237,7 @@ def main() -> None:
         suffix = "L" if side < 0 else "R"
         for index in range(3):
             z = -0.48 + index * 0.54
+            add_node("BurrowerLegRoot%s%d" % (suffix, index), mesh_ids["LegRoot"], (side * (0.62 + index * 0.05), 0.68, z), scale=(1.0, 0.72, 1.0), parent=torso, extras={"surface": "leg_root_collar"})
             add_node("BurrowerLeg%s%d" % (suffix, index), mesh_ids["Leg"], (side * (0.62 + index * 0.05), 0.32, z), rotation=(0.0, 0.0, side * 0.72))
             add_node("BurrowerTalon%s%d" % (suffix, index), mesh_ids["Talon"], (side * 0.92, 0.1, z - 0.04), rotation=(0.0, 0.0, side * 0.36))
         add_node("BurrowerFin%s" % suffix, mesh_ids["SideFin"], (side * 1.0, 1.08, 0.2), rotation=(0.0, side * 0.18, side * 0.12), scale=(0.35, 1.1, 0.8), extras={"surface": "side_fan"})
@@ -274,14 +326,35 @@ def main() -> None:
         "nodes": nodes,
         "meshes": meshes,
         "materials": materials,
+        "samplers": [{"name": "Shared organic repeating PBR sampler", "magFilter": 9729, "minFilter": 9987, "wrapS": 10497, "wrapT": 10497}],
+        "images": [
+            {"name": "Organic shell base color", "uri": TEXTURE_URIS[0]},
+            {"name": "Organic shell tangent-space normal", "uri": TEXTURE_URIS[1]},
+            {"name": "Organic shell occlusion roughness metallic", "uri": TEXTURE_URIS[2]},
+            {"name": "Organic tissue base color", "uri": TEXTURE_URIS[3]},
+            {"name": "Organic tissue tangent-space normal", "uri": TEXTURE_URIS[4]},
+            {"name": "Organic tissue occlusion roughness metallic", "uri": TEXTURE_URIS[5]},
+            {"name": "Organic signal emissive mask", "uri": TEXTURE_URIS[6]},
+        ],
+        "textures": [
+            {"name": image_name, "sampler": 0, "source": index}
+            for index, image_name in enumerate([
+                "Organic shell base color", "Organic shell tangent-space normal", "Organic shell occlusion roughness metallic",
+                "Organic tissue base color", "Organic tissue tangent-space normal", "Organic tissue occlusion roughness metallic",
+                "Organic signal emissive mask",
+            ])
+        ],
         "accessors": builder.accessors,
         "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "burrower.drill.v1",
-            "required_nodes": ["BurrowerModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BurrowerDrill", "BurrowerTip", "BurrowerDrillRing0", "BurrowerDrillFlute0", "BurrowerDrillCutter0", "BurrowerLampL", "BurrowerLampGuardL", "ProductionAssetMarker"],
+            "required_nodes": ["BurrowerModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BurrowerDrill", "BurrowerTip", "BurrowerDrillRing0", "BurrowerDrillFlute0", "BurrowerDrillCutter0", "BurrowerLampL", "BurrowerLampGuardL", "BurrowerLegRootL0", "BurrowerLegRootR0", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
+            "material_contract": "shared_textured_metallic_roughness_pbr",
+            "surface_profile": "shared_organic_pbr_v1",
+            "texture_resolution": TEXTURE_SIZE,
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

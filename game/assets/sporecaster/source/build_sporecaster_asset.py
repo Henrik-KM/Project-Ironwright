@@ -16,9 +16,59 @@ from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_b
 
 
 OUTPUT_PATH = SOURCE_DIR / "sporecaster.gltf"
+TEXTURE_SIZE = 1024
+TEXTURE_URIS = [
+    "../organic_families/textures/organic_shell_base_color.png",
+    "../organic_families/textures/organic_shell_normal.png",
+    "../organic_families/textures/organic_shell_orm.png",
+    "../organic_families/textures/organic_tissue_base_color.png",
+    "../organic_families/textures/organic_tissue_normal.png",
+    "../organic_families/textures/organic_tissue_orm.png",
+    "../organic_families/textures/organic_emissive.png",
+]
 
 
-def add_convex_gill(builder: BufferBuilder, size: Sequence[float], material: int, rings: int = 8, sides: int = 36) -> tuple[int, int, int, int]:
+def organic_material(
+    name: str,
+    color: Sequence[float],
+    metallic: float,
+    roughness: float,
+    lane: str,
+    normal_scale: float,
+    emissive: Sequence[float] | None = None,
+) -> dict:
+    """Bind one family tint to the frozen shared organic PBR surface set."""
+    if lane == "shell":
+        base_color_texture, normal_texture, orm_texture, maximum_normal_scale = 0, 1, 2, 0.35
+    elif lane == "tissue":
+        base_color_texture, normal_texture, orm_texture, maximum_normal_scale = 3, 4, 5, 0.22
+    elif lane == "signal":
+        base_color_texture, normal_texture, orm_texture, maximum_normal_scale = 3, 4, 5, 0.12
+    else:
+        raise ValueError(f"Unknown organic material lane: {lane}")
+    if normal_scale > maximum_normal_scale:
+        raise ValueError(f"{name} normal scale {normal_scale} exceeds {lane} ceiling {maximum_normal_scale}")
+    entry = {
+        "name": name,
+        "pbrMetallicRoughness": {
+            "baseColorFactor": list(color),
+            "baseColorTexture": {"index": base_color_texture},
+            "metallicFactor": metallic,
+            "roughnessFactor": roughness,
+            "metallicRoughnessTexture": {"index": orm_texture},
+        },
+        "normalTexture": {"index": normal_texture, "scale": normal_scale},
+        "occlusionTexture": {"index": orm_texture, "strength": 0.82},
+    }
+    if emissive is not None:
+        if lane != "signal":
+            raise ValueError(f"Only genuine signal materials may emit: {name}")
+        entry["emissiveFactor"] = list(emissive)
+        entry["emissiveTexture"] = {"index": 6}
+    return entry
+
+
+def add_convex_gill(builder: BufferBuilder, size: Sequence[float], material: int, rings: int = 8, sides: int = 36) -> tuple[int, int, int, int, int, int]:
     """Build a rounded, scalloped vertical gill whose edge breaks catch the light.
 
     The gill remains a compact closed volume for stable sockets, but a
@@ -91,18 +141,18 @@ def add_convex_gill(builder: BufferBuilder, size: Sequence[float], material: int
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Sporecaster wet flesh", "pbrMetallicRoughness": {"baseColorFactor": [0.09, 0.12, 0.13, 1.0], "metallicFactor": 0.12, "roughnessFactor": 0.34}},
-        {"name": "Sporecaster shell", "pbrMetallicRoughness": {"baseColorFactor": [0.26, 0.29, 0.27, 1.0], "metallicFactor": 0.15, "roughnessFactor": 0.44}},
-        {"name": "Sporecaster membrane", "pbrMetallicRoughness": {"baseColorFactor": [0.25, 0.045, 0.14, 0.88], "metallicFactor": 0.0, "roughnessFactor": 0.36}, "emissiveFactor": [0.05, 0.004, 0.025]},
-        {"name": "Sporecaster bone", "pbrMetallicRoughness": {"baseColorFactor": [0.56, 0.46, 0.32, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.57}},
-        {"name": "Sporecaster spore eye", "pbrMetallicRoughness": {"baseColorFactor": [0.48, 0.17, 0.025, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.23}, "emissiveFactor": [1.0, 0.16, 0.02]},
-        {"name": "Sporecaster tendon", "pbrMetallicRoughness": {"baseColorFactor": [0.32, 0.11, 0.16, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.52}},
+        organic_material("Sporecaster wet flesh", [0.09, 0.12, 0.13, 1.0], 0.12, 0.34, "tissue", 0.20),
+        organic_material("Sporecaster shell", [0.26, 0.29, 0.27, 1.0], 0.15, 0.44, "shell", 0.34),
+        organic_material("Sporecaster membrane", [0.25, 0.045, 0.14, 0.88], 0.0, 0.36, "tissue", 0.16),
+        organic_material("Sporecaster bone", [0.56, 0.46, 0.32, 1.0], 0.0, 0.57, "shell", 0.25),
+        organic_material("Sporecaster spore eye", [0.48, 0.17, 0.025, 1.0], 0.0, 0.23, "signal", 0.10, [1.0, 0.16, 0.02]),
+        organic_material("Sporecaster tendon", [0.32, 0.11, 0.16, 1.0], 0.0, 0.52, "tissue", 0.18),
     ]
     meshes: list[dict] = []
 
-    def mesh(name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
-        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
+    def mesh(name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        position, normal, uv, tangent, indices, material = geometry
+        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
     flesh, shell, membrane, bone, eye, tendon = range(6)
@@ -116,6 +166,7 @@ def main() -> None:
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.085, eye, 16, 24)),
         "Stem": mesh("Stem", add_cylinder(builder, 0.045, 0.54, tendon, 24)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.09, 1.25, tendon, 24)),
+        "LegRoot": mesh("LegRoot", add_cylinder(builder, 0.145, 0.22, shell, 28)),
         "Talon": mesh("Talon", add_cylinder(builder, 0.055, 0.62, bone, 24)),
         "Spine": mesh("Spine", add_cylinder(builder, 0.075, 0.84, bone, 24)),
         "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 16, 24)),
@@ -210,6 +261,7 @@ def main() -> None:
     for side in (-1.0, 1.0):
         for index in range(3):
             z = -0.5 + index * 0.52
+            add_node("SporecasterLegRoot%s%d" % ("L" if side < 0 else "R", index), mesh_ids["LegRoot"], (side * (0.58 + index * 0.05), 0.70, z), scale=(1.0, 0.72, 1.0), parent=torso, extras={"surface": "leg_root_collar"})
             add_node("SporecasterLeg%s%d" % ("L" if side < 0 else "R", index), mesh_ids["Leg"], (side * (0.58 + index * 0.05), 0.34, z), rotation=(0.0, 0.0, side * 0.72))
             add_node("SporecasterTalon%s%d" % ("L" if side < 0 else "R", index), mesh_ids["Talon"], (side * 0.9, 0.12, z - 0.04), rotation=(0.0, 0.0, side * 0.36))
 
@@ -300,14 +352,35 @@ def main() -> None:
         "nodes": nodes,
         "meshes": meshes,
         "materials": materials,
+        "samplers": [{"name": "Shared organic repeating PBR sampler", "magFilter": 9729, "minFilter": 9987, "wrapS": 10497, "wrapT": 10497}],
+        "images": [
+            {"name": "Organic shell base color", "uri": TEXTURE_URIS[0]},
+            {"name": "Organic shell tangent-space normal", "uri": TEXTURE_URIS[1]},
+            {"name": "Organic shell occlusion roughness metallic", "uri": TEXTURE_URIS[2]},
+            {"name": "Organic tissue base color", "uri": TEXTURE_URIS[3]},
+            {"name": "Organic tissue tangent-space normal", "uri": TEXTURE_URIS[4]},
+            {"name": "Organic tissue occlusion roughness metallic", "uri": TEXTURE_URIS[5]},
+            {"name": "Organic signal emissive mask", "uri": TEXTURE_URIS[6]},
+        ],
+        "textures": [
+            {"name": image_name, "sampler": 0, "source": index}
+            for index, image_name in enumerate([
+                "Organic shell base color", "Organic shell tangent-space normal", "Organic shell occlusion roughness metallic",
+                "Organic tissue base color", "Organic tissue tangent-space normal", "Organic tissue occlusion roughness metallic",
+                "Organic signal emissive mask",
+            ])
+        ],
         "accessors": builder.accessors,
         "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "sporecaster.infestation.v1",
-            "required_nodes": ["SporecasterModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SporecasterGillFan0", "SporecasterGillRib0", "SporecasterSac0", "SporecasterSacCap0", "SporecasterStem0", "SporecasterOculusL", "ProductionAssetMarker"],
+            "required_nodes": ["SporecasterModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SporecasterGillFan0", "SporecasterGillRib0", "SporecasterSac0", "SporecasterSacCap0", "SporecasterStem0", "SporecasterOculusL", "SporecasterLegRootL0", "SporecasterLegRootR0", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
+            "material_contract": "shared_textured_metallic_roughness_pbr",
+            "surface_profile": "shared_organic_pbr_v1",
+            "texture_resolution": TEXTURE_SIZE,
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

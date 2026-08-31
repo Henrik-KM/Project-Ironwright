@@ -2,6 +2,14 @@
   "asset_id": "bulwark.companion.v1",
   "asset_quality": "authored_high_definition",
   "runtime_scene": "res://assets/bulwark/bulwark.gltf",
+  "textures": {
+    "base_color": "res://assets/bulwark/bulwark_base_color.png",
+    "normal": "res://assets/bulwark/bulwark_normal.png",
+    "orm": "res://assets/bulwark/bulwark_orm.png",
+    "emissive": "res://assets/bulwark/bulwark_emissive.png"
+  },
+  "texture_resolution": 1024,
+  "material_workflow": "metallic_roughness_pbr",
   "source_builder": "game/assets/bulwark/source/build_bulwark_asset.py",
   "source_type": "original_project_ironwright_procedural_mesh_builder",
   "third_party_assets": [],
