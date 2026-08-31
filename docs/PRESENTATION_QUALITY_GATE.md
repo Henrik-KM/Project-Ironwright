@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Civic wreck PBR attribute preservation
+
+The authored central vehicle-wreck exporter now retains UV and tangent channels
+from the shared mesh builder across its chassis, cab, service hardware and
+damage detail. The regenerated civic shell preserves the high-definition
+material-detail path without changing its presentation-only runtime contract;
+native aesthetic, complete-game and release checks passed with Godot Dummy
+audio and `--quiet-audio`, with no physical speakers used.
+
 ## 2026-08-31 — Opening wreck PBR attribute preservation
 
 The authored opening salvage wreck now retains UV and tangent channels from the

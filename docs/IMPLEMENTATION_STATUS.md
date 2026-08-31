@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused civic-wreck PBR attribute pass — 2026-08-31
+
+- repaired the authored central vehicle-wreck exporter so the shared mesh
+  builder's UV and tangent channels survive across the chassis, cab, glass,
+  service and damage meshes;
+- refreshed the generated civic wreck glTF and declared its shared
+  high-definition material workflow in the asset manifest;
+- added imported-channel aesthetic coverage and verified deterministic source
+  regeneration, fresh import, complete-game and commercial-release gates with
+  Dummy audio and `--quiet-audio`.
+
 ## Focused opening-wreck PBR attribute pass — 2026-08-31
 
 - repaired the authored salvage-wreck exporter so the shared mesh builder's

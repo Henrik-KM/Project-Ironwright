@@ -133,6 +133,10 @@ func _run_all() -> void:
         _expect(city.find_child("RubbleRebar00", true, false) != null and city.find_child("RubbleRebar01", true, false) != null, "Street debris must expose restrained reinforcement detail.")
         var authored_vehicle_wreck := city.get_node_or_null("VehicleWreck00/VehicleWreckAuthoredModel")
         _expect(authored_vehicle_wreck != null, "Central vehicle wrecks must instantiate the authored high-definition shell.")
+        var vehicle_chassis := authored_vehicle_wreck.find_child("VehicleChassis", true, false) as MeshInstance3D if authored_vehicle_wreck != null else null
+        var vehicle_array_mesh := vehicle_chassis.mesh as ArrayMesh if vehicle_chassis != null else null
+        var vehicle_arrays := vehicle_array_mesh.surface_get_arrays(0) if vehicle_array_mesh != null and vehicle_array_mesh.get_surface_count() > 0 else []
+        _expect(vehicle_arrays is Array and vehicle_arrays.size() > Mesh.ARRAY_TANGENT and vehicle_arrays[Mesh.ARRAY_TEX_UV] != null and vehicle_arrays[Mesh.ARRAY_TANGENT] != null, "Central vehicle wrecks must retain UV and tangent channels for their high-definition PBR surface.")
         _expect(authored_vehicle_wreck != null and authored_vehicle_wreck.find_child("VehicleServicePanel", true, false) != null and authored_vehicle_wreck.find_child("VehicleGlassShard00", true, false) != null and authored_vehicle_wreck.find_child("VehicleHeadlampL", true, false) != null and authored_vehicle_wreck.find_child("VehicleFrontGrilleUpper", true, false) != null, "The authored civic wreck shell must retain service access, damage anatomy and a readable front hardware face.")
         _expect(city.get_node_or_null("HighDefinitionFacadeDetails") != null, "The ordinary urban blocks must carry a shared high-definition facade layer beyond their collision shells.")
         _expect(city.find_child("FacadeDetail00", true, false) != null and city.find_child("FacadeWindowBay00_00", true, false) != null, "Facade detail must expose layered window bays and floor-scale structure.")
