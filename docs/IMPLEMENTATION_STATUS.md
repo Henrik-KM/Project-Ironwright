@@ -7326,6 +7326,15 @@ structure at review distance while preserving role behavior, operation state,
 collision, navigation and fixed-site ownership. Native review used Dummy
 audio with `--quiet-audio`; no physical speakers were used.
 
+## Focused large-population evaluation cadence milestone — 2026-08-31
+
+The release performance director now lengthens its full candidate reassessment
+interval from 0.32 to 0.50 seconds once a stable population reaches 128
+actors. Near-player active budgets, round-robin medium/reduced simulation and
+the authored-visual cap remain unchanged, while the deterministic 192-actor
+benchmark improved from approximately 49 to 55 simulation FPS on the review
+workstation. Stress, release and full-game native gates remain green.
+
 ## Focused Municipal Glasshouse foundation pass — 2026-08-31
 
 The authored Municipal Glasshouse now carries a continuous low plinth and

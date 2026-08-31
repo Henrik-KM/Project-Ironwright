@@ -15,6 +15,7 @@ var medium_entity_budget: int = 40
 var reduced_tick_interval: float = 0.45
 var medium_tick_interval: float = 0.22
 var evaluation_interval: float = 0.32
+const LARGE_POPULATION_EVALUATION_INTERVAL := 0.50
 var evaluation_clock: float = 0.0
 var reduced_tick_clock: float = 0.0
 var medium_tick_clock: float = 0.0
@@ -62,8 +63,15 @@ func _process(delta: float) -> void:
         frames_count = 0
         frames_clock = 0.0
         _adapt_budgets()
-    if evaluation_clock >= evaluation_interval:
-        evaluation_clock = 0.0
+    var scheduled_evaluation_interval := evaluation_interval
+    if last_candidate_count >= 128:
+        # Keep the near-player budgets and round-robin simulation cadence
+        # responsive, while avoiding repeated full candidate sorting when a
+        # large remote population is stable. A later position change is still
+        # picked up on the next bounded evaluation.
+        scheduled_evaluation_interval = maxf(scheduled_evaluation_interval, LARGE_POPULATION_EVALUATION_INTERVAL)
+    if evaluation_clock >= scheduled_evaluation_interval:
+        evaluation_clock -= scheduled_evaluation_interval
         _evaluate_entities()
     _schedule_reduced_ticks()
     _schedule_medium_ticks()
