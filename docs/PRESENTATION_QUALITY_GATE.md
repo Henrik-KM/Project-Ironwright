@@ -1,5 +1,18 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Integrated production-model and action-state review
+
+The latest isolated high-definition model overhaul is now integrated with the
+later route, ecology, salvage, Relay and gallery changes. The exact fresh
+build's player/friendly, early-organic and late-organic pages show denser
+authored surfaces, clearer manufactured role hardware, coherent organic
+material separation and lifecycle-safe action presentation. The Mechromancer
+and all-organic action-review harnesses, fresh import and full release gates
+passed before the live review. This remains internal rendered-build evidence;
+external production-art, target-hardware, balance and accessibility gates are
+separate. Review audio was routed through Godot Dummy with `--quiet-audio`,
+with no physical speaker output.
+
 ## 2026-08-31 — Full remote-region gallery acceptance review
 
 The exact fresh release build was reviewed across the complete 15-page

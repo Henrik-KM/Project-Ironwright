@@ -1,5 +1,20 @@
 # Implementation status
 
+## Integrated production-model and organic-action overhaul — 2026-08-31
+
+- integrated the latest isolated high-definition production pass across the
+  Mechromancer, Bulwark, Heartforge, Heartforge threshold and organic family
+  assets, including authored PBR surface sets and source rebuild scripts;
+- integrated the corresponding runtime attachment, damage/death presentation,
+  reduced-detail lifecycle and action-state coverage for the organic roster;
+- preserved the later route-memory, ecology-recap, salvage-witness, Relay and
+  gallery-acceptance changes on top of the coherent HD source tree;
+- verified fresh asset import, the Mechromancer and organic action-review
+  harnesses, aesthetic, commercial release, complete-game and one-hundred-hour
+  soak gates, followed by exact-build live roster review;
+- all runtime review used Godot Dummy audio with `--quiet-audio`; no physical
+  speakers were used.
+
 ## Full remote-region gallery acceptance review — 2026-08-31
 
 - reviewed the exact fresh release build's complete 15-page presentation gallery
