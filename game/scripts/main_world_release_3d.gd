@@ -1349,6 +1349,15 @@ func _start_presentation_review() -> void:
 		operations_hud.visible = false
 	if release_front_end != null:
 		release_front_end.hide_all()
+	if release_audio != null:
+		# The gallery is a paused visual fixture. Clear any live-world sound
+		# caption first, then lock and suspend the release audio director so a
+		# delayed ecology callback cannot contaminate the review frame.
+		release_audio.clear_transient_feedback()
+		release_audio.transient_feedback_locked = true
+		if release_audio.caption_layer != null:
+			release_audio.caption_layer.visible = false
+		release_audio.process_mode = Node.PROCESS_MODE_DISABLED
 
 	var review_layer := CanvasLayer.new()
 	review_layer.name = "PresentationReviewLayer"

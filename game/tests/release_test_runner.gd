@@ -1177,6 +1177,7 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     await world._start_presentation_review()
     await process_frame
     _expect(world.presentation_review_pages.size() == 15, "Presentation review must expose the three core pages, all eleven remote regions and the autonomous outpost role page.")
+    _expect(world.release_audio != null and world.release_audio.process_mode == Node.PROCESS_MODE_DISABLED and world.release_audio.transient_feedback_locked, "Presentation review must suspend release audio and transient captions so live-world alerts cannot cover the authored gallery frame.")
     _expect(world.presentation_review_label != null and "1-9, 0 DIRECT PAGE" in world.presentation_review_label.text, "Presentation review navigation must describe the digit-key page controls clearly.")
     _expect(world.release_world_art != null and world.release_world_art.dressing_root != null, "Presentation review must retain the release dressing root alongside its controller.")
     _expect((world.presentation_review_pages[3] as Array).is_empty(), "Presentation review must keep unvisited remote pages lazy instead of constructing the whole gallery at startup.")

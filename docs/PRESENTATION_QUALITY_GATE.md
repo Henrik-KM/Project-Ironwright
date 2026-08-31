@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Silent gallery transient isolation
+
+The exact Tier III outpost gallery no longer permits a delayed release-audio
+caption or sound cue to cover the authored review frame. Entering the
+non-saving gallery clears existing transient feedback, locks captions and
+suspends the release audio director for the duration of the review. The
+runtime release and aesthetic gates now assert this boundary, and a fresh
+silent Windows review confirms the outpost page is free of the live-world
+alert overlay. Normal gameplay audio and captions are unchanged.
+
 ## 2026-08-31 — Core roster gallery acceptance review
 
 The current release build was visually inspected through the exact silent

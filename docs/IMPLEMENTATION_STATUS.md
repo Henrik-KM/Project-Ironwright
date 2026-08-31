@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused presentation-review transient isolation — 2026-08-31
+
+- stopped delayed release-audio captions and cues from covering the non-saving
+  authored gallery, while leaving normal gameplay audio and accessibility
+  behavior unchanged;
+- added a release regression assertion and verified the exact Tier III
+  outpost page live in one fresh Dummy-audio/quiet-mode process with no alert
+  overlay.
+
 ## Core roster gallery acceptance review — 2026-08-31
 
 - visually inspected the current player/friendly, early-organic and
