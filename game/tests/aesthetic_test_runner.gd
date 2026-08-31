@@ -210,6 +210,10 @@ func _run_all() -> void:
     root.add_child(salvage_sample)
     await process_frame
     _expect(salvage_sample.find_child("SalvageAuthoredModel", true, false) != null, "The first salvage target must use the authored high-definition wreck shell.")
+    var salvage_chassis := salvage_sample.find_child("WreckChassis", true, false) as MeshInstance3D
+    var salvage_array_mesh := salvage_chassis.mesh as ArrayMesh if salvage_chassis != null else null
+    var salvage_arrays := salvage_array_mesh.surface_get_arrays(0) if salvage_array_mesh != null and salvage_array_mesh.get_surface_count() > 0 else []
+    _expect(salvage_arrays is Array and salvage_arrays.size() > Mesh.ARRAY_TANGENT and salvage_arrays[Mesh.ARRAY_TEX_UV] != null and salvage_arrays[Mesh.ARRAY_TANGENT] != null, "The opening salvage wreck must retain UV and tangent channels for its high-definition PBR surface.")
     _expect(salvage_sample.find_child("WreckServicePanel", true, false) != null and salvage_sample.find_child("WreckPipeLeft", true, false) != null, "The salvage wreck must expose authored service and pipe anatomy.")
     _expect(salvage_sample.find_child("BrokenGlassShard00", true, false) != null and salvage_sample.find_child("WreckStatusLens", true, false) != null and salvage_sample.find_child("WreckCabinHandle", true, false) != null and salvage_sample.find_child("WreckServiceLatch00", true, false) != null, "The salvage wreck must expose damage, readable status detail and authored service hardware.")
     salvage_sample.queue_free()

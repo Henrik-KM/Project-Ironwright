@@ -1,6 +1,7 @@
 {
   "asset_id": "salvage.opening_wreck.v1",
   "asset_quality": "authored_high_definition",
+  "material_workflow": "shared_uv_tangent_pbr_geometry",
   "runtime_scene": "res://assets/salvage/salvage.gltf",
   "source_builder": "game/assets/salvage/source/build_salvage_asset.py",
   "source_type": "original_project_ironwright_shared_mesh_builder",

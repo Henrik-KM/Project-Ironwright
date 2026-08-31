@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused opening-wreck PBR attribute pass — 2026-08-31
+
+- repaired the authored salvage-wreck exporter so the shared mesh builder's
+  UV and tangent channels survive into every opening salvage mesh;
+- refreshed the generated wreck glTF and declared its shared high-definition
+  material workflow in the asset manifest;
+- added imported-channel aesthetic coverage and verified deterministic source
+  regeneration, fresh import, complete-game and commercial-release gates with
+  Dummy audio and `--quiet-audio`.
+
 ## Focused Signal Relay PBR attribute pass — 2026-08-31
 
 - preserved UV and tangent channels for every authored Relay mesh, including

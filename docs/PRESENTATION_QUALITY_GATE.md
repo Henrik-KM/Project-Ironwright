@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Opening wreck PBR attribute preservation
+
+The authored opening salvage wreck now retains UV and tangent channels from the
+shared mesh builder across its chassis, cabin, service hardware and damage
+detail. The regenerated asset preserves the high-definition material-detail
+path without changing salvage timing, interaction, collision or resource
+contracts. Native aesthetic, complete-game and release checks passed with
+Godot Dummy audio and `--quiet-audio`; no physical speakers were used.
+
 ## 2026-08-31 — Signal Relay PBR attribute preservation
 
 The authored Signal Relay exporter now retains UV and tangent channels across
