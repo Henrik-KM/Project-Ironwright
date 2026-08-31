@@ -3512,6 +3512,9 @@ func _on_front_end_settings_applied(values: Dictionary) -> void:
 
 
 func _on_release_locale_changed(_locale: StringName) -> void:
+	if release_front_end != null and release_front_end.active_screen == &"title":
+		var has_verified_save := transactional_save_service.has_valid_save(RELEASE_SLOT)
+		release_front_end.set_title_save_summary(_title_save_summary(has_verified_save, _legacy_save_exists()))
 	if hud != null:
 		hud.refresh_localized_text()
 	if strategic_hud != null:

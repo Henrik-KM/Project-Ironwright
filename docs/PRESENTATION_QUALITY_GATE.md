@@ -3466,3 +3466,5 @@ is centered within the existing title hierarchy and leaves the authored
 Heartforge backdrop unobstructed. A fresh silent 1280x720 native capture
 confirmed the legacy-import state without clipping or overlap; no physical
 speakers were used.
+The status also refreshes when the player changes language without leaving the
+title screen.
