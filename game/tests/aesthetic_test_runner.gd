@@ -1548,6 +1548,9 @@ func _run_all() -> void:
             _expect(_find_named(role_samples[index], "RelaySignalBeacon") != null and _find_named(role_samples[index], "RelayDirectionalDish") != null, "The Signal Relay must expose a distinct mast, dish and beacon silhouette.")
             var relay_dish := _find_named(role_samples[index], "RelayDirectionalDish") as MeshInstance3D
             _expect(relay_dish != null and _mesh_vertex_count(relay_dish) >= 200, "The Signal Relay directional dish must retain a dense parabolic bowl profile rather than a flat low-detail plate.")
+            var relay_array_mesh := relay_dish.mesh as ArrayMesh if relay_dish != null else null
+            var relay_arrays := relay_array_mesh.surface_get_arrays(0) if relay_array_mesh != null and relay_array_mesh.get_surface_count() > 0 else []
+            _expect(relay_arrays is Array and relay_arrays.size() > Mesh.ARRAY_TANGENT and relay_arrays[Mesh.ARRAY_TEX_UV] != null and relay_arrays[Mesh.ARRAY_TANGENT] != null, "The authored Signal Relay must retain UV and tangent channels across its standard and custom dish meshes.")
             var relay_face := _find_named(role_samples[index], "RelayServiceFace") as MeshInstance3D
             var relay_heat_sink := _find_named(role_samples[index], "RelayHeatSink") as MeshInstance3D
             var relay_panel := _find_named(role_samples[index], "RelaySignalPanelLeft") as MeshInstance3D

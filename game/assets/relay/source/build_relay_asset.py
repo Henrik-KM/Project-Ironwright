@@ -65,12 +65,21 @@ def add_parabolic_dish(
             ])
 
     position_min, position_max = vec_min_max(zip(*[iter(positions)] * 3))
+    # The dish is generated locally rather than through the shared primitive
+    # helpers, so provide the same stable UV/tangent contract explicitly.
+    uvs: list[float] = []
+    tangents: list[float] = []
+    for index in range(0, len(positions), 3):
+        uvs.extend([0.5 + positions[index] / max(radius * 2.0, 0.001), 0.5 + positions[index + 2] / max(radius * 2.0, 0.001)])
+        tangents.extend([1.0, 0.0, 0.0, 1.0])
     position_accessor = builder.accessor(
         positions, 5126, "VEC3", len(positions) // 3, 34962, position_min, position_max
     )
     normal_accessor = builder.accessor(normals, 5126, "VEC3", len(normals) // 3, 34962)
+    uv_accessor = builder.accessor(uvs, 5126, "VEC2", len(uvs) // 2, 34962)
+    tangent_accessor = builder.accessor(tangents, 5126, "VEC4", len(tangents) // 4, 34962)
     index_accessor = builder.accessor(indices, 5123, "SCALAR", len(indices), 34963)
-    return position_accessor, normal_accessor, index_accessor, material
+    return position_accessor, normal_accessor, uv_accessor, tangent_accessor, index_accessor, material
 
 
 def main() -> None:
@@ -84,11 +93,11 @@ def main() -> None:
     ]
     meshes: list[dict] = []
 
-    def mesh(name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
+    def mesh(name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        position, normal, uv, tangent, indices, material = geometry
         meshes.append({
             "name": name,
-            "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}],
+            "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent}, "indices": indices, "material": material}],
         })
         return len(meshes) - 1
 

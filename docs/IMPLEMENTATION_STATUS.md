@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Signal Relay PBR attribute pass — 2026-08-31
+
+- preserved UV and tangent channels for every authored Relay mesh, including
+  the custom parabolic signal dish generated outside the shared primitive
+  helpers;
+- refreshed the generated Relay glTF and declared its shared high-definition
+  material workflow in the asset manifest;
+- added imported-channel aesthetic coverage and verified deterministic source
+  regeneration, fresh import, repository, release, aesthetic and complete-game
+  gates with Dummy audio and `--quiet-audio`.
+
 ## Focused support-frame PBR attribute pass — 2026-08-31
 
 - repaired the Scrapper and Pathfinder source exporters so the shared mesh

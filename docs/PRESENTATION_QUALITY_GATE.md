@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Signal Relay PBR attribute preservation
+
+The authored Signal Relay exporter now retains UV and tangent channels across
+its standard machinery and custom parabolic dish. The regenerated communication
+frame therefore keeps the shared high-definition material-detail path without
+changing its mast, dish, beacon, animation or socket contracts. The asset
+re-imported cleanly and native aesthetic coverage passed with Godot Dummy audio
+and `--quiet-audio`; no physical speakers were used.
+
 ## 2026-08-31 — Support-frame PBR attribute preservation
 
 The authored Scrapper and Pathfinder exporters now retain the UV and tangent
