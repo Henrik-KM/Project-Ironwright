@@ -548,6 +548,29 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     _expect("bürgerliches nachbild" in german_archive_metadata, "German Town Archive must render its localized arc label.")
     world.operations_hud.close()
     world.operations_hud.open_archive([{
+        "id": "story.machine.first_salvage",
+        "display_name": "The First Shared Load",
+        "source_name": "Opening salvage network",
+        "arc": "machine_witness",
+        "description": "The first salvage group returned with a load no single frame could have carried alone."
+    }])
+    await process_frame
+    _expect(world.operations_hud.selection_label.text == "DIE ERSTE GEMEINSAME LAST" and "Bergungsgruppe" in world.operations_hud.description_label.text and "ERSTES BERGUNGSNETZWERK" in world.operations_hud.requirements_label.text, "German Town Archive must localize the first autonomous salvage witness on the actual archive surface.")
+    _expect(not world.operations_hud.selection_label.text.contains("machine_first_salvage") and not world.operations_hud.description_label.text.contains("The first salvage group"), "Localized salvage archive rendering must not expose raw keys or English fallback copy.")
+    world.operations_hud.close()
+    service.set_locale(&"sv")
+    world.operations_hud.open_archive([{
+        "id": "story.machine.first_salvage",
+        "display_name": "The First Shared Load",
+        "source_name": "Opening salvage network",
+        "arc": "machine_witness",
+        "description": "The first salvage group returned with a load no single frame could have carried alone."
+    }])
+    await process_frame
+    _expect(world.operations_hud.selection_label.text == "DEN FÖRSTA GEMENSAMMA LASTEN" and "bärgningsgruppen" in world.operations_hud.description_label.text and "DET FÖRSTA BÄRGNINGSNÄTVERKET" in world.operations_hud.requirements_label.text, "Swedish Town Archive must localize the first autonomous salvage witness on the actual archive surface.")
+    world.operations_hud.close()
+    service.set_locale(&"en")
+    world.operations_hud.open_archive([{
         "id": "thread.civic_afterimage",
         "kind": "story_thread",
         "thread_key": "civic_afterimage",
