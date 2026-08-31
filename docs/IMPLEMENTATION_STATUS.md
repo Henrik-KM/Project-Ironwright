@@ -7343,3 +7343,11 @@ edge restores a deliberate ground contact at approach distance while
 preserving the cultivation beds, climate hardware, service trolley and region
 simulation contracts. Native review used Dummy audio with `--quiet-audio`; no
 physical speakers were used.
+
+## Focused cross-platform authored asset integrity milestone — 2026-08-31
+
+The Burrower asset builder now writes its generated manifest with canonical LF
+line endings, keeping the authored runtime hash stable across Windows and
+Unix-like checkouts. The corrected manifest and builder pass repository,
+current-repository, aesthetic, release and full-game validation in a fresh
+Windows worktree.
