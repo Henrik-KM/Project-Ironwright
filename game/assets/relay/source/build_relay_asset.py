@@ -107,6 +107,7 @@ def main() -> None:
         "Optic": mesh("Optic", add_uv_sphere(builder, 0.085, cyan)),
         "Mast": mesh("Mast", add_cylinder(builder, 0.07, 1.18, rubber, 20)),
         "Collar": mesh("Collar", add_cylinder(builder, 0.115, 0.08, amber, 20)),
+        "MastFoot": mesh("MastFoot", add_cylinder(builder, 0.22, 0.10, ceramic, 24)),
         "Dish": mesh("Dish", add_parabolic_dish(builder, 0.40, 0.18, ceramic)),
         "DishRim": mesh("DishRim", add_cylinder(builder, 0.39, 0.04, cyan, 24)),
         "Beacon": mesh("Beacon", add_uv_sphere(builder, 0.095, cyan)),
@@ -165,6 +166,12 @@ def main() -> None:
     add_node("Sensor", mesh_ids["Optic"], (0.0, 1.36, -0.93), extras={"socket_type": "sensor"})
     add_node("OpticLens", mesh_ids["Optic"], (0.0, 1.36, -0.98), extras={"socket_type": "optic"})
     add_node("RelayMast", mesh_ids["Mast"], (0.0, 1.68, 0.08), extras={"socket_type": "signal_mast"})
+    # A broad service foot closes the mast-to-chassis load path at close
+    # review distance. It is presentation-only; the existing mast socket and
+    # animation ownership remain unchanged.
+    add_node("RelayMastFoot", mesh_ids["MastFoot"], (0.0, 1.28, 0.08), extras={"surface": "mast_root_service_collar"})
+    for side in (-1.0, 1.0):
+        add_node("RelayMastFootFastener%s" % ("Left" if side < 0 else "Right"), mesh_ids["Fastener"], (side * 0.14, 1.34, -0.04), rotation=(math.pi * 0.5, 0.0, 0.0), extras={"surface": "mast_root_fastener"})
     add_node("RelayMastCollar", mesh_ids["Collar"], (0.0, 1.58, 0.08))
     for side in (-1.0, 1.0):
         add_node("RelayMastBrace%s" % ("Left" if side < 0 else "Right"), mesh_ids["MastBraceDetail"], (side * 0.16, 1.75, 0.08), rotation=(0.0, 0.0, side * 0.34))
@@ -267,7 +274,7 @@ def main() -> None:
         "extras": {
             "ironwright_asset_id": "relay.signal.v1",
             "manufactured_surface_profile": "chamfered_high_definition",
-            "required_nodes": ["RelayModel", "Sensor", "OpticLens", "RelayMast", "RelayDirectionalDish", "RelayBeacon", "ProductionAssetMarker"],
+            "required_nodes": ["RelayModel", "Sensor", "OpticLens", "RelayMast", "RelayMastFoot", "RelayDirectionalDish", "RelayBeacon", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Work", "Fire", "Hit", "Retreat", "Death"],
         },
     }

@@ -3207,6 +3207,16 @@ collision or autonomous signal role. The exact live review uses Godot Dummy
 audio and `--quiet-audio`; no physical speakers are used. Broader human
 production-art acceptance remains open.
 
+# Focused Signal Relay mast-root refinement — 2026-08-31
+
+The authored Signal Relay now carries a broad ceramic mast-root service collar
+and paired captive fasteners where its directional mast meets the chassis. The
+added presentation-only hardware closes the visible load path beneath the
+recent dish cradle while preserving the mast socket, animation ownership,
+collision and autonomous signal role. The exact live review uses Godot Dummy
+audio with `--quiet-audio`; no physical speakers were used. Broader human
+production-art acceptance remains open.
+
 # Focused Heartforge collar-fastener refinement — 2026-08-31
 
 The authored Heartforge focal layer now carries four captive fasteners around
