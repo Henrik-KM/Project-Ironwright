@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused release population benchmark isolation — 2026-08-31
+
+- made the high-population performance fixture inert after construction so
+  live ecology combat cannot remove actors from the population being measured;
+- suspended bootstrap tier brains during teardown to keep the benchmark free
+  of invalid physics-space calls while preserving the real release detail
+  director and spatial-index evaluation;
+- verified complete actor registration, resource streaming, repository,
+  release, aesthetic, complete-game and silent live fresh-world gates.
+
 ## Focused first-salvage archive witness — 2026-08-31
 
 - added a durable machine-witness record for the first autonomous salvage

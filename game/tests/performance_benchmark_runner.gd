@@ -42,8 +42,25 @@ func _run_benchmark() -> void:
         var distance := 18.0 if band == 0 else (86.0 if band == 1 else (140.0 if band == 2 else 260.0))
         var angle := float(index) * 0.67
         var anchor := world.player.global_position + Vector3(cos(angle) * distance, 0.0, sin(angle) * distance)
-        world._spawn_enemy(anchor, ORGANIC_SPECIES[index % ORGANIC_SPECIES.size()])
-        world._spawn_robot(ROBOT_ARCHETYPES[index % ROBOT_ARCHETYPES.size()], anchor + Vector3(2.0, 0.0, 1.5), 1)
+        var benchmark_enemy := world._spawn_enemy(anchor, ORGANIC_SPECIES[index % ORGANIC_SPECIES.size()])
+        var benchmark_robot := world._spawn_robot(ROBOT_ARCHETYPES[index % ROBOT_ARCHETYPES.size()], anchor + Vector3(2.0, 0.0, 1.5), 1)
+        # Keep the population fixture inert after construction. The benchmark
+        # measures release detail management, not combat outcomes from the
+        # live ecology or the player's opening weapon.
+        benchmark_enemy.process_mode = Node.PROCESS_MODE_DISABLED
+        benchmark_enemy.alive = false
+        benchmark_robot.process_mode = Node.PROCESS_MODE_DISABLED
+
+    # The ecology bootstrap creates its own living actors before the fixture.
+    # Suspend their tier brains too, otherwise the benchmark can continue a
+    # physics move while the fixture is being torn down.
+    for raw_enemy in get_nodes_in_group(&"organic_enemies"):
+        if raw_enemy is Node:
+            if raw_enemy is OrganicEnemy3D:
+                (raw_enemy as OrganicEnemy3D).alive = false
+            var tier_brain := (raw_enemy as Node).get_node_or_null("EnemyTierBrain")
+            if tier_brain != null:
+                tier_brain.process_mode = Node.PROCESS_MODE_DISABLED
 
     for _index in range(WARMUP_FRAMES):
         await process_frame
