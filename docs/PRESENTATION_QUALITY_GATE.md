@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Causal collapse-preparation readout
+
+The post-collapse report now identifies the selected machine doctrine and the
+remote-support preparation that survived to the failure boundary. This keeps
+the defeat surface attributable to the player's strategic commitments instead
+of presenting only an undifferentiated loss message. English, Swedish and
+German report structures are covered by the complete-game localization checks;
+all validation used Godot Dummy audio with `--quiet-audio` and no physical
+speakers.
+
 ## 2026-08-31 — Strategic victory epilogue
 
 The first-victory surface now carries a compact strategic legacy readout: the

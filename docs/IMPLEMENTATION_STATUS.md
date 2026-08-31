@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused causal collapse-preparation readout — 2026-08-31
+
+- extended the post-collapse report with the selected machine doctrine and
+  functioning remote-support state, so failure identifies strategic
+  preparation rather than only displaying generic pressure and resource data;
+- localized the new report structure in English, Swedish and German and added
+  complete-game regression coverage for the English and Swedish surfaces;
+- refreshed the repository manifest; import, aesthetic, repository and
+  commercial-release gates passed with Dummy audio and `--quiet-audio`.
+
 ## Focused strategic-victory epilogue — 2026-08-31
 
 - extended the first-victory surface with a localized strategic legacy readout

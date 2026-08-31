@@ -670,6 +670,8 @@ func _build_collapse_report() -> String:
     var pressure_text := _localized_pressure_summary()
     var resource_text := _localized_text("hud.collapse.resource_totals", "SCRAP {0} · CORES {1} · MANUAL RECOVERED {2} · AUTONOMOUS RECOVERED {3}", [run_state.scrap, run_state.rare_cores, run_state.manual_scrap_recovered, run_state.autonomous_scrap_recovered])
     var resource_decline_text := run_state.resource_decline_report() if run_state != null else _localized_text("hud.collapse.resource_history_unavailable", "Resource history was unavailable.")
+    var remote_support_text := _localized_text("hud.collapse.remote_support", "{0} functioning remote support post{1}", [_functioning_outpost_count(), "" if _functioning_outpost_count() == 1 else "s"])
+    var doctrine_text := _localized_doctrine_display_name()
     var alternatives := _localized_text("hud.collapse.no_unspent_response", "No unspent response was recorded.")
     if progression != null:
         var available := progression.available_technologies()
@@ -680,8 +682,8 @@ func _build_collapse_report() -> String:
             alternatives = ", ".join(names)
     return _localized_text(
         "hud.collapse.report",
-        "WORLD DURATION · {0}\nMAJOR EVOLUTIONS · {1}\nECOLOGY OBSERVATIONS · {2}\nDECISIVE TIMELINE\n{3}\nRESOURCE POSITION · {4}\nFIRST SUSTAINED RESOURCE DECLINE · {5}\nMACHINE-LOSS PATTERN · {6}\nUNRESOLVED THREAT · {7}\nALTERNATIVE RESPONSES OBSERVED OR UNLOCKED · {8}",
-        [duration_text, evolution_text, species_text, events_text, resource_text, resource_decline_text, loss_text, pressure_text, alternatives]
+        "WORLD DURATION · {0}\nMAJOR EVOLUTIONS · {1}\nECOLOGY OBSERVATIONS · {2}\nDECISIVE TIMELINE\n{3}\nRESOURCE POSITION · {4}\nFIRST SUSTAINED RESOURCE DECLINE · {5}\nMACHINE-LOSS PATTERN · {6}\nUNRESOLVED THREAT · {7}\nALTERNATIVE RESPONSES OBSERVED OR UNLOCKED · {8}\nSTRATEGIC DOCTRINE · {9}\nREMOTE SUPPORT · {10}",
+        [duration_text, evolution_text, species_text, events_text, resource_text, resource_decline_text, loss_text, pressure_text, alternatives, doctrine_text, remote_support_text]
     )
 
 
@@ -1231,12 +1233,7 @@ func _on_endgame_completed(protocol_id: StringName, display_name: String, ending
 
 
 func _build_victory_strategy_epilogue(locale_service: LocalizationService3D) -> String:
-    var doctrine_name := progression.active_doctrine_display_name() if progression != null else "Uncommitted"
-    if locale_service != null and progression != null:
-        var doctrine_key := "technology.name.%s" % String(progression.active_doctrine_id()).replace(".", "_")
-        var localized_doctrine := locale_service.text(doctrine_key)
-        if localized_doctrine != doctrine_key:
-            doctrine_name = localized_doctrine
+    var doctrine_name := _localized_doctrine_display_name(locale_service)
     var component_count := long_operation_director.component_count() if long_operation_director != null else 0
     var outpost_count := _functioning_outpost_count()
     var built_count := run_state.robots_built if run_state != null else 0
@@ -1245,6 +1242,18 @@ func _build_victory_strategy_epilogue(locale_service: LocalizationService3D) -> 
         "STRATEGIC LEGACY\nDoctrine: {0} · Remote support posts: {1} · Unique components recovered: {2}\nThe machine society carried {3} constructed frames into the final response. Its choices now belong to the sanctuary's history.",
         [doctrine_name, outpost_count, component_count, built_count]
     )
+
+
+func _localized_doctrine_display_name(locale_service: LocalizationService3D = null) -> String:
+    var doctrine_name := progression.active_doctrine_display_name() if progression != null else "Uncommitted"
+    if locale_service == null:
+        locale_service = get_tree().get_first_node_in_group(&"localization_service") as LocalizationService3D
+    if locale_service != null and progression != null:
+        var doctrine_key := "technology.name.%s" % String(progression.active_doctrine_id()).replace(".", "_")
+        var localized_doctrine := locale_service.text(doctrine_key)
+        if localized_doctrine != doctrine_key:
+            doctrine_name = localized_doctrine
+    return doctrine_name
 
 
 func _on_endgame_failed(protocol_id: StringName, reason: String) -> void:
