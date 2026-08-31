@@ -4,6 +4,7 @@
   "kind": "world_landmark",
   "source": "game/assets/tram_graveyard/source/build_tram_graveyard_asset.py",
   "runtime_model": "game/assets/tram_graveyard/tram_graveyard.gltf",
+  "material_workflow": "shared_uv_tangent_pbr_geometry",
   "required_nodes": [
     "TramGraveyardModel",
     "TramCarriageA",

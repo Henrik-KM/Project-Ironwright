@@ -25,7 +25,7 @@ def add_parabolic_dish(
     material: int,
     sides: int = 36,
     rings: int = 6,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int, int]:
     """Build a shallow, smooth signal bowl with a readable concave profile."""
     sides = max(24, sides)
     rings = max(3, rings)

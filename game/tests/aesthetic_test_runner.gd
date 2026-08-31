@@ -21,6 +21,20 @@ const CARRIONBELL_ASSET_SCENE := preload("res://assets/carrionbell/carrionbell.g
 const ROOTWEAVER_ASSET_SCENE := preload("res://assets/rootweaver/rootweaver.gltf")
 const THORNBACK_ASSET_SCENE := preload("res://assets/thornback/thornback.gltf")
 const ASHMANTLE_ASSET_SCENE := preload("res://assets/ashmantle/ashmantle.gltf")
+const LANDMARK_ASSET_SCENES := [
+    preload("res://assets/archive/archive.gltf"),
+    preload("res://assets/glasshouse/glasshouse.gltf"),
+    preload("res://assets/flood_market/flood_market.gltf"),
+    preload("res://assets/buried_labs/buried_labs.gltf"),
+    preload("res://assets/cathedral/cathedral.gltf"),
+    preload("res://assets/observatory/observatory.gltf"),
+    preload("res://assets/riverworks/riverworks.gltf"),
+    preload("res://assets/root_cistern/root_cistern.gltf"),
+    preload("res://assets/west_grid/west_grid.gltf"),
+    preload("res://assets/tenement/tenement.gltf"),
+    preload("res://assets/tram_graveyard/tram_graveyard.gltf"),
+]
+const LANDMARK_ASSET_NAMES := ["archive", "glasshouse", "flood_market", "buried_labs", "cathedral", "observatory", "riverworks", "root_cistern", "west_grid", "tenement", "tram_graveyard"]
 
 var failures: Array[String] = []
 
@@ -1719,6 +1733,17 @@ func _run_all() -> void:
     _expect(_find_named(evolved_robot, "Tier2DorsalServicePanel") != null, "Level 3 frames must expose the evolved dorsal service panel.")
     _expect(_find_named(evolved_robot, "Tier3CrownRing") != null and _find_named(evolved_robot, "Tier3CrownBeacon") != null, "Level 3 frames must culminate in a readable crown and status beacons.")
     evolved_robot.queue_free()
+
+    for index in LANDMARK_ASSET_SCENES.size():
+        var landmark_root: Node3D = LANDMARK_ASSET_SCENES[index].instantiate() as Node3D
+        root.add_child(landmark_root)
+    await process_frame
+    for index in LANDMARK_ASSET_SCENES.size():
+        var landmark_root := root.get_child(root.get_child_count() - LANDMARK_ASSET_SCENES.size() + index) as Node3D
+        var landmark_mesh := _find_first_mesh(landmark_root)
+        var landmark_arrays := landmark_mesh.mesh.surface_get_arrays(0) if landmark_mesh != null and landmark_mesh.mesh != null and landmark_mesh.mesh.get_surface_count() > 0 else []
+        _expect(landmark_arrays is Array and landmark_arrays.size() > Mesh.ARRAY_TANGENT and landmark_arrays[Mesh.ARRAY_TEX_UV] != null and landmark_arrays[Mesh.ARRAY_TANGENT] != null, "The authored %s landmark must retain UV and tangent channels for its high-definition PBR surfaces." % LANDMARK_ASSET_NAMES[index])
+        landmark_root.queue_free()
 
     var outpost_samples: Array[Outpost3D] = []
     var outpost_roles := [&"resource", &"defence", &"scout", &"repair"]

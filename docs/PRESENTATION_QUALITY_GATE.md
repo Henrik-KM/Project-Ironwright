@@ -1,5 +1,16 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — World-landmark PBR attribute preservation
+
+The authored landmark exporters now retain UV and tangent channels from the
+shared mesh builder across the Archive, Glasshouse, Flood Market, Buried Labs,
+Cathedral, Observatory, Riverworks, Root Cistern, West Grid, Tenement and Tram
+Graveyard shells. This preserves the high-definition material-detail path for
+the persistent world, including the custom Flood Market canopy, without
+changing landmark sockets or gameplay contracts. Fresh native import and
+landmark aesthetic coverage passed with Godot Dummy audio and
+`--quiet-audio`, with no physical speakers used.
+
 ## 2026-08-31 — Autonomous outpost shelter PBR attribute preservation
 
 The authored outpost shelter exporter now retains UV and tangent channels from

@@ -4,6 +4,7 @@
   "kind": "world_landmark",
   "source": "game/assets/glasshouse/source/build_glasshouse_asset.py",
   "runtime_model": "game/assets/glasshouse/glasshouse.gltf",
+  "material_workflow": "shared_uv_tangent_pbr_geometry",
   "required_nodes": [
     "GlasshouseModel",
     "GlasshouseFrameBay0",

@@ -25,7 +25,7 @@ def add_torus(
     material: int,
     major_segments: int = 48,
     minor_segments: int = 10,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int, int]:
     """Build a dense circular volute ring for the hero pump face."""
     positions: list[float] = []
     normals: list[float] = []
@@ -65,9 +65,9 @@ def main() -> None:
     ]
     meshes: list[dict] = []
 
-    def mesh(name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
-        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
+    def mesh(name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        position, normal, uv, tangent, indices, material = geometry
+        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
     alloy, rust, ceramic, water, amber, growth = range(6)

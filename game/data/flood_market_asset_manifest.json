@@ -4,6 +4,7 @@
   "kind": "world_landmark",
   "source": "game/assets/flood_market/source/build_flood_market_asset.py",
   "runtime_model": "game/assets/flood_market/flood_market.gltf",
+  "material_workflow": "shared_uv_tangent_pbr_geometry",
   "required_nodes": [
     "FloodMarketModel",
     "FloodMarketCanopy0",

@@ -4,6 +4,7 @@
   "kind": "world_landmark",
   "source": "game/assets/root_cistern/source/build_root_cistern_asset.py",
   "runtime_model": "game/assets/root_cistern/root_cistern.gltf",
+  "material_workflow": "shared_uv_tangent_pbr_geometry",
   "required_nodes": [
     "RootCisternModel",
     "RootCisternBasin",

@@ -37,9 +37,9 @@ def main() -> None:
     ]
     meshes: list[dict] = []
 
-    def mesh(name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
-        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
+    def mesh(name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        position, normal, uv, tangent, indices, material = geometry
+        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
     brick, concrete, iron, rust, window, cloth, cloth_teal, cloth_cream, organic, tank = range(10)

@@ -3,6 +3,7 @@
   "kind": "world_landmark",
   "source": "game/assets/observatory/source/build_observatory_asset.py",
   "runtime_model": "game/assets/observatory/observatory.gltf",
+  "material_workflow": "shared_uv_tangent_pbr_geometry",
   "asset_quality": "authored_high_definition",
   "manufactured_surface_profile": "chamfered_high_definition",
   "required_nodes": [

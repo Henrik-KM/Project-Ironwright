@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused world-landmark PBR attribute pass — 2026-08-31
+
+- repaired the eleven authored world-landmark exporters that were discarding
+  UV and tangent channels from the shared mesh builder, including the custom
+  Flood Market canopy geometry;
+- refreshed every generated landmark glTF and declared the shared
+  high-definition material workflow in each asset manifest;
+- added imported-runtime channel coverage for the complete landmark set and
+  verified deterministic source regeneration plus fresh native import and
+  aesthetic gates with Dummy audio and `--quiet-audio`.
+
 ## Focused autonomous-outpost PBR attribute pass — 2026-08-31
 
 - repaired the authored outpost shelter exporter so the shared mesh builder's

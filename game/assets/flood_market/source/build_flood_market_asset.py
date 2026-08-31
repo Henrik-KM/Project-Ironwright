@@ -18,7 +18,7 @@ from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_b
 OUTPUT_PATH = SOURCE_DIR / "flood_market.gltf"
 
 
-def add_sagging_canopy(builder: BufferBuilder, width: float, depth: float, material: int) -> tuple[int, int, int, int]:
+def add_sagging_canopy(builder: BufferBuilder, width: float, depth: float, material: int) -> tuple[int, int, int, int, int, int]:
     """Build a shallow cloth canopy with a raised ridge and irregular edge fall."""
     half_width = width * 0.5
     half_depth = depth * 0.5
@@ -94,9 +94,9 @@ def main() -> None:
     ]
     meshes: list[dict] = []
 
-    def mesh(name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
-        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
+    def mesh(name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        position, normal, uv, tangent, indices, material = geometry
+        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
     frame, canopy, rust, signal_ceramic, water, waterline, sign, organic = range(8)

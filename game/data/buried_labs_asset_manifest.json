@@ -4,6 +4,7 @@
   "kind": "world_landmark",
   "source": "game/assets/buried_labs/source/build_buried_labs_asset.py",
   "runtime_model": "game/assets/buried_labs/buried_labs.gltf",
+  "material_workflow": "shared_uv_tangent_pbr_geometry",
   "manufactured_surface_profile": "chamfered_high_definition",
   "required_nodes": [
     "BuriedLabsModel",
