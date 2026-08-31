@@ -3244,3 +3244,22 @@ a coherent attached-limb language while preserving existing leg animation
 ownership, collision, tactical spacing and infestation behavior. The exact live
 review uses Godot Dummy audio with `--quiet-audio`; no physical speakers were
 used. Broader human production-art acceptance remains open.
+
+# Focused Skitterling leg-root refinement — 2026-08-31
+
+The authored Skitterling now carries paired carapace root collars where each
+leg meets the thorax. The presentation-only geometry brings the opening Tier-I
+silhouette into the same attached-limb language as the larger organic cast
+while preserving leg animation ownership, collision, tactical spacing and
+scavenger behavior. The exact live review uses Godot Dummy audio with
+`--quiet-audio`; no physical speakers were used. Broader human production-art
+acceptance remains open.
+
+# Focused Broodmass leg-root refinement — 2026-08-31
+
+The authored Broodmass now carries paired armored root collars where each leg
+meets the thorax. The presentation-only geometry completes the attached-limb
+read across the late nest-organism silhouette while preserving leg animation
+ownership, collision, tactical spacing and ecology behavior. The exact live
+review uses Godot Dummy audio with `--quiet-audio`; no physical speakers were
+used. Broader human production-art acceptance remains open.

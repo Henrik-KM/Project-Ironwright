@@ -159,6 +159,7 @@ def main() -> None:
         # reading as a row of identical manufactured bars at review distance.
         "Spine": mesh("Spine", add_tapered_cylinder(builder, 0.13, 0.026, 0.98, bone, 24)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.12, 1.72, tendon, 24)),
+        "LegRoot": mesh("LegRoot", add_cylinder(builder, 0.18, 0.26, shell, 32)),
         "Hook": mesh("Hook", add_cylinder(builder, 0.075, 0.78, bone, 24)),
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.105, eye, 20, 28)),
         "Tendon": mesh("Tendon", add_cylinder(builder, 0.065, 0.82, tendon, 28)),
@@ -259,6 +260,7 @@ def main() -> None:
         suffix = "L" if side < 0 else "R"
         for index in range(4):
             z = -0.74 + index * 0.5
+            add_node("BroodmassLegRoot%s%d" % (suffix, index), mesh_ids["LegRoot"], (side * (0.85 + index * 0.06), 1.12, z), scale=(1.0, 0.72, 1.0), parent=torso, extras={"surface": "leg_root_collar"})
             add_node("BroodmassLeg%s%d" % (suffix, index), mesh_ids["Leg"], (side * (0.85 + index * 0.06), 0.58, z), rotation=(0.0, 0.0, side * (0.76 - index * 0.06)))
             add_node("BroodmassHook%s%d" % (suffix, index), mesh_ids["Hook"], (side * (1.28 + index * 0.04), 0.14, z - 0.03), rotation=(0.0, 0.0, side * 0.38))
         add_node("BroodmassFan%s" % suffix, mesh_ids["Fan"], (side * 1.28, 1.62, 0.3), rotation=(0.0, side * 0.2, side * 0.08), scale=(0.22, 1.3, 0.44), extras={"surface": "dorsal_membrane"})
@@ -344,7 +346,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "broodmass.nest.v1",
-            "required_nodes": ["BroodmassModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BroodmassLobeL", "BroodmassLobeRidgeL", "BroodmassMaw", "BroodmassMawCollar", "BroodmassMawRidge", "CrownSpine0", "CrownFastener0", "BroodmassCrownCap", "BroodmassCrownCapPlate", "BroodmassFanL", "ProductionAssetMarker"],
+            "required_nodes": ["BroodmassModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "BroodmassLobeL", "BroodmassLobeRidgeL", "BroodmassMaw", "BroodmassMawCollar", "BroodmassMawRidge", "CrownSpine0", "CrownFastener0", "BroodmassCrownCap", "BroodmassCrownCapPlate", "BroodmassFanL", "BroodmassLegRootL0", "BroodmassLegRootR0", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
             "material_contract": "shared_textured_metallic_roughness_pbr",
             "surface_profile": "shared_organic_pbr_v1",

@@ -1926,6 +1926,7 @@ func _run_all() -> void:
                 _expect(_find_named(enemy_samples[index], "SporecasterSacRim0") != null and _find_named(enemy_samples[index], "SporecasterSacPore0") != null, "The Sporecaster must expose layered sac rims and visible pore apertures for ranged-infestation readability.")
             &"broodmass":
                 _expect(_find_named(enemy_samples[index], "BroodmassLobeRidgeL") != null and _find_named(enemy_samples[index], "BroodmassMawCollar") != null and _find_named(enemy_samples[index], "BroodmassMawRidge") != null and _find_named(enemy_samples[index], "BroodmassMawLower") != null and _find_named(enemy_samples[index], "CrownFastener0") != null, "The Broodmass must expose layered lobe, throat, maw and crown hardware.")
+                _expect(_find_named(enemy_samples[index], "BroodmassLegRootL0") != null and _find_named(enemy_samples[index], "BroodmassLegRootR0") != null, "The Broodmass must expose paired armored leg-root collars where its limbs meet the thorax.")
             &"roofleaper":
                 _expect(_find_named(enemy_samples[index], "RoofleaperFineVeinL") != null and _find_named(enemy_samples[index], "RoofleaperFineVeinR") != null, "The Roofleaper must expose fine vascular wing detail on both membranes.")
                 _expect(_find_named(enemy_samples[index], "RoofleaperWingFrameL") != null and _find_named(enemy_samples[index], "RoofleaperWingFastenerR") != null, "The Roofleaper must expose structural wing spars and socket fasteners.")
@@ -2254,6 +2255,9 @@ func _run_all() -> void:
     _expect(broodmass_dorsal != null and broodmass_dorsal.mesh.get_aabb().size.y >= 0.30 and broodmass_maw_plate != null and broodmass_maw_plate.mesh.get_aabb().size.y >= 0.30, "The authored Broodmass dorsal and maw plates must retain closed folded volume rather than broad horizontal sheets.")
     _expect(broodmass_maw_collar != null and _mesh_vertex_count(broodmass_maw_collar) >= 500 and broodmass_maw_collar.mesh.get_aabb().size.y >= 0.24 and broodmass_maw_collar.get_parent().name == "BroodmassMaw", "Broodmass's maw must retain a dense folded throat collar parented to the animated maw socket.")
     _expect(broodmass_maw_lower != null and _mesh_vertex_count(broodmass_maw_lower) >= 500 and broodmass_maw_lower.mesh.get_aabb().size.y >= 0.20 and broodmass_maw_lower.get_parent().name == "BroodmassMaw", "Broodmass's lower maw must retain a dense folded shell with readable depth on the animated maw socket.")
+    var broodmass_leg_root_l := _find_named(broodmass_asset, "BroodmassLegRootL0") as MeshInstance3D
+    var broodmass_leg_root_r := _find_named(broodmass_asset, "BroodmassLegRootR0") as MeshInstance3D
+    _expect(broodmass_leg_root_l != null and broodmass_leg_root_r != null and _mesh_vertex_count(broodmass_leg_root_l) >= 64 and _mesh_vertex_count(broodmass_leg_root_r) >= 64 and broodmass_leg_root_l.get_parent().name == "Torso" and broodmass_leg_root_r.get_parent().name == "Torso", "The authored Broodmass leg-root collars must retain dense paired geometry parented to the thorax so its limbs read as attached anatomy.")
     var broodmass_rib := _find_named(broodmass_asset, "BroodmassThoraxRib0") as MeshInstance3D
     _expect(broodmass_rib != null and _mesh_vertex_count(broodmass_rib) >= 200 and absf(broodmass_rib.rotation.z) >= 1.4, "The authored Broodmass thorax ribs must retain dense rounded struts rather than horizontal flat bars.")
     veilstalker_asset.queue_free()
