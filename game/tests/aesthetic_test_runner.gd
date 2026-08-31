@@ -1624,7 +1624,7 @@ func _run_all() -> void:
                 _expect(_animation_player_track_count(engineer_animation.animation_player, &"Death") >= 4, "Engineer Death must carry forge-coil and cradle collapse channels.")
             engineer_asset.queue_free()
         elif role_names[index] == &"relay":
-            _expect(_find_named(role_samples[index], "RelayMastCollar") != null and _find_named(role_samples[index], "RelayDishRibLeft") != null and _find_named(role_samples[index], "RelaySignalFace") != null, "The Signal Relay must expose maintained mast, dish-rib and signal-face hardware.")
+            _expect(_find_named(role_samples[index], "RelayMastCollar") != null and _find_named(role_samples[index], "RelayDishRibLeft") != null and _find_named(role_samples[index], "RelayDishRibRight") != null and _find_named(role_samples[index], "RelayDishRibFront") != null and _find_named(role_samples[index], "RelayDishRibRear") != null and _find_named(role_samples[index], "RelayServiceFace") != null, "The Signal Relay must expose a maintained four-point dish cradle and service-face hardware.")
         role_samples[index].queue_free()
 
     var authored_warden := ROBOT_SCENE.instantiate() as RobotUnit3D

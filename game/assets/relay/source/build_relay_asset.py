@@ -175,6 +175,11 @@ def main() -> None:
     add_node("RelayBeaconCap", mesh_ids["BeaconCap"], (0.0, 2.34, -0.04))
     for side in (-1.0, 1.0):
         add_node("RelayDishRib%s" % ("Left" if side < 0 else "Right"), mesh_ids["Brace"], (side * 0.18, 2.38, 0.0), rotation=(0.0, 0.0, side * 0.2))
+    # A four-point cradle gives the directional bowl a readable load-bearing
+    # aperture at close review distance. These are presentation-only braces;
+    # the dish remains owned by its existing animated node.
+    add_node("RelayDishRibFront", mesh_ids["Brace"], (0.0, 2.38, -0.18), rotation=(0.2, 0.0, 0.0))
+    add_node("RelayDishRibRear", mesh_ids["Brace"], (0.0, 2.38, 0.18), rotation=(-0.2, 0.0, 0.0))
     add_node("RelayFastenerLeft", mesh_ids["Fastener"], (-0.39, 1.19, -0.79), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("RelayFastenerRight", mesh_ids["Fastener"], (0.39, 1.19, -0.79), rotation=(math.pi * 0.5, 0.0, 0.0))
     add_node("RelayServiceLatch", mesh_ids["ServiceLatch"], (0.0, 1.18, -0.8))

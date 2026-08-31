@@ -3166,3 +3166,13 @@ compact frame without changing their row positions, runtime scale, collision,
 animation or tactical camera. The exact live review continues with Godot Dummy
 audio and `--quiet-audio`; no physical speakers are used. Broader human
 production-art acceptance remains open.
+
+# Focused Signal Relay dish-cradle refinement — 2026-08-31
+
+The authored Signal Relay now carries a four-point directional-dish cradle:
+two opposing braces were added to the existing left/right pair. The added
+presentation-only geometry strengthens the close-camera aperture and
+load-bearing read without changing the dish socket, animation ownership,
+collision or autonomous signal role. The exact live review uses Godot Dummy
+audio and `--quiet-audio`; no physical speakers are used. Broader human
+production-art acceptance remains open.
