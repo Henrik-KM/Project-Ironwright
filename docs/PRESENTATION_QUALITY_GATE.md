@@ -3494,3 +3494,12 @@ under the tiered shelter stacks, improving the grounded load-path read without
 adding a new structure or management surface. Exact native review passed at
 1280x720 with Godot Dummy audio and `--quiet-audio`; no physical speakers were
 used.
+
+## Focused Municipal Glasshouse foundation pass — 2026-08-31
+
+The Glasshouse review now shows a continuous low foundation plinth and four
+perimeter service rails below the transparent frame. The added edge gives the
+large cultivation structure a grounded, maintained footprint while keeping
+the transparent panes, growth beds and climate identity readable. Native
+review used Godot Dummy audio with `--quiet-audio`; no physical speakers were
+used.

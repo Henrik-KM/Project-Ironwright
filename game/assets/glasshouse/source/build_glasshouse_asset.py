@@ -39,6 +39,9 @@ def main() -> None:
     frame, rust, glass, grow_light, growth, soil, amber = range(7)
     mesh_ids = {
         "Floor": mesh("GlasshouseFloor", add_beveled_box(builder, (18.0, 0.16, 14.0), frame, 0.04)),
+        "FoundationPlinth": mesh("GlasshouseFoundationPlinth", add_beveled_box(builder, (18.8, 0.24, 14.8), frame, 0.08)),
+        "FoundationRailLong": mesh("GlasshouseFoundationRailLong", add_beveled_box(builder, (17.8, 0.22, 0.18), rust, 0.04)),
+        "FoundationRailShort": mesh("GlasshouseFoundationRailShort", add_beveled_box(builder, (0.18, 0.22, 13.8), rust, 0.04)),
         "Post": mesh("GlasshousePost", add_beveled_box(builder, (0.20, 6.6, 0.20), frame, 0.05)),
         "Beam": mesh("GlasshouseBeam", add_beveled_box(builder, (0.22, 0.22, 12.2), rust, 0.05)),
         "Glass": mesh("GlasshouseGlass", add_beveled_box(builder, (0.06, 4.9, 5.0), glass, 0.02)),
@@ -102,7 +105,12 @@ def main() -> None:
         nodes[parent].setdefault("children", []).append(len(nodes) - 1)
         return len(nodes) - 1
 
+    add_node("GlasshouseFoundationPlinth", mesh_ids["FoundationPlinth"], (0.0, -0.06, 0.0), extras={"socket_type": "greenhouse_foundation"})
     add_node("GlasshouseFloor", mesh_ids["Floor"], (0.0, 0.08, 0.0), extras={"socket_type": "greenhouse_floor"})
+    add_node("GlasshouseFoundationRailFront", mesh_ids["FoundationRailLong"], (0.0, 0.22, -6.92), extras={"surface": "foundation_service_rail"})
+    add_node("GlasshouseFoundationRailRear", mesh_ids["FoundationRailLong"], (0.0, 0.22, 6.92), extras={"surface": "foundation_service_rail"})
+    add_node("GlasshouseFoundationRailLeft", mesh_ids["FoundationRailShort"], (-8.92, 0.22, 0.0), extras={"surface": "foundation_service_rail"})
+    add_node("GlasshouseFoundationRailRight", mesh_ids["FoundationRailShort"], (8.92, 0.22, 0.0), extras={"surface": "foundation_service_rail"})
     for index, x in enumerate((-8.0, -4.0, 0.0, 4.0, 8.0)):
         add_node("GlasshouseFrameBay%d" % index, mesh_ids["Post"], (x, 3.3, -5.4), extras={"socket_type": "greenhouse_frame"})
         add_node("GlasshouseFrameBay%dRear" % index, mesh_ids["Post"], (x, 3.3, 5.4), extras={"socket_type": "greenhouse_frame"})
@@ -167,7 +175,7 @@ def main() -> None:
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "extras": {
             "ironwright_asset_id": "glasshouse.municipal.v1",
-            "required_nodes": ["GlasshouseModel", "GlasshouseFrameBay0", "GlasshouseRoofRib0", "GlasshousePaneLatch0", "GlasshouseClimateLouver", "GlasshouseClimateActuator", "GlasshouseBrokenSkylight", "GlasshouseGrowthBed0", "GlasshouseBedEdge0", "GlasshouseGrowthTendril0_0", "GlasshouseLightHousing0", "GlasshouseBedTrellis0", "GlasshouseTrellisRail0", "GlasshouseTrellisGrowth0_0", "GlasshouseServiceDoor", "GlasshouseServiceTrolley", "GlasshouseTrolleyBody", "GlasshouseTrolleyTray", "GlasshouseTrolleyWheelL", "GlasshouseTrolleyCanister", "GlasshouseTrolleyCrate", "GlasshouseTrolleyHandleL", "ProductionAssetMarker"],
+            "required_nodes": ["GlasshouseModel", "GlasshouseFoundationPlinth", "GlasshouseFoundationRailFront", "GlasshouseFoundationRailRear", "GlasshouseFoundationRailLeft", "GlasshouseFoundationRailRight", "GlasshouseFrameBay0", "GlasshouseRoofRib0", "GlasshousePaneLatch0", "GlasshouseClimateLouver", "GlasshouseClimateActuator", "GlasshouseBrokenSkylight", "GlasshouseGrowthBed0", "GlasshouseBedEdge0", "GlasshouseGrowthTendril0_0", "GlasshouseLightHousing0", "GlasshouseBedTrellis0", "GlasshouseTrellisRail0", "GlasshouseTrellisGrowth0_0", "GlasshouseServiceDoor", "GlasshouseServiceTrolley", "GlasshouseTrolleyBody", "GlasshouseTrolleyTray", "GlasshouseTrolleyWheelL", "GlasshouseTrolleyCanister", "GlasshouseTrolleyCrate", "GlasshouseTrolleyHandleL", "ProductionAssetMarker"],
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
