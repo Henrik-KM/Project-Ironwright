@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Compact machine-report readability
+
+Long localized machine reports now take one restrained font-size step before
+the compact release HUD permits text overrun. The exact late-objective capture
+shows both recovery-post reports readable while the objective, reserves,
+Mechromancer, Bulwark and Heartforge remain unobscured. First-session,
+complete-game and release checks passed with Dummy audio and
+`--quiet-audio`; no physical speakers were used.
+
 ## 2026-08-31 — Stable-root animation registration pass
 
 Stable imported model roots are now registered when the presentation cache is

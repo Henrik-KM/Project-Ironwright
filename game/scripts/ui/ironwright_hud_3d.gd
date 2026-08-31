@@ -582,10 +582,18 @@ func _refresh_notifications() -> void:
     notification_panel.visible = not notifications.is_empty()
     if notifications.is_empty():
         notification_label.text = ""
+        notification_label.add_theme_font_size_override("font_size", 14)
         return
     var formatted: Array[String] = []
+    var longest_message_length := 0
     for message in notifications:
         formatted.append("• %s" % message)
+        longest_message_length = maxi(longest_message_length, message.length())
+    # Keep the bounded two-line report stack readable at the compact release
+    # viewport without shrinking ordinary short reports. Long localized
+    # technology and outpost messages get one restrained step of headroom
+    # before Label's ellipsis behavior is allowed to intervene.
+    notification_label.add_theme_font_size_override("font_size", 13 if longest_message_length > 32 else 14)
     notification_label.text = "\n\n".join(formatted)
 
 

@@ -1,5 +1,14 @@
 # Implementation status
 
+## Focused compact machine-report readability pass — 2026-08-31
+
+- added a bounded content-aware font step for long localized machine reports,
+  preventing the compact release HUD from ellipsizing recovery-post messages;
+- preserved the two-report cap, ordinary short-report scale and viewport-safe
+  layout;
+- first-session, complete-game and release checks passed, and the exact
+  late-objective capture confirmed both recovery-post reports fully readable.
+
 ## Focused stable-root animation registration pass — 2026-08-31
 
 - moved stable model-root registration from every active animation tick into

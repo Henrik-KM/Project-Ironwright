@@ -102,7 +102,7 @@ func _run_all() -> void:
     _expect(not objective_rect.intersects(health_rect), "The opening objective copy and health stack must remain separate in the tactical frame.")
     if hud.companion_status_label != null and hud.companion_bar != null:
         _expect(not hud.companion_status_label.get_global_rect().intersects(hud.companion_bar.get_global_rect()), "The Bulwark health label must remain above its bar in the compact opening layout.")
-    hud.push_notification("FIRST MACHINE REPORT")
+    hud.push_notification("FIRST MACHINE REPORT · RECOVERY POST ONLINE")
     hud.push_notification("SECOND MACHINE REPORT")
     hud.push_notification("THIRD MACHINE REPORT")
     hud.push_notification("FOURTH MACHINE REPORT")
@@ -110,6 +110,7 @@ func _run_all() -> void:
     var notification_rect := hud.notification_panel.get_global_rect()
     _expect(not objective_rect.intersects(notification_rect), "Persistent objective text and transient reports must occupy separate regions.")
     _expect(hud.notifications.size() == IronwrightHUD3D.MAX_VISIBLE_NOTIFICATIONS, "The visible report stack must remain strictly bounded.")
+    _expect(hud.notification_label.text.length() > 32, "The bounded report stack must retain long machine-report copy for compact-layout handling.")
     _expect(hud.notification_panel.visible, "New reports must appear in the dedicated toast panel.")
     hud._process(IronwrightHUD3D.NOTIFICATION_LIFETIME_SECONDS + 0.2)
     _expect(hud.notifications.is_empty() and not hud.notification_panel.visible, "Reports must expire instead of permanently burying the objective.")
