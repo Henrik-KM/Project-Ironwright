@@ -5,6 +5,8 @@
 - extended the existing bounded route-risk memory to retain the three most
   recent physical blockage positions per region, so later formations can
   choose an authored route that clears the accumulated disruption pattern;
+- localized the operations-panel explanation of that remembered disruption in
+  English, German and Swedish so autonomous route selection remains legible;
 - kept the latest blockage and existing route-preview contract for backward
   compatibility, with older saves reconstructing a one-position history;
 - serialized and restored the bounded history through the unified save path,

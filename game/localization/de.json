@@ -448,6 +448,8 @@
     "command.operations.active": "OPERATION AKTIV · MIT F FOLGEN",
     "command.operations.authorize": "PHYSISCHE OPERATION AUTORISIEREN",
     "command.operations.route_brief": "Route: {0} · {1} Wegpunkt{2} · {3} m",
+    "command.operations.route_memory_suffix": " · {0} gemerkte Blockade",
+    "command.operations.route_memory_suffix_plural": " · {0} gemerkte Blockaden",
     "command.operations.route.primary": "Hauptroute",
     "command.operations.route.alternate": "Ausweichroute",
     "command.operations.route_confidence_suffix": " · Routenlage: {0}",

@@ -448,6 +448,8 @@
     "command.operations.active": "OPERATION AKTIV · FÖLJ MED F",
     "command.operations.authorize": "AUKTORISERA FYSISK OPERATION",
     "command.operations.route_brief": "Rutt: {0} · {1} vägpunk{2} · {3} m",
+    "command.operations.route_memory_suffix": " · {0} ihågkommen blockering",
+    "command.operations.route_memory_suffix_plural": " · {0} ihågkomna blockeringar",
     "command.operations.route.primary": "huvudrutt",
     "command.operations.route.alternate": "alternativ rutt",
     "command.operations.route_confidence_suffix": " · Ruttsäkerhet: {0}",
