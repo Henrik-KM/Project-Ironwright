@@ -1218,6 +1218,7 @@ func _on_endgame_completed(protocol_id: StringName, display_name: String, ending
     var localized_detail := "FIRST VICTORY · %s\n\n%s\n\nThe run reached a complete systemic conclusion without a recurring timed-wave loop." % [localized_name, localized_ending]
     if locale_service != null:
         localized_detail = locale_service.text("hud.ending.first_victory_detail", [localized_name, localized_ending])
+    localized_detail += "\n\n" + _build_victory_strategy_epilogue(locale_service)
     # Keep the live completion surface in the selected locale even though the
     # simulation director still owns canonical English data for saves/logs.
     _update_complete_game_objective()
@@ -1227,6 +1228,23 @@ func _on_endgame_completed(protocol_id: StringName, display_name: String, ending
     hud.set_operation(victory_status)
     hud.set_operation_badge("", false)
     hud.show_ending(true, localized_detail, true)
+
+
+func _build_victory_strategy_epilogue(locale_service: LocalizationService3D) -> String:
+    var doctrine_name := progression.active_doctrine_display_name() if progression != null else "Uncommitted"
+    if locale_service != null and progression != null:
+        var doctrine_key := "technology.name.%s" % String(progression.active_doctrine_id()).replace(".", "_")
+        var localized_doctrine := locale_service.text(doctrine_key)
+        if localized_doctrine != doctrine_key:
+            doctrine_name = localized_doctrine
+    var component_count := long_operation_director.component_count() if long_operation_director != null else 0
+    var outpost_count := _functioning_outpost_count()
+    var built_count := run_state.robots_built if run_state != null else 0
+    return _localized_text(
+        "hud.ending.strategy_epilogue",
+        "STRATEGIC LEGACY\nDoctrine: {0} · Remote support posts: {1} · Unique components recovered: {2}\nThe machine society carried {3} constructed frames into the final response. Its choices now belong to the sanctuary's history.",
+        [doctrine_name, outpost_count, component_count, built_count]
+    )
 
 
 func _on_endgame_failed(protocol_id: StringName, reason: String) -> void:

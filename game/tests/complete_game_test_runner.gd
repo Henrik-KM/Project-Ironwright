@@ -509,6 +509,8 @@ func _run_all() -> void:
     _expect(world.hud.operation_label.text.find("%") == -1 and (world.hud.operation_label.text.to_lower().find("victory") >= 0 or world.hud.operation_label.text.to_lower().find("sieg") >= 0), "First victory must replace the stale active-protocol percentage in the live resource panel.")
     _expect(world.hud.objective_label.text.to_lower().find("victory") >= 0 or world.hud.objective_label.text.to_lower().find("sieg") >= 0, "First victory must replace the active hold-the-Heartforge objective.")
     _expect(world.hud.ending_panel != null and world.hud.ending_panel.visible, "First victory must expose the continuing-sanctuary ending surface.")
+    var victory_detail_label := world.hud.ending_panel.get_node("PanelContent").get_child(0) as Label
+    _expect(victory_detail_label != null and victory_detail_label.text.contains("STRATEGIC LEGACY") and victory_detail_label.text.contains("Remote support posts"), "First victory must explain the doctrine, remote support and machine legacy that shaped the completed run.")
     _expect(world.hud.notifications.is_empty() and not world.hud.notification_panel.visible, "First victory must clear stale machine-report toasts before showing the ending surface.")
     _expect(not world.hud.prompt_panel.visible and world.hud.prompt_label.text.is_empty(), "First victory must clear stale interaction guidance so the ending surface owns the continuation prompt.")
     _expect(not world.long_operation_director.available_operations().any(func(entry: Dictionary) -> bool: return StringName(str(entry.get("id", ""))) == &"operation.post_victory_archive"), "The post-victory archive must remain unavailable behind the victory boundary until continuation is chosen.")

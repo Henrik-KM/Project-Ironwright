@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused strategic-victory epilogue — 2026-08-31
+
+- extended the first-victory surface with a localized strategic legacy readout
+  covering the chosen machine doctrine, functioning remote support posts,
+  recovered unique components and constructed machine scale;
+- increased the normal ending panel's viewport-safe height so the additional
+  run-specific evidence remains readable rather than clipped;
+- added complete-game coverage for the real victory surface and refreshed the
+  repository manifest after the three locale catalogs changed.
+
 ## Focused Engineer construction-silhouette pass — 2026-08-31
 
 - added paired articulated cradle braces and a cyan forge status strip to the

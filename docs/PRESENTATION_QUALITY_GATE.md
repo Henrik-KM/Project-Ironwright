@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Strategic victory epilogue
+
+The first-victory surface now carries a compact strategic legacy readout: the
+chosen machine doctrine, functioning remote support posts, recovered unique
+components and constructed machine count. The normal ending panel was given a
+viewport-safe height budget for the extra evidence, while the continuation
+prompt and calm sanctuary backdrop remain intact. Complete-game and release
+surface checks passed with Godot Dummy audio and `--quiet-audio`; no physical
+speakers were used. Exact human visual acceptance remains a separate gate.
+
 ## 2026-08-31 — Engineer construction silhouette
 
 The authored Engineer now carries paired articulated braces around its material
