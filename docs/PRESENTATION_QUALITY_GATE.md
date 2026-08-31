@@ -10,6 +10,8 @@ the persistent world, including the custom Flood Market canopy, without
 changing landmark sockets or gameplay contracts. Fresh native import and
 landmark aesthetic coverage passed with Godot Dummy audio and
 `--quiet-audio`, with no physical speakers used.
+The repository aesthetic validator now enforces those four surface accessors
+on every authored landmark primitive.
 
 ## 2026-08-31 — Autonomous outpost shelter PBR attribute preservation
 

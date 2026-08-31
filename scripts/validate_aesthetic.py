@@ -4054,6 +4054,29 @@ def validate_authored_region_assets() -> None:
                 fail(f"{family} landmark glTF is missing required node: {required}")
 
 
+def validate_authored_region_surface_channels() -> None:
+    """Ensure landmark meshes keep the shared high-definition surface channels."""
+    for family in AUTHORED_REGION_ASSETS:
+        manifest_path = ROOT / f"game/data/{family}_asset_manifest.json"
+        gltf_path = ROOT / f"game/assets/{family}/{family}.gltf"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest.get("material_workflow") != "shared_uv_tangent_pbr_geometry":
+            fail(f"{family} landmark manifest must declare the shared UV/tangent PBR workflow.")
+        gltf = json.loads(gltf_path.read_text(encoding="utf-8"))
+        accessors = gltf.get("accessors", [])
+        mesh_count = 0
+        for mesh in gltf.get("meshes", []):
+            for primitive in mesh.get("primitives", []):
+                attributes = primitive.get("attributes", {})
+                for semantic in ("POSITION", "NORMAL", "TEXCOORD_0", "TANGENT"):
+                    accessor_index = attributes.get(semantic)
+                    if not isinstance(accessor_index, int) or accessor_index < 0 or accessor_index >= len(accessors):
+                        fail(f"{family} landmark primitive is missing a valid {semantic} accessor.")
+                mesh_count += 1
+        if mesh_count == 0:
+            fail(f"{family} landmark glTF must contain authored mesh primitives.")
+
+
 def validate_asset_manifest_quality_contract() -> None:
     """Require every runtime art manifest to declare authored HD provenance."""
     manifests = sorted((ROOT / "game/data").glob("*_asset_manifest.json"))
@@ -4096,6 +4119,7 @@ def main() -> int:
         validate_early_organic_materials()
         validate_sporecaster_gill_finish()
         validate_authored_region_assets()
+        validate_authored_region_surface_channels()
 
         main_scene = (ROOT / "game/scenes/main_3d.tscn").read_text(encoding="utf-8")
         if all(entrypoint not in main_scene for entrypoint in ["main_world_prealpha_3d.gd", "main_world_release_3d.gd", "main_world_tiered_3d.gd"]):

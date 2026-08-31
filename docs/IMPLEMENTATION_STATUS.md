@@ -10,6 +10,8 @@
 - added imported-runtime channel coverage for the complete landmark set and
   verified deterministic source regeneration plus fresh native import and
   aesthetic gates with Dummy audio and `--quiet-audio`.
+- hardened the Python aesthetic validator so every authored landmark primitive
+  must declare valid POSITION, NORMAL, TEXCOORD_0 and TANGENT accessors.
 
 ## Focused autonomous-outpost PBR attribute pass — 2026-08-31
 
