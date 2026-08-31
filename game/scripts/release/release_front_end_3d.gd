@@ -374,6 +374,12 @@ func show_title(has_save: bool, save_summary: String = "") -> void:
         new_world_button.grab_focus()
 
 
+func set_title_save_summary(save_summary: String) -> void:
+    active_save_summary = save_summary if active_screen == &"title" and not continue_button.disabled else ""
+    save_status_label.text = active_save_summary
+    save_status_label.visible = not active_save_summary.is_empty()
+
+
 func show_pause() -> void:
     visible = true
     active_screen = &"pause"

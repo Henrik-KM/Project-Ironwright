@@ -820,10 +820,11 @@ func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void
     # deliberate travel-direction reframe.
     world.set_process(false)
     world.camera.rotation = Vector3(0.0, PI * 0.37, 0.0)
+    world.player.velocity = Vector3.ZERO
     var keyboard_position_before := world.player.global_position
     var expected_keyboard_direction := world.player._camera_relative_movement(Vector2(0.0, -1.0))
     Input.action_press(&"iw_move_up")
-    for _frame in range(12):
+    for _frame in range(18):
         await physics_frame
     Input.action_release(&"iw_move_up")
     var keyboard_displacement := world.player.global_position - keyboard_position_before
@@ -838,7 +839,7 @@ func _test_controller_and_accessibility(world: IronwrightReleaseWorld3D) -> void
     motion.axis = JOY_AXIS_LEFT_X
     motion.axis_value = 1.0
     Input.parse_input_event(motion)
-    for _frame in range(12):
+    for _frame in range(18):
         await physics_frame
     var release_motion := InputEventJoypadMotion.new()
     release_motion.device = 0
@@ -2059,6 +2060,12 @@ func _test_spatial_and_performance(world: IronwrightReleaseWorld3D) -> void:
     var medium_enemy := world._spawn_enemy(world.player.global_position + Vector3(80.0, 0.0, 0.0), &"glassmoth") as OrganicEnemyRelease3D
     var medium_robot := world._spawn_robot(&"scout", world.player.global_position + Vector3(82.0, 0.0, 0.0), 1) as RobotUnitRelease3D
     var far_enemy := world._spawn_enemy(world.player.global_position + Vector3(260.0, 0.0, 0.0), &"rootweaver") as OrganicEnemyRelease3D
+    # These are inert fixtures: the performance gate must inspect LOD state,
+    # not allow live combat or ecology cleanup to remove a sample mid-check.
+    for fixture in [near_enemy, medium_enemy, medium_robot, far_enemy]:
+        var fixture_brain := fixture.get_node_or_null("EnemyTierBrain") as Node
+        if fixture_brain != null:
+            fixture_brain.set_physics_process(false)
     await process_frame
     world.spatial_index.rebuild()
     var nearest := world.spatial_index.nearest(&"organic_enemies", world.player.global_position, 20.0)
@@ -2395,6 +2402,11 @@ func _test_front_end(world: IronwrightReleaseWorld3D) -> void:
     _expect(not front_end.continue_button.disabled and front_end.save_status_label.visible and front_end.save_status_label.text.contains("HEARTFORGE TIER 3"), "A title screen with a verified save must expose compact progress context beside Continue.")
     front_end.show_title(false)
     _expect(not front_end.save_status_label.visible and front_end.no_save_label.visible, "Returning to a first-run title state must clear stale saved-world progress context.")
+    front_end.show_title(true, world._title_save_summary(false, true))
+    world.localization_service.set_locale(&"sv")
+    _expect("ÄLDRE VÄRLD" in front_end.save_status_label.text, "Changing language on the title screen must refresh legacy saved-world context instead of retaining stale localized copy.")
+    world.localization_service.set_locale(&"en")
+    front_end.show_title(false)
     var title_rect := front_end.title_panel.get_global_rect()
     var title_viewport := front_end.get_viewport().get_visible_rect()
     _expect(title_rect.position.y >= title_viewport.position.y - 0.5 and title_rect.end.y <= title_viewport.end.y + 0.5, "The first-run title panel must fit inside the current viewport instead of clipping its no-save guidance.")

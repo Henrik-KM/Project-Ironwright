@@ -7296,3 +7296,5 @@ roster checks and requires silent late-organic live review before merge.
   recurring player task, and first-run focus still lands on New World;
 - release regression coverage and a fresh silent native title capture confirm
   that both the no-save and saved-world states remain readable at 1280x720.
+- changing language while the title remains open refreshes the saved-world line
+  immediately, including the legacy-import state.
