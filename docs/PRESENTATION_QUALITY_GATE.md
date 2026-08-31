@@ -1,5 +1,13 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Stable-root animation registration pass
+
+Stable imported model roots are now registered when the presentation cache is
+captured instead of being checked on every animation tick. Transform
+restoration and imported-subtree invalidation remain intact; repeated silent
+release benchmark and behavioral runs passed with Dummy audio and
+`--quiet-audio`.
+
 ## 2026-08-31 — Active animation cache hot-path pass
 
 The active presentation animator no longer repeats instance-ID registration

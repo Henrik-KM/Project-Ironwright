@@ -1,5 +1,13 @@
 # Implementation status
 
+## Focused stable-root animation registration pass — 2026-08-31
+
+- moved stable model-root registration from every active animation tick into
+  the existing model-capture boundary;
+- preserved transform restoration, dynamic imported-model capture and
+  reduced-detail handoffs, with performance and behavioral suites passing in
+  repeated silent benchmark runs.
+
 ## Focused active-animation cache hot-path pass — 2026-08-31
 
 - removed redundant per-frame re-registration of already-cached presentation
