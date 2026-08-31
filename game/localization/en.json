@@ -617,7 +617,7 @@
     "command.recap.close_hint": "Press ESC, P, L or V to close.",
     "command.recap.condition": "WORLD CONDITION · {0}\nHEARTFORGE {1}% INTEGRITY · TIER {2} · SCRAP {3} · CORES {4}",
     "command.recap.no_operation": "No long-range operation is in motion. Press P to review the next physical route.",
-    "command.recap.pressure_summary": "{0} · pressure {1}",
+    "command.recap.pressure_summary": "{0} · pressure {1} · migration tendency {2}",
     "command.recap.pressure_unavailable": "Regional pressure is not currently resolved.",
     "command.recap.current_objective": "Review the current objective on the tactical HUD.",
     "command.recap.unresolved_fallback": "No unresolved strategic problem is recorded.",

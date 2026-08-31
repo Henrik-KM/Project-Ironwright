@@ -390,6 +390,7 @@ func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
     _expect(float(migration_probe_high.get("migration_tendency", 0.0)) > float(migration_probe_low.get("migration_tendency", 0.0)), "A high-migration world condition must make the same stressed ecology more likely to relocate than a low-migration condition.")
     world.run_state.set_world_variant(original_variant, world.run_state.world_seed)
     variation.apply_current()
+    _expect(world._localized_pressure_summary().contains("migration tendency"), "The command recap must expose migration tendency alongside regional pressure so world-condition ecology changes remain legible.")
 
     var saved_state := world.run_state.to_dictionary()
     var restored_state := RunState3D.new()

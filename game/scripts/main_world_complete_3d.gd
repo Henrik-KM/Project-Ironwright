@@ -930,7 +930,8 @@ func _localized_pressure_summary() -> String:
     var region_id := StringName(str(summary.get("region_id", "region.heartforge_district")))
     var region_name := _localized_region_name(region_id)
     var pressure := float(summary.get("pressure", 0.0))
-    return _localized_text("command.recap.pressure_summary", "{0} · pressure {1}", [region_name, "%.2f" % pressure])
+    var migration_tendency := float(summary.get("migration_tendency", 0.0))
+    return _localized_text("command.recap.pressure_summary", "{0} · pressure {1} · migration tendency {2}", [region_name, "%.2f" % pressure, "%.2f" % migration_tendency])
 
 
 func _set_complete_objective(title_key: String, title_fallback: String, detail_key: String, detail_fallback: String, replacements: Array = [], prompt_key: String = "", prompt_fallback: String = "") -> void:

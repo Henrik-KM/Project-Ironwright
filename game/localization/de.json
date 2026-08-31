@@ -617,7 +617,7 @@
     "command.recap.close_hint": "ESC, P, L oder V zum Schließen drücken.",
     "command.recap.condition": "WELTZUSTAND · {0}\nHERZSCHMIEDE {1}% INTEGRITÄT · STUFE {2} · SCHROTT {3} · KERNE {4}",
     "command.recap.no_operation": "Keine Fernoperation ist aktiv. P drücken, um die nächste physische Route zu prüfen.",
-    "command.recap.pressure_summary": "{0} · Druck {1}",
+    "command.recap.pressure_summary": "{0} · Druck {1} · Migrationstendenz {2}",
     "command.recap.pressure_unavailable": "Der regionale Druck ist derzeit nicht aufgelöst.",
     "command.recap.current_objective": "Das aktuelle Ziel auf der taktischen HUD prüfen.",
     "command.recap.unresolved_fallback": "Es ist kein ungelöstes strategisches Problem verzeichnet.",

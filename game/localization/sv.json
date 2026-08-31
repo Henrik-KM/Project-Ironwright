@@ -617,7 +617,7 @@
     "command.recap.close_hint": "Tryck ESC, P, L eller V för att stänga.",
     "command.recap.condition": "VÄRLDSFÖRHÅLLANDE · {0}\nHJÄRTSMEDJAN {1}% INTEGRITET · NIVÅ {2} · SKROT {3} · KÄRNOR {4}",
     "command.recap.no_operation": "Ingen fjärroperation pågår. Tryck P för att granska nästa fysiska rutt.",
-    "command.recap.pressure_summary": "{0} · tryck {1}",
+    "command.recap.pressure_summary": "{0} · tryck {1} · migrationstendens {2}",
     "command.recap.pressure_unavailable": "Regionalt tryck är inte fastställt just nu.",
     "command.recap.current_objective": "Granska det aktuella målet på den taktiska HUD:en.",
     "command.recap.unresolved_fallback": "Inget olöst strategiskt problem är registrerat.",

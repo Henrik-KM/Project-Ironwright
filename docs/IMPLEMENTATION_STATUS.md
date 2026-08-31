@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused ecology recap readability milestone — 2026-08-31
+
+- extended the compact command recap's regional ecology summary to expose the
+  live migration tendency alongside pressure, making deterministic world
+  conditions' migration consequence legible without adding a persistent
+  dashboard or recurring player task;
+- localized the summary in English, German and Swedish and added release
+  coverage for the live field;
+- verified the exact release build through the silent Dummy-audio runtime and
+  command/operations interaction path with no physical speakers.
+
 ## Continue/load world-presentation recovery — 2026-08-30
 
 - changed Continue to rebuild the playable scene before restoring a save,
