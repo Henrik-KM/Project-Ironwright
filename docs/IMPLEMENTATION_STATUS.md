@@ -1,5 +1,18 @@
 # Implementation status
 
+## Focused persistent route-history pass — 2026-08-31
+
+- extended the existing bounded route-risk memory to retain the three most
+  recent physical blockage positions per region, so later formations can
+  choose an authored route that clears the accumulated disruption pattern;
+- kept the latest blockage and existing route-preview contract for backward
+  compatibility, with older saves reconstructing a one-position history;
+- serialized and restored the bounded history through the unified save path,
+  with complete-game coverage for creation and restoration;
+- verified the change with repository, headless import, release, aesthetic,
+  performance and complete-game gates, plus a fresh live opening/forge pass
+  using Godot Dummy audio and `--quiet-audio`.
+
 ## Focused presentation-review transient isolation — 2026-08-31
 
 - stopped delayed release-audio captions and cues from covering the non-saving

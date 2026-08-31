@@ -204,6 +204,7 @@ func _run_all() -> void:
     _expect(learned_west_route is Dictionary and float((learned_west_route as Dictionary).get("risk", 0.0)) >= 1.0, "A route disruption must become bounded persistent route-risk memory.")
     _expect(learned_west_route is Dictionary and bool((learned_west_route as Dictionary).get("has_block_position", false)), "A route disruption must remember the physical blockage position for future authored-route scoring.")
     _expect(learned_west_route is Dictionary and (learned_west_route as Dictionary).get("last_block_position", Vector3.ZERO).distance_to(route_blocker.global_position) < 0.1, "Route memory must record the actual obstruction position rather than only a region-wide risk value.")
+    _expect(learned_west_route is Dictionary and (learned_west_route as Dictionary).get("block_positions", []).size() == 1, "A route disruption must begin a bounded physical blockage history.")
     _expect(world.region_director.route_variant_count(&"region.west_grid") == 2, "The West Grid must expose two authored alternate street routes for segment-aware adaptive selection.")
     _expect(world.long_operation_director._preferred_route_variant(&"region.west_grid") == 2, "A blockage on the primary street must make the clearest authored alternate route the next autonomous preference.")
     var learned_route_preview := world.long_operation_director.route_preview(&"operation.west_grid_survey")
@@ -253,6 +254,7 @@ func _run_all() -> void:
     _expect(restored_west_route_memory is Dictionary and float((restored_west_route_memory as Dictionary).get("risk", 0.0)) >= 1.0, "Learned route-risk memory must survive the unified save/load path.")
     _expect(restored_west_route_memory is Dictionary and bool((restored_west_route_memory as Dictionary).get("has_block_position", false)), "Remembered route blockage state must survive the unified save/load path.")
     _expect(restored_west_route_memory is Dictionary and (restored_west_route_memory as Dictionary).get("last_block_position", Vector3.ZERO).distance_to(recovery_anchor) < 0.1, "The saved route-memory blockage position must restore to the same physical location.")
+    _expect(restored_west_route_memory is Dictionary and (restored_west_route_memory as Dictionary).get("block_positions", []).size() == 1, "The bounded physical blockage history must survive the unified save/load path.")
     var recovered_operation_snapshot := world.long_operation_director.to_dictionary()
     var retreat_blocker := Node3D.new()
     retreat_blocker.name = "RouteRecoveryRetreatBlocker"
