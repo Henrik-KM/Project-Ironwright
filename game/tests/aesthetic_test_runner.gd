@@ -1625,6 +1625,7 @@ func _run_all() -> void:
             var engineer_chassis := _find_named(engineer_asset, "Chassis") as MeshInstance3D
             var engineer_cradle := _find_named(engineer_asset, "MaterialCradle") as MeshInstance3D
             _expect(engineer_chassis != null and engineer_cradle != null and _mesh_vertex_count(engineer_chassis) >= 600 and _mesh_vertex_count(engineer_cradle) >= 48, "The authored Engineer chassis and material cradle must retain dense high-definition manufactured surfaces.")
+            _expect(_find_named(engineer_asset, "EngineerCradleBraceLeft") != null and _find_named(engineer_asset, "EngineerCradleBraceRight") != null and _find_named(engineer_asset, "EngineerStatusStrip") != null, "The Engineer must expose paired articulated cradle braces and a visible forge status strip.")
             var engineer_animation := role_samples[index].get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
             if engineer_animation != null and engineer_animation.animation_player != null:
                 _expect(_animation_player_track_count(engineer_animation.animation_player, &"Idle") >= 7, "Engineer Idle must carry cradle-latch, forge-coil and paired spool channels.")

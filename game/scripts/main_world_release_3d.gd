@@ -2211,6 +2211,7 @@ func _start_complete_objective_review() -> void:
 		_spawn_robot(&"salvager", heartforge.global_position + Vector3(0.0, 0.0, 3.8), 1)
 		_spawn_robot(&"guardian", heartforge.global_position + Vector3(3.0, 0.0, 2.0), 1)
 		_spawn_robot(&"scout", heartforge.global_position + Vector3(-3.0, 0.0, 2.0), 1)
+		_spawn_robot(&"engineer", heartforge.global_position + Vector3(0.0, 0.0, 5.8), 1)
 	if outpost_director != null:
 		for index in range(mini(3, outpost_director.sites.size())):
 			var site := outpost_director.sites[index] as OutpostSite3D
