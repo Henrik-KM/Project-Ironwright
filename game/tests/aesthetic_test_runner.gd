@@ -1625,6 +1625,7 @@ func _run_all() -> void:
             engineer_asset.queue_free()
         elif role_names[index] == &"relay":
             _expect(_find_named(role_samples[index], "RelayMastCollar") != null and _find_named(role_samples[index], "RelayMastFoot") != null and _find_named(role_samples[index], "RelayMastFootFastenerLeft") != null and _find_named(role_samples[index], "RelayMastFootFastenerRight") != null and _find_named(role_samples[index], "RelayDishRibLeft") != null and _find_named(role_samples[index], "RelayDishRibRight") != null and _find_named(role_samples[index], "RelayDishRibFront") != null and _find_named(role_samples[index], "RelayDishRibRear") != null and _find_named(role_samples[index], "RelayServiceFace") != null, "The Signal Relay must expose a grounded mast root, maintained four-point dish cradle and service-face hardware.")
+            _expect(_find_named(role_samples[index], "RelaySignalCollar") != null and _find_named(role_samples[index], "RelaySignalCollarBraceLeft") != null and _find_named(role_samples[index], "RelaySignalCollarBraceRight") != null, "The Signal Relay must expose a compact signal collar and paired mast supports for a readable role silhouette.")
         role_samples[index].queue_free()
 
     var authored_warden := ROBOT_SCENE.instantiate() as RobotUnit3D

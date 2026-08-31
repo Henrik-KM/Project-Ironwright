@@ -469,6 +469,32 @@ func _build_relay_detail(parent: Node3D) -> void:
     ModelKit3D.add_sphere(parent, 0.1, Vector3(0.0, 2.34, -0.02), relay_glow, Vector3(1.0, 0.72, 0.72), "RelaySignalBeacon")
     ModelKit3D.add_beveled_box(parent, Vector3(0.18, 0.3, 0.46), Vector3(-0.7, 1.0, 0.0), finish_panel, Vector3(0.0, 0.0, 0.18), "RelaySideGuardLeft", 0.18)
     ModelKit3D.add_beveled_box(parent, Vector3(0.18, 0.3, 0.46), Vector3(0.7, 1.0, 0.0), finish_panel, Vector3(0.0, 0.0, -0.18), "RelaySideGuardRight", 0.18)
+    # The signal role needs one unmistakable focal ring at compact tactical
+    # scale. Keep it around the existing authored beacon rather than replacing
+    # the imported dish, so the added read remains presentation-only and the
+    # animation/socket hierarchy stays authoritative.
+    var signal_collar := MeshInstance3D.new()
+    signal_collar.name = "RelaySignalCollar"
+    var collar_mesh := TorusMesh.new()
+    collar_mesh.inner_radius = 0.17
+    collar_mesh.outer_radius = 0.23
+    collar_mesh.rings = 16
+    collar_mesh.ring_segments = 32
+    signal_collar.mesh = collar_mesh
+    signal_collar.material_override = relay_glow
+    signal_collar.position = Vector3(0.0, 2.3, -0.02)
+    signal_collar.rotation.x = PI * 0.5
+    parent.add_child(signal_collar)
+    for side in [-1.0, 1.0]:
+        ModelKit3D.add_beveled_box(
+            parent,
+            Vector3(0.07, 0.16, 0.3),
+            Vector3(float(side) * 0.2, 2.14, 0.02),
+            finish_panel,
+            Vector3(0.0, 0.0, float(side) * 0.12),
+            "RelaySignalCollarBrace%s" % ("Left" if side < 0.0 else "Right"),
+            0.06
+        )
     _add_machine_lamp(parent, Vector3(0.0, 1.2, -0.84), Color("79e3e8"), 0.28)
 
 

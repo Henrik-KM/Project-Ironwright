@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Signal Relay compact-silhouette pass — 2026-08-31
+
+- added a restrained signal collar and paired mast supports to the existing
+  Relay presentation layer, making its communication role read at compact
+  tactical and roster-gallery scale without replacing the authored dish;
+- preserved the imported animation and socket hierarchy, with aesthetic
+  regression coverage for the new stable presentation nodes;
+- verified the exact player-and-friendly-machine gallery live after restart
+  with Godot Dummy audio and `--quiet-audio`, alongside repository and
+  aesthetic gates.
+
 ## Focused persistent route-history pass — 2026-08-31
 
 - extended the existing bounded route-risk memory to retain the three most

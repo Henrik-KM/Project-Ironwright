@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Signal Relay compact silhouette
+
+The Signal Relay's exact friendly-roster frame now carries a restrained
+emissive signal collar and paired supports around the existing authored mast.
+The added focal ring makes the late communication role readable beside the
+other friendly machines at compact review scale while preserving the imported
+dish, animation hierarchy, sockets and gameplay footprint. The exact gallery
+was restarted and reviewed with Godot Dummy audio and `--quiet-audio`; no
+physical speakers were used.
+
 ## 2026-08-31 — Silent gallery transient isolation
 
 The exact Tier III outpost gallery no longer permits a delayed release-audio
