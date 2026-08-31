@@ -3235,3 +3235,12 @@ load path while preserving the existing leg animation ownership, collision,
 tactical spacing and enemy behavior. The exact live review uses Godot Dummy
 audio with `--quiet-audio`; no physical speakers were used. Broader human
 production-art acceptance remains open.
+
+# Focused Sporecaster leg-root refinement — 2026-08-31
+
+The authored Sporecaster now carries paired organic root collars where each leg
+meets the thorax. The presentation-only geometry gives the close organic cast
+a coherent attached-limb language while preserving existing leg animation
+ownership, collision, tactical spacing and infestation behavior. The exact live
+review uses Godot Dummy audio with `--quiet-audio`; no physical speakers were
+used. Broader human production-art acceptance remains open.

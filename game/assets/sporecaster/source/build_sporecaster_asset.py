@@ -166,6 +166,7 @@ def main() -> None:
         "Eye": mesh("Eye", add_uv_sphere(builder, 0.085, eye, 16, 24)),
         "Stem": mesh("Stem", add_cylinder(builder, 0.045, 0.54, tendon, 24)),
         "Leg": mesh("Leg", add_cylinder(builder, 0.09, 1.25, tendon, 24)),
+        "LegRoot": mesh("LegRoot", add_cylinder(builder, 0.145, 0.22, shell, 28)),
         "Talon": mesh("Talon", add_cylinder(builder, 0.055, 0.62, bone, 24)),
         "Spine": mesh("Spine", add_cylinder(builder, 0.075, 0.84, bone, 24)),
         "Fastener": mesh("Fastener", add_uv_sphere(builder, 0.04, bone, 16, 24)),
@@ -260,6 +261,7 @@ def main() -> None:
     for side in (-1.0, 1.0):
         for index in range(3):
             z = -0.5 + index * 0.52
+            add_node("SporecasterLegRoot%s%d" % ("L" if side < 0 else "R", index), mesh_ids["LegRoot"], (side * (0.58 + index * 0.05), 0.70, z), scale=(1.0, 0.72, 1.0), parent=torso, extras={"surface": "leg_root_collar"})
             add_node("SporecasterLeg%s%d" % ("L" if side < 0 else "R", index), mesh_ids["Leg"], (side * (0.58 + index * 0.05), 0.34, z), rotation=(0.0, 0.0, side * 0.72))
             add_node("SporecasterTalon%s%d" % ("L" if side < 0 else "R", index), mesh_ids["Talon"], (side * 0.9, 0.12, z - 0.04), rotation=(0.0, 0.0, side * 0.36))
 
@@ -374,7 +376,7 @@ def main() -> None:
         "animations": animations,
         "extras": {
             "ironwright_asset_id": "sporecaster.infestation.v1",
-            "required_nodes": ["SporecasterModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SporecasterGillFan0", "SporecasterGillRib0", "SporecasterSac0", "SporecasterSacCap0", "SporecasterStem0", "SporecasterOculusL", "ProductionAssetMarker"],
+            "required_nodes": ["SporecasterModel", "Torso", "TorsoCore", "OrganicDorsalPlate", "SporecasterGillFan0", "SporecasterGillRib0", "SporecasterSac0", "SporecasterSacCap0", "SporecasterStem0", "SporecasterOculusL", "SporecasterLegRootL0", "SporecasterLegRootR0", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
             "material_contract": "shared_textured_metallic_roughness_pbr",
             "surface_profile": "shared_organic_pbr_v1",
