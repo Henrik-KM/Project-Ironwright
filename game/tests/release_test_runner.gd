@@ -339,6 +339,7 @@ func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
         _expect(float(signal_bloom.get("glow_bias", 0.0)) > 0.1 and str(signal_bloom.get("rain_color", "")) == "#76bfc8", "Signal Bloom must carry its distinct cyan organic atmospheric signature.")
         _expect(str(signal_bloom.get("ambient_tint", "")) == "#84aab8" and str(signal_bloom.get("fog_tint", "")) == "#4c7681", "Signal Bloom must carry its distinct restrained run-identity color grade.")
         _expect(float(signal_bloom.get("ecology_pressure_multiplier", 0.0)) > 1.2, "Signal Bloom must carry a stronger authored ecology-pressure identity beyond weather presentation.")
+        _expect(float(signal_bloom.get("ecology_migration_multiplier", 0.0)) > 1.2, "Signal Bloom must carry a stronger authored migration identity beyond pressure presentation.")
     _expect(variation.profiles.has(&"weather.ashfall_drift"), "Release must retain the authored Ashfall Drift world-condition profile.")
     if variation.profiles.has(&"weather.ashfall_drift"):
         var ashfall_drift: Dictionary = variation.profiles[&"weather.ashfall_drift"]
@@ -356,12 +357,14 @@ func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
         var profile: Dictionary = variation.profiles[profile_id]
         _expect(str(profile.get("ambient_tint", "")) != "" and str(profile.get("fog_tint", "")) != "", "Every authored world condition must define deterministic ambient and fog identity tints.")
         _expect(float(profile.get("ecology_pressure_multiplier", 0.0)) >= 0.75 and float(profile.get("ecology_pressure_multiplier", 0.0)) <= 1.35, "Every authored world condition must define a bounded ecology-pressure identity.")
+        _expect(float(profile.get("ecology_migration_multiplier", 0.0)) >= 0.7 and float(profile.get("ecology_migration_multiplier", 0.0)) <= 1.35, "Every authored world condition must define a bounded ecology-migration identity.")
     _expect(world.run_state.world_seed != 0, "A new run must record a non-zero world seed.")
     _expect(world.run_state.world_variant_id != &"", "A new run must record a stable world-condition ID.")
     _expect(not variation.current_display_name().is_empty(), "The active world condition must expose a player-readable name.")
     _expect(world.vertical_slice.weather_emitter != null and world.vertical_slice.weather_emitter.amount >= 80, "The active world condition must configure the opening weather emitter.")
     var active_profile: Dictionary = variation.current_profile()
     _expect(is_equal_approx(world.strategic_ecology_director.run_variation_pressure_multiplier, float(active_profile.get("ecology_pressure_multiplier", 1.0))), "The active world condition must apply its authored ecology-pressure identity to the live ecology director.")
+    _expect(is_equal_approx(world.strategic_ecology_director.run_variation_migration_multiplier, float(active_profile.get("ecology_migration_multiplier", 1.0))), "The active world condition must apply its authored ecology-migration identity to the live ecology director.")
     if str(active_profile.get("particle_style", "rain")) == "ash" and world.vertical_slice.weather_emitter != null:
         var ash_mesh := world.vertical_slice.weather_emitter.mesh as QuadMesh
         _expect(ash_mesh != null and ash_mesh.size.x <= 0.1 and ash_mesh.size.y <= 0.1, "Ashfall Drift must materialize as small drifting flecks instead of rain streaks.")
@@ -369,13 +372,22 @@ func _test_run_variation(world: IronwrightReleaseWorld3D) -> void:
     world.run_state.set_world_variant(&"weather.ashfall_drift", world.run_state.world_seed)
     variation.apply_current()
     _expect(is_equal_approx(world.strategic_ecology_director.run_variation_pressure_multiplier, 1.02), "Switching to Ashfall Drift must update the live ecology-pressure identity without changing the saved run seed.")
+    _expect(is_equal_approx(world.strategic_ecology_director.run_variation_migration_multiplier, 1.02), "Switching to Ashfall Drift must update the live ecology-migration identity without changing the saved run seed.")
     var ash_mesh := world.vertical_slice.weather_emitter.mesh as QuadMesh if world.vertical_slice.weather_emitter != null else null
     _expect(ash_mesh != null and ash_mesh.size.x <= 0.1 and ash_mesh.size.y <= 0.1, "Ashfall Drift must apply a fleck-sized particle mesh at runtime.")
     world.run_state.set_world_variant(&"weather.frost_hush", world.run_state.world_seed)
     variation.apply_current()
     _expect(is_equal_approx(world.strategic_ecology_director.run_variation_pressure_multiplier, 0.86), "Switching to Frost Hush must update the live ecology-pressure identity without changing the saved run seed.")
+    _expect(is_equal_approx(world.strategic_ecology_director.run_variation_migration_multiplier, 0.78), "Switching to Frost Hush must update the live ecology-migration identity without changing the saved run seed.")
     var frost_mesh := world.vertical_slice.weather_emitter.mesh as QuadMesh if world.vertical_slice.weather_emitter != null else null
     _expect(frost_mesh != null and frost_mesh.size.x >= 0.1 and frost_mesh.size.y >= 0.1, "Frost Hush must apply a readable drifting-flake particle mesh at runtime.")
+    var migration_probe_low := {"population": 8.0, "food": 0.3, "hunger": 0.8, "disturbance": 0.7, "territory": 0.2, "nesting": 0.2}
+    var migration_probe_high := migration_probe_low.duplicate(true)
+    world.strategic_ecology_director.set_run_variation_migration_multiplier(0.78)
+    world.strategic_ecology_director._advance_population_state(migration_probe_low, 1.0, 10.0)
+    world.strategic_ecology_director.set_run_variation_migration_multiplier(1.26)
+    world.strategic_ecology_director._advance_population_state(migration_probe_high, 1.0, 10.0)
+    _expect(float(migration_probe_high.get("migration_tendency", 0.0)) > float(migration_probe_low.get("migration_tendency", 0.0)), "A high-migration world condition must make the same stressed ecology more likely to relocate than a low-migration condition.")
     world.run_state.set_world_variant(original_variant, world.run_state.world_seed)
     variation.apply_current()
 

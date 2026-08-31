@@ -13,6 +13,7 @@ var active_enemy_cap: int = 96
 var endgame_escalation: float = 1.0
 var pressure_multiplier: float = 1.0
 var run_variation_pressure_multiplier: float = 1.0
+var run_variation_migration_multiplier: float = 1.0
 var reports_cooldown: float = 0.0
 var population_states: Dictionary = {}
 var run_state: RunState3D
@@ -56,6 +57,10 @@ func set_release_balance(next_enemy_cap: int, next_pressure_multiplier: float) -
 
 func set_run_variation_pressure_multiplier(value: float) -> void:
     run_variation_pressure_multiplier = clampf(value, 0.75, 1.35)
+
+
+func set_run_variation_migration_multiplier(value: float) -> void:
+    run_variation_migration_multiplier = clampf(value, 0.7, 1.35)
 
 
 func effective_pressure_multiplier() -> float:
@@ -273,7 +278,8 @@ func _advance_population_state(state: Dictionary, pressure: float, spawn_budget:
         population -= 0.06
     var territory := clampf(float(state.get("territory", 0.52)) + (population / maxf(2.0, spawn_budget * 2.0) - 0.5) * 0.003, 0.0, 1.0)
     var nesting := clampf(float(state.get("nesting", 0.08)) + (0.006 if food > 0.5 else -0.008), 0.0, 1.0)
-    var migration_tendency := clampf(hunger * 0.44 + disturbance * 0.42 + pressure * 0.14 - territory * 0.08, 0.0, 1.0)
+    var migration_pressure := hunger * 0.44 + disturbance * 0.42 + pressure * 0.14
+    var migration_tendency := clampf(migration_pressure * run_variation_migration_multiplier - territory * 0.08, 0.0, 1.0)
     state["population"] = clampf(population, 0.5, 42.0)
     state["health"] = clampf(food * 0.62 + (1.0 - hunger) * 0.38, 0.0, 1.0)
     state["food"] = food

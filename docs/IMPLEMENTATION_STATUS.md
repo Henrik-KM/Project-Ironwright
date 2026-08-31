@@ -6988,3 +6988,13 @@ roster checks and requires silent late-organic live review before merge.
   wreck body, collision, salvage interaction and authored asset transform;
 - closed the opening vertical-slice presentation guard for layered vehicle
   wrecks, with no new gameplay task or persistent state.
+
+## Focused world-condition ecology identity milestone
+
+- connected each deterministic saved world condition to a bounded migration
+  multiplier in the canonical strategic ecology director, so storm, signal,
+  ash and frost conditions change how readily existing populations relocate;
+- kept the effect seedable and derived from the persisted world-condition ID,
+  with no new player-maintained meter, queue or management surface;
+- added release coverage for profile bounds, live application and variant
+  switching while preserving the existing pressure and weather contracts.

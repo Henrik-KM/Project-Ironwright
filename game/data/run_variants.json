@@ -16,7 +16,8 @@
       "fog_energy_bias": 0.04,
       "brightness_bias": -0.018,
       "glow_bias": 0.035,
-      "ecology_pressure_multiplier": 1.18
+      "ecology_pressure_multiplier": 1.18,
+      "ecology_migration_multiplier": 1.12
     },
     {
       "id": "weather.mist_lull",
@@ -33,7 +34,8 @@
       "fog_energy_bias": 0.08,
       "brightness_bias": -0.008,
       "glow_bias": 0.08,
-      "ecology_pressure_multiplier": 1.08
+      "ecology_pressure_multiplier": 1.08,
+      "ecology_migration_multiplier": 1.05
     },
     {
       "id": "weather.cold_break",
@@ -50,7 +52,8 @@
       "fog_energy_bias": -0.03,
       "brightness_bias": 0.018,
       "glow_bias": -0.015,
-      "ecology_pressure_multiplier": 0.92
+      "ecology_pressure_multiplier": 0.92,
+      "ecology_migration_multiplier": 0.84
     },
     {
       "id": "weather.signal_bloom",
@@ -67,7 +70,8 @@
       "fog_energy_bias": 0.07,
       "brightness_bias": -0.004,
       "glow_bias": 0.16,
-      "ecology_pressure_multiplier": 1.24
+      "ecology_pressure_multiplier": 1.24,
+      "ecology_migration_multiplier": 1.26
     },
     {
       "id": "weather.ashfall_drift",
@@ -85,7 +89,8 @@
       "fog_energy_bias": 0.02,
       "brightness_bias": -0.012,
       "glow_bias": 0.055,
-      "ecology_pressure_multiplier": 1.02
+      "ecology_pressure_multiplier": 1.02,
+      "ecology_migration_multiplier": 1.02
     },
     {
       "id": "weather.frost_hush",
@@ -103,7 +108,8 @@
       "fog_energy_bias": 0.055,
       "brightness_bias": -0.006,
       "glow_bias": 0.11,
-      "ecology_pressure_multiplier": 0.86
+      "ecology_pressure_multiplier": 0.86,
+      "ecology_migration_multiplier": 0.78
     }
   ]
 }
