@@ -7285,3 +7285,14 @@ roster checks and requires silent late-organic live review before merge.
   with no new player-maintained meter, queue or management surface;
 - added release coverage for profile bounds, live application and variant
   switching while preserving the existing pressure and weather contracts.
+
+## Focused title save-context milestone — 2026-08-31
+
+- added a compact title-screen progress line for verified saves, showing the
+  Heartforge tier and discovered-region count beside Continue;
+- legacy saves now identify themselves as ready for import instead of appearing
+  indistinguishable from a current verified world;
+- the line remains informational only: it adds no management surface or
+  recurring player task, and first-run focus still lands on New World;
+- release regression coverage and a fresh silent native title capture confirm
+  that both the no-save and saved-world states remain readable at 1280x720.

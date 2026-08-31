@@ -3457,3 +3457,12 @@ read across the late nest-organism silhouette while preserving leg animation
 ownership, collision, tactical spacing and ecology behavior. The exact live
 review uses Godot Dummy audio with `--quiet-audio`; no physical speakers were
 used. Broader human production-art acceptance remains open.
+## Focused title save-context pass — 2026-08-31
+
+The title screen now gives Continue a small amount of consequential context:
+verified worlds identify their Heartforge tier and discovered-region count,
+while a legacy world explicitly says that continuing will import it. The line
+is centered within the existing title hierarchy and leaves the authored
+Heartforge backdrop unobstructed. A fresh silent 1280x720 native capture
+confirmed the legacy-import state without clipping or overlap; no physical
+speakers were used.

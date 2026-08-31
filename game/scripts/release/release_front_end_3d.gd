@@ -25,6 +25,7 @@ var pause_subtitle_label: Label
 var version_label: Label
 var continue_button: Button
 var new_world_button: Button
+var save_status_label: Label
 var no_save_label: Label
 var settings_title: Label
 var settings_controls: Dictionary = {}
@@ -33,6 +34,7 @@ var controller_remap_buttons: Dictionary = {}
 var active_screen: StringName = &"hidden"
 var last_focus: Control
 var remap_capture_action: StringName = &""
+var active_save_summary: String = ""
 
 
 func configure(next_localization: LocalizationService3D, next_settings: ReleaseSettingsService3D) -> void:
@@ -187,6 +189,11 @@ void fragment() {
     version_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     version_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     title_box.add_child(version_label)
+    save_status_label = _body_label("", 13, Color("8ea9a4"), 28)
+    save_status_label.custom_minimum_size.x = 600.0
+    save_status_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    save_status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    title_box.add_child(save_status_label)
     title_box.add_child(HSeparator.new())
     continue_button = _menu_button("CONTINUE", func() -> void: continue_requested.emit())
     title_box.add_child(continue_button)
@@ -346,13 +353,16 @@ func _settings_row(label_key: String, control: Control) -> HBoxContainer:
     return row
 
 
-func show_title(has_save: bool) -> void:
+func show_title(has_save: bool, save_summary: String = "") -> void:
     visible = true
     active_screen = &"title"
     title_panel.visible = true
     pause_panel.visible = false
     settings_panel.visible = false
     continue_button.disabled = not has_save
+    active_save_summary = save_summary if has_save else ""
+    save_status_label.text = active_save_summary
+    save_status_label.visible = not active_save_summary.is_empty()
     no_save_label.visible = not has_save
     remap_capture_action = &""
     _refresh_text()
@@ -520,6 +530,7 @@ func _refresh_text() -> void:
     title_label.text = localization.text("app.title")
     subtitle_label.text = localization.text("app.subtitle")
     version_label.text = localization.text("menu.release_candidate")
+    save_status_label.text = active_save_summary
     pause_subtitle_label.text = localization.text("menu.world_paused")
     continue_button.text = localization.text("menu.continue")
     no_save_label.text = localization.text("menu.no_save")

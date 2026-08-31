@@ -3249,9 +3249,23 @@ func _show_title_screen() -> void:
 	player.input_enabled = false
 	_set_tactical_hud_visible(false)
 	get_tree().paused = false
-	release_front_end.show_title(transactional_save_service.has_valid_save(RELEASE_SLOT) or _legacy_save_exists())
+	var has_verified_save := transactional_save_service.has_valid_save(RELEASE_SLOT)
+	var has_legacy_save := _legacy_save_exists()
+	release_front_end.show_title(has_verified_save or has_legacy_save, _title_save_summary(has_verified_save, has_legacy_save))
 	if title_pause_timer != null:
 		title_pause_timer.start(0.12)
+
+
+func _title_save_summary(has_verified_save: bool, has_legacy_save: bool) -> String:
+	if not has_verified_save:
+		if has_legacy_save:
+			return _localized_text("menu.legacy_save_ready", "LEGACY WORLD READY · CONTINUE TO IMPORT")
+		return ""
+	var envelope := transactional_save_service.inspect_slot(RELEASE_SLOT)
+	var metadata: Dictionary = envelope.get("metadata", {}) as Dictionary
+	var tier := maxi(1, int(metadata.get("heartforge_tier", 1)))
+	var regions := maxi(0, int(metadata.get("regions_discovered", 0)))
+	return _localized_text("menu.save_ready", "SAVED WORLD READY · HEARTFORGE TIER {0} · {1} REGIONS DISCOVERED", [tier, regions])
 
 
 func _set_title_camera() -> void:
