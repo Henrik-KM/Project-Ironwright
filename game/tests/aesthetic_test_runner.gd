@@ -1589,6 +1589,9 @@ func _run_all() -> void:
             var scrapper_chassis := _find_named(scrapper_asset, "Chassis") as MeshInstance3D
             var scrapper_cargo := _find_named(scrapper_asset, "CargoBin") as MeshInstance3D
             _expect(scrapper_chassis != null and scrapper_cargo != null and _mesh_vertex_count(scrapper_chassis) >= 600 and _mesh_vertex_count(scrapper_cargo) >= 48, "The authored Scrapper chassis and cargo bin must retain dense high-definition manufactured surfaces.")
+            var scrapper_array_mesh := scrapper_chassis.mesh as ArrayMesh if scrapper_chassis != null else null
+            var scrapper_arrays := scrapper_array_mesh.surface_get_arrays(0) if scrapper_array_mesh != null and scrapper_array_mesh.get_surface_count() > 0 else []
+            _expect(scrapper_arrays is Array and scrapper_arrays.size() > Mesh.ARRAY_TANGENT and scrapper_arrays[Mesh.ARRAY_TEX_UV] != null and scrapper_arrays[Mesh.ARRAY_TANGENT] != null, "The authored Scrapper must retain UV and tangent channels for its high-definition PBR surface.")
             var scrapper_hopper_rail := _find_named(scrapper_asset, "ScrapperHopperSideRail") as MeshInstance3D
             var scrapper_intake_deck := _find_named(scrapper_asset, "ScrapperIntakeDeck") as MeshInstance3D
             _expect(scrapper_hopper_rail != null and scrapper_intake_deck != null and _mesh_vertex_count(scrapper_hopper_rail) >= 48 and _mesh_vertex_count(scrapper_intake_deck) >= 48, "The Scrapper must retain raised hopper rails and a readable intake deck for its salvage role silhouette.")
@@ -1611,6 +1614,9 @@ func _run_all() -> void:
             var pathfinder_chassis := _find_named(pathfinder_asset, "Chassis") as MeshInstance3D
             var pathfinder_sensor_pod := _find_named(pathfinder_asset, "PathfinderSensorPod") as MeshInstance3D
             _expect(pathfinder_chassis != null and pathfinder_sensor_pod != null and _mesh_vertex_count(pathfinder_chassis) >= 600 and _mesh_vertex_count(pathfinder_sensor_pod) >= 48, "The authored Pathfinder chassis and sensor pod must retain dense high-definition manufactured surfaces.")
+            var pathfinder_array_mesh := pathfinder_chassis.mesh as ArrayMesh if pathfinder_chassis != null else null
+            var pathfinder_arrays := pathfinder_array_mesh.surface_get_arrays(0) if pathfinder_array_mesh != null and pathfinder_array_mesh.get_surface_count() > 0 else []
+            _expect(pathfinder_arrays is Array and pathfinder_arrays.size() > Mesh.ARRAY_TANGENT and pathfinder_arrays[Mesh.ARRAY_TEX_UV] != null and pathfinder_arrays[Mesh.ARRAY_TANGENT] != null, "The authored Pathfinder must retain UV and tangent channels for its high-definition PBR surface.")
             var pathfinder_console := _find_named(pathfinder_asset, "PathfinderSurveyConsole") as MeshInstance3D
             var pathfinder_dish_rim := _find_named(pathfinder_asset, "PathfinderDishRim") as MeshInstance3D
             _expect(pathfinder_console != null and pathfinder_dish_rim != null and _mesh_vertex_count(pathfinder_console) >= 48 and _mesh_vertex_count(pathfinder_dish_rim) >= 64, "The Pathfinder must retain a maintained survey console and dense dish rim for its scout role silhouette.")

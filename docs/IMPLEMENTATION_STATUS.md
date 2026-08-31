@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused support-frame PBR attribute pass — 2026-08-31
+
+- repaired the Scrapper and Pathfinder source exporters so the shared mesh
+  builder's UV and tangent channels survive into their authored glTF meshes;
+- refreshed both generated support-machine assets and declared the shared
+  high-definition material workflow in their manifests;
+- added imported-channel aesthetic coverage and verified deterministic source
+  regeneration, fresh import, repository, release, aesthetic and complete-game
+  gates with Dummy audio and `--quiet-audio`.
+
 ## Focused Warden PBR attribute-preservation pass — 2026-08-31
 
 - repaired the Warden source exporter so the shared geometry builder's UV and

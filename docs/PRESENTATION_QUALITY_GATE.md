@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Support-frame PBR attribute preservation
+
+The authored Scrapper and Pathfinder exporters now retain the UV and tangent
+channels produced by the shared mesh builder. Their regenerated glTF shells
+therefore preserve the material-detail path used by the high-definition model
+library, while existing salvage, survey, animation and socket contracts remain
+unchanged. Both assets re-imported cleanly and native aesthetic coverage passed
+under Godot Dummy audio with `--quiet-audio`; no physical speakers were used.
+
 ## 2026-08-31 — Warden PBR attribute preservation
 
 The authored Warden exporter now preserves the UV and tangent channels already
