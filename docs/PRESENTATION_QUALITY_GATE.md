@@ -1,5 +1,18 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Full remote-region gallery acceptance review
+
+The exact fresh release build was reviewed across the complete 15-page
+presentation gallery at the intended 1280×720 scale. The player/friendly
+roster, North Ruins, West Grid, East Tenements, Municipal Glasshouse, Flood
+Market, Riverworks, Tram Graveyard, Cathedral Quarter, Observatory Ridge,
+Buried Laboratories, Root Cistern and the Tier III autonomous-outpost roles
+all retained a readable focal silhouette and distinct authored identity. No
+new presentation change was justified by this pass. This is internal exact-
+build evidence only; broader human production-art, target-hardware, balance
+and accessibility acceptance remain separate release gates. The review used
+Godot Dummy audio with `--quiet-audio` and produced no physical speaker output.
+
 ## 2026-08-31 — Signal Relay compact silhouette
 
 The Signal Relay's exact friendly-roster frame now carries a restrained

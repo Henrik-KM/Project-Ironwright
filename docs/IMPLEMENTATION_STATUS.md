@@ -1,5 +1,20 @@
 # Implementation status
 
+## Full remote-region gallery acceptance review — 2026-08-31
+
+- reviewed the exact fresh release build's complete 15-page presentation gallery
+  with the player/friendly roster, all remote-region encounter spaces, and the
+  Tier III autonomous-outpost page at the intended 1280×720 review scale;
+- confirmed distinct focal silhouettes and authored regional identity across
+  North Ruins, West Grid, East Tenements, Municipal Glasshouse, Flood Market,
+  Riverworks, Tram Graveyard, Cathedral Quarter, Observatory Ridge, Buried
+  Laboratories, Root Cistern and the Tier III outpost roles;
+- retained the boundary that this is internal rendered-build acceptance, not a
+  substitute for external human production-art, target-hardware, balance or
+  accessibility review;
+- completed the review in a fresh Godot process with Dummy audio and
+  `--quiet-audio` and no physical speaker output.
+
 ## Focused Signal Relay compact-silhouette pass — 2026-08-31
 
 - added a restrained signal collar and paired mast supports to the existing
