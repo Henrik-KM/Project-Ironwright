@@ -9,6 +9,7 @@ by the runtime enemy actor.
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 import math
 import sys
@@ -22,6 +23,29 @@ sys.path.insert(0, str(ASSET_ROOT / "bulwark" / "source"))
 from build_bulwark_asset import BufferBuilder, _geometry, add_beveled_box, add_cylinder, add_ellipsoid, add_uv_sphere, quat  # noqa: E402
 
 
+TEXTURE_URIS = {
+    "shell_base_color": "../organic_families/textures/organic_shell_base_color.png",
+    "shell_normal": "../organic_families/textures/organic_shell_normal.png",
+    "shell_orm": "../organic_families/textures/organic_shell_orm.png",
+    "tissue_base_color": "../organic_families/textures/organic_tissue_base_color.png",
+    "tissue_normal": "../organic_families/textures/organic_tissue_normal.png",
+    "tissue_orm": "../organic_families/textures/organic_tissue_orm.png",
+    "emissive": "../organic_families/textures/organic_emissive.png",
+}
+TEXTURE_ORDER = tuple(TEXTURE_URIS)
+TEXTURE_SIZE = 1024
+SURFACE_PROFILE = "shared_organic_pbr_v1"
+ANIMATION_CLIPS = ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]
+ANATOMY_BASE_NODES = [
+    "OrganicPulseRim",
+    "OrganicGrowthPlate",
+    "OrganicVascularVeinL",
+    "OrganicVascularVeinR",
+    "OrganicVascularNodeL",
+    "OrganicVascularNodeR",
+]
+
+
 FAMILIES = {
     "roofleaper": {
         "display": "Roofleaper",
@@ -30,6 +54,9 @@ FAMILIES = {
         "body_profile": ((1.25, 0.74, 1.55), (1.08, 0.66, 1.20), 0.04),
         "socket_contract": "crown, wing_membranes, talons, threat_eyes",
         "signature_nodes": ["RoofleaperFineVeinL", "RoofleaperFineVeinR", "RoofleaperWingFrameL", "RoofleaperWingFastenerR"],
+        "anatomy_scale": 0.88,
+        "anatomy_accent": "de7c9a",
+        "focal_nodes": ["RoofleaperSensoryTalonL", "RoofleaperSensoryTalonR", "RoofleaperCentralOculus"],
     },
     "glassmoth": {
         "display": "Glassmoth",
@@ -38,6 +65,9 @@ FAMILIES = {
         "body_profile": ((0.94, 1.04, 1.18), (0.88, 0.82, 1.02), 0.035),
         "socket_contract": "wing_pairs, antennae, luminous_eyes, thorax",
         "signature_nodes": ["GlassmothFineVeinL0", "GlassmothFineVeinR0", "GlassmothWingFrameL0", "GlassmothWingFastenerR1"],
+        "anatomy_scale": 0.82,
+        "anatomy_accent": "8ee7d0",
+        "focal_nodes": ["GlassmothOcellus0", "GlassmothOcellus1", "GlassmothOcellus2", "GlassmothLensCollar"],
     },
     "miremaw": {
         "display": "Miremaw",
@@ -46,6 +76,9 @@ FAMILIES = {
         "body_profile": ((1.45, 0.76, 1.34), (1.28, 0.66, 1.10), 0.025),
         "socket_contract": "maw, gill_fan, water_fins, jaw_hooks",
         "signature_nodes": ["MiremawGillRidgeL", "MiremawGillRidgeR", "MiremawJawPlateL", "MiremawGillSpineR", "MiremawGillCollarL"],
+        "anatomy_scale": 1.18,
+        "anatomy_accent": "df9b63",
+        "focal_nodes": ["MiremawMawGuard", "MiremawMawLatchL", "MiremawMawLatchR"],
     },
     "carrionbell": {
         "display": "Carrion Bell",
@@ -54,6 +87,9 @@ FAMILIES = {
         "body_profile": ((1.32, 1.15, 1.18), (1.18, 0.86, 1.02), 0.02),
         "socket_contract": "resonator, bell_mantle, signal_tendrils, crown_plate",
         "signature_nodes": ["CarrionbellResonatorRing", "CarrionbellResonatorCore", "CarrionbellResonatorRootCollar", "CarrionbellBellRib0"],
+        "anatomy_scale": 1.05,
+        "anatomy_accent": "dd6e92",
+        "focal_nodes": ["CarrionbellThroatCollar", "CarrionbellThroatNodule"],
     },
     "rootweaver": {
         "display": "Rootweaver",
@@ -62,6 +98,9 @@ FAMILIES = {
         "body_profile": ((1.18, 1.05, 1.45), (1.04, 0.84, 1.18), 0.025),
         "socket_contract": "root_arms, route_spines, spore_fan, crown_oculi",
         "signature_nodes": ["RootweaverKnuckleL", "RootweaverKnuckleR", "RootweaverCrownPlate0", "RootweaverJawPlateL", "RootweaverJawPlateR", "RootweaverRootSpineR"],
+        "anatomy_scale": 1.28,
+        "anatomy_accent": "b85ce1",
+        "focal_nodes": ["RootweaverRouteMask", "RootweaverRouteKeel", "RootweaverRouteTendrilL", "RootweaverRouteTendrilR"],
     },
     "thornback": {
         "display": "Thornback",
@@ -70,6 +109,9 @@ FAMILIES = {
         "body_profile": ((1.50, 0.82, 1.45), (1.34, 0.75, 1.25), 0.03),
         "socket_contract": "thorn_crown, dorsal_spines, jaw_plates, threat_eyes",
         "signature_nodes": ["ThornbackCrown", "ThornbackSpineL", "ThornbackSpineR", "ThornbackJawPlateL", "ThornbackBarb0"],
+        "anatomy_scale": 1.12,
+        "anatomy_accent": "e3b45d",
+        "focal_nodes": ["ThornbackFaceShield", "ThornbackFaceBarb"],
     },
     "ashmantle": {
         "display": "Ashmantle",
@@ -78,8 +120,96 @@ FAMILIES = {
         "body_profile": ((1.48, 0.82, 1.42), (1.30, 0.72, 1.22), 0.03),
         "socket_contract": "heat_mantle, louver_fins, route_siphon, sensory_tendrils",
         "signature_nodes": ["AshmantleMantle", "AshmantleHeatLouverL", "AshmantleHeatLouverR", "AshmantleSiphon", "AshmantleSiphonRing"],
+        "anatomy_scale": 1.20,
+        "anatomy_accent": "f07b4a",
+        "focal_nodes": ["AshmantleThermalCollar", "AshmantleThermalCore"],
     },
 }
+
+
+def color_from_hex(value: str) -> list[float]:
+    """Convert a six-digit authored colour into glTF linear-factor channels."""
+    value = value.removeprefix("#")
+    if len(value) != 6:
+        raise ValueError(f"Expected a six-digit RGB colour, got {value!r}")
+    return [int(value[index:index + 2], 16) / 255.0 for index in (0, 2, 4)] + [1.0]
+
+
+def darkened(color: Sequence[float], amount: float) -> list[float]:
+    return [float(channel) * (1.0 - amount) for channel in color[:3]] + [float(color[3])]
+
+
+def lerped(color: Sequence[float], target: Sequence[float], amount: float) -> list[float]:
+    return [
+        float(color[index]) + (float(target[index]) - float(color[index])) * amount
+        for index in range(4)
+    ]
+
+
+def matrix_multiply(left: Sequence[Sequence[float]], right: Sequence[Sequence[float]]) -> list[list[float]]:
+    return [
+        [sum(float(left[row][axis]) * float(right[axis][column]) for axis in range(4)) for column in range(4)]
+        for row in range(4)
+    ]
+
+
+def node_matrix(node: dict) -> list[list[float]]:
+    translation = node.get("translation", [0.0, 0.0, 0.0])
+    scale = node.get("scale", [1.0, 1.0, 1.0])
+    x, y, z, w = node.get("rotation", [0.0, 0.0, 0.0, 1.0])
+    rotation = [
+        [1.0 - 2.0 * (y * y + z * z), 2.0 * (x * y - w * z), 2.0 * (x * z + w * y), 0.0],
+        [2.0 * (x * y + w * z), 1.0 - 2.0 * (x * x + z * z), 2.0 * (y * z - w * x), 0.0],
+        [2.0 * (x * z - w * y), 2.0 * (y * z + w * x), 1.0 - 2.0 * (x * x + y * y), 0.0],
+        [0.0, 0.0, 0.0, 1.0],
+    ]
+    scaling = [
+        [float(scale[0]), 0.0, 0.0, 0.0],
+        [0.0, float(scale[1]), 0.0, 0.0],
+        [0.0, 0.0, float(scale[2]), 0.0],
+        [0.0, 0.0, 0.0, 1.0],
+    ]
+    result = matrix_multiply(rotation, scaling)
+    for axis in range(3):
+        result[axis][3] = float(translation[axis])
+    return result
+
+
+def aggregate_geometry_bounds(nodes: Sequence[dict], meshes: Sequence[dict], builder: BufferBuilder) -> tuple[list[float], list[float]]:
+    """Measure the final package from transformed glTF accessor envelopes."""
+    minimum = [math.inf, math.inf, math.inf]
+    maximum = [-math.inf, -math.inf, -math.inf]
+    identity = [[1.0 if row == column else 0.0 for column in range(4)] for row in range(4)]
+
+    def walk(node_index: int, parent_matrix: Sequence[Sequence[float]]) -> None:
+        node = nodes[node_index]
+        world = matrix_multiply(parent_matrix, node_matrix(node))
+        if "mesh" in node:
+            for primitive in meshes[node["mesh"]]["primitives"]:
+                accessor = builder.accessors[primitive["attributes"]["POSITION"]]
+                accessor_minimum = accessor.get("min")
+                accessor_maximum = accessor.get("max")
+                if not isinstance(accessor_minimum, list) or not isinstance(accessor_maximum, list):
+                    raise ValueError("Aggregate bounds require explicit POSITION accessor bounds")
+                for corner_index in range(8):
+                    position = tuple(
+                        float(accessor_maximum[axis] if corner_index & (1 << axis) else accessor_minimum[axis])
+                        for axis in range(3)
+                    )
+                    transformed = [
+                        sum(world[row][axis] * (*position, 1.0)[axis] for axis in range(4))
+                        for row in range(3)
+                    ]
+                    for axis in range(3):
+                        minimum[axis] = min(minimum[axis], transformed[axis])
+                        maximum[axis] = max(maximum[axis], transformed[axis])
+        for child_index in node.get("children", []):
+            walk(child_index, world)
+
+    walk(0, identity)
+    if any(not math.isfinite(value) for value in (*minimum, *maximum)):
+        raise ValueError("Authored organic package contains no finite geometry bounds")
+    return ([round(value, 6) for value in minimum], [round(value, 6) for value in maximum])
 
 
 def add_convex_sheet(
@@ -88,7 +218,7 @@ def add_convex_sheet(
     material: int,
     rings: int = 5,
     sides: int = 24,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int, int]:
     """Build a smooth organic plate or membrane with a raised center and edge rim.
 
     The old shared kit used beveled boxes for both shell plates and membranes.
@@ -181,7 +311,7 @@ def add_organic_lobe(
     scallop_amplitude: float = 0.16,
     leading_extension: float = 0.42,
     fold_strength: float = 0.88,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int, int]:
     """Build a tapered living lobe instead of a repeated oval disc.
 
     The late-family membranes are broad enough to carry silhouette identity,
@@ -286,7 +416,7 @@ def add_swept_wing_membrane(
     material: int,
     rings: int = 9,
     sides: int = 40,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int, int]:
     """Build a tapered wing with a raised keel instead of an oval sheet.
 
     Airborne early families need a directional leading edge and a readable
@@ -388,7 +518,7 @@ def add_capsule(
     material: int,
     sides: int = 24,
     cap_segments: int = 6,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int, int]:
     """Build a smooth vertical capsule for living structural details.
 
     The shared family kit previously used capped cylinders for every bone,
@@ -447,7 +577,7 @@ def add_tapered_thorn(
     height: float,
     material: int,
     sides: int = 32,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int, int]:
     """Build a rounded-base, sharply tapered organic barb along local Y."""
     base_radius = max(0.001, float(base_radius))
     height = max(float(height), base_radius * 2.2)
@@ -493,6 +623,62 @@ def add_tapered_thorn(
     return _geometry(builder, positions, normals, indices, material)
 
 
+def add_tapered_cylinder_mesh(
+    builder: BufferBuilder,
+    top_radius: float,
+    bottom_radius: float,
+    height: float,
+    material: int,
+    sides: int = 32,
+    rings: int = 3,
+) -> tuple[int, int, int, int, int, int]:
+    """Build the runtime tapered-cylinder profile along local Y."""
+    top_radius = max(0.001, float(top_radius))
+    bottom_radius = max(0.001, float(bottom_radius))
+    height = max(0.001, float(height))
+    sides = max(24, int(sides))
+    rings = max(1, int(rings))
+    positions: list[float] = []
+    normals: list[float] = []
+    indices: list[int] = []
+    side_rings: list[list[int]] = []
+    slope = (bottom_radius - top_radius) / height
+    normal_length = math.sqrt(1.0 + slope * slope)
+    for ring_index in range(rings + 1):
+        fraction = ring_index / rings
+        y = -height * 0.5 + height * fraction
+        radius = bottom_radius + (top_radius - bottom_radius) * fraction
+        ring: list[int] = []
+        for side in range(sides):
+            angle = math.tau * side / sides
+            cosine = math.cos(angle)
+            sine = math.sin(angle)
+            ring.append(len(positions) // 3)
+            positions.extend([radius * cosine, y, radius * sine])
+            normals.extend([cosine / normal_length, slope / normal_length, sine / normal_length])
+        side_rings.append(ring)
+    for ring_index in range(rings):
+        current = side_rings[ring_index]
+        next_ring = side_rings[ring_index + 1]
+        for side in range(sides):
+            next_side = (side + 1) % sides
+            indices.extend([
+                current[side], current[next_side], next_ring[next_side],
+                current[side], next_ring[next_side], next_ring[side],
+            ])
+    bottom_center = len(positions) // 3
+    positions.extend([0.0, -height * 0.5, 0.0])
+    normals.extend([0.0, -1.0, 0.0])
+    top_center = len(positions) // 3
+    positions.extend([0.0, height * 0.5, 0.0])
+    normals.extend([0.0, 1.0, 0.0])
+    for side in range(sides):
+        next_side = (side + 1) % sides
+        indices.extend([bottom_center, side_rings[0][next_side], side_rings[0][side]])
+        indices.extend([top_center, side_rings[-1][side], side_rings[-1][next_side]])
+    return _geometry(builder, positions, normals, indices, material)
+
+
 def add_torus(
     builder: BufferBuilder,
     major_radius: float,
@@ -500,10 +686,10 @@ def add_torus(
     material: int,
     major_segments: int = 36,
     minor_segments: int = 10,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int, int]:
     """Build a smooth resonator ring around a living signal core."""
     major_segments = max(24, major_segments)
-    minor_segments = max(8, minor_segments)
+    minor_segments = max(6, minor_segments)
     positions: list[float] = []
     normals: list[float] = []
     indices: list[int] = []
@@ -542,39 +728,108 @@ def build_family(name: str, spec: dict) -> None:
     builder = BufferBuilder()
     wet, shell, membrane, bone, eye, tendon = range(6)
     colors = spec["colors"]
+    anatomy_scale = float(spec["anatomy_scale"])
+    anatomy_accent = color_from_hex(spec["anatomy_accent"])
+    anatomy_tissue_color = lerped(color_from_hex("3d202b"), darkened(anatomy_accent, 0.72), 0.28)
+    anatomy_signal_color = darkened(anatomy_accent, 0.42)
+    # Core glTF bounds emissiveFactor components to [0, 1]. Preserve as much
+    # of the former 1.35 runtime energy as the core format permits without
+    # introducing an optional extension that could import inconsistently.
+    anatomy_emissive = [min(1.0, float(channel) * 1.35) for channel in anatomy_accent[:3]]
     membrane_tone = [channel * 0.62 if index < 3 else channel for index, channel in enumerate(colors[2])]
     # Glassmoth is the luminous territorial swarm. Its wing membranes should
     # carry a cool living-light identity instead of inheriting the warmer
     # threat palette used by the terrestrial families.
+    glassmoth_vein_material: int | None = None
     if name == "glassmoth":
         membrane_tone = [0.07, 0.34, 0.36, 1.0]
     threat_emissive = [0.14, 0.86, 0.72] if name == "glassmoth" else [1.0, 0.18, 0.04]
+
+    def surface_material(
+        material_name: str,
+        color: Sequence[float],
+        metallic: float,
+        roughness: float,
+        surface: str,
+        normal_scale: float,
+        emissive_factor: Sequence[float] | None = None,
+    ) -> dict:
+        if surface == "shell":
+            base_index, normal_index, orm_index = 0, 1, 2
+        elif surface in {"tissue", "signal"}:
+            base_index, normal_index, orm_index = 3, 4, 5
+        else:
+            raise ValueError(f"Unknown organic surface class: {surface}")
+        entry = {
+            "name": material_name,
+            "pbrMetallicRoughness": {
+                "baseColorFactor": list(color),
+                "baseColorTexture": {"index": base_index},
+                "metallicFactor": metallic,
+                "roughnessFactor": roughness,
+                "metallicRoughnessTexture": {"index": orm_index},
+            },
+            "normalTexture": {"index": normal_index, "scale": normal_scale},
+            "occlusionTexture": {"index": orm_index, "strength": 0.88},
+            "extras": {
+                "ironwright_surface_class": surface,
+                "ironwright_surface_profile": SURFACE_PROFILE,
+                "surface_profile": SURFACE_PROFILE,
+            },
+        }
+        if emissive_factor is not None:
+            if surface != "signal":
+                raise ValueError(f"{material_name}: emissive organic materials must use the signal surface class")
+            entry["emissiveTexture"] = {"index": 6}
+            entry["emissiveFactor"] = list(emissive_factor)
+        return entry
+
     materials = [
-        {"name": f"{spec['display']} wet shell", "pbrMetallicRoughness": {"baseColorFactor": list(colors[0]), "metallicFactor": 0.18, "roughnessFactor": 0.32}},
-        {"name": f"{spec['display']} layered plate", "pbrMetallicRoughness": {"baseColorFactor": list(colors[1]), "metallicFactor": 0.14, "roughnessFactor": 0.42}},
-        {"name": f"{spec['display']} membrane", "pbrMetallicRoughness": {"baseColorFactor": membrane_tone, "metallicFactor": 0.02, "roughnessFactor": 0.58}},
-        {"name": f"{spec['display']} bone", "pbrMetallicRoughness": {"baseColorFactor": list(colors[3]), "metallicFactor": 0.0, "roughnessFactor": 0.62}},
-        {"name": f"{spec['display']} threat light", "pbrMetallicRoughness": {"baseColorFactor": list(colors[4]), "metallicFactor": 0.0, "roughnessFactor": 0.22}, "emissiveFactor": threat_emissive},
-        {"name": f"{spec['display']} tendon", "pbrMetallicRoughness": {"baseColorFactor": list(colors[5]), "metallicFactor": 0.0, "roughnessFactor": 0.55}},
+        surface_material(f"{spec['display']} wet shell", colors[0], 0.18, 0.32, "shell", 0.28),
+        surface_material(f"{spec['display']} layered plate", colors[1], 0.14, 0.42, "shell", 0.34),
+        surface_material(f"{spec['display']} membrane", membrane_tone, 0.02, 0.58, "tissue", 0.18),
+        surface_material(f"{spec['display']} bone", colors[3], 0.0, 0.62, "shell", 0.22),
+        surface_material(f"{spec['display']} threat light", colors[4], 0.0, 0.22, "signal", 0.08, threat_emissive),
+        surface_material(f"{spec['display']} tendon", colors[5], 0.0, 0.55, "tissue", 0.16),
     ]
     if name == "glassmoth":
         # A muted cyan living vein separates the broad luminous membrane from
         # the pale structural spars without turning the wing into a glowing
         # grid. It remains presentation-only under the existing wing rig.
-        materials.append({
-            "name": "Glassmoth wing vascular detail",
-            "pbrMetallicRoughness": {
-                "baseColorFactor": [0.40, 0.66, 0.60, 1.0],
-                "metallicFactor": 0.02,
-                "roughnessFactor": 0.44,
-            },
-            "emissiveFactor": [0.035, 0.24, 0.20],
-        })
+        glassmoth_vein_material = len(materials)
+        materials.append(surface_material(
+            "Glassmoth wing vascular detail",
+            [0.40, 0.66, 0.60, 1.0],
+            0.02,
+            0.44,
+            "signal",
+            0.10,
+            [0.035, 0.24, 0.20],
+        ))
+    anatomy_tissue = len(materials)
+    materials.append(surface_material(
+        f"{spec['display']} anatomy tissue",
+        anatomy_tissue_color,
+        0.02,
+        0.72,
+        "tissue",
+        0.16,
+    ))
+    anatomy_signal = len(materials)
+    materials.append(surface_material(
+        f"{spec['display']} anatomy signal",
+        anatomy_signal_color,
+        0.04,
+        0.44,
+        "signal",
+        0.08,
+        anatomy_emissive,
+    ))
     meshes: list[dict] = []
 
-    def mesh(mesh_name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
-        meshes.append({"name": mesh_name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
+    def mesh(mesh_name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        position, normal, uv, tangent, indices, material = geometry
+        meshes.append({"name": mesh_name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
     mesh_ids = {
@@ -641,10 +896,27 @@ def build_family(name: str, spec: dict) -> None:
             ),
         ),
     }
+    # These meshes are package-owned versions of the former runtime anatomy
+    # finish. Their dimensions already include the family scale factor, while
+    # the nodes below retain the original runtime positions and rotations.
+    mesh_ids["OrganicPulseRim"] = mesh(
+        "OrganicPulseRim",
+        add_torus(builder, 0.48 * anatomy_scale, 0.036 * anatomy_scale, anatomy_signal, 32, 6),
+    )
+    mesh_ids["OrganicVascularVein"] = mesh(
+        "OrganicVascularVein",
+        add_capsule(builder, 0.032 * anatomy_scale, 0.48 * anatomy_scale, anatomy_tissue, 32, 8),
+    )
+    mesh_ids["OrganicVascularNode"] = mesh(
+        "OrganicVascularNode",
+        add_uv_sphere(builder, 0.07 * anatomy_scale, anatomy_signal, 24, 32),
+    )
     if name == "glassmoth":
+        if glassmoth_vein_material is None:
+            raise RuntimeError("Glassmoth vascular material must be authored before its wing mesh")
         mesh_ids["GlassmothWingVein"] = mesh(
             "GlassmothWingVein",
-            add_capsule(builder, 0.024, 0.92, len(materials) - 1, 24),
+            add_capsule(builder, 0.024, 0.92, glassmoth_vein_material, 24),
         )
         # The broad luminous membranes need a living transition into the
         # thorax. A small folded root collar gives the wing socket a readable
@@ -913,6 +1185,7 @@ def build_family(name: str, spec: dict) -> None:
             "socket_contract": spec["socket_contract"],
         },
     }]
+    used_node_names = {root_name}
 
     def add_node(
         node_name: str,
@@ -923,6 +1196,9 @@ def build_family(name: str, spec: dict) -> None:
         extras: dict | None = None,
         parent: int = 0,
     ) -> int:
+        if node_name in used_node_names:
+            raise ValueError(f"{name}: duplicate stable node name {node_name}")
+        used_node_names.add(node_name)
         entry: dict = {"name": node_name, "translation": list(translation)}
         if mesh_id is not None:
             entry["mesh"] = mesh_id
@@ -936,6 +1212,256 @@ def build_family(name: str, spec: dict) -> None:
         nodes[parent].setdefault("children", []).append(len(nodes) - 1)
         return len(nodes) - 1
 
+    def add_anatomy_plate(
+        node_name: str,
+        radius: float,
+        translation: Sequence[float],
+        scale: Sequence[float],
+    ) -> int:
+        """Author the former runtime organic plate as one package hierarchy."""
+        plate_root = add_node(
+            node_name,
+            translation=translation,
+            scale=scale,
+            extras={"surface": "source_owned_anatomy_plate", "presentation_only": True},
+        )
+        shell_mesh = mesh(
+            f"{node_name}Shell",
+            add_uv_sphere(builder, radius, anatomy_tissue, 24, 36),
+        )
+        ridge_mesh = mesh(
+            f"{node_name}Ridge",
+            add_uv_sphere(builder, radius * 0.76, anatomy_signal, 24, 36),
+        )
+        seam_mesh = mesh(
+            f"{node_name}Seam",
+            add_torus(builder, radius * 0.68, max(0.018, radius * 0.052), anatomy_signal, 40, 8),
+        )
+        add_node(
+            f"{node_name}Shell",
+            shell_mesh,
+            parent=plate_root,
+            extras={"surface": "anatomy_tissue"},
+        )
+        add_node(
+            f"{node_name}Ridge",
+            ridge_mesh,
+            (0.0, radius * 0.42, -radius * 0.08),
+            scale=(1.0, 0.16, 0.88),
+            parent=plate_root,
+            extras={"surface": "anatomy_signal"},
+        )
+        add_node(
+            f"{node_name}Seam",
+            seam_mesh,
+            (0.0, radius * 0.34, -radius * 0.08),
+            scale=(1.0, 0.42, 0.86),
+            parent=plate_root,
+            extras={"surface": "anatomy_signal"},
+        )
+        return plate_root
+
+    def add_package_anatomy() -> None:
+        """Place the former runtime finish directly under the authored root."""
+        add_node(
+            "OrganicPulseRim",
+            mesh_ids["OrganicPulseRim"],
+            (0.0, 1.08 * anatomy_scale, 0.12),
+            extras={"surface": "anatomy_signal", "presentation_only": True},
+        )
+        add_anatomy_plate(
+            "OrganicGrowthPlate",
+            0.18 * anatomy_scale,
+            (-0.1 * anatomy_scale, 1.34 * anatomy_scale, 0.22),
+            (1.1, 0.48, 1.25),
+        )
+        for side in (-1.0, 1.0):
+            suffix = "L" if side < 0.0 else "R"
+            add_node(
+                f"OrganicVascularVein{suffix}",
+                mesh_ids["OrganicVascularVein"],
+                (side * 0.28 * anatomy_scale, 1.02 * anatomy_scale, -0.1),
+                rotation=(0.22, 0.0, side * 0.3),
+                extras={"surface": "anatomy_tissue", "presentation_only": True},
+            )
+            add_node(
+                f"OrganicVascularNode{suffix}",
+                mesh_ids["OrganicVascularNode"],
+                (side * 0.31 * anatomy_scale, 1.28 * anatomy_scale, -0.08),
+                scale=(1.0, 0.78, 0.92),
+                extras={"surface": "anatomy_signal", "presentation_only": True},
+            )
+
+        if name == "roofleaper":
+            sensory_talon_mesh = mesh(
+                "RoofleaperSensoryTalon",
+                add_capsule(builder, 0.045 * anatomy_scale, 0.34 * anatomy_scale, anatomy_signal, 32, 8),
+            )
+            central_oculus_mesh = mesh(
+                "RoofleaperCentralOculus",
+                add_uv_sphere(builder, 0.085 * anatomy_scale, anatomy_signal, 24, 32),
+            )
+            for side in (-1.0, 1.0):
+                suffix = "L" if side < 0.0 else "R"
+                add_node(
+                    f"RoofleaperSensoryTalon{suffix}",
+                    sensory_talon_mesh,
+                    (side * 0.23 * anatomy_scale, 1.34 * anatomy_scale, -0.34 * anatomy_scale),
+                    rotation=(0.0, side * 0.36, side * 0.58),
+                    extras={"surface": "anatomy_signal", "presentation_only": True},
+                )
+            add_node(
+                "RoofleaperCentralOculus",
+                central_oculus_mesh,
+                (0.0, 1.35 * anatomy_scale, -0.42 * anatomy_scale),
+                scale=(1.35, 0.72, 0.78),
+                extras={"surface": "anatomy_signal", "presentation_only": True},
+            )
+        elif name == "glassmoth":
+            for index, position in enumerate(((-0.16, 1.37, -0.36), (0.0, 1.43, -0.43), (0.16, 1.37, -0.36))):
+                radius = (0.07 if index == 1 else 0.052) * anatomy_scale
+                ocellus_mesh = mesh(
+                    f"GlassmothOcellus{index}",
+                    add_uv_sphere(builder, radius, anatomy_signal, 24, 32),
+                )
+                add_node(
+                    f"GlassmothOcellus{index}",
+                    ocellus_mesh,
+                    tuple(component * anatomy_scale for component in position),
+                    scale=(1.0, 0.76, 0.66),
+                    extras={"surface": "anatomy_signal", "presentation_only": True},
+                )
+            lens_collar_mesh = mesh(
+                "GlassmothLensCollar",
+                add_torus(builder, 0.22 * anatomy_scale, 0.022 * anatomy_scale, anatomy_signal, 32, 6),
+            )
+            add_node(
+                "GlassmothLensCollar",
+                lens_collar_mesh,
+                (0.0, 1.34 * anatomy_scale, -0.35 * anatomy_scale),
+                rotation=(math.pi * 0.5, 0.0, 0.0),
+                extras={"surface": "anatomy_signal", "presentation_only": True},
+            )
+        elif name == "miremaw":
+            add_anatomy_plate(
+                "MiremawMawGuard",
+                0.24 * anatomy_scale,
+                (0.0, 0.84 * anatomy_scale, -0.46 * anatomy_scale),
+                (1.72, 0.52, 0.82),
+            )
+            maw_latch_mesh = mesh(
+                "MiremawMawLatch",
+                add_capsule(builder, 0.038 * anatomy_scale, 0.26 * anatomy_scale, anatomy_signal, 32, 8),
+            )
+            for side in (-1.0, 1.0):
+                suffix = "L" if side < 0.0 else "R"
+                add_node(
+                    f"MiremawMawLatch{suffix}",
+                    maw_latch_mesh,
+                    (side * 0.28 * anatomy_scale, 0.92 * anatomy_scale, -0.57 * anatomy_scale),
+                    rotation=(0.0, side * 0.52, 0.0),
+                    extras={"surface": "anatomy_signal", "presentation_only": True},
+                )
+        elif name == "carrionbell":
+            throat_collar_mesh = mesh(
+                "CarrionbellThroatCollar",
+                add_torus(builder, 0.34 * anatomy_scale, 0.058 * anatomy_scale, anatomy_signal, 40, 8),
+            )
+            throat_nodule_mesh = mesh(
+                "CarrionbellThroatNodule",
+                add_uv_sphere(builder, 0.13 * anatomy_scale, anatomy_signal, 24, 32),
+            )
+            add_node(
+                "CarrionbellThroatCollar",
+                throat_collar_mesh,
+                (0.0, 1.08 * anatomy_scale, -0.45 * anatomy_scale),
+                rotation=(math.pi * 0.5, 0.0, 0.0),
+                extras={"surface": "anatomy_signal", "presentation_only": True},
+            )
+            add_node(
+                "CarrionbellThroatNodule",
+                throat_nodule_mesh,
+                (0.0, 1.08 * anatomy_scale, -0.49 * anatomy_scale),
+                scale=(1.0, 0.72, 0.72),
+                extras={"surface": "anatomy_signal", "presentation_only": True},
+            )
+        elif name == "rootweaver":
+            add_anatomy_plate(
+                "RootweaverRouteMask",
+                0.22 * anatomy_scale,
+                (0.0, 1.25 * anatomy_scale, -0.46 * anatomy_scale),
+                (1.28, 0.8, 0.7),
+            )
+            route_keel_mesh = mesh(
+                "RootweaverRouteKeel",
+                add_capsule(builder, 0.052 * anatomy_scale, 0.66 * anatomy_scale, anatomy_signal, 32, 8),
+            )
+            route_tendril_mesh = mesh(
+                "RootweaverRouteTendril",
+                add_capsule(builder, 0.035 * anatomy_scale, 0.38 * anatomy_scale, anatomy_signal, 32, 8),
+            )
+            add_node(
+                "RootweaverRouteKeel",
+                route_keel_mesh,
+                (0.0, 1.24 * anatomy_scale, -0.60 * anatomy_scale),
+                extras={"surface": "anatomy_signal", "presentation_only": True},
+            )
+            for side in (-1.0, 1.0):
+                suffix = "L" if side < 0.0 else "R"
+                add_node(
+                    f"RootweaverRouteTendril{suffix}",
+                    route_tendril_mesh,
+                    (side * 0.19 * anatomy_scale, 1.15 * anatomy_scale, -0.44 * anatomy_scale),
+                    rotation=(0.0, side * 0.34, side * 0.3),
+                    extras={"surface": "anatomy_signal", "presentation_only": True},
+                )
+        elif name == "thornback":
+            add_anatomy_plate(
+                "ThornbackFaceShield",
+                0.25 * anatomy_scale,
+                (0.0, 1.22 * anatomy_scale, -0.48 * anatomy_scale),
+                (1.42, 1.0, 0.72),
+            )
+            face_barb_mesh = mesh(
+                "ThornbackFaceBarb",
+                add_tapered_cylinder_mesh(
+                    builder,
+                    0.065 * anatomy_scale,
+                    0.018 * anatomy_scale,
+                    0.42 * anatomy_scale,
+                    anatomy_signal,
+                ),
+            )
+            add_node(
+                "ThornbackFaceBarb",
+                face_barb_mesh,
+                (0.0, 1.46 * anatomy_scale, -0.5 * anatomy_scale),
+                extras={"surface": "anatomy_signal", "presentation_only": True},
+            )
+        elif name == "ashmantle":
+            thermal_collar_mesh = mesh(
+                "AshmantleThermalCollar",
+                add_torus(builder, 0.29 * anatomy_scale, 0.052 * anatomy_scale, anatomy_signal, 40, 8),
+            )
+            thermal_core_mesh = mesh(
+                "AshmantleThermalCore",
+                add_uv_sphere(builder, 0.14 * anatomy_scale, anatomy_signal, 24, 32),
+            )
+            add_node(
+                "AshmantleThermalCollar",
+                thermal_collar_mesh,
+                (0.0, 0.98 * anatomy_scale, -0.48 * anatomy_scale),
+                rotation=(math.pi * 0.5, 0.0, 0.0),
+                extras={"surface": "anatomy_signal", "presentation_only": True},
+            )
+            add_node(
+                "AshmantleThermalCore",
+                thermal_core_mesh,
+                (0.0, 0.99 * anatomy_scale, -0.52 * anatomy_scale),
+                scale=(1.05, 0.78, 0.7),
+                extras={"surface": "anatomy_signal", "presentation_only": True},
+            )
+
     torso = add_node("Torso", extras={"surface": "layered_wet_chitin"})
     core_scale, segment_scale, segment_taper = spec["body_profile"]
     add_node("TorsoCore", mesh_ids["Core"], (0.0, 0.92, 0.08), scale=core_scale, parent=torso, extras={"release_material_family": "chitin"})
@@ -944,9 +1470,9 @@ def build_family(name: str, spec: dict) -> None:
         segment_width = max(0.72, float(segment_scale[0]) - index * segment_taper)
         segment_depth = max(0.78, float(segment_scale[2]) - index * segment_taper * 0.8)
         add_node(f"TorsoSegment{index}", mesh_ids["Segment"], (0.0, 0.89 - index * 0.024, z), scale=(segment_width, segment_scale[1], segment_depth), parent=torso)
-        add_node(f"{name.capitalize()}ThoraxRib", mesh_ids["ShellPlate"], (0.0, 1.35 - index * 0.045, z), rotation=(0.0, 0.0, 0.03 * (index - 1)), scale=(1.0, 1.0, 0.84), parent=torso, extras={"surface": "layered_shell_break"} if index == 1 else None)
-        add_node("ThoraxFastener", mesh_ids["Fastener"], (-0.56, 1.18, z), parent=torso)
-        add_node("ThoraxFastener", mesh_ids["Fastener"], (0.56, 1.18, z), parent=torso)
+        add_node(f"{name.capitalize()}ThoraxRib{index}", mesh_ids["ShellPlate"], (0.0, 1.35 - index * 0.045, z), rotation=(0.0, 0.0, 0.03 * (index - 1)), scale=(1.0, 1.0, 0.84), parent=torso, extras={"surface": "layered_shell_break"} if index == 1 else None)
+        add_node(f"{name.capitalize()}ThoraxFastener{index}L", mesh_ids["Fastener"], (-0.56, 1.18, z), parent=torso)
+        add_node(f"{name.capitalize()}ThoraxFastener{index}R", mesh_ids["Fastener"], (0.56, 1.18, z), parent=torso)
         # Paired surface veins break up the shared torso kit at close camera
         # distance. They are deliberately thin and recessed into the front
         # face, adding living vascular rhythm without becoming gameplay
@@ -1151,14 +1677,22 @@ def build_family(name: str, spec: dict) -> None:
         walk_node = "AshmantleHeatLouverL"
         attack_node = "AshmantleSiphon"
 
+    add_package_anatomy()
     add_node("ProductionAssetMarker", None, extras={"asset_contract": spec["asset_id"], "source": "original_shared_mesh_builder"})
     node_index = {node["name"]: index for index, node in enumerate(nodes)}
 
     def animation(animation_name: str, channels: list[tuple[str, str, list[float], list[float]]]) -> dict:
         samplers: list[dict] = []
         entries: list[dict] = []
+        used_targets: set[tuple[str, str]] = set()
         types = {"translation": ("VEC3", 3), "rotation": ("VEC4", 4)}
         for target_name, path, times, values in channels:
+            target_key = (target_name, path)
+            if target_key in used_targets:
+                raise ValueError(f"{name}/{animation_name}: duplicate animation target {target_name}.{path}")
+            if target_name not in node_index:
+                raise ValueError(f"{name}/{animation_name}: missing animation target {target_name}")
+            used_targets.add(target_key)
             type_name, width = types[path]
             time_accessor = builder.accessor(times, 5126, "SCALAR", len(times), minimum=[min(times)], maximum=[max(times)])
             output_accessor = builder.accessor(values, 5126, type_name, len(values) // width)
@@ -1240,6 +1774,9 @@ def build_family(name: str, spec: dict) -> None:
             ("RoofleaperWingFrameR", "rotation", [0.0, 0.5, 1.0], quat((0.20, 0.35, 0.72)) + quat((0.0, 0.24, 0.58)) + quat((0.20, 0.35, 0.72))),
             ("RoofleaperCrownRidge0", "rotation", [0.0, 0.5, 1.0], quat((0.0, -0.16, -0.14)) + quat((0.0, -0.08, -0.08)) + quat((0.0, -0.16, -0.14))),
         ])
+        # Replace the shared walk-node placeholder with the talon's authored
+        # rest-relative retreat arc; one node/path must have one owner.
+        retreat_channels = [channel for channel in retreat_channels if channel[0] != "RoofleaperTalonsL"]
         retreat_channels.extend([
             ("RoofleaperWingL", "rotation", [0.0, 0.22, 0.44], quat((-0.16, -0.18, -0.1)) + quat((0.28, -0.42, -0.3)) + quat((-0.16, -0.18, -0.1))),
             ("RoofleaperWingR", "rotation", [0.0, 0.22, 0.44], quat((0.16, 0.18, 0.1)) + quat((-0.28, 0.42, 0.3)) + quat((0.16, 0.18, 0.1))),
@@ -1254,6 +1791,7 @@ def build_family(name: str, spec: dict) -> None:
         # paired root arms. Keep the motion small enough for reduced-detail
         # transitions while giving the close release camera living secondary
         # anatomy to read between the broad torso beats.
+        walk_channels = [channel for channel in walk_channels if channel[0] != "RootweaverArmL"]
         idle_channels.extend([
             ("RootweaverSporeFan", "rotation", [0.0, 0.8, 1.6], quat((0.24, 0.0, 1.48)) + quat((0.30, 0.0, 1.66)) + quat((0.24, 0.0, 1.48))),
             ("RootweaverSporeRib0", "rotation", [0.0, 0.8, 1.6], quat((0.24, -0.18, -0.46)) + quat((0.28, -0.18, -0.42)) + quat((0.24, -0.18, -0.46))),
@@ -1284,6 +1822,8 @@ def build_family(name: str, spec: dict) -> None:
         # water fins. Articulate those surfaces independently so the wet
         # silhouette does not read as a static shell when it is close enough
         # for the release camera to judge the family.
+        walk_channels = [channel for channel in walk_channels if channel[0] != "MiremawWaterFinL"]
+        retreat_channels = [channel for channel in retreat_channels if channel[0] != "MiremawWaterFinL"]
         idle_channels.extend([
             ("MiremawGillFan", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.0, 1.48)) + quat((0.0, 0.0, 1.66)) + quat((0.0, 0.0, 1.48))),
             ("MiremawGillCollarL", "rotation", [0.0, 0.8, 1.6], quat((0.18, -0.28, -0.18)) + quat((0.08, -0.34, -0.24)) + quat((0.18, -0.28, -0.18))),
@@ -1324,6 +1864,8 @@ def build_family(name: str, spec: dict) -> None:
         # membranes, spars and antennae. Keep those surfaces breathing in
         # concert so the high-definition silhouette does not freeze into a
         # decorative plane during close tactical views.
+        walk_channels = [channel for channel in walk_channels if channel[0] != "GlassmothWingL0"]
+        retreat_channels = [channel for channel in retreat_channels if channel[0] != "GlassmothWingL0"]
         idle_channels.extend([
             ("GlassmothWingL0", "rotation", [0.0, 0.8, 1.6], quat((-0.2, -0.2, -0.18)) + quat((0.08, -0.24, -0.26)) + quat((-0.2, -0.2, -0.18))),
             ("GlassmothWingR0", "rotation", [0.0, 0.8, 1.6], quat((0.2, 0.2, 0.18)) + quat((-0.08, 0.24, 0.26)) + quat((0.2, 0.2, 0.18))),
@@ -1361,6 +1903,7 @@ def build_family(name: str, spec: dict) -> None:
         # breathes around the ring, the bell ribs answer the core, and the
         # low tendrils trail the signal. Keep those layers articulated rather
         # than asking the torso beat to carry the entire silhouette.
+        walk_channels = [channel for channel in walk_channels if channel[0] != "CarrionbellMantle"]
         idle_channels.extend([
             ("CarrionbellMantleSeamL", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.24, -0.08)) + quat((0.06, -0.28, -0.12)) + quat((0.0, -0.24, -0.08))),
             ("CarrionbellMantleSeamR", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.24, 0.08)) + quat((-0.06, 0.28, 0.12)) + quat((0.0, 0.24, 0.08))),
@@ -1395,6 +1938,8 @@ def build_family(name: str, spec: dict) -> None:
         # Give the paired plates, dorsal spines and crown ridges their own
         # restrained response so the armored family does not become a static
         # shell with only the shared torso beat moving underneath it.
+        walk_channels = [channel for channel in walk_channels if channel[0] != "ThornbackSpineL"]
+        retreat_channels = [channel for channel in retreat_channels if channel[0] != "ThornbackSpineL"]
         idle_channels.extend([
             ("ThornbackJawPlateL", "rotation", [0.0, 0.8, 1.6], quat((-0.38, 0.0, -0.12)) + quat((-0.44, 0.0, -0.16)) + quat((-0.38, 0.0, -0.12))),
             ("ThornbackJawPlateR", "rotation", [0.0, 0.8, 1.6], quat((0.38, 0.0, 0.12)) + quat((0.44, 0.0, 0.16)) + quat((0.38, 0.0, 0.12))),
@@ -1429,6 +1974,8 @@ def build_family(name: str, spec: dict) -> None:
         # Ashmantle's identity is a hot, vented organic shell rather than a
         # generic blob. Let the paired louvers breathe around the siphon,
         # with mantle ribs and sensory tendrils carrying its threat response.
+        walk_channels = [channel for channel in walk_channels if channel[0] != "AshmantleHeatLouverL"]
+        retreat_channels = [channel for channel in retreat_channels if channel[0] != "AshmantleHeatLouverL"]
         idle_channels.extend([
             ("AshmantleHeatLouverL", "rotation", [0.0, 0.8, 1.6], quat((0.0, -0.28, -0.12)) + quat((0.05, -0.34, -0.18)) + quat((0.0, -0.28, -0.12))),
             ("AshmantleHeatLouverR", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.28, 0.12)) + quat((-0.05, 0.34, 0.18)) + quat((0.0, 0.28, 0.12))),
@@ -1474,26 +2021,135 @@ def build_family(name: str, spec: dict) -> None:
         animation("Retreat", retreat_channels),
         animation("Death", death_channels),
     ]
+    required_nodes = [
+        root_name,
+        "Torso",
+        "TorsoCore",
+        "VentralSheath",
+        "OrganicDorsalPlate",
+        *spec["signature_nodes"],
+        *ANATOMY_BASE_NODES,
+        *spec["focal_nodes"],
+        "ProductionAssetMarker",
+    ]
+    socket_nodes = {
+        node["name"]: node.get("extras", {}).get("socket_type")
+        for node in nodes
+        if node.get("extras", {}).get("socket_type")
+    }
     document = {
-        "asset": {"version": "2.0", "generator": f"Project Ironwright original {spec['display']} asset builder"},
+        "asset": {"version": "2.0", "generator": f"Project Ironwright deterministic {spec['display']} HD builder"},
         "scene": 0,
         "scenes": [{"name": spec["display"], "nodes": [0]}],
         "nodes": nodes,
         "meshes": meshes,
         "materials": materials,
+        "textures": [{"sampler": 0, "source": index} for index in range(len(TEXTURE_ORDER))],
+        "images": [
+            {"uri": TEXTURE_URIS[key], "name": f"Project Ironwright organic {key}"}
+            for key in TEXTURE_ORDER
+        ],
+        "samplers": [{"magFilter": 9729, "minFilter": 9987, "wrapS": 10497, "wrapT": 10497}],
         "accessors": builder.accessors,
         "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "animations": animations,
         "extras": {
             "ironwright_asset_id": spec["asset_id"],
-            "required_nodes": [root_name, "Torso", "TorsoCore", "OrganicDorsalPlate", *spec["signature_nodes"], "ProductionAssetMarker"],
-            "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
+            "asset_quality": "authored_high_definition",
+            "texture_resolution": TEXTURE_SIZE,
+            "material_contract": "textured_metallic_roughness_pbr",
+            "surface_profile": SURFACE_PROFILE,
+            "required_nodes": required_nodes,
+            "authored_anatomy_nodes": [*ANATOMY_BASE_NODES, *spec["focal_nodes"]],
+            "animation_clips": ANIMATION_CLIPS,
+            "deterministic_build": True,
+            "presentation_only": True,
+            "collision": False,
+            "gameplay_state": "none",
+            "source_type": "original_project_ironwright_deterministic_mesh_builder",
         },
     }
     output_path = ASSET_ROOT / name / f"{name}.gltf"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    texture_paths = {
+        key: (output_path.parent / uri).resolve()
+        for key, uri in TEXTURE_URIS.items()
+    }
+    missing_textures = [str(path) for path in texture_paths.values() if not path.is_file()]
+    if missing_textures:
+        raise FileNotFoundError(f"{name}: shared organic textures missing: {missing_textures}")
+    position_accessors = [
+        primitive["attributes"]["POSITION"]
+        for mesh_entry in meshes
+        for primitive in mesh_entry["primitives"]
+    ]
+    index_accessors = [
+        primitive["indices"]
+        for mesh_entry in meshes
+        for primitive in mesh_entry["primitives"]
+    ]
+    bounds_min, bounds_max = aggregate_geometry_bounds(nodes, meshes, builder)
+    dimensions = [bounds_max[index] - bounds_min[index] for index in range(3)]
+    manifest = {
+        "asset_id": spec["asset_id"],
+        "asset_quality": "authored_high_definition",
+        "quality": "authored_high_definition",
+        "display_name": spec["display"],
+        "runtime_model": f"res://assets/{name}/{name}.gltf",
+        "runtime_path": f"res://assets/{name}/{name}.gltf",
+        "textures": {
+            key: f"res://assets/organic_families/textures/{Path(uri).name}"
+            for key, uri in TEXTURE_URIS.items()
+        },
+        "texture_resolution": TEXTURE_SIZE,
+        "material_workflow": "metallic_roughness_pbr",
+        "surface_profile": SURFACE_PROFILE,
+        "normal_scale_range": [0.08, 0.34],
+        "material_names": [material["name"] for material in materials],
+        "emissive_materials": [material["name"] for material in materials if "emissiveTexture" in material],
+        "source": "res://assets/organic_families/source/build_authored_organic_assets.py",
+        "source_builder": "res://assets/organic_families/source/build_authored_organic_assets.py",
+        "source_type": "original_project_ironwright_deterministic_mesh_builder",
+        "provenance": "Original Project Ironwright organic asset; deterministic source geometry and shared textures; no third-party runtime art.",
+        "third_party_assets": [],
+        "world_scale_m": round(max(dimensions), 6),
+        "aggregate_bounds": {"min": bounds_min, "max": bounds_max},
+        "source_visual_scale": 1.0,
+        "runtime_visual_scale": 1.0,
+        "presentation_only": True,
+        "collision": False,
+        "gameplay_state": "none",
+        "skins": 0,
+        "deterministic_build": True,
+        "required_accessors": ["POSITION", "NORMAL", "TEXCOORD_0", "TANGENT"],
+        "indexed_primitives": True,
+        "unique_node_names": True,
+        "unique_animation_target_paths": True,
+        "required_nodes": required_nodes,
+        "stable_nodes": required_nodes,
+        "authored_anatomy_nodes": [*ANATOMY_BASE_NODES, *spec["focal_nodes"]],
+        "socket_contract": socket_nodes,
+        "animation_clips": ANIMATION_CLIPS,
+        "geometry_metrics": {
+            "node_count": len(nodes),
+            "mesh_count": len(meshes),
+            "primitive_count": sum(len(mesh_entry["primitives"]) for mesh_entry in meshes),
+            "vertex_count": sum(builder.accessors[index]["count"] for index in position_accessors),
+            "triangle_count": sum(builder.accessors[index]["count"] for index in index_accessors) // 3,
+        },
+        "artifact_hashes": {
+            "source_builder_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest().upper(),
+            "runtime_model_sha256": hashlib.sha256(output_path.read_bytes()).hexdigest().upper(),
+            **{
+                f"{key}_sha256": hashlib.sha256(path.read_bytes()).hexdigest().upper()
+                for key, path in texture_paths.items()
+            },
+        },
+    }
+    manifest_path = ASSET_ROOT.parent / "data" / f"{name}_asset_manifest.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {output_path} with {len(nodes)} named nodes and {len(meshes)} meshes")
 
 

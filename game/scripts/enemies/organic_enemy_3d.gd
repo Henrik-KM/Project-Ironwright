@@ -67,8 +67,10 @@ var defer_authored_visuals: bool = false
 var _deferred_proxy_root: Node3D
 var _damage_visual_root: Node3D
 var _damage_signal_material: StandardMaterial3D
+var _damage_attachment_anchor: RemoteTransform3D
 var _death_visual_root: Node3D
 var _death_signal_material: StandardMaterial3D
+var _death_attachment_anchor: RemoteTransform3D
 var _damage_presentation_enabled: bool = true
 
 
@@ -551,6 +553,10 @@ func apply_damage(amount: float, source: Node = null) -> void:
     if current_health > 0.0:
         return
     alive = false
+    # The death silhouette supersedes ordinary wounds. Refresh immediately so
+    # a lethal hit cannot leave both complete runtime overlays stacked for the
+    # full death presentation interval while physics is paused in review.
+    _refresh_damage_presentation()
     _set_state(&"dead")
     velocity = Vector3.ZERO
     attack_windup_remaining = 0.0
@@ -691,6 +697,118 @@ func _instantiate_authored_scene(path: String, label: String) -> Node3D:
     return instance
 
 
+func _resolve_authored_torso() -> Node3D:
+    if _model_root == null or not is_instance_valid(_model_root):
+        return null
+    return _model_root.find_child("Torso", true, false) as Node3D
+
+
+func _authored_torso_local_bounds(authored_torso: Node3D) -> AABB:
+    if authored_torso == null or not is_instance_valid(authored_torso):
+        return AABB()
+    var combined := AABB()
+    var has_bounds := false
+    var torso_inverse := authored_torso.global_transform.affine_inverse()
+    for candidate in authored_torso.find_children("*", "MeshInstance3D", true, false):
+        var mesh_instance := candidate as MeshInstance3D
+        if mesh_instance == null or mesh_instance.mesh == null:
+            continue
+        var relative_transform := torso_inverse * mesh_instance.global_transform
+        var transformed_bounds := relative_transform * mesh_instance.get_aabb()
+        combined = transformed_bounds if not has_bounds else combined.merge(transformed_bounds)
+        has_bounds = true
+    return combined if has_bounds else AABB()
+
+
+func _attach_authored_runtime_presentation(
+        presentation_root: Node3D,
+        anchor_name: StringName
+    ) -> RemoteTransform3D:
+    if presentation_root == null or not is_instance_valid(presentation_root):
+        return null
+    var authored_torso := _resolve_authored_torso()
+    if authored_torso == null:
+        presentation_root.visible = false
+        presentation_root.set_meta(&"attachment_mode", "missing_authored_torso")
+        push_error("Organic %s presentation cannot attach because %s has no authored Torso." % [String(anchor_name), String(species)])
+        return null
+
+    var stale_anchor := authored_torso.get_node_or_null(NodePath(String(anchor_name)))
+    if stale_anchor != null:
+        stale_anchor.free()
+
+    # Runtime feedback stays outside the imported PBR package while a meshless
+    # child of the authored Torso copies the complete animation transform. This
+    # keeps presentation materials independently classifiable and prevents
+    # tier, wound or mortality cues from separating during any authored clip.
+    presentation_root.global_transform = authored_torso.global_transform
+    presentation_root.set_meta(&"attachment_mode", "authored_torso_remote")
+    var attachment := RemoteTransform3D.new()
+    attachment.name = String(anchor_name)
+    attachment.update_position = true
+    attachment.update_rotation = true
+    attachment.update_scale = true
+    attachment.use_global_coordinates = true
+    authored_torso.add_child(attachment)
+    attachment.remote_path = attachment.get_path_to(presentation_root)
+    attachment.force_update_cache()
+    return attachment
+
+
+func _add_organic_surface_lesion(
+        parent: Node3D,
+        socket_name: String,
+        mesh_prefix: String,
+        center: Vector3,
+        radius: float,
+        yaw: float,
+        rim_material: Material,
+        core_material: Material,
+        crack_material: Material
+    ) -> Node3D:
+    var lesion_socket := Node3D.new()
+    lesion_socket.name = socket_name
+    lesion_socket.position = center
+    lesion_socket.rotation.y = yaw
+    lesion_socket.set_meta(&"damage_profile", "shallow_authored_torso_lesion")
+    parent.add_child(lesion_socket)
+
+    ModelKit3D.add_sphere(
+        lesion_socket,
+        radius,
+        Vector3.ZERO,
+        rim_material,
+        Vector3(1.28, 0.085, 0.76),
+        "%sRim" % mesh_prefix
+    )
+    ModelKit3D.add_sphere(
+        lesion_socket,
+        radius * 0.82,
+        Vector3(0.0, radius * 0.105, 0.0),
+        core_material,
+        Vector3(1.18, 0.09, 0.68),
+        "%sCore" % mesh_prefix
+    )
+    var crack_specs := [
+        [Vector3(-0.20, 0.18, -0.02), 0.62, 0.0],
+        [Vector3(0.18, 0.18, -0.15), 0.48, 0.46],
+        [Vector3(0.28, 0.18, 0.16), 0.42, -0.52],
+    ]
+    for index in range(crack_specs.size()):
+        var spec: Array = crack_specs[index]
+        var relative_position: Vector3 = spec[0] as Vector3
+        ModelKit3D.add_capsule(
+            lesion_socket,
+            radius * 0.042,
+            radius * float(spec[1]),
+            relative_position * radius,
+            crack_material,
+            Vector3(PI * 0.5, float(spec[2]), 0.0),
+            "%sCrack%02d" % [mesh_prefix, index]
+        )
+    return lesion_socket
+
+
 func set_damage_presentation_enabled(value: bool) -> void:
     _damage_presentation_enabled = value
     if value and alive and current_health < maximum_health * 0.92:
@@ -699,64 +817,74 @@ func set_damage_presentation_enabled(value: bool) -> void:
 
 
 func _ensure_damage_presentation() -> void:
+    # Reduced-detail organisms can take simulated damage before their authored
+    # package is resident. Keep that event presentation-free; promotion to the
+    # active band materializes the shell and rebuilds the current wound state.
+    if _model_root == null or not is_instance_valid(_model_root):
+        return
     if _damage_visual_root != null and is_instance_valid(_damage_visual_root):
         return
     _build_damage_presentation()
 
 
 func _build_damage_presentation() -> void:
+    if _model_root == null or not is_instance_valid(_model_root):
+        return
+    if _damage_attachment_anchor != null and is_instance_valid(_damage_attachment_anchor):
+        _damage_attachment_anchor.free()
+    _damage_attachment_anchor = null
     if _damage_visual_root != null and is_instance_valid(_damage_visual_root):
         _damage_visual_root.free()
     _damage_visual_root = Node3D.new()
     _damage_visual_root.name = "OrganicDamagePresentation"
+    _damage_visual_root.set_meta(&"release_material_family", &"chitin")
+    _damage_visual_root.set_meta(&"presentation_profile", "authored_torso_surface_wounds")
     add_child(_damage_visual_root)
-
-    var size_scale := 1.0
-    match species:
-        &"broodmass":
-            size_scale = 1.28
-        &"miremaw", &"rootweaver":
-            size_scale = 1.42
-        &"apex":
-            size_scale = 1.7
-
-    _damage_signal_material = ModelKit3D.material(
-        Color("3d1422"),
-        0.08,
-        0.56,
-        Color("d82f52"),
-        0.95
+    var authored_torso := _resolve_authored_torso()
+    _damage_attachment_anchor = _attach_authored_runtime_presentation(
+        _damage_visual_root,
+        &"OrganicDamageAttachment"
     )
-    var leak_material := ModelKit3D.material(
-        Color("4b1b2a"),
-        0.02,
-        0.48,
-        Color("ff5370"),
-        2.1
-    )
+    if authored_torso == null or _damage_attachment_anchor == null:
+        _refresh_damage_presentation()
+        return
+    var torso_bounds := _authored_torso_local_bounds(authored_torso)
+    if torso_bounds.size.length_squared() <= 0.000001:
+        _damage_visual_root.visible = false
+        _damage_visual_root.set_meta(&"presentation_profile", "missing_authored_torso_bounds")
+        push_error("Organic damage presentation cannot resolve authored bounds for %s." % String(species))
+        return
+    _damage_visual_root.set_meta(&"authored_torso_bounds_position", torso_bounds.position)
+    _damage_visual_root.set_meta(&"authored_torso_bounds_size", torso_bounds.size)
+
+    # Every authored family receives the same physically plausible material
+    # language: shallow dark lesions and short tangent-plane cracks. Placement
+    # derives from the actual imported Torso bounds, so compact scavengers,
+    # broad nest organisms and the Apex all remain surface-bound without a
+    # family-specific stack of full-sized rods.
+    _damage_signal_material = ModelKit3D.material(Color("5a1a25"), 0.0, 0.86)
+    var lesion_rim_material := ModelKit3D.material(Color("241015"), 0.0, 0.92)
+    var crack_material := ModelKit3D.material(Color("75303b"), 0.0, 0.88)
+    var center := torso_bounds.get_center()
+    var surface_y := torso_bounds.position.y + torso_bounds.size.y * 0.84
+    var shortest_surface_extent := minf(torso_bounds.size.x, torso_bounds.size.z)
+    var lesion_radius := clampf(shortest_surface_extent * 0.078, 0.055, 0.22)
     var positions := [
-        Vector3(-0.38, 1.0, -0.72),
-        Vector3(0.32, 1.22, -0.6),
-        Vector3(0.04, 0.78, 0.7),
+        Vector3(center.x - torso_bounds.size.x * 0.16, surface_y, center.z - torso_bounds.size.z * 0.16),
+        Vector3(center.x + torso_bounds.size.x * 0.13, surface_y - torso_bounds.size.y * 0.045, center.z + torso_bounds.size.z * 0.02),
+        Vector3(center.x - torso_bounds.size.x * 0.02, surface_y - torso_bounds.size.y * 0.075, center.z + torso_bounds.size.z * 0.20),
     ]
-    for index in range(3):
-        var position: Vector3 = positions[index] * size_scale
-        ModelKit3D.add_beveled_box(
+    for index in range(positions.size()):
+        _add_organic_surface_lesion(
             _damage_visual_root,
-            Vector3(0.07, 0.38 + float(index) * 0.1, 0.11) * size_scale,
-            position,
-            _damage_signal_material,
-            Vector3(0.0, 0.0, -0.32 + float(index) * 0.24),
             "OrganicDamageScar%02d" % index,
-            0.24 * size_scale
-        )
-        ModelKit3D.add_sphere(
-            _damage_visual_root,
-            (0.065 + float(index) * 0.012) * size_scale,
-            position + Vector3.UP * (0.23 + float(index) * 0.07) * size_scale,
-            leak_material,
-            Vector3(1.0, 0.72, 1.0),
-            "OrganicDamageLeak%02d" % index
+            "OrganicDamageLesion%02d" % index,
+            positions[index] as Vector3,
+            lesion_radius * (1.0 - float(index) * 0.10),
+            -0.18 + float(index) * 0.29,
+            lesion_rim_material,
+            _damage_signal_material,
+            crack_material
         )
     _refresh_damage_presentation()
 
@@ -769,117 +897,109 @@ func _refresh_damage_presentation() -> void:
     var active := _damage_presentation_enabled and alive and damage > 0.08
     _damage_visual_root.visible = active
     if _damage_signal_material != null:
-        _damage_signal_material.emission_energy_multiplier = lerpf(0.65, 3.4, damage)
-        _damage_signal_material.albedo_color = Color("321322").lerp(Color("76233f"), damage)
+        _damage_signal_material.albedo_color = Color("40131b").lerp(Color("681f2b"), damage)
+        _damage_signal_material.emission_enabled = false
+        _damage_signal_material.emission_energy_multiplier = 0.0
     for index in range(3):
         var scar := _damage_visual_root.get_node_or_null("OrganicDamageScar%02d" % index) as Node3D
-        var leak := _damage_visual_root.get_node_or_null("OrganicDamageLeak%02d" % index) as Node3D
         var threshold := 0.08 + float(index) * 0.18
         var visibility := clampf((damage - threshold) / 0.18, 0.0, 1.0)
         if scar != null:
             scar.visible = active and visibility > 0.0
-            scar.scale = Vector3(1.0, 0.7 + visibility * 0.3, 1.0)
-        if leak != null:
-            leak.visible = active and visibility > 0.25
+            scar.scale = Vector3(
+                0.92 + visibility * 0.08,
+                0.72 + visibility * 0.12,
+                0.92 + visibility * 0.08
+            )
 
 
 func _ensure_death_presentation() -> void:
+    # A remote lethal resolution has no close-camera body to decorate. The
+    # simulation still completes mortality and despawn normally, while active
+    # actors retain the authored Death clip and attached failure signal.
+    if _model_root == null or not is_instance_valid(_model_root):
+        return
     if _death_visual_root != null and is_instance_valid(_death_visual_root):
         return
     _build_death_presentation()
 
 
 func _build_death_presentation() -> void:
+    if _model_root == null or not is_instance_valid(_model_root):
+        return
+    if _death_attachment_anchor != null and is_instance_valid(_death_attachment_anchor):
+        _death_attachment_anchor.free()
+    _death_attachment_anchor = null
     if _death_visual_root != null and is_instance_valid(_death_visual_root):
         _death_visual_root.free()
     _death_visual_root = Node3D.new()
     _death_visual_root.name = "OrganicDeathPresentation"
     _death_visual_root.visible = false
+    _death_visual_root.set_meta(&"release_material_family", &"chitin")
+    _death_visual_root.set_meta(&"presentation_profile", "authored_body_death_clip")
     add_child(_death_visual_root)
-
-    var size_scale := 1.0
-    var signal_color := Color("d83e5c")
-    match species:
-        &"glassmoth":
-            size_scale = 0.78
-            signal_color = Color("6ce4dd")
-        &"miremaw", &"rootweaver":
-            size_scale = 1.35
-            signal_color = Color("b52e59")
-        &"carrionbell", &"ashmantle":
-            size_scale = 1.12
-            signal_color = Color("f06b32")
-        &"broodmass":
-            size_scale = 1.58
-            signal_color = Color("9f2947")
-        &"apex":
-            size_scale = 1.92
-            signal_color = Color("f04426")
-
-    var shell_mat := ModelKit3D.material(Color("251b23"), 0.08, 0.78)
-    var edge_mat := ModelKit3D.material(Color("5d4a4b"), 0.0, 0.9)
-    var root_mat := ModelKit3D.material(Color("321626"), 0.0, 0.72)
-    _death_signal_material = ModelKit3D.material(Color("2b101d"), 0.0, 0.5, signal_color, 1.8)
-
-    ModelKit3D.add_segmented_carapace(
+    var authored_torso := _resolve_authored_torso()
+    _death_attachment_anchor = _attach_authored_runtime_presentation(
         _death_visual_root,
-        0.42 * size_scale,
-        Vector3(0.0, 0.78 * size_scale, 0.12),
-        shell_mat,
-        edge_mat,
-        Vector3(1.42, 0.62, 1.6),
-        3,
-        "OrganicDeathCarapace"
+        &"OrganicDeathAttachment"
     )
-    ModelKit3D.add_organic_plate(
-        _death_visual_root,
-        0.31 * size_scale,
-        Vector3(0.0, 0.98 * size_scale, -0.52 * size_scale),
-        root_mat,
-        edge_mat,
-        Vector3(1.28, 0.32, 1.0),
-        "OrganicDeathRootCollar"
+    if authored_torso == null or _death_attachment_anchor == null:
+        _refresh_death_presentation()
+        return
+    var torso_bounds := _authored_torso_local_bounds(authored_torso)
+    if torso_bounds.size.length_squared() <= 0.000001:
+        _death_visual_root.set_meta(&"presentation_profile", "missing_authored_torso_bounds")
+        push_error("Organic death presentation cannot resolve authored bounds for %s." % String(species))
+        return
+    _death_visual_root.set_meta(&"authored_torso_bounds_position", torso_bounds.position)
+    _death_visual_root.set_meta(&"authored_torso_bounds_size", torso_bounds.size)
+
+    # The imported package and authored Death clip are the corpse. Runtime adds
+    # only a pair of cooling surface failures and a small dimming organ; it no
+    # longer constructs a second generic carapace, collar, shard cage or spine
+    # pile over the original body.
+    var lesion_rim_material := ModelKit3D.material(Color("1b1116"), 0.0, 0.94)
+    var lesion_core_material := ModelKit3D.material(Color("35151f"), 0.0, 0.91)
+    var crack_material := ModelKit3D.material(Color("51313a"), 0.0, 0.93)
+    var failure_color: Color = {
+        &"glassmoth": Color("4f8d88"),
+        &"carrionbell": Color("8d3e26"),
+        &"ashmantle": Color("8d3e26"),
+        &"apex": Color("742515"),
+    }.get(species, Color("6d2639"))
+    _death_signal_material = ModelKit3D.material(
+        failure_color.darkened(0.52),
+        0.0,
+        0.86,
+        failure_color,
+        0.42
     )
-    for index in range(5):
-        var angle := TAU * float(index) / 5.0 + 0.3
-        var shard_position := Vector3(cos(angle) * 0.5, 0.78 + float(index % 2) * 0.16, sin(angle) * 0.48) * size_scale
-        ModelKit3D.add_beveled_box(
+    var center := torso_bounds.get_center()
+    var surface_y := torso_bounds.position.y + torso_bounds.size.y * 0.82
+    var shortest_surface_extent := minf(torso_bounds.size.x, torso_bounds.size.z)
+    var lesion_radius := clampf(shortest_surface_extent * 0.095, 0.065, 0.26)
+    var death_positions := [
+        Vector3(center.x - torso_bounds.size.x * 0.12, surface_y, center.z - torso_bounds.size.z * 0.08),
+        Vector3(center.x + torso_bounds.size.x * 0.15, surface_y - torso_bounds.size.y * 0.055, center.z + torso_bounds.size.z * 0.12),
+    ]
+    for index in range(death_positions.size()):
+        _add_organic_surface_lesion(
             _death_visual_root,
-            Vector3(0.16, 0.34 + float(index % 2) * 0.08, 0.08) * size_scale,
-            shard_position,
-            edge_mat,
-            Vector3(0.18, angle, -0.24 + float(index) * 0.12),
-            "OrganicDeathShard%02d" % index,
-            0.22
-        )
-    for index in range(3):
-        var vein_side := -1.0 if index % 2 == 0 else 1.0
-        ModelKit3D.add_tapered_cylinder(
-            _death_visual_root,
-            0.025 * size_scale,
-            0.045 * size_scale,
-            0.68 * size_scale,
-            Vector3(vein_side * (0.23 + float(index) * 0.08), 0.84 * size_scale, -0.08 * size_scale),
-            root_mat,
-            Vector3(0.0, 0.0, vein_side * (0.45 + float(index) * 0.1)),
-            "OrganicDeathVein%02d" % index
-        )
-    for side in [-1.0, 1.0]:
-        ModelKit3D.add_capsule(
-            _death_visual_root,
-            0.035 * size_scale,
-            0.72 * size_scale,
-            Vector3(side * 0.52 * size_scale, 0.62 * size_scale, 0.18 * size_scale),
-            edge_mat,
-            Vector3(0.0, 0.0, side * 0.72),
-            "OrganicDeathSpine%s" % ("L" if side < 0.0 else "R")
+            "OrganicDeathLesion%02d" % index,
+            "OrganicDeathFailure%02d" % index,
+            death_positions[index] as Vector3,
+            lesion_radius * (1.0 - float(index) * 0.12),
+            -0.12 + float(index) * 0.34,
+            lesion_rim_material,
+            lesion_core_material,
+            crack_material
         )
     ModelKit3D.add_sphere(
         _death_visual_root,
-        0.12 * size_scale,
-        Vector3(0.0, 1.28 * size_scale, -0.48 * size_scale),
+        clampf(shortest_surface_extent * 0.042, 0.034, 0.13),
+        Vector3(center.x, surface_y + torso_bounds.size.y * 0.018, center.z - torso_bounds.size.z * 0.24),
         _death_signal_material,
-        Vector3(1.0, 0.72, 0.86),
+        Vector3(1.0, 0.24, 1.18),
         "OrganicDeathSignal"
     )
     _refresh_death_presentation()
@@ -893,10 +1013,13 @@ func _refresh_death_presentation() -> void:
     _death_visual_root.visible = active
     if not active:
         return
-    _death_visual_root.scale = Vector3(1.0 + (1.0 - remaining_ratio) * 0.08, 0.76 + remaining_ratio * 0.24, 1.0 + (1.0 - remaining_ratio) * 0.08)
-    _death_visual_root.rotation.z = (1.0 - remaining_ratio) * 0.18
     if _death_signal_material != null:
-        _death_signal_material.emission_energy_multiplier = lerpf(0.25, 1.8, remaining_ratio)
+        _death_signal_material.emission_energy_multiplier = lerpf(0.0, 0.42, remaining_ratio)
+    for index in range(2):
+        var lesion := _death_visual_root.get_node_or_null("OrganicDeathLesion%02d" % index) as Node3D
+        if lesion != null:
+            var settle := 1.0 - remaining_ratio
+            lesion.scale = Vector3(1.0 + settle * 0.04, 0.92 - settle * 0.08, 1.0 + settle * 0.04)
 
 
 func _ensure_deferred_proxy_root() -> Node3D:
@@ -1114,14 +1237,6 @@ func _build_authored_veilstalker_visuals() -> void:
     if authored_scene_instance == null:
         return
     _attach_authored_scene_hierarchy(authored_scene_instance, _model_root, &"VeilstalkerAuthoredModel")
-    # Keep the production shell's torso anchor stable for release material
-    # continuity and secondary-animation lookup. The compact core sits inside
-    # the imported thorax, adding depth without changing the authored outline.
-    var torso := Node3D.new()
-    torso.name = "Torso"
-    _model_root.add_child(torso, true)
-    var torso_material := ModelKit3D.material(Color("422934"), 0.08, 0.68)
-    ModelKit3D.add_sphere(torso, 0.34, Vector3(0.0, 0.98, 0.1), torso_material, Vector3(1.55, 0.68, 1.2), "TorsoCore")
 
 
 func _build_authored_razorhound_visuals() -> void:
@@ -1198,7 +1313,6 @@ func _build_authored_organic_family_visuals(model_path: String, imported_root_na
     if authored_scene_instance == null:
         return
     _attach_authored_scene_hierarchy(authored_scene_instance, _model_root, marker_name)
-    _add_authored_family_anatomy_finish()
 
 
 func _attach_authored_scene_hierarchy(scene_instance: Node3D, target_root: Node3D, marker_name: StringName) -> void:
@@ -1212,249 +1326,3 @@ func _attach_authored_scene_hierarchy(scene_instance: Node3D, target_root: Node3
     var authored_marker := Node3D.new()
     authored_marker.name = String(marker_name)
     target_root.add_child(authored_marker)
-
-
-func _add_authored_family_anatomy_finish() -> void:
-    # Generic authored families share a small living focal so their imported
-    # shells read as complete organisms rather than unlit static meshes. The
-    # bounded vascular rim and asymmetrical growth nodes are presentation-only;
-    # species stats, animation ownership, collision and ecology stay unchanged.
-    var finish_root := Node3D.new()
-    finish_root.name = "OrganicFamilyAnatomyFinish"
-    _model_root.add_child(finish_root)
-
-    var scale_factor := 1.0
-    var accent_color := Color("c94d68")
-    match species:
-        &"roofleaper":
-            scale_factor = 0.88
-            accent_color = Color("de7c9a")
-        &"glassmoth":
-            scale_factor = 0.82
-            accent_color = Color("8ee7d0")
-        &"miremaw":
-            scale_factor = 1.18
-            accent_color = Color("df9b63")
-        &"carrionbell":
-            scale_factor = 1.05
-            accent_color = Color("dd6e92")
-        &"rootweaver":
-            scale_factor = 1.28
-            accent_color = Color("b85ce1")
-        &"thornback":
-            scale_factor = 1.12
-            accent_color = Color("e3b45d")
-        &"ashmantle":
-            scale_factor = 1.2
-            accent_color = Color("f07b4a")
-
-    var tissue := ModelKit3D.material(Color("3d202b").lerp(accent_color.darkened(0.72), 0.28), 0.02, 0.72)
-    var rim := ModelKit3D.material(accent_color.darkened(0.42), 0.04, 0.44, accent_color, 1.35)
-    ModelKit3D.add_torus(
-        finish_root,
-        0.48 * scale_factor,
-        0.036 * scale_factor,
-        Vector3(0.0, 1.08 * scale_factor, 0.12),
-        rim,
-        Vector3(0.0, 0.0, 0.0),
-        "OrganicPulseRim",
-        32,
-        6
-    )
-    ModelKit3D.add_organic_plate(
-        finish_root,
-        0.18 * scale_factor,
-        Vector3(-0.1 * scale_factor, 1.34 * scale_factor, 0.22),
-        tissue,
-        rim,
-        Vector3(1.1, 0.48, 1.25),
-        "OrganicGrowthPlate",
-        true
-    )
-    for side in [-1.0, 1.0]:
-        var side_sign := float(side)
-        ModelKit3D.add_capsule(
-            finish_root,
-            0.032 * scale_factor,
-            0.48 * scale_factor,
-            Vector3(side_sign * 0.28 * scale_factor, 1.02 * scale_factor, -0.1),
-            tissue,
-            Vector3(0.22, 0.0, side_sign * 0.3),
-            "OrganicVascularVein%s" % ("L" if side_sign < 0.0 else "R")
-        )
-        ModelKit3D.add_sphere(
-            finish_root,
-            0.07 * scale_factor,
-            Vector3(side_sign * 0.31 * scale_factor, 1.28 * scale_factor, -0.08),
-            rim,
-            Vector3(1.0, 0.78, 0.92),
-            "OrganicVascularNode%s" % ("L" if side_sign < 0.0 else "R")
-        )
-    _add_late_family_focal_anatomy(finish_root, tissue, rim, scale_factor)
-
-
-func _add_late_family_focal_anatomy(finish_root: Node3D, tissue: Material, rim: Material, scale_factor: float) -> void:
-    # The imported late-family shells already own animation and silhouette.
-    # This small local layer gives each family one unmistakable focal organ
-    # without touching collision, ecology, gameplay, or recurring workload.
-    match species:
-        &"roofleaper":
-            for side in [-1.0, 1.0]:
-                var side_sign := float(side)
-                ModelKit3D.add_capsule(
-                    finish_root,
-                    0.045 * scale_factor,
-                    0.34 * scale_factor,
-                    Vector3(side_sign * 0.23 * scale_factor, 1.34 * scale_factor, -0.34 * scale_factor),
-                    rim,
-                    Vector3(0.0, side_sign * 0.36, side_sign * 0.58),
-                    "RoofleaperSensoryTalon%s" % ("L" if side_sign < 0.0 else "R")
-                )
-            ModelKit3D.add_sphere(
-                finish_root,
-                0.085 * scale_factor,
-                Vector3(0.0, 1.35 * scale_factor, -0.42 * scale_factor),
-                rim,
-                Vector3(1.35, 0.72, 0.78),
-                "RoofleaperCentralOculus"
-            )
-        &"glassmoth":
-            var ocellus_positions := [Vector3(-0.16, 1.37, -0.36), Vector3(0.0, 1.43, -0.43), Vector3(0.16, 1.37, -0.36)]
-            for index in ocellus_positions.size():
-                ModelKit3D.add_sphere(
-                    finish_root,
-                    (0.07 if index == 1 else 0.052) * scale_factor,
-                    ocellus_positions[index] * scale_factor,
-                    rim,
-                    Vector3(1.0, 0.76, 0.66),
-                    "GlassmothOcellus%d" % index
-                )
-            ModelKit3D.add_torus(
-                finish_root,
-                0.22 * scale_factor,
-                0.022 * scale_factor,
-                Vector3(0.0, 1.34 * scale_factor, -0.35 * scale_factor),
-                rim,
-                Vector3(PI * 0.5, 0.0, 0.0),
-                "GlassmothLensCollar",
-                32,
-                6
-            )
-        &"miremaw":
-            ModelKit3D.add_organic_plate(
-                finish_root,
-                0.24 * scale_factor,
-                Vector3(0.0, 0.84 * scale_factor, -0.46 * scale_factor),
-                tissue,
-                rim,
-                Vector3(1.72, 0.52, 0.82),
-                "MiremawMawGuard",
-                true
-            )
-            for side in [-1.0, 1.0]:
-                var side_sign := float(side)
-                ModelKit3D.add_capsule(
-                    finish_root,
-                    0.038 * scale_factor,
-                    0.26 * scale_factor,
-                    Vector3(side_sign * 0.28 * scale_factor, 0.92 * scale_factor, -0.57 * scale_factor),
-                    rim,
-                    Vector3(0.0, side_sign * 0.52, 0.0),
-                    "MiremawMawLatch%s" % ("L" if side_sign < 0.0 else "R")
-                )
-        &"carrionbell":
-            ModelKit3D.add_torus(
-                finish_root,
-                0.34 * scale_factor,
-                0.058 * scale_factor,
-                Vector3(0.0, 1.08 * scale_factor, -0.45 * scale_factor),
-                rim,
-                Vector3(PI * 0.5, 0.0, 0.0),
-                "CarrionbellThroatCollar",
-                40,
-                8
-            )
-            ModelKit3D.add_sphere(
-                finish_root,
-                0.13 * scale_factor,
-                Vector3(0.0, 1.08 * scale_factor, -0.49 * scale_factor),
-                rim,
-                Vector3(1.0, 0.72, 0.72),
-                "CarrionbellThroatNodule"
-            )
-        &"rootweaver":
-            ModelKit3D.add_organic_plate(
-                finish_root,
-                0.22 * scale_factor,
-                Vector3(0.0, 1.25 * scale_factor, -0.46 * scale_factor),
-                tissue,
-                rim,
-                Vector3(1.28, 0.8, 0.7),
-                "RootweaverRouteMask",
-                true
-            )
-            # A narrow living keel breaks the route mask's broad horizontal
-            # read at close distance. It remains presentation-only and sits in
-            # the same finish layer, so the imported actor hierarchy and
-            # existing animation/runtime ownership stay unchanged.
-            ModelKit3D.add_capsule(
-                finish_root,
-                0.052 * scale_factor,
-                0.66 * scale_factor,
-                Vector3(0.0, 1.24 * scale_factor, -0.60 * scale_factor),
-                rim,
-                Vector3(0.0, 0.0, 0.0),
-                "RootweaverRouteKeel"
-            )
-            for side in [-1.0, 1.0]:
-                var side_sign := float(side)
-                ModelKit3D.add_capsule(
-                    finish_root,
-                    0.035 * scale_factor,
-                    0.38 * scale_factor,
-                    Vector3(side_sign * 0.19 * scale_factor, 1.15 * scale_factor, -0.44 * scale_factor),
-                    rim,
-                    Vector3(0.0, side_sign * 0.34, side_sign * 0.3),
-                    "RootweaverRouteTendril%s" % ("L" if side_sign < 0.0 else "R")
-                )
-        &"thornback":
-            ModelKit3D.add_organic_plate(
-                finish_root,
-                0.25 * scale_factor,
-                Vector3(0.0, 1.22 * scale_factor, -0.48 * scale_factor),
-                tissue,
-                rim,
-                Vector3(1.42, 1.0, 0.72),
-                "ThornbackFaceShield",
-                true
-            )
-            ModelKit3D.add_tapered_cylinder(
-                finish_root,
-                0.065 * scale_factor,
-                0.018 * scale_factor,
-                0.42 * scale_factor,
-                Vector3(0.0, 1.46 * scale_factor, -0.5 * scale_factor),
-                rim,
-                Vector3(0.0, 0.0, 0.0),
-                "ThornbackFaceBarb"
-            )
-        &"ashmantle":
-            ModelKit3D.add_torus(
-                finish_root,
-                0.29 * scale_factor,
-                0.052 * scale_factor,
-                Vector3(0.0, 0.98 * scale_factor, -0.48 * scale_factor),
-                rim,
-                Vector3(PI * 0.5, 0.0, 0.0),
-                "AshmantleThermalCollar",
-                40,
-                8
-            )
-            ModelKit3D.add_sphere(
-                finish_root,
-                0.14 * scale_factor,
-                Vector3(0.0, 0.99 * scale_factor, -0.52 * scale_factor),
-                rim,
-                Vector3(1.05, 0.78, 0.7),
-                "AshmantleThermalCore"
-            )

@@ -20,7 +20,6 @@ var cyan_material: StandardMaterial3D
 var warm_material: StandardMaterial3D
 var rust_material: StandardMaterial3D
 var dark_material: StandardMaterial3D
-var organic_material: StandardMaterial3D
 var channel_field: Node3D
 var channel_field_material: StandardMaterial3D
 var channel_field_color: Color = Color.WHITE
@@ -51,7 +50,6 @@ func _ready() -> void:
     warm_material = ModelKit3D.material(Color("7f4b28"), 0.18, 0.58, Color("ff9b43"), 2.8)
     rust_material = ModelKit3D.material(Color("72462e"), 0.46, 0.72)
     dark_material = ModelKit3D.material(Color("20282a"), 0.78, 0.38)
-    organic_material = ModelKit3D.material(Color("40282f"), 0.02, 0.78, Color("8e2935"), 0.55)
     _resolve_settings_service()
     call_deferred("_resolve_settings_service")
     _attach_existing_actors()
@@ -163,7 +161,8 @@ func _polish_actor(node: Node) -> void:
             companion_presentation.name = "CompanionProtectionPresentation3D"
             companion_presentation.configure(actor)
             actor.add_child(companion_presentation)
-    if actor.get_node_or_null("AestheticDetails") == null:
+    var model_root := _actor_model_root(actor)
+    if model_root != null and model_root.get_node_or_null("AestheticDetails") == null:
         _add_actor_details(actor)
     _connect_actor_feedback(actor)
 
@@ -221,18 +220,12 @@ func _add_robot_details(actor: Node3D, details: Node3D) -> void:
             ModelKit3D.add_beveled_box(details, Vector3(1.08, 0.58, 0.86), Vector3(0.0, 1.62, 0.35), dark_material, Vector3.ZERO, "ScrapBasket", 0.16)
 
 
-func _add_enemy_details(actor: Node3D, details: Node3D) -> void:
-    var species := StringName(actor.get(&"species")) if _property_exists(actor, &"species") else &"skitterling"
-    var spine_count := 4 if species == &"skitterling" else 6
-    for index in range(spine_count):
-        var z := -0.55 + float(index) * 0.28
-        ModelKit3D.add_capsule(details, 0.045, 0.55 + float(index % 2) * 0.2, Vector3(0.0, 1.18, z), organic_material, Vector3(0.48, 0.0, 0.0), "BackSpine")
-    if species == &"veilstalker":
-        for side in [-1.0, 1.0]:
-            ModelKit3D.add_sphere(details, 0.24, Vector3(side * 1.06, 1.05, -0.15), organic_material, Vector3(0.18, 1.35, 0.72), "VeilstalkerDetailMembrane")
-            ModelKit3D.add_capsule(details, 0.035, 0.85, Vector3(side * 0.3, 1.18, -1.55), organic_material, Vector3(0.52, 0.0, side * 0.14), "VeilstalkerDetailTendril")
-    else:
-        ModelKit3D.add_capsule(details, 0.08, 1.4, Vector3(0.0, 0.72, 1.15), organic_material, Vector3(1.2, 0.0, 0.0), "Tail")
+func _add_enemy_details(_actor: Node3D, details: Node3D) -> void:
+    # Every authored organic package owns its anatomy and animated silhouette.
+    # Keep the presentation socket stable for diagnostics and future bounded
+    # attachments, but never layer generic spines, tails, membranes or tendrils
+    # over species-authored geometry.
+    details.set_meta(&"authored_anatomy_policy", "source_owned_organic_family")
 
 
 func _connect_world_feedback() -> void:

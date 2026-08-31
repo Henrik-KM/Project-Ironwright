@@ -34,6 +34,36 @@ const AUTHORED_MACHINE_TOKENS: Array[String] = [
     "engineer",
     "relay",
 ]
+const AUTHORED_MECHROMANCER_ASSET_ID := &"mechromancer.player.v1"
+const AUTHORED_MECHROMANCER_ROOT_NAME := &"MechromancerModel"
+const AUTHORED_MECHROMANCER_MATERIAL_FAMILY := &"authored_mechromancer_pbr"
+const AUTHORED_BULWARK_ASSET_ID := &"bulwark.companion.v1"
+const AUTHORED_BULWARK_ROOT_NAME := &"BulwarkAuthoredModel"
+const AUTHORED_BULWARK_MATERIAL_FAMILY := &"authored_bulwark_pbr"
+const AUTHORED_HEARTFORGE_ASSET_ID := &"heartforge.core.v1"
+const AUTHORED_HEARTFORGE_ROOT_NAME := &"HeartforgeAuthoredModel"
+const AUTHORED_HEARTFORGE_MATERIAL_FAMILY := &"authored_heartforge_pbr"
+const AUTHORED_HEARTFORGE_THRESHOLD_SCENE := "res://assets/heartforge_threshold/heartforge_threshold.gltf"
+const AUTHORED_HEARTFORGE_THRESHOLD_ASSET_ID := &"heartforge.threshold.v1"
+const AUTHORED_HEARTFORGE_THRESHOLD_ROOT_NAME := &"AuthoredHeartforgeThreshold"
+const AUTHORED_HEARTFORGE_THRESHOLD_MATERIAL_FAMILY := &"authored_threshold_pbr"
+const AUTHORED_ORGANIC_MATERIAL_FAMILY := &"authored_organic_pbr"
+const AUTHORED_ORGANIC_ASSET_IDS: Array[StringName] = [
+    &"skitterling.scavenger.v1",
+    &"razorhound.predator.v1",
+    &"roofleaper.ambusher.v1",
+    &"glassmoth.swarm.v1",
+    &"veilstalker.predator.v1",
+    &"burrower.drill.v1",
+    &"sporecaster.infestation.v1",
+    &"broodmass.nest.v1",
+    &"miremaw.amphibious.v1",
+    &"carrionbell.signal.v1",
+    &"rootweaver.route_controller.v1",
+    &"thornback.territorial.v1",
+    &"ashmantle.route_predator.v1",
+    &"apex.cistern.v1",
+]
 const AUTHORED_ORGANIC_TOKENS: Array[String] = [
     "veilstalker",
     "razorhound",
@@ -115,6 +145,7 @@ var texture_flush_retry_pending: bool = false
 var region_stream_cleanup_pending: Dictionary = {}
 var region_stream_rebuild_pending: Dictionary = {}
 var initial_art_pass_complete: bool = false
+var threshold_authored_failure_reason: String = ""
 
 
 func configure(next_world: Node3D, next_regions: WorldRegionDirector3D, next_settings: ReleaseSettingsService3D) -> void:
@@ -526,6 +557,58 @@ func _texture_mesh(mesh_instance: MeshInstance3D) -> void:
         return
     if mesh_instance.has_meta(&"release_material_family"):
         return
+    if _is_authored_mechromancer_package_mesh(mesh_instance):
+        # The player package owns its UV-mapped coat, leather, skin, metal,
+        # visor and field-instrument materials. Mark those imported surfaces as
+        # complete without replacing them with a generic release atlas. The
+        # actor-owned progression and death layers are siblings of this root.
+        mesh_instance.visibility_range_end = 250.0
+        mesh_instance.set_meta(&"release_material_family", AUTHORED_MECHROMANCER_MATERIAL_FAMILY)
+        meshes_textured += 1
+        return
+    if _is_authored_bulwark_package_mesh(mesh_instance):
+        # Bulwark's imported shell owns a bespoke PBR material set. Mark that
+        # treatment as complete without replacing it with the generic metal
+        # atlas. Progression crowns, runtime damage and other procedural
+        # siblings remain outside this package root and keep the normal pass.
+        mesh_instance.visibility_range_end = 250.0
+        mesh_instance.set_meta(&"release_material_family", AUTHORED_BULWARK_MATERIAL_FAMILY)
+        meshes_textured += 1
+        return
+    if _is_authored_heartforge_package_mesh(mesh_instance):
+        # The permanent Heartforge core owns bespoke UV-mapped PBR materials.
+        # Preserve only meshes beneath the imported package root: progression,
+        # damage, adaptation and sanctuary dressing are runtime siblings and
+        # continue through the normal release material pass.
+        mesh_instance.visibility_range_end = 250.0
+        mesh_instance.set_meta(&"release_material_family", AUTHORED_HEARTFORGE_MATERIAL_FAMILY)
+        meshes_textured += 1
+        return
+    if _is_authored_heartforge_threshold_package_mesh(mesh_instance):
+        # The refuge threshold is a separate authored package from the core.
+        # Preserve its own UV-mapped PBR materials while keeping route slabs,
+        # camp dressing and every gameplay-owned sibling on the normal pass.
+        mesh_instance.visibility_range_end = 250.0
+        mesh_instance.set_meta(&"release_material_family", AUTHORED_HEARTFORGE_THRESHOLD_MATERIAL_FAMILY)
+        meshes_textured += 1
+        return
+    if _is_authored_organic_package_mesh(mesh_instance):
+        # The exact imported organic packages own their UV-mapped shell,
+        # tissue, packed ORM and signal materials. Only descendants of a
+        # package carrying one of the 14 stable IDs take this path: runtime
+        # damage, death, tier and reduced-detail proxy meshes are siblings and
+        # continue through the generic organic release treatment.
+        mesh_instance.visibility_range_end = 250.0
+        mesh_instance.set_meta(&"release_material_family", AUTHORED_ORGANIC_MATERIAL_FAMILY)
+        meshes_textured += 1
+        return
+    var inherited_family := _inherited_release_material_family(mesh_instance)
+    if inherited_family != &"":
+        # Presentation effects can own a material contract on a stable parent
+        # while ModelKit expands their visible surface into auto-named child
+        # meshes. Propagate that contract without touching the source material.
+        mesh_instance.set_meta(&"release_material_family", inherited_family)
+        return
     var category := _texture_category(mesh_instance)
     if category == &"" or not textures.has(category):
         return
@@ -603,6 +686,11 @@ func _texture_category(mesh_instance: MeshInstance3D) -> StringName:
     # texture heuristic flatten every player mesh into one metal family.
     if "mechromancer" in combined:
         return &""
+    if _is_companion_runtime_mesh(mesh_instance):
+        # Everything else under the companion's RobotModel is runtime-owned
+        # manufactured hardware. ModelKit may auto-name its child meshes, so
+        # ancestry—not a Tier2/Tier3 name prefix—owns this classification.
+        return &"metal"
     # Imported production shells retain their authored family in the node
     # path, while their individual meshes intentionally use neutral names
     # such as TorsoSegment or Fastener. Recognise the family before the
@@ -638,6 +726,122 @@ func _contains_any(text: String, tokens: Array[String]) -> bool:
         if token in text:
             return true
     return false
+
+
+func _is_authored_mechromancer_package_mesh(mesh_instance: MeshInstance3D) -> bool:
+    var current: Node = mesh_instance
+    while current != null:
+        if current.name == AUTHORED_MECHROMANCER_ROOT_NAME:
+            return true
+        if StringName(str(current.get_meta(&"ironwright_asset_id", &""))) == AUTHORED_MECHROMANCER_ASSET_ID:
+            return true
+        if StringName(str(current.get_meta(&"asset_contract", &""))) == AUTHORED_MECHROMANCER_ASSET_ID:
+            return true
+        var imported_extras := current.get_meta(&"extras", {}) as Dictionary
+        if StringName(str(imported_extras.get("ironwright_asset_id", ""))) == AUTHORED_MECHROMANCER_ASSET_ID:
+            return true
+        if StringName(str(imported_extras.get("asset_contract", ""))) == AUTHORED_MECHROMANCER_ASSET_ID:
+            return true
+        current = current.get_parent()
+    return false
+
+
+func _is_authored_bulwark_package_mesh(mesh_instance: MeshInstance3D) -> bool:
+    var current: Node = mesh_instance
+    while current != null:
+        if current.name == AUTHORED_BULWARK_ROOT_NAME:
+            return true
+        if StringName(str(current.get_meta(&"ironwright_asset_id", &""))) == AUTHORED_BULWARK_ASSET_ID:
+            return true
+        if StringName(str(current.get_meta(&"asset_contract", &""))) == AUTHORED_BULWARK_ASSET_ID:
+            return true
+        current = current.get_parent()
+    return false
+
+
+func _is_authored_heartforge_package_mesh(mesh_instance: MeshInstance3D) -> bool:
+    var current: Node = mesh_instance
+    while current != null:
+        if current.name == AUTHORED_HEARTFORGE_ROOT_NAME:
+            return true
+        if StringName(str(current.get_meta(&"ironwright_asset_id", &""))) == AUTHORED_HEARTFORGE_ASSET_ID:
+            return true
+        if StringName(str(current.get_meta(&"asset_contract", &""))) == AUTHORED_HEARTFORGE_ASSET_ID:
+            return true
+        current = current.get_parent()
+    return false
+
+
+func _is_authored_heartforge_threshold_package_mesh(mesh_instance: MeshInstance3D) -> bool:
+    var current: Node = mesh_instance
+    while current != null:
+        if current.name == AUTHORED_HEARTFORGE_THRESHOLD_ROOT_NAME:
+            return true
+        if StringName(str(current.get_meta(&"ironwright_asset_id", &""))) == AUTHORED_HEARTFORGE_THRESHOLD_ASSET_ID:
+            return true
+        if StringName(str(current.get_meta(&"asset_contract", &""))) == AUTHORED_HEARTFORGE_THRESHOLD_ASSET_ID:
+            return true
+        current = current.get_parent()
+    return false
+
+
+func _is_authored_organic_package_mesh(mesh_instance: MeshInstance3D) -> bool:
+    var current: Node = mesh_instance
+    while current != null:
+        if current.has_meta(&"ironwright_asset_id") and _is_authored_organic_asset_id(current.get_meta(&"ironwright_asset_id")):
+            return true
+        if current.has_meta(&"asset_contract") and _is_authored_organic_asset_id(current.get_meta(&"asset_contract")):
+            return true
+        # Godot's glTF importer may retain extras as one Dictionary or expose
+        # their fully qualified key. Accept only these known metadata shapes;
+        # family names and runtime presentation metadata are intentionally not
+        # package authority.
+        var imported_extras_variant: Variant = current.get_meta(&"extras") if current.has_meta(&"extras") else null
+        if imported_extras_variant is Dictionary:
+            var imported_extras := imported_extras_variant as Dictionary
+            if _is_authored_organic_asset_id(imported_extras.get("ironwright_asset_id", "")):
+                return true
+            if _is_authored_organic_asset_id(imported_extras.get("asset_contract", "")):
+                return true
+        for metadata_key in [
+            &"extras.ironwright_asset_id",
+            &"extras.asset_contract",
+            &"extras/ironwright_asset_id",
+            &"extras/asset_contract",
+        ]:
+            if current.has_meta(metadata_key) and _is_authored_organic_asset_id(current.get_meta(metadata_key)):
+                return true
+        current = current.get_parent()
+    return false
+
+
+func _is_authored_organic_asset_id(value: Variant) -> bool:
+    return StringName(str(value)) in AUTHORED_ORGANIC_ASSET_IDS
+
+
+func _is_companion_runtime_mesh(mesh_instance: MeshInstance3D) -> bool:
+    if _is_authored_bulwark_package_mesh(mesh_instance):
+        return false
+    var under_robot_model := false
+    var current: Node = mesh_instance
+    while current != null:
+        if current.name == &"RobotModel":
+            under_robot_model = true
+        if current is RobotUnit3D:
+            return under_robot_model and (current as RobotUnit3D).archetype == &"companion"
+        current = current.get_parent()
+    return false
+
+
+func _inherited_release_material_family(node: Node) -> StringName:
+    var current := node.get_parent()
+    while current != null:
+        if current.has_meta(&"release_material_family"):
+            var family := StringName(str(current.get_meta(&"release_material_family", &"")))
+            if family != &"":
+                return family
+        current = current.get_parent()
+    return &""
 
 
 func _contains_organic_membrane_name(name_text: String) -> bool:
@@ -787,21 +991,114 @@ func _dress_heartforge_district() -> void:
             )
         ModelKit3D.add_cylinder(heartforge_detail, 0.08, 2.6, position + Vector3.UP * 1.3, dark_metal, Vector3.ZERO, "CablePost")
         ModelKit3D.add_cylinder(heartforge_detail, 0.11, 0.18, position + Vector3.UP * 2.58, plate_metal, Vector3.ZERO, "CablePostCap")
-    # A single threshold gives the sanctuary a readable civic entry rather
-    # than leaving the perimeter as disconnected barriers. It is deliberately
-    # presentation-only: no collision, route blocker, power network or new
-    # player-managed gate state is introduced.
-    var threshold := Node3D.new()
-    threshold.name = "HeartforgeThresholdGate"
-    threshold.position = Vector3(0.0, 0.0, -5.8)
-    heartforge_detail.add_child(threshold)
+    _build_heartforge_threshold(heartforge_detail, warm_metal, dark_metal, plate_metal, beacon_material)
+    var string_light_material := _emissive_material(Color("ff8a3b"), 0.78)
+    for index in range(16):
+        var angle := TAU * float(index) / 16.0
+        var radius := 7.2 + float(index % 3) * 1.4
+        ModelKit3D.add_sphere(root, 0.055, Vector3(cos(angle) * radius, 2.5 + sin(float(index) * 0.7) * 0.35, sin(angle) * radius), string_light_material, Vector3.ONE, "SanctuaryStringLight")
+    regions_dressed += 1
+
+
+func _build_heartforge_threshold(
+    parent: Node3D,
+    warm_metal: StandardMaterial3D,
+    dark_metal: StandardMaterial3D,
+    plate_metal: StandardMaterial3D,
+    beacon_material: StandardMaterial3D
+) -> void:
+    # This is one presentation-only civic threshold: it does not own
+    # collision, navigation, power, interaction or player-managed gate state.
+    # The procedural geometry is created only when the authored import fails,
+    # never as a hidden shell beneath a healthy package.
+    threshold_authored_failure_reason = ""
+    var threshold := _instantiate_authored_heartforge_threshold()
+    if threshold != null:
+        threshold.position = Vector3(0.0, 0.0, -5.8)
+        parent.add_child(threshold)
+        return
+
+    var fallback := Node3D.new()
+    fallback.name = "HeartforgeThresholdFallback"
+    fallback.position = Vector3(0.0, 0.0, -5.8)
+    fallback.set_meta(&"threshold_visual_source", &"procedural_fallback")
+    fallback.set_meta(&"threshold_authored_failure_reason", threshold_authored_failure_reason)
+    parent.add_child(fallback)
+    _build_heartforge_threshold_fallback(fallback, warm_metal, dark_metal, plate_metal, beacon_material)
+
+
+func _instantiate_authored_heartforge_threshold() -> Node3D:
+    if not ResourceLoader.exists(AUTHORED_HEARTFORGE_THRESHOLD_SCENE):
+        _record_threshold_authored_load_failure("resource path does not exist")
+        return null
+
+    var authored_resource := ResourceLoader.load(
+        AUTHORED_HEARTFORGE_THRESHOLD_SCENE,
+        "PackedScene",
+        ResourceLoader.CACHE_MODE_REUSE
+    )
+    if authored_resource == null:
+        _record_threshold_authored_load_failure("resource loader returned null")
+        return null
+    if not (authored_resource is PackedScene):
+        _record_threshold_authored_load_failure(
+            "resource type is %s instead of PackedScene" % authored_resource.get_class()
+        )
+        return null
+
+    var authored_instance := (authored_resource as PackedScene).instantiate()
+    if authored_instance == null:
+        _record_threshold_authored_load_failure("PackedScene instantiated null")
+        return null
+    if not (authored_instance is Node3D):
+        var instance_type := authored_instance.get_class()
+        authored_instance.free()
+        _record_threshold_authored_load_failure(
+            "scene root type is %s instead of Node3D" % instance_type
+        )
+        return null
+
+    var authored_threshold := authored_instance as Node3D
+    # Godot may wrap a glTF scene whose scene name matches its authored root in
+    # a second identically named Node3D. Collapse only that exact one-child
+    # import wrapper so the runtime exposes one unambiguous package root.
+    if authored_threshold.get_child_count() == 1:
+        var imported_root := authored_threshold.get_child(0) as Node3D
+        if imported_root != null and imported_root.name == AUTHORED_HEARTFORGE_THRESHOLD_ROOT_NAME:
+            authored_threshold.remove_child(imported_root)
+            authored_threshold.free()
+            authored_threshold = imported_root
+    authored_threshold.name = AUTHORED_HEARTFORGE_THRESHOLD_ROOT_NAME
+    authored_threshold.set_meta(&"ironwright_asset_id", AUTHORED_HEARTFORGE_THRESHOLD_ASSET_ID)
+    authored_threshold.set_meta(&"threshold_visual_source", &"authored")
+    return authored_threshold
+
+
+func _record_threshold_authored_load_failure(reason: String) -> void:
+    threshold_authored_failure_reason = reason
+    var message := (
+        "Heartforge refuge threshold unavailable at %s (%s); activating visible procedural fallback."
+        % [AUTHORED_HEARTFORGE_THRESHOLD_SCENE, reason]
+    )
+    load_errors.append(message)
+    push_error(message)
+
+
+func _build_heartforge_threshold_fallback(
+    fallback: Node3D,
+    warm_metal: StandardMaterial3D,
+    dark_metal: StandardMaterial3D,
+    plate_metal: StandardMaterial3D,
+    beacon_material: StandardMaterial3D
+) -> void:
     for side in [-1.0, 1.0]:
         var pillar_x: float = side * 3.9
-        ModelKit3D.add_beveled_box(threshold, Vector3(0.42, 3.18, 0.58), Vector3(pillar_x, 1.59, 0.0), plate_metal, Vector3(0.0, 0.0, side * 0.03), "ThresholdPillar%s" % ("L" if side < 0.0 else "R"), 0.12)
-        ModelKit3D.add_beveled_box(threshold, Vector3(1.18, 0.18, 1.08), Vector3(pillar_x, 0.14, 0.0), dark_metal, Vector3.ZERO, "ThresholdFoot%s" % ("L" if side < 0.0 else "R"), 0.08)
-    ModelKit3D.add_beveled_box(threshold, Vector3(8.12, 0.30, 0.62), Vector3(0.0, 3.18, 0.0), warm_metal, Vector3.ZERO, "ThresholdLintel", 0.1)
+        ModelKit3D.add_beveled_box(fallback, Vector3(0.42, 3.18, 0.58), Vector3(pillar_x, 1.59, 0.0), plate_metal, Vector3(0.0, 0.0, side * 0.03), "ThresholdPillar%s" % ("L" if side < 0.0 else "R"), 0.12)
+        ModelKit3D.add_beveled_box(fallback, Vector3(1.18, 0.18, 1.08), Vector3(pillar_x, 0.14, 0.0), dark_metal, Vector3.ZERO, "ThresholdFoot%s" % ("L" if side < 0.0 else "R"), 0.08)
+    ModelKit3D.add_beveled_box(fallback, Vector3(8.12, 0.30, 0.62), Vector3(0.0, 3.18, 0.0), warm_metal, Vector3.ZERO, "ThresholdLintel", 0.1)
+    ModelKit3D.add_beveled_box(fallback, Vector3(3.35, 0.16, 0.08), Vector3(0.0, 3.18, -0.34), beacon_material, Vector3.ZERO, "RouteThresholdAmberBand", 0.12)
     ModelKit3D.add_surface_panel(
-        threshold,
+        fallback,
         Vector3(2.08, 0.56, 0.12),
         Vector3(0.0, 2.40, -0.34),
         dark_metal,
@@ -811,14 +1108,8 @@ func _dress_heartforge_district() -> void:
     )
     for light_index in range(3):
         var light_x := -3.0 + float(light_index) * 3.0
-        ModelKit3D.add_cylinder(threshold, 0.07, 0.20, Vector3(light_x, 3.02, -0.34), dark_metal, Vector3.ZERO, "ThresholdLampHousing%02d" % light_index)
-        ModelKit3D.add_sphere(threshold, 0.086, Vector3(light_x, 2.90, -0.34), beacon_material, Vector3.ONE, "ThresholdLamp%02d" % light_index)
-    var string_light_material := _emissive_material(Color("ff8a3b"), 0.78)
-    for index in range(16):
-        var angle := TAU * float(index) / 16.0
-        var radius := 7.2 + float(index % 3) * 1.4
-        ModelKit3D.add_sphere(root, 0.055, Vector3(cos(angle) * radius, 2.5 + sin(float(index) * 0.7) * 0.35, sin(angle) * radius), string_light_material, Vector3.ONE, "SanctuaryStringLight")
-    regions_dressed += 1
+        ModelKit3D.add_cylinder(fallback, 0.07, 0.20, Vector3(light_x, 3.02, -0.34), dark_metal, Vector3.ZERO, "ThresholdLampHousing%02d" % light_index)
+        ModelKit3D.add_sphere(fallback, 0.086, Vector3(light_x, 2.90, -0.34), beacon_material, Vector3.ONE, "ThresholdLamp%02d" % light_index)
 
 
 func _dress_region(region_id: StringName) -> void:

@@ -1,20 +1,19 @@
 class_name VerticalSliceActorArt3D
 extends Node
 
-## Concentrated silhouette pass for the opening cast. These meshes are still
-## procedural, but deliberately replace toy-like symmetry with layered,
-## asymmetric industrial shapes and readable functional parts.
+## Concentrated presentation pass for the opening cast. Authored hero packages
+## own their static silhouette; this director now adds only bounded runtime
+## feedback there while retaining procedural role detail for ordinary machines.
+
+const BULWARK_PROTECTION_VFX_MATERIAL_FAMILY := &"bulwark_protection_vfx"
 
 var world: Node
 var polished: Dictionary = {}
 var steel: StandardMaterial3D
 var dark_steel: StandardMaterial3D
 var rust: StandardMaterial3D
-var fabric: StandardMaterial3D
-var leather: StandardMaterial3D
 var cyan: StandardMaterial3D
 var warm: StandardMaterial3D
-var ceramic: StandardMaterial3D
 var finish_panel: StandardMaterial3D
 var finish_cable: StandardMaterial3D
 var finish_warning: StandardMaterial3D
@@ -30,13 +29,10 @@ func _ready() -> void:
     steel = ModelKit3D.material(Color("39464b"), 0.74, 0.34)
     dark_steel = ModelKit3D.material(Color("151d20"), 0.84, 0.3)
     rust = ModelKit3D.material(Color("6b3e29"), 0.48, 0.67)
-    fabric = ModelKit3D.material(Color("202a31"), 0.03, 0.94)
-    leather = ModelKit3D.material(Color("493329"), 0.06, 0.88)
     # Keep the cognition and utility accents luminous without washing the
     # authored machine shells into white bands at the close review distance.
     cyan = ModelKit3D.material(Color("23454b"), 0.34, 0.26, Color("58c7cf"), 0.95)
     warm = ModelKit3D.material(Color("72421f"), 0.24, 0.32, Color("ee8b3e"), 0.9)
-    ceramic = ModelKit3D.material(Color("707777"), 0.08, 0.72)
     finish_panel = ModelKit3D.material(Color("273338"), 0.68, 0.34)
     finish_cable = ModelKit3D.material(Color("10181c"), 0.35, 0.52)
     finish_warning = ModelKit3D.material(Color("6e3d27"), 0.34, 0.58, Color("d58a48"), 0.42)
@@ -83,186 +79,25 @@ func _polish(node: Node) -> void:
 
 
 func _polish_player(player: Mechromancer3D) -> void:
+    # The imported Mechromancer package now owns the complete static field-kit
+    # silhouette and PBR surface treatment. Keep only one restrained practical
+    # light on its authored shoulder socket; progression and the bounded death
+    # presentation remain actor-owned siblings. No geometry or material
+    # override is created here.
     var model := player.get_node_or_null("MechromancerModel") as Node3D
-    if model == null or model.get_node_or_null("VerticalSliceCharacterArt") != null:
+    if model == null or model.find_child("MechromancerReadabilityLight", true, false) != null:
         return
-    var detail := Node3D.new()
-    detail.name = "VerticalSliceCharacterArt"
-    model.add_child(detail)
-
-    # Hood silhouette and respirator collar.
-    ModelKit3D.add_sphere(detail, 0.33, Vector3(0.0, 1.9, 0.06), fabric, Vector3(1.03, 0.95, 1.08), "DeepHood")
-    ModelKit3D.add_beveled_box(detail, Vector3(0.56, 0.16, 0.32), Vector3(0.0, 1.66, -0.13), dark_steel, Vector3(0.08, 0.0, 0.0), "RespiratorCollar", 0.2)
-    ModelKit3D.add_beveled_box(detail, Vector3(0.28, 0.16, 0.18), Vector3(0.0, 1.72, -0.28), ceramic, Vector3.ZERO, "RespiratorMask", 0.24)
-
-    # Layered scavenger rig gives the body asymmetry and identifies the
-    # Mechromancer as a field mechanic, not a generic mobile-game hero.
-    ModelKit3D.add_beveled_box(detail, Vector3(0.7, 0.88, 0.34), Vector3(0.0, 1.08, 0.34), leather, Vector3(-0.05, 0.0, 0.02), "FieldPack", 0.16)
-    ModelKit3D.add_beveled_box(detail, Vector3(0.82, 0.1, 0.08), Vector3(0.0, 1.4, -0.28), rust, Vector3(0.0, 0.0, -0.05), "ChestHarness", 0.2)
-    ModelKit3D.add_beveled_box(detail, Vector3(0.1, 0.8, 0.08), Vector3(-0.28, 1.05, -0.24), leather, Vector3(0.0, 0.0, 0.08), "HarnessStrap", 0.28)
-    ModelKit3D.add_beveled_box(detail, Vector3(0.1, 0.8, 0.08), Vector3(0.28, 1.05, -0.24), leather, Vector3(0.0, 0.0, -0.08), "HarnessStrap", 0.28)
-    ModelKit3D.add_sphere(detail, 0.055, Vector3(-0.28, 1.39, -0.3), warm, Vector3(1.0, 0.72, 0.72), "HarnessFastener")
-    ModelKit3D.add_sphere(detail, 0.055, Vector3(0.28, 1.39, -0.3), warm, Vector3(1.0, 0.72, 0.72), "HarnessFastener")
-    ModelKit3D.add_cylinder(detail, 0.18, 0.46, Vector3(-0.43, 1.06, 0.38), rust, Vector3(1.5708, 0.0, 0.0), "CableSpool")
-    ModelKit3D.add_cylinder(detail, 0.045, 0.5, Vector3(-0.43, 1.06, 0.12), dark_steel, Vector3(1.5708, 0.0, 0.0), "CableSpoolAxle")
-    ModelKit3D.add_beveled_box(detail, Vector3(0.24, 0.5, 0.18), Vector3(0.48, 0.92, 0.3), rust, Vector3(0.0, 0.0, -0.08), "ToolRoll", 0.2)
-
-    # Weak pistol is visibly improvised and small relative to the machines.
-    ModelKit3D.add_beveled_box(detail, Vector3(0.13, 0.15, 0.65), Vector3(0.48, 1.06, -0.42), dark_steel, Vector3(0.0, 0.0, 0.01), "PistolSlide", 0.2)
-    ModelKit3D.add_cylinder(detail, 0.045, 0.62, Vector3(0.48, 1.08, -0.72), steel, Vector3(1.5708, 0.0, 0.0), "PistolBarrel")
-    ModelKit3D.add_beveled_box(detail, Vector3(0.14, 0.38, 0.16), Vector3(0.48, 0.83, -0.27), leather, Vector3(0.1, 0.0, 0.0), "PistolGrip", 0.24)
-    ModelKit3D.add_cylinder(detail, 0.07, 0.1, Vector3(0.48, 1.08, -1.03), dark_steel, Vector3(1.5708, 0.0, 0.0), "PistolMuzzleCollar")
-    ModelKit3D.add_beveled_box(detail, Vector3(0.055, 0.07, 0.1), Vector3(0.48, 1.16, -0.54), steel, Vector3.ZERO, "PistolFrontSight", 0.018)
-
-    # Final field-kit pass: asymmetric protection and communications hardware
-    # reinforce the Mechromancer as a vulnerable technician who survives by
-    # carrying tools, not as a clean heroic avatar. These pieces are visual
-    # only and do not alter the gameplay capsule or weapon sockets.
-    ModelKit3D.add_beveled_box(
-        detail,
-        Vector3(0.5, 0.18, 0.46),
-        Vector3(-0.44, 1.48, 0.08),
-        steel,
-        Vector3(-0.08, 0.0, 0.12),
-        "FieldShoulderGuard",
-        0.22
-    )
-    ModelKit3D.add_surface_panel(
-        detail,
-        Vector3(0.38, 0.42, 0.08),
-        Vector3(0.38, 1.42, 0.08),
-        dark_steel,
-        cyan,
-        Vector3(-0.04, 0.0, 0.0),
-        "FieldCommsPanel"
-    )
-    ModelKit3D.add_cylinder(detail, 0.028, 0.58, Vector3(0.56, 1.78, 0.1), dark_steel, Vector3(0.08, 0.0, -0.12), "FieldCommsAntenna")
-    ModelKit3D.add_sphere(detail, 0.05, Vector3(0.53, 2.06, 0.07), cyan, Vector3.ONE, "FieldCommsBeacon")
-    ModelKit3D.add_beveled_box(detail, Vector3(0.18, 0.12, 0.32), Vector3(-0.34, 0.28, -0.34), rust, Vector3(0.0, 0.0, 0.08), "FieldBootCuff", 0.2)
-    ModelKit3D.add_beveled_box(detail, Vector3(0.18, 0.12, 0.32), Vector3(0.34, 0.28, -0.34), rust, Vector3(0.0, 0.0, -0.08), "FieldBootCuff", 0.2)
-    ModelKit3D.add_beveled_box(detail, Vector3(0.1, 0.34, 0.14), Vector3(-0.52, 0.86, -0.38), leather, Vector3(0.0, 0.0, 0.12), "WristToolLoop", 0.24)
-
-    # Second-pass focal details make the technician read as a maintained field
-    # instrument at tactical distance: protected shoulder hardware, a service
-    # canister and restrained tool-deck parts add manufactured depth without
-    # changing the authored skeleton, collision capsule or pistol contract.
-    ModelKit3D.add_louvered_panel(
-        detail,
-        Vector3(0.42, 0.22, 0.16),
-        Vector3(-0.44, 1.5, -0.18),
-        dark_steel,
-        steel,
-        Vector3(-0.08, 0.0, 0.12),
-        "FieldShoulderLampHousing",
-        3
-    )
-    ModelKit3D.add_sphere(detail, 0.065, Vector3(-0.44, 1.48, -0.29), cyan, Vector3(1.0, 0.72, 0.72), "FieldShoulderLampLens")
-    ModelKit3D.add_cylinder(detail, 0.13, 0.3, Vector3(-0.62, 0.78, 0.04), rust, Vector3(1.5708, 0.0, 0.0), "FieldUtilityCanister")
-    ModelKit3D.add_cylinder(detail, 0.042, 0.34, Vector3(-0.62, 0.78, -0.13), dark_steel, Vector3(1.5708, 0.0, 0.0), "FieldUtilityCanisterClamp")
-    ModelKit3D.add_beveled_box(detail, Vector3(0.38, 0.12, 0.22), Vector3(0.62, 0.72, 0.22), steel, Vector3(0.0, 0.0, -0.08), "FieldToolDeck", 0.18)
-    ModelKit3D.add_beveled_box(detail, Vector3(0.06, 0.2, 0.26), Vector3(0.53, 0.86, 0.22), warm, Vector3(0.0, 0.0, -0.08), "FieldToolClamp", 0.28)
-
-    # Field-finish pass: a restrained hood rim, visor housing, work gloves and
-    # coat-hem hardware give the human technician a readable close-range
-    # material break from head to hand to boot. These are visual-only pieces;
-    # the authored skeleton, interaction sockets and gameplay capsule remain
-    # untouched.
-    ModelKit3D.add_torus(
-        detail,
-        0.28,
-        0.028,
-        Vector3(0.0, 1.91, 0.05),
-        leather,
-        Vector3.ZERO,
-        "FieldHoodRim",
-        36,
-        8
-    )
-    ModelKit3D.add_surface_panel(
-        detail,
-        Vector3(0.34, 0.1, 0.05),
-        Vector3(0.0, 1.82, -0.31),
-        dark_steel,
-        ceramic,
-        Vector3(-0.03, 0.0, 0.0),
-        "FieldVisorHousing"
-    )
-    ModelKit3D.add_capsule(
-        detail,
-        0.085,
-        0.3,
-        Vector3(-0.48, 0.68, -0.34),
-        leather,
-        Vector3(0.0, 0.0, 0.12),
-        "FieldWorkGloveLeft"
-    )
-    ModelKit3D.add_capsule(
-        detail,
-        0.085,
-        0.3,
-        Vector3(0.48, 0.68, -0.34),
-        leather,
-        Vector3(0.0, 0.0, -0.12),
-        "FieldWorkGloveRight"
-    )
-    ModelKit3D.add_beveled_box(
-        detail,
-        Vector3(0.32, 0.12, 0.16),
-        Vector3(-0.23, 0.4, -0.2),
-        leather,
-        Vector3(0.0, 0.0, 0.08),
-        "FieldCoatHemLeft",
-        0.22
-    )
-    ModelKit3D.add_beveled_box(
-        detail,
-        Vector3(0.32, 0.12, 0.16),
-        Vector3(0.23, 0.4, -0.2),
-        leather,
-        Vector3(0.0, 0.0, -0.08),
-        "FieldCoatHemRight",
-        0.22
-    )
-
-    # Hero micro-detail pass: a readable forearm diagnostic and protected knee
-    # hardware sharpen the technician silhouette at close tactical distance.
-    # These parts are deliberately small, asymmetric and presentation-only.
-    ModelKit3D.add_surface_panel(
-        detail,
-        Vector3(0.24, 0.24, 0.07),
-        Vector3(-0.5, 0.98, -0.38),
-        finish_panel,
-        finish_status,
-        Vector3(-0.08, 0.0, 0.12),
-        "FieldForearmDiagnostic"
-    )
-    ModelKit3D.add_sphere(detail, 0.045, Vector3(-0.5, 1.04, -0.425), finish_status, Vector3(1.5, 0.65, 0.42), "FieldForearmDiagnosticLens")
-    ModelKit3D.add_beveled_box(detail, Vector3(0.24, 0.14, 0.3), Vector3(-0.2, 0.58, -0.34), steel, Vector3(-0.06, 0.0, 0.08), "FieldKneeGuardLeft", 0.2)
-    ModelKit3D.add_beveled_box(detail, Vector3(0.24, 0.14, 0.3), Vector3(0.2, 0.58, -0.34), steel, Vector3(-0.06, 0.0, -0.08), "FieldKneeGuardRight", 0.2)
-    ModelKit3D.add_cylinder(detail, 0.045, 0.12, Vector3(-0.48, 1.26, 0.02), finish_warning, Vector3(1.5708, 0.0, 0.0), "FieldCableClamp")
-
-    # Final hero surface pass: a framed rear pack and exposed service cable
-    # make the Mechromancer read as a maintained field instrument from the
-    # three-quarter camera. The added parts are presentation-only and stay
-    # clear of the authored skeleton, sockets and gameplay capsule.
-    ModelKit3D.add_beveled_box(detail, Vector3(0.78, 0.1, 0.46), Vector3(0.0, 1.38, 0.54), leather, Vector3(-0.04, 0.0, 0.0), "FieldPackBackplate", 0.2)
-    for side in [-1.0, 1.0]:
-        var pack_side := float(side)
-        ModelKit3D.add_beveled_box(detail, Vector3(0.07, 0.62, 0.08), Vector3(pack_side * 0.32, 1.16, 0.55), steel, Vector3(0.0, 0.0, pack_side * 0.06), "FieldPackFrameRail%s" % ("Left" if pack_side < 0.0 else "Right"), 0.22)
-        ModelKit3D.add_sphere(detail, 0.06, Vector3(pack_side * 0.32, 1.48, 0.5), warm, Vector3(1.0, 0.72, 0.72), "FieldPackAnchor%s" % ("Left" if pack_side < 0.0 else "Right"))
-    ModelKit3D.add_cylinder(detail, 0.12, 0.58, Vector3(0.0, 1.52, 0.55), rust, Vector3(0.0, 0.0, 1.5708), "FieldPackTopRoll")
-    ModelKit3D.add_cylinder(detail, 0.026, 0.54, Vector3(-0.38, 1.48, 0.34), finish_cable, Vector3(0.28, 0.0, 0.0), "FieldPackServiceCable")
-
-    # One practical lamp rather than glowing eyes all over the model.
-    ModelKit3D.add_sphere(detail, 0.085, Vector3(-0.38, 1.48, -0.22), cyan, Vector3(1.0, 0.75, 0.55), "WorkLamp")
-    var lamp := OmniLight3D.new()
-    lamp.name = "MechromancerWorkLamp"
-    lamp.position = Vector3(-0.4, 1.48, -0.35)
-    lamp.light_color = Color("80dbe0")
-    lamp.light_energy = 0.34
-    lamp.omni_range = 3.7
-    lamp.shadow_enabled = false
-    detail.add_child(lamp)
+    var shoulder_socket := model.find_child("ShoulderLamp", true, false) as Node3D
+    if shoulder_socket == null:
+        return
+    var readability_light := OmniLight3D.new()
+    readability_light.name = "MechromancerReadabilityLight"
+    readability_light.position = Vector3(0.0, 0.0, -0.08)
+    readability_light.light_color = Color("80dbe0")
+    readability_light.light_energy = 0.22
+    readability_light.omni_range = 3.6
+    readability_light.shadow_enabled = false
+    shoulder_socket.add_child(readability_light)
 
 
 func _polish_robot(robot: RobotUnit3D) -> void:
@@ -273,9 +108,14 @@ func _polish_robot(robot: RobotUnit3D) -> void:
     detail.name = "VerticalSliceMachineArt"
     model.add_child(detail)
 
+    if robot.archetype == &"companion":
+        # The authored Bulwark package owns the complete static silhouette and
+        # surface finish. This layer contributes only animated protection
+        # feedback, so it cannot double the shell, weapons or service hardware.
+        _build_bulwark_detail(detail)
+        return
+
     match robot.archetype:
-        &"companion":
-            _build_bulwark_detail(detail)
         &"guardian":
             _build_warden_detail(detail)
         &"salvager":
@@ -557,16 +397,10 @@ func _build_machine_finish(parent: Node3D, robot: RobotUnit3D) -> void:
 
 
 func _build_bulwark_detail(parent: Node3D) -> void:
-    ModelKit3D.add_beveled_box(parent, Vector3(1.9, 0.62, 0.18), Vector3(0.0, 1.08, -0.92), steel, Vector3(-0.03, 0.0, 0.0), "BulwarkFrontPlate", 0.2)
-    ModelKit3D.add_beveled_box(parent, Vector3(0.42, 0.82, 0.28), Vector3(-0.88, 0.86, -0.35), rust, Vector3(0.0, 0.0, 0.12), "BulwarkShoulderLeft", 0.16)
-    ModelKit3D.add_beveled_box(parent, Vector3(0.42, 0.82, 0.28), Vector3(0.88, 0.86, -0.35), rust, Vector3(0.0, 0.0, -0.12), "BulwarkShoulderRight", 0.16)
-    ModelKit3D.add_cylinder(parent, 0.11, 1.3, Vector3(-0.4, 1.4, -0.72), dark_steel, Vector3(1.5708, 0.0, 0.0), "BulwarkGunLeft")
-    ModelKit3D.add_cylinder(parent, 0.11, 1.3, Vector3(0.4, 1.4, -0.72), dark_steel, Vector3(1.5708, 0.0, 0.0), "BulwarkGunRight")
-    ModelKit3D.add_beveled_box(parent, Vector3(1.3, 0.16, 0.62), Vector3(0.0, 1.64, 0.42), black_metal(), Vector3.ZERO, "BulwarkRadiator", 0.2)
-    # The companion's defining promise is protection. A compact, restrained
-    # field arc and protected emitter spine make that role legible before
-    # combat starts without turning the machine into a bright screen-space
-    # halo or adding a second gameplay resource.
+    # Bulwark's authored package owns every static plate, weapon, emitter,
+    # collar and service surface. Keep only the animated field cues here; the
+    # protection controller continues to resolve the package-owned
+    # BulwarkShieldEmitter and BulwarkEmitterCollar by their stable names.
     var shield_material := ModelKit3D.material(Color("14383d"), 0.46, 0.32, Color("50c6ce"), 0.82)
     var shield_ring := MeshInstance3D.new()
     shield_ring.name = "BulwarkShieldArc"
@@ -578,9 +412,10 @@ func _build_bulwark_detail(parent: Node3D) -> void:
     shield_ring.mesh = shield_mesh
     shield_ring.material_override = shield_material
     shield_ring.position = Vector3(0.0, 0.34, 0.08)
+    shield_ring.set_meta(&"release_material_family", BULWARK_PROTECTION_VFX_MATERIAL_FAMILY)
     parent.add_child(shield_ring)
     var scan_material := ModelKit3D.material(Color("255f65"), 0.34, 0.24, Color("79e3e8"), 1.9)
-    ModelKit3D.add_beveled_box(
+    var scan_blade := ModelKit3D.add_beveled_box(
         shield_ring,
         Vector3(0.055, 0.16, 0.18),
         Vector3(0.0, 0.0, -0.785),
@@ -589,65 +424,15 @@ func _build_bulwark_detail(parent: Node3D) -> void:
         "BulwarkShieldScanBlade",
         0.025
     )
-    ModelKit3D.add_tapered_cylinder(parent, 0.12, 0.18, 0.62, Vector3(0.0, 1.94, 0.46), dark_steel, Vector3.ZERO, "BulwarkShieldEmitterSpine")
-    ModelKit3D.add_sphere(parent, 0.13, Vector3(0.0, 2.28, 0.46), shield_material, Vector3(1.2, 0.7, 1.2), "BulwarkShieldEmitter")
-    for side in [-1.0, 1.0]:
-        ModelKit3D.add_beveled_box(parent, Vector3(0.16, 0.62, 0.46), Vector3(float(side) * 0.92, 1.08, 0.72), shield_material, Vector3(0.0, 0.0, float(side) * 0.08), "BulwarkShieldGuard", 0.14)
-    ModelKit3D.add_louvered_panel(
-        parent,
-        Vector3(1.12, 0.28, 0.16),
-        Vector3(0.0, 1.67, 0.43),
-        dark_steel,
-        steel,
-        Vector3.ZERO,
-        "BulwarkRadiatorLouver",
-        4
-    )
-    ModelKit3D.add_surface_panel(
-        parent,
-        Vector3(0.82, 0.24, 0.08),
-        Vector3(0.0, 1.48, -0.98),
-        dark_steel,
-        shield_material,
-        Vector3.ZERO,
-        "BulwarkFrontSensorVisor"
-    )
-    # The companion's front face now has a shallow service interface and
-    # guarded feet: manufactured depth that supports the protection fantasy
-    # without adding another glow source or gameplay socket.
-    ModelKit3D.add_surface_panel(
-        parent,
-        Vector3(0.58, 0.2, 0.07),
-        Vector3(0.0, 1.1, -1.25),
-        finish_panel,
-        finish_warning,
-        Vector3(-0.04, 0.0, 0.0),
-        "BulwarkServiceFace"
-    )
-    for side in [-1.0, 1.0]:
-        var side_sign := float(side)
-        ModelKit3D.add_cylinder(parent, 0.045, 0.1, Vector3(side_sign * 0.22, 1.1, -1.31), finish_warning, Vector3(1.5708, 0.0, 0.0), "BulwarkServiceLatch%s" % ("Left" if side_sign < 0.0 else "Right"))
-        ModelKit3D.add_beveled_box(parent, Vector3(0.5, 0.1, 0.16), Vector3(side_sign * 0.7, 1.43, -0.34), steel, Vector3(0.0, 0.0, side_sign * 0.08), "BulwarkShoulderRail%s" % ("Left" if side_sign < 0.0 else "Right"), 0.18)
-        ModelKit3D.add_beveled_box(parent, Vector3(0.46, 0.1, 0.38), Vector3(side_sign * 0.68, 0.18, -0.66), dark_steel, Vector3.ZERO, "BulwarkFootPlate%s" % ("Left" if side_sign < 0.0 else "Right"), 0.2)
-        # Side-mounted actuator rings and heat panels complete the companion's
-        # protected silhouette without introducing another combat signal.
-        ModelKit3D.add_torus(parent, 0.16, 0.035, Vector3(side_sign * 0.98, 0.9, -0.45), finish_warning, Vector3(1.5708, 0.0, 0.0), "BulwarkActuatorRing%s" % ("Left" if side_sign < 0.0 else "Right"), 24, 8)
-        ModelKit3D.add_sphere(parent, 0.09, Vector3(side_sign * 0.98, 0.9, -0.49), dark_steel, Vector3(1.0, 0.72, 0.72), "BulwarkActuatorCap%s" % ("Left" if side_sign < 0.0 else "Right"))
-        ModelKit3D.add_louvered_panel(parent, Vector3(0.28, 0.34, 0.14), Vector3(side_sign * 0.84, 1.0, 0.48), dark_steel, steel, Vector3(0.0, side_sign * 1.5708, 0.0), "BulwarkSideHeatPanel%s" % ("Left" if side_sign < 0.0 else "Right"), 3)
-    ModelKit3D.add_surface_panel(parent, Vector3(0.38, 0.12, 0.05), Vector3(0.0, 1.1, -1.31), finish_panel, finish_status, Vector3(-0.04, 0.0, 0.0), "BulwarkServiceWindowFrame")
-    var emitter_collar := MeshInstance3D.new()
-    emitter_collar.name = "BulwarkEmitterCollar"
-    var emitter_mesh := TorusMesh.new()
-    emitter_mesh.inner_radius = 0.16
-    emitter_mesh.outer_radius = 0.21
-    emitter_mesh.rings = 16
-    emitter_mesh.ring_segments = 32
-    emitter_collar.mesh = emitter_mesh
-    emitter_collar.material_override = shield_material
-    emitter_collar.position = Vector3(0.0, 2.28, 0.46)
-    emitter_collar.rotation.x = PI * 0.5
-    parent.add_child(emitter_collar)
-    _add_machine_lamp(parent, Vector3(0.0, 1.42, -1.0), Color("f0a65a"), 0.42)
+    scan_blade.set_meta(&"release_material_family", BULWARK_PROTECTION_VFX_MATERIAL_FAMILY)
+    var protection_light := OmniLight3D.new()
+    protection_light.name = "BulwarkProtectionLight"
+    protection_light.position = Vector3(0.0, 1.42, -1.0)
+    protection_light.light_color = Color("f0a65a")
+    protection_light.light_energy = 0.42
+    protection_light.omni_range = 3.2
+    protection_light.shadow_enabled = false
+    parent.add_child(protection_light)
 
 
 func _build_warden_detail(parent: Node3D) -> void:
@@ -706,25 +491,11 @@ func _build_engineer_detail(parent: Node3D) -> void:
     _add_machine_lamp(parent, Vector3(-1.25, 0.76, -0.12), Color("f0ad68"), 0.3)
 
 
-func _polish_heartforge(forge: Heartforge3D) -> void:
-    var model := forge.get_node_or_null("HeartforgeModel") as Node3D
-    if model == null or model.get_node_or_null("VerticalSliceForgeArt") != null:
-        return
-    var detail := Node3D.new()
-    detail.name = "VerticalSliceForgeArt"
-    model.add_child(detail)
-
-    # External pipework and service manifolds make the forge read as a machine
-    # assembled from municipal infrastructure rather than a glowing cylinder.
-    for side in [-1.0, 1.0]:
-        ModelKit3D.add_cylinder(detail, 0.18, 3.0, Vector3(side * 2.15, 1.6, 0.9), steel, Vector3(0.0, 0.0, side * 0.12), "ForgeCoolantStack")
-        ModelKit3D.add_cylinder(detail, 0.12, 2.3, Vector3(side * 1.7, 2.2, -1.55), rust, Vector3(1.1, 0.0, side * 0.2), "ForgePressurePipe")
-        ModelKit3D.add_beveled_box(detail, Vector3(0.72, 0.6, 0.52), Vector3(side * 2.15, 0.72, 1.2), dark_steel, Vector3.ZERO, "ForgePump", 0.2)
-    for index in range(5):
-        var angle := -1.1 + float(index) * 0.55
-        ModelKit3D.add_beveled_box(detail, Vector3(0.36, 0.18, 0.52), Vector3(cos(angle) * 1.9, 3.45, sin(angle) * 1.9), rust, Vector3(0.0, -angle, 0.08), "ForgeTopClamp", 0.22)
-    ModelKit3D.add_beveled_box(detail, Vector3(1.4, 0.24, 0.9), Vector3(-2.65, 1.1, -0.2), dark_steel, Vector3.ZERO, "ForgeControlCabinet", 0.18)
-    ModelKit3D.add_beveled_box(detail, Vector3(1.0, 0.08, 0.55), Vector3(-2.65, 1.28, -0.47), cyan, Vector3.ZERO, "ForgeDiagnosticPanel", 0.2)
+func _polish_heartforge(_forge: Heartforge3D) -> void:
+    # Static model-local forge hardware is now owned by the authored asset.
+    # Ambient sanctuary dressing remains world-owned and is intentionally
+    # unaffected by this actor-art pass.
+    pass
 
 
 func _add_machine_lamp(parent: Node3D, position: Vector3, color: Color, energy: float) -> void:
@@ -736,7 +507,3 @@ func _add_machine_lamp(parent: Node3D, position: Vector3, color: Color, energy: 
     light.omni_range = 3.2
     light.shadow_enabled = false
     parent.add_child(light)
-
-
-func black_metal() -> StandardMaterial3D:
-    return dark_steel

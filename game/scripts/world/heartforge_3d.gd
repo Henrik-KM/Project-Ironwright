@@ -5,6 +5,7 @@ signal health_changed(current: float, maximum: float)
 signal destroyed
 
 const AUTHORED_HEARTFORGE_MODEL_SCENE := "res://assets/heartforge/heartforge.gltf"
+const AUTHORED_HEARTFORGE_ASSET_ID := &"heartforge.core.v1"
 const RESTING_CORE_LIGHT_ENERGY: float = 1.8
 const ACTIVE_CORE_LIGHT_ENERGY: float = 2.8
 
@@ -225,6 +226,17 @@ func _build_visuals() -> void:
     _model_root.name = "HeartforgeModel"
     add_child(_model_root)
 
+    # The production shell belongs to the authored package. Resolve it before
+    # constructing any replacement geometry so a healthy import never pays for
+    # or briefly exposes the legacy procedural model.
+    var authored_model := _instantiate_authored_heartforge()
+    if authored_model != null:
+        _model_root.add_child(authored_model)
+        _retune_authored_materials(authored_model)
+        _model_root.set_meta(&"heartforge_visual_source", &"authored")
+        _build_runtime_presentation()
+        return
+
     var iron := ModelKit3D.material(Color("2c3132"), 0.82, 0.42)
     var dark := ModelKit3D.material(Color("161b1c"), 0.72, 0.55)
     var rust := ModelKit3D.material(Color("6d432b"), 0.48, 0.72)
@@ -370,27 +382,63 @@ func _build_visuals() -> void:
         var position := Vector3(cos(angle) * 2.35, 1.75, sin(angle) * 2.35)
         ModelKit3D.add_box(_model_root, Vector3(0.24, 2.1, 0.42), position, rust, Vector3(0.0, -angle, 0.0), "Rib")
 
-    # The permanent Heartforge shell is source-authored. Keep the former
-    # named procedural socket set hidden as a migration-compatible contract;
-    # adaptive tiers, retrofits, damage, lights and the interaction surface
-    # remain runtime-owned around the imported production asset.
-    var authored_resource := ResourceLoader.load(AUTHORED_HEARTFORGE_MODEL_SCENE, "PackedScene", ResourceLoader.CACHE_MODE_REUSE)
+    # A missing or invalid authored package must remain visibly diagnosable and
+    # playable. The complete legacy shell above is therefore constructed only
+    # on failure, directly beneath the same stable model root and sockets.
+    _model_root.set_meta(&"heartforge_visual_source", &"procedural_fallback")
+    _build_runtime_presentation()
+
+
+func _instantiate_authored_heartforge() -> Node3D:
+    if not ResourceLoader.exists(AUTHORED_HEARTFORGE_MODEL_SCENE):
+        _record_authored_load_failure("resource path does not exist")
+        return null
+
+    var authored_resource := ResourceLoader.load(
+        AUTHORED_HEARTFORGE_MODEL_SCENE,
+        "PackedScene",
+        ResourceLoader.CACHE_MODE_REUSE
+    )
+    if authored_resource == null:
+        _record_authored_load_failure("resource loader returned null")
+        return null
     if not (authored_resource is PackedScene):
-        push_error("Heartforge authored scene could not be loaded: %s" % AUTHORED_HEARTFORGE_MODEL_SCENE)
-    var authored_model := (authored_resource as PackedScene).instantiate() if authored_resource is PackedScene else null
-    if authored_model == null:
-        return
+        _record_authored_load_failure(
+            "resource type is %s instead of PackedScene" % authored_resource.get_class()
+        )
+        return null
+
+    var authored_instance := (authored_resource as PackedScene).instantiate()
+    if authored_instance == null:
+        _record_authored_load_failure("PackedScene instantiated null")
+        return null
+    if not (authored_instance is Node3D):
+        var instance_type := authored_instance.get_class()
+        authored_instance.free()
+        _record_authored_load_failure(
+            "scene root type is %s instead of Node3D" % instance_type
+        )
+        return null
+
+    var authored_model := authored_instance as Node3D
     authored_model.name = "HeartforgeAuthoredModel"
-    _model_root.add_child(authored_model)
-    _retune_authored_materials(authored_model)
-    var legacy_shell := Node3D.new()
-    legacy_shell.name = "LegacyProceduralHeartforgeShell"
-    for child in _model_root.get_children():
-        if child == authored_model or child == legacy_shell:
-            continue
-        child.reparent(legacy_shell)
-    _model_root.add_child(legacy_shell)
-    legacy_shell.visible = false
+    # Keep package identity explicit on the instantiated root even if importer
+    # handling of glTF extras changes. Release presentation can then preserve
+    # authored PBR by walking mesh ancestors instead of guessing from names.
+    authored_model.set_meta(&"ironwright_asset_id", AUTHORED_HEARTFORGE_ASSET_ID)
+    return authored_model
+
+
+func _record_authored_load_failure(reason: String) -> void:
+    _model_root.set_meta(&"heartforge_visual_source", &"procedural_fallback")
+    _model_root.set_meta(&"heartforge_authored_failure_reason", reason)
+    push_error(
+        "Heartforge authored core unavailable at %s (%s); activating complete visible procedural fallback."
+        % [AUTHORED_HEARTFORGE_MODEL_SCENE, reason]
+    )
+
+
+func _build_runtime_presentation() -> void:
 
     # The core remains the warm focal source, but its ground influence is
     # bounded so the Heartforge does not flatten the surrounding paving.

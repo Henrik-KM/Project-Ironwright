@@ -1,10 +1,160 @@
 {
   "asset_id": "ashmantle.route_predator.v1",
-  "display_name": "Ashmantle route-predator shell",
-  "source": "game/assets/organic_families/source/build_authored_organic_assets.py",
-  "runtime_path": "res://assets/ashmantle/ashmantle.gltf",
+  "asset_quality": "authored_high_definition",
   "quality": "authored_high_definition",
-  "license": "Original Project Ironwright asset",
-  "required_nodes": ["AshmantleModel", "Torso", "TorsoCore", "VentralSheath", "OrganicDorsalPlate", "AshmantleMantle", "AshmantleHeatLouverL", "AshmantleHeatLouverR", "AshmantleSiphon", "AshmantleSiphonRing", "AshmantleSiphonApertureL", "AshmantleTendrilR", "ProductionAssetMarker"],
-  "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]
+  "display_name": "Ashmantle",
+  "runtime_model": "res://assets/ashmantle/ashmantle.gltf",
+  "runtime_path": "res://assets/ashmantle/ashmantle.gltf",
+  "textures": {
+    "shell_base_color": "res://assets/organic_families/textures/organic_shell_base_color.png",
+    "shell_normal": "res://assets/organic_families/textures/organic_shell_normal.png",
+    "shell_orm": "res://assets/organic_families/textures/organic_shell_orm.png",
+    "tissue_base_color": "res://assets/organic_families/textures/organic_tissue_base_color.png",
+    "tissue_normal": "res://assets/organic_families/textures/organic_tissue_normal.png",
+    "tissue_orm": "res://assets/organic_families/textures/organic_tissue_orm.png",
+    "emissive": "res://assets/organic_families/textures/organic_emissive.png"
+  },
+  "texture_resolution": 1024,
+  "material_workflow": "metallic_roughness_pbr",
+  "surface_profile": "shared_organic_pbr_v1",
+  "normal_scale_range": [
+    0.08,
+    0.34
+  ],
+  "material_names": [
+    "Ashmantle wet shell",
+    "Ashmantle layered plate",
+    "Ashmantle membrane",
+    "Ashmantle bone",
+    "Ashmantle threat light",
+    "Ashmantle tendon",
+    "Ashmantle anatomy tissue",
+    "Ashmantle anatomy signal"
+  ],
+  "emissive_materials": [
+    "Ashmantle threat light",
+    "Ashmantle anatomy signal"
+  ],
+  "source": "res://assets/organic_families/source/build_authored_organic_assets.py",
+  "source_builder": "res://assets/organic_families/source/build_authored_organic_assets.py",
+  "source_type": "original_project_ironwright_deterministic_mesh_builder",
+  "provenance": "Original Project Ironwright organic asset; deterministic source geometry and shared textures; no third-party runtime art.",
+  "third_party_assets": [],
+  "world_scale_m": 3.13814,
+  "aggregate_bounds": {
+    "min": [
+      -1.452867,
+      0.3396,
+      -1.9171
+    ],
+    "max": [
+      1.430267,
+      1.890912,
+      1.22104
+    ]
+  },
+  "source_visual_scale": 1.0,
+  "runtime_visual_scale": 1.0,
+  "presentation_only": true,
+  "collision": false,
+  "gameplay_state": "none",
+  "skins": 0,
+  "deterministic_build": true,
+  "required_accessors": [
+    "POSITION",
+    "NORMAL",
+    "TEXCOORD_0",
+    "TANGENT"
+  ],
+  "indexed_primitives": true,
+  "unique_node_names": true,
+  "unique_animation_target_paths": true,
+  "required_nodes": [
+    "AshmantleModel",
+    "Torso",
+    "TorsoCore",
+    "VentralSheath",
+    "OrganicDorsalPlate",
+    "AshmantleMantle",
+    "AshmantleHeatLouverL",
+    "AshmantleHeatLouverR",
+    "AshmantleSiphon",
+    "AshmantleSiphonRing",
+    "OrganicPulseRim",
+    "OrganicGrowthPlate",
+    "OrganicVascularVeinL",
+    "OrganicVascularVeinR",
+    "OrganicVascularNodeL",
+    "OrganicVascularNodeR",
+    "AshmantleThermalCollar",
+    "AshmantleThermalCore",
+    "ProductionAssetMarker"
+  ],
+  "stable_nodes": [
+    "AshmantleModel",
+    "Torso",
+    "TorsoCore",
+    "VentralSheath",
+    "OrganicDorsalPlate",
+    "AshmantleMantle",
+    "AshmantleHeatLouverL",
+    "AshmantleHeatLouverR",
+    "AshmantleSiphon",
+    "AshmantleSiphonRing",
+    "OrganicPulseRim",
+    "OrganicGrowthPlate",
+    "OrganicVascularVeinL",
+    "OrganicVascularVeinR",
+    "OrganicVascularNodeL",
+    "OrganicVascularNodeR",
+    "AshmantleThermalCollar",
+    "AshmantleThermalCore",
+    "ProductionAssetMarker"
+  ],
+  "authored_anatomy_nodes": [
+    "OrganicPulseRim",
+    "OrganicGrowthPlate",
+    "OrganicVascularVeinL",
+    "OrganicVascularVeinR",
+    "OrganicVascularNodeL",
+    "OrganicVascularNodeR",
+    "AshmantleThermalCollar",
+    "AshmantleThermalCore"
+  ],
+  "socket_contract": {
+    "AshmantleMantle": "heat_mantle",
+    "AshmantleSiphon": "route_siphon",
+    "AshmantleTendrilL": "sensory_tendril",
+    "AshmantleEyeL": "threat_eye",
+    "AshmantleTendrilR": "sensory_tendril",
+    "AshmantleEyeR": "threat_eye"
+  },
+  "animation_clips": [
+    "Idle",
+    "Walk",
+    "Attack",
+    "Hit",
+    "Feed",
+    "Nest",
+    "Retreat",
+    "Death"
+  ],
+  "geometry_metrics": {
+    "node_count": 58,
+    "mesh_count": 36,
+    "primitive_count": 36,
+    "vertex_count": 25446,
+    "triangle_count": 47740
+  },
+  "artifact_hashes": {
+    "source_builder_sha256": "B2B0778ACC6113E2636132AE9D147B63B2A9CF38B610B7F143DE885D68CC44ED",
+    "runtime_model_sha256": "1DD849653688F22BE61F098326AD5F770547C2C7BF99C126333E0752CB023F7B",
+    "shell_base_color_sha256": "57FCB4D295FC5A33BF5D0F35E7435E8F2C2F071BE0F442915D593AB54A6C8A79",
+    "shell_normal_sha256": "56FC7F35010C295638D3A83F0DCD737260C2E85A7A2D5AB982D48261EFF588CF",
+    "shell_orm_sha256": "DFFD2622B90CBBE1570E2D9480D35D13B284D098C282A7601FCD2421204B521B",
+    "tissue_base_color_sha256": "14D021B9C7D2D18C44289B7BDD818D434AE06C0CE5CE0733916E051177DB495B",
+    "tissue_normal_sha256": "6DF8B7DD3D9562D9AF52FAEA23ED46E3426A926F14C8238FFC82B43C25ED5CBE",
+    "tissue_orm_sha256": "26ADD3D37E41A6764EB65F3A48D4DA05F6399A64BD0D9EEEF0385B17AC57A0E9",
+    "emissive_sha256": "83E1DFB119F5E2647E885458AD9E8955A2B2D31F63FC28B6627A5F4F26617E07"
+  }
 }

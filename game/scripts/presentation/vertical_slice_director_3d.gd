@@ -504,28 +504,19 @@ func _build_service_lane() -> void:
         ModelKit3D.add_box(lane, Vector3(0.12, 0.025, 1.8), Vector3(-2.25, 0.145, float(z)), warning_paint, Vector3.ZERO, "ServiceEdgeMark")
         ModelKit3D.add_box(lane, Vector3(0.12, 0.025, 1.8), Vector3(2.25, 0.145, float(z)), warning_paint, Vector3.ZERO, "ServiceEdgeMark")
 
-    # The first objective needs one unmistakable landmark beyond the forge.
-    # This is a visual affordance only: the lane remains owned by the
-    # persistent world and receives no new collision, routing or task state.
-    var threshold_arch := Node3D.new()
-    threshold_arch.name = "AmberRouteThresholdArch"
-    lane.add_child(threshold_arch)
-    var arch_dark := ModelKit3D.material(Color("1a2528"), 0.58, 0.5)
-    var arch_amber := ModelKit3D.material(Color("71472a"), 0.28, 0.42, Color("f2a65a"), 1.15)
-    for side in [-1.0, 1.0]:
-        _add_beam(threshold_arch, Vector3(side * 2.52, 0.25, -9.6), Vector3(side * 2.18, 5.8, -9.6), 0.11, arch_dark, "RouteThresholdPost")
-    _add_beam(threshold_arch, Vector3(-2.18, 5.8, -9.6), Vector3(2.18, 5.8, -9.6), 0.13, arch_dark, "RouteThresholdHeader")
-    ModelKit3D.add_beveled_box(threshold_arch, Vector3(3.35, 0.16, 0.08), Vector3(0.0, 5.5, -9.72), arch_amber, Vector3.ZERO, "RouteThresholdAmberBand", 0.12)
+    # The authored refuge threshold owns the one structural gateway and its
+    # lintel band at the sanctuary boundary. The service lane keeps only its
+    # ground-level route language so it cannot read as a second gate or add
+    # collision, routing or task state.
+    var route_dark := ModelKit3D.material(Color("1a2528"), 0.58, 0.5)
+    var route_amber := ModelKit3D.material(Color("71472a"), 0.28, 0.42, Color("f2a65a"), 1.15)
     for index in range(3):
         var marker_z := -13.0 - float(index) * 4.7
-        var marker := ModelKit3D.add_beveled_box(lane, Vector3(0.82, 0.06, 0.26), Vector3(0.0, 0.19, marker_z), arch_amber, Vector3.ZERO, "AmberRouteChevron", 0.1)
+        var marker := ModelKit3D.add_beveled_box(lane, Vector3(0.82, 0.06, 0.26), Vector3(0.0, 0.19, marker_z), route_amber, Vector3.ZERO, "AmberRouteChevron", 0.1)
         marker.rotation.y = PI * 0.5
     for side in [-1.0, 1.0]:
-        ModelKit3D.add_cylinder(lane, 0.08, 1.75, Vector3(side * 2.62, 0.95, -5.4), arch_dark, Vector3.ZERO, "AmberRouteGuideBeacon")
-        ModelKit3D.add_sphere(lane, 0.22, Vector3(side * 2.62, 1.92, -5.4), arch_amber, Vector3(1.0, 0.72, 1.0), "AmberRouteGuideLamp")
-    var threshold_light := _add_light(threshold_arch, Vector3(0.0, 5.42, -9.82), Color("f2a65a"), 0.46, 7.5, false)
-    threshold_light.set_meta(&"vertical_base_energy", 0.46)
-    practical_lights.append(threshold_light)
+        ModelKit3D.add_cylinder(lane, 0.08, 1.75, Vector3(side * 2.8, 0.95, -7.45), route_dark, Vector3.ZERO, "AmberRouteGuideBeacon")
+        ModelKit3D.add_sphere(lane, 0.22, Vector3(side * 2.8, 1.92, -7.45), route_amber, Vector3(1.0, 0.72, 1.0), "AmberRouteGuideLamp")
 
 
 func _build_street_encounter_dressing() -> void:
@@ -608,10 +599,9 @@ func _build_sanctuary_perimeter() -> void:
         for leg in [-1.0, 1.0]:
             ModelKit3D.add_beveled_box(perimeter, Vector3(0.16, 0.72, 0.6), position + Vector3(leg * 1.25, 0.34, 0.0), black_metal, Vector3(0.0, yaw, 0.1 * leg), "BarricadeFoot", 0.2)
 
-    # Open northern throat: the base is a refuge, not a sealed RTS compound.
-    for x in [-4.4, 4.4]:
-        ModelKit3D.add_cylinder(perimeter, 0.12, 4.2, Vector3(x, 2.1, -9.4), black_metal, Vector3.ZERO, "GatePost")
-        ModelKit3D.add_beveled_box(perimeter, Vector3(0.45, 0.45, 0.25), Vector3(x, 3.65, -9.5), cold_glass, Vector3.ZERO, "GateSensor", 0.22)
+    # Keep the northern throat open. The single authored refuge threshold is
+    # attached by the release art director at the established boundary, so
+    # the perimeter contributes no second posts, sensors, blocker or gate.
 
 
 func _build_workshop_gantry() -> void:

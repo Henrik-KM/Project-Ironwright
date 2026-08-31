@@ -1189,7 +1189,13 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
     var late_review_page: Array = world.presentation_review_pages[2]
     if late_review_page.size() >= 1:
         var first_late_actor := late_review_page[0] as Node3D
-        _expect(first_late_actor != null and first_late_actor.find_child("OrganicSurfaceSeam", true, false) != null, "Active organic families must retain a smooth continuous shell seam for close-camera material separation.")
+        var tier_root := first_late_actor.find_child("TierSilhouette", true, false) as Node3D if first_late_actor != null else null
+        var tier_detail := tier_root.get_node_or_null("TierHighDefinitionDetail") as Node3D if tier_root != null else null
+        var signal_socket := tier_detail.get_node_or_null("TierCrownRing") as Node3D if tier_detail != null else null
+        _expect(tier_root != null and str(tier_root.get_meta(&"presentation_profile", "")) == "compact_authored_focal_signal", "Active organic families must retain the compact authored-body tier signal in close review.")
+        _expect(tier_detail != null and tier_detail.find_child("TierDorsalPlate00", true, false) != null and tier_detail.find_child("TierVascularChannelL00", true, false) != null and tier_detail.find_child("TierVascularChannelR00", true, false) != null, "The compact tier signal must remain one shallow scute with two short surface channels.")
+        _expect(signal_socket != null and str(signal_socket.get_meta(&"mesh_policy", "")) == "meshless_signal_socket" and signal_socket.find_child("TierCrownNode00", true, false) != null, "Tier identity must use a meshless authored-surface socket with embedded signal buds.")
+        _expect(first_late_actor == null or first_late_actor.find_child("OrganicSurfaceSeam", true, false) == null, "The close-review organism must not restore the removed broad generic surface seam.")
     for page_index in range(3, 3 + world.PRESENTATION_REVIEW_REGIONS.size()):
         await world._show_presentation_review_page(page_index)
         await process_frame
@@ -1344,9 +1350,60 @@ func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.outpost_sites.size() >= 8, "Commercial release must contain at least eight bounded outpost sites.")
     var heartforge_detail := world.release_world_art.dressing_root.find_child("HighDefinitionHeartforgeDressing", true, false) if world.release_world_art.dressing_root != null else null
     _expect(heartforge_detail != null and heartforge_detail.find_child("HeartforgeBarrier00", true, false) != null and heartforge_detail.find_child("HeartforgeBarrierService00", true, false) != null, "The opening Heartforge perimeter must retain its authored barrier and service-detail dressing.")
-    var threshold_gate := heartforge_detail.find_child("HeartforgeThresholdGate", true, false) if heartforge_detail != null else null
-    _expect(threshold_gate != null and threshold_gate.find_child("ThresholdPillarL", true, false) != null and threshold_gate.find_child("ThresholdPillarR", true, false) != null and threshold_gate.find_child("ThresholdLintel", true, false) != null, "The opening Heartforge perimeter must retain one readable presentation-only threshold gate.")
-    _expect(threshold_gate != null and threshold_gate.find_child("ThresholdServicePanel", true, false) != null and threshold_gate.find_child("ThresholdLamp01", true, false) != null, "The Heartforge threshold must retain its service panel and warm entry lamps.")
+    var threshold_package := heartforge_detail.get_node_or_null("AuthoredHeartforgeThreshold") as Node3D if heartforge_detail != null else null
+    _expect(threshold_package != null, "The refuge boundary must instantiate its authored threshold package as a direct Heartforge-dressing child.")
+    _expect(heartforge_detail == null or heartforge_detail.find_children("AuthoredHeartforgeThreshold", "Node3D", true, false).size() == 1, "The refuge boundary must contain exactly one authored threshold package.")
+    _expect(threshold_package != null and StringName(str(threshold_package.get_meta(&"ironwright_asset_id", &""))) == &"heartforge.threshold.v1", "The authored threshold must expose its stable package identifier.")
+    _expect(threshold_package != null and StringName(str(threshold_package.get_meta(&"threshold_visual_source", &""))) == &"authored", "A healthy threshold import must report the authored package as its active visual source.")
+    _expect(threshold_package != null and threshold_package.position.is_equal_approx(Vector3(0.0, 0.0, -5.8)) and threshold_package.rotation.is_equal_approx(Vector3.ZERO) and threshold_package.scale.is_equal_approx(Vector3.ONE), "The authored threshold must retain the established refuge-boundary transform.")
+    for detail_name in [
+        "ThresholdStructure",
+        "ThresholdPillarL",
+        "ThresholdFootL",
+        "ThresholdPillarR",
+        "ThresholdFootR",
+        "ThresholdLintel",
+        "ThresholdCrown",
+        "RouteThresholdAmberBand",
+        "ThresholdServiceLayer",
+        "ThresholdServicePanel",
+        "LeftServicePanel",
+        "RightServicePanel",
+        "ThresholdSignalLayer",
+        "ThresholdLamp00",
+        "ThresholdLamp01",
+        "ThresholdLamp02",
+        "LeftRouteSensor",
+        "RightRouteSensor",
+        "ThresholdRouteMarker",
+        "ThresholdOrganicMachineLayer",
+        "ProductionAssetMarker",
+    ]:
+        _expect(threshold_package != null and threshold_package.find_child(detail_name, true, false) != null, "The authored threshold package must retain stable detail node %s." % detail_name)
+    for removed_legacy_name in ["HeartforgeThresholdGate", "HeartforgeThresholdFallback", "AmberRouteThresholdArch", "RouteThresholdPost", "RouteThresholdHeader", "GatePost", "GateSensor"]:
+        _expect(world.find_children(removed_legacy_name, "", true, false).is_empty(), "A healthy authored refuge boundary must not retain legacy threshold node %s." % removed_legacy_name)
+    _expect(threshold_package == null or threshold_package.find_children("*", "CollisionObject3D", true, false).is_empty(), "The authored threshold must remain presentation-only and introduce no collision object.")
+    _expect(threshold_package == null or threshold_package.find_children("*", "CollisionShape3D", true, false).is_empty(), "The authored threshold must not add a route blocker through collision geometry.")
+    _expect(world.find_child("ForgeServiceLane", true, false) != null and world.find_child("AmberRouteChevron", true, false) != null and world.find_child("AmberRouteGuideBeacon", true, false) != null and world.find_child("AmberRouteGuideLamp", true, false) != null, "Threshold consolidation must preserve the service lane and its ground-level amber route cues.")
+    var threshold_route_guide := world.find_child("AmberRouteGuideBeacon", true, false) as Node3D
+    _expect(threshold_package == null or threshold_route_guide == null or threshold_route_guide.global_position.z < threshold_package.global_position.z - 1.4, "The retained route beacons must sit beyond the authored threshold footprint rather than intersecting its structure.")
+    _expect(world.find_child("ForegroundRefugeThreshold", true, false) != null and world.find_child("ThresholdSlab", true, false) != null and world.find_child("ImprovisedSanctuaryPerimeter", true, false) != null and world.find_child("WeldedBarricade", true, false) != null, "Threshold consolidation must preserve the lived-in foreground refuge and non-threshold perimeter dressing.")
+    var threshold_meshes: Array[MeshInstance3D] = []
+    _collect_mesh_instances(threshold_package, threshold_meshes)
+    _expect(threshold_meshes.size() >= 12, "The authored threshold must expose a substantial UV/PBR mesh package rather than a token marker.")
+    var threshold_material_ids: Dictionary = {}
+    for threshold_mesh in threshold_meshes:
+        _expect(threshold_mesh.material_override == null, "The authored threshold must preserve imported surface materials without a global override.")
+        _expect(StringName(str(threshold_mesh.get_meta(&"release_material_family", &""))) == &"authored_threshold_pbr", "Every authored threshold mesh must use the dedicated imported-PBR release family.")
+        _expect(_mesh_retains_imported_heartforge_pbr(threshold_mesh), "Every authored threshold surface must retain base-color, normal and packed ORM texture wiring.")
+        threshold_material_ids[threshold_mesh.get_instance_id()] = _active_surface_material_ids(threshold_mesh)
+    var threshold_band := _find_mesh_named(threshold_package, "RouteThresholdAmberBand")
+    _expect(_mesh_retains_imported_heartforge_emission(threshold_band), "The authored threshold lintel must retain its textured amber route signal.")
+    world.release_world_art.apply_to_node(threshold_package)
+    _expect(heartforge_detail == null or heartforge_detail.find_children("AuthoredHeartforgeThreshold", "Node3D", true, false).size() == 1, "A repeated release material pass must not duplicate the authored threshold package.")
+    for threshold_mesh in threshold_meshes:
+        _expect(threshold_mesh.material_override == null and StringName(str(threshold_mesh.get_meta(&"release_material_family", &""))) == &"authored_threshold_pbr", "A repeated release pass must preserve the authored threshold PBR contract.")
+        _expect(_active_surface_material_ids(threshold_mesh) == threshold_material_ids.get(threshold_mesh.get_instance_id(), []), "A repeated release pass must preserve authored threshold material identity.")
     var heartforge_release := world.release_world_art.dressing_root.find_child("HeartforgeReleaseDressing", true, false) if world.release_world_art.dressing_root != null else null
     var string_light := heartforge_release.find_child("SanctuaryStringLight", true, false) as MeshInstance3D if heartforge_release != null else null
     var string_light_material := string_light.get_active_material(0) as StandardMaterial3D if string_light != null and string_light.mesh != null and string_light.mesh.get_surface_count() > 0 else null
@@ -1413,29 +1470,129 @@ func _test_content_breadth(world: IronwrightReleaseWorld3D) -> void:
 
 func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
     var textured_before := world.release_world_art.meshes_textured
+    var heartforge := world.heartforge as Heartforge3D
+    var heartforge_model := heartforge.get_node_or_null("HeartforgeModel") as Node3D if heartforge != null else null
+    var authored_heartforge := heartforge_model.get_node_or_null("HeartforgeAuthoredModel") as Node3D if heartforge_model != null else null
+    _expect(heartforge_model != null and StringName(str(heartforge_model.get_meta(&"heartforge_visual_source", &""))) == &"authored", "The release Heartforge must report its authored package as the active visual source.")
+    _expect(authored_heartforge != null and StringName(str(authored_heartforge.get_meta(&"ironwright_asset_id", &""))) == &"heartforge.core.v1", "The release Heartforge must expose the exact authored package marker.")
+    _expect(heartforge_model != null and heartforge_model.find_child("LegacyProceduralHeartforgeShell", true, false) == null, "The release Heartforge must not carry a hidden procedural shell beside its authored package.")
+    var heartforge_authored_meshes: Array[MeshInstance3D] = []
+    _collect_mesh_instances(authored_heartforge, heartforge_authored_meshes)
+    _expect(not heartforge_authored_meshes.is_empty(), "The release Heartforge must expose its imported authored mesh package.")
+    var heartforge_material_ids: Dictionary = {}
+    for authored_mesh in heartforge_authored_meshes:
+        _expect(StringName(str(authored_mesh.get_meta(&"release_material_family", &""))) == &"authored_heartforge_pbr", "Every authored Heartforge mesh must use the dedicated imported-PBR release family.")
+        _expect(authored_mesh.material_override == null, "Release texturing must not flatten an authored Heartforge mesh with a generic material override.")
+        _expect(_mesh_retains_imported_heartforge_pbr(authored_mesh), "Every authored Heartforge surface must retain imported base-color, normal and ORM texture channels.")
+        heartforge_material_ids[authored_mesh.get_instance_id()] = _active_surface_material_ids(authored_mesh)
+    var heartforge_thermal_mesh := _find_mesh_named(authored_heartforge, "FurnaceCore")
+    var heartforge_cyan_mesh := _find_mesh_named(authored_heartforge, "CoreServiceLouver00")
+    _expect(_mesh_retains_imported_heartforge_emission(heartforge_thermal_mesh), "The authored Heartforge thermal core must retain its imported emissive texture.")
+    _expect(_mesh_retains_imported_heartforge_emission(heartforge_cyan_mesh), "The authored Heartforge cyan service louver must retain its imported emissive texture.")
+    world.release_world_art.apply_to_node(authored_heartforge)
+    for authored_mesh in heartforge_authored_meshes:
+        var expected_material_ids: Array = heartforge_material_ids.get(authored_mesh.get_instance_id(), [])
+        _expect(_active_surface_material_ids(authored_mesh) == expected_material_ids, "A repeated release texture pass must not replace an imported Heartforge surface material.")
+        _expect(authored_mesh.material_override == null and StringName(str(authored_mesh.get_meta(&"release_material_family", &""))) == &"authored_heartforge_pbr", "A repeated release pass must preserve the authored Heartforge PBR contract.")
+    var original_heartforge_tier := heartforge.progression_tier if heartforge != null else 1
+    if heartforge != null:
+        heartforge.set_progression_tier(maxi(3, original_heartforge_tier))
+        world.release_world_art.apply_to_node(heartforge)
+    var heartforge_progression_root := heartforge_model.get_node_or_null("AdaptiveHeartforgeGeometry") as Node3D if heartforge_model != null else null
+    var heartforge_progression_meshes: Array[MeshInstance3D] = []
+    _collect_mesh_instances(heartforge_progression_root, heartforge_progression_meshes)
+    _expect(not heartforge_progression_meshes.is_empty(), "The release Heartforge must retain visible runtime-owned progression geometry.")
+    for progression_mesh in heartforge_progression_meshes:
+        _expect(StringName(str(progression_mesh.get_meta(&"release_material_family", &""))) != &"authored_heartforge_pbr", "Runtime Heartforge progression geometry must never inherit the authored-package material family.")
+        _expect(progression_mesh.material_override != null, "Runtime Heartforge progression geometry must retain its procedural material treatment.")
+    if heartforge != null:
+        heartforge.set_progression_tier(original_heartforge_tier)
     var opening_robot := get_first_node_in_group(&"friendly_robots") as Node
     var opening_bulwark := opening_robot.get_node_or_null("RobotModel/BulwarkAuthoredModel") if opening_robot != null else null
-    var opening_authored_mesh := _find_first_mesh(opening_bulwark)
-    _expect(opening_authored_mesh != null and opening_authored_mesh.get_meta(&"release_material_family", &"") == &"metal", "Authored Bulwark shell meshes must receive the release metal material pass.")
-    var opening_material := opening_authored_mesh.material_override as StandardMaterial3D if opening_authored_mesh != null else null
-    _expect(opening_material != null and opening_material.normal_enabled and opening_material.normal_texture != null, "Authored Bulwark shell materials must carry the generated normal-relief companion.")
+    var opening_authored_meshes: Array[MeshInstance3D] = []
+    _collect_mesh_instances(opening_bulwark, opening_authored_meshes)
+    _expect(not opening_authored_meshes.is_empty(), "The release Bulwark must expose its imported authored mesh package.")
+    for authored_mesh in opening_authored_meshes:
+        _expect(authored_mesh.get_meta(&"release_material_family", &"") == &"authored_bulwark_pbr", "Every authored Bulwark mesh must use the dedicated imported-PBR release family.")
+        _expect(authored_mesh.material_override == null, "Release texturing must not flatten an authored Bulwark mesh with a generic material override.")
+        _expect(_mesh_retains_imported_bulwark_pbr(authored_mesh), "Every authored Bulwark mesh must retain imported base-color, normal and ORM texture channels.")
+    var opening_emitter_lens := _find_mesh_named(opening_bulwark, "BulwarkEmitterLensInset")
+    _expect(_mesh_retains_imported_bulwark_emission(opening_emitter_lens), "The authored Bulwark emitter must retain its imported emissive-mask channel.")
     _expect(opening_bulwark != null and opening_bulwark.find_child("BulwarkEmitterGuardL", true, false) != null and opening_bulwark.find_child("BulwarkEmitterGuardR", true, false) != null, "The Bulwark protection emitter must retain its authored paired guard rails.")
     _expect(opening_bulwark != null and opening_bulwark.find_child("BulwarkEmitterCollar", true, false) != null and opening_bulwark.find_child("BulwarkEmitterAperture", true, false) != null and opening_bulwark.find_child("BulwarkEmitterLensInset", true, false) != null, "The Bulwark protection emitter must retain its nested authored projector assembly.")
     _expect(opening_bulwark != null and opening_bulwark.find_child("BulwarkServiceFace", true, false) != null and opening_bulwark.find_child("BulwarkServiceWindow", true, false) != null, "The Bulwark companion must expose an authored front service face and diagnostic window.")
-    var player_authored_mesh := _find_first_mesh(world.player.get_node_or_null("MechromancerModel") if world.player != null else null)
-    _expect(player_authored_mesh != null and player_authored_mesh.get_meta(&"release_material_family", &"") == &"", "The authored Mechromancer shell must preserve its source material families instead of receiving a flattened release metal override.")
     var player_model := world.player.get_node_or_null("MechromancerModel") if world.player != null else null
+    var authored_mechromancer := _find_asset_package(player_model, &"mechromancer.player.v1")
+    _expect(authored_mechromancer != null, "The release player must expose the exact authored Mechromancer package identity.")
+    _expect(_asset_package_count(player_model, &"mechromancer.player.v1") == 1, "The release player must contain exactly one authored Mechromancer package.")
+    _expect(player_model == null or player_model.get_node_or_null("VerticalSliceCharacterArt") == null, "The release actor-art pass must not duplicate the authored Mechromancer with a legacy static overlay.")
+    var player_readability_light := world.player.find_child("MechromancerReadabilityLight", true, false) as OmniLight3D if world.player != null else null
+    _expect(player_readability_light != null and player_readability_light.get_parent() != null and player_readability_light.get_parent().name == &"ShoulderLamp" and player_readability_light.light_energy <= 0.25, "Static-overlay consolidation must retain one restrained readability light on the authored shoulder socket.")
+    var player_authored_meshes: Array[MeshInstance3D] = []
+    _collect_mesh_instances(authored_mechromancer, player_authored_meshes)
+    _expect(not player_authored_meshes.is_empty(), "The release Mechromancer must expose its imported authored mesh package.")
+    var player_material_ids: Dictionary = {}
+    for authored_mesh in player_authored_meshes:
+        _expect(StringName(str(authored_mesh.get_meta(&"release_material_family", &""))) == &"authored_mechromancer_pbr", "Every authored Mechromancer mesh must use the dedicated imported-PBR release family.")
+        _expect(authored_mesh.material_override == null, "Release texturing must not flatten an authored Mechromancer mesh with a generic material override.")
+        _expect(_mesh_retains_imported_mechromancer_pbr(authored_mesh), "Every authored Mechromancer surface must retain imported base-color, normal and packed ORM texture channels.")
+        player_material_ids[authored_mesh.get_instance_id()] = _active_surface_material_ids(authored_mesh)
     _expect(player_model != null and player_model.find_child("ChestShell", true, false) != null and player_model.find_child("ChestArmorPlate", true, false) != null, "The Mechromancer must expose the layered curved chest shell and breastplate in the live authored model.")
     var player_leather := _find_mesh_named(player_model, "FieldPack")
     var player_coat := _find_mesh_named(player_model, "Torso")
     var player_lamp := _find_mesh_named(player_model, "LampCore")
     _expect(player_leather != null and player_coat != null and player_lamp != null, "The authored Mechromancer material-break samples must remain present.")
     _expect(player_leather != null and player_leather.material_override == null and player_coat != null and player_coat.material_override == null and player_lamp != null and player_lamp.material_override == null, "The Mechromancer leather, coat and cognition-light samples must retain their imported material assignments.")
+    _expect(_mesh_retains_imported_heartforge_emission(player_lamp), "The authored Mechromancer work lamp must retain its imported emissive-mask channel.")
+    world.release_world_art.apply_to_node(player_model)
+    for authored_mesh in player_authored_meshes:
+        var expected_player_material_ids: Array = player_material_ids.get(authored_mesh.get_instance_id(), [])
+        _expect(_active_surface_material_ids(authored_mesh) == expected_player_material_ids, "A repeated release texture pass must not replace an imported Mechromancer surface material.")
+        _expect(authored_mesh.material_override == null and StringName(str(authored_mesh.get_meta(&"release_material_family", &""))) == &"authored_mechromancer_pbr", "A repeated release pass must preserve the authored Mechromancer PBR contract.")
+    world.player.apply_progression_visuals({
+        &"unlock_machine_society": true,
+        &"unlock_adaptive_defence": true,
+        &"unlock_final_protocol_research": true,
+        &"machine_signal_lattice": true,
+    }, 5)
+    world.release_world_art.apply_to_node(world.player)
+    var player_progression_root := world.player.get_node_or_null("MechromancerProgressionVisuals") as Node3D
+    var player_progression_meshes: Array[MeshInstance3D] = []
+    _collect_mesh_instances(player_progression_root, player_progression_meshes)
+    _expect(player_progression_root != null and player_progression_root.get_parent() == world.player and not player_progression_meshes.is_empty(), "The authored-package handoff must retain the actor-owned Mechromancer progression layer.")
+    for progression_mesh in player_progression_meshes:
+        _expect(StringName(str(progression_mesh.get_meta(&"release_material_family", &""))) != &"authored_mechromancer_pbr" and progression_mesh.material_override != null, "Runtime Mechromancer progression hardware must keep its procedural material treatment outside the authored package family.")
+    var player_death_root := world.player.get_node_or_null("MechromancerDeathPresentation") as Node3D
+    var player_death_meshes: Array[MeshInstance3D] = []
+    _collect_mesh_instances(player_death_root, player_death_meshes)
+    _expect(player_death_root != null and player_death_root.get_parent() == world.player and not player_death_meshes.is_empty(), "The authored-package handoff must retain the bounded actor-owned Mechromancer death layer.")
+    for death_mesh in player_death_meshes:
+        _expect(StringName(str(death_mesh.get_meta(&"release_material_family", &""))) != &"authored_mechromancer_pbr" and death_mesh.material_override != null, "Runtime Mechromancer death geometry must keep its procedural failure material treatment outside the authored package family.")
     _expect(world.player.find_child("FieldHoodRim", true, false) != null and world.player.find_child("FieldVisorHousing", true, false) != null, "The release Mechromancer must retain the close-range hood and visor field-finish hardware.")
     _expect(world.player.find_child("HoodLowerSeam", true, false) != null and world.player.find_child("VisorBrow", true, false) != null and world.player.find_child("VisorMountLeft", true, false) != null and world.player.find_child("VisorMountRight", true, false) != null, "The release Mechromancer must retain the authored protective hood seam and fastened visor brow finish.")
     _expect(world.player.find_child("FieldWorkGloveLeft", true, false) != null and world.player.find_child("FieldWorkGloveRight", true, false) != null and world.player.find_child("FieldCoatHemLeft", true, false) != null and world.player.find_child("FieldCoatHemRight", true, false) != null, "The release Mechromancer must retain paired gloves and coat-hem field-finish hardware.")
     _expect(world.player.find_child("FieldPackBackplate", true, false) != null and world.player.find_child("FieldPackTopRoll", true, false) != null and world.player.find_child("FieldPackServiceCable", true, false) != null, "The release Mechromancer must retain the framed pack and service cable hero surface pass.")
     _expect(opening_robot != null and opening_robot.find_child("BulwarkActuatorRingLeft", true, false) != null and opening_robot.find_child("BulwarkActuatorRingRight", true, false) != null and opening_robot.find_child("BulwarkSideHeatPanelLeft", true, false) != null and opening_robot.find_child("BulwarkServiceWindowFrame", true, false) != null, "The release Bulwark must retain paired actuator, heat-panel and diagnostic-window depth.")
+    var progressed_bulwark := world._spawn_robot(&"companion", world.player.global_position + Vector3(7.0, 0.0, -3.0), 3)
+    if progressed_bulwark != null:
+        progressed_bulwark.call(&"ensure_authored_visuals")
+        world.release_world_art.apply_to_node(progressed_bulwark)
+    var progressed_model := progressed_bulwark.get_node_or_null("RobotModel") if progressed_bulwark != null else null
+    var progression_meshes: Array[MeshInstance3D] = []
+    if progressed_model != null:
+        for progressed_child in progressed_model.get_children():
+            if progressed_child.name == &"BulwarkAuthoredModel" or String(progressed_child.name).begins_with("Hero") or progressed_child is Light3D:
+                continue
+            _collect_mesh_instances(progressed_child as Node, progression_meshes)
+    _expect(not progression_meshes.is_empty(), "A level-three Bulwark must retain visible procedural progression hardware.")
+    var untextured_progression_meshes: Array[String] = []
+    for progression_mesh in progression_meshes:
+        var progression_family := StringName(str(progression_mesh.get_meta(&"release_material_family", &"")))
+        if progression_family != &"metal" or progression_mesh.material_override == null:
+            untextured_progression_meshes.append("%s:%s" % [progression_mesh.name, progression_family])
+    _expect(untextured_progression_meshes.is_empty(), "Every procedural Bulwark progression mesh must retain the generic release metal treatment; invalid surfaces: %s." % ", ".join(untextured_progression_meshes))
+    var progressed_authored_mesh := _find_first_mesh(progressed_bulwark.get_node_or_null("RobotModel/BulwarkAuthoredModel") if progressed_bulwark != null else null)
+    _expect(progressed_authored_mesh != null and progressed_authored_mesh.get_meta(&"release_material_family", &"") == &"authored_bulwark_pbr" and progressed_authored_mesh.material_override == null, "Progression must not leak generic metal overrides back into the authored Bulwark package.")
     var relay := world._spawn_robot(&"relay", world.player.global_position + Vector3(5.0, 0.0, -2.0), 1)
     if relay != null:
         relay.call(&"ensure_authored_visuals")
@@ -1454,75 +1611,225 @@ func _test_runtime_material_continuity(world: IronwrightReleaseWorld3D) -> void:
         opening_robot.call("repair", float(opening_robot.get("maximum_health")))
         _expect(not opening_damage_root.visible, "Fully repaired machines must clear persistent damage presentation.")
     var late_robot := world._spawn_robot(&"salvager", world.player.global_position + Vector3(3.0, 0.0, -3.0), 1)
-    var late_enemy := world._spawn_enemy(world.player.global_position + Vector3(-4.0, 0.0, -4.0), &"veilstalker")
-    var late_authored_family := world._spawn_enemy(world.player.global_position + Vector3(-6.0, 0.0, -2.0), &"rootweaver")
-    var later_families: Array[OrganicEnemyRelease3D] = []
-    for index in range(6):
-        var later_species := [&"roofleaper", &"glassmoth", &"miremaw", &"carrionbell", &"thornback", &"ashmantle"][index] as StringName
-        later_families.append(world._spawn_enemy(world.player.global_position + Vector3(-8.0 + float(index) * 3.0, 0.0, -6.0), later_species) as OrganicEnemyRelease3D)
-    # The runtime release director intentionally defers authored shells beyond
-    # its nearest-subject visual budget. This continuity fixture is explicitly
-    # inspecting each family, so materialize those test subjects before the
-    # assertions without changing the production budget.
-    for fixture_actor in [relay, late_robot, late_enemy, late_authored_family] + later_families:
-        if fixture_actor != null and fixture_actor.has_method(&"ensure_authored_visuals"):
-            fixture_actor.call(&"ensure_authored_visuals")
+    var organic_fixture_species: Array[StringName] = [
+        &"skitterling", &"razorhound", &"roofleaper", &"glassmoth", &"veilstalker", &"burrower", &"sporecaster",
+        &"broodmass", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle", &"apex",
+    ]
+    var organic_fixture_asset_ids: Array[StringName] = [
+        &"skitterling.scavenger.v1", &"razorhound.predator.v1", &"roofleaper.ambusher.v1", &"glassmoth.swarm.v1",
+        &"veilstalker.predator.v1", &"burrower.drill.v1", &"sporecaster.infestation.v1", &"broodmass.nest.v1",
+        &"miremaw.amphibious.v1", &"carrionbell.signal.v1", &"rootweaver.route_controller.v1",
+        &"thornback.territorial.v1", &"ashmantle.route_predator.v1", &"apex.cistern.v1",
+    ]
+    var source_owned_focal_names := {
+        &"roofleaper": &"RoofleaperCentralOculus",
+        &"glassmoth": &"GlassmothLensCollar",
+        &"miremaw": &"MiremawMawGuard",
+        &"carrionbell": &"CarrionbellThroatCollar",
+        &"rootweaver": &"RootweaverRouteMask",
+        &"thornback": &"ThornbackFaceShield",
+        &"ashmantle": &"AshmantleThermalCollar",
+    }
+    var organic_fixtures: Array[OrganicEnemyRelease3D] = []
+    for index in range(organic_fixture_species.size()):
+        var column := index % 7
+        var row := index / 7
+        var fixture_position := world.player.global_position + Vector3(-12.0 + float(column) * 4.0, 0.0, -11.0 - float(row) * 5.0)
+        organic_fixtures.append(world._spawn_enemy(fixture_position, organic_fixture_species[index]) as OrganicEnemyRelease3D)
+
+    # The production director may defer shells outside its nearest-subject
+    # budget. This fixture explicitly audits all 14 packages, so materialize
+    # only these test actors before checking imported material ownership.
+    for index in range(organic_fixtures.size()):
+        var fixture_actor := organic_fixtures[index]
+        if fixture_actor == null:
+            continue
+        fixture_actor.ensure_authored_visuals()
+        if organic_fixture_species[index] == &"glassmoth":
+            # Exercise the production gallery's real non-unit model scale. The
+            # three runtime siblings must still inherit the authored Torso's
+            # complete transform rather than falling back to actor-root scale.
+            var glassmoth_model := fixture_actor.get_node_or_null("OrganicModel") as Node3D
+            if glassmoth_model != null:
+                glassmoth_model.scale = Vector3.ONE * 1.1
+    if late_robot != null:
+        late_robot.call(&"ensure_authored_visuals")
     await process_frame
     await process_frame
 
-    var organic_damage_root := late_enemy.get_node_or_null("OrganicDamagePresentation") as Node3D
+    for index in range(organic_fixtures.size()):
+        var fixture_actor := organic_fixtures[index]
+        var species_id := organic_fixture_species[index]
+        var asset_id := organic_fixture_asset_ids[index]
+        _expect(fixture_actor != null, "The authored organic runtime fixture must spawn %s." % species_id)
+        if fixture_actor == null:
+            continue
+        var organic_model := fixture_actor.get_node_or_null("OrganicModel") as Node3D
+        var authored_package := _find_asset_package(organic_model, asset_id)
+        _expect(authored_package != null, "The %s runtime actor must expose exact imported package %s." % [species_id, asset_id])
+        _expect(_asset_package_count(organic_model, asset_id) == 1, "The %s runtime actor must contain exactly one authoritative organic package." % species_id)
+        var authored_meshes: Array[MeshInstance3D] = []
+        _collect_mesh_instances(authored_package, authored_meshes)
+        _expect(not authored_meshes.is_empty(), "The %s imported package must expose authored mesh surfaces." % species_id)
+        var material_ids: Dictionary = {}
+        for authored_mesh in authored_meshes:
+            material_ids[authored_mesh.get_instance_id()] = _active_surface_material_ids(authored_mesh)
+
+        var overlay_specs := [
+            {"root": &"TierSilhouette", "anchor": &"OrganicTierAttachment", "profile": "compact_authored_focal_signal"},
+            {"root": &"OrganicDamagePresentation", "anchor": &"OrganicDamageAttachment", "profile": "authored_torso_surface_wounds"},
+            {"root": &"OrganicDeathPresentation", "anchor": &"OrganicDeathAttachment", "profile": "authored_body_death_clip"},
+        ]
+        var authored_torso := authored_package.find_child("Torso", true, false) as Node3D if authored_package != null else null
+        _expect(authored_torso != null, "The %s imported package must expose the authored Torso socket used by every runtime overlay." % species_id)
+        var runtime_material_ids: Dictionary = {}
+        var damage_signal_material := fixture_actor._damage_signal_material
+        var death_signal_material := fixture_actor._death_signal_material
+        for overlay_spec in overlay_specs:
+            var overlay_name := StringName(str(overlay_spec.get("root", &"")))
+            var anchor_name := StringName(str(overlay_spec.get("anchor", &"")))
+            var overlay_matches := fixture_actor.find_children(String(overlay_name), "", true, false)
+            var anchor_matches := fixture_actor.find_children(String(anchor_name), "RemoteTransform3D", true, false)
+            _expect(overlay_matches.size() == 1, "The %s runtime must contain exactly one %s root." % [species_id, overlay_name])
+            _expect(anchor_matches.size() == 1, "The %s runtime must contain exactly one meshless %s anchor." % [species_id, anchor_name])
+            var overlay_root := overlay_matches[0] as Node3D if overlay_matches.size() == 1 else null
+            var attachment := anchor_matches[0] as RemoteTransform3D if anchor_matches.size() == 1 else null
+            _expect(overlay_root != null and str(overlay_root.get_meta(&"presentation_profile", "")) == str(overlay_spec.get("profile", "")), "The %s %s root must retain its bounded authored-body presentation profile." % [species_id, overlay_name])
+            _expect(overlay_root != null and StringName(str(overlay_root.get_meta(&"release_material_family", &""))) == &"chitin", "The %s %s root must explicitly own the runtime chitin material boundary." % [species_id, overlay_name])
+            _expect(overlay_root != null and str(overlay_root.get_meta(&"attachment_mode", "")) == "authored_torso_remote", "The %s %s root must report authored-Torso remote attachment." % [species_id, overlay_name])
+            _expect(overlay_root != null and not _node_is_descendant_of(overlay_root, authored_package), "The %s %s mesh root must remain outside the imported PBR package." % [species_id, overlay_name])
+            _expect(attachment != null and _node_is_descendant_of(attachment, authored_package), "The %s %s anchor must live inside the imported package while remaining meshless." % [species_id, anchor_name])
+            _expect(attachment != null and attachment.get_parent() == authored_torso, "The %s %s anchor must be a direct child of the authored Torso socket." % [species_id, anchor_name])
+            _expect(attachment != null and attachment.update_position and attachment.update_rotation and attachment.update_scale and attachment.use_global_coordinates, "The %s %s anchor must copy the complete global transform." % [species_id, anchor_name])
+            _expect(attachment != null and overlay_root != null and attachment.get_node_or_null(attachment.remote_path) == overlay_root, "The %s %s anchor must target the corresponding runtime sibling." % [species_id, anchor_name])
+            _expect(attachment != null and overlay_root != null and attachment.global_transform.is_equal_approx(overlay_root.global_transform), "The %s %s root must coincide with its animated authored-Torso anchor." % [species_id, overlay_name])
+            var anchor_meshes: Array[MeshInstance3D] = []
+            _collect_mesh_instances(attachment, anchor_meshes)
+            _expect(anchor_meshes.is_empty(), "The %s %s anchor must never place runtime meshes inside authored-package ancestry." % [species_id, anchor_name])
+            var overlay_meshes: Array[MeshInstance3D] = []
+            _collect_mesh_instances(overlay_root, overlay_meshes)
+            _expect(not overlay_meshes.is_empty(), "The %s %s root must retain a visible bounded runtime mesh set." % [species_id, overlay_name])
+            for overlay_mesh in overlay_meshes:
+                _expect(overlay_mesh.material_override != null, "The %s %s mesh %s must begin with an explicit runtime material object." % [species_id, overlay_name, overlay_mesh.name])
+                if overlay_name in [&"OrganicDamagePresentation", &"OrganicDeathPresentation"]:
+                    runtime_material_ids[overlay_mesh.get_instance_id()] = overlay_mesh.material_override.get_instance_id() if overlay_mesh.material_override != null else 0
+
+        if species_id == &"glassmoth" and authored_torso != null:
+            var glassmoth_torso_scale := authored_torso.global_transform.basis.get_scale().abs()
+            _expect(not glassmoth_torso_scale.is_equal_approx(Vector3.ONE), "The Glassmoth release fixture must exercise the production gallery's non-unit model scale.")
+            for overlay_spec in overlay_specs:
+                var overlay_name := StringName(str(overlay_spec.get("root", &"")))
+                var overlay_root := fixture_actor.find_child(String(overlay_name), true, false) as Node3D
+                var overlay_scale := overlay_root.global_transform.basis.get_scale().abs() if overlay_root != null else Vector3.ZERO
+                _expect(overlay_root != null and overlay_scale.is_equal_approx(glassmoth_torso_scale), "Glassmoth %s must inherit the authored Torso's non-unit gallery scale." % overlay_name)
+
+        for removed_death_prefix in [
+            "OrganicDeathCarapace", "OrganicDeathRootCollar", "OrganicDeathShard",
+            "OrganicDeathVein", "OrganicDeathSpine", "SkitterlingDeathResponse",
+        ]:
+            _expect(fixture_actor.find_children("%s*" % removed_death_prefix, "", true, false).is_empty(), "The %s runtime must not rebuild removed generic corpse anatomy %s*." % [species_id, removed_death_prefix])
+
+        # Three explicit release passes audit idempotence from the material
+        # objects present on the live fixture, including hidden death feedback.
+        for _release_pass in range(3):
+            world.release_world_art.apply_to_node(fixture_actor)
+        for authored_mesh in authored_meshes:
+            var expected_ids: Array = material_ids.get(authored_mesh.get_instance_id(), [])
+            _expect(StringName(str(authored_mesh.get_meta(&"release_material_family", &""))) == &"authored_organic_pbr", "Every %s imported mesh must use the authored organic PBR release family." % species_id)
+            _expect(authored_mesh.material_override == null, "Release texturing must not flatten a %s imported mesh with a generic override." % species_id)
+            _expect(_mesh_retains_imported_organic_pbr(authored_mesh), "Every %s imported surface must retain base-color, normal and packed ORM textures." % species_id)
+            _expect(_active_surface_material_ids(authored_mesh) == expected_ids, "Three release passes must preserve %s imported material identity." % species_id)
+
+        for overlay_spec in overlay_specs:
+            var overlay_name := StringName(str(overlay_spec.get("root", &"")))
+            var overlay_root := fixture_actor.find_child(String(overlay_name), true, false) as Node3D
+            var overlay_meshes: Array[MeshInstance3D] = []
+            _collect_mesh_instances(overlay_root, overlay_meshes)
+            for overlay_mesh in overlay_meshes:
+                var material_family := StringName(str(overlay_mesh.get_meta(&"release_material_family", &"")))
+                _expect(material_family != &"" and material_family != &"authored_organic_pbr", "The %s %s mesh %s must stay runtime-classified outside authored organic PBR." % [species_id, overlay_name, overlay_mesh.name])
+                _expect(overlay_mesh.material_override != null, "The %s %s mesh %s must retain its runtime material after three release passes." % [species_id, overlay_name, overlay_mesh.name])
+                if overlay_name in [&"OrganicDamagePresentation", &"OrganicDeathPresentation"]:
+                    var expected_material_id := int(runtime_material_ids.get(overlay_mesh.get_instance_id(), 0))
+                    var actual_material_id := overlay_mesh.material_override.get_instance_id() if overlay_mesh.material_override != null else 0
+                    _expect(expected_material_id != 0 and actual_material_id == expected_material_id, "Three release passes must preserve exact %s %s material object identity on %s." % [species_id, overlay_name, overlay_mesh.name])
+        _expect(fixture_actor._damage_signal_material == damage_signal_material and _overlay_uses_material( fixture_actor.find_child("OrganicDamagePresentation", true, false), damage_signal_material), "The %s wound meshes must retain the actor's live damage material object through three release passes." % species_id)
+        _expect(fixture_actor._death_signal_material == death_signal_material and _overlay_uses_material(fixture_actor.find_child("OrganicDeathPresentation", true, false), death_signal_material), "The %s death meshes must retain the actor's live death material object through three release passes." % species_id)
+
+        _expect(fixture_actor.find_child("OrganicFamilyAnatomyFinish", true, false) == null, "The %s runtime actor must not duplicate source-owned anatomy with the former finish overlay." % species_id)
+        var organic_damage := fixture_actor.get_node_or_null("OrganicDamagePresentation") as Node3D
+        var wound_socket := organic_damage.get_node_or_null("OrganicDamageScar00") as Node3D if organic_damage != null else null
+        _expect(wound_socket != null and str(wound_socket.get_meta(&"damage_profile", "")) == "shallow_authored_torso_lesion", "The %s runtime must retain shallow authored-Torso lesion sockets." % species_id)
+        fixture_actor.set_damage_presentation_enabled(true)
+        fixture_actor.apply_damage(float(fixture_actor.maximum_health) * 0.12)
+        _expect(organic_damage != null and organic_damage.visible, "The real bounded Hit path must reveal the %s authored-surface wounds." % species_id)
+        fixture_actor.current_health = fixture_actor.maximum_health
+        fixture_actor._refresh_damage_presentation()
+        if source_owned_focal_names.has(species_id):
+            var focal_name := StringName(str(source_owned_focal_names[species_id]))
+            _expect(authored_package != null and authored_package.find_child("OrganicPulseRim", true, false) != null and authored_package.find_child("OrganicGrowthPlate", true, false) != null, "The %s imported package must directly own its pulse and growth anatomy." % species_id)
+            _expect(authored_package != null and authored_package.find_child(String(focal_name), true, false) != null, "The %s imported package must directly own focal anatomy %s." % [species_id, focal_name])
+        if species_id == &"veilstalker":
+            _expect(organic_model == null or organic_model.get_node_or_null("Torso") == null, "The Veilstalker runtime must not add a duplicate torso/core beside its imported package.")
+            _expect(authored_package != null and authored_package.find_child("TorsoCore", true, false) != null, "The Veilstalker imported package must own its sole torso core.")
+
+    var late_enemy := organic_fixtures[4]
+    var organic_damage_root := late_enemy.get_node_or_null("OrganicDamagePresentation") as Node3D if late_enemy != null else null
     _expect(organic_damage_root != null, "Organic enemies must carry a bounded persistent damage presentation root.")
-    if organic_damage_root != null:
+    if late_enemy != null and organic_damage_root != null:
         late_enemy.apply_damage(float(late_enemy.maximum_health) * 0.34)
         _expect(organic_damage_root.visible, "Nearby damaged organisms must expose persistent wound and leak presentation.")
-        late_enemy.set_visual_lod(1)
-        _expect(not organic_damage_root.visible, "Reduced-detail organism presentation must hide persistent damage overlays.")
-        late_enemy.set_visual_lod(0)
-        _expect(organic_damage_root.visible, "Restored close organism presentation must show persistent damage overlays again.")
 
-    var robot_core := late_robot.get_node_or_null("RobotModel/Chassis/ChassisCore") as MeshInstance3D
-    var enemy_core := late_enemy.get_node_or_null("OrganicModel/Torso/TorsoCore") as MeshInstance3D
-    var enemy_authored_mesh := _find_first_mesh_with_token(late_enemy.get_node_or_null("OrganicModel"), "veilstalker")
-    var late_authored_family_mesh := _find_first_mesh(late_authored_family.find_child("RootweaverCrown", true, false) if late_authored_family != null else null)
-    var rootweaver_membrane_mesh := _find_first_mesh(late_authored_family.find_child("RootweaverSporeFan", true, false) if late_authored_family != null else null)
+    var veilstalker_package := _find_asset_package(late_enemy.get_node_or_null("OrganicModel") if late_enemy != null else null, &"veilstalker.predator.v1")
+    var veilstalker_meshes: Array[MeshInstance3D] = []
+    _collect_mesh_instances(veilstalker_package, veilstalker_meshes)
+    var pre_lod_material_ids: Dictionary = {}
+    for authored_mesh in veilstalker_meshes:
+        pre_lod_material_ids[authored_mesh.get_instance_id()] = _active_surface_material_ids(authored_mesh)
+
+    if late_enemy != null:
+        late_enemy.set_visual_lod(1)
+        world.release_world_art.apply_to_node(late_enemy)
+    var reduced_proxy := late_enemy.find_child("ReducedDetailProxy", true, false) as MeshInstance3D if late_enemy != null else null
+    _expect(organic_damage_root == null or not organic_damage_root.visible, "Reduced-detail organism presentation must hide persistent damage overlays.")
+    _expect(reduced_proxy != null and reduced_proxy.visible, "Reduced-detail organisms must expose their bounded proxy.")
+    _expect(reduced_proxy != null and StringName(str(reduced_proxy.get_meta(&"release_material_family", &""))) != &"authored_organic_pbr" and reduced_proxy.material_override != null, "The reduced-detail proxy must remain runtime-owned and outside the authored organic PBR family.")
+
+    if late_enemy != null:
+        late_enemy.set_visual_lod(0)
+        world.release_world_art.apply_to_node(late_enemy)
+    _expect(organic_damage_root == null or organic_damage_root.visible, "Restored close organism presentation must show persistent damage overlays again.")
+    _expect(reduced_proxy == null or not reduced_proxy.visible, "Returning to active detail must hide the reduced proxy.")
+    for authored_mesh in veilstalker_meshes:
+        var expected_ids: Array = pre_lod_material_ids.get(authored_mesh.get_instance_id(), [])
+        _expect(_active_surface_material_ids(authored_mesh) == expected_ids, "An active/proxy/active transition must preserve imported organic material identity.")
+        _expect(authored_mesh.material_override == null and StringName(str(authored_mesh.get_meta(&"release_material_family", &""))) == &"authored_organic_pbr", "An active/proxy/active transition must restore the authored organic package without a generic override.")
+
+    if late_enemy != null:
+        world.release_world_art.apply_to_node(late_enemy)
+        for overlay_name in ["OrganicDamagePresentation", "OrganicDeathPresentation", "TierSilhouette"]:
+            var overlay_root := late_enemy.find_child(overlay_name, true, false) as Node3D
+            _expect(overlay_root != null, "The runtime organism must retain its %s overlay." % overlay_name)
+            var overlay_meshes: Array[MeshInstance3D] = []
+            _collect_mesh_instances(overlay_root, overlay_meshes)
+            _expect(not overlay_meshes.is_empty(), "The runtime %s overlay must retain visible meshes." % overlay_name)
+            for overlay_mesh in overlay_meshes:
+                _expect(StringName(str(overlay_mesh.get_meta(&"release_material_family", &""))) != &"authored_organic_pbr", "Runtime %s meshes must never inherit the imported organic material family." % overlay_name)
+                _expect(overlay_mesh.material_override != null, "Runtime %s meshes must retain their procedural material treatment." % overlay_name)
+
+    var robot_core := late_robot.get_node_or_null("RobotModel/Chassis/ChassisCore") as MeshInstance3D if late_robot != null else null
     _expect(robot_core != null and robot_core.get_meta(&"release_material_family", &"") == &"metal", "Late-fabricated robots must receive the release metal material pass.")
-    _expect(enemy_core != null and enemy_core.get_meta(&"release_material_family", &"") == &"chitin", "Late-spawned organic families must receive the release chitin material pass.")
-    _expect(enemy_authored_mesh != null and enemy_authored_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Authored Veilstalker shell meshes must receive the release chitin material pass.")
-    _expect(late_authored_family != null and late_authored_family.find_child("RootweaverAuthoredModel", true, false) != null and late_authored_family_mesh != null and late_authored_family_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Late-spawned Rootweaver shells must retain their authored marker and release chitin material pass.")
-    var rootweaver_membrane_material := rootweaver_membrane_mesh.material_override as StandardMaterial3D if rootweaver_membrane_mesh != null else null
-    _expect(rootweaver_membrane_material != null and rootweaver_membrane_material.albedo_color.r < 0.7 and rootweaver_membrane_material.albedo_color.b < 0.7, "Authored organic membrane surfaces must retain restrained release color after texturing.")
-    _expect(rootweaver_membrane_material != null and rootweaver_membrane_material.rim_enabled and rootweaver_membrane_material.clearcoat_enabled and rootweaver_membrane_material.get_meta(&"release_organic_surface_finish", &"") == "membrane_rim_clearcoat", "Authored organic membranes must receive a restrained rim and clearcoat finish for high-definition material separation.")
-    var rootweaver_spine_mesh := _find_first_mesh(late_authored_family.find_child("RootweaverRootSpineR", true, false) if late_authored_family != null else null)
-    var rootweaver_spine_material := rootweaver_spine_mesh.material_override as StandardMaterial3D if rootweaver_spine_mesh != null else null
-    var rootweaver_material_delta := 0.0
-    if rootweaver_spine_material != null and rootweaver_membrane_material != null:
-        rootweaver_material_delta = absf(rootweaver_spine_material.albedo_color.r - rootweaver_membrane_material.albedo_color.r) + absf(rootweaver_spine_material.albedo_color.g - rootweaver_membrane_material.albedo_color.g) + absf(rootweaver_spine_material.albedo_color.b - rootweaver_membrane_material.albedo_color.b)
-    _expect(rootweaver_spine_material != null and rootweaver_membrane_material != null and rootweaver_material_delta > 0.12, "Authored organic structural ridges must retain a visible material break from living membranes.")
-    _expect(rootweaver_spine_material != null and rootweaver_spine_material.rim_enabled and rootweaver_spine_material.clearcoat_enabled and rootweaver_spine_material.get_meta(&"release_organic_surface_finish", &"") == "chitin_rim_clearcoat", "Authored organic structural anatomy must retain the wet-chitin surface finish.")
-    var roofleaper_frame_mesh := _find_first_mesh(later_families[0].find_child("RoofleaperWingFrameL", true, false) if later_families.size() > 0 and later_families[0] != null else null)
-    var roofleaper_frame_material := roofleaper_frame_mesh.material_override as StandardMaterial3D if roofleaper_frame_mesh != null else null
-    _expect(roofleaper_frame_mesh != null and roofleaper_frame_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Wing-frame supports must use the structural chitin material lane rather than the membrane lane.")
-    _expect(roofleaper_frame_material != null and roofleaper_frame_material.albedo_texture == null and not roofleaper_frame_material.normal_enabled and roofleaper_frame_material.roughness >= 0.71 and roofleaper_frame_material.albedo_color.get_luminance() < 0.52, "Wing-frame supports must retain a clean darker, rough structural surface instead of a pale membrane texture.")
-    var rootweaver_rib_mesh := _find_first_mesh(late_authored_family.find_child("RootweaverSporeRib0", true, false) if late_authored_family != null else null)
-    _expect(rootweaver_rib_mesh != null and rootweaver_rib_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Spore-fan ribs must use the structural chitin material lane while the fan membrane stays living.")
-    for family in later_families:
-        var family_mesh := _find_first_mesh(family.get_node_or_null("OrganicModel") if family != null else null)
-        _expect(family_mesh != null and family_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Every later organic family shell must receive the release chitin material pass.")
-    var thornback_mesh := _find_first_mesh_with_token(later_families[4].get_node_or_null("OrganicModel") if later_families[4] != null else null, "thornback")
-    var ashmantle_mesh := _find_first_mesh_with_token(later_families[5].get_node_or_null("OrganicModel") if later_families[5] != null else null, "ashmantle")
-    _expect(thornback_mesh != null and thornback_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Thornback authored shell meshes must retain release chitin material continuity.")
-    _expect(ashmantle_mesh != null and ashmantle_mesh.get_meta(&"release_material_family", &"") == &"chitin", "Ashmantle authored shell meshes must retain release chitin material continuity.")
-    var ashmantle_mantle_mesh := _find_first_mesh_with_token(later_families[5].get_node_or_null("OrganicModel") if later_families[5] != null else null, "ashmantlemantle")
-    _expect(ashmantle_mantle_mesh != null and ashmantle_mantle_mesh.get_meta(&"release_material_family", &"") == &"membrane", "Ashmantle mantle surfaces must retain release membrane material continuity.")
     _expect(world.release_world_art.meshes_textured > textured_before, "Runtime release art must texture meshes added after initial boot.")
 
-    late_robot.queue_free()
-    relay.queue_free()
-    late_enemy.queue_free()
-    late_authored_family.queue_free()
-    for family in later_families:
-        family.queue_free()
-
+    if late_robot != null:
+        late_robot.queue_free()
+    if progressed_bulwark != null:
+        progressed_bulwark.queue_free()
+    if relay != null:
+        relay.queue_free()
+    for fixture_actor in organic_fixtures:
+        if fixture_actor != null:
+            fixture_actor.queue_free()
 
 func _find_first_mesh(node: Node) -> MeshInstance3D:
     if node == null or not is_instance_valid(node):
@@ -1534,6 +1841,148 @@ func _find_first_mesh(node: Node) -> MeshInstance3D:
         if result != null:
             return result
     return null
+
+
+func _find_asset_package(node: Node, asset_id: StringName) -> Node3D:
+    if node == null or not is_instance_valid(node):
+        return null
+    if node is Node3D and _node_asset_id(node) == asset_id:
+        return node as Node3D
+    for child in node.get_children():
+        var found := _find_asset_package(child as Node, asset_id)
+        if found != null:
+            return found
+    return null
+
+
+func _asset_package_count(node: Node, asset_id: StringName) -> int:
+    if node == null or not is_instance_valid(node):
+        return 0
+    var count := 1 if _node_asset_id(node) == asset_id else 0
+    for child in node.get_children():
+        count += _asset_package_count(child as Node, asset_id)
+    return count
+
+
+func _node_asset_id(node: Node) -> StringName:
+    var direct_id := StringName(str(node.get_meta(&"ironwright_asset_id", &"")))
+    if direct_id != &"":
+        return direct_id
+    for metadata_key in [&"extras.ironwright_asset_id", &"extras/ironwright_asset_id"]:
+        var imported_id := StringName(str(node.get_meta(metadata_key, &"")))
+        if imported_id != &"":
+            return imported_id
+    var extras := node.get_meta(&"extras", {}) as Dictionary
+    return StringName(str(extras.get("ironwright_asset_id", "")))
+
+
+func _collect_mesh_instances(node: Node, result: Array[MeshInstance3D]) -> void:
+    if node == null or not is_instance_valid(node):
+        return
+    if node is MeshInstance3D:
+        result.append(node as MeshInstance3D)
+    for child in node.get_children():
+        _collect_mesh_instances(child as Node, result)
+
+
+func _node_is_descendant_of(node: Node, ancestor: Node) -> bool:
+    if node == null or ancestor == null or not is_instance_valid(node) or not is_instance_valid(ancestor):
+        return false
+    var current := node
+    while current != null:
+        if current == ancestor:
+            return true
+        current = current.get_parent()
+    return false
+
+
+func _overlay_uses_material(node: Node, material: Material) -> bool:
+    if node == null or material == null or not is_instance_valid(node) or not is_instance_valid(material):
+        return false
+    var meshes: Array[MeshInstance3D] = []
+    _collect_mesh_instances(node, meshes)
+    for mesh_instance in meshes:
+        if mesh_instance.material_override == material:
+            return true
+    return false
+
+
+func _mesh_retains_imported_mechromancer_pbr(mesh_instance: MeshInstance3D) -> bool:
+    if mesh_instance == null or mesh_instance.mesh == null or mesh_instance.mesh.get_surface_count() <= 0:
+        return false
+    for surface_index in range(mesh_instance.mesh.get_surface_count()):
+        var material := mesh_instance.get_active_material(surface_index) as StandardMaterial3D
+        if material == null or material.albedo_texture == null or not material.normal_enabled or material.normal_texture == null:
+            return false
+        if material.metallic_texture == null or material.roughness_texture == null or not material.ao_enabled or material.ao_texture == null:
+            return false
+    return true
+
+
+func _mesh_retains_imported_organic_pbr(mesh_instance: MeshInstance3D) -> bool:
+    if mesh_instance == null or mesh_instance.mesh == null or mesh_instance.mesh.get_surface_count() <= 0:
+        return false
+    for surface_index in range(mesh_instance.mesh.get_surface_count()):
+        var material := mesh_instance.get_active_material(surface_index) as StandardMaterial3D
+        if material == null or material.albedo_texture == null or not material.normal_enabled or material.normal_texture == null:
+            return false
+        if material.metallic_texture == null or material.roughness_texture == null or not material.ao_enabled or material.ao_texture == null:
+            return false
+    return true
+
+
+func _mesh_retains_imported_bulwark_pbr(mesh_instance: MeshInstance3D) -> bool:
+    if mesh_instance == null or mesh_instance.mesh == null or mesh_instance.mesh.get_surface_count() <= 0:
+        return false
+    for surface_index in range(mesh_instance.mesh.get_surface_count()):
+        var material := mesh_instance.mesh.surface_get_material(surface_index) as StandardMaterial3D
+        if material == null or material.albedo_texture == null or not material.normal_enabled or material.normal_texture == null:
+            return false
+        if material.metallic_texture == null or material.roughness_texture == null or not material.ao_enabled or material.ao_texture == null:
+            return false
+    return true
+
+
+func _mesh_retains_imported_bulwark_emission(mesh_instance: MeshInstance3D) -> bool:
+    if mesh_instance == null or mesh_instance.mesh == null:
+        return false
+    for surface_index in range(mesh_instance.mesh.get_surface_count()):
+        var material := mesh_instance.mesh.surface_get_material(surface_index) as StandardMaterial3D
+        if material != null and material.emission_enabled and material.emission_texture != null:
+            return true
+    return false
+
+
+func _mesh_retains_imported_heartforge_pbr(mesh_instance: MeshInstance3D) -> bool:
+    if mesh_instance == null or mesh_instance.mesh == null or mesh_instance.mesh.get_surface_count() <= 0:
+        return false
+    for surface_index in range(mesh_instance.mesh.get_surface_count()):
+        var material := mesh_instance.get_active_material(surface_index) as StandardMaterial3D
+        if material == null or material.albedo_texture == null or not material.normal_enabled or material.normal_texture == null:
+            return false
+        if material.metallic_texture == null or material.roughness_texture == null or not material.ao_enabled or material.ao_texture == null:
+            return false
+    return true
+
+
+func _mesh_retains_imported_heartforge_emission(mesh_instance: MeshInstance3D) -> bool:
+    if mesh_instance == null or mesh_instance.mesh == null:
+        return false
+    for surface_index in range(mesh_instance.mesh.get_surface_count()):
+        var material := mesh_instance.get_active_material(surface_index) as StandardMaterial3D
+        if material != null and material.emission_enabled and material.emission_texture != null:
+            return true
+    return false
+
+
+func _active_surface_material_ids(mesh_instance: MeshInstance3D) -> Array[int]:
+    var material_ids: Array[int] = []
+    if mesh_instance == null or mesh_instance.mesh == null:
+        return material_ids
+    for surface_index in range(mesh_instance.mesh.get_surface_count()):
+        var material := mesh_instance.get_active_material(surface_index)
+        material_ids.append(material.get_instance_id() if material != null else 0)
+    return material_ids
 
 
 func _find_first_mesh_with_token(node: Node, token: String) -> MeshInstance3D:

@@ -18,6 +18,56 @@ from build_authored_organic_assets import add_organic_lobe  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "apex.gltf"
+TEXTURE_SIZE = 1024
+TEXTURE_URIS = [
+    "../organic_families/textures/organic_shell_base_color.png",
+    "../organic_families/textures/organic_shell_normal.png",
+    "../organic_families/textures/organic_shell_orm.png",
+    "../organic_families/textures/organic_tissue_base_color.png",
+    "../organic_families/textures/organic_tissue_normal.png",
+    "../organic_families/textures/organic_tissue_orm.png",
+    "../organic_families/textures/organic_emissive.png",
+]
+
+
+def organic_material(
+    name: str,
+    color: Sequence[float],
+    metallic: float,
+    roughness: float,
+    lane: str,
+    normal_scale: float,
+    emissive: Sequence[float] | None = None,
+) -> dict:
+    """Bind one family tint to the frozen shared organic PBR surface set."""
+    if lane == "shell":
+        base_color_texture, normal_texture, orm_texture, maximum_normal_scale = 0, 1, 2, 0.35
+    elif lane == "tissue":
+        base_color_texture, normal_texture, orm_texture, maximum_normal_scale = 3, 4, 5, 0.22
+    elif lane == "signal":
+        base_color_texture, normal_texture, orm_texture, maximum_normal_scale = 3, 4, 5, 0.12
+    else:
+        raise ValueError(f"Unknown organic material lane: {lane}")
+    if normal_scale > maximum_normal_scale:
+        raise ValueError(f"{name} normal scale {normal_scale} exceeds {lane} ceiling {maximum_normal_scale}")
+    entry = {
+        "name": name,
+        "pbrMetallicRoughness": {
+            "baseColorFactor": list(color),
+            "baseColorTexture": {"index": base_color_texture},
+            "metallicFactor": metallic,
+            "roughnessFactor": roughness,
+            "metallicRoughnessTexture": {"index": orm_texture},
+        },
+        "normalTexture": {"index": normal_texture, "scale": normal_scale},
+        "occlusionTexture": {"index": orm_texture, "strength": 0.82},
+    }
+    if emissive is not None:
+        if lane != "signal":
+            raise ValueError(f"Only genuine signal materials may emit: {name}")
+        entry["emissiveFactor"] = list(emissive)
+        entry["emissiveTexture"] = {"index": 6}
+    return entry
 
 
 def add_tapered_cylinder(
@@ -27,7 +77,7 @@ def add_tapered_cylinder(
     height: float,
     material: int,
     sides: int = 32,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int, int]:
     """Build a smooth pointed crown thorn for the final organic silhouette."""
     sides = max(sides, 24)
     positions: list[float] = []
@@ -68,19 +118,19 @@ def add_tapered_cylinder(
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Apex wet carapace", "pbrMetallicRoughness": {"baseColorFactor": [0.035, 0.045, 0.055, 1.0], "metallicFactor": 0.24, "roughnessFactor": 0.28}},
-        {"name": "Apex layered shell", "pbrMetallicRoughness": {"baseColorFactor": [0.17, 0.20, 0.20, 1.0], "metallicFactor": 0.18, "roughnessFactor": 0.4}},
-        {"name": "Apex deep flesh", "pbrMetallicRoughness": {"baseColorFactor": [0.16, 0.035, 0.045, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.7}},
-        {"name": "Apex bone", "pbrMetallicRoughness": {"baseColorFactor": [0.48, 0.40, 0.29, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.56}},
-        {"name": "Apex membrane", "pbrMetallicRoughness": {"baseColorFactor": [0.12, 0.012, 0.028, 0.92], "metallicFactor": 0.0, "roughnessFactor": 0.42}, "emissiveFactor": [0.035, 0.002, 0.006]},
-        {"name": "Apex threat eye", "pbrMetallicRoughness": {"baseColorFactor": [0.42, 0.02, 0.006, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.2}, "emissiveFactor": [1.0, 0.05, 0.008]},
-        {"name": "Apex tendon", "pbrMetallicRoughness": {"baseColorFactor": [0.34, 0.08, 0.10, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.5}},
+        organic_material("Apex wet carapace", [0.035, 0.045, 0.055, 1.0], 0.24, 0.28, "shell", 0.32),
+        organic_material("Apex layered shell", [0.17, 0.20, 0.20, 1.0], 0.18, 0.4, "shell", 0.35),
+        organic_material("Apex deep flesh", [0.16, 0.035, 0.045, 1.0], 0.0, 0.7, "tissue", 0.20),
+        organic_material("Apex bone", [0.48, 0.40, 0.29, 1.0], 0.0, 0.56, "shell", 0.26),
+        organic_material("Apex membrane", [0.12, 0.012, 0.028, 0.92], 0.0, 0.42, "tissue", 0.16),
+        organic_material("Apex threat eye", [0.42, 0.02, 0.006, 1.0], 0.0, 0.2, "signal", 0.10, [1.0, 0.05, 0.008]),
+        organic_material("Apex tendon", [0.34, 0.08, 0.10, 1.0], 0.0, 0.5, "tissue", 0.18),
     ]
     meshes: list[dict] = []
 
-    def mesh(name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
-        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
+    def mesh(name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        position, normal, uv, tangent, indices, material = geometry
+        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
     wet, shell, flesh, bone, membrane, eye, tendon = range(7)
@@ -314,6 +364,24 @@ def main() -> None:
         "nodes": nodes,
         "meshes": meshes,
         "materials": materials,
+        "samplers": [{"name": "Shared organic repeating PBR sampler", "magFilter": 9729, "minFilter": 9987, "wrapS": 10497, "wrapT": 10497}],
+        "images": [
+            {"name": "Organic shell base color", "uri": TEXTURE_URIS[0]},
+            {"name": "Organic shell tangent-space normal", "uri": TEXTURE_URIS[1]},
+            {"name": "Organic shell occlusion roughness metallic", "uri": TEXTURE_URIS[2]},
+            {"name": "Organic tissue base color", "uri": TEXTURE_URIS[3]},
+            {"name": "Organic tissue tangent-space normal", "uri": TEXTURE_URIS[4]},
+            {"name": "Organic tissue occlusion roughness metallic", "uri": TEXTURE_URIS[5]},
+            {"name": "Organic signal emissive mask", "uri": TEXTURE_URIS[6]},
+        ],
+        "textures": [
+            {"name": image_name, "sampler": 0, "source": index}
+            for index, image_name in enumerate([
+                "Organic shell base color", "Organic shell tangent-space normal", "Organic shell occlusion roughness metallic",
+                "Organic tissue base color", "Organic tissue tangent-space normal", "Organic tissue occlusion roughness metallic",
+                "Organic signal emissive mask",
+            ])
+        ],
         "accessors": builder.accessors,
         "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
@@ -323,6 +391,9 @@ def main() -> None:
             "manufactured_surface_profile": "chamfered_high_definition",
             "required_nodes": ["ApexModel", "Torso", "TorsoCore", "ApexCrown", "ApexJawL", "ApexJawRootCollarL", "ApexJawRootCollarR", "ApexMembraneL", "ApexFlankRootL", "ProductionAssetMarker"],
             "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
+            "material_contract": "shared_textured_metallic_roughness_pbr",
+            "surface_profile": "shared_organic_pbr_v1",
+            "texture_resolution": TEXTURE_SIZE,
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

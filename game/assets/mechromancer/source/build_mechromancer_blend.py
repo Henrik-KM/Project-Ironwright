@@ -1,18 +1,20 @@
-"""Build the original Blender source and textured glTF for the Mechromancer.
+"""Build the editable Blender reference and portrait for the Mechromancer.
 
 Run with Blender in background mode:
 
     blender -b --python build_mechromancer_blend.py
 
-The generated .blend is the editable source of truth. The paired glTF and BIN
-files keep the runtime import self-contained while preserving the stable
-Godot-facing node and animation contract.
+The deterministic runtime source of truth is build_mechromancer_asset.py. This
+reference builder still exports a temporary glTF for Blender-side inspection,
+then invokes the canonical builder so the final game-facing package retains
+its byte-stable UV/PBR/tangent and node contracts.
 """
 
 from __future__ import annotations
 
 import math
 import random
+import runpy
 from pathlib import Path
 
 import bpy
@@ -879,6 +881,9 @@ def main() -> None:
         use_selection=True,
     )
     render_portrait()
+    # Raw Blender glTF output is not byte-stable across identical invocations.
+    # Always leave the repository with the canonical deterministic package.
+    runpy.run_path(str(ASSET_DIR / "source" / "build_mechromancer_asset.py"), run_name="__main__")
     backup_path = BLEND_PATH.with_suffix(BLEND_PATH.suffix + "1")
     if backup_path.exists():
         backup_path.unlink()

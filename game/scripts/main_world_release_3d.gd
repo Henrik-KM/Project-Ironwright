@@ -35,6 +35,18 @@ const PRESENTATION_REVIEW_REGIONS: Array[StringName] = [
 	&"region.buried_labs", &"region.root_cistern",
 ]
 const ROOT_CISTERN_PRESENTATION_REVIEW_SCENE := "res://assets/root_cistern/root_cistern.gltf"
+const MECHROMANCER_ACTION_REVIEW_SEQUENCE: Array[StringName] = [
+	&"Idle", &"Walk", &"Fire", &"Work", &"Upgrade", &"Hit", &"Death",
+]
+const MECHROMANCER_ACTION_REVIEW_PHASE_SECONDS := 2.6
+const ORGANIC_ACTION_REVIEW_FAMILIES: Array[StringName] = [
+	&"skitterling", &"razorhound", &"roofleaper", &"glassmoth", &"veilstalker", &"burrower", &"sporecaster",
+	&"broodmass", &"miremaw", &"carrionbell", &"rootweaver", &"thornback", &"ashmantle", &"apex",
+]
+const ORGANIC_ACTION_REVIEW_SEQUENCE: Array[StringName] = [
+	&"Idle", &"Walk", &"Attack", &"Hit", &"Feed", &"Nest", &"Retreat", &"Death",
+]
+const ORGANIC_ACTION_REVIEW_PHASE_SECONDS := 2.6
 
 var localization_service: LocalizationService3D
 var settings_service: ReleaseSettingsService3D
@@ -87,6 +99,29 @@ var stream_ring_review_clock: float = 0.0
 var stream_ring_review_phase: int = 0
 var stream_ring_review_capture_path: String = ""
 var stream_ring_review_capture_frames: int = 0
+var threshold_review_active: bool = false
+var threshold_review_clock: float = 0.0
+var mechromancer_action_review_active: bool = false
+var mechromancer_action_review_clock: float = 0.0
+var mechromancer_action_review_phase: int = -1
+var mechromancer_action_review_replay: int = 0
+var mechromancer_action_review_manual_hold: bool = false
+var mechromancer_action_review_hold_clock: float = 0.0
+var mechromancer_action_review_presentation: MechromancerPresentation3D
+var mechromancer_action_review_animation: AnimationPlayer
+var organic_action_review_active: bool = false
+var organic_action_review_clock: float = 0.0
+var organic_action_review_phase: int = -1
+var organic_action_review_replay: int = 0
+var organic_action_review_manual_hold: bool = false
+var organic_action_review_hold_clock: float = 0.0
+var organic_action_review_family: StringName = &"skitterling"
+var organic_action_review_actor: OrganicEnemy3D
+var organic_action_review_presentation: AuthoredActorAnimation3D
+var organic_action_review_animation: AnimationPlayer
+var organic_action_review_target: Node3D
+var organic_action_review_camera_target: Vector3 = Vector3(0.0, 1.0, 0.0)
+var organic_action_review_camera_position: Vector3 = Vector3(2.0, 2.5, 6.0)
 var title_pause_timer: Timer
 
 
@@ -102,7 +137,12 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if presentation_review_active:
-		_update_presentation_review_camera(delta)
+		if organic_action_review_active:
+			_update_organic_action_review(delta)
+		elif mechromancer_action_review_active:
+			_update_mechromancer_action_review(delta)
+		else:
+			_update_presentation_review_camera(delta)
 		if not presentation_review_capture_path.is_empty():
 			presentation_review_capture_frames += 1
 			if presentation_review_capture_frames == 45:
@@ -127,6 +167,8 @@ func _process(delta: float) -> void:
 					push_error("Stream-ring review screenshot failed: %s" % capture_error)
 				stream_ring_review_capture_path = ""
 	super._process(delta)
+	if threshold_review_active:
+		_update_threshold_review(delta)
 	if not title_review_capture_path.is_empty():
 		title_review_capture_frames += 1
 		if title_review_capture_frames == 45:
@@ -206,9 +248,24 @@ func _process(delta: float) -> void:
 		_ensure_modal_focus()
 
 func _on_player_died() -> void:
+	# The action gallery deliberately drives the real actor through its lethal
+	# damage path so the shipped collapse presentation can be inspected. Keep
+	# that development-only signal from opening the defeat flow or mutating the
+	# run; the next deterministic phase restores the actor in memory.
+	if mechromancer_action_review_active:
+		return
 	if session_diagnostics != null:
 		session_diagnostics.record_event(&"player_defeat", "The Mechromancer was lost.")
 	super._on_player_died()
+
+
+func _on_enemy_killed(enemy: OrganicEnemy3D, killer: Node) -> void:
+	# Signal isolation is the primary review boundary. Keep this override as a
+	# second guard so a newly introduced world-level listener cannot turn the
+	# fixture's demonstrated lethal state into ecology or archive progress.
+	if organic_action_review_active and enemy == organic_action_review_actor:
+		return
+	super._on_enemy_killed(enemy, killer)
 
 
 func _setup_vertical_slice_presentation() -> void:
@@ -540,6 +597,38 @@ func _unhandled_input(event: InputEvent) -> void:
 			var review_key := (event as InputEventKey).keycode
 			if review_key == 0:
 				review_key = (event as InputEventKey).physical_keycode
+			if organic_action_review_active:
+				if review_key == KEY_ESCAPE:
+					get_tree().quit()
+				elif review_key >= KEY_1 and review_key <= KEY_8:
+					var organic_requested_phase := int(review_key - KEY_1)
+					organic_action_review_manual_hold = true
+					organic_action_review_hold_clock = 0.0
+					organic_action_review_clock = (
+						float(organic_requested_phase) * ORGANIC_ACTION_REVIEW_PHASE_SECONDS + 0.05
+					)
+					_enter_organic_action_review_phase(organic_requested_phase)
+				elif review_key == KEY_SPACE:
+					organic_action_review_manual_hold = false
+					organic_action_review_hold_clock = 0.0
+				get_viewport().set_input_as_handled()
+				return
+			elif mechromancer_action_review_active:
+				if review_key == KEY_ESCAPE:
+					get_tree().quit()
+				elif review_key >= KEY_1 and review_key <= KEY_7:
+					var requested_phase := int(review_key - KEY_1)
+					mechromancer_action_review_manual_hold = true
+					mechromancer_action_review_hold_clock = 0.0
+					mechromancer_action_review_clock = (
+						float(requested_phase) * MECHROMANCER_ACTION_REVIEW_PHASE_SECONDS + 0.05
+					)
+					_enter_mechromancer_action_review_phase(requested_phase)
+				elif review_key == KEY_SPACE:
+					mechromancer_action_review_manual_hold = false
+					mechromancer_action_review_hold_clock = 0.0
+				get_viewport().set_input_as_handled()
+				return
 			match review_key:
 				KEY_1:
 					_show_presentation_review_page(0)
@@ -753,6 +842,12 @@ func _finish_release_boot() -> void:
 	elif _has_endgame_protocol_review_flag():
 		_start_release_world()
 		call_deferred("_start_endgame_protocol_review")
+	elif _has_organic_action_review_flag():
+		_start_release_world()
+		call_deferred("_start_organic_action_review")
+	elif _has_mechromancer_action_review_flag():
+		_start_release_world()
+		call_deferred("_start_mechromancer_action_review")
 	elif _has_mechromancer_evolution_review_flag():
 		_start_release_world()
 		call_deferred("_start_mechromancer_evolution_review")
@@ -766,6 +861,9 @@ func _finish_release_boot() -> void:
 	elif _has_stream_ring_review_flag():
 		_start_release_world()
 		call_deferred("_start_stream_ring_review")
+	elif _has_threshold_review_flag():
+		_start_release_world()
+		call_deferred("_start_threshold_review")
 	elif _has_route_memory_review_flag():
 		_start_release_world()
 		call_deferred("_start_route_memory_review")
@@ -883,6 +981,16 @@ func _has_stream_ring_review_flag() -> bool:
 	return false
 
 
+func _has_threshold_review_flag() -> bool:
+	for argument in OS.get_cmdline_args():
+		if str(argument) == "--threshold-review":
+			return true
+	for argument in OS.get_cmdline_user_args():
+		if str(argument) == "--threshold-review":
+			return true
+	return false
+
+
 func _has_title_review_flag() -> bool:
 	for argument in OS.get_cmdline_args():
 		if str(argument) == "--title-review":
@@ -937,6 +1045,44 @@ func _has_mechromancer_evolution_review_flag() -> bool:
 		if str(argument) == "--mechromancer-evolution-review":
 			return true
 	return false
+
+
+func _has_mechromancer_action_review_flag() -> bool:
+	for argument in OS.get_cmdline_args():
+		if str(argument) == "--mechromancer-action-review":
+			return true
+	for argument in OS.get_cmdline_user_args():
+		if str(argument) == "--mechromancer-action-review":
+			return true
+	return false
+
+
+func _has_organic_action_review_flag() -> bool:
+	var arguments: Array = OS.get_cmdline_args()
+	arguments.append_array(OS.get_cmdline_user_args())
+	for argument in arguments:
+		var raw_argument := str(argument)
+		if raw_argument == "--organic-action-review" or raw_argument == "--organic-action-review-family":
+			return true
+		if raw_argument.begins_with("--organic-action-review-family="):
+			return true
+	return false
+
+
+func _organic_action_review_family_argument() -> StringName:
+	var requested_family: StringName = ORGANIC_ACTION_REVIEW_FAMILIES[0]
+	var arguments: Array = OS.get_cmdline_args()
+	arguments.append_array(OS.get_cmdline_user_args())
+	for index in arguments.size():
+		var raw_argument := str(arguments[index])
+		if raw_argument.begins_with("--organic-action-review-family="):
+			requested_family = StringName(raw_argument.get_slice("=", 1).strip_edges().to_lower())
+		elif raw_argument == "--organic-action-review-family" and index + 1 < arguments.size():
+			requested_family = StringName(str(arguments[index + 1]).strip_edges().to_lower())
+	if requested_family not in ORGANIC_ACTION_REVIEW_FAMILIES:
+		push_error("Organic action review family must be one of: skitterling, razorhound, roofleaper, glassmoth, veilstalker, burrower, sporecaster, broodmass, miremaw, carrionbell, rootweaver, thornback, ashmantle, apex.")
+		return &""
+	return requested_family
 
 
 func _has_heartforge_progression_review_flag() -> bool:
@@ -1392,6 +1538,62 @@ func _stream_ring_review_capture_argument() -> String:
 	return ""
 
 
+func _start_threshold_review() -> void:
+	# Development-only traversal fixture for the authored refuge threshold. The
+	# player crosses the real opening in the real world while the normal camera,
+	# companion follow behaviour, lighting and presentation remain active. It
+	# never saves and exists so renderer review does not depend on held-key input.
+	threshold_review_active = true
+	threshold_review_clock = 0.0
+	camera_heading = Vector3(0.0, 0.0, 1.0)
+	if player != null:
+		player.input_enabled = false
+		player.invulnerability_seconds = 999.0
+		player.global_position = Vector3(0.0, 0.0, -3.35)
+		player.rotation.y = PI
+	if companion != null:
+		companion.global_position = Vector3(1.35, 0.0, -2.45)
+	if camera != null:
+		_snap_release_camera_to_subject()
+	if hud != null:
+		hud.push_notification("THRESHOLD REVIEW · LIVE SOUTH/NORTH CROSSING · NO SAVE")
+	run_state.log_event("Threshold review started: the live player and companion traverse both faces of the authored refuge opening. No save or player input is enabled.")
+
+
+func _update_threshold_review(delta: float) -> void:
+	if player == null:
+		return
+	threshold_review_clock = fmod(threshold_review_clock + delta, 12.0)
+	var phase := threshold_review_clock
+	var progress := 0.0
+	var signed_speed := 0.0
+	if phase < 2.0:
+		progress = 0.0
+	elif phase < 5.0:
+		progress = smoothstep(0.0, 1.0, (phase - 2.0) / 3.0)
+		signed_speed = -1.6
+	elif phase < 7.0:
+		progress = 1.0
+	elif phase < 10.0:
+		progress = 1.0 - smoothstep(0.0, 1.0, (phase - 7.0) / 3.0)
+		signed_speed = 1.6
+	else:
+		progress = 0.0
+	var south_position := Vector3(0.0, 0.0, -3.35)
+	var north_position := Vector3(0.0, 0.0, -8.25)
+	player.global_position = south_position.lerp(north_position, progress)
+	player.velocity = Vector3(0.0, 0.0, signed_speed)
+	if not is_zero_approx(signed_speed):
+		player.rotation.y = PI if signed_speed < 0.0 else 0.0
+	if camera != null:
+		var threshold_target := Vector3(0.0, 1.7, -5.8)
+		var south_oblique := Vector3(8.8, 6.9, 1.2)
+		var north_oblique := Vector3(-8.8, 6.9, -12.8)
+		camera.global_position = south_oblique if phase < 6.0 else north_oblique
+		camera.fov = 47.0
+		camera.look_at(threshold_target, Vector3.UP)
+
+
 func _start_mechromancer_evolution_review() -> void:
 	if progression != null:
 		progression.set_heartforge_tier(5)
@@ -1406,6 +1608,470 @@ func _start_mechromancer_evolution_review() -> void:
 	await _start_presentation_review()
 	if presentation_review_label != null:
 		presentation_review_label.text = "MECHROMANCER EVOLUTION REVIEW  ·  HEARTFORGE TIER V\nTIER II FIELD RIG  ·  TIER III COGNITION LATTICE  ·  TIER IV BIO-SENSOR  ·  TIER V PROTOCOL HARDWARE"
+
+
+func _start_mechromancer_action_review() -> void:
+	# Development-only, non-saving animation review. It stages the actual runtime
+	# Mechromancer in the neutral production gallery and routes every safe action
+	# through the same signal or method used by gameplay. The world remains
+	# paused, player input and physics stay disabled, and no target is damaged.
+	await _start_presentation_review()
+	if not presentation_review_active or player == null:
+		push_error("Mechromancer action review could not open the production presentation gallery.")
+		return
+	mechromancer_action_review_presentation = player.get_node_or_null("MechromancerPresentation3D") as MechromancerPresentation3D
+	if mechromancer_action_review_presentation == null or mechromancer_action_review_presentation.animation_player == null:
+		push_error("Mechromancer action review requires the runtime presentation bridge and authored AnimationPlayer.")
+		return
+
+	mechromancer_action_review_active = true
+	mechromancer_action_review_clock = 0.0
+	mechromancer_action_review_phase = -1
+	mechromancer_action_review_manual_hold = false
+	mechromancer_action_review_hold_clock = 0.0
+	mechromancer_action_review_animation = mechromancer_action_review_presentation.animation_player
+	mechromancer_action_review_presentation.process_mode = Node.PROCESS_MODE_ALWAYS
+	mechromancer_action_review_presentation.set_process(true)
+	mechromancer_action_review_animation.process_mode = Node.PROCESS_MODE_ALWAYS
+	player.input_enabled = false
+	player.set_process(false)
+	player.set_physics_process(false)
+	player.velocity = Vector3.ZERO
+	player.current_target = null
+	player.global_position = Vector3.ZERO
+	player.rotation.y = 0.0
+	for page_actors in presentation_review_pages:
+		for actor in page_actors:
+			if actor is Node3D and is_instance_valid(actor):
+				(actor as Node3D).visible = actor == player
+	player.visible = true
+	presentation_review_capture_path = ""
+	_configure_mechromancer_action_review_lighting()
+	_enter_mechromancer_action_review_phase(0)
+	_update_mechromancer_action_review_camera()
+	if run_state != null:
+		run_state.log_event("Mechromancer action review started: the live actor cycles seven production states in a paused, non-saving gallery.")
+
+
+func _configure_mechromancer_action_review_lighting() -> void:
+	if presentation_review_stage == null:
+		return
+	var front_fill := presentation_review_stage.get_node_or_null("ReviewFrontFill") as OmniLight3D
+	var warm_light := presentation_review_stage.get_node_or_null("ReviewWarmLight") as OmniLight3D
+	var cool_light := presentation_review_stage.get_node_or_null("ReviewCoolLight") as OmniLight3D
+	var rim_light := presentation_review_stage.get_node_or_null("ReviewRimLight") as OmniLight3D
+	var organic_fill := presentation_review_stage.get_node_or_null("ReviewOrganicFill") as OmniLight3D
+	if front_fill != null:
+		front_fill.light_energy = 0.9
+		front_fill.position = Vector3(0.0, 4.8, 7.0)
+	if warm_light != null:
+		warm_light.light_energy = 0.8
+		warm_light.position = Vector3(-4.5, 4.2, 4.0)
+	if cool_light != null:
+		cool_light.light_energy = 0.65
+		cool_light.position = Vector3(4.8, 3.7, 2.6)
+	if rim_light != null:
+		rim_light.light_energy = 1.1
+		rim_light.position = Vector3(0.0, 4.4, -4.0)
+	if organic_fill != null:
+		organic_fill.visible = false
+		organic_fill.light_energy = 0.0
+
+
+func _update_mechromancer_action_review(delta: float) -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	var cycle_seconds := MECHROMANCER_ACTION_REVIEW_PHASE_SECONDS * float(MECHROMANCER_ACTION_REVIEW_SEQUENCE.size())
+	var next_phase := mechromancer_action_review_phase
+	if mechromancer_action_review_manual_hold:
+		mechromancer_action_review_hold_clock += delta
+	else:
+		mechromancer_action_review_clock = fmod(mechromancer_action_review_clock + delta, cycle_seconds)
+		next_phase = clampi(
+			int(floor(mechromancer_action_review_clock / MECHROMANCER_ACTION_REVIEW_PHASE_SECONDS)),
+			0,
+			MECHROMANCER_ACTION_REVIEW_SEQUENCE.size() - 1
+		)
+	if next_phase != mechromancer_action_review_phase:
+		_enter_mechromancer_action_review_phase(next_phase)
+	var action := MECHROMANCER_ACTION_REVIEW_SEQUENCE[mechromancer_action_review_phase]
+	if action in [&"Fire", &"Hit"]:
+		# One real event enters each state. Repeat only the short imported clip at
+		# its authored speed so a live reviewer can inspect it throughout the
+		# phase without generating repeated damage, tracers, noise or audio cues.
+		var phase_elapsed := mechromancer_action_review_hold_clock if mechromancer_action_review_manual_hold else fmod(mechromancer_action_review_clock, MECHROMANCER_ACTION_REVIEW_PHASE_SECONDS)
+		var replay := int(floor(phase_elapsed / 0.32))
+		if replay > mechromancer_action_review_replay:
+			mechromancer_action_review_replay = replay
+			mechromancer_action_review_presentation._play_clip(action)
+	player.global_position = Vector3.ZERO
+	player.rotation.y = 0.0
+	_update_mechromancer_action_review_camera()
+
+
+func _update_mechromancer_action_review_camera() -> void:
+	if camera == null:
+		return
+	var target := Vector3(0.0, 1.38, 0.0)
+	camera.global_position = Vector3(2.75, 2.72, 6.15)
+	camera.fov = 38.0
+	camera.look_at(target, Vector3.UP)
+
+
+func _enter_mechromancer_action_review_phase(next_phase: int) -> void:
+	if player == null or mechromancer_action_review_presentation == null or mechromancer_action_review_animation == null:
+		return
+	mechromancer_action_review_phase = clampi(next_phase, 0, MECHROMANCER_ACTION_REVIEW_SEQUENCE.size() - 1)
+	mechromancer_action_review_replay = 0
+	mechromancer_action_review_hold_clock = 0.0
+	var action := MECHROMANCER_ACTION_REVIEW_SEQUENCE[mechromancer_action_review_phase]
+	if player.is_channeling():
+		player.cancel_channel()
+	if player.current_health < player.maximum_health:
+		player.heal_full()
+	player.invulnerability_seconds = 0.0
+	player.velocity = Vector3.ZERO
+	player.current_target = null
+	var model_root := player.get_node_or_null("MechromancerModel") as Node3D
+	if model_root != null:
+		model_root.visible = true
+	mechromancer_action_review_presentation.fire_remaining = 0.0
+	mechromancer_action_review_presentation.hit_remaining = 0.0
+
+	var action_detail := "AUTHORED CLIP · LIVE RUNTIME BRIDGE"
+	match action:
+		&"Idle":
+			mechromancer_action_review_presentation._select_loop_clip()
+		&"Walk":
+			# A real velocity state selects Walk while physics remains disabled, so
+			# the actor cannot leave the fixed review mark.
+			player.velocity = Vector3(0.0, 0.0, -2.4)
+			mechromancer_action_review_presentation._select_loop_clip()
+		&"Fire":
+			# Emitting the production signal exercises recoil, muzzle feedback and
+			# the imported Fire clip without acquiring or damaging a world target.
+			var fire_origin := player.global_position + Vector3(0.42, 1.35, 0.18)
+			player.pistol_fired.emit(fire_origin, fire_origin + Vector3(0.0, 0.0, 5.0), null)
+			mechromancer_action_review_presentation.fire_remaining = MECHROMANCER_ACTION_REVIEW_PHASE_SECONDS
+		&"Work":
+			player.begin_channel(&"manual_salvage", null, 999.0, "ACTION REVIEW · FIELD WORK", {}, false, 0.0, 0.0)
+		&"Upgrade":
+			player.begin_channel(&"forge_upgrade", null, 999.0, "ACTION REVIEW · FORGE UPGRADE", {}, false, 0.0, 0.0)
+		&"Hit":
+			mechromancer_action_review_presentation.last_health = player.current_health
+			player.apply_damage(8.0, self)
+			mechromancer_action_review_presentation.hit_remaining = MECHROMANCER_ACTION_REVIEW_PHASE_SECONDS
+		&"Death":
+			# Death is deliberately actor-owned rather than a seventh imported clip.
+			# Exercise the shipped lethal method and bounded equipment-collapse
+			# presentation while the review guard suppresses the game-over flow.
+			mechromancer_action_review_presentation.last_health = player.current_health
+			player.apply_damage(player.maximum_health * 2.0, self)
+			# Freeze the real actor near the readable end of its bounded fall. The
+			# gallery keeps physics disabled, while normal gameplay advances this
+			# same presentation continuously over DEATH_PRESENTATION_SECONDS.
+			player.death_presentation_remaining = 0.08
+			player._refresh_death_presentation()
+			action_detail = "ACTOR-OWNED RUNTIME COLLAPSE · LIVE LETHAL PATH"
+	if mechromancer_action_review_animation.is_playing():
+		mechromancer_action_review_animation.advance(0.0)
+	if presentation_review_label != null:
+		presentation_review_label.text = "MECHROMANCER ACTION REVIEW  ·  %s  ·  %d/%d\n%s  ·  1-7 HOLD STATE  ·  SPACE AUTO  ·  ESC EXIT  ·  NO SAVE" % [
+			String(action).to_upper(),
+			mechromancer_action_review_phase + 1,
+			MECHROMANCER_ACTION_REVIEW_SEQUENCE.size(),
+			action_detail,
+		]
+
+
+func _start_organic_action_review() -> void:
+	# Development-only, non-saving action inspection for every shipped organic
+	# family. Reuse the actual OrganicEnemy3D already staged by the production
+	# gallery, but isolate its outward signals before driving combat presentation.
+	organic_action_review_family = _organic_action_review_family_argument()
+	if organic_action_review_family == &"":
+		return
+	await _start_presentation_review()
+	if not presentation_review_active:
+		push_error("Organic action review could not open the production presentation gallery.")
+		return
+
+	var family_page := 1 if organic_action_review_family in PRESENTATION_REVIEW_EARLY_ORGANICS else 2
+	await _show_presentation_review_page(family_page)
+	for raw_actor in presentation_review_pages[family_page]:
+		var candidate := raw_actor as OrganicEnemy3D
+		if candidate != null and candidate.species == organic_action_review_family:
+			organic_action_review_actor = candidate
+			break
+	if organic_action_review_actor == null:
+		push_error("Organic action review could not resolve the shipped %s actor." % String(organic_action_review_family))
+		return
+	organic_action_review_presentation = organic_action_review_actor.get_node_or_null("AuthoredActorAnimation3D") as AuthoredActorAnimation3D
+	if organic_action_review_presentation == null or organic_action_review_presentation.animation_player == null:
+		push_error("Organic action review requires the runtime authored-animation bridge and imported AnimationPlayer.")
+		return
+
+	organic_action_review_active = true
+	organic_action_review_clock = 0.0
+	organic_action_review_phase = -1
+	organic_action_review_replay = 0
+	organic_action_review_manual_hold = false
+	organic_action_review_hold_clock = 0.0
+	organic_action_review_animation = organic_action_review_presentation.animation_player
+	organic_action_review_presentation.process_mode = Node.PROCESS_MODE_ALWAYS
+	organic_action_review_presentation.set_process(true)
+	organic_action_review_animation.process_mode = Node.PROCESS_MODE_ALWAYS
+	organic_action_review_actor.set_process(false)
+	organic_action_review_actor.set_physics_process(false)
+	organic_action_review_actor.player_reference = null
+	organic_action_review_actor.heartforge_reference = null
+	organic_action_review_actor._target = null
+	organic_action_review_actor.collision_layer = 0
+	organic_action_review_actor.collision_mask = 0
+	organic_action_review_actor.set_meta(&"organic_action_review_fixture", true)
+	if player != null:
+		player.input_enabled = false
+		player.set_process(false)
+		player.set_physics_process(false)
+
+	# Keep only the production authored-animation bridge connected to this
+	# disposable review actor. The real signals still fire, but no population,
+	# ecology, world-log, audio or combat-feedback listener can mutate the run.
+	_isolate_organic_action_review_signals()
+	organic_action_review_presentation._connect_subject_signals()
+	organic_action_review_target = Node3D.new()
+	organic_action_review_target.name = "OrganicActionReviewInertTarget"
+	organic_action_review_target.position = Vector3(0.0, 0.0, -1.0)
+	if presentation_review_stage != null:
+		presentation_review_stage.add_child(organic_action_review_target)
+	else:
+		add_child(organic_action_review_target)
+
+	for page_actors in presentation_review_pages:
+		for raw_actor in page_actors:
+			var review_actor := raw_actor as Node3D
+			if review_actor != null and is_instance_valid(review_actor):
+				review_actor.visible = review_actor == organic_action_review_actor
+	organic_action_review_actor.visible = true
+	organic_action_review_actor.global_position = Vector3.ZERO
+	organic_action_review_actor.rotation = Vector3(0.0, PI, 0.0)
+	presentation_review_capture_path = ""
+	_configure_organic_action_review_framing()
+	_enter_organic_action_review_phase(0)
+	_update_organic_action_review_camera()
+	if run_state != null:
+		run_state.log_event("Organic action review started: %s cycles eight authored production states in a paused, isolated, non-saving gallery." % String(organic_action_review_family))
+
+
+func _isolate_organic_action_review_signals() -> void:
+	if organic_action_review_actor == null or organic_action_review_presentation == null:
+		return
+	for signal_name in [&"attack_started", &"attack_landed", &"health_changed", &"behaviour_changed", &"killed"]:
+		for connection in organic_action_review_actor.get_signal_connection_list(signal_name):
+			var callback: Callable = connection.get("callable", Callable())
+			if not callback.is_valid() or callback.get_object() == organic_action_review_presentation:
+				continue
+			organic_action_review_actor.disconnect(signal_name, callback)
+
+
+func _update_organic_action_review(delta: float) -> void:
+	if organic_action_review_actor == null or not is_instance_valid(organic_action_review_actor):
+		return
+	var cycle_seconds := ORGANIC_ACTION_REVIEW_PHASE_SECONDS * float(ORGANIC_ACTION_REVIEW_SEQUENCE.size())
+	var next_phase := organic_action_review_phase
+	if organic_action_review_manual_hold:
+		organic_action_review_hold_clock += delta
+	else:
+		organic_action_review_clock = fmod(organic_action_review_clock + delta, cycle_seconds)
+		next_phase = clampi(
+			int(floor(organic_action_review_clock / ORGANIC_ACTION_REVIEW_PHASE_SECONDS)),
+			0,
+			ORGANIC_ACTION_REVIEW_SEQUENCE.size() - 1
+		)
+	if next_phase != organic_action_review_phase:
+		_enter_organic_action_review_phase(next_phase)
+	var action := ORGANIC_ACTION_REVIEW_SEQUENCE[organic_action_review_phase]
+	if action in [&"Attack", &"Hit"]:
+		# Enter each state through exactly one real gameplay event. Repeat only the
+		# imported one-shot for live inspection; no extra attack or damage signal is
+		# emitted while the phase is held.
+		var phase_elapsed := organic_action_review_hold_clock if organic_action_review_manual_hold else fmod(organic_action_review_clock, ORGANIC_ACTION_REVIEW_PHASE_SECONDS)
+		var replay_seconds := 0.9
+		var resolved_clip := organic_action_review_presentation._resolve_clip(action)
+		var authored_clip := organic_action_review_animation.get_animation(resolved_clip) if resolved_clip != &"" else null
+		if authored_clip != null:
+			replay_seconds = maxf(0.45, authored_clip.length + 0.12)
+		var replay := int(floor(phase_elapsed / replay_seconds))
+		if replay > organic_action_review_replay:
+			organic_action_review_replay = replay
+			organic_action_review_presentation._play_one_shot(action)
+	organic_action_review_actor.global_position = Vector3.ZERO
+	organic_action_review_actor.rotation = Vector3(0.0, PI, 0.0)
+	_update_organic_action_review_camera()
+
+
+func _reset_organic_action_review_actor() -> void:
+	if organic_action_review_actor == null or organic_action_review_presentation == null:
+		return
+	organic_action_review_actor.alive = true
+	organic_action_review_actor.current_health = organic_action_review_actor.maximum_health
+	organic_action_review_actor.death_presentation_remaining = 0.0
+	organic_action_review_actor.attack_cooldown = 0.0
+	organic_action_review_actor.attack_windup_remaining = 0.0
+	organic_action_review_actor.pending_attack_target = null
+	organic_action_review_actor.velocity = Vector3.ZERO
+	organic_action_review_actor.aggression = 0.2
+	organic_action_review_actor.investigate_seconds = 0.0
+	organic_action_review_actor.has_last_known_prey = false
+	organic_action_review_actor.behaviour_has_target = false
+	organic_action_review_actor._target = null
+	organic_action_review_actor.collision_layer = 0
+	organic_action_review_actor.collision_mask = 0
+	if organic_action_review_actor.has_meta(&"enemy_behaviour"):
+		organic_action_review_actor.remove_meta(&"enemy_behaviour")
+	organic_action_review_actor._set_state(&"lurking")
+	organic_action_review_actor._refresh_damage_presentation()
+	organic_action_review_actor._refresh_death_presentation()
+	var model_root := organic_action_review_actor.get_node_or_null("OrganicModel") as Node3D
+	if model_root != null:
+		model_root.visible = true
+	organic_action_review_presentation.one_shot_remaining = 0.0
+	organic_action_review_presentation._last_health = organic_action_review_actor.current_health
+	organic_action_review_presentation._last_loop_key = &""
+	organic_action_review_animation.stop()
+
+
+func _enter_organic_action_review_phase(next_phase: int) -> void:
+	if organic_action_review_actor == null or organic_action_review_presentation == null or organic_action_review_animation == null:
+		return
+	organic_action_review_phase = clampi(next_phase, 0, ORGANIC_ACTION_REVIEW_SEQUENCE.size() - 1)
+	organic_action_review_replay = 0
+	organic_action_review_hold_clock = 0.0
+	_reset_organic_action_review_actor()
+	var action := ORGANIC_ACTION_REVIEW_SEQUENCE[organic_action_review_phase]
+	var action_detail := "LIVE ACTOR STATE · AUTHORED ANIMATIONPLAYER"
+	match action:
+		&"Idle":
+			organic_action_review_actor._set_state(&"lurking")
+			organic_action_review_presentation._select_loop_clip()
+		&"Walk":
+			organic_action_review_actor.velocity = Vector3(0.0, 0.0, -organic_action_review_actor.move_speed)
+			organic_action_review_actor._set_state(&"hunting")
+			organic_action_review_presentation._select_loop_clip()
+			action_detail = "LIVE VELOCITY STATE · AUTHORED WALK CLIP"
+		&"Attack":
+			# The production attack method emits attack_started against a target that
+			# intentionally has no damage API. Physics is disabled, then the pending
+			# strike is cleared immediately so it cannot ever resolve.
+			organic_action_review_actor._attack_target(organic_action_review_target)
+			organic_action_review_actor.pending_attack_target = null
+			organic_action_review_actor.attack_windup_remaining = 0.0
+			action_detail = "REAL ATTACK_STARTED SIGNAL · INERT TARGET · AUTHORED ATTACK CLIP"
+		&"Hit":
+			organic_action_review_presentation._last_health = organic_action_review_actor.current_health
+			organic_action_review_actor.apply_damage(maxf(1.0, organic_action_review_actor.maximum_health * 0.12), null)
+			action_detail = "REAL HEALTH_CHANGED SIGNAL · BOUNDED DAMAGE · AUTHORED HIT CLIP"
+		&"Feed":
+			organic_action_review_actor.set_meta(&"enemy_behaviour", &"feed")
+			organic_action_review_actor._set_state(&"feeding")
+			organic_action_review_presentation._select_loop_clip()
+			action_detail = "LIVE FEED BEHAVIOUR · AUTHORED FEED CLIP"
+		&"Nest":
+			organic_action_review_actor.set_meta(&"enemy_behaviour", &"guard_nest")
+			organic_action_review_actor._set_state(&"nest_guard")
+			organic_action_review_presentation._select_loop_clip()
+			action_detail = "LIVE NEST-GUARD BEHAVIOUR · AUTHORED NEST CLIP"
+		&"Retreat":
+			organic_action_review_actor.set_meta(&"enemy_behaviour", &"retreat")
+			organic_action_review_actor.velocity = Vector3(0.0, 0.0, organic_action_review_actor.move_speed)
+			organic_action_review_actor._set_state(&"retreating")
+			organic_action_review_presentation._select_loop_clip()
+			action_detail = "LIVE RETREAT BEHAVIOUR · AUTHORED RETREAT CLIP"
+		&"Death":
+			# The actor owns mortality, collision shutdown and its bounded death
+			# overlay; the surviving runtime bridge maps the same killed signal to the
+			# authored Death clip. Physics stays off, so the actor cannot queue-free.
+			organic_action_review_presentation._last_health = organic_action_review_actor.current_health
+			organic_action_review_actor.apply_damage(organic_action_review_actor.maximum_health * 2.0, null)
+			organic_action_review_actor.death_presentation_remaining = OrganicEnemy3D.DEATH_PRESENTATION_SECONDS * 0.38
+			organic_action_review_actor._refresh_death_presentation()
+			action_detail = "REAL KILLED SIGNAL · ACTOR-OWNED DEATH PRESENTATION + AUTHORED DEATH CLIP"
+	if organic_action_review_animation.is_playing():
+		organic_action_review_animation.advance(0.0)
+	# Hit and Death reveal state-owned meshes that are intentionally absent from
+	# the initial idle bounds. Reframe after the real state transition so every
+	# review phase proves that its complete visible presentation remains inside
+	# the production camera rather than silently escaping the original frame.
+	_configure_organic_action_review_framing()
+	if presentation_review_label != null:
+		presentation_review_label.text = "ORGANIC ACTION REVIEW  ·  %s  ·  %s  ·  %d/%d\n%s  ·  1-8 HOLD STATE  ·  SPACE AUTO  ·  ESC EXIT  ·  NO INPUT / PHYSICS / ECOLOGY / SAVE" % [
+			String(organic_action_review_family).to_upper(),
+			String(action).to_upper(),
+			organic_action_review_phase + 1,
+			ORGANIC_ACTION_REVIEW_SEQUENCE.size(),
+			action_detail,
+		]
+
+
+func _configure_organic_action_review_framing() -> void:
+	if organic_action_review_actor == null:
+		return
+	var has_bounds := false
+	var combined_bounds := AABB()
+	for raw_mesh in organic_action_review_actor.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := raw_mesh as MeshInstance3D
+		if mesh_instance == null or mesh_instance.mesh == null or not mesh_instance.is_visible_in_tree():
+			continue
+		var mesh_bounds := mesh_instance.global_transform * mesh_instance.get_aabb()
+		combined_bounds = mesh_bounds if not has_bounds else combined_bounds.merge(mesh_bounds)
+		has_bounds = true
+	if has_bounds:
+		organic_action_review_camera_target = combined_bounds.get_center()
+		var frame_height := maxf(combined_bounds.size.y, combined_bounds.size.x * 0.62)
+		var camera_distance := frame_height * 0.5 / tan(deg_to_rad(20.0)) + combined_bounds.size.z * 0.46 + 0.8
+		camera_distance = clampf(camera_distance, 4.4, 11.5)
+		organic_action_review_camera_position = organic_action_review_camera_target + Vector3(camera_distance * 0.28, camera_distance * 0.18, camera_distance)
+	else:
+		organic_action_review_camera_target = Vector3(0.0, 1.15, 0.0)
+		organic_action_review_camera_position = Vector3(1.8, 2.4, 6.2)
+	_configure_organic_action_review_lighting()
+
+
+func _configure_organic_action_review_lighting() -> void:
+	if presentation_review_stage == null:
+		return
+	var front_fill := presentation_review_stage.get_node_or_null("ReviewFrontFill") as OmniLight3D
+	var warm_light := presentation_review_stage.get_node_or_null("ReviewWarmLight") as OmniLight3D
+	var cool_light := presentation_review_stage.get_node_or_null("ReviewCoolLight") as OmniLight3D
+	var rim_light := presentation_review_stage.get_node_or_null("ReviewRimLight") as OmniLight3D
+	var organic_fill := presentation_review_stage.get_node_or_null("ReviewOrganicFill") as OmniLight3D
+	for review_light in [front_fill, warm_light, cool_light, rim_light]:
+		if review_light != null:
+			review_light.shadow_enabled = false
+	if front_fill != null:
+		front_fill.light_energy = 3.0
+		front_fill.position = organic_action_review_camera_target + Vector3(0.0, 5.5, 7.0)
+	if warm_light != null:
+		warm_light.light_energy = 3.1
+		warm_light.position = organic_action_review_camera_target + Vector3(-5.0, 4.2, 4.0)
+	if cool_light != null:
+		cool_light.light_energy = 2.3
+		cool_light.position = organic_action_review_camera_target + Vector3(5.2, 3.8, 2.8)
+	if rim_light != null:
+		rim_light.light_energy = 3.5
+		rim_light.position = organic_action_review_camera_target + Vector3(0.0, 4.8, -4.5)
+	if organic_fill != null:
+		organic_fill.visible = true
+		organic_fill.light_energy = 1.7
+		organic_fill.position = organic_action_review_camera_target + Vector3(0.0, 2.4, 5.0)
+
+
+func _update_organic_action_review_camera() -> void:
+	if camera == null:
+		return
+	camera.global_position = organic_action_review_camera_position
+	camera.fov = 40.0
+	camera.look_at(organic_action_review_camera_target, Vector3.UP)
 
 
 func _start_heartforge_progression_review() -> void:
@@ -2650,11 +3316,14 @@ func _should_build_city_on_boot() -> bool:
 			"--concurrent-operation-review",
 			"--run-variation-review", "--heartforge-progression-review", "--adaptive-defense-review",
 			"--complete-objective-review", "--endgame-protocol-review", "--mechromancer-evolution-review",
+			"--mechromancer-action-review", "--organic-action-review", "--organic-action-review-family",
 		]:
 			return true
 		if raw_argument.begins_with("--authored-operation-review=") or raw_argument.begins_with("--authored-operation-review-screenshot="):
 			return true
 		if raw_argument.begins_with("--endgame-protocol-review="):
+			return true
+		if raw_argument.begins_with("--organic-action-review-family="):
 			return true
 	return false
 
@@ -3087,6 +3756,10 @@ func _load_release_game() -> bool:
 
 
 func _release_save_is_safe() -> bool:
+	if organic_action_review_active:
+		return false
+	if mechromancer_action_review_active:
+		return false
 	if player.is_channeling():
 		return false
 	return true

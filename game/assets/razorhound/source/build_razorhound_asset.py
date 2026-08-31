@@ -18,24 +18,74 @@ from build_authored_organic_assets import add_organic_lobe  # noqa: E402
 
 
 OUTPUT_PATH = SOURCE_DIR / "razorhound.gltf"
+TEXTURE_URIS = {
+    "shell_base": "../organic_families/textures/organic_shell_base_color.png",
+    "tissue_base": "../organic_families/textures/organic_tissue_base_color.png",
+    "shell_normal": "../organic_families/textures/organic_shell_normal.png",
+    "tissue_normal": "../organic_families/textures/organic_tissue_normal.png",
+    "shell_orm": "../organic_families/textures/organic_shell_orm.png",
+    "tissue_orm": "../organic_families/textures/organic_tissue_orm.png",
+    "emissive": "../organic_families/textures/organic_emissive.png",
+}
+
+
+def material(
+    name: str,
+    base_color: Sequence[float],
+    metallic: float,
+    roughness: float,
+    surface: str,
+    normal_scale: float,
+    emissive: Sequence[float] | None = None,
+) -> dict:
+    base_texture = 0 if surface in {"shell", "signal"} else 1
+    normal_texture = 2 if surface in {"shell", "signal"} else 3
+    orm_texture = 4 if surface in {"shell", "signal"} else 5
+    entry = {
+        "name": name,
+        "pbrMetallicRoughness": {
+            "baseColorFactor": list(base_color),
+            "baseColorTexture": {"index": base_texture},
+            "metallicFactor": metallic,
+            "roughnessFactor": roughness,
+            "metallicRoughnessTexture": {"index": orm_texture},
+        },
+        "normalTexture": {"index": normal_texture, "scale": normal_scale},
+        "occlusionTexture": {"index": orm_texture, "strength": 1.0},
+        "extras": {
+            "ironwright_surface_profile": "shared_organic_pbr_v1",
+            "ironwright_surface_class": surface,
+        },
+    }
+    if emissive is not None:
+        entry["emissiveFactor"] = list(emissive)
+        entry["emissiveTexture"] = {"index": 6}
+    return entry
 
 
 def main() -> None:
     builder = BufferBuilder()
     materials = [
-        {"name": "Razorhound wet chitin", "pbrMetallicRoughness": {"baseColorFactor": [0.08, 0.11, 0.12, 1.0], "metallicFactor": 0.2, "roughnessFactor": 0.3}},
-        {"name": "Razorhound shell ridge", "pbrMetallicRoughness": {"baseColorFactor": [0.24, 0.28, 0.28, 1.0], "metallicFactor": 0.16, "roughnessFactor": 0.42}},
-        {"name": "Razorhound flesh", "pbrMetallicRoughness": {"baseColorFactor": [0.18, 0.05, 0.04, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.74}},
-        {"name": "Razorhound bone", "pbrMetallicRoughness": {"baseColorFactor": [0.52, 0.44, 0.32, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.6}},
-        {"name": "Razorhound threat eye", "pbrMetallicRoughness": {"baseColorFactor": [0.3, 0.03, 0.008, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.28}, "emissiveFactor": [1.0, 0.06, 0.01]},
-        {"name": "Razorhound tendon", "pbrMetallicRoughness": {"baseColorFactor": [0.26, 0.08, 0.07, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.55}},
-        {"name": "Razorhound mouth seam", "pbrMetallicRoughness": {"baseColorFactor": [0.035, 0.012, 0.014, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.62}},
+        material("Razorhound wet chitin", [0.08, 0.11, 0.12, 1.0], 0.2, 0.3, "shell", 0.28),
+        material("Razorhound shell ridge", [0.24, 0.28, 0.28, 1.0], 0.16, 0.42, "shell", 0.30),
+        material("Razorhound flesh", [0.18, 0.05, 0.04, 1.0], 0.0, 0.74, "tissue", 0.18),
+        material("Razorhound bone", [0.52, 0.44, 0.32, 1.0], 0.0, 0.6, "shell", 0.32),
+        material("Razorhound threat eye", [0.3, 0.03, 0.008, 1.0], 0.0, 0.28, "signal", 0.08, [1.0, 0.06, 0.01]),
+        material("Razorhound tendon", [0.26, 0.08, 0.07, 1.0], 0.0, 0.55, "tissue", 0.18),
+        material("Razorhound mouth seam", [0.035, 0.012, 0.014, 1.0], 0.0, 0.62, "tissue", 0.12),
     ]
     meshes: list[dict] = []
 
-    def mesh(name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
-        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
+    def mesh(name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        position, normal, uv, tangent, indices, material_index = geometry
+        meshes.append({
+            "name": name,
+            "primitives": [{
+                "attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent},
+                "indices": indices,
+                "material": material_index,
+            }],
+        })
         return len(meshes) - 1
 
     wet, shell, flesh, bone, eye, tendon, mouth = range(7)
@@ -91,9 +141,9 @@ def main() -> None:
     for index in range(3):
         z = -0.42 + index * 0.46
         add_node("TorsoSegment%d" % index, mesh_ids["Segment"], (0.0, 0.58, z), parent=torso)
-        add_node("RazorhoundThoraxRib", mesh_ids["Rib"], (0.0, 0.96, z), parent=torso)
-        add_node("ThoraxFastener", mesh_ids["Fastener"], (-0.45, 0.84, z), parent=torso)
-        add_node("ThoraxFastener", mesh_ids["Fastener"], (0.45, 0.84, z), parent=torso)
+        add_node("RazorhoundThoraxRib%d" % index, mesh_ids["Rib"], (0.0, 0.96, z), parent=torso)
+        add_node("RazorhoundThoraxFastenerL%d" % index, mesh_ids["Fastener"], (-0.45, 0.84, z), parent=torso)
+        add_node("RazorhoundThoraxFastenerR%d" % index, mesh_ids["Fastener"], (0.45, 0.84, z), parent=torso)
     head = add_node("RazorhoundHead", mesh_ids["Head"], (0.0, 0.84, -0.82))
     snout = add_node("RazorhoundSnout", mesh_ids["Snout"], (0.0, 0.78, -1.18), extras={"socket_type": "snout"})
     add_node("RazorhoundMuzzleGuard", mesh_ids["MuzzleGuard"], (0.0, 0.10, -0.12), scale=(1.08, 1.0, 0.96), parent=snout, extras={"surface": "layered_muzzle_guard"})
@@ -102,25 +152,29 @@ def main() -> None:
         add_node("RazorhoundNostril%s" % ("L" if side < 0.0 else "R"), mesh_ids["Nostril"], (side * 0.09, 0.05, -0.25), scale=(1.0, 0.72, 0.68), parent=snout, extras={"surface": "muzzle_sensor_detail"})
     add_node("OrganicDorsalPlate", mesh_ids["Rib"], (0.0, 1.04, 0.16), rotation=(0.0, 0.0, 0.05), extras={"surface": "layered_shell_break"})
     for side in (-1.0, 1.0):
-        add_node("RazorhoundCheekPlate", mesh_ids["CheekLobe"], (side * 0.44, 0.82, -0.94))
-        add_node("RazorhoundEar", mesh_ids["Ear"], (side * 0.28, 1.14, -0.9), rotation=(0.0, 0.0, side * 0.28))
-        add_node("RazorhoundEye", mesh_ids["Eye"], (side * 0.2, 1.02, -1.27), extras={"socket_type": "threat_eye"})
+        side_name = "L" if side < 0.0 else "R"
+        add_node("RazorhoundCheekPlate%s" % side_name, mesh_ids["CheekLobe"], (side * 0.44, 0.82, -0.94))
+        add_node("RazorhoundEar%s" % side_name, mesh_ids["Ear"], (side * 0.28, 1.14, -0.9), rotation=(0.0, 0.0, side * 0.28))
+        add_node("RazorhoundEye%s" % side_name, mesh_ids["Eye"], (side * 0.2, 1.02, -1.27), extras={"socket_type": "threat_eye"})
         # This node is parented to the head, so keep the eye-guard placement
         # head-local; the target world position remains around y=1.1, z=-1.22.
-        add_node("RazorhoundBrowGuard", mesh_ids["BrowGuard"], (side * 0.2, 0.26, -0.4), rotation=(0.0, side * 0.08, side * 0.12), parent=head, extras={"surface": "folded_eye_guard"})
-        add_node("RazorhoundFang", mesh_ids["Fang"], (side * 0.17, 0.54, -1.45), rotation=(0.78, 0.0, side * 0.1))
+        add_node("RazorhoundBrowGuard%s" % side_name, mesh_ids["BrowGuard"], (side * 0.2, 0.26, -0.4), rotation=(0.0, side * 0.08, side * 0.12), parent=head, extras={"surface": "folded_eye_guard"})
+        add_node("RazorhoundFang%s" % side_name, mesh_ids["Fang"], (side * 0.17, 0.54, -1.45), rotation=(0.78, 0.0, side * 0.1))
     for index in range(4):
         z = -0.5 + index * 0.38
-        add_node("RazorhoundSpine", mesh_ids["Spine"], (0.0, 1.18 + (index % 2) * 0.08, z), rotation=(0.0, 0.0, -0.18 + index * 0.11))
+        add_node("RazorhoundSpine%d" % index, mesh_ids["Spine"], (0.0, 1.18 + (index % 2) * 0.08, z), rotation=(0.0, 0.0, -0.18 + index * 0.11))
     for index in range(3):
         z = -0.58 + index * 0.56
         for side in (-1.0, 1.0):
-            add_node("RazorhoundLeg", mesh_ids["Leg"], (side * 0.55, 0.4, z), rotation=(0.0, 0.0, side * 0.74))
-            add_node("RazorhoundTalon", mesh_ids["Talon"], (side * 0.86, 0.14, z - 0.04), rotation=(0.0, 0.0, side * 0.42))
+            side_name = "L" if side < 0.0 else "R"
+            add_node("RazorhoundLeg%s%d" % (side_name, index), mesh_ids["Leg"], (side * 0.55, 0.4, z), rotation=(0.0, 0.0, side * 0.74))
+            add_node("RazorhoundTalon%s%d" % (side_name, index), mesh_ids["Talon"], (side * 0.86, 0.14, z - 0.04), rotation=(0.0, 0.0, side * 0.42))
     add_node("RazorhoundTail", mesh_ids["Tail"], (0.0, 0.64, 1.12), rotation=(-0.42, 0.0, 0.0), extras={"socket_type": "tail"})
     add_node("ProductionAssetMarker", None, extras={"asset_contract": "razorhound.predator.v1", "source": "original_shared_mesh_builder"})
 
     node_index = {node["name"]: index for index, node in enumerate(nodes)}
+    if len(node_index) != len(nodes):
+        raise RuntimeError("Razorhound nodes must have globally unique stable names")
 
     def animation(name: str, channels: list[tuple[str, str, list[float], list[float]]]) -> dict:
         samplers: list[dict] = []
@@ -135,73 +189,148 @@ def main() -> None:
             entries.append({"sampler": sampler_index, "target": {"node": node_index[target_name], "path": path}})
         return {"name": name, "samplers": samplers, "channels": entries}
 
+    def rotation_channel(target: str, times: list[float], frames: Sequence[Sequence[float]]) -> tuple[str, str, list[float], list[float]]:
+        return target, "rotation", times, [value for frame in frames for value in quat(frame)]
+
+    def ear_channels(times: list[float], fold: Sequence[float]) -> list[tuple[str, str, list[float], list[float]]]:
+        return [
+            rotation_channel(
+                "RazorhoundEar%s" % side_name,
+                times,
+                [(0.0, 0.0, side * (0.28 + delta)) for delta in fold],
+            )
+            for side, side_name in ((-1.0, "L"), (1.0, "R"))
+        ]
+
+    def cheek_channels(times: list[float], motion: Sequence[float], axis: str = "y") -> list[tuple[str, str, list[float], list[float]]]:
+        channels = []
+        for side, side_name in ((-1.0, "L"), (1.0, "R")):
+            frames = [(0.0, side * value, 0.0) if axis == "y" else (0.0, 0.0, side * value) for value in motion]
+            channels.append(rotation_channel("RazorhoundCheekPlate%s" % side_name, times, frames))
+        return channels
+
+    def fang_channels(times: list[float], pitch: Sequence[float], flare: Sequence[float]) -> list[tuple[str, str, list[float], list[float]]]:
+        return [
+            rotation_channel(
+                "RazorhoundFang%s" % side_name,
+                times,
+                [(pitch[index], 0.0, side * flare[index]) for index in range(len(times))],
+            )
+            for side, side_name in ((-1.0, "L"), (1.0, "R"))
+        ]
+
+    def spine_channels(times: list[float], offsets: Sequence[float]) -> list[tuple[str, str, list[float], list[float]]]:
+        return [
+            rotation_channel(
+                "RazorhoundSpine%d" % index,
+                times,
+                [(0.0, 0.0, -0.18 + index * 0.11 + offset) for offset in offsets],
+            )
+            for index in range(4)
+        ]
+
+    def leg_channels(times: list[float], forward: float, back: float) -> list[tuple[str, str, list[float], list[float]]]:
+        channels = []
+        for index in range(3):
+            for side, side_name in ((-1.0, "L"), (1.0, "R")):
+                gait_sign = 1.0 if (index + (0 if side < 0.0 else 1)) % 2 == 0 else -1.0
+                channels.append(rotation_channel(
+                    "RazorhoundLeg%s%d" % (side_name, index),
+                    times,
+                    [
+                        (forward * gait_sign, 0.0, side * 0.74),
+                        (back * gait_sign, 0.0, side * 0.74),
+                        (forward * gait_sign, 0.0, side * 0.74),
+                    ],
+                ))
+        return channels
+
+    idle_times = [0.0, 0.8, 1.6]
+    walk_times = [0.0, 0.22, 0.44]
+    attack_times = [0.0, 0.24, 0.48]
+    hit_times = [0.0, 0.10, 0.24]
+    feed_times = [0.0, 0.3, 0.6]
+    nest_times = [0.0, 0.5, 1.0]
+    death_times = [0.0, 0.28, 0.64]
+
     animations = [
         animation("Idle", [
-            ("RazorhoundModel", "translation", [0.0, 0.8, 1.6], [0.0, 0.0, 0.0, 0.0, 0.014, 0.0, 0.0, 0.0, 0.0]),
-            ("Torso", "rotation", [0.0, 0.8, 1.6], quat((0.012, 0.0, 0.0)) + quat((-0.012, 0.0, 0.0)) + quat((0.012, 0.0, 0.0))),
-            ("RazorhoundEar", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.05, 0.0)) + quat((0.0, -0.04, 0.0)) + quat((0.0, 0.05, 0.0))),
-            ("RazorhoundTail", "rotation", [0.0, 0.8, 1.6], quat((-0.42, 0.04, 0.0)) + quat((-0.38, -0.08, 0.0)) + quat((-0.42, 0.04, 0.0))),
-            ("RazorhoundCheekPlate", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.02, 0.0)) + quat((0.0, -0.02, 0.0)) + quat((0.0, 0.02, 0.0))),
-            ("RazorhoundSpine", "rotation", [0.0, 0.8, 1.6], quat((0.0, 0.0, -0.18)) + quat((0.0, 0.0, -0.24)) + quat((0.0, 0.0, -0.18))),
-        ]),
-        animation("Walk", [
-            ("RazorhoundLeg", "rotation", [0.0, 0.22, 0.44], quat((0.22, 0.0, 0.0)) + quat((-0.22, 0.0, 0.0)) + quat((0.22, 0.0, 0.0))),
-            ("Torso", "rotation", [0.0, 0.22, 0.44], quat((0.05, 0.0, 0.0)) + quat((-0.05, 0.0, 0.0)) + quat((0.05, 0.0, 0.0))),
-            ("RazorhoundTail", "rotation", [0.0, 0.22, 0.44], quat((-0.32, 0.0, 0.0)) + quat((-0.5, 0.0, 0.0)) + quat((-0.32, 0.0, 0.0))),
-            ("RazorhoundSpine", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, -0.12)) + quat((0.0, 0.0, -0.3)) + quat((0.0, 0.0, -0.12))),
-            ("RazorhoundCheekPlate", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, 0.08)) + quat((0.0, 0.0, -0.08)) + quat((0.0, 0.0, 0.08))),
-            ("RazorhoundFang", "rotation", [0.0, 0.22, 0.44], quat((0.78, 0.0, 0.1)) + quat((0.7, 0.0, -0.1)) + quat((0.78, 0.0, 0.1))),
-        ]),
+            ("RazorhoundModel", "translation", idle_times, [0.0, 0.0, 0.0, 0.0, 0.014, 0.0, 0.0, 0.0, 0.0]),
+            rotation_channel("Torso", idle_times, [(0.012, 0.0, 0.0), (-0.012, 0.0, 0.0), (0.012, 0.0, 0.0)]),
+            rotation_channel("RazorhoundTail", idle_times, [(-0.42, 0.04, 0.0), (-0.38, -0.08, 0.0), (-0.42, 0.04, 0.0)]),
+        ] + ear_channels(idle_times, [0.0, -0.07, 0.0])
+          + cheek_channels(idle_times, [0.02, -0.02, 0.02])
+          + spine_channels(idle_times, [0.0, -0.06, 0.0])),
+        animation("Walk", leg_channels(walk_times, 0.22, -0.22) + [
+            rotation_channel("Torso", walk_times, [(0.05, 0.0, 0.0), (-0.05, 0.0, 0.0), (0.05, 0.0, 0.0)]),
+            rotation_channel("RazorhoundTail", walk_times, [(-0.32, 0.0, 0.0), (-0.5, 0.0, 0.0), (-0.32, 0.0, 0.0)]),
+        ] + spine_channels(walk_times, [0.06, -0.12, 0.06])
+          + cheek_channels(walk_times, [0.08, -0.08, 0.08], "z")
+          + fang_channels(walk_times, [0.78, 0.70, 0.78], [0.10, 0.06, 0.10])),
         animation("Attack", [
-            ("RazorhoundSnout", "translation", [0.0, 0.24, 0.48], [0.0, 0.78, -1.18, 0.0, 0.75, -1.3, 0.0, 0.78, -1.18]),
-            ("Torso", "rotation", [0.0, 0.24, 0.48], quat((0.05, 0.0, 0.0)) + quat((-0.12, 0.0, 0.0)) + quat((0.05, 0.0, 0.0))),
-            ("RazorhoundCheekPlate", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.0, 0.08)) + quat((0.0, 0.0, -0.18)) + quat((0.0, 0.0, 0.08))),
-            ("RazorhoundFang", "rotation", [0.0, 0.24, 0.48], quat((0.78, 0.0, 0.1)) + quat((0.58, 0.0, -0.16)) + quat((0.78, 0.0, 0.1))),
-            ("RazorhoundEar", "rotation", [0.0, 0.24, 0.48], quat((0.0, 0.0, 0.12)) + quat((0.0, 0.0, -0.16)) + quat((0.0, 0.0, 0.12))),
-            ("RazorhoundTail", "rotation", [0.0, 0.24, 0.48], quat((-0.42, 0.0, 0.0)) + quat((-0.2, 0.0, 0.0)) + quat((-0.42, 0.0, 0.0))),
-        ]),
+            ("RazorhoundSnout", "translation", attack_times, [0.0, 0.78, -1.18, 0.0, 0.75, -1.3, 0.0, 0.78, -1.18]),
+            rotation_channel("Torso", attack_times, [(0.05, 0.0, 0.0), (-0.12, 0.0, 0.0), (0.05, 0.0, 0.0)]),
+            rotation_channel("RazorhoundTail", attack_times, [(-0.42, 0.0, 0.0), (-0.2, 0.0, 0.0), (-0.42, 0.0, 0.0)]),
+        ] + cheek_channels(attack_times, [0.08, 0.18, 0.08], "z")
+          + fang_channels(attack_times, [0.78, 0.58, 0.78], [0.10, 0.16, 0.10])
+          + ear_channels(attack_times, [0.0, -0.18, 0.0])),
         animation("Hit", [
-            ("RazorhoundModel", "translation", [0.0, 0.10, 0.24], [0.0, 0.0, 0.0, 0.0, 0.0, 0.12, 0.0, 0.0, 0.0]),
-            ("Torso", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.0)) + quat((-0.16, 0.08, 0.0)) + quat((0.0, 0.0, 0.0))),
-            ("RazorhoundEar", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, 0.24)) + quat((0.0, 0.0, 0.0))),
-            ("RazorhoundCheekPlate", "rotation", [0.0, 0.10, 0.24], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.18, 0.0)) + quat((0.0, 0.0, 0.0))),
-            ("RazorhoundTail", "rotation", [0.0, 0.10, 0.24], quat((-0.42, 0.0, 0.0)) + quat((-0.28, 0.12, 0.0)) + quat((-0.42, 0.0, 0.0))),
-        ]),
+            ("RazorhoundModel", "translation", hit_times, [0.0, 0.0, 0.0, 0.0, 0.0, 0.12, 0.0, 0.0, 0.0]),
+            rotation_channel("Torso", hit_times, [(0.0, 0.0, 0.0), (-0.16, 0.08, 0.0), (0.0, 0.0, 0.0)]),
+            rotation_channel("RazorhoundTail", hit_times, [(-0.42, 0.0, 0.0), (-0.28, 0.12, 0.0), (-0.42, 0.0, 0.0)]),
+        ] + ear_channels(hit_times, [0.0, 0.18, 0.0])
+          + cheek_channels(hit_times, [0.0, 0.18, 0.0])),
         animation("Feed", [
-            ("RazorhoundModel", "translation", [0.0, 0.3, 0.6], [0.0, 0.0, 0.0, 0.0, -0.12, -0.08, 0.0, 0.0, 0.0]),
-            ("Torso", "rotation", [0.0, 0.3, 0.6], quat((0.02, 0.0, 0.0)) + quat((0.16, 0.0, 0.0)) + quat((0.02, 0.0, 0.0))),
-            ("RazorhoundSnout", "translation", [0.0, 0.3, 0.6], [0.0, 0.78, -1.18, 0.0, 0.7, -1.12, 0.0, 0.78, -1.18]),
-            ("RazorhoundFang", "rotation", [0.0, 0.3, 0.6], quat((0.78, 0.0, 0.1)) + quat((0.9, 0.0, 0.1)) + quat((0.78, 0.0, 0.1))),
-            ("RazorhoundEar", "rotation", [0.0, 0.3, 0.6], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, 0.12)) + quat((0.0, 0.0, 0.0))),
-        ]),
+            ("RazorhoundModel", "translation", feed_times, [0.0, 0.0, 0.0, 0.0, -0.12, -0.08, 0.0, 0.0, 0.0]),
+            rotation_channel("Torso", feed_times, [(0.02, 0.0, 0.0), (0.16, 0.0, 0.0), (0.02, 0.0, 0.0)]),
+            ("RazorhoundSnout", "translation", feed_times, [0.0, 0.78, -1.18, 0.0, 0.7, -1.12, 0.0, 0.78, -1.18]),
+        ] + fang_channels(feed_times, [0.78, 0.90, 0.78], [0.10, 0.10, 0.10])
+          + ear_channels(feed_times, [0.0, 0.10, 0.0])),
         animation("Nest", [
-            ("RazorhoundModel", "translation", [0.0, 0.5, 1.0], [0.0, 0.0, 0.0, 0.0, 0.08, 0.0, 0.0, 0.0, 0.0]),
-            ("Torso", "rotation", [0.0, 0.5, 1.0], quat((0.025, 0.0, 0.0)) + quat((-0.025, 0.0, 0.0)) + quat((0.025, 0.0, 0.0))),
-            ("RazorhoundTail", "rotation", [0.0, 0.5, 1.0], quat((-0.42, 0.0, 0.0)) + quat((-0.56, 0.0, 0.0)) + quat((-0.42, 0.0, 0.0))),
-            ("RazorhoundEar", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, -0.1)) + quat((0.0, 0.0, 0.0))),
-            ("RazorhoundSpine", "rotation", [0.0, 0.5, 1.0], quat((0.0, 0.0, -0.18)) + quat((0.0, 0.0, -0.08)) + quat((0.0, 0.0, -0.18))),
-        ]),
-        animation("Retreat", [
-            ("RazorhoundLeg", "rotation", [0.0, 0.22, 0.44], quat((0.28, 0.0, 0.0)) + quat((-0.16, 0.0, 0.0)) + quat((0.28, 0.0, 0.0))),
-            ("Torso", "rotation", [0.0, 0.22, 0.44], quat((0.12, 0.0, 0.0)) + quat((0.22, 0.0, 0.0)) + quat((0.12, 0.0, 0.0))),
-            ("RazorhoundTail", "rotation", [0.0, 0.22, 0.44], quat((-0.42, 0.0, 0.0)) + quat((-0.64, 0.0, 0.0)) + quat((-0.42, 0.0, 0.0))),
-            ("RazorhoundEar", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, -0.2)) + quat((0.0, 0.0, 0.0))),
-            ("RazorhoundCheekPlate", "rotation", [0.0, 0.22, 0.44], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.16, 0.0)) + quat((0.0, 0.0, 0.0))),
-        ]),
+            ("RazorhoundModel", "translation", nest_times, [0.0, 0.0, 0.0, 0.0, 0.08, 0.0, 0.0, 0.0, 0.0]),
+            rotation_channel("Torso", nest_times, [(0.025, 0.0, 0.0), (-0.025, 0.0, 0.0), (0.025, 0.0, 0.0)]),
+            rotation_channel("RazorhoundTail", nest_times, [(-0.42, 0.0, 0.0), (-0.56, 0.0, 0.0), (-0.42, 0.0, 0.0)]),
+        ] + ear_channels(nest_times, [0.0, -0.10, 0.0])
+          + spine_channels(nest_times, [0.0, 0.10, 0.0])),
+        animation("Retreat", leg_channels(walk_times, 0.28, -0.16) + [
+            rotation_channel("Torso", walk_times, [(0.12, 0.0, 0.0), (0.22, 0.0, 0.0), (0.12, 0.0, 0.0)]),
+            rotation_channel("RazorhoundTail", walk_times, [(-0.42, 0.0, 0.0), (-0.64, 0.0, 0.0), (-0.42, 0.0, 0.0)]),
+        ] + ear_channels(walk_times, [0.0, -0.20, 0.0])
+          + cheek_channels(walk_times, [0.0, 0.16, 0.0])),
         animation("Death", [
-            ("RazorhoundModel", "rotation", [0.0, 0.28, 0.64], quat((0.0, 0.0, 0.0)) + quat((0.34, 0.08, 0.2)) + quat((0.78, 0.16, 0.42))),
-            ("Torso", "rotation", [0.0, 0.28, 0.64], quat((0.0, 0.0, 0.0)) + quat((0.18, 0.0, 0.0)) + quat((0.46, 0.0, 0.0))),
-            ("RazorhoundTail", "rotation", [0.0, 0.28, 0.64], quat((-0.42, 0.0, 0.0)) + quat((-0.18, 0.12, 0.0)) + quat((0.12, 0.28, 0.0))),
-            ("RazorhoundEar", "rotation", [0.0, 0.28, 0.64], quat((0.0, 0.0, 0.0)) + quat((0.0, 0.0, 0.18)) + quat((0.0, 0.0, 0.42))),
-        ]),
+            rotation_channel("RazorhoundModel", death_times, [(0.0, 0.0, 0.0), (0.34, 0.08, 0.2), (0.78, 0.16, 0.42)]),
+            rotation_channel("Torso", death_times, [(0.0, 0.0, 0.0), (0.18, 0.0, 0.0), (0.46, 0.0, 0.0)]),
+            rotation_channel("RazorhoundTail", death_times, [(-0.42, 0.0, 0.0), (-0.18, 0.12, 0.0), (0.12, 0.28, 0.0)]),
+        ] + ear_channels(death_times, [0.0, 0.18, 0.34])),
     ]
+
+    for clip in animations:
+        targets = [(channel["target"]["node"], channel["target"]["path"]) for channel in clip["channels"]]
+        if len(targets) != len(set(targets)):
+            raise RuntimeError(f"Razorhound {clip['name']} contains duplicate animation target paths")
     document = {
-        "asset": {"version": "2.0", "generator": "Project Ironwright original Razorhound asset builder"},
+        "asset": {"version": "2.0", "generator": "Project Ironwright deterministic Razorhound HD PBR builder"},
         "scene": 0, "scenes": [{"name": "Razorhound", "nodes": [0]}], "nodes": nodes, "meshes": meshes, "materials": materials,
+        "images": [
+            {"uri": TEXTURE_URIS[key], "name": "Razorhound %s" % key}
+            for key in ("shell_base", "tissue_base", "shell_normal", "tissue_normal", "shell_orm", "tissue_orm", "emissive")
+        ],
+        "textures": [{"sampler": 0, "source": index} for index in range(7)],
+        "samplers": [{"magFilter": 9729, "minFilter": 9987, "wrapS": 10497, "wrapT": 10497}],
         "accessors": builder.accessors, "bufferViews": builder.views,
         "buffers": [{"byteLength": len(builder.data), "uri": "data:application/octet-stream;base64," + base64.b64encode(builder.data).decode("ascii")}],
         "animations": animations,
-        "extras": {"ironwright_asset_id": "razorhound.predator.v1", "required_nodes": ["RazorhoundModel", "Torso", "TorsoCore", "RazorhoundSnout", "RazorhoundCheekPlate", "RazorhoundBrowGuard", "RazorhoundFang", "RazorhoundSpine", "RazorhoundTail", "ProductionAssetMarker"], "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"]},
+        "extras": {
+            "ironwright_asset_id": "razorhound.predator.v1",
+            "surface_profile": "shared_organic_pbr_v1",
+            "required_nodes": [
+                "RazorhoundModel", "Torso", "TorsoCore", "RazorhoundSnout", "RazorhoundMuzzleGuard",
+                "RazorhoundThroatLobe", "RazorhoundNostrilL", "RazorhoundNostrilR",
+                "RazorhoundCheekPlateL", "RazorhoundCheekPlateR", "RazorhoundBrowGuardL", "RazorhoundBrowGuardR",
+                "RazorhoundFangL", "RazorhoundFangR", "RazorhoundSpine0", "RazorhoundTail", "ProductionAssetMarker",
+            ],
+            "animation_clips": ["Idle", "Walk", "Attack", "Hit", "Feed", "Nest", "Retreat", "Death"],
+        },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
