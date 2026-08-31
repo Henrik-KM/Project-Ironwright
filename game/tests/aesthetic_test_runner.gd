@@ -1568,6 +1568,14 @@ func _run_all() -> void:
                 _expect(_animation_player_has_clip(relay_animation.animation_player, &"Death"), "The authored Signal Relay must expose a Death clip.")
                 _expect(_animation_player_track_count(relay_animation.animation_player, &"Death") >= 4, "Signal Relay Death must carry dish and beacon-cap collapse channels.")
         if role_names[index] == &"guardian":
+            var warden_surface := preload("res://assets/warden/warden.gltf").instantiate()
+            root.add_child(warden_surface)
+            await process_frame
+            var warden_mesh := _find_named(warden_surface, "Chassis") as MeshInstance3D
+            var warden_material := warden_mesh.mesh as ArrayMesh if warden_mesh != null else null
+            var warden_arrays := warden_material.surface_get_arrays(0) if warden_material != null and warden_material.get_surface_count() > 0 else []
+            _expect(warden_arrays is Array and warden_arrays.size() > Mesh.ARRAY_TANGENT and warden_arrays[Mesh.ARRAY_TEX_UV] != null and warden_arrays[Mesh.ARRAY_TANGENT] != null, "The authored Warden must retain UV and tangent channels for its high-definition PBR surface.")
+            warden_surface.queue_free()
             _expect(_find_named(role_samples[index], "WardenTargetingFace") != null and _find_named(role_samples[index], "WardenRecoilCollarLeft") != null, "The Warden must expose its maintained targeting and recoil hardware.")
             _expect(_find_named(role_samples[index], "WardenThermalFinLeft") != null and _find_named(role_samples[index], "WardenOpticShroud") != null and _find_named(role_samples[index], "WardenBreechClamp") != null, "The Warden must expose its third-pass thermal, optic and breech hardware.")
             _expect(_find_named(role_samples[index], "WardenCounterweight") != null, "The Warden must retain a layered counterweight silhouette.")

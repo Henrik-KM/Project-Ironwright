@@ -1,5 +1,16 @@
 # Implementation status
 
+## Focused Warden PBR attribute-preservation pass — 2026-08-31
+
+- repaired the Warden source exporter so the shared geometry builder's UV and
+  tangent channels are retained in every authored guardian mesh;
+- refreshed the generated Warden glTF and declared the material workflow in
+  its asset manifest, keeping the cannon-bearing frontline silhouette's
+  high-definition surface contract reproducible;
+- added native aesthetic coverage for imported UV/tangent channels; fresh
+  import, aesthetic, complete-game and commercial-release gates passed with
+  Dummy audio and `--quiet-audio`.
+
 ## Focused causal collapse-preparation readout — 2026-08-31
 
 - extended the post-collapse report with the selected machine doctrine and
