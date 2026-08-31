@@ -569,7 +569,7 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     await process_frame
     _expect(world.operations_hud.selection_label.text == "DEN FÖRSTA GEMENSAMMA LASTEN" and "bärgningsgruppen" in world.operations_hud.description_label.text and "DET FÖRSTA BÄRGNINGSNÄTVERKET" in world.operations_hud.requirements_label.text, "Swedish Town Archive must localize the first autonomous salvage witness on the actual archive surface.")
     world.operations_hud.close()
-    service.set_locale(&"en")
+    service.set_locale(&"de")
     world.operations_hud.open_archive([{
         "id": "thread.civic_afterimage",
         "kind": "story_thread",
