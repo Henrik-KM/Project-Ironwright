@@ -632,7 +632,10 @@ func _nodes_with_prefix(root: Node, prefix: String) -> Array[Node3D]:
             prefix_cache_child_count = root_3d.get_child_count()
         var cached: Variant = prefix_nodes.get(prefix, null)
         if cached is Array:
-            _register_animated_nodes(cached as Array[Node3D])
+            # Cached prefix arrays were registered when they were built. Do
+            # not repeat the per-node instance-ID dictionary walk on every
+            # animation tick; cache invalidation clears both structures when
+            # an imported presentation subtree changes.
             return cached as Array[Node3D]
     var result: Array[Node3D] = []
     _collect_nodes_with_prefix(root, prefix, result)

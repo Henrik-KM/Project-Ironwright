@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Active animation cache hot-path pass
+
+The active presentation animator no longer repeats instance-ID registration
+walks for prefix arrays that are already cached. Imported-model cache
+invalidation, authored animation, procedural motion and reduced-detail
+handoffs are unchanged. The 192-actor release benchmark measured 59.53 FPS in
+the verified pass; all runtime checks used Godot Dummy audio and
+`--quiet-audio`, with no physical speakers used.
+
 ## 2026-08-31 — World-landmark PBR attribute preservation
 
 The authored landmark exporters now retain UV and tangent channels from the

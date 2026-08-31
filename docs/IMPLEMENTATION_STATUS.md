@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused active-animation cache hot-path pass — 2026-08-31
+
+- removed redundant per-frame re-registration of already-cached presentation
+  node prefixes in `ProceduralAnimator3D`;
+- kept cache invalidation, imported-subtree promotion, animation timing and
+  reduced-detail behavior unchanged;
+- the 192-actor release benchmark measured 59.53 FPS in the verified pass,
+  while intelligence, complete-game and silent Dummy-audio gates remained
+  green.
+
 ## Focused world-landmark PBR attribute pass — 2026-08-31
 
 - repaired the eleven authored world-landmark exporters that were discarding
