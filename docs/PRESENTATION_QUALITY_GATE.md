@@ -1,5 +1,14 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Autonomous outpost shelter PBR attribute preservation
+
+The authored outpost shelter exporter now retains UV and tangent channels from
+the shared mesh builder across its foundation, shelter, roof, service and
+status hardware. The regenerated fixed-site shell preserves the high-definition
+material-detail path without changing outpost sockets, collision or operation;
+native import and aesthetic, complete-game and release checks passed with Godot
+Dummy audio and `--quiet-audio`, with no physical speakers used.
+
 ## 2026-08-31 — Civic wreck PBR attribute preservation
 
 The authored central vehicle-wreck exporter now retains UV and tangent channels

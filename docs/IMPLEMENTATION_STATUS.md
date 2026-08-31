@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused autonomous-outpost PBR attribute pass — 2026-08-31
+
+- repaired the authored outpost shelter exporter so the shared mesh builder's
+  UV and tangent channels survive across every fixed-site shelter mesh;
+- refreshed the generated outpost glTF and declared its shared high-definition
+  material workflow in the asset manifest;
+- added imported-channel aesthetic coverage and verified deterministic source
+  regeneration, fresh import, complete-game and commercial-release gates with
+  Dummy audio and `--quiet-audio`.
+
 ## Focused civic-wreck PBR attribute pass — 2026-08-31
 
 - repaired the authored central vehicle-wreck exporter so the shared mesh

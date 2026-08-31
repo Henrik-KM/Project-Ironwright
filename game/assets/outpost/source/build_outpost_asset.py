@@ -33,9 +33,11 @@ def build() -> None:
     ]
     meshes: list[dict] = []
 
-    def mesh(name: str, geometry: tuple[int, int, int, int]) -> int:
-        position, normal, indices, material = geometry
-        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal}, "indices": indices, "material": material}]})
+    def mesh(name: str, geometry: tuple[int, int, int, int, int, int]) -> int:
+        # Keep the shared builder's UV and tangent channels on every authored
+        # shelter surface so imported PBR materials retain their relief.
+        position, normal, uv, tangent, indices, material = geometry
+        meshes.append({"name": name, "primitives": [{"attributes": {"POSITION": position, "NORMAL": normal, "TEXCOORD_0": uv, "TANGENT": tangent}, "indices": indices, "material": material}]})
         return len(meshes) - 1
 
     def node(name: str, mesh_id: int | None = None, translation: tuple[float, float, float] | None = None, children: list[int] | None = None, extras: dict | None = None) -> dict:

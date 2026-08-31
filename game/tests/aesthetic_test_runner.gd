@@ -1753,6 +1753,7 @@ func _run_all() -> void:
             var shell_arrays := (shell_core.mesh as ArrayMesh).surface_get_arrays(0)
             if shell_arrays.size() > Mesh.ARRAY_VERTEX:
                 shell_vertices = shell_arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array
+            _expect(shell_arrays.size() > Mesh.ARRAY_TANGENT and shell_arrays[Mesh.ARRAY_TEX_UV] != null and shell_arrays[Mesh.ARRAY_TANGENT] != null, "The authored outpost shelter core must retain UV and tangent channels for its high-definition PBR surface.")
         _expect(shell_vertices.size() > 24, "The authored outpost shelter core must use chamfered high-definition geometry rather than a flat six-face box.")
         _expect(_find_named(sample, "TierFrame1") != null and _find_named(sample, "TierFrame2") != null and _find_named(sample, "TierFrame3") != null, "Tier 3 outposts must expose three stable structural frames.")
         _expect(_find_named(sample, "TierFrame1Deck") != null and _find_named(sample, "TierFrame3Deck") != null and _find_named(sample, "TierFrame2DeckInset") != null, "Tier 3 outposts must expose recessed structural decks rather than empty repeated frames.")
