@@ -7325,3 +7325,12 @@ grounding layer makes the evolved tier frames read as one anchored autonomous
 structure at review distance while preserving role behavior, operation state,
 collision, navigation and fixed-site ownership. Native review used Dummy
 audio with `--quiet-audio`; no physical speakers were used.
+
+## Focused Municipal Glasshouse foundation pass — 2026-08-31
+
+The authored Municipal Glasshouse now carries a continuous low plinth and
+four perimeter service rails beneath its glazed frame. The added manufactured
+edge restores a deliberate ground contact at approach distance while
+preserving the cultivation beds, climate hardware, service trolley and region
+simulation contracts. Native review used Dummy audio with `--quiet-audio`; no
+physical speakers were used.
