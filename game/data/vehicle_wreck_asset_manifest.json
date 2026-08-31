@@ -15,6 +15,8 @@
     "VehicleWindshield",
     "VehicleRearWindow",
     "VehicleFrontBumper",
+    "VehicleHeadlampL",
+    "VehicleFrontGrilleUpper",
     "VehicleServicePanel",
     "VehicleStatusLens",
     "VehicleAxle00",

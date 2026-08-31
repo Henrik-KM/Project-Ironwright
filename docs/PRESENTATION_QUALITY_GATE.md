@@ -1,5 +1,15 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Civic wreck front-face pass
+
+The authored civic vehicle wreck now has paired cyan service lamps and a
+recessed twin-bar front grille. These small manufactured cues make the central
+town's damaged transport shell read as a vehicle rather than a generic
+rounded prop, while preserving its service panel, status lens, damage shards,
+collision and route contracts. This is presentation-only. Fresh import and
+live review use Godot Dummy audio with `--quiet-audio`; no physical speakers
+are used.
+
 ## 2026-08-31 — Opening salvage service-hardware pass
 
 The first salvage wreck now carries a warm cabin service grip and paired

@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused civic wreck front-face pass — 2026-08-31
+
+- added paired service lamps and a recessed twin-bar grille to the authored
+  civic vehicle wrecks, improving the readable front silhouette in the central
+  town without changing collision, navigation or simulation state;
+- regenerated the source-owned high-definition glTF and extended the stable
+  asset contract and aesthetic regression coverage;
+- verified fresh import, native aesthetic/complete-game gates and the exact
+  opening world through the silent Dummy-audio runtime.
+
 ## Focused opening salvage readability pass — 2026-08-31
 
 - added an authored cabin service grip and paired access latches to the first
