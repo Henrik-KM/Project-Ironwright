@@ -7351,3 +7351,13 @@ line endings, keeping the authored runtime hash stable across Windows and
 Unix-like checkouts. The corrected manifest and builder pass repository,
 current-repository, aesthetic, release and full-game validation in a fresh
 Windows worktree.
+
+## Focused early-organic gallery grounding milestone — 2026-08-31
+
+The exact presentation-review gallery now gives the rear early-organic row a
+shallow grounded display shelf and enough vertical separation to keep complete
+family silhouettes visible instead of leaving only isolated upper anatomy
+pieces above the near row. The review-only lens remains within the existing
+54.5-degree release bound; gameplay transforms, collision, navigation,
+animation and ecology are unchanged. The exact Windows frame was live-reviewed
+silently with Dummy audio and `--quiet-audio`.

@@ -2304,6 +2304,13 @@ func _create_presentation_review_stage() -> void:
 	# black backdrop made the darker organic shells collapse into one value band.
 	_add_presentation_review_box("ReviewFloor", Vector3(30.0, 0.35, 13.0), Vector3(0.0, -0.25, 0.0), Color("243744"), 0.44, 0.46)
 	_add_presentation_review_box("ReviewBackdrop", Vector3(30.0, 11.0, 0.3), Vector3(0.0, 5.0, -3.8), Color("162936"), 0.05, 0.78)
+	# Give the rear early-organic row a shallow museum plinth. The former flat
+	# floor let the nearer row occlude most of the rear bodies, leaving only
+	# isolated crowns and sacs visible in the exact review frame. This fixture is
+	# presentation-only; gameplay roots, scale, collision and navigation remain
+	# unchanged.
+	_add_presentation_review_box("ReviewEarlyRearTierBase", Vector3(13.2, 0.45, 0.34), Vector3(0.0, 0.225, -3.65), Color("1d3542"), 0.58, 0.42)
+	_add_presentation_review_box("ReviewEarlyRearTierTop", Vector3(12.4, 0.25, 0.28), Vector3(0.0, 0.575, -3.65), Color("294957"), 0.64, 0.36)
 	var front_fill := OmniLight3D.new()
 	front_fill.name = "ReviewFrontFill"
 	front_fill.position = Vector3(0.0, 6.2, 8.0)
@@ -2466,6 +2473,11 @@ func _show_presentation_review_page(page: int) -> void:
 				var early_positions := [-4.0, 0.0, 4.0] if row_index == 0 else [-4.3, -1.45, 1.45, 4.3]
 				centered_x = early_positions[row_position]
 			var row_z := 1.45 if row_index == 0 else -3.35
+			var row_y := 0.0
+			if presentation_review_page == 1 and row_index == 1:
+				# The rear tier lifts the second row just enough to clear the near
+				# silhouettes while preserving an obviously grounded presentation.
+				row_y = 0.62
 			if presentation_review_page == 0:
 				row_z = 0.7 if row_index == 0 else -2.5
 			elif outpost_page:
@@ -2485,7 +2497,7 @@ func _show_presentation_review_page(page: int) -> void:
 			var review_model_root := actor.get_node_or_null("OrganicModel") as Node3D
 			if review_model_root != null:
 				review_model_root.scale = Vector3.ONE * _presentation_review_model_scale(actor)
-			actor.position = Vector3(centered_x, 0.0, row_z)
+			actor.position = Vector3(centered_x, row_y, row_z)
 			if outpost_page:
 				# Break the four role shelters out of a rigid two-by-two grid while
 				# preserving the authored front-facing presentation basis. The shelter
@@ -3134,7 +3146,10 @@ func _update_presentation_review_camera(delta: float) -> void:
 	# that page a slightly wider gallery lens so the outer families keep their
 	# full silhouette at the compact review window without shrinking the
 	# authored models or changing their gameplay scale.
-	var core_review_fov := 54.0 if presentation_review_page == 1 else (46.0 if presentation_review_page >= 1 else 43.0)
+	# The broadest early wing shell reaches beyond the fitted outer slot at the
+	# old lens. Widen only this review camera so the complete silhouette remains
+	# inside the frame without shrinking the authored model.
+	var core_review_fov := 54.5 if presentation_review_page == 1 else (46.0 if presentation_review_page >= 1 else 43.0)
 	var outpost_page := presentation_review_page == 3 + PRESENTATION_REVIEW_REGIONS.size()
 	camera.fov = 48.0 if outpost_page else (44.0 if presentation_review_page == 13 else (46.0 if presentation_review_page == 12 else (48.0 if presentation_review_page == 11 else (52.0 if presentation_review_page >= 3 else core_review_fov))))
 	camera.look_at(target, Vector3.UP)
@@ -3148,9 +3163,14 @@ func _set_presentation_review_stage_for_page(is_region_page: bool) -> void:
 	var backdrop := presentation_review_stage.get_node_or_null("ReviewBackdrop") as Node3D
 	var amber_band := presentation_review_stage.get_node_or_null("ReviewAmberBand") as Node3D
 	var teal_band := presentation_review_stage.get_node_or_null("ReviewTealBand") as Node3D
+	var early_rear_tier_base := presentation_review_stage.get_node_or_null("ReviewEarlyRearTierBase") as Node3D
+	var early_rear_tier_top := presentation_review_stage.get_node_or_null("ReviewEarlyRearTierTop") as Node3D
 	for node in [floor, backdrop, amber_band, teal_band]:
 		if node != null:
 			node.visible = not is_region_page
+	for node in [early_rear_tier_base, early_rear_tier_top]:
+		if node != null:
+			node.visible = not is_region_page and presentation_review_page == 1
 	var front_fill := presentation_review_stage.get_node_or_null("ReviewFrontFill") as OmniLight3D
 	var warm_light := presentation_review_stage.get_node_or_null("ReviewWarmLight") as OmniLight3D
 	var cool_light := presentation_review_stage.get_node_or_null("ReviewCoolLight") as OmniLight3D

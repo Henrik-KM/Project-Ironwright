@@ -1223,6 +1223,10 @@ func _test_presentation_review(world: IronwrightReleaseWorld3D) -> void:
         var fourth_early_actor := early_review_page[3] as Node3D
         _expect(third_early_actor != null and fourth_early_actor != null and third_early_actor.position.z > fourth_early_actor.position.z + 3.0, "Early organic presentation must separate its broad near row from the rear row so wing and limb silhouettes remain judgeable.")
         _expect(is_equal_approx(first_early_actor.position.x, -4.0) and is_equal_approx(third_early_actor.position.x, 4.0), "Early organic presentation must use the fitted triangular near-row composition.")
+        var early_rear_tier_base := world.presentation_review_stage.get_node_or_null("ReviewEarlyRearTierBase") as Node3D
+        var early_rear_tier_top := world.presentation_review_stage.get_node_or_null("ReviewEarlyRearTierTop") as Node3D
+        _expect(early_rear_tier_base != null and early_rear_tier_top != null and early_rear_tier_base.visible and early_rear_tier_top.visible, "Early organic presentation must expose a grounded rear display tier so the back-row anatomy is not visually occluded.")
+        _expect(fourth_early_actor.position.y >= 0.6 and fourth_early_actor.position.y <= 0.7, "Early organic rear-row actors must remain grounded on the raised presentation tier.")
     await world._show_presentation_review_page(2)
     await process_frame
     var late_review_page: Array = world.presentation_review_pages[2]
