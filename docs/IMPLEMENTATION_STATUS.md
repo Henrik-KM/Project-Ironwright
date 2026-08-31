@@ -7307,3 +7307,12 @@ architectural footprint at approach distance while leaving collision,
 navigation, simulation ownership and the suspended signal-pylon arrangement
 unchanged. The exact native presentation review was captured silently with
 Godot Dummy audio and `--quiet-audio`; no physical speakers were used.
+
+## Focused North Ruins archive facade pass — 2026-08-31
+
+The authored civic archive now carries a restrained service band, four
+vertical facade ribs and a central archive identity seal. These details break
+up the broad approach-facing wall into readable manufactured layers while
+preserving the vault, story witness, collision and archive progression
+contracts. The exact native review was performed silently with Dummy audio;
+no physical speakers were used.

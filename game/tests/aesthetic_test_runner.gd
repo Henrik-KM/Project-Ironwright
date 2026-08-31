@@ -702,6 +702,7 @@ func _run_all() -> void:
             if landmark.region_kind == &"archive":
                 _expect(landmark.find_child("ArchiveCivicFacade", true, false) != null, "North Ruins must expose an authored civic archive facade.")
                 _expect(landmark.find_child("ArchiveFacadeCornice", true, false) != null and landmark.find_child("ArchiveFacadePilasterL", true, false) != null, "North Ruins must expose layered facade edge treatment and civic pilaster detail.")
+                _expect(landmark.find_child("ArchiveFacadeServiceBand", true, false) != null and landmark.find_child("ArchiveFacadeServiceRib0", true, false) != null and landmark.find_child("ArchiveFacadeArchiveSeal", true, false) != null, "North Ruins must expose layered facade service segmentation and a central archive identity seal.")
                 _expect(landmark.find_child("ArchiveVaultInset", true, false) != null, "North Ruins must expose a readable recessed vault surround.")
                 _expect(landmark.find_child("ArchiveVaultDoor", true, false) != null, "North Ruins must expose a readable archive vault entrance.")
                 _expect(landmark.find_child("ArchiveRoofBeacon", true, false) != null, "North Ruins must expose a surviving archive beacon silhouette.")
@@ -2514,7 +2515,10 @@ func _await_renderer_quiescence(world: Node) -> void:
     # contract before polling any remaining threaded package handoffs.
     await create_timer(0.25, true, false, true).timeout
     var settled := false
-    for _attempt in range(100):
+    # A complete fresh world can legitimately queue tens of thousands of
+    # imported meshes. The queue is bounded per frame, so allow enough real
+    # time for the known worst-case batch plus one deferred flush retry.
+    for _attempt in range(240):
         var pending := false
         for raw_landmark in world.find_children("*", "RegionLandmark3D", true, false):
             var landmark := raw_landmark as RegionLandmark3D
