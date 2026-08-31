@@ -3486,3 +3486,11 @@ at approach distance instead of one broad blank plane. This is presentation
 geometry only; the vault entrance, story archive and region contracts are
 unchanged. Native review used Godot Dummy audio and `--quiet-audio`; no
 physical speakers were used.
+
+## Focused autonomous outpost foundation pass — 2026-08-31
+
+The outpost gallery now shows a broader foundation apron and service collar
+under the tiered shelter stacks, improving the grounded load-path read without
+adding a new structure or management surface. Exact native review passed at
+1280x720 with Godot Dummy audio and `--quiet-audio`; no physical speakers were
+used.
