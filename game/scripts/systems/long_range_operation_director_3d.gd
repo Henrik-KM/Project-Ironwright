@@ -323,6 +323,8 @@ func _with_route_preview(entry: Dictionary) -> Dictionary:
     var region_id := StringName(str(preview.get("region_id", "region.heartforge_district")))
     var route_variant := _preferred_route_variant(region_id)
     var route := _route_for_entry(preview, route_variant)
+    var route_memory_value: Variant = route_memory.get(String(region_id), {})
+    var remembered_blockages := _route_block_positions(route_memory_value as Dictionary) if route_memory_value is Dictionary else []
     var route_distance := 0.0
     for index in range(1, route.size()):
         route_distance += route[index - 1].distance_to(route[index])
@@ -333,11 +335,14 @@ func _with_route_preview(entry: Dictionary) -> Dictionary:
     preview["route_waypoints"] = waypoint_count
     preview["route_distance"] = route_distance
     preview["route_confidence"] = _route_confidence(region_id)
-    preview["route_brief"] = "Route: %s · %d waypoint%s · %d m" % [
+    preview["route_memory_disruptions"] = remembered_blockages.size()
+    var memory_suffix := " · %d remembered blockage%s" % [remembered_blockages.size(), "" if remembered_blockages.size() == 1 else "s"] if not remembered_blockages.is_empty() else ""
+    preview["route_brief"] = "Route: %s · %d waypoint%s · %d m%s" % [
         route_label,
         waypoint_count,
         "" if waypoint_count == 1 else "s",
         int(round(route_distance)),
+        memory_suffix,
     ]
     return preview
 

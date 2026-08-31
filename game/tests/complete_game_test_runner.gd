@@ -211,6 +211,7 @@ func _run_all() -> void:
     _expect(int(learned_route_preview.get("route_variant", 0)) == 2, "An operation preview must surface the clearest route-memory alternate selected for the West Grid.")
     _expect(StringName(str(learned_route_preview.get("route_confidence", ""))) == &"guarded", "A route with one remembered disruption must expose a guarded confidence readout before authorization.")
     _expect(str(learned_route_preview.get("route_brief", "")).contains("rail-yard cut-through") and str(learned_route_preview.get("route_brief", "")).contains("waypoint"), "An operation preview must explain the remembered street route and bounded waypoint count.")
+    _expect(int(learned_route_preview.get("route_memory_disruptions", 0)) == 1 and str(learned_route_preview.get("route_brief", "")).contains("remembered blockage"), "An operation preview must explain the physical disruption history that shaped its autonomous route.")
     _expect(float(learned_route_preview.get("route_distance", 0.0)) > 0.0, "An operation preview must expose a non-zero physical travel distance.")
     var primary_west_route := world.region_director.route_from_heartforge(&"region.west_grid", world.heartforge.global_position)
     var alternate_west_route := world.region_director.route_from_heartforge_variant(&"region.west_grid", world.heartforge.global_position, 1)
