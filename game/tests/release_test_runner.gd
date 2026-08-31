@@ -618,6 +618,7 @@ func _test_localization(world: IronwrightReleaseWorld3D) -> void:
     _expect(world.operations_hud.status_label.text.begins_with("Kein Endprotokoll aktiv"), "German final-protocol status must localize the inactive state.")
     _expect(world._localized_endgame_status_summary("Severance · 20%") == "Trennung · 20%", "German active final-protocol status must localize the protocol name in world objective and operation updates.")
     _expect(world._localized_endgame_status_summary("Severance completed") == "Trennung abgeschlossen", "German completed final-protocol status must localize the protocol name in world objective and operation updates.")
+    _expect(world._localized_endgame_failure_reason("The Heartforge could not hold the final convergence long enough to complete the protocol.") == "Die Herzschmiede konnte die letzte Konvergenz nicht lange genug halten, um das Protokoll abzuschließen.", "German final-protocol failure reasons must remain attributable instead of falling back to English prose.")
     world._on_endgame_started(&"protocol.severance", "Severance")
     _expect(world.hud.notification_label.text.contains("TRENNUNG"), "German final-protocol convergence notification must localize the protocol name.")
     world.operations_hud.close()

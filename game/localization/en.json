@@ -725,6 +725,8 @@
     "notification.final_protocol.unavailable": "FINAL PROTOCOL UNAVAILABLE · CHECK RESEARCH, COMPONENTS, OUTPOSTS, SCRAP, CORES AND ACTIVE OPERATIONS",
     "notification.final_protocol.converging": "FINAL PROTOCOL · {0} · ORGANIC PRESSURE IS CONVERGING",
     "notification.final_protocol.failed": "FINAL PROTOCOL FAILED · {0}",
+    "notification.final_protocol.failure.remote_support": "The remote relay network lost too many functioning outposts before the final signal could be severed.",
+    "notification.final_protocol.failure.homefront": "The Heartforge could not hold the final convergence long enough to complete the protocol.",
     "notification.continuity.consumed": "DISTRIBUTED CONTINUITY CONSUMED · HEARTFORGE RECOVERED AT 48% · {0} SCRAP LOST",
     "notification.region.discovered": "REGION DISCOVERED · {0} · PHYSICAL ROUTES NOW KNOWN",
     "notification.story.thread_advanced": "STORY THREAD ADVANCED · {0} · {1} CLUES\n{2}",

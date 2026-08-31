@@ -1,5 +1,15 @@
 # Implementation status
 
+## Focused endgame failure-report localization milestone — 2026-08-31
+
+- localized the two canonical causal final-protocol failure reasons for the
+  English, German and Swedish release shells instead of appending raw English
+  diagnostics to a translated failure notification;
+- retained the existing failure causes and protocol flow while adding release
+  coverage for German attribution;
+- verified the exact endgame review reaches first victory silently through
+  Godot Dummy audio with `--quiet-audio`.
+
 ## Focused ecology recap readability milestone — 2026-08-31
 
 - extended the compact command recap's regional ecology summary to expose the

@@ -725,6 +725,8 @@
     "notification.final_protocol.unavailable": "ENDPROTOKOLL NICHT VERFÜGBAR · FORSCHUNG, KOMPONENTEN, AUSSENPOSTEN, SCHROTT, KERNE UND AKTIVE OPERATIONEN PRÜFEN",
     "notification.final_protocol.converging": "ENDPROTOKOLL · {0} · ORGANISCHER DRUCK KONVERGIERT",
     "notification.final_protocol.failed": "ENDPROTOKOLL FEHLGESCHLAGEN · {0}",
+    "notification.final_protocol.failure.remote_support": "Das entfernte Relaisnetz verlor zu viele funktionsfähige Außenposten, bevor das Endsignal getrennt werden konnte.",
+    "notification.final_protocol.failure.homefront": "Die Herzschmiede konnte die letzte Konvergenz nicht lange genug halten, um das Protokoll abzuschließen.",
     "notification.continuity.consumed": "VERTEILTE KONTINUITÄT VERBRAUCHT · HERZSCHMIEDE AUF 48% WIEDERHERGESTELLT · {0} SCHROTT VERLOREN",
     "notification.region.discovered": "REGION ENTDECKT · {0} · PHYSISCHE ROUTEN SIND NUN BEKANNT",
     "notification.story.thread_advanced": "GESCHICHTSFADEN FORTGESCHRITTEN · {0} · {1} HINWEISE\n{2}",

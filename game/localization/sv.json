@@ -725,6 +725,8 @@
     "notification.final_protocol.unavailable": "SLUTPROTOKOLL OTILLGÄNGLIGT · KONTROLLERA FORSKNING, KOMPONENTER, UTPOSTER, SKROT, KÄRNOR OCH AKTIVA OPERATIONER",
     "notification.final_protocol.converging": "SLUTPROTOKOLL · {0} · ORGANISKT TRYCK KONVERGERAR",
     "notification.final_protocol.failed": "SLUTPROTOKOLL MISSLYCKADES · {0}",
+    "notification.final_protocol.failure.remote_support": "Det avlägsna relänätet förlorade för många fungerande utposter innan slutsignalen kunde brytas.",
+    "notification.final_protocol.failure.homefront": "Hjärtsmedjan kunde inte hålla den slutliga konvergensen tillräckligt länge för att slutföra protokollet.",
     "notification.continuity.consumed": "DISTRIBUERAD KONTINUITET FÖRBRUKAD · HJÄRTSMEDJAN ÅTERSTÄLLD TILL 48% · {0} SKROT FÖRLORAT",
     "notification.region.discovered": "REGION UPPTÄCKT · {0} · FYSISKA RUTTER ÄR NU KÄNDA",
     "notification.story.thread_advanced": "BERÄTTELSETRÅD FRAMSKJUTEN · {0} · {1} LEDTRÅDAR\n{2}",

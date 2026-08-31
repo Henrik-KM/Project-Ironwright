@@ -1229,7 +1229,15 @@ func _on_endgame_completed(protocol_id: StringName, display_name: String, ending
 
 
 func _on_endgame_failed(protocol_id: StringName, reason: String) -> void:
-    hud.push_notification(_localized_text("notification.final_protocol.failed", "FINAL PROTOCOL FAILED · {0}", [reason.to_upper()]))
+    hud.push_notification(_localized_text("notification.final_protocol.failed", "FINAL PROTOCOL FAILED · {0}", [_localized_endgame_failure_reason(reason).to_upper()]))
+
+
+func _localized_endgame_failure_reason(reason: String) -> String:
+    if reason == "The remote relay network lost too many functioning outposts before the final signal could be severed.":
+        return _localized_text("notification.final_protocol.failure.remote_support", "The remote relay network lost too many functioning outposts before the final signal could be severed.")
+    if reason == "The Heartforge could not hold the final convergence long enough to complete the protocol.":
+        return _localized_text("notification.final_protocol.failure.homefront", "The Heartforge could not hold the final convergence long enough to complete the protocol.")
+    return reason
 
 
 func _functioning_outpost_count() -> int:
