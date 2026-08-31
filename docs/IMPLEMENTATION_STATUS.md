@@ -1,5 +1,17 @@
 # Implementation status
 
+## Focused Engineer construction-silhouette pass — 2026-08-31
+
+- added paired articulated cradle braces and a cyan forge status strip to the
+  authored Engineer glTF, strengthening its construction role at roster and
+  Heartforge approach distance;
+- repaired the shared-geometry tuple contract in the Engineer source builder
+  so the regenerated asset preserves UVs and tangents and remains byte-stable;
+- added stable-node aesthetic coverage and included an Engineer in the exact
+  late-run review fixture for a real in-world visual check;
+- fresh import, aesthetic, complete-game, repository and commercial-release
+  gates passed with Dummy audio and `--quiet-audio`.
+
 ## Focused persistent district-recovery witness — 2026-08-31
 
 - added a bounded `MachineRecoveryRead` presentation layer to every discovered

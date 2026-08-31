@@ -1,5 +1,17 @@
 # Project Ironwright — Presentation Quality Gate
 
+## 2026-08-31 — Engineer construction silhouette
+
+The authored Engineer now carries paired articulated braces around its material
+cradle and a compact cyan forge-status strip across the service face. These
+details reinforce the machine's construction identity without changing its
+collision envelope, role behaviour, or player workload. The exact late-run
+release fixture was reviewed at 1280×720 with the Engineer standing among the
+Heartforge machine society; the updated silhouette, forge hardware and
+status-light separation remained readable. The review used Godot Dummy audio
+with `--quiet-audio`; no physical speakers were used. Broader human
+production-art and target-hardware acceptance remain open.
+
 ## 2026-08-31 — Persistent district-recovery witness
 
 Each non-sanctuary region now gains a small framed machine-recovery plate in
