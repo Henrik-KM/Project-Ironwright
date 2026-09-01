@@ -2063,7 +2063,11 @@ func _test_spatial_and_performance(world: IronwrightReleaseWorld3D) -> void:
     var near_enemy := world._spawn_enemy(world.player.global_position + Vector3(6.0, 0.0, 0.0), &"roofleaper") as OrganicEnemyRelease3D
     var medium_enemy := world._spawn_enemy(world.player.global_position + Vector3(80.0, 0.0, 0.0), &"glassmoth") as OrganicEnemyRelease3D
     var medium_robot := world._spawn_robot(&"scout", world.player.global_position + Vector3(82.0, 0.0, 0.0), 1) as RobotUnitRelease3D
-    var far_enemy := world._spawn_enemy(world.player.global_position + Vector3(260.0, 0.0, 0.0), &"rootweaver") as OrganicEnemyRelease3D
+    # Keep the reduced-detail fixture outside the medium band but inside the
+    # authored world envelope. Positions beyond the world envelope are valid
+    # for remote simulation, but the release-world cleanup may legitimately
+    # retire them before this presentation-only assertion samples the state.
+    var far_enemy := world._spawn_enemy(world.player.global_position + Vector3(140.0, 0.0, 0.0), &"rootweaver") as OrganicEnemyRelease3D
     # These are inert fixtures: the performance gate must inspect LOD state,
     # not allow live combat or ecology cleanup to remove a sample mid-check.
     for fixture in [near_enemy, medium_enemy, medium_robot, far_enemy]:
