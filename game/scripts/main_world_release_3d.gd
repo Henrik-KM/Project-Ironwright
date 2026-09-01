@@ -2542,13 +2542,13 @@ func _show_presentation_review_page(page: int) -> void:
 			# This is review-fixture composition only; gameplay camera, actor scale,
 			# collision, LOD and tactical spacing remain unchanged.
 			var late_organic_roster := presentation_review_page == 2
-			presentation_review_camera_target = Vector3(0.0, 0.55 if late_organic_roster else 1.22, -0.85 if late_organic_roster else core_target_depth)
+			presentation_review_camera_target = Vector3(0.0, 0.72 if late_organic_roster else 1.22, -0.85 if late_organic_roster else core_target_depth)
 			# The early families already have a fitted wide lens and bounded row
 			# positions. Move that review-only camera slightly closer so the broad
 			# shells use the compact frame instead of leaving a large unused sky band;
 			# keep the late roster's established distance because its folded masses
 			# already fill the frame cleanly.
-			presentation_review_camera_desired = Vector3(0.0, 3.65 if late_organic_roster else 4.05, 10.8 if late_organic_roster else 8.75)
+			presentation_review_camera_desired = Vector3(0.0, 3.55 if late_organic_roster else 4.05, 9.6 if late_organic_roster else 8.75)
 		else:
 			presentation_review_camera_target = Vector3(0.0, core_target_height, core_target_depth)
 			presentation_review_camera_desired = Vector3(0.0, 6.15, 15.8) if outpost_page else (Vector3(0.0, 4.45, 12.8) if presentation_review_page >= 1 else Vector3(0.0, 4.8, 12.5))
