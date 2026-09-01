@@ -390,7 +390,10 @@ func _refresh_visuals() -> void:
     var panel := ModelKit3D.material(Color("596568"), 0.76, 0.38)
     var panel_accent := ModelKit3D.material(Color("a6b5b3"), 0.64, 0.32)
     var frame_rust := ModelKit3D.material(Color("654235"), 0.42, 0.72)
-    var frame_rail := ModelKit3D.material(Color("49343a"), 0.24, 0.88)
+    # Secondary tier rails should anchor the shelter without competing with
+    # the authored shell and role signature. Keep the required rail sockets,
+    # but give them a darker, less reflective manufactured finish.
+    var frame_rail := ModelKit3D.material(Color("342d32"), 0.38, 0.62)
     var destroyed_edge := ModelKit3D.material(Color("2a3435"), 0.72, 0.56)
     var destroyed_rubble := ModelKit3D.material(Color("744b36"), 0.42, 0.78)
     var role_color := Color("6bd8dd")
@@ -623,10 +626,10 @@ func _refresh_visuals() -> void:
         frame.position = Vector3(0.0, y, 0.0)
         _model_root.add_child(frame)
         var frame_size := 3.1 + float(tier_index) * 0.25
-        ModelKit3D.add_beveled_box(frame, Vector3(frame_size, 0.16, 0.22), Vector3(0.0, 0.0, -frame_size * 0.5), frame_rail, Vector3.ZERO, "%sNorthRail" % frame_name, 0.28)
-        ModelKit3D.add_beveled_box(frame, Vector3(frame_size, 0.16, 0.22), Vector3(0.0, 0.0, frame_size * 0.5), frame_rail, Vector3.ZERO, "%sSouthRail" % frame_name, 0.28)
-        ModelKit3D.add_beveled_box(frame, Vector3(0.22, 0.16, frame_size - 0.42), Vector3(-frame_size * 0.5, 0.0, 0.0), frame_rail, Vector3.ZERO, "%sWestRail" % frame_name, 0.28)
-        ModelKit3D.add_beveled_box(frame, Vector3(0.22, 0.16, frame_size - 0.42), Vector3(frame_size * 0.5, 0.0, 0.0), frame_rail, Vector3.ZERO, "%sEastRail" % frame_name, 0.28)
+        ModelKit3D.add_beveled_box(frame, Vector3(frame_size, 0.12, 0.16), Vector3(0.0, 0.0, -frame_size * 0.5), frame_rail, Vector3.ZERO, "%sNorthRail" % frame_name, 0.2)
+        ModelKit3D.add_beveled_box(frame, Vector3(frame_size, 0.12, 0.16), Vector3(0.0, 0.0, frame_size * 0.5), frame_rail, Vector3.ZERO, "%sSouthRail" % frame_name, 0.2)
+        ModelKit3D.add_beveled_box(frame, Vector3(0.16, 0.12, frame_size - 0.42), Vector3(-frame_size * 0.5, 0.0, 0.0), frame_rail, Vector3.ZERO, "%sWestRail" % frame_name, 0.2)
+        ModelKit3D.add_beveled_box(frame, Vector3(0.16, 0.12, frame_size - 0.42), Vector3(frame_size * 0.5, 0.0, 0.0), frame_rail, Vector3.ZERO, "%sEastRail" % frame_name, 0.2)
         ModelKit3D.add_beveled_box(
             frame,
             Vector3(frame_size - 0.46, 0.07, frame_size - 0.46),
