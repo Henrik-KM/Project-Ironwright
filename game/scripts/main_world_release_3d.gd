@@ -941,10 +941,10 @@ func _has_new_world_flag() -> bool:
 
 func _has_ecology_runtime_review_flag() -> bool:
 	for argument in OS.get_cmdline_args():
-		if str(argument) == "--ecology-runtime-review":
+		if str(argument) == "--ecology-runtime-review" or str(argument).begins_with("--ecology-runtime-review-screenshot="):
 			return true
 	for argument in OS.get_cmdline_user_args():
-		if str(argument) == "--ecology-runtime-review":
+		if str(argument) == "--ecology-runtime-review" or str(argument).begins_with("--ecology-runtime-review-screenshot="):
 			return true
 	return false
 

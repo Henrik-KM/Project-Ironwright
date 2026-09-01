@@ -2,12 +2,36 @@ class_name IronwrightTieredWorld3D
 extends IronwrightReleaseWorld3D
 
 var _pending_restore_enemy_data: Array[Dictionary] = []
+var _ecology_runtime_review_capture_path: String = ""
+var _ecology_runtime_review_camera_active: bool = false
+var _ecology_runtime_review_camera_nest: Node3D
+var _ecology_runtime_review_camera_enemy: Node3D
 
 
 func _ready() -> void:
 	super._ready()
 	_disable_legacy_population_materialization()
 	run_state.log_event("Enemy escalation is population-driven. Saturated lower tiers convert reproductive capacity into rarer, more intelligent organisms.")
+
+
+func _process(delta: float) -> void:
+	super._process(delta)
+	if not _ecology_runtime_review_camera_active:
+		return
+	if camera == null or not is_instance_valid(_ecology_runtime_review_camera_nest) or not is_instance_valid(_ecology_runtime_review_camera_enemy):
+		return
+	var nest_position := _ecology_runtime_review_camera_nest.global_position
+	var enemy_position := _ecology_runtime_review_camera_enemy.global_position
+	var player_position := player.global_position
+	var center := (nest_position + enemy_position + player_position) / 3.0 + Vector3.UP * 0.7
+	var away_from_nest := player_position - nest_position
+	away_from_nest.y = 0.0
+	if away_from_nest.length_squared() <= 0.001:
+		away_from_nest = Vector3.FORWARD
+	var review_camera_position := center + Vector3.UP * 8.0 + away_from_nest.normalized() * 11.0
+	camera.global_position = review_camera_position
+	camera.look_at(center, Vector3.UP)
+	camera.fov = 48.0
 
 
 func _disable_legacy_population_materialization() -> void:
@@ -32,6 +56,7 @@ func _canonical_enemy_tier_director() -> EnemyTierProgressionDirector3D:
 
 func _start_ecology_runtime_review() -> void:
 	print("ECOLOGY_RUNTIME_REVIEW requested")
+	_ecology_runtime_review_capture_path = _ecology_runtime_review_capture_argument()
 	if not await _await_enemy_tier_bootstrap_initialized():
 		print("ECOLOGY_RUNTIME_REVIEW failed: canonical startup timeout")
 		hud.push_notification("ECOLOGY REVIEW FAILED · CANONICAL ECOLOGY STARTUP DID NOT COMPLETE")
@@ -59,6 +84,9 @@ func _start_ecology_runtime_review() -> void:
 	approach_direction.y = 0.0
 	if approach_direction.length_squared() <= 0.001:
 		approach_direction = Vector3.FORWARD
+	# Face away from the nest so the normal tactical camera looks through the
+	# Mechromancer toward the physical source and its newly born organism.
+	camera_heading = approach_direction.normalized()
 	player.global_position = review_nest.global_position + approach_direction.normalized() * 15.0
 	player.velocity = Vector3.ZERO
 	_snap_release_camera_to_subject()
@@ -77,6 +105,40 @@ func _start_ecology_runtime_review() -> void:
 		return
 	print("ECOLOGY_RUNTIME_REVIEW ready: nest=%s enemy=%s tier=%d" % [String(review_nest.get("nest_id")), String(review_enemy.name), int(review_enemy.get_meta(&"enemy_tier", 0))])
 	hud.push_notification("ECOLOGY RUNTIME REVIEW · A CAPPED ORGANISM EMERGED AT A LIVING NEST AND IS MOVING TOWARD THE DISTURBANCE · PRESS M FOR THE SINGLE ECOLOGY INTELLIGENCE PANEL")
+	if not _ecology_runtime_review_capture_path.is_empty():
+		_ecology_runtime_review_camera_nest = review_nest
+		_ecology_runtime_review_camera_enemy = review_enemy as Node3D
+		_ecology_runtime_review_camera_active = true
+		_capture_ecology_runtime_review()
+
+
+func _capture_ecology_runtime_review() -> void:
+	# Let the physical birth, camera snap, atmosphere, and LOD refresh render
+	# before capturing. This remains a silent developer review path.
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var review_image := get_viewport().get_texture().get_image()
+	var capture_error := review_image.save_png(_ecology_runtime_review_capture_path)
+	if capture_error == OK:
+		print("Ecology runtime review screenshot written to %s" % _ecology_runtime_review_capture_path)
+	else:
+		push_error("Ecology runtime review screenshot failed: %s" % capture_error)
+	_ecology_runtime_review_capture_path = ""
+	_ecology_runtime_review_camera_active = false
+	_ecology_runtime_review_camera_nest = null
+	_ecology_runtime_review_camera_enemy = null
+
+
+func _ecology_runtime_review_capture_argument() -> String:
+	var arguments: Array = OS.get_cmdline_args()
+	arguments.append_array(OS.get_cmdline_user_args())
+	for index in arguments.size():
+		var argument := str(arguments[index])
+		if argument.begins_with("--ecology-runtime-review-screenshot="):
+			return argument.get_slice("=", 1)
+		if argument == "--ecology-runtime-review-screenshot" and index + 1 < arguments.size():
+			return str(arguments[index + 1])
+	return ""
 
 
 func _spawn_enemy(position: Vector3, species: StringName) -> OrganicEnemy3D:
