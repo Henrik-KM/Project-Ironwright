@@ -672,13 +672,13 @@ func show_ending(victory: bool, detail: String, allow_continuation: bool = false
     ending_style.content_margin_top = 16.0
     ending_style.content_margin_bottom = 16.0
     ending_panel.add_theme_stylebox_override("panel", ending_style)
-    var label := _label(ending_panel, _text(title_key, title_fallback) + "\n\n" + readable_detail + "\n\n" + prompt, 19, Color("79d8dc") if victory else Color("e06b5f"))
+    var label := _label(ending_panel, _text(title_key, title_fallback) + "\n\n" + readable_detail + "\n\n" + prompt, 17, Color("79d8dc") if victory else Color("e06b5f"))
     label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
     label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     label.add_theme_constant_override("outline_size", 4)
     label.add_theme_color_override("font_outline_color", Color(0.005, 0.012, 0.015, 0.95))
-    label.add_theme_constant_override("line_spacing", 4)
+    label.add_theme_constant_override("line_spacing", 2)
     _layout_ending_panel(Vector2(get_viewport().get_visible_rect().size))
 
 
@@ -722,7 +722,11 @@ func _layout_ending_panel(viewport_size: Vector2) -> void:
     # Victory now includes a compact strategic-legacy epilogue. Give the
     # ordinary ending surface enough vertical room for that evidence while
     # retaining the expanded report's separate reading budget.
-    var panel_height := minf(620.0 if expanded_report else 500.0, maxf(260.0, viewport_size.y - 40.0))
+    # The victory epilogue carries the chosen doctrine, remote support, unique
+    # components, and constructed-machine legacy. Give both ending variants
+    # the same responsive vertical budget so the panel's intentional clipping
+    # boundary never hides the conclusion at 1280x720 or 1024x576.
+    var panel_height := minf(620.0, maxf(260.0, viewport_size.y - 40.0))
     ending_panel.set_anchors_preset(Control.PRESET_CENTER)
     ending_panel.offset_left = -panel_width * 0.5
     ending_panel.offset_right = panel_width * 0.5
