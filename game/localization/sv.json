@@ -133,7 +133,7 @@
     "hud.ending.continue": "TRYCK ENTER FÖR ATT FORTSÄTTA UTFORSKA.",
     "hud.ending.restart": "TRYCK ENTER FÖR ATT STARTA OM.",
     "hud.ending.first_victory_detail": "FÖRSTA SEGERN · {0}\n\n{1}\n\nKörningen nådde en fullständig systemisk slutsats utan återkommande tidsstyrda vågor.",
-    "hud.ending.strategy_epilogue": "STRATEGISKT ARV\nDoktrin: {0} · Fungerande stödposter: {1} · Unika komponenter återvunna: {2}\nMaskinsamhället bar {3} byggda chassin in i det slutliga svaret. Dess val tillhör nu fristadens historia.",
+    "hud.ending.strategy_epilogue": "STRATEGISKT ARV\nDoktrin: {0} · Fungerande stödposter: {1}\nUnika komponenter återvunna: {2}\nMaskinsamhället bar {3} byggda chassin in i det slutliga svaret. Dess val tillhör nu fristadens historia.",
     "hud.collapse.report": "VÄRLDSDURATION · {0}\nSTÖRRE UTVECKLINGAR · {1}\nEKOLOGISKA OBSERVATIONER · {2}\nAVGÖRANDE TIDSLINJE\n{3}\nRESURSSTATUS · {4}\nFÖRSTA IHÅLLANDE RESURSNEDGÅNGEN · {5}\nMÖNSTER FÖR MASKINFÖRLUSTER · {6}\nOLÖST HOT · {7}\nOBSERVERADE ELLER UPPLÅSTA ALTERNATIVA SVAR · {8}\nSTRATEGISK DOKTRIN · {9}\nFJÄRRSTÖD · {10}",
     "hud.collapse.no_major_evolution": "Ingen större utveckling hade registrerats.",
     "hud.collapse.species_unavailable": "Beständiga artobservationer var inte tillgängliga.",

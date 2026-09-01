@@ -743,17 +743,23 @@ func _layout_ending_panel(viewport_size: Vector2) -> void:
 
 func _wrap_ending_detail(detail: String, max_chars: int) -> String:
     var lines: Array[String] = []
-    var current := ""
-    for word in detail.split(" ", false):
-        if current.is_empty():
-            current = word
-        elif current.length() + word.length() + 1 <= max_chars:
-            current += " " + word
-        else:
+    # Preserve authored paragraph/line boundaries before wrapping. Otherwise
+    # a localized epilogue line can be merged into the preceding line and
+    # leave its first short word orphaned at the edge of the ending panel.
+    for paragraph in detail.split("\n", true):
+        var current := ""
+        for word in paragraph.split(" ", false):
+            if current.is_empty():
+                current = word
+            elif current.length() + word.length() + 1 <= max_chars:
+                current += " " + word
+            else:
+                lines.append(current)
+                current = word
+        if not current.is_empty():
             lines.append(current)
-            current = word
-    if not current.is_empty():
-        lines.append(current)
+        elif not lines.is_empty():
+            lines.append("")
     return "\n".join(lines)
 
 
